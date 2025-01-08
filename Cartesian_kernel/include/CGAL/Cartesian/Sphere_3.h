@@ -163,6 +163,7 @@ typename R::Oriented_side
 SphereC3<R>::
 oriented_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Oriented_side Oriented_side;
   return enum_cast<Oriented_side>(bounded_side(p)) * orientation();
 }
 
@@ -172,6 +173,7 @@ typename R::Bounded_side
 SphereC3<R>::
 bounded_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Bounded_side Bounded_side;
   return enum_cast<Bounded_side>(compare(squared_radius(),
                                          squared_distance(center(), p)));
 }

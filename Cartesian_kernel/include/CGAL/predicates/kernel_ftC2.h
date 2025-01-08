@@ -421,6 +421,7 @@ typename Same_uncertainty_nt<Angle, FT>::type
 angleC2(const FT &ux, const FT &uy,
         const FT &vx, const FT &vy)
 {
+  typedef typename Same_uncertainty_nt<Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign(ux*vx + uy*vy));
 }
 
@@ -431,6 +432,7 @@ angleC2(const FT &px, const FT &py,
         const FT &qx, const FT &qy,
         const FT &rx, const FT &ry)
 {
+  typedef typename Same_uncertainty_nt<Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-qx)+(py-qy)*(ry-qy)));
 }
 
@@ -442,6 +444,7 @@ angleC2(const FT &px, const FT &py,
         const FT &rx, const FT &ry,
         const FT &sx, const FT &sy)
 {
+  typedef typename Same_uncertainty_nt<Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-sx)+(py-qy)*(ry-sy)));
 }
 
@@ -508,6 +511,7 @@ side_of_bounded_circleC2(const FT &px, const FT &py,
                          const FT &rx, const FT &ry,
                          const FT &tx, const FT &ty)
 {
+  typedef typename Same_uncertainty_nt<Bounded_side, FT>::type Bounded_side;
   return enum_cast<Bounded_side>( side_of_oriented_circleC2(px,py,qx,qy,rx,ry,tx,ty)
                                  * orientationC2(px,py,qx,qy,rx,ry) );
 }
@@ -520,8 +524,8 @@ side_of_bounded_circleC2(const FT &px, const FT &py,
                          const FT &tx, const FT &ty)
 {
   // Returns whether T lies inside or outside the circle which diameter is PQ.
-  return enum_cast<Bounded_side>(
-                      CGAL_NTS compare((tx-px)*(qx-tx), (ty-py)*(ty-qy)) );
+  typedef typename Same_uncertainty_nt<Bounded_side, FT>::type Bounded_side;
+  return enum_cast<Bounded_side>(CGAL_NTS compare((tx-px)*(qx-tx), (ty-py)*(ty-qy)) );
 }
 
 template < class FT >
@@ -648,14 +652,15 @@ power_side_of_bounded_power_circleC2(const FT &px, const FT &py, const FT &pw,
                                      const FT &qx, const FT &qy, const FT &qw,
                                      const FT &tx, const FT &ty, const FT &tw)
 {
+  typedef typename Same_uncertainty_nt<Bounded_side, FT>::type Bounded_side;
+
   FT dpx = px - qx;
   FT dpy = py - qy;
   FT dtx = tx - qx;
   FT dty = ty - qy;
   FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy);
 
-  return enum_cast<Bounded_side>
-    (CGAL_NTS sign(-(CGAL_NTS square(dtx) + CGAL_NTS square(dty)-tw+qw)*dpz
+  return enum_cast<Bounded_side>(CGAL_NTS sign(-(CGAL_NTS square(dtx) + CGAL_NTS square(dty)-tw+qw)*dpz
                    +(dpz-pw+qw)*(dpx*dtx+dpy*dty)));
 }
 

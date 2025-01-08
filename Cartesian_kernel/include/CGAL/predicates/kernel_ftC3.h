@@ -141,6 +141,7 @@ typename Same_uncertainty_nt<Angle, FT>::type
 angleC3(const FT &ux, const FT &uy, const FT &uz,
         const FT &vx, const FT &vy, const FT &vz)
 {
+  typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign(ux*vx + uy*vy + uz*vz));
 }
 
@@ -151,6 +152,7 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,
         const FT &rx, const FT &ry, const FT &rz)
 {
+  typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-qx)+
                                         (py-qy)*(ry-qy)+
                                         (pz-qz)*(rz-qz)));
@@ -164,6 +166,7 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &rx, const FT &ry, const FT &rz,
         const FT &sx, const FT &sy, const FT &sz)
 {
+  typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type Angle;
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-sx)+
                                         (py-qy)*(ry-sy)+
                                         (pz-qz)*(rz-sz)));
@@ -218,6 +221,8 @@ coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,
                                   const FT &rx, const FT &ry, const FT &rz,
                                   const FT &tx, const FT &ty, const FT &tz)
 {
+  typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type Bounded_side;
+
   // The approach is to compute side_of_bounded_sphere(p,q,r,t+v,t),
   // with v = pq ^ pr.
   // Note : since the circle defines the orientation of the plane, it can not
@@ -371,6 +376,7 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &sx, const FT &sy, const FT &sz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
+  typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type Bounded_side;
   return enum_cast<Bounded_side>( side_of_oriented_sphereC3(px, py, pz,
                                                             qx, qy, qz,
                                                             rx, ry, rz,
@@ -390,6 +396,7 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
                          const FT &tx, const FT &ty, const FT &tz)
 {
   // Returns whether T lies inside or outside the sphere which diameter is PQ.
+  typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type Bounded_side;
   return enum_cast<Bounded_side>( CGAL_NTS sign((tx-px)*(qx-tx)
                                               + (ty-py)*(qy-ty)
                                               + (tz-pz)*(qz-tz)) );
@@ -418,9 +425,9 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
 {
   // Returns whether T lies inside or outside the sphere which equatorial
   // circle is PQR.
+  typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type Bounded_side;
 
   // This code is inspired by the one of circumcenterC3(3 points).
-
   FT psx = px-sx;
   FT psy = py-sy;
   FT psz = pz-sz;
@@ -713,6 +720,8 @@ power_side_of_bounded_power_sphereC3(
     const FT &rx, const FT &ry, const FT &rz, const FT &rw,
     const FT &sx, const FT &sy, const FT &sz, const FT &sw)
 {
+  typedef typename Same_uncertainty_nt<Bounded_side, FT>::type Bounded_side;
+
   // Translate p to origin and compute determinants
   FT qpx = qx-px;
   FT qpy = qy-py;
@@ -763,6 +772,8 @@ power_side_of_bounded_power_sphereC3(
  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
 {
+  typedef typename Same_uncertainty_nt<Bounded_side, FT>::type Bounded_side;
+
   FT FT2(2);
   FT dpx = px - qx;
   FT dpy = py - qy;
