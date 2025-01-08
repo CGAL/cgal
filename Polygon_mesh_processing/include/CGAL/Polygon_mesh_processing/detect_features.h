@@ -369,7 +369,7 @@ detect_sharp_edges(const TriangleMesh& pmesh,
 
   // extract types from NPs
   typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
-  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  // GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
