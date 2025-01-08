@@ -1152,7 +1152,7 @@ void match_faces(const PolygonMesh1& m1,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \see `sharp_edges_segmentation()`
+ * \see `detect_sharp_edges()`
  */
 #ifdef DOXYGEN_RUNNING
 template<typename TriangleMesh, typename FT,

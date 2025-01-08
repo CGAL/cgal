@@ -275,6 +275,7 @@ void sharp_call(const FT angle_in_deg,
  * \cgalNamedParamsEnd
  *
  * \see `sharp_edges_segmentation()`
+ * \see `minmax_dihedral_angle()`
  */
 #ifdef DOXYGEN_RUNNING
 template <typename PolygonMesh, typename FT,
