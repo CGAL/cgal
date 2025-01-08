@@ -274,8 +274,10 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
 
-  add_item(locally_shortest_path_item Plugins/Bsurf/Locally_shortest_path_item.cpp)
-  target_link_libraries(locally_shortest_path_item PUBLIC scene_surface_mesh_item scene_polylines_item)
+  if (CGAL_Eigen3_support)
+    add_item(locally_shortest_path_item Plugins/Bsurf/Locally_shortest_path_item.cpp)
+    target_link_libraries(locally_shortest_path_item PUBLIC scene_surface_mesh_item scene_polylines_item CGAL::Eigen3_support)
+  endif()
 
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
