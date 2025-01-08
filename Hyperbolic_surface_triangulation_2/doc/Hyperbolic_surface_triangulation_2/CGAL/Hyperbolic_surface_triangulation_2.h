@@ -114,6 +114,12 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
+  Anchor& anchor();
+  /*!
+      returns the anchor.
+
+      \pre <code> is_valid() && has_anchor() </code>
+  */
   Anchor& anchor() const;
   /// @}
 
