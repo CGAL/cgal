@@ -7562,7 +7562,7 @@ public:
     and also for `Type1` and `Type2` of respective types
 
     - `Kernel::Triangle_3` and `Kernel::Tetrahedron_3`
-    - `Kernel::Plane_3` and `Kernel::Sphere_3` (or the contrary)
+    - `Kernel::Plane_3` and `Kernel::Sphere_3`
     - `Kernel::Sphere_3` and `Kernel::Sphere_3`.
 
   */
