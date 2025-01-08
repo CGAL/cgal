@@ -52,6 +52,30 @@ public:
   */
   typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                               Dart_const_descriptor;
   /*!
+      Range of one dart for each vertex (that is 0-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<0>             Vertex_range;
+  /*!
+    Range of one dart for each edge (that is 1-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<1>             Edge_range;
+  /*!
+    Range of one dart for each face (that is 2-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<2>             Face_range;
+  /*!
+      Range of one dart for each vertex (that is 0-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<0>             Vertex_const_range;
+  /*!
+    Range of one dart for each edge (that is 1-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<1>             Edge_const_range;
+  /*!
+    Range of one dart for each face (that is 2-cell) of the combinatorial map.
+  */
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2>             Face_const_range;
+  /*!
       Point type.
   */
   typedef typename Traits::Hyperbolic_point_2                                                           Point;
@@ -120,7 +144,31 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  Anchor& anchor() const;
+  const Anchor& anchor() const;
+  /*!
+    returns the range of vertices.
+  */
+Vertex_range vertices_range();
+  /*!
+      returns the range of edges.
+  */
+Edge_range edges_range();
+  /*!
+      returns the range of faces.
+  */
+Face_range faces_range();
+  /*!
+    returns the range of vertices.
+  */
+Vertex_const_range vertices_const_range() const;
+  /*!
+      returns the range of edges.
+  */
+Edge_const_range edges_const_range() const;
+  /*!
+      returns the range of faces.
+  */
+Face_const_range faces_const_range() const;
   /// @}
 
 

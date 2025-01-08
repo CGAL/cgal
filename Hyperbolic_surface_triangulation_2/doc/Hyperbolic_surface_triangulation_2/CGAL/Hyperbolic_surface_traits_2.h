@@ -8,17 +8,6 @@ namespace CGAL{
 \cgalModels{HyperbolicSurfaceTraits_2}
 */
 template<class HyperbolicTraitsClass>
-class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {
-public:
-  /// \name Types
-  /// @{
-  /*!
-          represents a complex number, model of
-          `ComplexNumber`, over the field `HyperbolicSurfaceTraits_2::FT` for its real and
-          imaginary parts.
-  */
-  typedef unspecified_type  Complex_number;
-  /// @}
-};
+class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {};
 
 }; // namespace CGAL
