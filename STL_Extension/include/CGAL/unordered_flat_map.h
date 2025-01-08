@@ -26,11 +26,8 @@
 #  include <unordered_map>
 #endif
 
-#if CGAL_USE_BARE_STD_MAP
-  #include <map>
-#endif
-
-#include <functional>
+#include <functional> // for std::hash, std::equal_to
+#include <memory> // for std::allocator
 
 namespace CGAL {
 

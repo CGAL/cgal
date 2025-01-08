@@ -136,6 +136,24 @@ public:
     }
   };
 
+  class Pair_compare {
+    Compare comp;
+
+  public:
+    Pair_compare(const Compare& comp) : comp(comp) {}
+
+    bool operator()(const Edge& e1, const Edge& e2) const {
+      if(comp(e1.first, e2.first)) {
+        return true;
+      } else if((! comp(e2.first, e1.first)) && //  !less(e1,e2) && !less(e2,e1) == equal
+                comp(e1.second, e2.second)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
   class Context {
     friend class Polyline_constraint_hierarchy_2<T,Compare,Point>;
   private:
@@ -155,7 +173,12 @@ public:
   typedef typename Context_list::iterator Context_iterator;
 
   typedef std::set<Constraint_id>           Constraint_set;
+#if CGAL_USE_BARE_STD_MAP
+  typedef std::map<Edge, Context_list*,
+                   Pair_compare>            Sc_to_c_map;
+#else
   typedef CGAL::unordered_flat_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
+#endif
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
@@ -169,7 +192,11 @@ private:
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp)
     : comp(comp)
+#if CGAL_USE_BARE_STD_MAP
+    , sc_to_c_map(Pair_compare(comp))
+#else
     , sc_to_c_map()
+#endif
   { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
