@@ -33,33 +33,27 @@ class Filtered_predicate_with_state
   O1  o1;
   mutable boost::optional<EP>  oep;
   AP  ap;
-  typedef typename AP::result_type  Ares;
 
 public:
-
+  // AP::result_type must be convertible to EP::result_type.
   typedef AP    Approximate_predicate;
   typedef EP    Exact_predicate;
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
-
-  typedef typename EP::result_type  result_type;
-  // AP::result_type must be convertible to EP::result_type.
 
   Filtered_predicate_with_state(const O1 &o1)
     : c2e(), c2a(), o1(o1), oep(), ap(c2a(o1))
   {}
 
   template <typename... Args>
-  result_type
-  operator()(const Args&... args) const;
-};
-
-template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
-  template <typename... Args>
-typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
-Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
+  auto
   operator()(const Args&... args) const
-{
+  {
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype((*oep)(c2e(args)...))> >::Type result_type;
+
+#ifndef CGAL_EPICK_NO_INTERVALS
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(ap(c2a(args)...))> >::Type Ares;
+
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -68,18 +62,22 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
         {
           Ares res = ap(c2a(args)...);
           if (is_certain(res))
-            return get_certain(res);
+            return result_type(get_certain(res));
         }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif
     if(! oep){
       oep.emplace(c2e(o1));
     }
-    return (*oep)(c2e(args)...);
-}
+    return result_type((*oep)(c2e(args)...));
+  }
+};
+
+
 
 } //namespace CGAL
 
