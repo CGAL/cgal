@@ -24,6 +24,7 @@
 
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/Skiplist.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
