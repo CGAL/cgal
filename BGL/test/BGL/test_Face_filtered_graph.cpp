@@ -498,6 +498,103 @@ void test_invalid_selections()
   assert(!many_umbrellas_fg.is_selection_valid());
 }
 
+
+void non_manifoldness_test1()
+{
+  // works out-of-the-box because Face_filtered_graph handles already non-manifold cycles
+  SM mesh;
+  SM::Vertex_index v0=add_vertex(mesh);
+  SM::Vertex_index v1=add_vertex(mesh);
+  SM::Vertex_index v2=add_vertex(mesh);
+  SM::Vertex_index v3=add_vertex(mesh);
+  SM::Vertex_index v4=add_vertex(mesh);
+  SM::Vertex_index v5=add_vertex(mesh);
+  SM::Vertex_index v6=add_vertex(mesh);
+
+  SM::Face_index f0=mesh.add_face(v0,v1,v2);
+  SM::Face_index f1=mesh.add_face(v0,v3,v4);
+  SM::Face_index f2=mesh.add_face(v0,v5,v6);
+  SM::Halfedge_index h = halfedge(f0,mesh);
+  while(target(h, mesh)!=v0)
+    h=next(h,mesh);
+  set_halfedge(v0, h, mesh);
+
+  std::vector<SM::Face_index> selection = {f1, f2};
+  CGAL::Face_filtered_graph<SM> ffg(mesh, selection);
+
+  SM out;
+  CGAL::copy_face_graph(ffg, out);
+
+  assert(vertices(out).size()==5);
+  assert(faces(out).size()==2);
+}
+
+void non_manifoldness_test2()
+{
+  SM mesh;
+  SM::Vertex_index v0=add_vertex(mesh);
+  SM::Vertex_index v0b=add_vertex(mesh);
+  SM::Vertex_index v0t=add_vertex(mesh);
+
+  SM::Vertex_index v1=add_vertex(mesh);
+  SM::Vertex_index v2=add_vertex(mesh);
+  SM::Vertex_index v3=add_vertex(mesh);
+
+  SM::Vertex_index v4=add_vertex(mesh);
+  SM::Vertex_index v5=add_vertex(mesh);
+  SM::Vertex_index v6=add_vertex(mesh);
+
+  SM::Vertex_index v7=add_vertex(mesh);
+  SM::Vertex_index v8=add_vertex(mesh);
+  SM::Vertex_index v9=add_vertex(mesh);
+
+  SM::Face_index f00=mesh.add_face(v1,v2,v0);
+  SM::Face_index f01=mesh.add_face(v2,v3,v0);
+  SM::Face_index f02=mesh.add_face(v3,v1,v0);
+
+  SM::Face_index f10=mesh.add_face(v4,v5,v0b);
+  SM::Face_index f11=mesh.add_face(v5,v6,v0b);
+  SM::Face_index f12=mesh.add_face(v6,v4,v0b);
+
+  SM::Face_index f20=mesh.add_face(v7,v8,v0t);
+  SM::Face_index f21=mesh.add_face(v8,v9,v0t);
+  SM::Face_index f22=mesh.add_face(v9,v7,v0t);
+
+  assert(f00!=SM::Face_index());
+  assert(f01!=SM::Face_index());
+  assert(f02!=SM::Face_index());
+  assert(f10!=SM::Face_index());
+  assert(f11!=SM::Face_index());
+  assert(f12!=SM::Face_index());
+  assert(f20!=SM::Face_index());
+  assert(f21!=SM::Face_index());
+  assert(f22!=SM::Face_index());
+
+  #define UPDATE_V(fX, vX) \
+  { SM::Halfedge_index h = halfedge(fX,mesh);\
+  while(target(h, mesh)!=vX) h=next(h,mesh);\
+  set_target(h, v0, mesh); }
+
+  UPDATE_V(f10, v0b)
+  UPDATE_V(f11, v0b)
+  UPDATE_V(f12, v0b)
+  UPDATE_V(f20, v0t)
+  UPDATE_V(f21, v0t)
+  UPDATE_V(f22, v0t)
+
+  remove_vertex(v0b, mesh);
+  remove_vertex(v0t, mesh);
+
+  std::vector<SM::Face_index> selection = {f10, f11, f12, f20, f21, f22};
+  CGAL::Face_filtered_graph<SM> ffg(mesh, selection);
+
+  SM out;
+  CGAL::copy_face_graph(ffg, out);
+
+  assert(vertices(out).size()==7);
+  assert(faces(out).size()==6);
+}
+
 int main()
 {
   test_graph_range(poly_data());
@@ -511,6 +608,8 @@ int main()
 #endif
 
   test_invalid_selections();
+  non_manifoldness_test1();
+  non_manifoldness_test2();
 
   // Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   typedef CGAL::Face_filtered_graph<SM> SM_Adapter;
