@@ -53,14 +53,16 @@ public:
     typename Traits::Hyperbolic_point_2 vertices[3];
   };
 
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                                     Dart_descriptor;
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_range                                      Dart_range;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                                 Dart_descriptor;
+//typedef typename Combinatorial_map_with_cross_ratios::Dart_range                                      Dart_range;
+//  typedef typename Combinatorial_map_with_cross_ratios::Dart_range::iterator                            Dart_iterator;
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<0>             Vertex_range;
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<1>             Edge_range;
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<2>             Face_range;
 
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                               Dart_const_descriptor;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                           Dart_const_descriptor;
   typedef typename Combinatorial_map_with_cross_ratios::Dart_const_range                                Dart_const_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<0>       Vertex_const_range;
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<1>       Edge_const_range;
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2>       Face_const_range;
 
@@ -81,7 +83,7 @@ public:
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
   Anchor& anchor();
-  Anchor& anchor() const;
+  const Anchor& anchor() const;
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -109,6 +111,26 @@ public:
   Complex_number cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
   // Returns the point d such that the cross ratio of a,b,c,d is cratio
   Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const Complex_number& cratio) const;
+
+// Wrapper around the Cmap for iterating over vertices, edges or faces.
+Vertex_range vertices_range(){
+  return _combinatorial_map.template one_dart_per_cell<0>();
+}
+Edge_range edges_range(){
+  return _combinatorial_map.template one_dart_per_cell<1>();
+}
+Face_range faces_range(){
+  return _combinatorial_map.template one_dart_per_cell<2>();
+}
+Vertex_const_range vertices_const_range() const {
+  return _combinatorial_map.template one_dart_per_cell<0>();
+}
+Edge_const_range edges_const_range() const {
+  return _combinatorial_map.template one_dart_per_cell<1>();
+}
+Face_const_range faces_const_range() const {
+  return _combinatorial_map.template one_dart_per_cell<2>();
+}
 
 protected:
   Combinatorial_map_with_cross_ratios _combinatorial_map;
@@ -248,7 +270,7 @@ Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor()  {
 }
 
 template<class Traits, class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const {
   CGAL_precondition(is_valid() && has_anchor());
   return _anchor;
@@ -531,14 +553,14 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::to_stream(std::ostr
     }
 
     // Store the triangles
-    for (typename Face_const_range::const_iterator it = _combinatorial_map.template one_dart_per_cell<2>().begin(); it != _combinatorial_map.template one_dart_per_cell<2>().end(); ++it){
+    for (typename Face_const_range::const_iterator it = faces_const_range().begin(); it != faces_const_range().end(); ++it){
       s << darts_indices[it] << std::endl;
       s << darts_indices[const_cw(it)] << std::endl;
       s << darts_indices[const_ccw(it)] << std::endl;
     }
 
     // Store the edges
-    for (typename Edge_range::const_iterator it = _combinatorial_map.template one_dart_per_cell<1>().begin(); it != _combinatorial_map.template one_dart_per_cell<1>().end(); ++it){
+    for (typename Edge_const_range::const_iterator it = edges_const_range().begin(); it != edges_const_range().end(); ++it){
       s << darts_indices[it] << std::endl;
       s << darts_indices[const_opposite(it)] << std::endl;
       s << get_cross_ratio(it);
