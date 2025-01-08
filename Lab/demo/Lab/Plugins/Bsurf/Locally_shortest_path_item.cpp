@@ -168,7 +168,7 @@ struct Locally_shortest_path_item_priv{
     rotate_cursor = QCursor(pix);
 
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-    CGAL::Polygon_mesh_processing::init_geodesic_dual_solver(geodesic_solver, mesh);
+    VGoS::init_geodesic_dual_solver(geodesic_solver, mesh);
 #endif
   }
 
