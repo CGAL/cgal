@@ -1,5 +1,10 @@
 // 154 515 565
 #include <CGAL/config.h>
+#if CGAL_CXX20
+#  define CGAL_DEBUG_RANDOM_ALLOCATOR 1
+#  include <CGAL/Random_allocator.h>
+#  define CGAL_ALLOCATOR(T) CGAL::Random_allocator<T>
+#endif
 #include "test_dependencies.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #if CGAL_USE_CORE || CGAL_USE_LEDA
