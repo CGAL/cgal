@@ -22,14 +22,7 @@
 #include <set>
 #include <list>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 108100
-#  include <boost/unordered/unordered_flat_map.hpp>
-#  define CGAL_USE_BOOST_UNORDERED 1
-#else // BOOST before 1.81.0
-#  include <unordered_map>
-#endif
-
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/Skiplist.h>
 #include <CGAL/assertions.h>
 
@@ -162,11 +155,7 @@ public:
   typedef typename Context_list::iterator Context_iterator;
 
   typedef std::set<Constraint_id>           Constraint_set;
-#if CGAL_USE_BOOST_UNORDERED
-  typedef boost::unordered_flat_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
-#else
-  typedef std::unordered_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
-#endif
+  typedef CGAL::unordered_flat_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
