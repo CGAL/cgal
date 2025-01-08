@@ -4216,8 +4216,7 @@ namespace CartesianKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
         (o3 == COLLINEAR
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
-        ? result_type(ON_ORIENTED_BOUNDARY)
-        : opposite(ot);
+        ? Oriented_side(ON_ORIENTED_BOUNDARY) : opposite(ot);
     }
 
     Oriented_side

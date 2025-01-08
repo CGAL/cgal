@@ -85,7 +85,7 @@ namespace CGAL {
 
     template < class SK >
     inline
-    typename SK::Linear_kernel::Bounded_side_3::result_type
+    typename SK::Bounded_side
     bounded_side(const typename SK::Sphere_3 &s,
                  const typename SK::Circular_arc_point_3 &p) {
       typedef typename SK::Algebraic_kernel Algebraic_kernel;
@@ -99,7 +99,7 @@ namespace CGAL {
 
     template < class SK >
     inline
-    typename SK::Linear_kernel::Bounded_side
+    typename SK::Bounded_side
     bounded_side(const typename SK::Circle_3 &c,
                  const typename SK::Circular_arc_point_3 &p) {
       typedef typename SK::Algebraic_kernel Algebraic_kernel;
