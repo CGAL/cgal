@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
@@ -25,7 +26,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::pair<std::pair<edge_descriptor,double>, std::pair<edge_descriptor,double>> res = PMP::detect_sharp_edges(mesh);
+  std::pair<std::pair<edge_descriptor,double>, std::pair<edge_descriptor,double>> res = PMP::minmax_dihedral_angle(mesh);
 
    std::cout << "Sharpest dihedral angles: " << res.first.second << "   " << res.second.second << std::endl;
 

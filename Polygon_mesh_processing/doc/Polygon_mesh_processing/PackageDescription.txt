@@ -249,6 +249,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::longest_border()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::match_faces()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::minmax_dihedral_angle()` \endlink
 
 \cgalCRPSection{Feature Detection Functions}
 - `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
