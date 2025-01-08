@@ -217,6 +217,7 @@ template<class Traits, class Attributes>
 
 template<class Traits, class Attributes>
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
+  CGAL_precondition(other->is_valid());
   if (other.has_anchor()){
     copy_from(other.combinatorial_map(), other.anchor());
   }
@@ -235,18 +236,21 @@ typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_m
 
 template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const {
+  CGAL_precondition(is_valid());
   return _has_anchor;
 }
 
 template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor()  {
+  CGAL_precondition(is_valid() && has_anchor());
   return _anchor;
 }
 
 template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const {
+  CGAL_precondition(is_valid() && has_anchor());
   return _anchor;
 }
 
@@ -254,12 +258,13 @@ Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const {
 
 template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_Delaunay_flippable(Dart_const_descriptor dart) const{
+  CGAL_precondition(is_valid());
   return ( get_cross_ratio(dart).imag()>Number(0) );
 }
 
 template<class Traits, class Attributes>
 void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_descriptor dart){
-
+  CGAL_precondition(is_valid());
   // First gather all the information needed
 
    Dart_descriptor a = opposite(dart); // Get a fresh descriptor
@@ -351,6 +356,7 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_Delaunay() const
 
 template<class Traits, class Attributes>
 int Hyperbolic_surface_triangulation_2<Traits, Attributes>::make_Delaunay(){
+  CGAL_precondition(is_valid());
   int number_of_flips_done = 0;
 
   Dart_descriptor edge_to_flip = pick_edge_to_flip();
@@ -366,6 +372,7 @@ int Hyperbolic_surface_triangulation_2<Traits, Attributes>::make_Delaunay(){
 
 template<class Traits, class Attributes>
 std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_const_descriptor, typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point, typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point, typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point>> Hyperbolic_surface_triangulation_2<Traits, Attributes>::lift(bool center) const{
+  CGAL_precondition(is_valid() && has_anchor());
   std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realizations;
 
   size_t visited_darts_mark = _combinatorial_map.get_new_mark();
@@ -500,7 +507,8 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_valid() const{
 
 template<class Traits, class Attributes>
 void Hyperbolic_surface_triangulation_2<Traits, Attributes>::to_stream(std::ostream& s) const{
-    // Give indices to the darts
+  CGAL_precondition(is_valid() && has_anchor());
+  // Give indices to the darts
     std::map<Dart_const_descriptor, int> darts_indices;
     int current_dart_index = 0;
     for (typename Dart_const_range::const_iterator it=_combinatorial_map.darts().begin(); it!=_combinatorial_map.darts().end(); ++it){

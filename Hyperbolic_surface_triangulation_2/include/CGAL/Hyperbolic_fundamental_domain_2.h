@@ -16,6 +16,7 @@
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 
 #include <CGAL/Hyperbolic_isometry_2.h>
+#include <CGAL/basic.h>
 
 #include <vector>
 #include <iostream>
@@ -68,21 +69,25 @@ template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fund
 
 template<class Traits>
 std::size_t Hyperbolic_fundamental_domain_2<Traits>::size() const{
+  CGAL_precondition(is_valid());
   return _vertices.size();
 }
 
 template<class Traits>
 const typename Hyperbolic_fundamental_domain_2<Traits>::Point& Hyperbolic_fundamental_domain_2<Traits>::vertex(std::size_t index) const{
+  CGAL_precondition(is_valid());
   return _vertices[index];
 }
 
 template<class Traits>
 std::size_t Hyperbolic_fundamental_domain_2<Traits>::paired_side(std::size_t index) const{
+  CGAL_precondition(is_valid());
   return _pairings[index];
 }
 
 template<class Traits>
 Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pairing(std::size_t index) const{
+  CGAL_precondition(is_valid());
   std::size_t n = size();
   std::size_t paired_index = paired_side(index);
 
@@ -142,6 +147,7 @@ std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream&
 
 template<class Traits>
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain){
+  CGAL_precondition(domain.is_valid());
   return domain.to_stream(s);
 }
 
