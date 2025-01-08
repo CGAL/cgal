@@ -20,7 +20,7 @@
 \cgalPkgPicture{vgos-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Claudio Mancinelli and Sébastien Loriot}
-\cgalPkgDesc{The package provides functions to draw and manipulate basic geometric primitives such as geodesics, Bézier and B-Spline curves
+\cgalPkgDesc{The package provides functions to draw and manipulate basic geometric primitives such as geodesics curves and Bézier splines
              on triangulated surface meshes.}
 \cgalPkgManuals{Chapter_VGoS,PkgVGoS_Ref}
 \cgalPkgSummaryEnd
