@@ -58,14 +58,16 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const {
     out_obj = _walk_from_face(*f, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
 
-  if (const auto* f = std::get_if<Face_const_handle>(&out_obj)) {
+  if (const auto* fp = std::get_if<Face_const_handle>(&out_obj)) {
+    const auto& f = *fp;
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face. However, we first have to check whether the query point coincides
     // with any of the isolated vertices contained inside this face.
     auto equal = m_traits->equal_2_object();
-    for (auto iso_verts_it = (*f)->isolated_vertices_begin();
-         iso_verts_it != (*f)->isolated_vertices_end(); ++iso_verts_it) {
+    // Do not use 'auto' to define the iterator, as MSVC2017 complains.
+    for (Isolated_vertex_const_iterator iso_verts_it = f->isolated_vertices_begin();
+         iso_verts_it != f->isolated_vertices_end(); ++iso_verts_it) {
       if (equal(p, iso_verts_it->point())) {
         Vertex_const_handle ivh = iso_verts_it;
         return make_result(ivh);
