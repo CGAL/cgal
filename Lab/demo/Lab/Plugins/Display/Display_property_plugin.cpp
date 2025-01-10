@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <CGAL/Polygon_mesh_processing/internal/curvature.h>
+#include <CGAL/Polygon_mesh_processing/curvature.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <QAbstractItemView>
