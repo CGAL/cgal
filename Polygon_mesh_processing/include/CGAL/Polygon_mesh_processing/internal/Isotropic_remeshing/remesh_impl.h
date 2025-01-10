@@ -1832,6 +1832,17 @@ private:
       // else keep current status for en and eno
     }
 
+    void remove_border_face(const halfedge_descriptor h)
+    {
+      CGAL_assertion(is_border(opposite(h, mesh_), mesh_));
+      for (halfedge_descriptor hf : halfedges_around_face(h, mesh_))
+      {
+        set_status(hf, MESH_BORDER); //only 1 or 2 of the listed halfedges
+                                     //will survive face removal, but status will be correct
+      }
+      CGAL::Euler::remove_face(h, mesh_);
+    }
+
     template<typename Bimap, typename SizingFunction>
     bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
@@ -1861,7 +1872,7 @@ private:
 
         if(is_border(opposite(h, mesh_), mesh_))
         {
-          CGAL::Euler::remove_face(h, mesh_);
+          remove_border_face(h);
           continue;
         }
 
@@ -1872,7 +1883,7 @@ private:
 
           if(is_border(hfo, mesh_))
           {
-            CGAL::Euler::remove_face(h, mesh_);
+            remove_border_face(h);
             break;
           }
           vertex_descriptor vc = target(hf, mesh_);
