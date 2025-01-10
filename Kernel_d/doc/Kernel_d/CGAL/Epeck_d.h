@@ -60,7 +60,7 @@ typedef DimensionTag Dimension;
 /*!
 A bidirectional iterator over the %Cartesian coordinates of a point
 */
-class Cartesian_const_iterator;
+class Cartesian_const_iterator{};
 
 
 /*!
@@ -177,12 +177,25 @@ public:
   Bbox_d<DimensionTag> operator()(Point_d p);
 };
 
-Construct_circumcenter_d construct_circumcenter_d_object();
+class Construct_cartesian_const_iterator_d {
+public:
+/*! returns the begin iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p);
+
+  /*! returns the past-the-end iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p, int);
+};
+
+
 Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Construct_bbox_d construct_bbox_d_object();
+Construct_cartesian_const_iterator_d  construct_cartesian_const_iterator_d_object();
+Construct_circumcenter_d construct_circumcenter_d_object();
 Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
-Construct_bbox_d construct_bbox_d_object();
 }; /* end Epeck_d */
 } /* end namespace CGAL */
