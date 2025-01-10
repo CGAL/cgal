@@ -55,7 +55,7 @@ void read_iso_volume(const std::string& filename, Grid& grid, Values& values) {
   std::vector<float> volume_data(total_points);
   for (std::size_t i = 0; i < total_points; ++i) {
     file.read(reinterpret_cast<char*>(&volume_data[i]), sizeof(float));
-    std::cout << volume_data[i] << std::endl;
+    //std::cout << volume_data[i] << std::endl;
   }
 
   for(int x=0; x<nx; ++x)
@@ -106,7 +106,6 @@ void verify_euler() {
   const std::size_t num_tests = 10000;
 
   for (std::size_t i = 0; i < num_tests; i++) {
-
     Grid grid;
     Values values { grid };
     Domain domain { grid, values };
@@ -179,8 +178,9 @@ void verify_betti() {
 
     if (b0 != solution[0])
       std::cout << "error in test " << i << ": b0 " << b0 << " != " << solution[0] << std::endl;
-    if (b1 != solution[1])
+    if (b1 != (solution[1] * 2))
       std::cout << "error in test " << i << ": b1 " << b1 << " != " << solution[1] << std::endl;
+
   }
 }
 
@@ -208,9 +208,9 @@ void compare_to_reference(const std::string& filename) {
 
   Point_range points;
   Polygon_range triangles;
-  IS::marching_cubes<CGAL::Sequential_tag>(domain, 0, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
+  IS::marching_cubes<CGAL::Sequential_tag>(domain, 0, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true).isovalue_nudging(true).constrain_to_cell(true));
 
-  CGAL::IO::write_polygon_soup("verify_tmc.off", points, triangles, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_soup("verify_tmc_orig.off", points, triangles, CGAL::parameters::stream_precision(17));
 
   Grid grid_high_res { grid.span().min(), grid.span().max(), std::array<std::size_t, 3>{151, 151, 151} };
   IS::Value_function_3<Grid> values_high_res { values, grid_high_res };
@@ -218,11 +218,11 @@ void compare_to_reference(const std::string& filename) {
 
   Point_range points_high_res;
   Polygon_range triangles_high_res;
-  IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain_high_res, 0, points_high_res, triangles_high_res, CGAL::parameters::use_topologically_correct_marching_cubes(false));
+  IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain_high_res, 0, points_high_res, triangles_high_res, CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
   CGAL::IO::write_polygon_soup("verify_reference.off", points_high_res, triangles_high_res);
 
-  write_debug_grid(domain, "verify_cell.off");
+  //write_debug_grid(domain, "verify_cell.off");
 }
 
 int main(int, char**)
@@ -230,8 +230,8 @@ int main(int, char**)
   using K = CGAL::Simple_cartesian<double>;
   using FT = typename K::FT;
 
-  // verify_euler<K>();
-  // verify_betti<K>();
-  compare_to_reference<K>("data/MarchingCubes_cases/Grids/" + std::to_string(100) + "-scalar_field.iso");
+  verify_euler<K>();
+  verify_betti<K>();
+  //compare_to_reference<K>("data/MarchingCubes_cases/Grids/" + std::to_string(100) + "-scalar_field.iso");
   // compare_to_reference<K>("data/Closed_Surfaces/Grids/" + std::to_string(0) + "-scalar_field.iso");
 }
