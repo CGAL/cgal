@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 
 #include <vector>
 
@@ -82,7 +82,7 @@ int main()
 
   {
   //Dimension d
-  typedef CGAL::Bbox<CGAL::Dimension_tag<3>,double> BBox3;
+  typedef CGAL::Bbox_d<CGAL::Dimension_tag<3>> BBox3;
   BBox3 bb3(3), bb3a(3,1.0);
   assert(bb3.dimension() == 3);
   assert(bb3 != bb3a);

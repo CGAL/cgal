@@ -25,7 +25,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Bbox_d.h>
 #include <CGAL/Default.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -51,6 +50,9 @@
 #include <mutex>
 
 namespace CGAL {
+
+template <typename D>
+class Bbox_d;
 
 template <class E,
           class A,
