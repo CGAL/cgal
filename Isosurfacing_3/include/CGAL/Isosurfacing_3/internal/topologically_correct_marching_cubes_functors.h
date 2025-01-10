@@ -300,8 +300,6 @@ private:
 
   void face_intersections(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, FT& a, FT& b, FT& c, FT& d) {
     const int *remap = internal::Cube_table::asymptotic_remap[idx];
-//     a = (values[remap[0]] - values[remap[1]]) * (-values[remap[6]] + values[remap[7]] + values[remap[4]] - values[remap[5]]) -
-//       (values[remap[4]] - values[remap[5]]) * (-values[remap[2]] + values[remap[3]] + values[remap[0]] - values[remap[1]]);
 
     a = (values[remap[1]] - values[remap[0]]) * (values[remap[6]] - values[remap[7]]) + (values[remap[2]] - values[remap[3]]) * (values[remap[4]] - values[remap[5]]);
     b = (i0 - values[remap[0]]) * (-values[remap[6]] + values[remap[7]] + values[remap[4]] - values[remap[5]]) +
@@ -315,13 +313,6 @@ private:
 
   bool calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
     const int* remap = internal::Cube_table::asymptotic_remap[idx];
-
-    if (values[remap[0]] == values[remap[2]] && values[remap[1]] == values[remap[3]])
-      return false;
-
-    if (values[remap[0]] == values[remap[4]] && values[remap[1]] == values[remap[5]])
-      return false;
-
     FT d2 = sqrt(CGAL::to_double(d));
 
     // compute u-coord of solutions
@@ -512,7 +503,7 @@ private:
 
     // compute oriented contours
     //
-    // A contour consists of segment at the faces connecting the intersection of the
+    // A contour consists of segments at the faces connecting the intersection of the
     // isosurface with the edges. For each edge, we store the edge to which the segment
     // is outgoing and the edge from which the segment in coming. Therefore, a contour
     // can be reconstructed by connecting the edges in the direction of the outgoing.
@@ -848,6 +839,38 @@ private:
       }
     }
 
+    // counts the number of set bits
+    auto numberOfSetBits = [](const unsigned char n)
+      {
+        // C or C++: use uint32_t
+        unsigned int b = (unsigned int)(n);
+        b = b - ((b >> 1) & 0x55555555);
+        b = (b & 0x33333333) + ((b >> 2) & 0x33333333);
+        return (((b + (b >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+      };
+
+    // compute the number of solutions to the quadratic equation for a given face
+    auto nrQSolFace = [](const unsigned int f, const unsigned char n)
+      {
+        unsigned int nr = 0;
+        switch (f)
+        {
+        case 0:
+          if ((n & 0x5) == 0x5) nr = nr + 1;
+          if ((n & 0xA) == 0xA) nr = nr + 1;
+          break;
+        case 1:
+          if ((n & 0x11) == 0x11) nr = nr + 1;
+          if ((n & 0x22) == 0x22) nr = nr + 1;
+          break;
+        case 2:
+          if ((n & 0x18) == 0x18) nr = nr + 1;
+          if ((n & 0x24) == 0x24) nr = nr + 1;
+          break;
+        }
+        return nr;
+      };
+
     // compute intersection of opposite faces
     //
     // It is sufficient to compute a pair of solutions for one face
@@ -861,56 +884,33 @@ private:
 
     FT a, b, c, d;
     std::size_t idx = 0;
+    unsigned char nr_u, nr_v, nr_w, nr_t;
     for (; idx < 10; idx++) {
       face_intersections(values, idx, i0, a, b, c, d);
-
-      if (a == 0 || d < 0)
-        continue;
 
       if (!calc_coordinates(values, idx, i0, a, b, d, f_flag, q_sol, ui, vi, wi))
         continue;
 
-      if (!std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1])))
+      bool ui_invalid = !std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1]));
+
+      nr_u = nrQSolFace(0, q_sol);
+      nr_v = nrQSolFace(1, q_sol);
+      nr_w = nrQSolFace(2, q_sol);
+      nr_t = (nr_u + nr_v + nr_w);
+
+      if (get_cnt_size(0, c_) == 7 && (ui_invalid || nr_t == nr_u || nr_t == nr_v || nr_t == nr_w))
         continue;
 
-      // In practice, there does not seem to be a difference in choosing the first working over the best one.
+      if (ui_invalid && q_sol != 0) {
+        if (!(nr_t == nr_u || nr_t == nr_v || nr_t == nr_w))
+          continue;
+
+        if (numberOfSetBits(q_sol) == 6)
+          continue;
+      }
+
       break;
     }
-
-    if (idx >= 10)
-      return false;
-
-    // counts the number of set bits
-    auto numberOfSetBits = [](const unsigned char n)
-    {
-      // C or C++: use uint32_t
-      unsigned int b = (unsigned int)(n);
-      b = b - ((b >> 1) & 0x55555555);
-      b = (b & 0x33333333) + ((b >> 2) & 0x33333333);
-      return (((b + (b >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
-    };
-
-    // compute the number of solutions to the quadratic equation for a given face
-    auto nrQSolFace = [](const unsigned int f, const unsigned char n)
-    {
-      unsigned int nr = 0;
-      switch (f)
-      {
-        case 0:
-          if((n & 0x5) == 0x5) nr = nr + 1;
-          if((n & 0xA) == 0xA) nr = nr + 1;
-        break;
-        case 1:
-          if((n & 0x11) == 0x11) nr = nr + 1;
-          if((n & 0x22) == 0x22) nr = nr + 1;
-        break;
-        case 2:
-          if((n & 0x18) == 0x18) nr = nr + 1;
-          if((n & 0x24) == 0x24) nr = nr + 1;
-        break;
-      }
-      return nr;
-    };
 
     // triangulate contours
     //
@@ -1210,6 +1210,9 @@ private:
                            vertices[get_c(i, 5, c_)]);
             }
             break;
+            default:
+              std::cout << "Contour size " << get_cnt_size(i, c_) << " not supported\n";
+              break;
           } // switch over size of contour
         } // loop over contorus
       }
