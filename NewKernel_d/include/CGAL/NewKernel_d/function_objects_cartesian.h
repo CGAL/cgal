@@ -14,7 +14,7 @@
 
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -1016,7 +1016,7 @@ template<class R_> struct Construct_bbox : private Store_kernel<R_> {
         typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 
-        typedef Bbox<Dimension,double> result_type;
+        typedef Bbox_d<Dimension> result_type;
         typedef Point argument_type;
         result_type operator()(Point const&a)const{
                 CI ci(this->kernel());

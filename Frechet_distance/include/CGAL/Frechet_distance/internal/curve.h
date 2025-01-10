@@ -18,7 +18,7 @@
 #include <CGAL/Frechet_distance/internal/id.h>
 
 #include <CGAL/Kernel/Type_mapper.h>
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_converter.h>
@@ -46,8 +46,8 @@ double length_of_diagonal(const Bbox_3& bb)
     return sqrt(d).sup();
 }
 
-template<int N, typename T>
-double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
+template<int N>
+double length_of_diagonal(const Bbox_d<Dimension_tag<N>>& bb)
 {
     using I = Interval_nt<true>;
     I d = square(I((bb.max)(0)) - I((bb.min)(0)));
@@ -227,7 +227,7 @@ public:
     static constexpr int dimension =  Traits::Dimension::value;
     using Bbox = std::conditional_t<dimension==2,
                                     Bbox_2, std::conditional_t<dimension==3,
-                                                               Bbox_3, ::CGAL::Bbox<typename Traits::Dimension, double>>>;
+                                                               Bbox_3, ::CGAL::Bbox_d<typename Traits::Dimension>>>;
 
     using FT = typename Traits::FT;
     using IFT = std::conditional_t<std::is_floating_point_v<FT>, FT, CGAL::Interval_nt<false>>;

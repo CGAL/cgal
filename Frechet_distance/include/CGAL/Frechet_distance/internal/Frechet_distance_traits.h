@@ -17,7 +17,7 @@
 
 #include <CGAL/license/Frechet_distance.h>
 
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 #include <array>
 
 namespace CGAL {
@@ -36,9 +36,9 @@ public:
 
   struct Construct_bbox_d
   {
-    Bbox<Dimension, double> operator()(const Point_d& p) const
+    Bbox_d<Dimension> operator()(const Point_d& p) const
     {
-      Bbox<Dimension, double> bb;
+      Bbox_d<Dimension> bb;
       for (int i=0;i<dimension; ++i)
       {
         (bb.min)(i)=to_interval(p[i]).first;

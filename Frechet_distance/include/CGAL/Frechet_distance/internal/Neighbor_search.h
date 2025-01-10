@@ -22,7 +22,7 @@
 #include <CGAL/Search_traits_d.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 #include <array>
 #include <iterator>
 #include <tuple>
@@ -53,7 +53,7 @@ class FrechetKdTree
 
 
     struct Point_d {
-        using BB = Bbox<Dimension_tag<dim>,FT>;
+        using BB = Bbox_d<Dimension_tag<dim>>;
         Point ends[2];
         BB bbox;
         using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
@@ -232,7 +232,7 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
     res.ends[0] = curve.front();
     res.ends[1] = curve.back();
     for (auto const& point : curve) {
-        Bbox<Dimension_tag<dim>,FT> bb = bbox(point);
+        Bbox_d<Dimension_tag<dim>> bb = bbox(point);
         res.bbox +=  bb;
     }
     return res;
