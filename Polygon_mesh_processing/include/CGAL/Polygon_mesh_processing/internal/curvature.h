@@ -26,8 +26,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-// Discrete Gaussian Curvature
-
 /**
   * \ingroup PMP_vertex_angle_grp
   *
@@ -101,6 +99,8 @@ angle_sum(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
 
   return angle_sum;
 }
+
+// Discrete Gaussian Curvature
 
 template <typename TriangleMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
