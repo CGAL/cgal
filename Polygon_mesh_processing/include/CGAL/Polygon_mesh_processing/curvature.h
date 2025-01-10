@@ -87,7 +87,7 @@ angle_sum(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
 
   CGAL_precondition(is_valid_vertex_descriptor(v, pmesh));
 
-  typename Geom_traits::Construct_vector_3 approx_angle = gt.compute_approximate_angle_3_object();
+  typename Geom_traits::Compute_approximate_angle_3 approx_angle = gt.compute_approximate_angle_3_object();
 
   FT angle_sum = 0;
   for(auto h : halfedges_around_source(v, pmesh))
