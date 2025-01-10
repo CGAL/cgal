@@ -8,7 +8,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
+// Author(s)     : Vincent Despré, Loïc Dubois, Marc Pouget, Monique Teillaud
 
 // This file contains the declaration and the implementation of the class Hyperbolic_fundamental_domain_factory_2
 
