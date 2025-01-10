@@ -516,6 +516,9 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     if(f == boost::graph_traits<PolygonMesh>::null_face())
       continue;
 
+    if((! incident_faces.empty()) && (get(face_normals, incident_faces.back()) == get(face_normals, f)) )
+      continue;
+
     incident_faces.push_back(f);
   }
 
