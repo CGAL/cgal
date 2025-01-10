@@ -92,6 +92,9 @@ angle_sum(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   FT angle_sum = 0;
   for(auto h : halfedges_around_source(v, pmesh))
   {
+    if(is_border(h, pmesh))
+      continue;
+
     angle_sum += approx_angle(get(vpm, target(h, pmesh)),
                               get(vpm, source(h, pmesh)),
                               get(vpm, source(prev(h,pmesh), pmesh)));
