@@ -427,11 +427,11 @@ public:
     hierarchy.swap(cid, aux);
     remove_constraint(aux, std::back_inserter(fc));
 
-    if(head.vl_ptr()){
+    if(head != nullptr){
       hierarchy.concatenate2(head, cid);
     }
 
-    if(tail.vl_ptr()){
+    if(tail != nullptr){
       hierarchy.concatenate(cid, tail);
     }
     fc.write_faces(out);
@@ -514,7 +514,7 @@ public:
     pos = vertices_in_constraint_begin(aux2);
     concatenate(aux1, aux2);
 
-    if(head.vl_ptr()){
+    if(head != nullptr){
       //std::cout << "concatenate head" << std::endl;
       remove_constraint(cid, std::back_inserter(fc));
       hierarchy.concatenate(head, aux1);
@@ -524,7 +524,7 @@ public:
       head = cid;
     }
 
-    if(tail.vl_ptr()){
+    if(tail != nullptr){
       //std::cout << "concatenate tail" << std::endl;
       concatenate(head, tail);
     }
@@ -559,10 +559,8 @@ public:
         insert_subconstraint(vertices[j], vertices[j+1], std::back_inserter(fc));
       }
     }
-    for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(ca);
-        vcit != vertices_in_constraint_end(ca);
-        vcit++){
-      insert_incident_faces(vcit, out);
+    for(auto vh : vertices_in_constraint(ca)) {
+      out = insert_incident_faces(vh, out);
     }
     //AF    vertices_in_constraint_begin(ca)->fixed() = true;
     // Vertices_in_constraint_iterator end = std::prev(vertices_in_constraint_end(ca));
@@ -593,7 +591,7 @@ private:
 
     std::size_t n = vertices.size();
     if(n == 1){
-      return nullptr;
+      return Constraint_id{};
     }
     CGAL_assertion(n >= 2);
 
@@ -628,12 +626,12 @@ public:
       }
     }
 
-    for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
-      os << (*cit).second->all_size();
-      for(Vertex_handle vh : vertices_in_constraint(*cit)){
-         os << " " << V[vh];
-       }
-       os << std::endl;
+    for(const auto& cid : constraints()) {
+      os << cid.size();
+      for(Vertex_handle vh : vertices_in_constraint(cid)) {
+        os << " " << V[vh];
+      }
+      os << std::endl;
     }
   }
 
@@ -672,16 +670,14 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(nullptr);
+      return Constraint_id();
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
     if (va != vb && (cid != nullptr) )  insert_subconstraint(va,vb,out);
 
-    for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(cid);
-        vcit != vertices_in_constraint_end(cid);
-        vcit++){
-      insert_incident_faces(vcit, out);
+    for(auto vh : vertices_in_constraint(cid)) {
+      out = insert_incident_faces(vh, out);
     }
     return cid;
   }
@@ -711,14 +707,11 @@ public:
   template <class OutputIterator>
   void remove_constraint(Constraint_id cid, OutputIterator out)
   {
-    std::list<Vertex_handle> vertices(hierarchy.vertices_in_constraint_begin(cid),
-                                      hierarchy.vertices_in_constraint_end(cid));
+    std::vector<Vertex_handle> vertices(hierarchy.vertices_in_constraint_begin(cid),
+                                        hierarchy.vertices_in_constraint_end(cid));
 
     hierarchy.remove_constraint(cid);
-    for(typename std::list<Vertex_handle>::iterator it = vertices.begin(),
-          succ = it;
-        ++succ != vertices.end();
-        ++it){
+    for(auto it = vertices.begin(), succ = it; ++succ != vertices.end(); ++it){
       if(! is_subconstraint(*it, *succ)){ // this checks whether other constraints pass
         Face_handle fh;
         int i;
@@ -833,29 +826,24 @@ public:
 
 protected:
   template <class OutputItertator>
-  void insert_incident_faces(Vertices_in_constraint_iterator vcit, OutputItertator out)
+  OutputItertator insert_incident_faces(Vertex_handle vh, OutputItertator out)
   {
-    Vertex_handle vh = *vcit;
     Face_circulator fc = incident_faces(vh), done = fc;
-    Face_circulator null ;
-    if ( fc != null )
-    {
+    if(fc != nullptr) {
       do {
         Face_handle fh = fc;
-        out = fh;
-        out++;
-        fc++;
-      }while(fc != done);
+        *out++ = fh;
+      } while(++fc != done);
     }
+    return out;
   }
-
 
 void
 insert_subconstraint(Vertex_handle vaa,
                      Vertex_handle vbb)
-  {
-    insert_subconstraint(vaa,vbb,Emptyset_iterator());
-  }
+{
+  insert_subconstraint(vaa,vbb,Emptyset_iterator());
+}
 
 
 

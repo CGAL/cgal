@@ -2,14 +2,16 @@
 Language:        Cpp
 BasedOnStyle:  LLVM
 AccessModifierOffset: -2
+AllowShortFunctionsOnASingleLine: true
 BinPackParameters: false
+BreakConstructorInitializers: BeforeComma
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel:  false
   AfterClass:      true
   AfterControlStatement: MultiLine
   AfterEnum:       false
-  AfterFunction:   true
+  AfterFunction:   false
   AfterNamespace:  false
   AfterObjCDeclaration: false
   AfterStruct:     true
@@ -20,9 +22,9 @@ BraceWrapping:
   BeforeLambdaBody: false
   BeforeWhile:     false
   IndentBraces:    false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 ColumnLimit:     120
 # Force pointers to the type for C++.
 DerivePointerAlignment: false
