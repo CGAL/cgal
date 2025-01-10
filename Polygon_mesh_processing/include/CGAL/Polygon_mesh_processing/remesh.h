@@ -338,6 +338,9 @@ void isotropic_remeshing(const FaceRange& faces
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
+    if (i > 0)
+        smoothing_algo = TANGENTIAL_RELAXATION;
+
     if(do_split)
      remesher.split_long_edges(sizing);
     if(do_collapse)
