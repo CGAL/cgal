@@ -344,27 +344,7 @@ protected:
 
   void scan_triangulation_impl(Tag_true)
   {
-    // with constraint hierarchy
-
-    // create a vector of pairs of vertex handles, from the subconstraints
-    // and sort it to ensure the determinism
-    std::vector<std::array<Vertex_handle, 2>> subconstraints_vector(tr.number_of_subconstraints());
-    std::transform(tr.subconstraints_begin(), tr.subconstraints_end(), subconstraints_vector.begin(),
-                   [](const auto& sc) {
-                     return std::array<Vertex_handle, 2>{sc.first.first, sc.first.second};
-                   });
-
-    auto comp_vh = [&] (Vertex_handle va, Vertex_handle vb) {
-      return tr.compare_xy(va->point(), vb->point()) == SMALLER;
-    };
-    auto comp_pair_vh = [&] (const auto& e1, const auto& e2) {
-      return comp_vh(e1[0], e2[0]) ||
-           (!comp_vh(e2[0], e1[0]) && comp_vh(e1[1], e2[1]));
-    };
-
-    std::sort(subconstraints_vector.begin(), subconstraints_vector.end(), comp_pair_vh);
-
-    for(const auto& [v1, v2] : subconstraints_vector)
+    for(const auto& [v1, v2] : tr.hierarchy_ref().edges())
     {
       if(!is_locally_conform(tr, v1, v2) ){
         add_constrained_edge_to_be_conformed(v1, v2);

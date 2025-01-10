@@ -22,6 +22,8 @@
 #include <set>
 #include <list>
 
+#include <boost/stl_interfaces/iterator_interface.hpp>
+
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/Skiplist.h>
 #include <CGAL/Iterator_range.h>
@@ -212,6 +214,115 @@ public:
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
 
+  class Edge_iterator : public boost::stl_interfaces::proxy_iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+                            Edge_iterator,
+#endif
+                            std::bidirectional_iterator_tag,
+                            Edge>
+  {
+    using base_type = boost::stl_interfaces::proxy_iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+        Edge_iterator,
+#endif
+        std::bidirectional_iterator_tag,
+        Edge>;
+
+    const Constraint_set* constraint_set = nullptr;
+    C_iterator constraint_it{};
+    Vertex_it vertex_it{};
+
+  public:
+    // - The object is singular if and only if `constraint_set==nullptr`.
+    //
+    // - The end value is when `constraint_it` is the end iterator of `constraint_set`.
+    //   In that case `vertex_it` must be singular.
+    //
+    // - Otherwise all members must be valid pointers or dereferencable iterators.
+
+    bool equal(const Edge_iterator& other) const {
+      return constraint_set == other.constraint_set &&
+             (constraint_set == nullptr || (constraint_it == other.constraint_it && vertex_it == other.vertex_it));
+    }
+
+    Vertex_it first_vertex_it(C_iterator constraint_it) const {
+      if(constraint_it == constraint_set->end()) {
+        return Vertex_it();
+      }
+      return constraint_it->begin();
+    }
+
+  public:
+    Edge_iterator() = default;
+
+    // Constructors for begin and end. The constructors are public, but only the
+    // hierarchy can create an iterator of this class, through its friendship of
+    // the nested class `Construction_access`: Construction_access::begin_tag() and
+    // Construction_access::end_tag().
+    class Construction_access
+    {
+    private:
+      friend class Edge_iterator;
+      friend class Polyline_constraint_hierarchy_2<T, Compare, Point>;
+
+      static auto begin_tag() { return Begin_tag(); }
+      static auto end_tag() { return End_tag(); }
+
+      struct Begin_tag
+      {};
+      struct End_tag
+      {};
+    };
+    //
+    // constructor for the begin iterator
+    explicit Edge_iterator(Construction_access::Begin_tag, const Constraint_set* constraint_set)
+        : constraint_set(constraint_set)
+        , constraint_it(constraint_set->begin())
+        , vertex_it(first_vertex_it(constraint_set->begin())) {}
+    //
+    // constructor for the end iterator
+    explicit Edge_iterator(Construction_access::End_tag, const Constraint_set* constraint_set)
+        : constraint_set(constraint_set)
+        , constraint_it(constraint_set->end())
+        , vertex_it() {}
+
+    Edge operator*() const {
+      CGAL_precondition(constraint_set != nullptr && constraint_it != constraint_set->end());
+      CGAL_assertion(vertex_it != constraint_it->end());
+      CGAL_assertion(std::next(vertex_it) != constraint_it->end());
+      return Edge(*vertex_it, *std::next(vertex_it));
+    }
+
+    friend bool operator==(const Edge_iterator& lhs, const Edge_iterator& rhs) { return lhs.equal(rhs); }
+
+    using base_type::operator++;
+    Edge_iterator& operator++() {
+      CGAL_precondition(constraint_set != nullptr && constraint_it != constraint_set->end());
+
+      ++vertex_it;
+      CGAL_assertion(vertex_it != constraint_it->end());
+
+      if(std::next(vertex_it) == constraint_it->end()) {
+        ++constraint_it;
+        vertex_it = first_vertex_it(constraint_it);
+      }
+      return *this;
+    }
+
+    using base_type::operator--;
+    Edge_iterator& operator--() {
+      CGAL_precondition(constraint_set != nullptr);
+      CGAL_precondition(constraint_it != constraint_set->begin() || vertex_it != constraint_it->begin());
+      if(constraint_it == constraint_set->end() || vertex_it == constraint_it->begin()) {
+        --constraint_it;
+        vertex_it = std::prev(constraint_it->end(), 2);
+      } else {
+        --vertex_it;
+      }
+      return *this;
+    }
+  }; // end class Edge_iterator
+
 private:
   // data for the 1d hierarchy
   Compare          comp;
@@ -301,6 +412,20 @@ public:
   {
     return sc_to_c_map.end();
   }
+
+  Edge_iterator edges_begin() const {
+    BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Edge_iterator, std::bidirectional_iterator);
+    BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(Edge_iterator, std::bidirectional_iterator_tag,
+                                                       std::bidirectional_iterator, Edge, Edge,
+                                                       typename Edge_iterator::pointer, std::ptrdiff_t);
+    return Edge_iterator(Edge_iterator::Construction_access::begin_tag(), &constraint_set);
+  }
+
+  Edge_iterator edges_end() const {
+    return Edge_iterator(Edge_iterator::Construction_access::end_tag(), &constraint_set);
+  }
+
+  auto edges() const { return Iterator_range<Edge_iterator>(edges_begin(), edges_end()); }
 
   Sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
   Sc_iterator sc_end()   const{ return sc_to_c_map.end();   }
