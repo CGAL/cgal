@@ -25,7 +25,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Bbox.h>
+#include <CGAL/Bbox_d.h>
 #include <CGAL/Default.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -98,9 +98,9 @@ CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
 #undef CGAL_LAZY_FORWARD
 
-template<class A, class B> Bbox<A,B> const& approx(Bbox<A,B> const& d) { return d; }
-template<class A, class B> Bbox<A,B> const& exact (Bbox<A,B> const& d) { return d; }
-template<class A, class B> int              depth (Bbox<A,B> const&  ) { return 0; }
+template<class A> Bbox_d<A> const& approx(Bbox_d<A> const& d) { return d; }
+template<class A> Bbox_d<A> const& exact (Bbox_d<A> const& d) { return d; }
+template<class A> int              depth (Bbox_d<A> const&  ) { return 0; }
 
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> approx(T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}

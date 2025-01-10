@@ -9,8 +9,8 @@
 //
 // Author(s)     : Mathieu Brédif
 
-#ifndef CGAL_BBOX_H
-#define CGAL_BBOX_H
+#ifndef CGAL_BBOX_D_H
+#define CGAL_BBOX_D_H
 
 #include <boost/config.hpp> // defines BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <stddef.h>
@@ -175,26 +175,26 @@ protected:
 
 }
 
-template <typename Di, typename T>
-class Bbox;
+template <typename Di>
+class Bbox_d;
 
 // A fixed D-dimensional axis aligned box
-template<int N, typename T>
-class Bbox<Dimension_tag<N>, T> : public Impl::Bbox<std::array<T, N>, Bbox<Dimension_tag<N>,T>>
+template<int N>
+class Bbox_d<Dimension_tag<N>> : public Impl::Bbox<std::array<double, N>, Bbox_d<Dimension_tag<N>>>
 {
     enum { D = N };
-    using array_const_iterator = typename std::array<T, N>::const_iterator;
+    using array_const_iterator = typename std::array<double, N>::const_iterator;
 public:
     using Cartesian_const_iterator = Concatenate_iterator<array_const_iterator,array_const_iterator>;
 
     inline constexpr int dimension() const { return D; }
-    Bbox(int d = 0          ) { CGAL_assertion(d==N || d==0); this->init(d       ); }
-    Bbox(int d, const T& range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
+    Bbox_d(int d = 0          ) { CGAL_assertion(d==N || d==0); this->init(d       ); }
+    Bbox_d(int d, double range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
     template <typename I>
-    Bbox(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
+    Bbox_d(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
 
-    Bbox(const Bbox_2& bb2){ this->init(bb2);}
-    Bbox(const Bbox_3& bb3){ this->init(bb3);}
+    Bbox_d(const Bbox_2& bb2){ this->init(bb2);}
+    Bbox_d(const Bbox_3& bb3){ this->init(bb3);}
 
     Cartesian_const_iterator cartesian_begin() const
     {
@@ -208,15 +208,15 @@ public:
 };
 
 // A dynamic D-dimensional axis aligned box
-template<typename T>
-class Bbox<Dynamic_dimension_tag,T> : public Impl::Bbox<std::vector<T>, Bbox<Dynamic_dimension_tag,T>>
+template<>
+class Bbox_d<Dynamic_dimension_tag> : public Impl::Bbox<std::vector<double>, Bbox_d<Dynamic_dimension_tag>>
 {
 public:
     inline int dimension() const { return this->min_values.size(); }
-    Bbox(int d = 0          ) { init_values(d); this->init(d       ); }
-    Bbox(int d, const T& range) { init_values(d); this->init(d, range); }
+    Bbox_d(int d = 0          ) { init_values(d); this->init(d       ); }
+    Bbox_d(int d, double range) { init_values(d); this->init(d, range); }
     template <typename I>
-    Bbox(int d, I b, I e) { init_values(d); this->init(d, b, e); }
+    Bbox_d(int d, I b, I e) { init_values(d); this->init(d, b, e); }
 
 protected:
     void init_values(int d) {
@@ -243,17 +243,17 @@ std::istream& operator>>(std::istream& in, Impl::Bbox<Container, Derived>& bbox)
     return in;
 }
 
-template<int N, typename T>
-Bbox<Dimension_tag<N>, T> operator+(Bbox<Dimension_tag<N>, T> bbox, const Bbox<Dimension_tag<N>, T>& other)
+template<int N>
+Bbox_d<Dimension_tag<N>> operator+(Bbox_d<Dimension_tag<N>> bbox, const Bbox_d<Dimension_tag<N>>& other)
 {
     bbox += other;
     return bbox;
 }
 
-template<typename Di, typename T>
+template<typename Di>
 inline
 bool
-do_overlap(const Bbox<Di,T>& bb1, const Bbox<Di,T>& bb2)
+do_overlap(const Bbox_d<Di>& bb1, const Bbox_d<Di>& bb2)
 {
     // check for emptiness ??
     int d = bb1.dimension();
@@ -268,4 +268,4 @@ do_overlap(const Bbox<Di,T>& bb1, const Bbox<Di,T>& bb2)
 
 } // namespace CGAL
 
-#endif // CGAL_DDT_BBOX_H
+#endif // CGAL_BBOX_D_H
