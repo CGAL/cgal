@@ -103,6 +103,19 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 
+  edge_descriptor longest_edge = PMP::longest_edge(pmesh);
+  assert(longest_edge != typename boost::graph_traits<Mesh>::edge_descriptor());
+  FT le_sq_length = PMP::squared_edge_length(longest_edge, pmesh);
+  std::cout << "longest edge is: " << get(CGAL::vertex_point, pmesh, source(longest_edge, pmesh))
+            << " -> " << get(CGAL::vertex_point, pmesh, target(longest_edge, pmesh))
+            << ", length = " << PMP::edge_length(longest_edge, pmesh) << std::endl;
+  for(edge_descriptor e : edges(pmesh))
+  {
+    // this could be wrong due to numerical errors, but the tested meshes are gentle enough
+    // such that we don't need a predicate... right?
+    assert(le_sq_length >= PMP::squared_edge_length(e, pmesh));
+  }
+
   std::pair<halfedge_descriptor, FT> res = PMP::longest_border(pmesh);
   if(res.first == boost::graph_traits<Mesh>::null_halfedge()){
     std::cout << "mesh has no border" << std::endl;

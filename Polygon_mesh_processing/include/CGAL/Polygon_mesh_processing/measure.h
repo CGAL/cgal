@@ -240,6 +240,82 @@ average_edge_length(const PolygonMesh& pmesh,
 /**
   * \ingroup PMP_measure_grp
   *
+  * returns the longest edge of a given polygon mesh.
+  *
+  * @tparam PolygonMesh a model of `HalfedgeListGraph`
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pmesh the polygon mesh in which the longest edge is searched for
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compare_squared_distance_3`
+  *                    to compare the lengths of two edges given by their end points:
+  *                    `CGAL::Comparison_result operator()(%Point_3 src1, %Point_3 tgt1, %Point_3 src2, %Point_3 tgt2)`,
+  *                    and a function `Compare_squared_distance_3 compare_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return the longest edge in `pmesh`. The return type is an `edge_descriptor`.
+  *
+  * @sa `squared_edge_length()`
+  */
+template<typename PolygonMesh,
+         typename NamedParameters = parameters::Default_named_parameters>
+inline typename boost::graph_traits<PolygonMesh>::edge_descriptor
+longest_edge(const PolygonMesh& pmesh,
+             const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, pmesh));
+
+  const auto& edge_range = edges(pmesh);
+
+  // if mesh has no edges
+  edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+  if(first == beyond)
+    return { };
+
+  edge_iterator le_pos = first, eit = first;
+  while(++eit != beyond)
+  {
+    if(gt.compare_squared_distance_3_object()(get(vpm, source(*eit, pmesh)),
+                                              get(vpm, target(*eit, pmesh)),
+                                              get(vpm, source(*le_pos, pmesh)),
+                                              get(vpm, target(*le_pos, pmesh))) == LARGER)
+    {
+      le_pos = eit;
+    }
+  }
+
+  CGAL_assertion(le_pos != beyond);
+
+  return *le_pos;
+}
+
+/**
+  * \ingroup PMP_measure_grp
+  *
   * computes the length of the border polyline that contains a given halfedge.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
