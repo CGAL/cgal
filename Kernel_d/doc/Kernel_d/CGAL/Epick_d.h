@@ -46,6 +46,12 @@ struct Epick_d {
 */
 typedef DimensionTag Dimension;
 
+/*!
+A bidirectional iterator over the %Cartesian coordinates of a point
+*/
+class Cartesian_const_iterator;
+
+/*!
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
 */
@@ -159,6 +165,17 @@ public:
   Bbox_d<DimensionTag> operator()(Point_d p);
 };
 
+class Construct_cartesian_const_iterator_d {
+public:
+/*! returns the begin iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p);
+
+  /*! returns the past-the-end iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p, int);
+};
+
 Construct_circumcenter_d construct_circumcenter_d_object();
 Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
@@ -166,5 +183,6 @@ Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_small
 Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 Construct_bbox_d construct_bbox_d_object();
+Construct_cartesian_const_iterator_d  onstruct_cartesian_const_iterator_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */

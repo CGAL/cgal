@@ -58,6 +58,12 @@ struct Epeck_d {
 typedef DimensionTag Dimension;
 
 /*!
+A bidirectional iterator over the %Cartesian coordinates of a point
+*/
+class Cartesian_const_iterator;
+
+
+/*!
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
 */
