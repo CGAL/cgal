@@ -151,11 +151,20 @@ public:
  */
 FT operator()(Weighted_point_d pw, Weighted_point_d qw);
 };
+
+class Construct_bbox_d {
+public:
+/*! returns the bounding box of point `p`.
+ */
+  Bbox_d<DimensionTag> operator()(Point_d p);
+};
+
 Construct_circumcenter_d construct_circumcenter_d_object();
 Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
 Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
+Construct_bbox_d construct_bbox_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */
