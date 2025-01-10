@@ -3,6 +3,9 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+### General Changes
+- The minimal supported version of Boost is now 1.74.0.
+
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
