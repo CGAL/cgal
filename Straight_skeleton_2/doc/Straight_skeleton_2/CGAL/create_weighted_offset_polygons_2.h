@@ -45,9 +45,9 @@ template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWei
 std::vector< boost::shared_ptr<OfKPolygon> >
 create_interior_weighted_skeleton_and_offset_polygons_2(FT offset,
                                                         const InKPolygon& outer_boundary,
-                                                        const InKWeights& outer_boundary_weights,
                                                         HoleIterator holes_begin,
                                                         HoleIterator holes_end,
+                                                        const InKWeights& outer_boundary_weights,
                                                         HoleWeightsIterator holes_weights_begin,
                                                         HoleWeightsIterator holes_weights_end,
                                                         OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
