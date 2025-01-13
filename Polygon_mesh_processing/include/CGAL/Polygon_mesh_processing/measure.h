@@ -248,7 +248,8 @@ average_edge_length(const PolygonMesh& pmesh,
 /**
   * \ingroup PMP_measure_grp
   *
-  * returns the shortest and longest edges of a range of edges of a given polygon mesh.
+  * returns the shortest and longest edges of a range of edges of a given polygon mesh,
+  * as well as their respective edge lengths.
   *
   * @tparam EdgeRange a model of `Range` whose iterator type is `InputIterator` with value type
   *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
@@ -279,6 +280,8 @@ average_edge_length(const PolygonMesh& pmesh,
   * \cgalNamedParamsEnd
   *
   * @return the shortest and longest edge in `pmesh`, along with their respective lengths.
+  *
+  * @warning This function involves a square root computation.
   *
   * @sa `edge_length()`
   * @sa `squared_edge_length()`
@@ -343,8 +346,9 @@ minmax_edge_length(const EdgeRange& edge_range,
 
 /*!
  * \ingroup PMP_measure_grp
- * returns the shortest and longest edges of a given polygon mesh.
- * Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
+ * \brief returns the shortest and longest edges of a given polygon mesh,
+ * as well as their respective edge lengths.
+ * Equivalent to `minmax_edge_length(edges(pmesh), pmesh, np)`
  */
 template<typename PolygonMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -1343,8 +1347,8 @@ minmax_dihedral_angle(const EdgeRange& edge_range,
 
 /*!
  * \ingroup PMP_measure_grp
- * computes the minimum and maximum dihedral angles of a given polygon mesh.
- * Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
+ * computes the minimum and maximum dihedral angles of a given triangle mesh.
+ * Equivalent to `minmax_dihedral_angle(edges(tmesh), tmesh, np)`
  */
 template<typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
