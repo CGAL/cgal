@@ -2218,8 +2218,8 @@ struct Geodesic_circle_impl
                     const FT& len)
   {
     // TODO: avoid cast
-    uint vida=get(vidmap,a);
-    uint vidb=get(vidmap,b);
+    unsigned int vida=get(vidmap,a);
+    unsigned int vidb=get(vidmap,b);
     solver.graph[vida].push_back({static_cast<int>(vidb), len});
     solver.graph[vidb].push_back({static_cast<int>(vida), len});
 

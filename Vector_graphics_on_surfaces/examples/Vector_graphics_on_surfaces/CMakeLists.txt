@@ -38,3 +38,4 @@ if(TARGET CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Examples that use Eigen will not be compiled.")
 endif()
+
