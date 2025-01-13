@@ -3371,7 +3371,7 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
 
 /*!
  * \ingroup VGSFunctions
- * computes for each vertex of each polygon in `polygons` a face locations on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
  * This method computes the location of the center of the bounding box of each polygon on the mesh with respect to `center` and calls `trace_geodesic_polygon()` with that center with
  * appropriate directions and distances to have a consistent orientation for the polygons.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
@@ -3472,7 +3472,7 @@ trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<Trian
 
 /*!
  * \ingroup VGSFunctions
- * computes for each vertex of each polygon in `polygons` a face locations on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
  * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
  * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
  * The splitting segment is then drawn on `tmesh` and the face location of the 2D centers is found.
@@ -3740,7 +3740,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<Tr
 
 /*!
  * \ingroup VGSFunctions
- * computes for each vertex of each polygon in `polygons` a face locations on `tmesh` along the curve `supporting_curve`.
+ * computes for each vertex of each polygon in `polygons` a face location on `tmesh` along the curve `supporting_curve`.
  * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
  * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
  * The splitting segment is then mapped onto `supporting_curve` by first scaling it using `scaling`, and using `padding` and `is_centered`.
