@@ -52,7 +52,9 @@ void test_pmesh(const Mesh& pmesh)
   for(halfedge_descriptor h : halfedges(pmesh))
   {
     if (is_border(h, pmesh) || is_border(opposite(h, pmesh), pmesh))
+    {
       continue;
+    }
     else
     {
        FT edge_length = PMP::edge_length(h, pmesh);
@@ -98,22 +100,35 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area = " << mesh_area << std::endl;
   assert(mesh_area >= patch_area);
 
-  FT mesh_area_np = PMP::area(pmesh,
-    CGAL::parameters::geom_traits(K()));
+  FT mesh_area_np = PMP::area(pmesh, CGAL::parameters::geom_traits(K()));
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 
-  edge_descriptor longest_edge = PMP::longest_edge(pmesh);
+  edge_descriptor shortest_edge;
+  FT shortest_edge_length;
+  edge_descriptor longest_edge;
+  FT longest_edge_length;
+
+  auto [shortest_edge_pair, longest_edge_pair] = PMP::minmax_edge_length(pmesh);
+  std::tie(shortest_edge, shortest_edge_length) = shortest_edge_pair;
+  std::tie(longest_edge, longest_edge_length) = longest_edge_pair;
+
+  assert(shortest_edge != typename boost::graph_traits<Mesh>::edge_descriptor());
   assert(longest_edge != typename boost::graph_traits<Mesh>::edge_descriptor());
-  FT le_sq_length = PMP::squared_edge_length(longest_edge, pmesh);
+
+  std::cout << "shortest edge is: " << get(CGAL::vertex_point, pmesh, source(shortest_edge, pmesh))
+            << " -> " << get(CGAL::vertex_point, pmesh, target(shortest_edge, pmesh))
+            << ", length = " << shortest_edge_length << std::endl;
   std::cout << "longest edge is: " << get(CGAL::vertex_point, pmesh, source(longest_edge, pmesh))
             << " -> " << get(CGAL::vertex_point, pmesh, target(longest_edge, pmesh))
-            << ", length = " << PMP::edge_length(longest_edge, pmesh) << std::endl;
+            << ", length = " << longest_edge_length << std::endl;
   for(edge_descriptor e : edges(pmesh))
   {
     // this could be wrong due to numerical errors, but the tested meshes are gentle enough
     // such that we don't need a predicate... right?
-    assert(le_sq_length >= PMP::squared_edge_length(e, pmesh));
+    FT edge_length = PMP::edge_length(e, pmesh);
+    assert(shortest_edge_length <= edge_length);
+    assert(longest_edge_length >= edge_length);
   }
 
   std::pair<halfedge_descriptor, FT> res = PMP::longest_border(pmesh);
@@ -367,13 +382,52 @@ void test_compare()
 
 }
 
+template <typename PolygonMesh, typename K>
+void test_dihedral_angles(const std::string filename,
+                          const typename K::FT expected_smallest_dihedral_angle,
+                          const typename K::FT expected_largest_dihedral_angle)
+{
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using FT = typename K::FT;
+
+  PolygonMesh pmesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, pmesh) || faces(pmesh).size() == 0)
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    std::exit(1);
+  }
+
+  edge_descriptor edge_with_smallest_da;
+  FT smallest_da;
+  edge_descriptor edge_with_largest_da;
+  FT largest_da;
+
+  auto [smallest_da_pair, largest_da_pair] = PMP::minmax_dihedral_angle(pmesh);
+  std::tie(edge_with_smallest_da, smallest_da) = smallest_da_pair;
+  std::tie(edge_with_largest_da, largest_da) = largest_da_pair;
+
+  std::cout << "smallest vs expected: " << smallest_da << " " << expected_smallest_dihedral_angle << std::endl;
+  std::cout << "largest vs expected: " << largest_da << " " << expected_largest_dihedral_angle << std::endl;
+
+  const FT tolerance = 0.99;
+  assert((std::min)(smallest_da, expected_smallest_dihedral_angle) /
+           (std::max)(smallest_da, expected_smallest_dihedral_angle) > tolerance);
+  assert((std::min)(largest_da, expected_largest_dihedral_angle) /
+           (std::max)(largest_da, expected_largest_dihedral_angle) > tolerance);
+}
+
 int main(int argc, char* argv[])
 {
+  std::cout.precision(17);
+  std::cout.precision(17);
+
+  std::cout << "=== TEST mech-holes-shark ===" << std::endl;
   const std::string filename_polyhedron =
     (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
   test_polyhedron<CGAL::Polyhedron_3<Epic>,Epic>(filename_polyhedron);
   test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
 
+  std::cout << "\n=== TEST elephant ===" << std::endl;
   const std::string filename_surface_mesh =
     (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
@@ -386,6 +440,14 @@ int main(int argc, char* argv[])
   test_compare<CGAL::Polyhedron_3<Epec>, CGAL::Surface_mesh<Epec::Point_3> >();
   test_compare<CGAL::Surface_mesh<Epic::Point_3>, CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Surface_mesh<Epec::Point_3>, CGAL::Polyhedron_3<Epec> >();
+
+  std::cout << "\n=== TEST cube_poly ===" << std::endl;
+  test_dihedral_angles<CGAL::Surface_mesh<Epic::Point_3>, Epic>(CGAL::data_file_path("meshes/cube-ouvert.off"), -90, 180);
+  test_dihedral_angles<CGAL::Surface_mesh<Epec::Point_3>, Epec>(CGAL::data_file_path("meshes/cube-ouvert.off"), -90, 180);
+  test_dihedral_angles<CGAL::Polyhedron_3<Epic>, Epic>(CGAL::data_file_path("meshes/cube-ouvert.off"), -90, 180);
+  test_dihedral_angles<CGAL::Polyhedron_3<Epec>, Epec>(CGAL::data_file_path("meshes/cube-ouvert.off"), -90, 180);
+  test_dihedral_angles<CGAL::Surface_mesh<Epic::Point_3>, Epic>(CGAL::data_file_path("meshes/regular_tetrahedron.off"), -70.52878, -70.52878);
+
   std::cerr << "All done." << std::endl;
   return 0;
 }
