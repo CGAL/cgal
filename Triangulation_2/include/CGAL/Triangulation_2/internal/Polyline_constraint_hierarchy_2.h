@@ -399,8 +399,6 @@ public:
   Constraint_id split(Constraint_id first, Vertex_it vcit);
   Constraint_id split2(Constraint_id first, Vertex_it vcit);
 
-  void remove_Steiner(T v, T va, T vb);
-
   // iterators
 
   Subconstraint_iterator subconstraint_begin() const
@@ -1116,39 +1114,6 @@ next_along_sc(T va, T vb, T& w) const
   }
   return false;
 }
-
-
-
-/*
-  Attention, le point v DOIT etre un point de Steiner,
-  et les segments va,v et v,vb sont des sous contraintes.
-*/
-template <class T, class Compare, class Point>
-void Polyline_constraint_hierarchy_2<T,Compare,Point>::
-remove_Steiner(T v, T va, T vb)
-{
-  // remove a Steiner point
-  CGAL_precondition(!is_constrained_vertex(v));
-
-  Context_list*  hcl1;
-  Context_list*  hcl2;
-  if(!get_contexts(va,v,hcl1)) CGAL_assertion(false);
-  if(!get_contexts(v,vb,hcl2)) CGAL_assertion(false);
-
-  Vertex_it      pos;
-  for(Context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
-    pos = ctit->pos;
-    if((*pos)==va) pos++;
-    pos = ctit->enclosing.vl_ptr()->erase(pos);
-    ctit->pos = --pos;
-  }
-
-  sc_to_c_map.erase(make_edge(va,v));
-  sc_to_c_map.erase(make_edge(v,vb));
-  delete hcl2;
-  sc_to_c_map.emplace(make_edge(va,vb),hcl1);
-}
-
 
 
 /*
