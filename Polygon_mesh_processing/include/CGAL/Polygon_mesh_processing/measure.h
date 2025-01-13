@@ -81,12 +81,16 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
   *   \cgalParamNEnd
   *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+
   * \cgalNamedParamsEnd
   *
   * @return the length of `h`. The return type `FT` is a number type either deduced
@@ -162,12 +166,15 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
   *   \cgalParamNEnd
   *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the squared length of `h`. The return type `FT` is a number type either deduced
