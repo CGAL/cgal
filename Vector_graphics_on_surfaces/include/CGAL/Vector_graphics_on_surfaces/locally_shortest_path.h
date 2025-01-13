@@ -2245,8 +2245,8 @@ struct Geodesic_circle_impl
 
     double cos_alpha = ba_norm * bd_norm;
     double cos_beta  = bc_norm * bd_norm;
-    double sin_alpha = sqrt(std::max(0.0, 1 - cos_alpha * cos_alpha));
-    double sin_beta  = sqrt(std::max(0.0, 1 - cos_beta * cos_beta));
+    double sin_alpha = sqrt((std::max)(0.0, 1 - cos_alpha * cos_alpha));
+    double sin_beta  = sqrt((std::max)(0.0, 1 - cos_beta * cos_beta));
 
 
     // cos(alpha + beta)
