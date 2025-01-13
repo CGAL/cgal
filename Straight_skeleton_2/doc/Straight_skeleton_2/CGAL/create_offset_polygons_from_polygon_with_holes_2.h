@@ -42,7 +42,7 @@ at distance `offset` of the 2D polygon `poly_with_holes`. Note that the
 offset of the outer frame is ignored.
 
 This is equivalent to a call to `CGAL::arrange_offset_polygons_2()` on the
-output of \link CGAL::create_exterior_skeleton_and_offset_polygons_2() `create_exterior_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk))` \endlink
+output of \link CGAL::create_exterior_skeleton_and_offset_polygons_2() `create_exterior_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk)` \endlink
 after having filtered out the polygon corresponding to the offset of the outer frame and
 having reversed the orientation of all other polygons.
 
