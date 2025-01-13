@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/utils_classes.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
@@ -240,11 +241,14 @@ average_edge_length(const PolygonMesh& pmesh,
 /**
   * \ingroup PMP_measure_grp
   *
-  * returns the longest edge of a given polygon mesh.
+  * returns the shortest and longest edges of a range of edges of a given polygon mesh.
   *
-  * @tparam PolygonMesh a model of `HalfedgeListGraph`
+  * @tparam EdgeRange a model of `Range` whose iterator type is `InputIterator` with value type
+  *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
+  * @param edge_range a range of edges of `pmesh`
   * @param pmesh the polygon mesh in which the longest edge is searched for
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -258,59 +262,95 @@ average_edge_length(const PolygonMesh& pmesh,
   *
   *   \cgalParamNBegin{geom_traits}
   *     \cgalParamDescription{an instance of a geometric traits class}
-  *     \cgalParamType{The traits class must provide the nested functor `Compare_squared_distance_3`
-  *                    to compare the lengths of two edges given by their end points:
-  *                    `CGAL::Comparison_result operator()(%Point_3 src1, %Point_3 tgt1, %Point_3 src2, %Point_3 tgt2)`,
-  *                    and a function `Compare_squared_distance_3 compare_squared_distance_3_object()`.}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
   *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
   *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @return the longest edge in `pmesh`. The return type is an `edge_descriptor`.
+  * @return the shortest and longest edge in `pmesh`, along with their respective lengths.
   *
+  * @sa `edge_length()`
   * @sa `squared_edge_length()`
   */
-template<typename PolygonMesh,
-         typename NamedParameters = parameters::Default_named_parameters>
-inline typename boost::graph_traits<PolygonMesh>::edge_descriptor
-longest_edge(const PolygonMesh& pmesh,
-             const NamedParameters& np = parameters::default_values())
+template<typename EdgeRange,
+         typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_edge_length(const EdgeRange& edge_range,
+                   const PolygonMesh& pmesh,
+                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
   using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
 
-  using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
-  typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+  using FT = typename Geom_traits::FT;
+
+  typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
-  const auto& edge_range = edges(pmesh);
-
-  // if mesh has no edges
   edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
   if(first == beyond)
-    return { };
-
-  edge_iterator le_pos = first, eit = first;
-  while(++eit != beyond)
   {
-    if(gt.compare_squared_distance_3_object()(get(vpm, source(*eit, pmesh)),
-                                              get(vpm, target(*eit, pmesh)),
-                                              get(vpm, source(*le_pos, pmesh)),
-                                              get(vpm, target(*le_pos, pmesh))) == LARGER)
-    {
-      le_pos = eit;
+    return std::make_pair(std::make_pair(edge_descriptor(), FT(0)),
+                          std::make_pair(edge_descriptor(), FT(0)));
+  }
+
+  edge_iterator low = first, high = first, eit = first;
+  FT sq_lo, sq_hi;
+  sq_lo = sq_hi = squared_edge_length(*eit++, pmesh, np);
+
+  for(; eit!=beyond; ++eit)
+  {
+    const FT sq_l = squared_edge_length(*eit, pmesh, np);
+
+    if(sq_l < sq_lo) {
+      low = eit;
+      sq_lo = sq_l;
+    }
+    if(sq_l > sq_hi) {
+      high = eit;
+      sq_hi = sq_l;
     }
   }
 
-  CGAL_assertion(le_pos != beyond);
+  CGAL_assertion(low != beyond && high != beyond);
+  return std::make_pair(std::make_pair(*low, CGAL::approximate_sqrt(sq_lo)),
+                        std::make_pair(*high, CGAL::approximate_sqrt(sq_hi)));
+}
 
-  return *le_pos;
+/*!
+ * \ingroup PMP_measure_grp
+ * returns the shortest and longest edges of a given polygon mesh.
+ * Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
+ */
+template<typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_edge_length(const PolygonMesh& pmesh,
+                   const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return minmax_edge_length(edges(pmesh), pmesh, np);
 }
 
 /**
