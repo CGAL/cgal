@@ -84,9 +84,10 @@ The value type of this iterator is `Constraint_id`.
 typedef unspecified_type Constraint_iterator;
 
 /*!
-A range type for iterating over all constraints.
+A range type for iterating over all constraints. The iterator type of
+the range is `Constraint_iterator`.
 */
-typedef Iterator_range<Constraint_iterator> Constraints;
+typedef unspecified_type Constraints;
 
 
 /*!
@@ -95,19 +96,30 @@ A subconstraint is a pair of vertices that correspond to an `Edge`.
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
 /*!
-An iterator
-to visit all the subconstraints of the triangulation.
+An iterator to visit all the subconstraints of the triangulation.
 The order of visit is undefined.
-The value type of this iterator is `std::pair<Subconstraint,std::list<Context>*>`
-corresponding to the vertices of the
-subconstraint.
+The value type of this iterator is `Subconstraint`.
 */
 typedef unspecified_type Subconstraint_iterator;
 
 /*!
-A range type for iterating over all subconstraints.
+A range type for iterating over all subconstraints. The iterator type of
+the range is `Subconstraint_iterator`.
 */
-typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+typedef unspecified_type Subconstraints;
+
+/*!
+An iterator to visit all the subconstraints of the triangulation and the
+contexts of their enclosing constraints. The order of visit is undefined.
+The value type of this iterator is `std::pair<const Subconstraint, std::list<Context>*>`.
+*/
+typedef unspecified_type Subconstraint_and_contexts_iterator;
+
+/*!
+A range type for iterating over all subconstraints. The iterator type of
+the range is `Subconstraint_and_contexts_iterator`.
+*/
+typedef unspecified_type Subconstraints_and_contexts;
 
 /*!
 An iterator on the
@@ -380,6 +392,22 @@ Subconstraint_iterator subconstraints_end() const;
 returns a range of subconstraints.
 */
 Subconstraints subconstraints() const;
+
+/*!
+returns a `Subconstraint_and_contexts_iterator` pointing at the first
+subconstraint of the triangulation.
+*/
+Subconstraint_and_contexts_iterator subconstraints_and_contexts_begin() const;
+
+/*!
+returns the past-the-end iterator of the subconstraints of the triangulation.
+*/
+Subconstraint_and_contexts_iterator subconstraints_and_contexts_end() const;
+
+/*!
+returns a range of subconstraints with the contexts of their enclosing constraints.
+*/
+Subconstraints_and_contexts subconstraints_and_contexts() const;
 
 /*!
 returns the number of constraints enclosing the subconstraint

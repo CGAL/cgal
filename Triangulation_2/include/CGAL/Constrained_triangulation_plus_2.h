@@ -165,11 +165,14 @@ public:
   typedef typename Constraint_hierarchy::Context_iterator Context_iterator;
   typedef Iterator_range<Context_iterator>                Contexts;
 
-  typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
-  typedef Iterator_range<Constraint_iterator> Constraints;
+  typedef typename Constraint_hierarchy::Constraint_iterator   Constraint_iterator;
+  typedef typename Constraint_hierarchy::Constraints           Constraints;
 
-  typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
-  typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  typedef typename Constraint_hierarchy::Subconstraint_iterator Subconstraint_iterator;
+  typedef typename Constraint_hierarchy::Subconstraints         Subconstraints;
+
+  typedef typename Constraint_hierarchy::Subconstraint_and_contexts_iterator Subconstraint_and_contexts_iterator;
+  typedef typename Constraint_hierarchy::Subconstraints_and_contexts         Subconstraints_and_contexts;
 
   typedef typename Constraint_hierarchy::Constraint_id Constraint_id;
 
@@ -768,18 +771,15 @@ public:
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
-  Constraints constraints() const
-  {
-    return Constraints(constraints_begin(),constraints_end());
-  }
+  Constraints constraints() const;
 
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
+  Subconstraints subconstraints() const;
 
-  Subconstraints subconstraints() const
-  {
-    return Subconstraints(subconstraints_begin(),subconstraints_end());
-  }
+  Subconstraint_and_contexts_iterator subconstraints_and_contexts_begin() const;
+  Subconstraint_and_contexts_iterator subconstraints_and_contexts_end() const;
+  Subconstraints_and_contexts subconstraints_and_contexts() const;
 
   Context   context(Vertex_handle va, Vertex_handle vb); //AF: const;
 
@@ -1266,7 +1266,7 @@ Constrained_triangulation_plus_2<Tr>::Constraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 constraints_begin() const
 {
-  return hierarchy.c_begin();
+  return hierarchy.constraints_begin();
 }
 
 template <class Tr>
@@ -1276,7 +1276,17 @@ Constrained_triangulation_plus_2<Tr>::Constraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 constraints_end() const
 {
-  return hierarchy.c_end();
+  return hierarchy.constraints_end();
+}
+
+template <class Tr>
+inline
+typename
+Constrained_triangulation_plus_2<Tr>::Constraints
+Constrained_triangulation_plus_2<Tr>::
+constraints() const
+{
+  return hierarchy.constraints();
 }
 
 template <class Tr>
@@ -1286,7 +1296,7 @@ Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 subconstraints_begin() const
 {
-  return hierarchy.subconstraint_begin();
+  return hierarchy.subconstraints_begin();
 }
 
 template <class Tr>
@@ -1296,9 +1306,48 @@ Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
 Constrained_triangulation_plus_2<Tr>::
 subconstraints_end() const
 {
-  return hierarchy.subconstraint_end();
+  return hierarchy.subconstraints_end();
 }
 
+template <class Tr>
+inline
+typename
+Constrained_triangulation_plus_2<Tr>::Subconstraints
+Constrained_triangulation_plus_2<Tr>::
+subconstraints() const
+{
+  return hierarchy.subconstraints();
+}
+
+template <class Tr>
+inline
+typename
+Constrained_triangulation_plus_2<Tr>::Subconstraint_and_contexts_iterator
+Constrained_triangulation_plus_2<Tr>::
+subconstraints_and_contexts_begin() const
+{
+  return hierarchy.subconstraints_and_contexts_begin();
+}
+
+template <class Tr>
+inline
+typename
+Constrained_triangulation_plus_2<Tr>::Subconstraint_and_contexts_iterator
+Constrained_triangulation_plus_2<Tr>::
+subconstraints_and_contexts_end() const
+{
+  return hierarchy.subconstraints_and_contexts_end();
+}
+
+template <class Tr>
+inline
+typename
+Constrained_triangulation_plus_2<Tr>::Subconstraints_and_contexts
+Constrained_triangulation_plus_2<Tr>::
+subconstraints_and_contexts() const
+{
+  return hierarchy.subconstraints_and_contexts();
+}
 
 template <class Tr>
 inline
@@ -1325,7 +1374,7 @@ inline bool
 Constrained_triangulation_plus_2<Tr>::
 is_subconstraint(Vertex_handle va, Vertex_handle vb)
 {
- return hierarchy.is_subconstrained_edge(va,vb);
+ return hierarchy.is_subconstraint(va,vb);
 }
 
 

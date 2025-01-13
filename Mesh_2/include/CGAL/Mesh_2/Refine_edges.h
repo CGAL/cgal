@@ -344,7 +344,7 @@ protected:
 
   void scan_triangulation_impl(Tag_true)
   {
-    for(const auto& [v1, v2] : tr.hierarchy_ref().edges())
+    for(const auto& [v1, v2] : tr.subconstraints())
     {
       if(!is_locally_conform(tr, v1, v2) ){
         add_constrained_edge_to_be_conformed(v1, v2);

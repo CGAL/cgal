@@ -30,15 +30,15 @@ main( )
     cdt.insert_constraint( Point(j,0), Point(j,6));
 
   int count = 0;
-  for (Triangulation::Subconstraint_iterator scit = cdt.subconstraints_begin();
-       scit != cdt.subconstraints_end();
-       ++scit)  ++count;
+  for (const Triangulation::Subconstraint& sc :  cdt.subconstraints()) {
+    ++count;
+  }
   std::cout << "The number of resulting constrained edges is  ";
   std::cout <<  count << std::endl;
 
   //verbose mode of is_valid ; shows the number of vertices at each  level
   std::cout << "The number of vertices at successive levels" << std::endl;
-  assert(cdt.is_valid(true));
+  bool valid = cdt.is_valid(true);
 
-  return 0;
+  return valid ? 0 : 1;
 }
