@@ -123,7 +123,7 @@ therefore, to construct offsets at more than one single distance, use the separa
 \note If `SsK != OfK` the constructed straight skeleton is converted to `CGAL::Straight_skeleton_2<OfK>`.
 
 \pre `offset` is positive
-\pre poly` is weakly simple, counterclockwise polygon.
+\pre `poly` is weakly simple, counterclockwise polygon.
 
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_2()`
 \sa `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
