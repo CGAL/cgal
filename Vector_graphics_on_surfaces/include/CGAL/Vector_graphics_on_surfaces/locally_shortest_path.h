@@ -836,22 +836,22 @@ struct Locally_shortest_path_imp
     Vector_2 w = c1 - c0;
     FT phi_ij = angle(e0, w);
     if (e0.x()*w.y()-e0.y()*w.x() < 0)
-      phi_ij = 2 * M_PI - phi_ij;
+      phi_ij = 2 * CGAL_PI - phi_ij;
     w *= -1;
     FT phi_ji = angle(e1, w);
 
     if (e1.x()*w.y()-e1.y()*w.x() < 0)
-      phi_ji = 2 * M_PI - phi_ji;
+      phi_ji = 2 * CGAL_PI - phi_ji;
 
     Vector_3 n_from= face_normal(vpm, mesh, from);
     std::vector<Vector_3> e_from = polar_basis(vpm, mesh, from);
     double teta = angle(e_from, v);
     if (cross_product(e_from, v)*n_from < 0)
-      teta = 2 * M_PI - teta;
+      teta = 2 * CGAL_PI - teta;
 
     std::vector<Vector_3> e_to = polar_basis(vpm, mesh, from ,to);
     Vector_3 n_to = face_normal(vpm, mesh, to);
-    double rot = teta + phi_ji + M_PI - phi_ij;
+    double rot = teta + phi_ji + CGAL_PI - phi_ij;
     e_to =e_to*sqrt(v.squared_length());
     v = rotate_vector(e_to, n_to, rot);
 
@@ -1206,7 +1206,7 @@ struct Locally_shortest_path_imp
     FT l = sqrt(squared_distance(prev_vert_adj,vert));
     FT phi = approximate_angle(vert - prev_vert_adj, vert_adj - prev_vert_adj);
     phi*=CGAL_PI/180.;
-    FT x = l * std::sin(offset) / std::sin(M_PI - phi - offset);
+    FT x = l * std::sin(offset) / std::sin(CGAL_PI - phi - offset);
     FT alpha = x / sqrt(squared_distance(vert_adj, prev_vert_adj));
     halfedge_descriptor prev_h=prev(h,mesh);
 
@@ -2813,7 +2813,7 @@ struct Geodesic_circle_impl
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
 /*!
  * \ingroup VGSMiscellaneous
- * Geodesic solver class used to store pre-computed information of a given mesh for
+ * Geodesic solver class used to store precomputed information of a given mesh for
  * approximate geodesic compution. Those information are computed by the function
  * `init_geodesic_dual_solver()`.
  * \tparam FT floating point number type (float or double)
@@ -2835,8 +2835,8 @@ struct Dual_geodesic_solver
  * If `solver` was used in a previous call to this function, information will be ovewritten.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
- * \param `solver` the container for the pre-computed information
- * \param `tmesh` triangle mesh to be considered for the precomputations
+ * \param solver the container for the precomputed information
+ * \param tmesh triangle mesh to be considered for the precomputations
  * \todo add named parameters
  * \todo make sure solver.graph is cleared before filling it
  */
@@ -2875,7 +2875,7 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
  *                       of `edge_locations` is such that `f == face(opposite(halfedge(e_0, tmesh), tmesh), tmesh))`.
  *                       Similarly, if `tgt` is in the interior of a face `f`, then the last edge location `e_n`
  *                       of `edge_locations` is such that `f == face(halfedge(e_n, tmesh), tmesh)`.
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \todo add named parameters
  * \todo should we have halfedge location instead?
  */
@@ -3121,10 +3121,10 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
  * \param mesh input triangle mesh to compute the path on
  * \param control_points control points of the Bézier segment
  * \param num_subdiv the number of iterations of the subdivision algorithm
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return descretization of the Bézier segment as face locations
  * \todo add named parameters
- * \todo do we want to also have a way to return Bezier segments? The output is actually bezier segments subdivided.
+ * \todo do we want to also have a way to return Bézier segments? The output is actually Bézier segments subdivided.
  */
 template <class TriangleMesh, class FT>
 std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>
@@ -3232,7 +3232,7 @@ void approximate_geodesic_distance_field(const CGAL::Polygon_mesh_processing::Fa
 /*!
  * \ingroup VGSFunctions
  * computes a path on a triangle mesh that is computed by starting a walk on `tmesh`
- * given a direction and a maximum distance. The distance will not be achieved is a border edge
+ * given a direction and a maximum distance. The distance will not be achieved if a border edge
  * is reached before.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
@@ -3242,7 +3242,7 @@ void approximate_geodesic_distance_field(const CGAL::Polygon_mesh_processing::Fa
  * \param dir the initial direction of the walk, given as a 2D vector in the face of src, the halfedge of the face being the y-axis.
  * \return the straightest path (not containing `src`)
  * \todo add named parameters
- * \todo do we want to also have a way to return Bezier segments? The output is actually bezier segments subdivided.
+ * \todo do we want to also have a way to return Bézier segments? The output is actually Bézier segments subdivided.
  * \todo offer something better than a 2D vector for the direction
  */
 template <class K, class TriangleMesh>
@@ -3264,7 +3264,7 @@ straightest_geodesic(const CGAL::Polygon_mesh_processing::Face_location<Triangle
 
 /*!
  * \ingroup VGSMiscellaneous
- * converts the coordinates of a range of points into polar coordinates w.r.t. a given center
+ * converts the coordinates of a range of points into polar coordinates with respect to a given center
  * \tparam K a model of `PolygonTraits_2`
  * \tparam PointRange_2 a model of the concept `RandomAccessContainer` with `K::Point_2` as value type
  * \param points the input points to convert.
@@ -3306,14 +3306,14 @@ convert_to_polar_coordinates(const PointRange_2& points,
 /*!
  * \ingroup VGSFunctions
  * computes the face location of each vertex of a 2D polygon on `tmesh`.
- * The vertices of the polygon are given as a pair of direction and distance w.r.t. a point corresponding to `center` on `tmesh`.
+ * The vertices of the polygon are given as a pair of direction and distance with respect to a point corresponding to `center` on `tmesh`.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \param center the location on `tmesh` used as reference. The y-axis used for coordinates is `halfedge(center.first, tmesh)`.
  * \param directions contains the direction one need to move from `center` to reach each vertex of the polygon.
  * \param lengths the distance one need to move from `center` along the direction at the same position in `directions` to reach each vertex of the polygon.
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of the polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3372,15 +3372,15 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
 /*!
  * \ingroup VGSFunctions
  * computes for each vertex of each polygon in `polygons` a face locations on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
- * This method computes the location of the center of the bounding box of each polygon on the mesh w.r.t. `center` and call `trace_geodesic_polygon()` with that center with
- * appropriate directions and distances to have a consistant orientation for the polygons.
+ * This method computes the location of the center of the bounding box of each polygon on the mesh with respect to `center` and calls `trace_geodesic_polygon()` with that center with
+ * appropriate directions and distances to have a consistent orientation for the polygons.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \param center the location on `tmesh` corresponding to the center of the 2D bounding box of the polygons.
  * \param polygons 2D polygons
  * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3476,14 +3476,14 @@ trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<Trian
  * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
  * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
  * The splitting segment is then drawn on `tmesh` and the face location of the 2D centers is found.
- * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistant orientation for the polygons.
+ * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistent orientation for the polygons.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \param center the location on `tmesh` corresponding to the center of the 2D bounding box of the polygons.
  * \param polygons 2D polygons
  * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3745,7 +3745,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<Tr
  * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
  * The splitting segment is then mapped onto `supporting_curve` by first scaling it using `scaling`, and using `padding` and `is_centered`.
  * Face locations of the 2D center are found on `supporting_curve`.
- * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistant orientation for the polygons.
+ * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistent orientation for the polygons.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \param supporting_curve a path on `tmesh` that will support the center of the bounding box of each polygon.
@@ -3755,7 +3755,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<Tr
  * \param padding padding applied at the beggining of supporting curve to start the drawing
  * \param is_centered is `true`, `padding` is ignored and the bounding box of the polygon is centered on the supporting curve (in 1D)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3930,7 +3930,7 @@ trace_geodesic_label_along_curve(const std::vector<CGAL::Polygon_mesh_processing
 
 /*!
  * \ingroup VGSFunctions
- * computes a path representing a bezier curve defined by four control points.
+ * computes a path representing a Bézier curve defined by four control points.
  * Control points are defined by the endpoints of straightest geodesic curves starting from `center` along given directions and distances.
  * The iterative de Casteljau subdivision algorithm is applied to create more control points that are then connected with locally shortest paths.
  * The output path is such that for two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
@@ -3941,7 +3941,7 @@ trace_geodesic_label_along_curve(const std::vector<CGAL::Polygon_mesh_processing
  * \param lengths contains the length of the straightest geodesic for each control point
  * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -4031,7 +4031,7 @@ trace_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
 
 /*!
  * \ingroup VGSFunctions
- * computes a path representing a bezier polyline (a sequence of bezier curves having an identical control points,
+ * computes a path representing a Bézier polyline (a sequence of Bézier curves having an identical control points,
  * that is the fourth control point of the nth curve is the first control point of the (n+1)th curve).
  * Control points are defined by the endpoints of straightest geodesic curves starting from `center` along given directions and distances.
  * The iterative de Casteljau subdivision algorithm is applied to create more control points that are then connected with locally shortest paths.
@@ -4046,7 +4046,7 @@ trace_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
  * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
  * \param is_closed if true [directions/lengths].front() will be used as additional last point, generating a closed path
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
- * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
+ * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -4158,7 +4158,7 @@ trace_polyline_of_bezier_curves(const CGAL::Polygon_mesh_processing::Face_locati
 /*!
  * \ingroup VGSFunctions
  * refines `tmesh` so that each path in `paths` corresponds to a set edges of `tmesh` after the call.
- * Note that each path must be such that for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+ * Note that each path must be such that for two consecutive face locations, there exists a face in `tmesh` containing the two corresponding points.
  * \tparam TriangleMesh a model of `MutableFaceGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \tparam VNM a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `Kernel::Vector_3` as value type.
@@ -4166,7 +4166,7 @@ trace_polyline_of_bezier_curves(const CGAL::Polygon_mesh_processing::Face_locati
  * \tparam OutputIterator an output iterator accepting `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` to be put
  * \param tmesh the triangle mesh to be refined
  * \param paths a path described as a range of edge locations, with the property that
- *              for two consecutive edge locations, there exist a face in `tmesh` containing the two corresponding points.
+ *              for two consecutive edge locations, there exists a face in `tmesh` containing the two corresponding points.
  * \param vnm property map associating a normal to each vertex of `tmesh` that is updated by this function
  * \param fnm property map associating a normal to each face of `tmesh` that is updated by this function
  * \param out output iterator where created halfedges are put
@@ -4317,7 +4317,7 @@ refine_mesh_along_paths(const std::vector<std::vector<CGAL::Polygon_mesh_process
                        prev_id, first_id);
   }
 
-  // pre-compute normals per face
+  // precompute normals per face
   std::vector<typename K::Vector_3> face_normals(faces_to_refine.size());
   std::vector<std::array<vertex_descriptor, 3>> face_input_vertices(faces_to_refine.size());
   for (std::size_t fid=0; fid<faces_to_refine.size(); ++fid)
@@ -4633,7 +4633,7 @@ refine_mesh_along_paths(const std::vector<std::vector<CGAL::Polygon_mesh_process
  * \tparam TriangleMesh a model of `FaceGraph`
  * \tparam OutputIterator an output iterator accepting points from `tmesh`
  * \param path a path described as a range of face locations, with the property that
-               for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+               for two consecutive face locations, there exists a face in `tmesh` containing the two corresponding points.
  * \param tmesh the triangle mesh supporing the path
  * \param poly_out output iterator where points of the polyline are put.
  * \todo add named parameters
@@ -4673,7 +4673,7 @@ convert_path_to_polyline(const std::vector<CGAL::Polygon_mesh_processing::Face_l
  * \param src source of the path
  * \param tgt target of the path
  * \param path a path described as a range of edge locations, with the property that
-               for two consecutive edge locations, there exist a edge in `tmesh` containing the two corresponding points.
+               for two consecutive edge locations, there exists an edge in `tmesh` containing the two corresponding points.
  * \param tmesh the triangle mesh supporing the path
  * \param poly_out output iterator where points of the polyline are put.
  * \todo add named parameters
