@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2OffsetFunctions
+\ingroup PkgStraightSkeleton2WeightedOffsetFunctions
 
 \brief returns a container with all the inner offset polygons <I>with holes</I> at distance `offset`
 of the 2D polygon with holes `poly_with_holes`.
@@ -35,7 +35,7 @@ create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(FT offset,
 // ---------------------------------------------- EXTERIOR -----------------------------------------
 
 /*!
-\ingroup PkgStraightSkeleton2OffsetFunctions
+\ingroup PkgStraightSkeleton2WeightedOffsetFunctions
 
 \brief returns a container with all the outer offset polygons <I>with holes</I>
 at distance `offset` of the 2D polygon `poly_with_holes`. Note that the
