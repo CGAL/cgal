@@ -216,7 +216,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                  const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(is_valid_face_descriptor(f, tm));
-  return is_degenerate_triangle_face(halfedge(f, tm), np);
+  return is_degenerate_triangle_face(halfedge(f, tm), tm, np);
 }
 
 /// \ingroup PMP_predicates_grp
