@@ -509,6 +509,8 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
 
   typedef typename GT::Vector_3                                            Vector_3;
 
+  typename GT::FT bound(0.1);
+
   std::vector<face_descriptor> incident_faces;
   incident_faces.reserve(8);
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
@@ -516,9 +518,14 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     if(f == boost::graph_traits<PolygonMesh>::null_face())
       continue;
 
-    if((! incident_faces.empty()) && (get(face_normals, incident_faces.back()) == get(face_normals, f)) )
-      continue;
+    if(! incident_faces.empty()){
+      if((get(face_normals, incident_faces.back()) == get(face_normals, f)) )
+        continue;
 
+      auto aa = approximate_angle(get(face_normals, incident_faces.back()) ,get(face_normals, f));
+      if(aa < bound)
+        continue;
+    }
     incident_faces.push_back(f);
   }
 
