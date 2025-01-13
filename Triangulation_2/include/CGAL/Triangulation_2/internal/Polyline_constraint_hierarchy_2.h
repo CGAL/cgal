@@ -347,8 +347,6 @@ public:
 
   // Query
   bool is_subconstrained_edge(T va, T vb) const;
-  bool is_constrained_edge(T va, T vb) const;
-  bool is_constrained_vertex(T v) const;
 
   Vertex_it vertices_in_constraint_begin(Constraint_id cid) const
   { return cid.begin(); }
