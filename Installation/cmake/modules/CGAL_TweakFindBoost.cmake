@@ -29,7 +29,7 @@ if( NOT CGAL_TweakFindBoost )
     cmake_policy(SET CMP0077 NEW)
   endif()
   if(POLICY CMP0167)
-    cmake_policy(SET CMP0167 NEW)
+    cmake_policy(SET CMP0167 OLD)
   endif()
   if(DEFINED CGAL_Boost_USE_STATIC_LIBS)
     # If the option is loaded from CGALConfig.cmake, use its value as default
