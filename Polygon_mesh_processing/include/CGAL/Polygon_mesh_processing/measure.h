@@ -1240,29 +1240,25 @@ void match_faces(const PolygonMesh1& m1,
 /*!
  * \ingroup PMP_measure_grp
  *
- * \brief detects the edges with the smallest and largest dihedral angle in degrees.
+ * \brief computes the minimum and maximum dihedral angles of a range of edges of a given polygon mesh.
  *
+ * \tparam EdgeRange a model of `Range` whhose iterator type is `InputIterator` with value type
+ *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
  * \tparam TriangleMesh a model of `HalfedgeListGraph`
- * \tparam FT a number type. It is
- * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
- * or from the geometric traits class deduced from the point property map
- * of `TriangleMesh`.
- * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
- *  as key type and `bool` as value type. It must be default constructible.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param pmesh the polygon mesh
+ * \param edge_range a range of edges of `tmesh`
+ * \param tmesh the polygon mesh
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
- *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
  *
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`.}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with
  *                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *                    as key type and `GT::Point_3` as value type.}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+ *                    as key type and `geom_traits::Point_3` as value type.}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`.}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for
  *                     `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
  *   \cgalParamNEnd
@@ -1275,62 +1271,93 @@ void match_faces(const PolygonMesh1& m1,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \pre `CGAL::is_triangle_mesh(tmesh)`
+ * \pre There are no degenerate faces in `tmesh`.
+ *
  * \see `detect_sharp_edges()`
  */
-#ifdef DOXYGEN_RUNNING
-template<typename TriangleMesh, typename FT,
+template<typename EdgeRange,
+         typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
-#else
-template<typename TriangleMesh,
-         typename CGAL_NP_TEMPLATE_PARAMETERS>
-#endif
 #ifdef DOXYGEN_RUNNING
-std::pair<std::pair<edge_descriptor,FT>, std::pair<edge_descriptor,FT>>
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
 #else
-std::pair<
-  std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor, typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT>,
-  std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor, typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT>
-  >
+auto
 #endif
-minmax_dihedral_angle(const TriangleMesh& pmesh,
+minmax_dihedral_angle(const EdgeRange& edge_range,
+                      const TriangleMesh& tmesh,
                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  // extract types from NPs
-  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
-  // GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
 
-  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type VPM;
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(boost::vertex_point, pmesh));
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
-  typedef typename GT::FT FT;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  using FT = typename Geom_traits::FT;
+
+  typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tmesh));
+
+  CGAL_precondition(is_triangle_mesh(tmesh));
+
   edge_descriptor low, high;
   FT lo(200), hi(-200);
-  for (edge_descriptor e : edges(pmesh)){
-    if(! is_border(e,pmesh)){
-      halfedge_descriptor h = halfedge(e,pmesh);
-      vertex_descriptor p = source(h,pmesh);
-      vertex_descriptor q = target(h,pmesh);
-      vertex_descriptor r = target(next(h,pmesh),pmesh);
-      vertex_descriptor s = target(next(opposite(h,pmesh),pmesh),pmesh);
-      FT da = approximate_dihedral_angle(get(vpm,p),get(vpm,q),get(vpm,r),get(vpm,s));
-      if(da < lo){
-         low = e;
-         lo = da;
-      }
-      if(da > hi){
-        high = e;
-        hi = da;
-      }
+
+  typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
+    gt.compute_approximate_dihedral_angle_3_object();
+
+  for(edge_descriptor e : edge_range)
+  {
+    CGAL_assertion(is_valid_edge_descriptor(e, tmesh));
+    if(is_border(e, tmesh))
+      continue;
+
+    const halfedge_descriptor h = halfedge(e, tmesh);
+    CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+
+    const vertex_descriptor p = source(h,tmesh);
+    const vertex_descriptor q = target(h,tmesh);
+    const vertex_descriptor r = target(next(h,tmesh),tmesh);
+    const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
+
+    const FT da = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+    if(da < lo) {
+        low = e;
+        lo = da;
+    }
+    if(da > hi) {
+      high = e;
+      hi = da;
     }
   }
-  return std::make_pair(std::make_pair(low, lo),std::make_pair(high,hi));
+
+  return std::make_pair(std::make_pair(low, lo), std::make_pair(high, hi));
+}
+
+/*!
+ * \ingroup PMP_measure_grp
+ * computes the minimum and maximum dihedral angles of a given polygon mesh.
+ * Equivalent to `remove_almost_degenerate_faces(faces(tmesh), tmesh, np)`
+ */
+template<typename TriangleMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_dihedral_angle(const TriangleMesh& tmesh,
+                      const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return minmax_dihedral_angle(edges(tmesh), tmesh, np);
 }
 
 } // namespace Polygon_mesh_processing
