@@ -219,7 +219,7 @@ void test2(){
   CGAL_USE(cr);
   using std::abs;
   P a=cp(3,4);
-  CGAL::Bbox<CGAL::Dimension_tag<2>,double> bb2 = cb(a);
+  CGAL::Bbox_d<CGAL::Dimension_tag<2>> bb2 = cb(a);
   std::cout << "bb2 = " << bb2 << std::endl;
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
