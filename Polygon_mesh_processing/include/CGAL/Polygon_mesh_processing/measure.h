@@ -15,20 +15,18 @@
 
 #include <CGAL/license/Polygon_mesh_processing/measure.h>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/utils_classes.h>
-
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/for_each.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
+#include <CGAL/utils_classes.h>
 
 #include <boost/container/small_vector.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -251,6 +249,8 @@ average_edge_length(const PolygonMesh& pmesh,
   * returns the shortest and longest edges of a range of edges of a given polygon mesh,
   * as well as their respective edge lengths.
   *
+  * @tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
+  *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
   * @tparam EdgeRange a model of `Range` whose iterator type is `InputIterator` with value type
   *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
   * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -286,7 +286,8 @@ average_edge_length(const PolygonMesh& pmesh,
   * @sa `edge_length()`
   * @sa `squared_edge_length()`
   */
-template<typename EdgeRange,
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename EdgeRange,
          typename PolygonMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
@@ -303,39 +304,54 @@ minmax_edge_length(const EdgeRange& edge_range,
   using parameters::get_parameter;
 
   using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
-  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
-
   using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   using FT = typename Geom_traits::FT;
 
-  edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
-  if(first == beyond)
+  if(std::begin(edge_range) == std::end(edge_range))
   {
     return std::make_pair(std::make_pair(edge_descriptor(), FT(0)),
                           std::make_pair(edge_descriptor(), FT(0)));
   }
 
-  edge_iterator low = first, high = first, eit = first;
-  FT sq_lo, sq_hi;
-  sq_lo = sq_hi = squared_edge_length(*eit++, pmesh, np);
-
-  for(; eit!=beyond; ++eit)
+  struct Extremas
   {
-    const FT sq_l = squared_edge_length(*eit, pmesh, np);
+    edge_descriptor low{};
+    edge_descriptor high{};
+    FT sq_lo{-1};
+    FT sq_hi{-1};
+#ifdef CGAL_LINKED_WITH_TBB
+    std::mutex mutex;
+#endif
+  };
+  Extremas extremas;
 
-    if(sq_l < sq_lo) {
-      low = eit;
-      sq_lo = sq_l;
-    }
-    if(sq_l > sq_hi) {
-      high = eit;
-      sq_hi = sq_l;
-    }
-  }
+  // Initialize with first edge
+  auto first = *std::begin(edge_range);
+  extremas.low = extremas.high = first;
+  extremas.sq_lo = extremas.sq_hi = squared_edge_length(first, pmesh, np);
 
-  CGAL_assertion(low != beyond && high != beyond);
-  return std::make_pair(std::make_pair(*low, CGAL::approximate_sqrt(sq_lo)),
-                        std::make_pair(*high, CGAL::approximate_sqrt(sq_hi)));
+  CGAL::for_each<ConcurrencyTag>
+    (edge_range,
+     [&](const edge_descriptor& e) -> bool
+     {
+       const FT sq_l = squared_edge_length(e, pmesh, np);
+
+#ifdef CGAL_LINKED_WITH_TBB
+       std::lock_guard<std::mutex> lock(extremas.mutex);
+#endif
+       if(extremas.sq_lo < 0 || sq_l < extremas.sq_lo) {
+         extremas.low = e;
+         extremas.sq_lo = sq_l;
+       }
+       if(extremas.sq_hi < 0 || sq_l > extremas.sq_hi) {
+         extremas.high = e;
+         extremas.sq_hi = sq_l;
+       }
+       return true;
+     });
+
+  return std::make_pair(std::make_pair(extremas.low, CGAL::approximate_sqrt(extremas.sq_lo)),
+                        std::make_pair(extremas.high, CGAL::approximate_sqrt(extremas.sq_hi)));
 }
 
 /*!
@@ -344,7 +360,8 @@ minmax_edge_length(const EdgeRange& edge_range,
  * as well as their respective edge lengths.
  * Equivalent to `minmax_edge_length(edges(pmesh), pmesh, np)`
  */
-template<typename PolygonMesh,
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename PolygonMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
 std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
@@ -355,7 +372,7 @@ auto
 minmax_edge_length(const PolygonMesh& pmesh,
                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return minmax_edge_length(edges(pmesh), pmesh, np);
+  return minmax_edge_length<ConcurrencyTag>(edges(pmesh), pmesh, np);
 }
 
 /**
@@ -1240,6 +1257,8 @@ void match_faces(const PolygonMesh1& m1,
  *
  * \brief computes the minimum and maximum dihedral angles of a range of edges of a given polygon mesh.
  *
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
+ *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * \tparam EdgeRange a model of `Range` whhose iterator type is `InputIterator` with value type
  *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
  * \tparam TriangleMesh a model of `HalfedgeListGraph`
@@ -1273,8 +1292,10 @@ void match_faces(const PolygonMesh1& m1,
  * \pre There are no degenerate faces in `tmesh`.
  *
  * \see `detect_sharp_edges()`
+ * \see `sharp_edges_segmentation()`
  */
-template<typename EdgeRange,
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename EdgeRange,
          typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
@@ -1305,38 +1326,55 @@ minmax_dihedral_angle(const EdgeRange& edge_range,
 
   CGAL_precondition(is_triangle_mesh(tmesh));
 
-  edge_descriptor low, high;
-  FT lo(200), hi(-200);
+  struct Extremas
+  {
+    edge_descriptor low{};
+    edge_descriptor high{};
+    FT lo{200};
+    FT hi{-200};
+#ifdef CGAL_LINKED_WITH_TBB
+    std::mutex mutex;
+#endif
+  };
+  Extremas extremas;
 
   typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
     gt.compute_approximate_dihedral_angle_3_object();
 
-  for(edge_descriptor e : edge_range)
-  {
-    CGAL_assertion(is_valid_edge_descriptor(e, tmesh));
-    if(is_border(e, tmesh))
-      continue;
+  CGAL::for_each<ConcurrencyTag>
+    (edge_range,
+     [&](const edge_descriptor& e) -> bool
+     {
+       if(is_border(e, tmesh))
+         return true;
 
-    const halfedge_descriptor h = halfedge(e, tmesh);
-    CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+       const halfedge_descriptor h = halfedge(e, tmesh);
+       CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
 
-    const vertex_descriptor p = source(h,tmesh);
-    const vertex_descriptor q = target(h,tmesh);
-    const vertex_descriptor r = target(next(h,tmesh),tmesh);
-    const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
+       const vertex_descriptor p = source(h,tmesh);
+       const vertex_descriptor q = target(h,tmesh);
+       const vertex_descriptor r = target(next(h,tmesh),tmesh);
+       const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
 
-    const FT da = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
-    if(da < lo) {
-        low = e;
-        lo = da;
-    }
-    if(da > hi) {
-      high = e;
-      hi = da;
-    }
-  }
+       const FT da = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
 
-  return std::make_pair(std::make_pair(low, lo), std::make_pair(high, hi));
+#ifdef CGAL_LINKED_WITH_TBB
+       std::lock_guard<std::mutex> lock(extremas.mutex);
+#endif
+       if(da < extremas.lo) {
+         extremas.low = e;
+         extremas.lo = da;
+       }
+       if(da > extremas.hi) {
+         extremas.high = e;
+         extremas.hi = da;
+       }
+
+       return true;
+     });
+
+  return std::make_pair(std::make_pair(extremas.low, extremas.lo),
+                        std::make_pair(extremas.high, extremas.hi));
 }
 
 /*!
@@ -1344,7 +1382,8 @@ minmax_dihedral_angle(const EdgeRange& edge_range,
  * computes the minimum and maximum dihedral angles of a given triangle mesh.
  * Equivalent to `minmax_dihedral_angle(edges(tmesh), tmesh, np)`
  */
-template<typename TriangleMesh,
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
 std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
@@ -1355,12 +1394,10 @@ auto
 minmax_dihedral_angle(const TriangleMesh& tmesh,
                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return minmax_dihedral_angle(edges(tmesh), tmesh, np);
+  return minmax_dihedral_angle<ConcurrencyTag>(edges(tmesh), tmesh, np);
 }
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_MEASURE_H

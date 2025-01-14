@@ -109,7 +109,8 @@ void test_pmesh(const Mesh& pmesh)
   edge_descriptor longest_edge;
   FT longest_edge_length;
 
-  auto [shortest_edge_pair, longest_edge_pair] = PMP::minmax_edge_length(pmesh);
+  auto [shortest_edge_pair, longest_edge_pair] =
+    PMP::minmax_edge_length<CGAL::Parallel_if_available_tag>(pmesh);
   std::tie(shortest_edge, shortest_edge_length) = shortest_edge_pair;
   std::tie(longest_edge, longest_edge_length) = longest_edge_pair;
 
@@ -124,9 +125,11 @@ void test_pmesh(const Mesh& pmesh)
             << ", length = " << longest_edge_length << std::endl;
   for(edge_descriptor e : edges(pmesh))
   {
+    FT edge_length = PMP::edge_length(e, pmesh);
+    std::cout << "edge length: " << edge_length << std::endl;
+
     // this could be wrong due to numerical errors, but the tested meshes are gentle enough
     // such that we don't need a predicate... right?
-    FT edge_length = PMP::edge_length(e, pmesh);
     assert(shortest_edge_length <= edge_length);
     assert(longest_edge_length >= edge_length);
   }
@@ -402,7 +405,8 @@ void test_dihedral_angles(const std::string filename,
   edge_descriptor edge_with_largest_da;
   FT largest_da;
 
-  auto [smallest_da_pair, largest_da_pair] = PMP::minmax_dihedral_angle(pmesh);
+  auto [smallest_da_pair, largest_da_pair] =
+    PMP::minmax_dihedral_angle<CGAL::Parallel_if_available_tag>(pmesh);
   std::tie(edge_with_smallest_da, smallest_da) = smallest_da_pair;
   std::tie(edge_with_largest_da, largest_da) = largest_da_pair;
 
