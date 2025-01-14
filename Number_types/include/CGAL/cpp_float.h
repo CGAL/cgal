@@ -25,7 +25,7 @@ namespace CGAL {
 namespace internal {
   // Only used with an argument known not to be 0.
   inline int low_bit (boost::uint64_t x) {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (! defined(__clang__))
     unsigned long ret;
     _BitScanForward64(&ret, x);
     return (int)ret;
@@ -37,7 +37,7 @@ namespace internal {
 #endif
   }
   inline int high_bit (boost::uint64_t x) {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (! defined(__clang__))
     unsigned long ret;
     _BitScanReverse64(&ret, x);
     return (int)ret;
