@@ -63,7 +63,6 @@ class FrechetKdTree
 
         Cartesian_const_iterator_d cartesian_begin() const
         {
-            Construct_cartesian_const_iterator ccc;
             Bbcci ppb = endsbbox.cartesian_begin();
             Bbcci ppe = endsbbox.cartesian_end();
           return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), ppb);
@@ -71,7 +70,6 @@ class FrechetKdTree
 
         Cartesian_const_iterator_d cartesian_end() const
         {
-            Construct_cartesian_const_iterator ccc;
             Bbcci ppe = endsbbox.cartesian_end();
             return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), bbox.cartesian_end(), 0);
         }
