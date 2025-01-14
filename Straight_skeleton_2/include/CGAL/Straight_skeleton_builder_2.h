@@ -1457,10 +1457,10 @@ public:
       CGAL_assertion(fit != mSSkel->SSkel::Base::faces_end());
 
       Halfedge_handle lBorder = fit->halfedge();
-      FT lWeight = *aWeightsBegin;
       CGAL_assertion(lBorder->opposite()->is_border());
-      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << lWeight << " cvt to " << cvt(lWeight) << " to E" << lBorder->id());
-      lBorder->set_weight(cvt(lWeight));
+      FT lWeight = cvt(*aWeightsBegin);
+      CGAL_STSKEL_BUILDER_TRACE(4, "Assign " << *aWeightsBegin << " (converted to " << cvt(lWeight) << ") to E" << lBorder->id());
+      lBorder->set_weight(lWeight);
     }
 
     return *this;
