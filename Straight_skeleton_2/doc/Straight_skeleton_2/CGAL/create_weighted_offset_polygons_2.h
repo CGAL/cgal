@@ -20,19 +20,19 @@ The construction of this skeleton is the most expensive operation, therefore, to
 at more than one single distance, it is advised to use the separate functions `create_interior_straight_skeleton_2()`
 and `create_offset_polygons_2()` instead.
 
+\tparam OfKPolygon is a polygon without holes type determined from `OfK` and `InKPolygon`,
+                   see Section \ref SLSOffsetPolygonReturnType.
+\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
+\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`).
+\tparam HoleIterator must be a model of `InputIterator` with value type being a model of `ConstRange`
+                     with value type `SsK::Point_2`.
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is `InK::FT`.
+\tparam HoleWeightsIterator must be a model of `InputIterator` with value type being a model of `SequenceContainer`
+                            with value type `InK::FT`.
 \tparam OfK must be a model of `Kernel`. It is used to instantiate
             `Polygon_offset_builder_traits_2<OfK>` for constructing the offset polygons.
 \tparam SsK must be a model of `Kernel`. It is used to instantiate
             `Straight_skeleton_builder_traits_2<SsK>` for constructing the straight skeleton.
-\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
-\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`).
-\tparam InKWeights must be a model of `Range` with value type `InK::FT`.
-\tparam HoleIterator must be a model of `InputIterator` with value type being a model of `ConstRange`
-                     with value type `SsK::Point_2`.
-\tparam HoleWeightsIterator must be a model of `InputIterator` with value type being a model of `ConstRange`
-                            with value type `InK::FT`.
-\tparam OfKPolygon is a polygon without holes type determined from `OfK` and `InKPolygon`,
-                   see Section \ref SLSOffsetPolygonReturnType.
 
 \note If `SsK != OfK` the constructed straight skeleton is converted to `CGAL::Straight_skeleton_2<OfK>`.
 
@@ -66,16 +66,16 @@ The construction of this skeleton is the most expensive operation, therefore, to
  at more than one single distance, use the separate functions `create_interior_straight_skeleton_2()`
 and `create_offset_polygons_2()` instead.
 
+\tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
+                   see Section \ref SLSOffsetPolygonReturnType.
+\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
+\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
+                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 \tparam OfK must be a model of `Kernel`. It is used to instantiate
             `Polygon_offset_builder_traits_2<OfK>` for constructing the offset polygons.
 \tparam SsK must be a model of `Kernel`. It is used to instantiate
             `Straight_skeleton_builder_traits_2<SsK>` for constructing the straight skeleton.
-\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
-\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` with value type `InK::FT`.
-\tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
-                   see Section \ref SLSOffsetPolygonReturnType.
 
 \note If `SsK != OfK` the constructed straight skeleton is converted to `CGAL::Straight_skeleton_2<OfK>`.
 
@@ -109,16 +109,16 @@ to obtain the offsets. The construction of this skeleton is the most expensive o
 therefore, to construct offsets at more than one single distance, use the separate functions
 `create_exterior_straight_skeleton_2()` and `create_offset_polygons_2()` instead.
 
+\tparam OfKPolygon is a polygon without holes type determined from `OfK` and `InKPolygon`,
+                   see Section \ref SLSOffsetPolygonReturnType.
+\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
+\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
+                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 \tparam OfK must be a model of `Kernel`. It is used to instantiate
             `Polygon_offset_builder_traits_2<OfK>` for constructing the offset polygons.
 \tparam SsK must be a model of `Kernel`. It is used to instantiate
             `Straight_skeleton_builder_traits_2<SsK>` for constructing the straight skeleton.
-\tparam FT must be a model of `FieldNumberType` convertible to `OfK::FT` and `SsK::FT`.
-\tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                   or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` with value type `InK::FT`.
-\tparam OfKPolygon is a polygon without holes type determined from `OfK` and `InKPolygon`,
-                   see Section \ref SLSOffsetPolygonReturnType.
 
 \note If `SsK != OfK` the constructed straight skeleton is converted to `CGAL::Straight_skeleton_2<OfK>`.
 
