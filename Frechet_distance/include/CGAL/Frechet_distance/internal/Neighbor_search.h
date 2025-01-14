@@ -55,22 +55,24 @@ class FrechetKdTree
     struct Point_d {
         using BB = Bbox_d<Dimension_tag<dim>>;
         Point ends[2];
+        BB endsbbox;
         BB bbox;
-        using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
-        using Cartesian_const_iterator_d = Concatenate_iterator<PP, typename BB::Cartesian_const_iterator>;
+        // using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
+        using Bbcci = typename BB::Cartesian_const_iterator;
+        using Cartesian_const_iterator_d = Concatenate_iterator<Bbcci, Bbcci>;
 
         Cartesian_const_iterator_d cartesian_begin() const
         {
             Construct_cartesian_const_iterator ccc;
-            PP ppb(ccc(ends[0],0), ccc(ends[1]), ccc(ends[0]));
-            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
+            Bbcci ppb = endsbbox.cartesian_begin();
+            Bbcci ppe = endsbbox.cartesian_end();
           return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), ppb);
         }
 
         Cartesian_const_iterator_d cartesian_end() const
         {
             Construct_cartesian_const_iterator ccc;
-            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
+            Bbcci ppe = endsbbox.cartesian_end();
             return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), bbox.cartesian_end(), 0);
         }
 
@@ -231,6 +233,7 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 
     res.ends[0] = curve.front();
     res.ends[1] = curve.back();
+    res.endsbbox = bbox(res.ends[0]) + bbox(res.ends[1]);
     for (auto const& point : curve) {
         Bbox_d<Dimension_tag<dim>> bb = bbox(point);
         res.bbox +=  bb;
