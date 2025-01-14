@@ -149,7 +149,7 @@ Random_allocator<T, Upstream_allocator>::allocate(size_type n, const void* hint)
 #endif // CGAL_DEBUG_RANDOM_ALLOCATOR
     return block->data + index;
   }
-  size_type block_size = std::max(n * random_size, minimal_block_size);
+  size_type block_size = (std::max)(n * random_size, minimal_block_size);
   ptr_->allocate_new_block(block_size);
   return allocate(n, hint);
 }
@@ -183,7 +183,7 @@ template <typename T, typename Upstream_allocator>
 typename Random_allocator<T, Upstream_allocator>::size_type
 Random_allocator<T, Upstream_allocator>::max_size() const noexcept
 {
-  return std::numeric_limits<size_type>::max() / sizeof(T);
+  return (std::numeric_limits<size_type>::max)() / sizeof(T);
 }
 
 } // namespace CGAL

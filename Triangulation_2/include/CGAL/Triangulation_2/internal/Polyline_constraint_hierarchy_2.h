@@ -116,7 +116,7 @@ public:
   struct Constraint_id
   {
     Vertex_list_ptr vl = nullptr;
-    size_type id = std::numeric_limits<size_type>::max();
+    size_type id = (std::numeric_limits<size_type>::max)();
 
     Constraint_id(std::nullptr_t = nullptr) {}
     Constraint_id(Vertex_list_ptr vl, size_type id) : vl(vl), id(id) {}
@@ -131,7 +131,7 @@ public:
 
     Constraint_id& operator=(std::nullptr_t) {
       vl = nullptr;
-      id = std::numeric_limits<size_type>::max();
+      id = (std::numeric_limits<size_type>::max)();
       return *this;
     }
     bool operator==(std::nullptr_t n) const { return vl == n; }
