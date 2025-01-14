@@ -105,7 +105,7 @@ bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
       if (lParent == nullptr)
         return false;
 
-      lParent->add_hole(Inner_polygon(CGAL_SS_i::vertices_begin(lPoly), CGAL_SS_i::vertices_begin(lPoly)));
+      lParent->add_hole(Inner_polygon(CGAL_SS_i::vertices_begin(lPoly), CGAL_SS_i::vertices_end(lPoly)));
     }
   }
 
