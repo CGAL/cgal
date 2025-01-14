@@ -175,10 +175,12 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& /*k*
   typedef Polygon_offset_builder_traits_2<K>                                OffsetBuilderTraits;
   typedef Polygon_offset_builder_2<Skeleton,OffsetBuilderTraits,OutPolygon> OffsetBuilder;
 
-  OutPolygonPtrVector rR ;
-
   OffsetBuilder ob(aSs);
-  ob.construct_offset_contours(aOffset, std::back_inserter(rR) ) ;
+  typename K::FT lOffset = aOffset;
+
+
+  OutPolygonPtrVector rR ;
+  ob.construct_offset_contours(lOffset, std::back_inserter(rR) ) ;
 
   return rR ;
 }

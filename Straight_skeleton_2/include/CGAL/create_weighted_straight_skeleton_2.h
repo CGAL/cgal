@@ -147,6 +147,8 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
   using IK = typename Kernel_traits<Point_2>::Kernel;
   using IFT = typename IK::FT;
 
+  static_assert(std::is_same_v<typename std::iterator_traits<WeightIterator>::value_type, IFT>);
+
   boost::shared_ptr<Straight_skeleton_2<K> > skeleton;
 
   // That's because we might not have FT == IK::FT (e.g. `double` and `Core`)
@@ -188,11 +190,11 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
     holes.push_back(poly);
 
     // put a weight large enough such that frame edges are not relevant
-    const FT frame_weight = FT(10) * *(std::max_element(weights_begin, weights_end));
+    const IFT frame_weight = IFT(10) * *(std::max_element(weights_begin, weights_end));
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
-    std::vector<FT> lFrameWeights(4, frame_weight);
-    std::vector<std::vector<FT> > lHoleWeights;
+    std::vector<IFT> lFrameWeights(4, frame_weight);
+    std::vector<std::vector<IFT> > lHoleWeights;
     lHoleWeights.emplace_back(weights_begin, weights_end);
 
     // If w[0] pointed to v_0, then when we reverse the polygon, the last polygon is pointing to v_{n-1}
