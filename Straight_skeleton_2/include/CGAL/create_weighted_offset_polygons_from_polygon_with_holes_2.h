@@ -153,7 +153,7 @@ create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& aOffset,
     std::vector<boost::shared_ptr<OutPolygon> > hole_polygons =
         create_interior_weighted_skeleton_and_offset_polygons_2<OutPolygon>(aOffset,
                                                                             hole,
-                                                                            {aWeights[weight_pos]},
+                                                                            Weights{aWeights[weight_pos]},
                                                                             ofk, ssk);
     polygons.insert(polygons.end(), hole_polygons.begin(), hole_polygons.end());
   }
