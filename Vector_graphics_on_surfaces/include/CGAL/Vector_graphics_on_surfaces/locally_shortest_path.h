@@ -2832,7 +2832,7 @@ struct Dual_geodesic_solver
  * \ingroup VGSMiscellaneous
  * fills `solver` for a given mesh `tmesh`. It is the user responsability to
  * call again this function if `tmesh` or the points of its vertices are modified.
- * If `solver` was used in a previous call to this function, information will be ovewritten.
+ * If `solver` was used in a previous call to this function, information will be overwritten.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
  * \param solver the container for the precomputed information
@@ -2859,7 +2859,7 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
 /*!
  * \ingroup VGSFunctions
  * computes an approximated geodesic shortest path between two locations on a
- * triangle mesh. `src` and `tgt` must be on the same connected component.
+ * `tmesh`. The points`src` and `tgt` must be on the same connected component.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
  * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `CGAL::Polygon_mesh_processing::Edge_location<FT>`.
@@ -3115,7 +3115,7 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
  * \ingroup VGSFunctions
  * computes a discretization of a Bézier segment defined by the location of four control points on `tmesh`.
  * All control points must be on the same connected component. This functions applies several iterations of
- * the de Casteljau algorithm, and geodesic shortest path are drawn between the control points.
+ * the de Casteljau algorithm, and geodesic shortest paths are drawn between the control points.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
  * \param mesh input triangle mesh to compute the path on
@@ -3371,7 +3371,7 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
 
 /*!
  * \ingroup VGSFunctions
- * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, where `center` represents the center of the 2D bounding box of the polygons.
  * This method computes the location of the center of the bounding box of each polygon on the mesh with respect to `center` and calls `trace_geodesic_polygon()` with that center with
  * appropriate directions and distances to have a consistent orientation for the polygons.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
@@ -3472,7 +3472,7 @@ trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<Trian
 
 /*!
  * \ingroup VGSFunctions
- * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * computes for each vertex of each polygon in `polygons` a face location on `tmesh`, where `center` represents the center of the 2D bounding box of the polygons.
  * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
  * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
  * The splitting segment is then drawn on `tmesh` and the face location of the 2D centers is found.
@@ -3669,7 +3669,7 @@ trace_geodesic_label(const CGAL::Polygon_mesh_processing::Face_location<Triangle
  * \tparam FT floating point number type (float or double)
  * \tparam TriangleMesh a model of `FaceGraph`
  * \param path a path described as a range of face locations, with the property that
-               for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+               for two consecutive face locations, there exists a face in `tmesh` containing the two corresponding points.
  * \param tmesh the triangle mesh supporing the path
  * \todo add named parameters
  * \todo generic range
@@ -3704,7 +3704,7 @@ FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Face_location<Tr
  * \param src source of the path
  * \param tgt target of the path
  * \param path a path described as a range of edge locations, with the property that
-               for two consecutive edge locations, there exist a face in `tmesh` containing the two corresponding points.
+               for two consecutive edge locations, there exists a face in `tmesh` containing the two corresponding points.
  * \param tmesh the triangle mesh supporing the path
  * \todo add named parameters
  * \todo generic range
