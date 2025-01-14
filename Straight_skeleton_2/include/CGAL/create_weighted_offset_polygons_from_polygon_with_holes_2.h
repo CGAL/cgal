@@ -124,8 +124,13 @@ create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& aOf
   std::swap(raw_output[0], raw_output.back());
   raw_output.pop_back();
 
-  for(boost::shared_ptr<Polygon_> ptr : raw_output)
-    ptr->reverse_orientation();
+  for (boost::shared_ptr<OutPolygon> ptr : raw_output) {
+    if (ptr->size() > 1) {
+      // keep the first in place is just to get the same behavior as for Polygon_2
+      auto first = std::next(ptr->begin());
+      std::reverse(first, ptr->end());
+    }
+  }
 
   return arrange_offset_polygons_2<OutPolygonWithHoles>(raw_output);
 }
