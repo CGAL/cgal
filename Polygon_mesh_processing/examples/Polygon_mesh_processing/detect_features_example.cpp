@@ -17,18 +17,24 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/anchor.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  std::pair<std::pair<edge_descriptor,double>, std::pair<edge_descriptor,double>> res = PMP::minmax_dihedral_angle(mesh);
+  if(!CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Input must be triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
 
-   std::cout << "Sharpest dihedral angles: " << res.first.second << "   " << res.second.second << std::endl;
+  std::pair<std::pair<edge_descriptor,double>,
+            std::pair<edge_descriptor,double> > res = PMP::minmax_dihedral_angle(mesh);
+  std::cout << "dihedral angle extremas: " << res.first.second << "   " << res.second.second << std::endl;
 
   typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
   typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
