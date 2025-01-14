@@ -306,13 +306,7 @@ minmax_edge_length(const EdgeRange& edge_range,
   using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
 
   using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
-  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
-
   using FT = typename Geom_traits::FT;
-
-  typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, pmesh));
 
   edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
   if(first == beyond)
