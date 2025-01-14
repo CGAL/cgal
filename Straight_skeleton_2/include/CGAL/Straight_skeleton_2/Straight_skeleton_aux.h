@@ -197,8 +197,8 @@ struct Default_return_polygon_type // Polygon type supports holes
                                       typename Kernel_traits<typename boost::range_value<
                                         typename Polygon::Polygon_2>::type>::Kernel,
                                       OfK>::value,
-                                    typename Polygon::Polygon_2, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+                                    typename Polygon::Polygon_2, // same kernel
+                                    CGAL::Polygon_2<OfK> /*different kernel*/ >::type type;
 };
 
 template <typename Polygon, typename OfK>
@@ -207,8 +207,8 @@ struct Default_return_polygon_type<Polygon, OfK, false> // Polygon type does NOT
   typedef typename std::conditional<std::is_same<
                                       typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
                                       OfK>::value,
-                                    Polygon, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+                                    Polygon, // same kernel
+                                    CGAL::Polygon_2<OfK> /*different kernel*/ >::type type;
 };
 
 // The return type of create_interior/exterior_skeleton_and_offset_polygons_with_holes_2:
