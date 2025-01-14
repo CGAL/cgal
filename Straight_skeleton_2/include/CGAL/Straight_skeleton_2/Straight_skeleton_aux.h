@@ -17,6 +17,8 @@
 #include <CGAL/Straight_skeleton_2/debug.h>
 #include <CGAL/Straight_skeleton_2/test.h>
 
+#include <CGAL/Default.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/mpl/has_xxx.hpp>
@@ -211,6 +213,10 @@ struct Default_return_polygon_type<Polygon, OfK, false> // Polygon type does NOT
                                     CGAL::Polygon_2<OfK> /*different kernel*/ >::type type;
 };
 
+template <typename OfKPolygon, typename InKPolygon, typename OfK>
+using Polygon_return_type = typename CGAL::Default::Get<OfKPolygon,
+                                                        typename Default_return_polygon_type<InKPolygon, OfK>::type>::type;
+
 // The return type of create_interior/exterior_skeleton_and_offset_polygons_with_holes_2:
 // - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type should be the same
 // - if polygon input is just a sequence container of points (e.g. Polygon_2), then use
@@ -237,6 +243,10 @@ struct Default_return_polygon_with_holes_type<Polygon, OfK, false> // Polygon ty
                                     CGAL::Polygon_with_holes_2<OfK>, // correct kernel but no holes
                                     CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
 };
+
+template <typename OfKPolygon, typename InKPolygon, typename OfK>
+using Polygon_with_holes_return_type = typename CGAL::Default::Get<OfKPolygon,
+                                                                   typename Default_return_polygon_with_holes_type<InKPolygon, OfK>::type>::type;
 
 } // namespace CGAL_SS_i
 
