@@ -111,7 +111,7 @@ typedef unspecified_type Subconstraints;
 /*!
 An iterator to visit all the subconstraints of the triangulation and the
 contexts of their enclosing constraints. The order of visit is undefined.
-The value type of this iterator is `std::pair<const Subconstraint, std::list<Context>*>`.
+The value type of this iterator is `const std::pair<const Subconstraint, std::list<Context>*>`.
 */
 typedef unspecified_type Subconstraint_and_contexts_iterator;
 
