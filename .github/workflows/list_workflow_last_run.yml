@@ -7,7 +7,7 @@
     GH_TOKEN: ${{ github.token }}
   jobs:
     list_workflow:
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       outputs:
         messages: ${{ steps.cat_output.outputs.message }}
       steps:

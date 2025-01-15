@@ -14,7 +14,7 @@ jobs:
       contents: read # to fetch code (actions/checkout)
       pull-requests: write # to create comment
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/github-script@v6
         id: get_round

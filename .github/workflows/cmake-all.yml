@@ -8,7 +8,7 @@ permissions:
 jobs:
   cmake-testsuite:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
 
   cmake-testsuite-with-qt5:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3
