@@ -330,7 +330,7 @@ minmax_edge_length(const EdgeRange& edge_range,
   extremas.low = extremas.high = first;
   extremas.sq_lo = extremas.sq_hi = squared_edge_length(first, pmesh, np);
 
-  CGAL::for_each<ConcurrencyTag>
+  CGAL::for_each<ConcurrencyTag, EdgeRange>
     (edge_range,
      [&](const edge_descriptor& e) -> bool
      {
@@ -1341,7 +1341,7 @@ minmax_dihedral_angle(const EdgeRange& edge_range,
   typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
     gt.compute_approximate_dihedral_angle_3_object();
 
-  CGAL::for_each<ConcurrencyTag>
+  CGAL::for_each<ConcurrencyTag, EdgeRange>
     (edge_range,
      [&](const edge_descriptor& e) -> bool
      {
