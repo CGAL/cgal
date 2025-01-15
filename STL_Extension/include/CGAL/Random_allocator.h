@@ -15,12 +15,20 @@
 #include <boost/dynamic_bitset.hpp>
 #include <memory>
 #include <vector>
-
-// This header requires C++20 or later.
-#include <format>
 #include <random>
-#include <ranges>
-#include <source_location>
+
+#if CGAL_DEBUG_RANDOM_ALLOCATOR
+#  if __has_include(<format>)
+#    include <iostream>
+#    include <format>
+#    if __cpp_lib_format >= 201907L
+#      define CGAL_DEBUG_RANDOM_ALLOCATOR_OKAY 1
+#    endif
+#  endif
+#  if ! CGAL_DEBUG_RANDOM_ALLOCATOR_OKAY
+#    error "CGAL_DEBUG_RANDOM_ALLOCATOR requires <format> and C++20 std::format"
+#  endif
+#endif
 
 namespace CGAL {
 
@@ -50,9 +58,9 @@ template <typename T, typename Upstream_allocator = std::allocator<T>> class Ran
 
     void allocate_new_block(std::size_t block_size = minimal_block_size)
     {
-      auto& block = blocks.emplace_back(nullptr, boost::dynamic_bitset<>(block_size));
+      auto& block = blocks.emplace_back();
       block.data = alloc.allocate(block_size);
-      block.available.set();
+      block.available.resize(block_size, true);
       block.maximal_continuous_free_space = block_size;
     }
 
@@ -93,7 +101,8 @@ public:
 
   template <typename U> struct rebind
   {
-    using other_upstream_allocator = std::allocator_traits<Upstream_allocator>::template rebind_alloc<U>;
+    using upstream_traits = std::allocator_traits<Upstream_allocator>;
+    using other_upstream_allocator = typename upstream_traits::template rebind_alloc<U>;
     using other = Random_allocator<U, other_upstream_allocator>;
   };
 
@@ -113,7 +122,8 @@ typename Random_allocator<T, Upstream_allocator>::pointer
 Random_allocator<T, Upstream_allocator>::allocate(size_type n, const void* hint)
 {
   boost::container::static_vector<std::pair<Block*, size_type>, random_size> found_spaces;
-  for(auto& block : ptr_->blocks | std::views::reverse) {
+  for(auto it = ptr_->blocks.rbegin(), end = ptr_->blocks.rend(); it != end; ++it) {
+    auto& block = *it;
     if(block.maximal_continuous_free_space < n)
       continue;
     auto& available = block.available;
@@ -127,7 +137,7 @@ Random_allocator<T, Upstream_allocator>::allocate(size_type n, const void* hint)
       auto free_space = end_of_free_block - index;
       found_max_free_space = (std::max)(found_max_free_space, free_space);
       while(free_space > n && found_spaces.size() < found_spaces.capacity()) {
-        found_spaces.push_back({std::addressof(block), index});
+        found_spaces.emplace_back(std::addressof(block), index);
         free_space -= n;
         index += n;
       }
@@ -144,7 +154,7 @@ Random_allocator<T, Upstream_allocator>::allocate(size_type n, const void* hint)
     block->available.set(index, n, false);
 #if CGAL_DEBUG_RANDOM_ALLOCATOR
     std::clog << std::format("CGAL::Random_allocator debug info: n = {}, found_spaces.size() = {}, i = {},"
-                             "block nb = {}, block size = {}, index = {}\n",
+                             " block id = {}, block size = {}, index = {}\n",
                              n, found_spaces.size(), i, block - ptr_->blocks.data(), block->size(), index);
 #endif // CGAL_DEBUG_RANDOM_ALLOCATOR
     return block->data + index;
