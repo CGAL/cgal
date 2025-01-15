@@ -128,7 +128,7 @@ create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
     std::vector<Hole> holes ;
     holes.push_back(lPoly) ;
 
-    rSkeleton = create_partial_interior_straight_skeleton_2(aMaxOffset,frame, frame+4, holes.begin(), holes.end(), k ) ;
+    rSkeleton = create_partial_interior_straight_skeleton_2(aMaxOffset, frame, frame+4, holes.begin(), holes.end(), k ) ;
   }
 
   return rSkeleton ;
@@ -177,8 +177,6 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& /*k*
 
   OffsetBuilder ob(aSs);
   typename K::FT lOffset = aOffset;
-
-
   OutPolygonPtrVector rR ;
   ob.construct_offset_contours(lOffset, std::back_inserter(rR) ) ;
 
