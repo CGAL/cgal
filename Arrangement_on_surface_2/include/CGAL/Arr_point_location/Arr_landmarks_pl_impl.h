@@ -452,7 +452,8 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
       // its holes).
       cv_is_contained_in_seg = false;
       auto new_face = face;
-      for (auto inner_ccb_iter = face->inner_ccbs_begin();
+      // Do not use 'auto' to define the iterator, as MSVC2017 complains.
+      for (Inner_ccb_const_iterator inner_ccb_iter = face->inner_ccbs_begin();
            inner_ccb_iter != face->inner_ccbs_end(); ++inner_ccb_iter) {
         bool is_on_edge;
         bool is_target;
@@ -495,7 +496,8 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
       // We know that p is not located inside the current face. We therefore
       // look for an edge on its outer boundary that intersects seg.
       auto new_face = face;
-      for (auto outer_ccb_iter = face->outer_ccbs_begin();
+      // Do not use 'auto' to define the iterator, as MSVC2017 complains.
+      for (Inner_ccb_const_iterator outer_ccb_iter = face->outer_ccbs_begin();
            outer_ccb_iter != face->outer_ccbs_end(); ++outer_ccb_iter) {
         bool is_on_edge;
         bool is_target;
