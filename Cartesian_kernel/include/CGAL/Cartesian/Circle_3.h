@@ -23,6 +23,8 @@ namespace CGAL {
 
 template <class R_ >
 class CircleC3 {
+  typedef typename R_::Boolean                  Boolean;
+  typedef typename R_::Bounded_side             Bounded_side;
   typedef typename R_::Sphere_3                 Sphere_3;
   typedef typename R_::Plane_3                  Plane_3;
   typedef typename R_::Point_3                  Point_3;
@@ -200,15 +202,15 @@ public:
                         (x+mx).sup(),(y+my).sup(),(z+mz).sup());
   }
 
-  bool operator==(const CircleC3 &) const;
-  bool operator!=(const CircleC3 &) const;
+  Boolean operator==(const CircleC3 &) const;
+  Boolean operator!=(const CircleC3 &) const;
 
-  bool has_on(const Point_3 &p) const;
-  bool has_on_bounded_side(const Point_3 &p) const;
-  bool has_on_unbounded_side(const Point_3 &p) const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean has_on_bounded_side(const Point_3 &p) const;
+  Boolean has_on_unbounded_side(const Point_3 &p) const;
   Bounded_side bounded_side(const Point_3 &p) const;
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return diametral_sphere().is_degenerate();
   }
@@ -217,7 +219,7 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 CircleC3<R>::
 has_on(const typename CircleC3<R>::Point_3 &p) const
 {
@@ -227,7 +229,7 @@ has_on(const typename CircleC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 CircleC3<R>::
 has_on_bounded_side(const typename CircleC3<R>::Point_3 &p) const
 {
@@ -237,7 +239,7 @@ has_on_bounded_side(const typename CircleC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 CircleC3<R>::
 has_on_unbounded_side(const typename CircleC3<R>::Point_3 &p) const
 {
@@ -246,8 +248,7 @@ has_on_unbounded_side(const typename CircleC3<R>::Point_3 &p) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
-Bounded_side
+typename R::Bounded_side
 CircleC3<R>::
 bounded_side(const typename CircleC3<R>::Point_3 &p) const
 {
@@ -256,8 +257,7 @@ bounded_side(const typename CircleC3<R>::Point_3 &p) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleC3<R>::operator==(const CircleC3<R> &t) const
 {
   if (CGAL::identical(base, t.base))
@@ -283,8 +283,7 @@ CircleC3<R>::operator==(const CircleC3<R> &t) const
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleC3<R>::operator!=(const CircleC3<R> &t) const
 {
   return !(*this == t);

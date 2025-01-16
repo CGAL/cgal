@@ -178,39 +178,43 @@ public:
 template <class R,int dim>
 class Side_of_bounded_circle_projected_3
 {
+  typedef typename R::Bounded_side Bounded_side;
+  typedef typename R::Point_3      Point;
+
 public:
-  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
-
 
   typename R::Point_2 project(const Point& p) const
   {
     return typename R::Point_2(x(p),y(p));
   }
-  CGAL::Bounded_side operator() (const Point &p,
-                                  const Point &q,
-                                  const Point &r,
-                                  const Point &s) const
-    {
-      return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
-    }
 
-    CGAL::Bounded_side operator() (const Point &p,
-                                  const Point &q,
-                                  const Point &r) const
-    {
-      return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
-    }
+  Bounded_side operator()(const Point &p,
+                          const Point &q,
+                          const Point &r,
+                          const Point &s) const
+  {
+    return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
+  }
+
+  Bounded_side operator()(const Point &p,
+                          const Point &q,
+                          const Point &r) const
+  {
+    return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
+  }
 };
 
 template <class R,int dim>
 class Compare_distance_projected_3
 {
 public:
+  typedef typename R::Comparison_result Comparison_result;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
 
@@ -636,6 +640,7 @@ template <class R, int dim>
 class Compare_power_distance_projected_3
 {
 public:
+  typedef typename R::Comparison_result         Comparison_result;
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Weighted_point_2          Weighted_point_2;
   typedef typename R::Point_3                   Point_3;
@@ -817,6 +822,7 @@ template <class R, int dim>
 class Power_side_of_bounded_power_circle_projected_3
 {
 public:
+  typedef typename R::Bounded_side              Bounded_side;
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Weighted_point_2          Weighted_point_2;
   typedef typename R::Point_3                   Point_3;
@@ -832,24 +838,24 @@ public:
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq,
-                                const Weighted_point_3 &wr,
-                                const Weighted_point_3 &ws) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq,
+                          const Weighted_point_3 &wr,
+                          const Weighted_point_3 &ws) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq),
                                                     project(wr), project(ws));
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq,
-                                const Weighted_point_3 &wr) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq,
+                          const Weighted_point_3 &wr) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq), project(wr));
   }
 
-  CGAL::Bounded_side operator()(const Weighted_point_3 &wp,
-                                const Weighted_point_3 &wq) const
+  Bounded_side operator()(const Weighted_point_3 &wp,
+                          const Weighted_point_3 &wq) const
   {
     return CGAL::power_side_of_bounded_power_circle(project(wp), project(wq));
   }
@@ -975,7 +981,9 @@ public:
 
 
   struct Less_xy_2 {
+    typedef typename R::Comparison_result Comparison_result;
     typedef typename R::Boolean Boolean;
+
     Boolean operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;

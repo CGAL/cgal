@@ -47,8 +47,8 @@ public:
     LineH2(const RT& a, const RT& b, const RT& c)
       : base(CGAL::make_array(a, b, c)) {}
 
-    bool           operator==(const LineH2<R>& l) const;
-    bool           operator!=(const LineH2<R>& l) const;
+    typename R_::Boolean operator==(const LineH2<R>& l) const;
+    typename R_::Boolean operator!=(const LineH2<R>& l) const;
 
     const RT &     a() const { return get_pointee_or_identity(base)[0]; }
     const RT &     b() const { return get_pointee_or_identity(base)[1]; }
@@ -58,7 +58,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 LineH2<R>::operator==(const LineH2<R>& l) const
 {
   if (  (a() * l.c() != l.a() * c() )
@@ -83,7 +83,7 @@ LineH2<R>::operator==(const LineH2<R>& l) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 LineH2<R>::operator!=(const LineH2<R>& l) const
 { return !(*this == l); }
 

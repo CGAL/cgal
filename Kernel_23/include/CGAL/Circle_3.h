@@ -161,7 +161,7 @@ operator==(const Circle_3<R> &p,
 
 template < typename R >
 inline
-bool
+typename R::Boolean
 operator!=(const Circle_3<R> &p,
            const Circle_3<R> &q)
 {

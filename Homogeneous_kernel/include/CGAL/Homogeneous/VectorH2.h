@@ -82,10 +82,10 @@ public:
     return static_cast<const Self& >(*this);
   }
 
-   bool    operator==( const VectorH2<R>& v) const;
-   bool    operator!=( const VectorH2<R>& v) const;
-   bool    operator==( const Null_vector&) const;
-   bool    operator!=( const Null_vector& v) const;
+   typename R::Boolean operator==( const VectorH2<R>& v) const;
+   typename R::Boolean operator!=( const VectorH2<R>& v) const;
+   typename R::Boolean operator==( const Null_vector&) const;
+   typename R::Boolean operator!=( const Null_vector& v) const;
 
    const RT & hx() const { return CGAL::get_pointee_or_identity(base)[0]; };
    const RT & hy() const { return CGAL::get_pointee_or_identity(base)[1]; };
@@ -131,19 +131,19 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator==( const Null_vector&) const
 { return (hx() == RT(0)) && (hy() == RT(0)); }
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator!=( const Null_vector& v) const
 { return !(*this == v); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 VectorH2<R>::operator==( const VectorH2<R>& v) const
 {
   return (  (hx() * v.hw() == v.hx() * hw() )
@@ -152,7 +152,7 @@ VectorH2<R>::operator==( const VectorH2<R>& v) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator!=( const VectorH2<R>& v) const
 { return !(*this == v); }  /* XXX */
 

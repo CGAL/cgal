@@ -25,6 +25,7 @@ namespace CGAL {
 template < class R_ >
 class SegmentC3
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -44,11 +45,11 @@ public:
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
     : base(CGAL::make_array(sp, ep)) {}
 
-  bool        has_on(const Point_3 &p) const;
-  bool        collinear_has_on(const Point_3 &p) const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean collinear_has_on(const Point_3 &p) const;
 
-  bool        operator==(const SegmentC3 &s) const;
-  bool        operator!=(const SegmentC3 &s) const;
+  Boolean operator==(const SegmentC3 &s) const;
+  Boolean operator!=(const SegmentC3 &s) const;
 
   const Point_3 &   source() const
   {
@@ -73,12 +74,12 @@ public:
   Line_3      supporting_line() const;
   Segment_3   opposite() const;
 
-  bool        is_degenerate() const;
+  Boolean is_degenerate() const;
 };
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 {
   if (CGAL::identical(base, s.base))
@@ -88,7 +89,7 @@ SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::operator!=(const SegmentC3<R> &s) const
 {
   return !(*this == s);
@@ -184,7 +185,7 @@ SegmentC3<R>::opposite() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::is_degenerate() const
 {
   return source() == target();
@@ -192,7 +193,7 @@ SegmentC3<R>::is_degenerate() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::
 has_on(const typename SegmentC3<R>::Point_3 &p) const
 {
@@ -201,7 +202,7 @@ has_on(const typename SegmentC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::
 collinear_has_on(const typename SegmentC3<R>::Point_3 &p) const
 {

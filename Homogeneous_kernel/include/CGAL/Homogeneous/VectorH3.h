@@ -131,8 +131,8 @@ public:
 
   Vector_3 operator-() const;
 
-  bool  operator==( const VectorH3<R>& v) const;
-  bool  operator!=( const VectorH3<R>& v) const;
+  typename R::Boolean operator==( const VectorH3<R>& v) const;
+  typename R::Boolean operator!=( const VectorH3<R>& v) const;
 
   Vector_3 operator+( const VectorH3 &v) const;
   Vector_3 operator-( const VectorH3 &v) const;
@@ -173,7 +173,7 @@ VectorH3<R>::direction() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 VectorH3<R>::operator==( const VectorH3<R>& v) const
 {
  return ( (hx() * v.hw() == v.hx() * hw() )
@@ -183,7 +183,7 @@ VectorH3<R>::operator==( const VectorH3<R>& v) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH3<R>::operator!=( const VectorH3<R>& v) const
 { return !(*this == v); }
 

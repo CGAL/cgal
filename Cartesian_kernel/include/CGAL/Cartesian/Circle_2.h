@@ -25,6 +25,7 @@ namespace CGAL {
 template <class R_ >
 class CircleC2
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
   typedef typename R_::Circle_2             Circle_2;
@@ -49,8 +50,8 @@ public:
     base = Rep(center, squared_radius, orient);
   }
 
-  bool           operator==(const CircleC2 &s) const;
-  bool           operator!=(const CircleC2 &s) const;
+  Boolean operator==(const CircleC2& s) const;
+  Boolean operator!=(const CircleC2& s) const;
 
   const Point_2 & center() const
   {

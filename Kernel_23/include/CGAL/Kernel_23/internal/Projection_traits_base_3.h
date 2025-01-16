@@ -345,10 +345,13 @@ template <class Traits>
 class Less_xy_along_axis
 {
   // private members
+  typedef typename R::Comparison_result Comparison_result;
   typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
+
   Vector_3 base1, base2;
+
 public:
   Less_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
   {

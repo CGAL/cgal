@@ -693,7 +693,7 @@ power_side_of_oriented_power_sphereC3(const FT &pwt, const FT &qwt)
 }
 
 template < class FT >
-Comparison_result
+typename Compare<FT>::result_type
 compare_power_distanceC3(const FT &px, const FT &py, const FT &pz,
                          const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                          const FT &rx, const FT &ry, const FT &rz, const FT &rw)
