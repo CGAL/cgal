@@ -30,7 +30,8 @@ main( )
     cdt.insert_constraint( Point(j,0), Point(j,6));
 
   int count = 0;
-  for (const Triangulation::Subconstraint& sc :  cdt.subconstraints()) {
+  using Sc = Triangulation::Subconstraint;
+  for ([[maybe_unused]] const Sc& sc :  cdt.subconstraints()) {
     ++count;
   }
   std::cout << "The number of resulting constrained edges is  ";

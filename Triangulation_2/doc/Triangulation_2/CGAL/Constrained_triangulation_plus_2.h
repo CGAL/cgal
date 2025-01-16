@@ -360,6 +360,11 @@ void remove_constraint(Constraint_id cid);
 
 /// \name Access
 /// @{
+///
+/// \note
+/// Since CGAL-6.1, the value type of the range returned by `subconstraints()` has changed from
+/// `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+/// The old range type is now returned by the function `subconstraints_and_contexts()`.
 
 /*!
 returns a `Constraint_iterator` that points at the first

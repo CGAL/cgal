@@ -14,6 +14,12 @@
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 
+### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
+
+-  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
+   by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+   The old range type is now returned by a new function named `subconstraints_and_contexts()`.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
