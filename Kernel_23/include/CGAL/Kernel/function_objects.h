@@ -3076,12 +3076,10 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_3      Circle_3;
 
   public:
-
-    // Point_3 is special case since the global operator== would recurse.
     Boolean
     operator()(const Point_3 &p, const Point_3 &q) const
     {
-      return CGAL_AND_3(p.x() == q.x(), p.y() == q.y(), p.z() == q.z());
+      return p.rep() == q.rep();
     }
 
     Boolean
