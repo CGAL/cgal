@@ -88,11 +88,8 @@ _test_cls_point_2(const R& )
 
  assert( p0 == CGAL::ORIGIN);
  assert( p1 != CGAL::ORIGIN );
- // Doesn't work; Point_2::operator== can't be used :(
-#ifdef ENHANCED
  assert( CGAL::ORIGIN == p0 );
  assert( CGAL::ORIGIN != p1 );
-#endif
 
  assert( p3.hx() == n1 );   // don't replace p3
  assert( p3.hy() == n2 );
