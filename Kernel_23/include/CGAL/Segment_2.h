@@ -135,19 +135,6 @@ public:
     return R().construct_bbox_2_object()(*this);
   }
 
-  bool
-  operator==(const Segment_2 &s) const
-  {
-    return R().equal_2_object()(*this, s);
-  }
-
-  bool
-  operator!=(const Segment_2 &s) const
-  {
-    return !(*this == s);
-  }
-
-
   Direction_2
   direction() const
   {

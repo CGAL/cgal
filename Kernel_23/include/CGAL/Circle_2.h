@@ -178,18 +178,6 @@ public:
     return R().construct_bbox_2_object()(*this);
   }
 
-  typename R::Boolean
-  operator==(const Circle_2 &c) const
-  {
-    return R().equal_2_object()(*this, c);
-  }
-
-  typename R::Boolean
-  operator!=(const Circle_2 &c) const
-  {
-    return !(*this == c);
-  }
-
   Circle_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);

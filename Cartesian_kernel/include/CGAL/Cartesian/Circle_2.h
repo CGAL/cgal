@@ -70,6 +70,25 @@ public:
 
 };
 
+template < class R >
+typename R::Boolean
+CircleC2<R>::operator==(const CircleC2<R> &t) const
+{
+  if (CGAL::identical(base, t.base))
+    return true;
+
+  return center() == t.center() &&
+         squared_radius() == t.squared_radius() &&
+         orientation() == t.orientation();
+}
+
+template < class R >
+typename R::Boolean
+CircleC2<R>::operator!=(const CircleC2<R> &t) const
+{
+  return !(*this == t);
+}
+
 } //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CIRCLE_2_H

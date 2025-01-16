@@ -152,15 +152,6 @@ public:
 
 template < typename R >
 inline
-bool
-operator==(const Circle_3<R> &p,
-           const Circle_3<R> &q)
-{
-  return R().equal_3_object()(p, q);
-}
-
-template < typename R >
-inline
 typename R::Boolean
 operator!=(const Circle_3<R> &p,
            const Circle_3<R> &q)

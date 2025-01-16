@@ -201,19 +201,6 @@ public:
 
 };
 
-template <class R>
-inline
-bool
-operator==(const Origin& o, const Point_3<R>& p)
-{ return p == o; }
-
-template <class R>
-inline
-bool
-operator!=(const Origin& o, const Point_3<R>& p)
-{ return p != o; }
-
-
 template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&)

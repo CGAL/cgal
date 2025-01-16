@@ -96,19 +96,6 @@ public:
     return R().construct_max_vertex_2_object()(*this);
   }
 
-  bool
-  operator==(const Iso_rectangle_2 &i) const
-  {
-    return R().equal_2_object()(*this, i);
-  }
-
-  bool
-  operator!=(const Iso_rectangle_2 &i) const
-  {
-    return ! (*this == i);
-  }
-
-
   decltype(auto)
   vertex(int i) const
   {

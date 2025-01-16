@@ -799,8 +799,76 @@ operator==(const Point_3<K>& p, const Origin& o)
 template < class K >
 inline
 typename K::Boolean
+operator==(const Origin& o, const Point_3<K>& p)
+{ return p == o; }
+
+template < class K >
+inline
+typename K::Boolean
 operator!=(const Point_3<K>& p, const Origin& o)
 { return ! (p == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Origin& o, const Point_3<K>& p)
+{ return ! (p == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Origin& o, const Weighted_point_3<K>& p)
+{ return p == o; }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Origin& o, const Weighted_point_3<K>& p)
+{ return p != o; }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Point_3<K>& bp, const Weighted_point_3<K>& p)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Point_3<K>& bp, const Weighted_point_3<K>& p)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_3<K>& p, const Point_3<K>& bp)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_3<K>& p, const Point_3<K>& bp)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_3<K>& p, const Weighted_point_3<K>& p2)
+{ return p.point() == p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_3<K>& p, const Weighted_point_3<K>& p2)
+{ return p.point() != p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Circle_3<K>& p, const Circle_3<K>& q)
+{
+  return K().equal_3_object()(p, q);
+}
 
 template < class K >
 inline
@@ -931,8 +999,20 @@ operator==(const Vector_3<K>& p, const Null_vector& o)
 template < class K >
 inline
 typename K::Boolean
-operator!=(const Vector_3<K>& p, const Null_vector& o)
-{ return ! (p == o); }
+operator==(const Null_vector& o, const Vector_3<K>& v)
+{ return (v == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Vector_3<K>& v, const Null_vector& o)
+{ return ! (v == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Null_vector& o, const Vector_3<K>& v)
+{ return ! (v == o); }
 
 
 template < class K >
@@ -958,6 +1038,12 @@ inline
 typename K::Boolean
 operator>=(const Point_3<K>& p, const Point_3<K>& q)
 { return ! K().less_xyz_3_object()(p, q); }
+
+template < class K >
+inline
+typename K::Boolean
+operator<(const Weighted_point_3<K>& p, const Weighted_point_3<K>& q)
+{ return p.point() < q.point(); }
 
 template < class K >
 inline

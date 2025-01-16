@@ -176,18 +176,6 @@ public:
     return R().construct_line_2_object()(source(), second_point());
   }
 
-  bool
-  operator==(const Ray_2& r) const
-  {
-    return R().equal_2_object()(*this, r);
-  }
-
-  bool
-  operator!=(const Ray_2& r) const
-  {
-    return !(*this == r);
-  }
-
   Ray_2
   transform(const Aff_transformation_2 &t) const
   {
