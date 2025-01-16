@@ -142,7 +142,7 @@ inline
 typename R::Boolean
 operator==(const VectorC3<R> &v, const VectorC3<R> &w)
 {
-  return w.x() == v.x() && w.y() == v.y() && w.z() == v.z();
+  return CGAL_AND_3(w.x() == v.x(), w.y() == v.y(), w.z() == v.z());
 }
 
 template < class R >
@@ -158,8 +158,7 @@ inline
 typename R::Boolean
 operator==(const VectorC3<R> &v, const Null_vector &)
 {
-  return CGAL_NTS is_zero(v.x()) && CGAL_NTS is_zero(v.y()) &&
-         CGAL_NTS is_zero(v.z());
+  return CGAL_AND_3(CGAL_NTS is_zero(v.x()), CGAL_NTS is_zero(v.y()), CGAL_NTS is_zero(v.z()));
 }
 
 template < class R >
