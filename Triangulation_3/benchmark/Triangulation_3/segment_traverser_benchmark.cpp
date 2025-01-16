@@ -44,7 +44,7 @@ void bench_segment_traverser(const int nb_queries,
   typedef CGAL::Triangulation_segment_simplex_iterator_3<DT> Simplex_traverser;
   typedef CGAL::Triangulation_segment_cell_iterator_3<DT>    Cell_traverser;
   typedef typename DT::Point_3                               Point_3;
-  typedef typename DT::Cell                                  Cell;
+  typedef typename DT::Cell_handle                           Cell_handle;
 
   std::cout << "\nBench :\t " << nb_queries << " queries," << std::endl
     << "\t in triangulation of size " << nbv << std::endl
@@ -83,29 +83,29 @@ void bench_segment_traverser(const int nb_queries,
   {
     //Simplex traverser
     timer_st.start();
-    Simplex_traverser st(dt, segments[2*i], segments[2*i + 1]);
+    Simplex_traverser st(&dt, segments[2*i], segments[2*i + 1]);
 
     // Count the number of finite cells traversed.
     unsigned int inf = 0, fin = 0;
     for (; st != st.end(); ++st)
     {
-      Cell c = st.cell();
-//      if (dt.is_infinite(c)) ++inf;
-//      else                  ++fin;
+      Cell_handle c = st.get_cell();
+      // if (dt.is_infinite(c)) ++inf;
+      // else                  ++fin;
     }
     timer_st.stop();
 
     //Cell traverser
     timer_ct.start();
-    Cell_traverser ct(dt, segments[2*i], segments[2*i + 1]);
+    Cell_traverser ct(&dt, segments[2*i], segments[2*i + 1]);
 
     // Count the number of finite cells traversed.
     inf = 0, fin = 0;
     for (; ct != ct.end(); ++ct)
     {
-      Cell c = ct.cell();
-//      if (dt.is_infinite(c)) ++inf;
-//      else                  ++fin;
+      Cell_handle c = ct.handle();
+      // if (dt.is_infinite(c)) ++inf;
+      // else                  ++fin;
     }
     timer_ct.stop();
   }
