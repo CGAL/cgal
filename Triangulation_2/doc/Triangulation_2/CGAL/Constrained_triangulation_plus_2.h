@@ -77,7 +77,7 @@ A default constructed `Constraint_id` is a singular value that can not be the ID
   typedef unspecified_type Constraint_id;
 
 /*!
-An iterator to visit
+A bidirectional iterator to visit
 all the input constraints. The order of visit is undefined.
 The value type of this iterator is `Constraint_id`.
 */
@@ -96,7 +96,7 @@ A subconstraint is a pair of vertices that correspond to an `Edge`.
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
 /*!
-An iterator to visit all the subconstraints of the triangulation.
+A bidirectional iterator to visit all the subconstraints of the triangulation.
 The order of visit is undefined.
 The value type of this iterator is `Subconstraint`.
 */
@@ -109,7 +109,7 @@ the range is `Subconstraint_iterator`.
 typedef unspecified_type Subconstraints;
 
 /*!
-An iterator to visit all the subconstraints of the triangulation and the
+A bidirectional iterator to visit all the subconstraints of the triangulation and the
 contexts of their enclosing constraints. The order of visit is undefined.
 The value type of this iterator is `const std::pair<const Subconstraint, std::list<Context>*>`.
 */
@@ -122,7 +122,7 @@ the range is `Subconstraint_and_contexts_iterator`.
 typedef unspecified_type Subconstraints_and_contexts;
 
 /*!
-An iterator on the
+A bidirectional iterator on the
 vertices of the chain of subconstraints representing a
 constraint. The value type of this iterator is `Vertex_handle`.
 */
@@ -164,10 +164,8 @@ through a subconstraint.
   };
 
 /*!
-An iterator on
-constraints enclosing a given subconstraint. The value type of this
-iterator
-is `Context`.
+A bidirectional iterator on constraints enclosing a given subconstraint.
+The value type of this iterator is `Context`.
 */
 typedef unspecified_type Context_iterator;
 
