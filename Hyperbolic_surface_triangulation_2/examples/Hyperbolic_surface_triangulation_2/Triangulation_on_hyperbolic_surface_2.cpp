@@ -3,7 +3,7 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
-#include <CGAL/Delaunay_Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Hyperbolic_surface_triangulation_2.h>
 #include <time.h>
 
 typedef CGAL::Exact_rational                                         Rational;
@@ -12,8 +12,7 @@ typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>     ParentTrait
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>              Traits;
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                Domain;
 typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>        Factory;
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>          Triangulation;
-typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits> Delaunay_triangulation;
+typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>             Triangulation;
 
 int main(){
   // Generates the domain:
@@ -30,15 +29,6 @@ int main(){
 
   // Prints the triangulation:
   std::cout << triangulation << std::endl;
-
-  // Generates a Delaunay triangulation
-  Delaunay_triangulation dt = Delaunay_triangulation(domain);
-
-  triangulation.has_anchor();
-  dt.has_anchor();
-  dt.make_Delaunay();
- // Prints the triangulation:
-  std::cout << dt << std::endl;
 
   return 0;
 }
