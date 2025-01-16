@@ -39,7 +39,7 @@ struct PM_to_PS_point_converter
 {
   PS_Point operator()(const PM_Point& p) const
   {
-    CGAL_static_assertion((std::is_convertible<PM_Point, PS_Point>::value));
+    static_assert(std::is_convertible<PM_Point, PS_Point>::value);
     return PS_Point(p);
   }
 };

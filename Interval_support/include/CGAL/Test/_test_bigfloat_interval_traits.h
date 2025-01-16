@@ -41,7 +41,7 @@ void test_bigfloat_interval_traits() {
   typedef typename BFIT::Is_bigfloat_interval Is_bigfloat_interval;
   CGAL_USE_TYPE(Is_bigfloat_interval);
   // using CGAL::Tag_true;
-  CGAL_static_assertion(( ::std::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value));
+  static_assert(::std::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value);
 
   const typename BFIT::Construct construct = typename BFIT::Construct();
   const typename BFIT::Set_precision set_precision = typename BFIT::Set_precision();

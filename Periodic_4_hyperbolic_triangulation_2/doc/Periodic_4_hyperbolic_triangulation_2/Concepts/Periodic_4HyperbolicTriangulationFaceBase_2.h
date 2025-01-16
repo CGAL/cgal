@@ -20,7 +20,9 @@ corresponding vertex produces the canonical representative of the face in the hy
 Hyperbolic translations are represented by a nested type which is provided by the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
-\cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_face_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_4_hyperbolic_triangulation_face_base_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `Periodic_4HyperbolicTriangulationVertexBase_2`

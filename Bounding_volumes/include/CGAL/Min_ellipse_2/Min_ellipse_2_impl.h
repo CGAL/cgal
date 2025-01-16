@@ -10,6 +10,11 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
+#ifndef CGAL_MIN_ELLIPSE_2_MIN_ELLIPSE_2_IMP_H
+#define CGAL_MIN_ELLIPSE_2_MIN_ELLIPSE_2_IMP_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 #include <iterator>
 
 namespace CGAL {
@@ -98,3 +103,5 @@ operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif // CGAL_MIN_ELLIPSE_2_MIN_ELLIPSE_2_IMP_H

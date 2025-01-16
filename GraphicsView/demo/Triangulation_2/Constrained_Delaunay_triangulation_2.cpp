@@ -288,7 +288,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with
   // the signal/slot mechanism
-  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
+  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
                    this, SLOT(processInput(CGAL::Object)));
 
@@ -925,7 +925,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

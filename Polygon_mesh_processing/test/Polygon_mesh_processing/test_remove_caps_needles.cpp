@@ -1,12 +1,13 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <fstream>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
+
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -28,7 +29,7 @@ void general_test(std::string filename)
   std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+  if (!CGAL::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Not a valid input file." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -56,7 +57,8 @@ void test_with_envelope(std::string filename, double eps)
   std::ifstream input(filename);
 
   Mesh mesh, bk;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+  if (!CGAL::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
     std::cerr << "Not a valid input file." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -131,7 +133,8 @@ void test_parameters_on_pig(std::string filename)
   std::ifstream input(filename);
 
   Mesh mesh, bk;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+  if (!CGAL::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
     std::cerr << "Not a valid input file." << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -164,13 +167,11 @@ void test_parameters_on_pig(std::string filename)
 int main(int argc, char** argv)
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
+  double eps = (argc > 2) ? atof(argv[2]) : 0.01;
 
   general_test(filename);
-  if (argc==2)
-    test_with_envelope(filename, 0.01);
-  else
-    if (argc==3)
-      test_with_envelope(filename, atof(argv[2]));
+
+  test_with_envelope(filename, eps);
 
   // only run that test with pig.off
   if (argc==1)

@@ -44,7 +44,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function uses the Jarvis march (gift-wrapping)
-algorithm \cgalCite{j-ichfs-73}. This algorithm requires \f$ O(n h)\f$ time
+algorithm \cgalCite{j-ichfs-73}. This algorithm requires \cgalBigO{n h} time
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 
 */
@@ -97,7 +97,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 The function uses the Jarvis march (gift-wrapping) algorithm \cgalCite{j-ichfs-73}.
-This algorithm requires \f$ O(n h)\f$ time in the worst
+This algorithm requires \cgalBigO{n h} time in the worst
 case for \f$ n\f$ input points with \f$ h\f$ extreme points
 
 \pre `start_p` and `stop_p` are extreme points with respect to

@@ -18,8 +18,7 @@ int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
-  std::ifstream is(filename);
-  if(!is || !(is >> surface_mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
@@ -32,6 +31,8 @@ int main(int argc, char** argv)
   }
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+  std::cout << num_vertices(surface_mesh) << " vertices, " << num_edges(surface_mesh) << " edges (BEFORE)" << std::endl;
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count

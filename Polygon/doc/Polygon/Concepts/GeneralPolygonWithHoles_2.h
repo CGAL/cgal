@@ -8,8 +8,10 @@
  * represents the outer boundary and the general polygons that represent
  * the holes.
  *
- * \cgalHasModel `CGAL::General_polygon_with_holes_2<Polygon>`
- * \cgalHasModel `CGAL::Polygon_with_holes_2<Kernel,Container>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::General_polygon_with_holes_2<Polygon>}
+ * \cgalHasModels{CGAL::Polygon_with_holes_2<Kernel,Container>}
+ * \cgalHasModelsEnd
  */
 
 class GeneralPolygonWithHoles_2 {

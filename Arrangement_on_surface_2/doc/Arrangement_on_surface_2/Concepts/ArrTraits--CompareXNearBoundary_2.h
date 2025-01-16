@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableTernaryFunction}
  *
- * \cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_x_near_boundary_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Compare_x_near_boundary_}
+ * \cgalHasModelsEnd
  */
 class CompareXNearBoundary_2 {
 public:

@@ -42,7 +42,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
 
   typedef Vector_2                    Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Vector_2>::value));
+  static_assert(std::is_same<Self, typename R_::Vector_2>::value);
 
 public:
 
@@ -88,8 +88,11 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2 >
-  Vector_2(const T1 &x, const T2 &y)
-      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y)) {}
+  Vector_2(T1&& x, T2&& y)
+    : RVector_2(typename R::Construct_vector_2()(Return_base_tag(),
+                                                 std::forward<T1>(x),
+                                                 std::forward<T2>(y)))
+  {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}

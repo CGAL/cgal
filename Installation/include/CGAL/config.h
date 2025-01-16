@@ -36,12 +36,14 @@
 #  define WIN64
 #endif
 
-#ifdef _MSC_VER
-#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
-#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
-#endif
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+// Include support for memory leak detection
+// This is only available in debug mode and when _CRTDBG_MAP_ALLOC is defined.
+// It will include <crtdbg.h> which will redefine `malloc` and `free`.
+#  define _CRTDBG_MAP_ALLOC 1
+#endif
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
 #include <windows.h>
@@ -117,6 +119,7 @@
 #include <boost/version.hpp>
 
 #include <CGAL/version.h>
+#include <CGAL/version_checker.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
@@ -146,13 +149,17 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-// Same for C++17
-#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
-#  define CGAL_CXX17 1
+#if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
+#error "CGAL requires C++ 17"
 #endif
-// Same for C++20
+
+// Macro to detect C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
+#endif
+// Same for C++23
+#if __cplusplus >= 202302L || _MSVC_LANG >= 202302L
+#  define CGAL_CXX23 1
 #endif
 
 
@@ -247,20 +254,6 @@
 #  define CGAL_SUNPRO_INITIALIZE(C)
 #endif
 
-//----------------------------------------------------------------------//
-// MacOSX specific.
-//----------------------------------------------------------------------//
-
-#ifdef __APPLE__
-#  if defined(__GNUG__) && (__GNUG__ == 4) && (__GNUC_MINOR__ == 0) \
-   && defined(__OPTIMIZE__) && !defined(CGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG)
-#    warning "Your configuration may exhibit run-time errors in CGAL code"
-#    warning "This appears with g++ 4.0 on MacOSX when optimizing"
-#    warning "You can disable this warning using -DCGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG"
-#    warning "For more information, see https://www.cgal.org/FAQ.html#mac_optimization_bug"
-#  endif
-#endif
-
 //-------------------------------------------------------------------//
 // When the global min and max are no longer defined (as macros)
 // because of NOMINMAX flag definition, we define our own global
@@ -297,7 +290,9 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See https://clang.llvm.org/docs/LanguageExtensions.html
-// See also https://en.cppreference.com/w/cpp/experimental/feature_test
+//
+// Some of those macro have been standardized. See C++20 feature testing:
+//   https://en.cppreference.com/w/cpp/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -318,6 +313,10 @@ using std::max;
 #endif
 #ifndef __has_warning
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
+#endif
+
+#if __has_include(<version>)
+#  include <version>
 #endif
 
 // Macro to specify a 'unused' attribute.
@@ -356,8 +355,11 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
+#ifdef CGAL_CXX23
+#  define CGAL_ASSUME(EX) [[ assume(EX) ]]
+#  define CGAL_UNREACHABLE() std::unreachable()
+#elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
@@ -474,6 +476,14 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
+#if __cpp_lib_concepts >= 201806L
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
+#  define CGAL_TYPE_CONSTRAINT(x) x
+#else
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x)
+#  define CGAL_TYPE_CONSTRAINT(x) typename
+#endif
+
 // The fallthrough attribute
 // See for clang:
 //   https://clang.llvm.org/docs/AttributeReference.html#statement-attributes
@@ -491,10 +501,8 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if CGAL_CXX17
-#  define CGAL_CPP17_INLINE inline
-#else
-#  define CGAL_CPP17_INLINE
+#if __cpp_lib_format >= 201907L || (__has_include(<format>) && (__cplusplus >= 202000L || _MSVC_LANG >= 202000L))
+#  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 
 #ifndef CGAL_NO_ASSERTIONS

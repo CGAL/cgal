@@ -47,8 +47,8 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Floor::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::std::is_same<NT, Argument_type>::value));
-    CGAL_static_assertion(( ::std::is_same<Integer, Result_type>::value));
+    static_assert(::std::is_same<NT, Argument_type>::value);
+    static_assert(::std::is_same<Integer, Result_type>::value);
     assert(Integer(42) == floor(NT(42)));
     assert(Integer(-42) == floor(NT(-42)));
   }
@@ -59,8 +59,8 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Floor_log2_abs::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::std::is_same<NT, Argument_type>::value));
-    CGAL_static_assertion(( ::std::is_same<long, Result_type>::value));
+    static_assert(::std::is_same<NT, Argument_type>::value);
+    static_assert(::std::is_same<long, Result_type>::value);
 
     assert(long(0) == floor_log2_abs(NT(1)));
     assert(long(0) == floor_log2_abs(NT(-1)));
@@ -86,8 +86,8 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Ceil::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::std::is_same<NT, Argument_type>::value));
-    CGAL_static_assertion(( ::std::is_same<Integer, Result_type>::value));
+    static_assert(::std::is_same<NT, Argument_type>::value);
+    static_assert(::std::is_same<Integer, Result_type>::value);
     assert(Integer(42) == ceil(NT(42)));
     assert(Integer(-42) == ceil(NT(-42)));
   }
@@ -98,8 +98,8 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Ceil_log2_abs::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::std::is_same<NT, Argument_type>::value));
-    CGAL_static_assertion(( ::std::is_same<long, Result_type>::value));
+    static_assert(::std::is_same<NT, Argument_type>::value);
+    static_assert(::std::is_same<long, Result_type>::value);
 
     assert(long(0) == ceil_log2_abs(NT(1)));
     assert(long(0) == ceil_log2_abs(NT(-1)));

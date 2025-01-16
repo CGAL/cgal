@@ -29,7 +29,7 @@ public:
 };
 
 template<class T>
-CGAL_CPP17_INLINE constexpr bool Has_member_clear_v = Has_member_clear<T>::value;
+inline constexpr bool Has_member_clear_v = Has_member_clear<T>::value;
 
 }  // internal
 }  // cgal

@@ -88,10 +88,10 @@ class Mesh_sizing_field
                                   typename Tr::Concurrency_tag>
 {
   // Types
-  typedef typename Tr::Geom_traits              Gt;
+  typedef typename Tr::Geom_traits              GT;
   typedef typename Tr::Bare_point               Bare_point;
   typedef typename Tr::Weighted_point           Weighted_point;
-  typedef typename Gt::FT                       FT;
+  typedef typename GT::FT                       FT;
 
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
@@ -169,7 +169,7 @@ fill(const std::map<Bare_point, FT>& value_map)
 {
   typedef typename Tr::Finite_vertices_iterator  Fvi;
 
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   for ( Fvi vit = tr_.finite_vertices_begin(); vit != tr_.finite_vertices_end(); ++ vit )
   {
@@ -196,7 +196,7 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Bare_point& p, const Cell_handle& c) const
 {
-  typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
 
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   //use the inexact locate (much faster than locate) to get a hint
@@ -239,8 +239,8 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename Gt::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
 
   // Interpolate value using tet vertices values
   const FT& va = cell->vertex(0)->meshing_info();
@@ -275,9 +275,9 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
-  typename Gt::Compute_area_3 area =  tr_.geom_traits().compute_area_3_object();
+  typename GT::Compute_area_3 area =  tr_.geom_traits().compute_area_3_object();
 
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   // Find infinite vertex and put it in k0
   int k0 = 0;
   int k1 = 1;

@@ -14,7 +14,7 @@ The template argument must be a model of the concept
 predicates to construct a regular triangulation of the weighted
 points.
 
-\cgalModels `SkinSurface_3`
+\cgalModels{SkinSurface_3}
 
 */
 template< typename SkinSurfaceTraits_3 >

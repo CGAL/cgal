@@ -31,7 +31,7 @@
  * class-template.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
@@ -1551,7 +1551,7 @@ split_edge(Halfedge_handle e,
   //    o---------e-------->o
   if (_are_equal(source, cv1, ARR_MIN_END)) {
     const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv1);
-    CGAL_postcondition_code
+    CGAL_precondition_code
       (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv2));
     CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
     CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MAX_END));
@@ -1562,7 +1562,7 @@ split_edge(Halfedge_handle e,
   //    o<--------e---------o
   if (_are_equal(source, cv1, ARR_MAX_END)) {
     const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv1);
-    CGAL_postcondition_code
+    CGAL_precondition_code
       (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv2));
     CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
     CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MIN_END));
@@ -1573,7 +1573,7 @@ split_edge(Halfedge_handle e,
   //    o---------e-------->o
   if (_are_equal(source, cv2, ARR_MIN_END)) {
     const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv2);
-    CGAL_postcondition_code
+    CGAL_precondition_code
       (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv1));
     CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
     CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MAX_END));
@@ -1584,7 +1584,7 @@ split_edge(Halfedge_handle e,
   //    o<--------e---------o
   CGAL_precondition(_are_equal(source, cv2, ARR_MAX_END));
   const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv2);
-  CGAL_postcondition_code
+  CGAL_precondition_code
     (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv1));
   CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
   CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MIN_END));
@@ -2253,7 +2253,7 @@ _place_and_set_curve_end(DFace* f,
     return v;
   }
 
-  DHalfedge** fict_he_p = boost::get<DHalfedge*>(&*obj);
+  DHalfedge** fict_he_p = std::get_if<DHalfedge*>(&*obj);
   if (fict_he_p != nullptr) {
     DHalfedge* fict_he = *fict_he_p;
     CGAL_assertion(fict_he != nullptr);
@@ -2273,7 +2273,7 @@ _place_and_set_curve_end(DFace* f,
                                         Halfedge_handle((*p_pred)->next()));
     return v;
   }
-  DVertex** v_p = boost::get<DVertex*>(&*obj);
+  DVertex** v_p = std::get_if<DVertex*>(&*obj);
   CGAL_assertion(v_p != nullptr);
   DVertex* v = *v_p;
   CGAL_assertion(v != nullptr);
@@ -2534,7 +2534,7 @@ _insert_at_vertices(DHalfedge* he_to,
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
       // - search only local minima to find leftmost vertex
-      // - re-use of signs of ccbs
+      // - reuse of signs of ccbs
       // signs1/2 are only used when hole1 == hole2,
       // thus we have to init them now
       Arr_halfedge_direction cv_dir1 = cv_dir;

@@ -15,12 +15,12 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_face_extended_dcel<Traits, unsigned int> Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>                  Ex_arrangement;
-typedef CGAL::Dual<Ex_arrangement>                         Dual_arrangement;
-typedef CGAL::Arr_face_index_map<Ex_arrangement>           Face_index_map;
-typedef Extended_face_property_map<Ex_arrangement,unsigned int>
-                                                           Face_property_map;
+using Dcel = CGAL::Arr_face_extended_dcel<Traits, unsigned int>;
+using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
+using Dual_arrangement = CGAL::Dual<Ex_arrangement>;
+using Face_index_map = CGAL::Arr_face_index_map<Ex_arrangement>;
+using Face_property_map =
+  Extended_face_property_map<Ex_arrangement,unsigned int>;
 
 int main() {
   // Construct an arrangement of seven intersecting line segments.

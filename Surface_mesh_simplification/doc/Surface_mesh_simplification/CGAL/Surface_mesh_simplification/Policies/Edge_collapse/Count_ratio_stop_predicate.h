@@ -12,7 +12,7 @@ which returns `true` when the relation between the initial and current number of
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `StopPredicate`
+\cgalModels{StopPredicate}
 
 \sa `CGAL::Surface_mesh_simplification::Edge_count_ratio_stop_predicate<TriangleMesh>`
 \sa `CGAL::Surface_mesh_simplification::Face_count_ratio_stop_predicate<TriangleMesh>`

@@ -58,10 +58,10 @@ _test_cls_point_3(const R& )
  CGAL::Weighted_point_3<R> wp(p1);
  CGAL::Point_3<R> p7(wp);
 
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_3<R>,
-                                               CGAL::Point_3<R> >::value));
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_3<R>,
-                                               CGAL::Weighted_point_3<R> >::value));
+ static_assert(!std::is_convertible<CGAL::Weighted_point_3<R>,
+                                    CGAL::Point_3<R> >::value);
+ static_assert(!std::is_convertible<CGAL::Point_3<R>,
+                                    CGAL::Weighted_point_3<R> >::value);
 
  std::cout << '.';
 

@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -444,8 +444,8 @@ generic_clip_impl(
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<Vpm>::value_type,
-                                      typename boost::property_traits<Vpm>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<Vpm>::value_type,
+                             typename boost::property_traits<Vpm>::value_type>::value);
 
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                               get_property_map(boost::vertex_point, tm1));
@@ -566,7 +566,7 @@ generic_clip_impl(
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm` and `clipper` will be
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm` and `clipper` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -668,7 +668,7 @@ clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -721,7 +721,7 @@ bool clip(TriangleMesh& tm,
   using params::get_parameter;
   using params::choose_parameter;
 
-  if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
+  if(std::begin(faces(tm))==std::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
 
@@ -738,7 +738,7 @@ bool clip(TriangleMesh& tm,
     case ON_NEGATIVE_SIDE:
       return true; // nothing to clip, the full mesh is on the negative side
     case ON_POSITIVE_SIDE:
-      clear(tm); // clear the mesh that is fully on the positive side
+      remove_all_elements(tm); // clear the mesh that is fully on the positive side
       return true;
     default:
       break;
@@ -778,7 +778,7 @@ bool clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `iso_cuboid` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -831,7 +831,7 @@ bool clip(TriangleMesh& tm,
   using params::get_parameter;
   using params::choose_parameter;
 
-  if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
+  if(std::begin(faces(tm))==std::end(faces(tm))) return true;
   TriangleMesh clipper;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
@@ -980,7 +980,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -1069,7 +1069,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `iso_cuboid` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}

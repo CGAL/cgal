@@ -218,6 +218,25 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
 
+template<typename PolygonMesh,
+         typename NamedParameters = parameters::Default_named_parameters>
+typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
+average_edge_length(const PolygonMesh& pmesh,
+                    const NamedParameters& np = parameters::default_values())
+{
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+
+  const std::size_t n = edges(pmesh).size();
+  CGAL_assertion(n > 0);
+
+  typename GT::FT avg_edge_length = 0;
+  for (auto e : edges(pmesh))
+    avg_edge_length += edge_length(e, pmesh, np);
+
+  avg_edge_length /= static_cast<typename GT::FT>(n);
+  return avg_edge_length;
+}
+
 /**
   * \ingroup PMP_measure_grp
   *
@@ -998,8 +1017,8 @@ void match_faces(const PolygonMesh1& m1,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
-  CGAL_static_assertion_msg((std::is_same<typename boost::property_traits<VPMap1>::value_type,
-                             typename boost::property_traits<VPMap2>::value_type>::value),
+  static_assert(std::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value,
                             "Both vertex point maps must have the same point type.");
 
   const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);

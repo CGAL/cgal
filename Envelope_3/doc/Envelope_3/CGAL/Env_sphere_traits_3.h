@@ -25,7 +25,7 @@ The `Xy_monotone_surface_3` type is the same as the nested
 hemisphere when it computes lower envelopes, and ignores the lower
 hemisphere when it computes upper envelopes.
 
-\cgalModels `EnvelopeTraits_3`
+\cgalModels{EnvelopeTraits_3}
 
 */
 template< typename ConicTraits >

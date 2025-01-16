@@ -26,7 +26,6 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/function_objects.h>
 #include <functional>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 

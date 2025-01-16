@@ -20,7 +20,9 @@ DOXYGEN_2=$($PATH_TO_1_9_6 --version)
 
 DO_COMPARE=TRUE
 PATH_TO_SCRIPTS=${PWD}
+NB_CORES="$(nproc)"
 
+set +e
 #######################################
 ## download and build doxygen_master ##
  #######################################

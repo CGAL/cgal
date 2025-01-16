@@ -749,23 +749,23 @@ _test_cls_regular_triangulation_2( const Triangulation & )
    // input output have not yet been overload
    // so they do not input output hidden vertices
   std::cout << "    output to a file" << std::endl;
-  std::ofstream of1_5("T15.triangulation");
+  std::ofstream of1_5("T15rt.triangulation");
   CGAL::IO::set_ascii_mode(of1_5);
   of1_5 << T1_5; of1_5.close();
-  std::ofstream of2_3("T23.triangulation");
+  std::ofstream of2_3("T23rt.triangulation");
   CGAL::IO::set_ascii_mode(of2_3);
   of2_3 << T2_3; of2_3.close();
 
 
 //   std::cout << "    input from a file" << std::endl;
 
-//   std::ifstream if1_5("T15.triangulation"); CGAL::IO::set_ascii_mode(if1_5);
+//   std::ifstream if1_5("T15rt.triangulation"); CGAL::IO::set_ascii_mode(if1_5);
 //   Cls T1_5_copy; if1_5 >> T1_5_copy;
  //  assert( T1_5_copy.is_valid(verbose) &&
 //           T1_5_copy.number_of_vertices() ==
 //           T1_5.number_of_vertices() - T1_5.number_of_hidden_vertices());
 
-//   std::ifstream if2_3("T23.triangulation"); CGAL::IO::set_ascii_mode(if2_3);
+//   std::ifstream if2_3("T23rt.triangulation"); CGAL::IO::set_ascii_mode(if2_3);
 //   Cls T2_3_copy; if2_3 >> T2_3_copy;
   // assert( T2_3_copy.is_valid(verbose) &&
 //           T2_3_copy.number_of_vertices() ==

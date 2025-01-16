@@ -20,7 +20,7 @@ default value for `Method_tag` is `CGAL::Integral_domain_without_division_tag`.
 The way the predicates are evaluated is discussed in
 \cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}.
 
-\cgalModels `ApolloniusGraphTraits_2`
+\cgalModels{ApolloniusGraphTraits_2}
 
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`

@@ -206,7 +206,7 @@ polynomial_power_to_bernstein_approx(
     std::vector<Integer> f(n+1);
     polynomial_affine_transform_approx_log_denom(
             first, beyond, f.begin(),
-            upper_num - lower_num, lower_num, log_denom,
+            Integer(upper_num - lower_num), lower_num, log_denom,
             p+q,
             approx, log, logl
     );
@@ -865,7 +865,7 @@ public:
     by trying randomly and checking.  This randomization means
     the same polynomial and same initial interval may give rise
     to different intervals each time this class is used.
-    As indicated in the paper, we favour subdivision ratios
+    As indicated in the paper, we favor subdivision ratios
     with a small denominator. Hence we first try denominator
     2 (subdivision at midpoint), then denominator 16, and
     only then the "proper" denominator prescribed by theory.

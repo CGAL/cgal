@@ -19,26 +19,13 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
-#include <boost/mpl/integral_c.hpp>
 
 namespace CGAL {
 
 struct Void {};
 
-// Boolean_tag<bool> is a model of the Boost Integral Constant concept.
-// https://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
 template <bool b>
-struct Boolean_tag {
-  typedef boost::mpl::integral_c_tag tag;
-  typedef bool value_type;
-  static const bool value = b;
-  typedef Boolean_tag<b> type;
-  operator bool() const { return this->value; }
-};
-/* In C++11, try:
-template <bool b>
-using Boolean_tag = std::integral_constant<bool, b>;
-*/
+using Boolean_tag = std::bool_constant<b>;
 
 typedef Boolean_tag<true>   Tag_true;
 typedef Boolean_tag<false>  Tag_false;
@@ -63,6 +50,11 @@ typedef CGAL::Parallel_tag Parallel_if_available_tag;
 #else
 typedef CGAL::Sequential_tag Parallel_if_available_tag;
 #endif
+
+// For Surface_mesher and Mesh_3
+struct Non_manifold_tag {};
+struct Manifold_tag {};
+struct Manifold_with_boundary_tag {};
 
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.

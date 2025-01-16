@@ -9,8 +9,10 @@ The concept requires a constructor from an iterator range of
 weighted points and a shrink factor. By default the input balls are
 grown in such that the skin surface wraps around the input balls.
 
-\cgalHasModel `CGAL::Skin_surface_3<SkinSurfaceTraits_3>`
-\cgalHasModel `CGAL::Union_of_balls_3<SkinSurfaceTraits_3>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}
+\cgalHasModels{CGAL::Union_of_balls_3<SkinSurfaceTraits_3>}
+\cgalHasModelsEnd
 
 */
 

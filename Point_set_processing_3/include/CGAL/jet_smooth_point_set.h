@@ -200,7 +200,7 @@ jet_smooth_point_set(
   typedef typename NP_helper::Geom_traits Kernel;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
-  CGAL_static_assertion_msg(!(std::is_same<SvdTraits,
+  static_assert(!(std::is_same<SvdTraits,
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 

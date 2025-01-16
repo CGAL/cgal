@@ -10,7 +10,7 @@ functions `min_rectangle_2()`, `min_parallelogram_2()` and
 
 \tparam K must be a model for `Kernel`.
 
-\cgalModels `MinQuadrilateralTraits_2`
+\cgalModels{MinQuadrilateralTraits_2}
 
 \sa `CGAL::min_rectangle_2()`
 \sa `CGAL::min_parallelogram_2()`

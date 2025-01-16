@@ -115,6 +115,7 @@ public:
   // Types
   typedef Index_                      Index;
   typedef typename GT::FT             FT;
+  typedef typename Vb::Point          Point;
 
   // Constructor
   Mesh_vertex_3()
@@ -309,7 +310,7 @@ of the concept `MeshDomain_3`.
 of the concept `RegularTriangulationVertexBase_3` and defaults to
 `Regular_triangulation_vertex_base_3<GT>`.
 
-\cgalModels `MeshVertexBase_3`
+\cgalModels{MeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 */
@@ -324,6 +325,7 @@ struct Mesh_vertex_base_3 {
 #endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
+  using Point = typename Vb::Point;
 
   template < class TDS3 >
   struct Rebind_TDS {

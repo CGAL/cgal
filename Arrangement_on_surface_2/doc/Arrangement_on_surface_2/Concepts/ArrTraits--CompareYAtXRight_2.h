@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableTernaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Compare_y_at_x_right_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Compare_y_at_x_right_2}
+ * \cgalHasModelsEnd
  */
 class CompareYAtXRight_2 {
 public:

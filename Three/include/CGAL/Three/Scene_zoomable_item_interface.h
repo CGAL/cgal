@@ -31,5 +31,5 @@ public:
 }
 }
 
-Q_DECLARE_INTERFACE(CGAL::Three::Scene_zoomable_item_interface, "com.geometryfactory.PolyhedronDemo.ZoomInterface/1.0")
+Q_DECLARE_INTERFACE(CGAL::Three::Scene_zoomable_item_interface, "com.geometryfactory.CGALLab.ZoomInterface/1.0")
 #endif // SCENE_ZOOMABLE_ITEM_INTERFACE_H

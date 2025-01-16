@@ -18,8 +18,8 @@ struct With_report_as_a_template_member_function {
 
 int main() {
   using CGAL::Box_intersection_d::Has_member_report;
-  CGAL_static_assertion(!Has_member_report<S>::value);
-  CGAL_static_assertion(Has_member_report<With_report>::value);
-  CGAL_static_assertion(Has_member_report<With_report_as_a_template_member_function>::value);
+  static_assert(!Has_member_report<S>::value);
+  static_assert(Has_member_report<With_report>::value);
+  static_assert(Has_member_report<With_report_as_a_template_member_function>::value);
   return EXIT_SUCCESS;
 }

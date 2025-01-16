@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Cell_attribute_with_id` represents an attribute containing (or not) an information, and having an id.
 
-\cgalModels `CellAttribute`
+\cgalModels{CellAttribute}
 
 \tparam Map a model of the `GenericMap` concept.
 

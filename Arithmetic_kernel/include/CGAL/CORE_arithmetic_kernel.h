@@ -56,14 +56,6 @@ public:
 
 
 template <>
-struct Get_arithmetic_kernel<CORE::BigInt>{
-  typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<CORE::BigRat>{
-  typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
 struct Get_arithmetic_kernel<CORE::Expr>{
   typedef CORE_arithmetic_kernel Arithmetic_kernel;
 };
@@ -73,6 +65,8 @@ struct Get_arithmetic_kernel<CORE::BigFloat>{
 };
 
 } //namespace CGAL
+
+#include <CGAL/BOOST_MP_arithmetic_kernel.h>
 
 #endif // CGAL_USE_CORE
 

@@ -43,7 +43,7 @@ namespace internal {
 template <typename PM_Point, typename PS_Point>
 PM_Point convert_to_pm_point(const PS_Point& p)
 {
-  CGAL_static_assertion((std::is_convertible<PS_Point, PM_Point>::value));
+  static_assert(std::is_convertible<PS_Point, PM_Point>::value);
   return PM_Point(p);
 }
 
@@ -197,7 +197,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   typedef typename boost::range_value<PolygonRange>::type           Polygon;
   typedef typename boost::range_value<Polygon>::type                V_ID;
 
-  if(boost::begin(polygons) == boost::end(polygons))
+  if(std::begin(polygons) == std::end(polygons))
     return true;
 
   //check there is no duplicated ordered edge, and
@@ -213,7 +213,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
       return false;
 
     polygon_vertices.clear();
-    V_ID prev = *std::prev(boost::end(polygon));
+    V_ID prev = *std::prev(std::end(polygon));
     for(V_ID id : polygon)
     {
       if(max_id<id)
@@ -353,10 +353,10 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
     choose_parameter(get_parameter(np_ps, internal_np::polygon_to_face_output_iterator),
                      impl::make_functor(get_parameter(np_ps, internal_np::polygon_to_face_map))));
 
-  CGAL_static_assertion_msg(
+  static_assert(
       (parameters::is_default_parameter<NamedParameters_PS,internal_np::vertex_to_vertex_map_t>::value),
       "Named parameter vertex_to_vertex_map was renamed point_to_vertex_map");
-  CGAL_static_assertion_msg(
+  static_assert(
       (parameters::is_default_parameter<NamedParameters_PS,internal_np::face_to_face_map_t>::value),
       "Named parameter face_to_face_map was renamed polygon_to_face_map");
 }

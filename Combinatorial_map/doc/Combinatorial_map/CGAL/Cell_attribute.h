@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Cell_attribute` represents an attribute containing (or not) an information.
 
-\cgalModels `CellAttribute`
+\cgalModels{CellAttribute}
 
 \tparam Map a model of the `GenericMap` concept.
 

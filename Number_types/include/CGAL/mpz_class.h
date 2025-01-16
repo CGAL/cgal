@@ -38,7 +38,7 @@
 #include <type_traits>
 
 #define CGAL_CHECK_GMP_EXPR                                             \
-    CGAL_static_assertion(                                                \
+    static_assert(                                                \
             (::std::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 namespace CGAL {

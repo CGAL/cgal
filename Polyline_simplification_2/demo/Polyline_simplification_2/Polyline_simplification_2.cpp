@@ -505,7 +505,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyline_simplification_2 demo");
 
-  // Import resources from libCGALQt5.
+  // Import resources from libCGALQt6.
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

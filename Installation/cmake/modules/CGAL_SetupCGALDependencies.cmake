@@ -15,7 +15,7 @@
 # .. variable:: CGAL_DISABLE_GMP
 #
 #    If set, the `GMP` library will not be used. If
-#    :variable:`WITH_LEDA` is not used either, a efficient exact
+#    :variable:`WITH_LEDA` is not used either, an efficient exact
 #    number types are used by CGAL kernels for exact computation.
 #
 # .. variable:: WITH_LEDA
@@ -23,7 +23,7 @@
 #    If set, the `LEDA` library will be searched and used to provide
 #    the exact number types used by CGAL kernels.
 #
-cmake_minimum_required(VERSION 3.11...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 if(CGAL_SetupCGALDependencies_included)
   return()
 endif()
@@ -97,9 +97,6 @@ function(CGAL_setup_CGAL_dependencies target)
     target_compile_definitions(${target} INTERFACE CGAL_TEST_SUITE=1)
   endif()
 
-  # CGAL now requires C++14. `decltype(auto)` is used as a marker of C++14.
-  target_compile_features(${target} INTERFACE cxx_decltype_auto)
-
   use_CGAL_Boost_support(${target} INTERFACE)
 
   # Make CGAL depend on threads-support (for Epeck and Epeck_d)
@@ -119,6 +116,13 @@ function(CGAL_setup_CGAL_dependencies target)
     target_link_options(${target} INTERFACE -fsanitize=address)
   endif()
   # Now setup compilation flags
+  CGAL_setup_CGAL_flags(${target})
+endfunction()
+
+function(CGAL_setup_CGAL_flags target)
+  # CGAL now requires C++17
+  target_compile_features(${target} INTERFACE cxx_std_17)
+
   if(MSVC)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
@@ -127,23 +131,20 @@ function(CGAL_setup_CGAL_dependencies target)
       $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
-    if(MSVC_TOOLSET_VERSION VERSION_LESS_EQUAL 140) # for MSVC 2015
-      target_compile_options(${target} INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
-        )
-    endif()
-  elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
-      message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")
-      message(STATUS "Boost MP is turned off for all Apple Clang versions below 11.0.3!")
-      target_compile_options(${target} INTERFACE "-DCGAL_DO_NOT_USE_BOOST_MP")
-    endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-    message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
-    if(WIN32)
-      target_compile_options(${target} INTERFACE "/fp:strict")
+    # cuda knows how to deal with 'fp-model=strict' but not 'fp-model strict'
+    if(CMAKE_VERSION VERSION_LESS 3.3)
+      if(WIN32)
+        target_compile_options(${target} INTERFACE "/fp:strict")
+      else()
+        target_compile_options(${target} INTERFACE "-fp-model=strict")
+      endif()
     else()
-      target_compile_options(${target} INTERFACE "-fp-model" "strict")
+      if(WIN32)
+        target_compile_options(${target} INTERFACE "$<$<COMPILE_LANGUAGE:CXX>:/fp:strict>")
+      else()
+        target_compile_options(${target} INTERFACE "$<$<COMPILE_LANGUAGE:CXX>:-fp-model=strict>")
+      endif()
     endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "SunPro")
     message( STATUS "Using SunPro compiler, using STLPort 4." )
@@ -167,4 +168,9 @@ function(CGAL_setup_CGAL_dependencies target)
       target_compile_options(${target} INTERFACE "-mieee" "-mfp-rounding-mode=d" )
     endif()
   endif()
+
+  if (CGAL_DO_NOT_USE_BOOST_MP)
+    target_compile_options(${target} INTERFACE "-DCGAL_DO_NOT_USE_BOOST_MP")
+  endif()
+
 endfunction()

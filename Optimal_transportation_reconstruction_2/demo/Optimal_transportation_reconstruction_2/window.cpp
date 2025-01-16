@@ -11,7 +11,6 @@
 
 // local
 #include "window.h"
-#include "ui_options.h"
 #include "dialog_options.h"
 
 MainWindow::MainWindow() :

@@ -1,4 +1,4 @@
-// Copyright(c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -23,7 +23,6 @@
 #include <CGAL/Object.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/utility/result_of.hpp>
 
@@ -163,7 +162,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
@@ -180,10 +179,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&>> Finite_vertex_handles;
 
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
@@ -197,10 +197,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
-  typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator> > Hidden_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator,
+                                       const Vertex_handle&>> Hidden_vertex_handles;
 
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
@@ -395,7 +396,7 @@ public:
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
           std::enable_if_t<
-              boost::is_convertible<
+              std::is_convertible<
                   typename std::iterator_traits<InputIterator>::value_type,
                   Weighted_point
               >::value
@@ -516,7 +517,7 @@ public:
   insert(InputIterator first,
           InputIterator last,
           std::enable_if_t<
-              boost::is_convertible<
+              std::is_convertible<
                 typename std::iterator_traits<InputIterator>::value_type,
                 std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
               >::value
@@ -529,10 +530,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
-            boost::mpl::and_<
-              typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-              typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >::value
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
           >* =nullptr
 )
   {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
@@ -1492,7 +1491,7 @@ regularize(Vertex_handle v)
 
   if(dimension() < 1) return;
 
-  //initialise faces_around
+  //initialize faces_around
   if(dimension() == 1) {
     faces_around.push_back(v->face());
     faces_around.push_back(v->face()->neighbor(1- v->face()->index(v)));
@@ -2236,7 +2235,7 @@ typename Regular_triangulation_2<Gt,Tds>::Finite_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
 finite_vertex_handles() const
 {
-  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+    return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template < class Gt, class Tds >
@@ -2263,7 +2262,7 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertex_handles() const
 {
-  return make_prevent_deref_range(hidden_vertices_begin(),hidden_vertices_end());
+  return { hidden_vertices_begin(), hidden_vertices_end() };
 }
 
 template < class Gt, class Tds >

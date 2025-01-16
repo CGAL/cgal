@@ -6,9 +6,11 @@
 A model for the `ArrangementOutputFormatter` concept supports a set of functions that enable
 writing an arrangement to an output stream using a specific format.
 
-\cgalHasModel `CGAL::Arr_text_formatter<Arrangement>`
-\cgalHasModel `CGAL::Arr_face_extended_text_formatter<Arrangement>`
-\cgalHasModel `CGAL::Arr_extended_dcel_text_formatter<Arrangement>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_text_formatter<Arrangement>}
+\cgalHasModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
+\cgalHasModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
+\cgalHasModelsEnd
 
 */
 

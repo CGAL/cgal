@@ -21,7 +21,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
@@ -119,7 +119,7 @@ public:
                              bool& collinear) const
   /*{\Xop returns a halfedge |e| bounding a wedge in between two
   neighbored edges in the adjacency list of |v| which contains |d|.
-  If |d| extends along a edge then |e| is this edge. If |d| extends
+  If |d| extends along an edge then |e| is this edge. If |d| extends
   into the interior of such a wedge then |e| is the first edge hit
   when |d| is rotated clockwise. \precond |v| is not isolated.}*/
   { CGAL_NEF_TRACEN("out_wedge "<<PH(v));

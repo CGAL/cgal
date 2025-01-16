@@ -1,0 +1,29 @@
+/*!
+\defgroup PkgKineticSurfaceReconstructionRef Kinetic Surface Reconstruction Reference
+
+\addtogroup PkgKineticSurfaceReconstructionRef
+\cgalPkgDescriptionBegin{Kinetic Surface Reconstruction, PkgKineticSurfaceReconstruction}
+\cgalPkgPicture{fig/kinetic_logo2.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Sven Oesau and Florent Lafarge}
+\cgalPkgDesc{The package implements a piece-wise planar surface reconstruction pipeline from point clouds combining methods from the Shape Detection, Shape Regularization and Kinetic Shape Partition packages and graph-cut.}
+\cgalPkgManuals{Chapter_Kinetic_Surface_Reconstruction, PkgKineticSurfaceReconstructionRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgDependsOn{\ref PkgKineticSpacePartition, \ref PkgSurfaceMesh, \ref PkgLinearCellComplex, \ref PkgShapeDetection}
+\cgalPkgBib{cgal:ol-kinetic-reconstruction}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Kinetic_surface_reconstruction_3`
+
+*/

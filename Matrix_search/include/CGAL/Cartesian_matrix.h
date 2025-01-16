@@ -28,11 +28,7 @@ template < class Operation,
 class Cartesian_matrix {
 public:
 
-#if CGAL_CXX17 && __has_cpp_attribute(nodiscard)
   typedef typename std::invoke_result<Operation, typename std::iterator_traits<RandomAccessIC_row>::value_type, typename std::iterator_traits<RandomAccessIC_column>::value_type>::type Value;
-#else
-  typedef typename Operation::result_type           Value;
-#endif
 
   Cartesian_matrix(RandomAccessIC_row r_f,
                    RandomAccessIC_row r_l,

@@ -19,13 +19,13 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 struct Dummy_placement {
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile&) const
+  std::optional<typename Profile::Point> operator()(const Profile&) const
   {
-    return boost::none;
+    return std::nullopt;
   }
 
  template <typename Profile>
- boost::optional<typename Profile::Point> operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+ std::optional<typename Profile::Point> operator()(const Profile&, const std::optional<typename Profile::Point>& op) const
   {
     return op;
   }

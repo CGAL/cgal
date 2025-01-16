@@ -32,7 +32,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -118,7 +118,7 @@ public:
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
 
   SNC_const_decorator() : sncp_(0) {}
@@ -369,7 +369,7 @@ public:
         continue;
       }
 
-      // We have to comapare the two scalar products sk0 and sk1. Therefore
+      // We have to compare the two scalar products sk0 and sk1. Therefore
       // we have to normalize the input vectors vec0 and vec1, which means
       // that we have to divide them by their lengths len0 and len1.
       // To cicumvent irrational numbers, we square the whole inequality.

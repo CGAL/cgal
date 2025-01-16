@@ -7,7 +7,7 @@ namespace CGAL {
 An object `b` of the class `Bbox_3` is a bounding
 box in the three-dimensional Euclidean space \f$ \E^3\f$.
 
-\cgalModels `Hashable`
+\cgalModels{Hashable}
 
 \sa `CGAL::Bbox_2`
 
@@ -115,6 +115,13 @@ Bbox_3& operator+=(const Bbox_3 &c);
 dilates the bounding box by a specified number of ULP.
 */
 void dilate(int dist);
+
+/*!
+scales the bounding box by `factor`, while keeping its center fixed.
+\pre `factor > 0`
+*/
+void scale(double factor);
+
 /// @}
 
 }; /* end Bbox_3 */

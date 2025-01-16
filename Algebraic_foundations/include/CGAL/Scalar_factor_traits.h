@@ -85,13 +85,13 @@ public:
 
         // determine extractable scalar factor
         Scalar operator () (const NT& a) {
-            CGAL_static_assertion(( ::std::is_same< NT,Scalar >::value));
+            static_assert(::std::is_same< NT,Scalar >::value);
             typedef typename Algebraic_structure_traits<NT>::Algebraic_category SAT;
             return scalar_factor(a, SAT());
         }
         // determine extractable scalar factor
         Scalar operator () (const NT& a, const Scalar& d) {
-            CGAL_static_assertion(( ::std::is_same< NT,Scalar >::value));
+            static_assert(::std::is_same< NT,Scalar >::value);
             typedef typename Algebraic_structure_traits<NT>::Algebraic_category SAT;
             return scalar_factor(a,d,SAT());
         }

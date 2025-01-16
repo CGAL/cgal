@@ -38,8 +38,6 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/global_functions_circular_kernel_2.h>
 
-
-
 namespace CGAL {
 
 // Traits class for CGAL::Arrangement_2 (and similar) based on a
@@ -125,7 +123,7 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& line, OutputIterator oi) const
     {
-      typedef boost::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+      typedef std::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(line);
       return oi;
     }

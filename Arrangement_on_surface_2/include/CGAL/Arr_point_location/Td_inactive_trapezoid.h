@@ -21,7 +21,7 @@
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
-#include <boost/variant.hpp>
+#include <variant>
 
 
 #ifdef CGAL_TD_DEBUG

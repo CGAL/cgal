@@ -23,10 +23,6 @@ function(create_single_source_cgal_program firstfile )
 
   if(EXISTS "${firstfile}")
 
-    if(CXX_FEATURES AND NOT COMMAND target_compile_features)
-      message(STATUS "NOTICE: ${exe_name}.cpp requires a CMake version >= 3.1 to detect C++ features, and will not be compiled.")
-      return()
-    endif()
     if(CXX_FEATURES)
       set(MISSING_CXX_FEATURES ${CXX_FEATURES})
       if(CMAKE_CXX_COMPILE_FEATURES)
@@ -53,14 +49,8 @@ function(create_single_source_cgal_program firstfile )
 
     get_directory_property(folder_NO_TESTING CGAL_NO_TESTING)
 
-    if(folder_NO_TESTING OR NOT BUILD_TESTING)
+    if(folder_NO_TESTING OR NOT CGAL_ENABLE_TESTING)
       set(NO_TESTING TRUE)
-    endif()
-
-    if(NOT NO_TESTING)
-      cgal_add_test(${exe_name})
-    else()
-      cgal_add_test(${exe_name} NO_EXECUTION)
     endif()
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
@@ -75,13 +65,10 @@ function(create_single_source_cgal_program firstfile )
       target_link_libraries(${exe_name} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
 
-    if(POLICY CMP0064)
-      # CMake 3.4 or later
-      if(NOT NO_TESTING)
-        cgal_add_test(${exe_name})
-      else()
-        cgal_add_test(${exe_name} NO_EXECUTION)
-      endif()
+    if(NOT NO_TESTING)
+      cgal_add_test(${exe_name})
+    else()
+      cgal_add_test(${exe_name} NO_EXECUTION)
     endif()
 
   else()

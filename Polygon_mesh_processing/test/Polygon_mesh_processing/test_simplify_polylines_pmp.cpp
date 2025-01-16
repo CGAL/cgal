@@ -1,5 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/internal/simplify_polyline.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <vector>
 #include <fstream>

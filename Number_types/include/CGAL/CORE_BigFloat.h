@@ -178,13 +178,16 @@ public:
 
             // shift such that err.m()+err.err() fits into long
             int digits_long = std::numeric_limits<long>::digits;
-            if(::CORE::bitLength(err.m()+err.err()) >= digits_long){
-                long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ;
+            if(::CORE::bitLength(err.m()+err.err()) >= static_cast<std::size_t>(digits_long)){
+                CGAL_assertion(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(err.m()));
+                long shift = static_cast<long>(::CORE::bitLength(err.m())) - digits_long + 1;
                 //std::cout << "shift " << shift<< std::endl;
-                long new_err = ((err.m()+err.err()) >> shift).longValue()+1;
+                CORE::BigInt bi = (err.m() + err.err());
+                bi = bi >> shift;
+                long new_err = CORE::longValue(bi)+1;
                 err = CORE::BigFloat(0,new_err,0) * CORE::BigFloat::exp2(err.exp()*CORE::CHUNK_BIT+shift);
             }else{
-                err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
+                err = CORE::BigFloat(0, CORE::longValue(err.m())+err.err(),err.exp());
             }
             //print_bf(err,"new_err");
 
@@ -272,9 +275,10 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::get_static_defRelPrec().toL
 //    long shift = ::CORE::bitLength(m) - rel_prec - 1;
 
     long shift ;
-    if (err == 0)
-      shift = ::CORE::bitLength(m) - rel_prec - 3;
-    else
+    if (err == 0) {
+        CGAL_assertion(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(m));
+        shift = static_cast<long>(::CORE::bitLength(m)) - rel_prec - 3;
+    }else
       shift = CGAL::relative_precision(x) - rel_prec -1;
 
     if( shift > 0 ){
@@ -324,7 +328,7 @@ public:
           NT w = Width()(x);
           w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
           w = w.abs();
-          return -(CORE::ceilLg(w.m()+w.err())+w.exp()*CORE::CHUNK_BIT);
+          return -(CORE::ceilLg(CORE::BigInt(w.m()+w.err()))+w.exp()*CORE::CHUNK_BIT);
         }
     };
 

@@ -295,13 +295,13 @@ namespace CGAL {
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
-    { CGAL_static_assertion( Bi>=2 && Bi<=Map::dimension ); }
+    { static_assert( Bi>=2 && Bi<=Map::dimension ); }
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_descriptor adart,
                                               size_type /*amark*/):
       Base(amap, adart)
-    { CGAL_static_assertion( Bi>=2 && Bi<=Map::dimension ); }
+    { static_assert( Bi>=2 && Bi<=Map::dimension ); }
 
     /// Prefix ++ operator.
     Self& operator++()
@@ -346,7 +346,7 @@ namespace CGAL {
 
     typedef Tag_false Use_mark;
 
-    CGAL_static_assertion( Bi>1 && delta>1 && Bi+delta<=Map::dimension );
+    static_assert( Bi>1 && delta>1 && Bi+delta<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -460,7 +460,7 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
-    CGAL_static_assertion( 2<=Map::dimension );
+    static_assert( 2<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -493,7 +493,7 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
-    CGAL_static_assertion( 2<=Map::dimension );
+    static_assert( 2<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -524,7 +524,7 @@ namespace CGAL {
 
     typedef Tag_false Use_mark;
 
-    CGAL_static_assertion( delta>1 && delta<=Map::dimension );
+    static_assert( delta>1 && delta<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -625,7 +625,7 @@ namespace CGAL {
 
     typedef Tag_false Use_mark;
 
-    CGAL_static_assertion( delta>1 && delta+1<=Map::dimension );
+    static_assert( delta>1 && delta+1<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -726,7 +726,7 @@ namespace CGAL {
 
     typedef Tag_false Use_mark;
 
-    CGAL_static_assertion( Bi>1 && Bi+1<=Map::dimension );
+    static_assert( Bi>1 && Bi+1<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -1026,7 +1026,7 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
-    CGAL_static_assertion( i>1 && i<=Map::dimension+1 );
+    static_assert( i>1 && i<=Map::dimension+1 );
 
   public:
     /// Main constructor.

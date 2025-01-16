@@ -67,6 +67,18 @@ namespace CGAL {
                                         delete supporting_plane_;
                                 supporting_plane_ = new Plane;
                                 CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), *supporting_plane_, CGAL::Dimension_tag<0>());
+
+                                // Check orientation
+                                int vote_for_opposite = 0;
+                                for (std::size_t i = 0; i < size(); i++)
+                                  if (supporting_plane_->orthogonal_vector() * point_set_->normal_map()[at(i)] < 0)
+                                    vote_for_opposite++;
+                                  else
+                                    vote_for_opposite--;
+
+                                if (vote_for_opposite > 0)
+                                  *supporting_plane_ = supporting_plane_->opposite();
+
                                 return supporting_plane_;
                         }
 

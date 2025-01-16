@@ -91,7 +91,6 @@ protected:
 
 protected Q_SLOTS:
   void setUseAntialiasing(bool checked);
-  void setUseOpenGL(bool checked);
   void popupAboutCGAL();
   void popupAboutDemo();
 
@@ -110,7 +109,6 @@ protected:
   GraphicsViewNavigation* navigation;
   QLabel* xycoord ;
 
-  QAction *actionUse_OpenGL;
   QAction *actionUse_Antialiasing;
   QAction *actionAbout;
   QAction *actionAboutCGAL;

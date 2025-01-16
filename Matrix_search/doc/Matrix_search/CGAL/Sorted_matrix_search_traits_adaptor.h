@@ -8,7 +8,7 @@ The class `Sorted_matrix_search_traits_adaptor` can be used
 as an adaptor to create sorted matrix search traits classes for
 arbitrary feasibility test and matrix classes `F` resp.\ `M`.
 
-\cgalModels `SortedMatrixSearchTraits`
+\cgalModels{SortedMatrixSearchTraits}
 
 \tparam M must be a model for `BasicMatrix`
 \tparam F must define a copy constructor and a monotone `bool operator()( const Value&)`.

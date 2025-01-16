@@ -35,7 +35,7 @@ class Triangle_2 : public R_::Kernel_base::Triangle_2
   typedef typename R_::Kernel_base::Triangle_2  RTriangle_2;
 
   typedef Triangle_2                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Triangle_2>::value));
+  static_assert(std::is_same<Self, typename R_::Triangle_2>::value);
 
 public:
 

@@ -22,7 +22,7 @@ The code is generic and works with any model of the `FaceGraph` concept.}
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:salf-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

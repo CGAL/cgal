@@ -41,7 +41,7 @@ template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
   CGAL_USE_TYPE(CT_type);
-  CGAL_static_assertion(( ::std::is_same<CT_type, BFI>::value));
+  static_assert(::std::is_same<CT_type, BFI>::value);
   assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
   assert(CGAL::convert_to_bfi(From(1))  == BFI(1));
   assert(CGAL::convert_to_bfi(From(2))  == BFI(2));

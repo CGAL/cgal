@@ -65,7 +65,7 @@ class Bitstream_descartes;
 
 
 /*
- * \brief Thrown whenever a non-specialised virtual member function is called
+ * \brief Thrown whenever a non-specialized virtual member function is called
  */
 class Virtual_method_exception {};
 
@@ -128,7 +128,7 @@ public:
 
   /*!
    * Constructor computing an interval containing all real roots of \c f,
-   * and initialising the Bitstream Descartes tree
+   * and initializing the Bitstream Descartes tree
    */
   Generic_descartes_rep(Bitstream_descartes_type type,
                         Polynomial f,
@@ -170,7 +170,7 @@ public:
 
   /*!
    * Constructor that copies the Bitstream tree given from outside
-   * and initialising the Bitstream Descartes tree
+   * and initializing the Bitstream Descartes tree
    * The tree must "fit" to the polynomial
    */
   Generic_descartes_rep(Bitstream_descartes_type type,
@@ -367,7 +367,7 @@ public:
   /*!
    * \brief When does the isolation algorithm terminate?
    *
-   * This method must be specialised by derived classes
+   * This method must be specialized by derived classes
    */
   virtual bool termination_condition() {
     throw Virtual_method_exception();
@@ -378,7 +378,7 @@ public:
    * \brief gives an opportunity to process the nodes after
    * the subdivision steps are finished
    *
-   * This method must be specialised by derived classes, but can
+   * This method must be specialized by derived classes, but can
    * remain empty in many cases.
    */
   virtual void process_nodes() {
@@ -389,7 +389,7 @@ public:
   /*! \brief returns whether the \c i th root is definitely a simple root
    * of the isolated polynomial
    *
-   * Must be specialised by derived class
+   * Must be specialized by derived class
    */
   virtual bool is_certainly_simple_root(int) const {
     throw Virtual_method_exception();
@@ -399,7 +399,7 @@ public:
   /*! \brief returns whether the \c i th root is definitely a multiple root
    * of the isolated polynomial
    *
-   * Must be specialised by derived class
+   * Must be specialized by derived class
    */
   virtual bool is_certainly_multiple_root(int) const {
     throw Virtual_method_exception();
@@ -1082,7 +1082,7 @@ protected:
  * variant of the Bitstream Descartes method: The Square_free_descartes_tag
  * starts the usual Bitstream method for square free integer polynomials.
  * With the M_k_descartes tag, it is able to handle one multiple root in
- * favourable situations, the Backshear_descartes_tag allows to isolate
+ * favorable situations, the Backshear_descartes_tag allows to isolate
  * even more complicated polynomials, if the multiple roots with even
  * multiplicity can be refined from outside. See the corresponding
  * constructors for more information.
@@ -1153,7 +1153,7 @@ public:
   /*!
    * \brief Constructor for a polynomial \c f
    *
-   * See the documentation of the constrctor
+   * See the documentation of the constructor
    * with \c Square_free_descartes_tag
    */
   Bitstream_descartes(Polynomial f,

@@ -20,14 +20,15 @@
 #endif
 #include <CGAL/MP_Float.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <memory>
 #include <sstream>
 #include <string>
+#include <optional>
 
 template<class T>
-inline std::string o2str( boost::optional<T> const& o )
+inline std::string o2str( std::optional<T> const& o )
 {
   std::ostringstream ss ;
   ss << std::setprecision(17) ;

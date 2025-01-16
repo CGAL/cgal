@@ -12,10 +12,6 @@
 #ifndef CGAL_TRANSFORMING_ITERATOR_H
 #define CGAL_TRANSFORMING_ITERATOR_H
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/type_traits/is_empty.hpp>
-#include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <CGAL/Default.h>
 #include <utility>
@@ -27,7 +23,7 @@ namespace CGAL {
 namespace internal {
 
 // non-empty case
-template<class T,bool=boost::is_empty<T>::value> struct Functor_as_base {
+template<class T,bool=std::is_empty<T>::value> struct Functor_as_base {
         Functor_as_base(){}
         Functor_as_base(T const& t):f(t){}
         //template<class T2> Functor_as_base(Functor_as_base<T2> const&g):f(g.functor()){}
@@ -55,13 +51,11 @@ class transforming_iterator_helper
                 decltype(std::declval<F>()(std::declval<Iter_ref>()))
                         >::type reference_;
 
-        typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference_>::type>::type>::type value_type;
+        typedef typename Default::Get<Val,std::remove_cv_t<std::remove_reference_t<reference_>>>::type value_type;
 
         // Crappy heuristic. If we have *it that returns a Weighted_point and F that returns a reference to the Point contained in the Weighted_point it takes as argument, we do NOT want the transformed iterator to return a reference to the temporary *it. On the other hand, if *it returns an int n, and F returns a reference to array[n] it is not so good to lose the reference. This probably should be done elsewhere and should at least be made optional...
-        typedef typename boost::mpl::if_<
-          boost::mpl::or_<boost::is_reference<Iter_ref>,
-                          boost::is_integral<Iter_ref> >,
-          reference_, value_type>::type reference;
+        typedef std::conditional_t<std::is_reference_v<Iter_ref> || std::is_integral_v<Iter_ref>,
+                                   reference_, value_type> reference;
 
         public:
         typedef boost::iterator_adaptor<
@@ -93,8 +87,8 @@ private internal::Functor_as_base<F>
         template<class F2,class I2,class R2,class V2>
         transforming_iterator(
                 transforming_iterator<F2,I2,R2,V2> const&i,
-                std::enable_if_t<boost::is_convertible<I2, Iter>::value>* = 0,
-                std::enable_if_t<boost::is_convertible<F2, F>::value>* = 0)
+                std::enable_if_t<std::is_convertible<I2, Iter>::value>* = 0,
+                std::enable_if_t<std::is_convertible<F2, F>::value>* = 0)
                 : Base(i.base()),Functor_base(i.functor()) {}
 
 };

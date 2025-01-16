@@ -14,7 +14,7 @@
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -26,6 +26,7 @@
  */
 
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_insertion_helper.h>
@@ -90,10 +91,10 @@ public:
   typedef typename Gt_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
-  CGAL_static_assertion((std::is_same< Left_side_category, Arr_oblivious_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Top_side_category, Arr_oblivious_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Right_side_category, Arr_oblivious_side_tag >::value));
+  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value);
   //@}
 
   /*! \struct
@@ -117,26 +118,26 @@ public:
   ///! \name Construction methods.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_bounded_planar_topology_traits_2() :
     Base(),
     unb_face(nullptr)
   {}
 
-  /*! Constructor from a geometry-traits object. */
+  /*! constructs from a geometry-traits object. */
   Arr_bounded_planar_topology_traits_2(const Gt2* traits) :
     Base(traits),
     unb_face(nullptr)
   {}
 
-  /*! Assign the contents of another topology-traits class. */
+  /*! assigns the contents of another topology-traits class. */
   void assign(const Self& other);
   //@}
 
   ///! \name Accessing the DCEL and constructing iterators.
   //@{
 
-  /*! Determine whether the DCEL reprsenets an empty structure. */
+  /*! determines whether the DCEL reprsenets an empty structure. */
   bool is_empty_dcel() const
   {
     // An empty bounded arrangement has no edges or vertices.
@@ -144,40 +145,40 @@ public:
             this->m_dcel.size_of_halfedges() == 0);
   }
 
-  /*! Check if the given vertex is concrete (associated with a point). */
+  /*! checks if the given vertex is concrete (associated with a point). */
   inline bool is_concrete_vertex(const Vertex*) const { return true; }
 
-  /*! Get the number of concrete vertices. */
+  /*! obtains the number of concrete vertices. */
   Size number_of_concrete_vertices() const
   {
     // All vertices are concrete.
     return (this->m_dcel.size_of_vertices());
   }
 
-  /*! Check if the given vertex is valid (not a fictitious one). */
+  /*! checks if the given vertex is valid (not a fictitious one). */
   inline bool is_valid_vertex(const Vertex*) const { return true; }
 
-  /*! Get the number of valid vertices. */
+  /*! obtains the number of valid vertices. */
   Size number_of_valid_vertices() const
   {
     // All vertices are valid.
     return (this->m_dcel.size_of_vertices());
   }
 
-  /*! Check if the given halfedge is valid (not a fictitious one). */
+  /*! checks if the given halfedge is valid (not a fictitious one). */
   inline bool is_valid_halfedge(const Halfedge*) const { return true; }
 
-  /*! Get the number of valid halfedges. */
+  /*! obtains the number of valid halfedges. */
   Size number_of_valid_halfedges() const
   {
     // All halfedges are valid.
     return (this->m_dcel.size_of_halfedges());
   }
 
-  /*! Check if the given face is valid (not a fictitious one). */
+  /*! checks if the given face is valid (not a fictitious one). */
   inline bool is_valid_face (const Face*) const { return true; }
 
-  /*! Get the number of valid faces. */
+  /*! obtains the number of valid faces. */
   Size number_of_valid_faces() const
   {
     // All faces are valid.
@@ -254,15 +255,15 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Initialize an empty DCEL structure.
+  /*! initializes an empty DCEL structure.
    */
   void init_dcel();
 
-  /*! Make the necessary updates after the DCEL structure have been updated.
+  /*! makes the necessary updates after the DCEL structure have been updated.
    */
   void dcel_updated();
 
-  /*! Check if the given vertex is associated with the given curve end.
+  /*! checks if the given vertex is associated with the given curve end.
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
@@ -294,8 +295,8 @@ public:
     }
   }
 
-  /*! Given a curve end with boundary conditions and a face that contains the
-   * interior of the curve, find a place for a boundary vertex that will
+  /*! given a curve end with boundary conditions and a face that contains the
+   * interior of the curve, finds a place for a boundary vertex that will
    * represent the curve end along the face boundary.
    * \param f The face.
    * \param cv The x-monotone curve.
@@ -305,7 +306,7 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that wraps the curve end.
    */
-  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  std::optional<std::variant<Vertex*, Halfedge*> >
   place_boundary_vertex(Face*,
                         const X_monotone_curve_2&,
                         Arr_curve_end,
@@ -314,10 +315,10 @@ public:
   {
     // This function should never be called:
     CGAL_error();
-    return boost::none;
+    return std::nullopt;
   }
 
-  /*! Locate the predecessor halfedge for the given curve around a given
+  /*! locates the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -339,7 +340,7 @@ public:
     return nullptr;
   }
 
-  /*! Locate a DCEL feature that contains the given curve end.
+  /*! locates a DCEL feature that contains the given curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
    * \param ps_x The boundary condition of the curve end in x.
@@ -347,20 +348,20 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  boost::variant<Vertex*, Halfedge*, Face*>
+  std::variant<Vertex*, Halfedge*, Face*>
   locate_curve_end(const X_monotone_curve_2&,
                    Arr_curve_end,
                    Arr_parameter_space /* ps_x */,
                    Arr_parameter_space /* ps_y */)
   {
-    typedef boost::variant<Vertex*, Halfedge*, Face*>   Result;
+    typedef std::variant<Vertex*, Halfedge*, Face*>   Result;
     // This function should never be called:
     CGAL_error();
     Vertex* v(nullptr);
     return Result(v);
   }
 
-  /*! Split a fictitious edge using the given vertex.
+  /*! splits a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
    * \param v The split vertex.
    * \pre e is a fictitious halfedge.
@@ -374,21 +375,21 @@ public:
     return nullptr;
   }
 
-  /*! Determine whether the given face is unbounded.
+  /*! determines whether the given face is unbounded.
    * \param f The face.
    * \return Whether f is unbounded.
    * There is only one unbounded face in the arrangement:
    */
   bool is_unbounded(const Face* f) const { return (f == unb_face); }
 
-  /*! Determine whether the given boundary vertex is redundant.
+  /*! determines whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    * There are no redundant vertices.
    */
   bool is_redundant(const Vertex*) const { return false; }
 
-  /*! Erase the given redundant vertex by merging a fictitious edge.
+  /*! erases the given redundant vertex by merging a fictitious edge.
    * The function does not free the vertex v itself.
    * \param v The vertex.
    * \pre v is a redundant vertex.
@@ -401,20 +402,20 @@ public:
     return nullptr;
   }
 
-    //! reference_face (const version).
-  /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+  //! reference_face (const version).
+  /*! returns a reference face of the arrangement.  All reference faces of
+   * arrangements of the same type have a common point.
+   *
+   * \return A pointer to the reference face.
+   */
   const Face* reference_face() const { return unbounded_face(); }
 
   //! reference_face (non-const version).
-  /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+  /*! returns a reference face of the arrangement.  All reference faces of
+   * arrangements of the same type have a common point.
+   *
+   * \return A pointer to the reference face.
+   */
   Face* reference_face() { return unbounded_face(); }
 
   //@}
@@ -425,17 +426,17 @@ public:
   /*! This function is used by the "walk" point-location strategy. */
   const Face* initial_face() const { return (unb_face); }
 
-  /*! Get the unbounded face (const version). */
+  /*! obtains the unbounded face (const version). */
   const Face* unbounded_face() const { return (unb_face); }
 
-  /*! Get the unbounded face (non-const version). */
+  /*! obtains the unbounded face (non-const version). */
   Face* unbounded_face() { return (unb_face); }
   //@}
 
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*! Compare the given vertex and the given point.
+  /*! compares the given vertex and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -443,7 +444,7 @@ public:
   virtual Comparison_result compare_x(const Point_2& p, const Vertex* v) const
   { return (this->m_geom_traits->compare_x_2_object()(p, v->point())); }
 
-  /*! Compare the given vertex and the given point.
+  /*! compares the given vertex and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
@@ -451,7 +452,7 @@ public:
   virtual Comparison_result compare_xy(const Point_2& p, const Vertex* v) const
   { return (this->m_geom_traits->compare_xy_2_object()(p, v->point())); }
 
-  /*! Compare the relative y-position of the given point and the given edge
+  /*! compares the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).

@@ -120,7 +120,7 @@ namespace CGAL {
     static typename LCC::Point run(const LCC& amap,
                                    typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(0<i && i<=LCC::dimension);
+      static_assert(0<i && i<=LCC::dimension);
       CGAL_assertion(adart != LCC::null_descriptor);
 
       typename LCC::Vector vec
@@ -151,7 +151,7 @@ namespace CGAL {
     static typename LCC::Point run(const LCC& amap,
                                    typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(1<=LCC::dimension);
+      static_assert(1<=LCC::dimension);
       CGAL_assertion(adart != LCC::null_descriptor);
       typename LCC::Dart_const_descriptor d2=amap.other_extremity(adart);
       if (d2==amap.null_descriptor) return amap.point(adart);
@@ -168,7 +168,7 @@ namespace CGAL {
     static typename LCC::Point run(const LCC& amap,
                                    typename LCC::Dart_const_descriptor adart)
     {
-      CGAL_static_assertion(2<=LCC::dimension);
+      static_assert(2<=LCC::dimension);
       CGAL_assertion(adart != LCC::null_descriptor);
 
       // We go to the beginning of the face (first dart, case of open face)

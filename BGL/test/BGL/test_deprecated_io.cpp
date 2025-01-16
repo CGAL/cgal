@@ -21,18 +21,18 @@ int main()
   SM sm_in, sm_out;
   Point_3 p0(0,0,0), p1(1,0,0), p2(0,1,0);
   CGAL::make_triangle(p0, p1, p2, sm_out);
-  bool ok = CGAL::write_off("tmp.off", sm_out);
+  bool ok = CGAL::write_off("tmp_deprecated.off", sm_out);
   assert(ok);
-  ok = CGAL::read_off("tmp.off", sm_in);
+  ok = CGAL::read_off("tmp_deprecated.off", sm_in);
   assert(ok);
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   sm_in.clear();
 
-  std::ofstream os("tmp.off");
+  std::ofstream os("tmp_deprecated.off");
   ok = CGAL::write_off(os, sm_out);
   assert(ok);
   os.close();
-  std::ifstream is("tmp.off");
+  std::ifstream is("tmp_deprecated.off");
   ok = CGAL::read_off(is, sm_in);
   assert(ok);
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
@@ -40,18 +40,18 @@ int main()
   sm_in.clear();
 #ifdef CGAL_USE_VTK
   //vtk
-  os.open("tmp.vtp");
+  os.open("tmp_deprecated.vtp");
   ok = CGAL::write_vtp(os, sm_out);
   assert(ok);
   os.close();
 
-  ok = CGAL::IO::read_VTP("tmp.vtp", sm_in);
+  ok = CGAL::IO::read_VTP("tmp_deprecated.vtp", sm_in);
   assert(ok);
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   sm_in.clear();
 #endif
   //wrl
-  os.open("tmp.wrl");
+  os.open("tmp_deprecated.wrl");
   ok = CGAL::write_wrl(os, sm_out);
   assert(ok);
   os.close();

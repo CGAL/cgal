@@ -15,7 +15,7 @@
 
 #include <iostream>
 #include <vector>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include "helper_functions.h"
 
@@ -81,13 +81,13 @@ void test_locate_dg(const VDA& vda, const Projector& ,
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     ns_qr = nearest_site(vda.dual(), vecp[i]);
-    if ( Vertex_handle* v = boost::get<Vertex_handle>(&ns_qr) ) {
+    if ( Vertex_handle* v = std::get_if<Vertex_handle>(&ns_qr) ) {
       os << "FACE";
       kill_warning( v );
-    } else if ( Edge* e = boost::get<Edge>(&ns_qr) ) {
+    } else if ( Edge* e = std::get_if<Edge>(&ns_qr) ) {
       os << "EDGE";
       kill_warning( e );
-    } else if ( Face_handle* f = boost::get<Face_handle>(&ns_qr) ) {
+    } else if ( Face_handle* f = std::get_if<Face_handle>(&ns_qr) ) {
       os << "VERTEX";
       kill_warning( f );
     } else {
@@ -114,7 +114,7 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
   for (unsigned int i = 0; i < vecp.size(); ++i) {
     os << vecp[i] << "\t --> \t" << std::flush;
     lr = vda.locate(vecp[i]);
-    if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
+    if ( Halfedge_handle* ee = std::get_if<Halfedge_handle>(&lr) ) {
       Halfedge_handle e = *ee;
       os << "VORONOI EDGE";
       if ( print_sites ) {
@@ -135,7 +135,7 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
         }
       } // if ( print_sites )
       kill_warning( e );
-    } else if ( Vertex_handle* vv = boost::get<Vertex_handle>(&lr) ) {
+    } else if ( Vertex_handle* vv = std::get_if<Vertex_handle>(&lr) ) {
       os << "VORONOI VERTEX";
       Vertex_handle v = *vv;
       if ( print_sites ) {
@@ -145,7 +145,7 @@ void test_locate_vd(const VDA& vda, const Point_vector& vecp,
         }
       }
       kill_warning( v );
-    } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
+    } else if ( Face_handle* ff = std::get_if<Face_handle>(&lr) ) {
       typename VDA::Face_handle f = *ff;
       kill_warning( f );
       os << "VORONOI FACE";

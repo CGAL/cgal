@@ -122,8 +122,8 @@ public:
       return false;
     }
 
-    std::set<vertex_descriptor> interior_vertices(boost::begin(vertices),
-                                                  boost::end(vertices));
+    std::set<vertex_descriptor> interior_vertices(std::begin(vertices),
+                                                  std::end(vertices));
     if(interior_vertices.empty()) { return true; }
 
     #ifdef CGAL_PMP_FAIR_DEBUG

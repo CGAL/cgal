@@ -21,7 +21,7 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <ostream>
 #include <istream>
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 template <>
@@ -52,19 +52,19 @@ public:
 };
 
 template <>
-class Output_rep<boost::variant<int,
+class Output_rep<std::variant<int,
                                 std::pair<int, int> > >
   : public IO_rep_is_specialized
 {
-  typedef boost::variant<int, std::pair<int, int> > Variant;
+  typedef std::variant<int, std::pair<int, int> > Variant;
   const Variant& v;
 public:
   Output_rep(const Variant& v) : v(v) {}
   std::ostream& operator()( std::ostream& out) const {
-    if(v.which() == 1) {
-      out << IO::oformat(boost::get<std::pair<int, int> >(v));
+    if(v.index() == 1) {
+      out << IO::oformat(std::get<std::pair<int, int> >(v));
     } else {
-      out << boost::get<int>(v);
+      out << std::get<int>(v);
     }
     return out;
   }

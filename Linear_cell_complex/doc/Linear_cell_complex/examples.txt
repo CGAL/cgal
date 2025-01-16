@@ -5,4 +5,5 @@
 \example Linear_cell_complex/linear_cell_complex_3_attributes_management.cpp
 \example Linear_cell_complex/linear_cell_complex_3_incremental_builder.cpp
 \example Linear_cell_complex/draw_linear_cell_complex.cpp
+\example Linear_cell_complex/linear_cell_complex_3_insert.cpp
 */

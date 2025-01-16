@@ -1,14 +1,15 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-
 #include <CGAL/number_type_config.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::FT                                                       FT;

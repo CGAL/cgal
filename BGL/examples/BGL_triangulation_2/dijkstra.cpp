@@ -60,9 +60,9 @@ int main(int argc,char* argv[])
   for(vertex_descriptor vd : vertices(tr))
   {
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "] ";
-    std::cout << " has distance = " << boost::get(distance_pmap,vd)
+    std::cout << " has distance = " << get(distance_pmap,vd)
               << " and predecessor ";
-    vd = boost::get(predecessor_pmap,vd);
+    vd = get(predecessor_pmap,vd);
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "]\n ";
   }
 

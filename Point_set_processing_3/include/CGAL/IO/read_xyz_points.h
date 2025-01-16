@@ -134,15 +134,15 @@ bool read_XYZ(std::istream& is,
     {
       iss.clear();
       iss.str(line);
-      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
+      if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
         Point point(x,y,z);
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
-        if (iss >> iformat(nx))
+        if (iss >> IO::iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
-          if(iss >> iformat(ny) >> iformat(nz)){
+          if(iss >> IO::iformat(ny) >> IO::iformat(nz)){
             normal = Vector(nx,ny,nz);
           } else {
             std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;
@@ -245,9 +245,11 @@ bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
+/// \endcond
+
 } // namespace IO
 
-/// \endcond
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -392,14 +394,7 @@ bool read_xyz_points(std::istream& is, ///< input stream.
 
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IODeprecated
 
-   \deprecated This function is deprecated since \cgal 5.3,
-               \link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink should be used instead.
-
-   \returns `true` if reading was successful, `false` otherwise.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

@@ -24,7 +24,9 @@ In addition to the requirements described for the traits class
 Periodic triangulation must fulfill the following
 requirements:
 
-\cgalHasModel `CGAL::Periodic_2_triangulation_traits_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_2_triangulation_traits_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationTraits_2`
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`

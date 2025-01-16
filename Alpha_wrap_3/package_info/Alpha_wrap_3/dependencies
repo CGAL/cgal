@@ -4,6 +4,7 @@ Alpha_wrap_3
 Arithmetic_kernel
 BGL
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2

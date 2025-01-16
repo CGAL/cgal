@@ -24,7 +24,7 @@ void convert_to(const NT& x, RT& r){
     typedef CGAL::Coercion_traits<NT,RT> CT;
     typedef typename CT::Type Type;
     CGAL_USE_TYPE(Type);
-    CGAL_static_assertion((::std::is_same<Type,RT>::value));
+    static_assert(::std::is_same<Type,RT>::value);
     r = typename CT::Cast()(x);
 }
 } //namespace CGAL
@@ -575,7 +575,7 @@ void test_algebraic_extension_traits(){
     typedef CGAL::Sqrt_extension<RAT1_EXT,INT,ACDE_TAG> RAT2_EXT;
     typedef CGAL::Sqrt_extension<INT1_EXT,INT,ACDE_TAG> INT2_EXT;
 
-    // normalisation factor
+    // normalization factor
     typedef CGAL::Algebraic_extension_traits<RAT1_EXT> RAT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<INT1_EXT> INT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<RAT2_EXT> RAT2_EXT_ANT;
@@ -700,17 +700,17 @@ void test_get_arithmetic_kernel(){
     typedef CGAL::Sqrt_extension<Integer,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((std::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   } {
     typedef CGAL::Sqrt_extension<Rational,Integer,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((std::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   } {
     typedef CGAL::Sqrt_extension<Rational,Rational,ACDE_TAG> EXT;
     typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
     CGAL_USE_TYPE(AT_);
-    CGAL_static_assertion((std::is_same<AT,AT_>::value));
+    static_assert(std::is_same<AT,AT_>::value);
   }
 }
 

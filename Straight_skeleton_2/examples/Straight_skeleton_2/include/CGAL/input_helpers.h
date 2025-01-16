@@ -13,12 +13,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
-#include <CGAL/IO/helpers.h>
 #include <CGAL/enum.h>
 
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 template <typename PolygonWithHoles>
 bool read_dat_polygon(const char* filename,
@@ -36,7 +36,7 @@ bool read_dat_polygon(const char* filename,
   }
 
   bool is_number_of_CC_in_input = false;
-  if(CGAL::IO::internal::get_file_extension(filename) == "poly")
+  if(std::filesystem::path(filename).extension().string() == ".poly")
   {
     is_number_of_CC_in_input = true;
   }
@@ -109,8 +109,8 @@ template <typename PolygonWithHoles>
 bool read_input_polygon(const char* filename,
                         PolygonWithHoles& p)
 {
-  std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "dat")
+  std::string ext = std::filesystem::path(filename).extension().string();
+  if(ext == ".dat")
   {
     return read_dat_polygon(filename, p);
   }
@@ -204,7 +204,7 @@ void generate_random_weights(const PolygonWithHoles& p,
     using Container = typename std::remove_reference<decltype(c)>::type;
     using Iterator = typename Container::const_iterator;
 
-    std::map<Iterator, std::size_t /*rnd weight*/> weight;
+    std::map<Iterator, FT> weight;
 
     // start somewhere not collinear
     Iterator start_it;
@@ -238,7 +238,7 @@ void generate_random_weights(const PolygonWithHoles& p,
       else
       {
         CGAL_assertion(weight.count(it) == 0);
-        weight[it] = rnd.get_double(min_weight, max_weight);
+        weight[it] = FT(rnd.get_double(min_weight, max_weight));
       }
 
       it = next(it, c);

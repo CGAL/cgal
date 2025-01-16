@@ -14,7 +14,7 @@ of Delaunay triangulations.
 By default, this parameter is instantiated by
 `Triangulation_cell_base_3<Traits>`.
 
-\cgalModels `DelaunayTriangulationCellBase_3`
+\cgalModels{DelaunayTriangulationCellBase_3}
 
 \sa `DelaunayTriangulationCellBase_3`
 \sa `CGAL::Delaunay_triangulation_3`

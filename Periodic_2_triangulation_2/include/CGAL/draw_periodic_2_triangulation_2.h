@@ -8,274 +8,280 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Jasmeet Singh <jasmeet.singh.mec11@iitbhu.ac.in>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef DRAW_PERIODIC_2_TRIANGULATION_2_H
 #define DRAW_PERIODIC_2_TRIANGULATION_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Qt/init_ogl_context.h>
+#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Random.h>
+#include <CGAL/Periodic_2_triangulation_2.h>
 
 namespace CGAL {
 
-// Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorP2T2 {
-  template <typename P2T2>
-  static CGAL::IO::Color run(const P2T2 &,
-                         const typename P2T2::Periodic_triangle_iterator /*ti*/) {
-    //CGAL::Random random((unsigned int)(std::size_t)(&*ti));
-    //return get_random_color(random);
-    return CGAL::IO::Color(73, 250, 117);
+// We need a specific graphics view options for periodic_2_triangulation_2 for the parameters
+// of the domain.
+template <typename DS,
+          typename vertex_handle,
+          typename edge_handle,
+          typename face_handle>
+struct Graphics_scene_options_periodic_2_triangulation_2 :
+    public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
+{
+  Graphics_scene_options_periodic_2_triangulation_2():
+    m_domain_color(CGAL::IO::Color(96, 104, 252)),
+    m_draw_domain(true),
+    m_display_type(DS::STORED)
+  {}
+
+  bool draw_domain() const
+  { return m_draw_domain; }
+  void draw_domain(bool b)
+  { m_draw_domain=b; }
+  void toggle_draw_domain()
+  { m_draw_domain=!m_draw_domain; }
+
+  typename DS::Iterator_type display_type() const
+  { return m_display_type; }
+
+  void increase_display_type()
+  {
+    if(m_display_type==DS::UNIQUE_COVER_DOMAIN)
+    { m_display_type=DS::STORED; }
+    else
+    { m_display_type=typename DS::Iterator_type(static_cast<int>(m_display_type)+1); }
   }
+
+  const CGAL::IO::Color& domain_color() const
+  { return m_domain_color; }
+  void domain_color(const CGAL::IO::Color& c)
+  { m_domain_color=c; }
+
+protected:
+  CGAL::IO::Color m_domain_color;
+  bool m_draw_domain;
+  typename DS::Iterator_type m_display_type;
 };
 
-// Viewer class for P2T2
-template <class P2T2, class ColorFunctor>
-class SimplePeriodic2Triangulation2ViewerQt : public Basic_viewer_qt
+namespace draw_function_for_P2T2
 {
-  typedef Basic_viewer_qt                         Base;
 
-  typedef typename P2T2::Iterator_type            Iterator_type;
+template <class P2T2, class GSOptions>
+void compute_vertex(const P2T2 &p2t2,
+                    typename P2T2::Periodic_point_iterator pi,
+                    CGAL::Graphics_scene& graphics_scene,
+                    const GSOptions& gs_options)
+{
+  // Construct the point in 9-sheeted covering space and add to viewer
+  if(!gs_options.draw_vertex(p2t2, pi))
+  { return; }
 
-  // Vertex iterators
-  typedef typename P2T2::Periodic_point_iterator      Periodic_point_iterator;
+  if(gs_options.colored_vertex(p2t2, pi))
+  { graphics_scene.add_point(p2t2.point(*pi),
+                             gs_options.vertex_color(p2t2, pi)); }
+  else
+  { graphics_scene.add_point(p2t2.point(*pi)); }
+}
 
-  // Edge iterators
-  typedef typename P2T2::Periodic_segment_iterator    Periodic_segment_iterator;
-  typedef typename P2T2::Segment                      Segment;
+template <class P2T2, class GSOptions>
+void compute_edge(const P2T2 &p2t2,
+                  typename P2T2::Periodic_segment_iterator si,
+                  CGAL::Graphics_scene& graphics_scene,
+                  const GSOptions& gs_options)
+{
+  if(!gs_options.draw_edge(p2t2, si))
+  { return; }
 
-  // Face iterators
-  typedef typename P2T2::Periodic_triangle_iterator   Periodic_triangle_iterator;
-  typedef typename P2T2::Triangle                     Triangle;
+  // Construct the segment in 9-sheeted covering space and add to viewer
+  typename P2T2::Segment s(p2t2.segment(*si));
+  if(gs_options.colored_edge(p2t2, si))
+  { graphics_scene.add_segment(s[0], s[1],
+                               gs_options.edge_color(p2t2, si)); }
+  else
+  { graphics_scene.add_segment(s[0], s[1]); }
+}
 
+template <class P2T2, class GSOptions>
+void compute_face(const P2T2 &p2t2,
+                  typename P2T2::Periodic_triangle_iterator ti,
+                  CGAL::Graphics_scene& graphics_scene,
+                  const GSOptions& gs_options)
+{
+  if(!gs_options.draw_face(p2t2, ti))
+  { return; }
+
+  // Construct the triangle in 9-sheeted covering space and add to viewer
+  typename P2T2::Triangle t(p2t2.triangle(*ti));
+
+  if(gs_options.colored_face(p2t2, ti))
+  { graphics_scene.face_begin(gs_options.face_color(p2t2, ti)); }
+  else
+  { graphics_scene.face_begin(); }
+
+  graphics_scene.add_point_in_face(t[0]);
+  graphics_scene.add_point_in_face(t[1]);
+  graphics_scene.add_point_in_face(t[2]);
+  graphics_scene.face_end();
+}
+
+template <class P2T2, class GSOptions>
+void compute_domain(const P2T2& p2t2,
+                    CGAL::Graphics_scene& graphics_scene,
+                    const GSOptions& gs_options)
+{
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-public:
-  /// Construct the viewer.
-  /// @param ap2t2 the p2t2 to view
-  /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        useful for very big object where this time could be long)
-  SimplePeriodic2Triangulation2ViewerQt(QWidget* parent, const P2T2& ap2t2,
-                               const char* title="Basic P2T2 Viewer",
-                               bool anofaces=false,
-                               const ColorFunctor& fcolor=ColorFunctor()) :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    p2t2(ap2t2),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor),
-    m_display_type(STORED_COVER_DOMAIN),
-    m_domain(true)
+  Kernel::Iso_rectangle_2 orig_domain =  p2t2.domain();
+  std::array<int, 2> covering_sheets = p2t2.number_of_sheets();
+
+  for(int i = 0; i < covering_sheets[0]; i++)
   {
-    // Add custom key description (see keyPressEvent).
-    setKeyDescription(::Qt::Key_1, "STORED: Display all geometric primitives as they are stored in "
-                                   "Triangulation_data_structure_2");
-    setKeyDescription(::Qt::Key_2, "UNIQUE: Display only one representative of each geometric primitive even "
-                                   "if the triangulation is computed in multiply sheeted covering space.");
-    setKeyDescription(::Qt::Key_3, "STORED_COVER_DOMAIN: Same as STORED but also display "
-                                   "all primitives whose intersection with the original "
-                                   "domain of the current covering space is non-empty");
-    setKeyDescription(::Qt::Key_4, "UNIQUE_COVER_DOMAIN: Same as UNIQUE but also display "
-                                   "all primitives whose intersection with the original "
-                                   "domain of the current covering space is non-empty");
-    setKeyDescription(::Qt::Key_D, "Toggle 9-sheeted domain display");
+    for(int j = 0; j < covering_sheets[1]; j++)
+    {
+      Kernel::Vector_2 shift(i * (orig_domain.xmax() - orig_domain.xmin()),
+                             j * orig_domain.ymax() - orig_domain.ymin());
+      Kernel::Point_2 p1((orig_domain.min)());
+      Kernel::Point_2 p2(orig_domain.xmin(), orig_domain.ymax());
+      Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
+      Kernel::Point_2 p4((orig_domain.max)());
 
-    compute_elements();
-  }
-protected:
-  void compute_vertex(Periodic_point_iterator pi)
-  {
-    // Construct the point in 9-sheeted covering space and add to viewer
-    add_point(p2t2.point(*pi));
-  }
-
-  void compute_edge(Periodic_segment_iterator si)
-  {
-    // Construct the segment in 9-sheeted covering space and add to viewer
-    Segment s(p2t2.segment(*si));
-    add_segment(s[0], s[1]);
-  }
-
-  void compute_face(Periodic_triangle_iterator ti)
-  {
-    // Construct the triangle in 9-sheeted covering space and add to viewer
-    Triangle t(p2t2.triangle(*ti));
-
-    CGAL::IO::Color c=m_fcolor.run(p2t2, ti);
-    face_begin(c);
-    add_point_in_face(t[0]);
-    add_point_in_face(t[1]);
-    add_point_in_face(t[2]);
-    face_end();
-
-    // Display the edges of the faces as segments with a
-    // light gray color for better visualization
-    add_segment(t[0], t[1], CGAL::IO::Color(207, 213, 211));
-    add_segment(t[1], t[2], CGAL::IO::Color(207, 213, 211));
-    add_segment(t[2], t[0], CGAL::IO::Color(207, 213, 211));
-  }
-
-  void compute_domain()
-  {
-    Kernel::Iso_rectangle_2 orig_domain =  p2t2.domain();
-    std::array<int, 2> covering_sheets = p2t2.number_of_sheets();
-
-    for(int i = 0; i < covering_sheets[0]; i++){
-      for(int j = 0; j < covering_sheets[1]; j++){
-        Kernel::Vector_2 shift(i * (orig_domain.xmax() - orig_domain.xmin()),
-                               j * orig_domain.ymax() - orig_domain.ymin());
-        Kernel::Point_2 p1((orig_domain.min)());
-        Kernel::Point_2 p2(orig_domain.xmin(), orig_domain.ymax());
-        Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
-        Kernel::Point_2 p4((orig_domain.max)());
-
-        add_segment(p1 + shift, p2 + shift, CGAL::IO::Color(96, 104, 252));
-        add_segment(p1 + shift, p3 + shift, CGAL::IO::Color(96, 104, 252));
-        add_segment(p2 + shift, p4 + shift, CGAL::IO::Color(96, 104, 252));
-        add_segment(p3 + shift, p4 + shift, CGAL::IO::Color(96, 104, 252));
-      }
+      graphics_scene.add_segment(p1 + shift, p2 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p1 + shift, p3 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p2 + shift, p4 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p3 + shift, p4 + shift, gs_options.domain_color());
     }
-  }
-
-  void compute_elements() {
-    // Clear the buffers
-    clear();
-
-    // Get the display type, iterate through periodic elements according
-    // to the display type
-    Iterator_type it_type = (Iterator_type)m_display_type;
-
-    // Iterate through vertices, edges and faces, add elements to buffer
-    for (Periodic_point_iterator it =
-             p2t2.periodic_points_begin(it_type);
-         it != p2t2.periodic_points_end(it_type); it++)
-    {
-      compute_vertex(it);
-    }
-
-    for (Periodic_segment_iterator it =
-             p2t2.periodic_segments_begin(it_type);
-         it != p2t2.periodic_segments_end(it_type); it++)
-    {
-      compute_edge(it);
-    }
-
-    for (Periodic_triangle_iterator it =
-             p2t2.periodic_triangles_begin(it_type);
-         it != p2t2.periodic_triangles_end(it_type); it++)
-    {
-      compute_face(it);
-    }
-
-    if(m_domain){
-      // Compute the (9-sheet covering space) domain of the periodic triangulation
-      compute_domain();
-    }
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if (e->text()=="1")
-    {
-      m_display_type = Display_type::UNIQUE;
-      displayMessage(QString("Display type= UNIQUE"));
-      compute_elements();
-      redraw();
-    } else if (e->text()=="2")
-    {
-      m_display_type = Display_type::UNIQUE_COVER_DOMAIN;
-      displayMessage(QString("Display type= UNIQUE_COVER_DOMAIN"));
-      compute_elements();
-      redraw();
-    } else if (e->text()=="3")
-    {
-      m_display_type = Display_type::STORED;
-      displayMessage(QString("Display type= STORED"));
-      compute_elements();
-      redraw();
-    } else if (e->text()=="4")
-    {
-      m_display_type = Display_type::STORED_COVER_DOMAIN;
-      displayMessage(QString("Display type= STORED_COVER_DOMAIN"));
-      compute_elements();
-      redraw();
-    } else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
-    {
-      m_domain=!m_domain;
-      displayMessage(QString("Draw domain=%1.").arg(m_domain?"true":"false"));
-      compute_elements();
-      redraw();
-    } else {
-      Base::keyPressEvent(e);
-    }
-  }
-
-protected:
-  const P2T2& p2t2;
-  bool m_nofaces;
-  const ColorFunctor& m_fcolor;
-  enum Display_type
-  {
-    STORED = 0,
-    UNIQUE, // 1
-    STORED_COVER_DOMAIN, // 2
-    UNIQUE_COVER_DOMAIN // 3
-  };
-  Display_type m_display_type;
-  bool m_domain;
-};
-
-// Specialization of draw function
-#define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2 \
-  <Gt, Tds >
-
-template < class Gt,
-           class Tds >
-void draw(const CGAL_P2T2_TYPE& ap2t2,
-          const char* title = "2D Periodic Triangulation Viewer",
-          bool nofill = false)
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"p2t2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorP2T2 fcolor;
-    SimplePeriodic2Triangulation2ViewerQt<CGAL_P2T2_TYPE,
-                                          DefaultColorFunctorP2T2>
-        mainwindow(app.activeWindow(), ap2t2, title, nofill, fcolor);
-    mainwindow.show();
-    app.exec();
   }
 }
 
-} // namespace CGAL
+template <class P2T2, class GSOptions>
+void compute_elements(const P2T2& p2t2,
+                      CGAL::Graphics_scene& graphics_scene,
+                      const GSOptions& gs_options)
+{
+  // Get the display type, iterate through periodic elements according
+  // to the display type
+  typedef typename P2T2::Iterator_type Iterator_type;
+  Iterator_type it_type = (Iterator_type)gs_options.display_type();
+
+  // Iterate through vertices, edges and faces, add elements to buffer
+  if(gs_options.are_vertices_enabled())
+  {
+    for (typename P2T2::Periodic_point_iterator it=p2t2.periodic_points_begin(it_type);
+         it!=p2t2.periodic_points_end(it_type); ++it)
+    { compute_vertex(p2t2, it, graphics_scene, gs_options); }
+  }
+
+  if(gs_options.are_edges_enabled())
+  {
+    for (typename P2T2::Periodic_segment_iterator it=p2t2.periodic_segments_begin(it_type);
+         it!=p2t2.periodic_segments_end(it_type); ++it)
+    { compute_edge(p2t2, it, graphics_scene, gs_options); }
+  }
+
+  if (gs_options.are_faces_enabled())
+  {
+    for (typename P2T2::Periodic_triangle_iterator it=p2t2.periodic_triangles_begin(it_type);
+         it!=p2t2.periodic_triangles_end(it_type); ++it)
+    { compute_face(p2t2, it, graphics_scene, gs_options); }
+  }
+
+  if(gs_options.draw_domain())
+  {
+    // Compute the (9-sheet covering space) domain of the periodic triangulation
+    compute_domain(p2t2, graphics_scene, gs_options);
+  }
+}
+
+} // namespace draw_function_for_P2T2
+
+#define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2<Gt, Tds >
+
+template <class Gt, class Tds, class GSOptions>
+void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gs_options)
+{
+  draw_function_for_P2T2::compute_elements(p2t2, graphics_scene, gs_options);
+}
+
+template <class Gt, class Tds>
+void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+                           CGAL::Graphics_scene& graphics_scene)
+{
+  CGAL::Graphics_scene_options_periodic_2_triangulation_2
+    <CGAL_P2T2_TYPE,
+     typename CGAL_P2T2_TYPE::Periodic_point_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
+
+  add_to_graphics_scene(p2t2, graphics_scene, gs_options);
+}
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
+// Specialization of draw function
+template<class Gt, class Tds, class GSOptions>
+void draw(const CGAL_P2T2_TYPE& ap2t2,
+          GSOptions& gs_options,
+          const char* title="2D Periodic Triangulation Viewer")
+{
+  CGAL::Graphics_scene gs;
+  add_to_graphics_scene(ap2t2, gs, gs_options);
+  CGAL::Qt::QApplication_and_basic_viewer app(gs, title);
+  if(app)
+  {
+    // Here we define the std::function to capture key pressed.
+    app.basic_viewer().on_key_pressed=
+      [&ap2t2, &gs, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
+      {
+        const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+        if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
+        {
+          gs_options.increase_display_type();
+          basic_viewer->displayMessage
+            (QString("Display type=%1.").arg(gs_options.display_type()==0?"Stored":
+                                             (gs_options.display_type()==1?"Unique":
+                                              (gs_options.display_type()==2?"Stored cover":
+                                               "Unique cover"))));
+          gs.clear();
+          add_to_graphics_scene(ap2t2, gs, gs_options);
+          basic_viewer->redraw();
+        }
+        else
+        {
+          // Return false will call the base method to process others/classicals key
+          return false;
+        }
+        return true; // the key was captured
+      };
+
+    // Here we add shortcut descriptions
+    app.basic_viewer().setKeyDescription(::Qt::Key_D, "Next display type");
+
+    // Then we run the app
+    app.run();
+  }
+}
+
+template<class Gt, class Tds>
+void draw(const CGAL_P2T2_TYPE& ap2t2,
+          const char* title="2D Periodic Triangulation Viewer")
+{
+  CGAL::Graphics_scene_options_periodic_2_triangulation_2
+    <CGAL_P2T2_TYPE,
+     typename CGAL_P2T2_TYPE::Periodic_point_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
+  draw(ap2t2, gs_options, title);
+}
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_P2T2_TYPE
+
+} // namespace CGAL
 
 #endif // DRAW_PERIODIC_2_TRIANGULATION_2_H

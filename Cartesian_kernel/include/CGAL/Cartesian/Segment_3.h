@@ -43,7 +43,7 @@ public:
   SegmentC3() {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : base(CGAL::make_array(sp, ep)) {}
+    : base{sp, ep} {}
 
   Boolean has_on(const Point_3 &p) const;
   Boolean collinear_has_on(const Point_3 &p) const;

@@ -7,18 +7,18 @@
 
 #include "arr_polylines.h"
 
-typedef std::string Name;               // The name-field type.
+using Name = std::string;               // The name-field type.
 
 struct Merge_names {
   Name operator() (const Name& s1, const Name& s2) const
   { return (s1 + " " + s2); }
 };
 
-typedef CGAL::Arr_curve_data_traits_2<Traits, Name, Merge_names>
-                                                    Ex_traits;
-typedef Ex_traits::Curve_2                          Ex_polyline;
-typedef Ex_traits::X_monotone_curve_2               Ex_x_monotone_polyline;
-typedef CGAL::Arrangement_2<Ex_traits>              Ex_arrangement;
+using Ex_traits = CGAL::Arr_curve_data_traits_2<Traits, Name, Merge_names>;
+
+using Ex_polyline = Ex_traits::Curve_2;
+using Ex_x_monotone_polyline = Ex_traits::X_monotone_curve_2;
+using Ex_arrangement = CGAL::Arrangement_2<Ex_traits>;
 
 int main() {
   // Construct an arrangement of four polylines named A--D.

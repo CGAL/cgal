@@ -49,7 +49,7 @@ public:
   DirectionC2() {}
 
   DirectionC2(const FT &x, const FT &y)
-    : base(CGAL::make_array(x, y)) {}
+    : base{x, y} {}
 
   Boolean operator==(const DirectionC2 &d) const;
   Boolean operator!=(const DirectionC2 &d) const;

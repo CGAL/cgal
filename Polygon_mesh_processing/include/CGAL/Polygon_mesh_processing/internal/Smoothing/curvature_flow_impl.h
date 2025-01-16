@@ -102,7 +102,7 @@ public:
         constrained_flags_[get(vimap_, v)] = true;
 
         // scaling things cannot preserve the position of more than a single constrained point
-        if(anchor_point == boost::none)
+        if(anchor_point == std::nullopt)
           anchor_point = get(vpmap_, v);
         else
           scale_volume_after_smoothing_ = false;
@@ -230,7 +230,7 @@ public:
 
     // If no vertex is constrained, then the smoothed mesh will share the same centroid as the input mesh
     Point pre_smooth_anchor_point;
-    if(anchor_point != boost::none)
+    if(anchor_point != std::nullopt)
       pre_smooth_anchor_point = *anchor_point;
     else
       pre_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
@@ -247,7 +247,7 @@ public:
     }
 
     Point post_smooth_anchor_point;
-    if(anchor_point != boost::none)
+    if(anchor_point != std::nullopt)
       post_smooth_anchor_point = *anchor_point;
     else
       post_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
@@ -364,7 +364,7 @@ private:
   // of the initial mesh if no vertex is constrained. If there is more than a constrained vertex,
   // then no scaling can be done without violating the constraint.
   bool scale_volume_after_smoothing_;
-  boost::optional<Point> anchor_point;
+  std::optional<Point> anchor_point;
 
   // linear system data
   std::vector<double> diagonal_; // index of vector -> index of vimap_

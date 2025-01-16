@@ -35,7 +35,7 @@ class Segment_d : public Get_type<typename R_::Kernel_base, Segment_tag>::type
   typedef typename Get_functor<Kbase, Segment_extremity_tag>::type CSEBase;
 
   typedef Segment_d                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename Get_type<R_, Segment_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Segment_tag>::type>::value);
 
 public:
 

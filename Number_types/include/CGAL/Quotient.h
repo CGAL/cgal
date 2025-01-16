@@ -421,7 +421,6 @@ operator>>(std::istream& in, Quotient<NT>& r)
   NT num,den=1;
   in >> num;
   if(!in) return in;
-  std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
           if(!in.good()){
                   in.clear(std::ios_base::eofbit);
@@ -627,13 +626,13 @@ public:
 
     };
 
-    typedef typename boost::mpl::if_c<
-        !std::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
-                         Null_functor >::value,
+    typedef std::conditional_t<
+        !std::is_same_v< typename Algebraic_structure_traits<NT>::Sqrt,
+                         Null_functor >,
          typename INTERN_QUOTIENT::Sqrt_selector< Type,
                                                   Is_exact >::Sqrt,
          Null_functor
-                            >::type Sqrt;
+                            > Sqrt;
 
     class Simplify
       : public CGAL::cpp98::unary_function< Type&, void > {

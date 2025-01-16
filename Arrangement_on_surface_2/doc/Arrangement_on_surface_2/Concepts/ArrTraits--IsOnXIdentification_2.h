@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableUnaryFunction}
  *
- * \cgalHasModel ArrangementIdentifiedHorizontalTraits_2::Is_on_x_identification_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementIdentifiedHorizontalTraits_2::Is_on_x_identification_2}
+ * \cgalHasModelsEnd
  */
 class IsOnXIdentification_2 {
 public:

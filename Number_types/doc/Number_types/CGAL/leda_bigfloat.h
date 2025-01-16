@@ -12,9 +12,7 @@ Rounding mode and precision (i.e.\ mantissa length) of
 
 For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:as-lum}.
 
-\cgalModels `FieldWithKthRoot`
-\cgalModels `RealEmbeddable`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{FieldWithKthRoot,RealEmbeddable,FromDoubleConstructible}
 
 */
 

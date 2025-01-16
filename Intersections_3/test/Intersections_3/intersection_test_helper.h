@@ -309,10 +309,8 @@ public:
     template<typename T>
     bool compare_to_other_variant(const T& t) const
     {
-      if(ov->type() == typeid(T))
+      if(auto* r = std::get_if<T>(&*ov))
       {
-        auto* r = boost::get<T>(&*ov); // ov is an optional<variant>
-        assert(r);
         return (t == *r);
       }
 
@@ -363,7 +361,7 @@ public:
         assert(ires12 && ires34);
 
         Variant_visitor<decltype(ires12)> vis(ires12);
-        boost::apply_visitor(vis, *ires34);
+        std::visit(vis, *ires34);
         assert(vis.equal);
       }
     }

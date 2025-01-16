@@ -65,7 +65,9 @@ neighbors of each cell, where the index corresponds to the preceding
 list of cells. When dimension < 3, the same information is stored
 for faces of maximal dimension instead of cells.
 
-\cgalHasModel `CGAL::Triangulation_data_structure_3<Vb, Cb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_data_structure_3<Vb, Cb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_3::Vertex`
 \sa `TriangulationDataStructure_3::Cell`
@@ -128,6 +130,7 @@ data structure that only changes the vertex type. It has to define a type
 `Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the
 one whose `TriangulationDSVertexBase_3` will be `Vb2`.
 \note It can be implemented using a nested template class.
+
 \cgalAdvancedEnd
 */
 template <typename Vb2>
@@ -141,6 +144,7 @@ data structure that only changes the cell type. It has to define a type
 `Rebind_cell<Cb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the
 one whose `TriangulationDSCellBase_3` will be `Cb2`.
 \note It can be implemented using a nested template class.
+
 \cgalAdvancedEnd
 */
 template <typename Cb2>

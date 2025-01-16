@@ -194,14 +194,15 @@ public:
       Base base;
       std::cerr << "Construct_projected_boundary_2: JUST FIRST" << std::endl;
       std::cerr << "Surface: " << s << std::endl;
-      std::list<CGAL::Object> l;
+      // TODO UPDATE CONCEPT + CHANGES.md
+      std::list< std::variant<std::pair<X_monotone_curve_2, Oriented_side>, Point_2 > > l;
       base.construct_projected_boundary_2_object() (s, std::back_inserter(l));
 
       if (l.size() > 0)
       {
-        std::pair<X_monotone_curve_2, CGAL::Oriented_side> i;
-        if (CGAL::assign(i, l.front()))
-          std::cerr << "First: " << i.first << std::endl;
+        if (const std::pair<X_monotone_curve_2, CGAL::Oriented_side>* i =
+            std::get_if<std::pair<X_monotone_curve_2, CGAL::Oriented_side>>(&l.front()))
+          std::cerr << "First: " << i->first << std::endl;
         else
           std::cerr << "First intersection is a point" << std::endl;
       }
@@ -232,15 +233,14 @@ public:
                 << std::endl;
       std::cerr << "Surface1: " << s1 << std::endl;
       std::cerr << "Surface2: " << s2 << std::endl;
-      std::list<CGAL::Object> l;
+      std::list< std::variant<Intersection_curve, Point_2 > > l;
       base.construct_projected_intersections_2_object() (s1, s2,
                                                          std::back_inserter(l));
 
       if (l.size() > 0)
       {
-        Intersection_curve i;
-        if (CGAL::assign(i, l.front()))
-          std::cerr << "First: " << i.first << std::endl;
+        if (const Intersection_curve* i = std::get_if<Intersection_curve>(&l.front()))
+          std::cerr << "First: " << i->first << std::endl;
         else
           std::cerr << "First intersection is not a point" << std::endl;
       }

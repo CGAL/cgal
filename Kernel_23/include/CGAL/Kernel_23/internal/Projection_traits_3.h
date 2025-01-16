@@ -20,6 +20,7 @@
 
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 namespace CGAL {
 
@@ -437,10 +438,10 @@ public:
 
 
 
-  boost::optional< boost::variant<Point_3,Segment_3> >
+  std::optional< std::variant<Point_3,Segment_3> >
   operator()(const Segment_3& s1, const Segment_3& s2) const
   {
-    typedef  boost::variant<Point_3, Segment_3> variant_type;
+    typedef  std::variant<Point_3, Segment_3> variant_type;
 
     Point_2 s1_source = project(s1.source());
     Point_2 s1_target = project(s1.target());
@@ -456,10 +457,10 @@ public:
 
     auto o = intersection(s1_2,s2_2);
     if(! o){
-      return boost::none;
+      return std::nullopt;
     }
 
-    if(const Segment_2* si = boost::get<Segment_2>(&*o)){
+    if(const Segment_2* si = std::get_if<Segment_2>(&*o)){
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -477,11 +478,11 @@ public:
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
       tgt[Projector<R,dim>::y_index] = si->target().y();
-      return boost::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
+      return std::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
     }
 
 
-    const Point_2* pi = boost::get<Point_2>(&*o);
+    const Point_2* pi = std::get_if<Point_2>(&*o);
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
     FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -493,7 +494,7 @@ public:
 
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
-    return boost::make_optional(variant_type(res));
+    return std::make_optional(variant_type(res));
   }
 };
 
@@ -979,6 +980,7 @@ public:
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
 
+  typedef typename Rp::Compare_xyz_3                          Compare_xy_2;
 
   struct Less_xy_2 {
     typedef typename R::Comparison_result Comparison_result;
@@ -1074,6 +1076,10 @@ public:
   Less_x_2
   less_x_2_object() const
     { return Less_x_2();}
+
+  Compare_xy_2
+  compare_xy_2_object() const
+    { return Compare_xy_2();}
 
   Less_xy_2
   less_xy_2_object() const
@@ -1221,6 +1227,14 @@ public:
 };
 
 
-} } //namespace CGAL::internal
+
+} // namespace internal
+
+template <class R, int dim>
+struct Triangulation_structural_filtering_traits<::CGAL::internal::Projection_traits_3<R,dim> > {
+  typedef typename Triangulation_structural_filtering_traits<R>::Use_structural_filtering_tag  Use_structural_filtering_tag;
+};
+
+ } //namespace CGAL
 
 #endif // CGAL_INTERNAL_PROJECTION_TRAITS_3_H

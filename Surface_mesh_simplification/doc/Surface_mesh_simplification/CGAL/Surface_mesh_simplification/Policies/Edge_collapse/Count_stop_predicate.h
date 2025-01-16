@@ -11,7 +11,7 @@ which returns `true` when the number of current edges drops below a certain thre
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `StopPredicate`
+\cgalModels{StopPredicate}
 
 \sa `CGAL::Surface_mesh_simplification::Edge_count_stop_predicate<TriangleMesh>`
 \sa `CGAL::Surface_mesh_simplification::Face_count_stop_predicate<TriangleMesh>`

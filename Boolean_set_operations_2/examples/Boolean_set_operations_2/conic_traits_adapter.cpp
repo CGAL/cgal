@@ -3,6 +3,7 @@
  */
 
 #include <CGAL/config.h>
+#include <CGAL/iterator.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
@@ -42,14 +43,8 @@ typedef Traits_2::Point_2                               Point_2;
 // sub-arcs and append these sub-arcs as polygon edges.
 void append_conic_arc(Polygon_2& polygon, const Curve_2& arc) {
   Conic_traits_2 traits;
-  std::list<CGAL::Object> objects;
-  X_monotone_curve_2 xarc;
-
-  traits.make_x_monotone_2_object() (arc, std::back_inserter(objects));
-  for (auto it = objects.begin(); it != objects.end(); ++it) {
-    if (CGAL::assign (xarc, *it))
-      polygon.push_back (xarc);
-  }
+  traits.make_x_monotone_2_object() (arc,
+    CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(polygon)));
 }
 
 int main() {

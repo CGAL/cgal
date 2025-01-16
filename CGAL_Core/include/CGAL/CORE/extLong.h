@@ -31,6 +31,9 @@
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/CoreAux.h>
 
+#include <limits>
+#include <type_traits>
+
 namespace CORE {
 
 #ifndef LONG_MAX
@@ -77,6 +80,9 @@ public:
   extLong(long);
   /// constructor for \c unsigned long
   extLong(unsigned long);
+  /// constructor for \c std::size_t
+  template<typename T, typename = std::enable_if_t<std::is_same_v<T,std::size_t> && !std::is_same_v<unsigned long, std::size_t>>>
+  extLong(T s);
   //@}
 
   /// \name Arithmetic and assignment operators
@@ -149,8 +155,7 @@ const extLong EXTLONG_EIGHT(8);
 //  private comparison function
 inline int extLong::cmp(const extLong& x) const {
   if (isNaN() || x.isNaN()) {
-    core_error("Two extLong NaN's cannot be compared!",
-               __FILE__, __LINE__, false);
+    CGAL_CORE_warning_msg(false, "Two extLong NaN's cannot be compared!");
   }
   return (val == x.val) ? 0 : ((val > x.val) ? 1 : -1);
 }
@@ -181,6 +186,17 @@ inline extLong::extLong(long l) : val(l), flag(0) {
 
 inline extLong::extLong(unsigned long u) {
   if (u >= U_EXTLONG_MAX) {
+    val  = EXTLONG_MAX;
+    flag = 1;
+  } else {
+    val = static_cast<long>(u);
+    flag = 0;
+  }
+}
+
+template <typename T, typename>
+inline extLong::extLong(T u) {
+  if (u >= (std::numeric_limits<std::size_t>::max)()) {
     val  = EXTLONG_MAX;
     flag = 1;
   } else {

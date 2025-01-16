@@ -32,11 +32,10 @@ namespace CGAL {
  * same direction as a precondition. Moreover, `Arr_circle_segment_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2}
  *
  */
-template< typename Kernel >
+template <typename Kernel>
 class Arr_circle_segment_traits_2 {
 public:
 
@@ -134,7 +133,7 @@ public:
     /*! returns the target point.
      *
      * \pre `cv` is not a full circle.
-    */
+     */
     const Point_2& target() const;
 
     /*! returns the orientation of the curve (`COLLINEAR` in case of line
@@ -168,7 +167,7 @@ public:
 
 
   /*! The `Point_2` number-type nested within the traits class represents
-   * a Cartesian point whose coordinates are algebraic numbers of type
+   * a %Cartesian point whose coordinates are algebraic numbers of type
    * `CoordNT`.
    */
   class Point_2 {
@@ -190,7 +189,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
+    /*! constructs default
      */
     Point_2();
 
@@ -324,15 +323,15 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given x-monotone curve to an from src to tgt.
      * \ pre `src` and `tgt` lies on the curve
      */
 
     X_monotone_curve_2(const X_monotone_curve_2& xcv,
                        const Point_2& src,
-                       const Point_2& tgt)const
+                       const Point_2& tgt) const
     /// @}
-      } /* end Arr_circle_segment_traits_2::Trim_2 */
+  } /* end Arr_circle_segment_traits_2::Trim_2 */
 
 }; /* end Arr_circle_segment_traits_2 */
 

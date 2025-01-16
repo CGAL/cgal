@@ -282,7 +282,7 @@ scenarios for different splitter types.
 
 \subsection Spatial_searchingExampleforKNeighborSearching Example for K Neighbor Searching
 
-The first example illustrates k neighbor searching with an Euclidean
+The first example illustrates k neighbor searching with a Euclidean
 distance and 2-dimensional points. The generated random
 data points are inserted in a search tree. We then initialize
 the k neighbor search object with the origin as query. Finally, we

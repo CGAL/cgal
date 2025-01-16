@@ -51,7 +51,7 @@ void make_x_monotone(CurveInputIter begin, CurveInputIter end,
 {
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
 
   // Split the input curves into x-monotone objects.
   std::size_t num_of_curves = std::distance(begin, end);
@@ -63,14 +63,14 @@ void make_x_monotone(CurveInputIter begin, CurveInputIter end,
 
   // Transform each object to either a point or an x-monotone curve.
   for (const auto& obj : object_vec) {
-    const X_monotone_curve_2* xcv = boost::get<X_monotone_curve_2>(&obj);
+    const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&obj);
     if (xcv != nullptr) {
       // The object is an x-monotone curve.
       *x_curves++ = *xcv;
       continue;
     }
     // The object is an isolated point.
-    const Point_2* pt = boost::get<Point_2>(&obj);
+    const Point_2* pt = std::get_if<Point_2>(&obj);
     CGAL_assertion(pt != nullptr);
     *iso_points++ = *pt;
   }

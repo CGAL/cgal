@@ -43,7 +43,7 @@ public:
   TriangleC3() {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : base(CGAL::make_array(p, q, r)) {}
+    : base{p, q, r} {}
 
   Boolean operator==(const TriangleC3 &t) const;
   Boolean operator!=(const TriangleC3 &t) const;

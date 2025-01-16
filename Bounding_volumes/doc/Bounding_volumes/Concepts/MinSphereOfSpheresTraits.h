@@ -6,13 +6,14 @@
 A model of concept `MinSphereOfSpheresTraits` must provide the
 following constants, types, predicates and operations.
 
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
-
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+\cgalHasModelsEnd
 */
 
 class MinSphereOfSpheresTraits {
@@ -79,7 +80,7 @@ The recommended choice is the first, which is a synonym to the one
 of the other two methods which we consider "the best in practice."
 In case of `CGAL::LP_algorithm`, the minsphere will be computed
 using the LP-algorithm \cgalCite{msw-sblp-92}, which in our
-implementation has maximal expected running time \f$ O(2^d n)\f$ (in the
+implementation has maximal expected running time \cgalBigO{2^d n} (in the
 number of operations on the number type `FT`). In case of
 `CGAL::Farthest_first_heuristic`, a simple heuristic will be
 used instead which seems to work fine in practice, but comes without

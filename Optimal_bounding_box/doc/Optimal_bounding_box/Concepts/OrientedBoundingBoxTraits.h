@@ -8,7 +8,9 @@ a 3x3 matrix type.
 
 \cgalRefines{Kernel}
 
-\cgalHasModel `CGAL::Oriented_bounding_box_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Oriented_bounding_box_traits_3}
+\cgalHasModelsEnd
 
 */
 class OrientedBoundingBoxTraits_3

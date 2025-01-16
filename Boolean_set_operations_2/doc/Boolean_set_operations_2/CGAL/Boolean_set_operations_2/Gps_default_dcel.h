@@ -15,7 +15,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GeneralPolygonSetDcelFace`
+\cgalModels{GeneralPolygonSetDcelFace}
 
 \sa `Arr_face_base`
 */
@@ -35,7 +35,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GeneralPolygonSetDcelHalfedge`
+\cgalModels{GeneralPolygonSetDcelHalfedge}
 
 \sa `Arr_halfedge_base<X_monotone_curve_2>`
 */
@@ -62,7 +62,7 @@ You need to override this default and use a different
 \dcel only if you intend to obtain the underlying
 arrangement of the general polygon set and process it further.
 
-\cgalModels `GeneralPolygonSetDcel`
+\cgalModels{GeneralPolygonSetDcel}
 
 \sa `Arr_dcel_base<V,H,F>`
 \sa `Gps_halfedge_base<X_monotone_curve_2>`

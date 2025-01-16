@@ -21,10 +21,10 @@ int main ()
 #include "integer_type.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_algebraic_segment_traits_2<Integer> Traits;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
-typedef Traits::Curve_2                               Curve;
-typedef Traits::Polynomial_2                          Polynomial;
+using Traits = CGAL::Arr_algebraic_segment_traits_2<Integer>;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Curve = Traits::Curve_2;
+using Polynomial = Traits::Polynomial_2;
 
 int main() {
   CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.

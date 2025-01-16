@@ -28,7 +28,7 @@
 #include <CGAL/utility.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <utility>
 
@@ -187,9 +187,9 @@ public:
 
   Hyperbolic_point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2)
   {
-    if(Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1))
+    if(Circular_arc_2* c1 = std::get_if<Circular_arc_2>(&s1))
     {
-      if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+      if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
         Hyperbolic_point_2 p1 = res.first;
@@ -202,7 +202,7 @@ public:
       }
       else
       {
-        Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+        Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(),
                                                                       ell2->supporting_line());
         Hyperbolic_point_2 p1 = res.first;
@@ -216,8 +216,8 @@ public:
     }
     else
     {
-      Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
-      if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+      Euclidean_segment_2* ell1 = std::get_if<Euclidean_segment_2>(&s1);
+      if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
                                                                       c2->supporting_circle());
@@ -231,7 +231,7 @@ public:
       }
       else
       {
-        Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+        Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
         Hyperbolic_point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
         CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
         return p1;
@@ -279,9 +279,9 @@ public:
     Euclidean_line_2* l;
     Circle_2* c;
 
-    if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+    if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
     {
-      if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+      if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c_pq, *c_qr);
 
@@ -291,14 +291,14 @@ public:
         return inters.second;
       }
 
-      l = boost::get<Euclidean_line_2>(&bis_qr);
+      l = std::get_if<Euclidean_line_2>(&bis_qr);
       c = c_pq;
     }
     else
     {
       // here bis_pq is a line
-      l = boost::get<Euclidean_line_2>(&bis_pq);
-      c = boost::get<Circle_2>(&bis_qr);
+      l = std::get_if<Euclidean_line_2>(&bis_pq);
+      c = std::get_if<Circle_2>(&bis_qr);
     }
 
     std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c, *l);
@@ -348,7 +348,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c = std::get_if<Circle_2>(&bis_pq);
     std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c, l_inf);
 
     if(_gt.orientation_2_object()(c->center(), inters.first, inters.second) == POSITIVE)
@@ -388,7 +388,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
     if(_gt.compare_distance_2_object()(po, p, q) == POSITIVE) {
       // then p is inside the supporting circle
@@ -430,7 +430,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
     std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = ci(*c_pq, l_inf);
     Hyperbolic_point_2 approx_pinf = inters.first;
@@ -468,10 +468,10 @@ public:
   typedef Hyperbolic_point_2                                    Hyperbolic_Voronoi_point_2;
   typedef typename Kernel::Circle_2                             Circle_2;
   typedef typename Kernel::Line_2                               Euclidean_line_2;
-  typedef boost::variant<Circle_2,Euclidean_line_2>             Euclidean_circle_or_line_2;
+  typedef std::variant<Circle_2,Euclidean_line_2>               Euclidean_circle_or_line_2;
   typedef internal::HDT_2_Circular_arc_2<Self>                  Circular_arc_2;
   typedef typename Kernel::Segment_2                            Euclidean_segment_2; // only used internally here
-  typedef boost::variant<Circular_arc_2, Euclidean_segment_2>   Hyperbolic_segment_2;
+  typedef std::variant<Circular_arc_2, Euclidean_segment_2>   Hyperbolic_segment_2;
 
   typedef typename Kernel::Triangle_2                           Hyperbolic_triangle_2;
 

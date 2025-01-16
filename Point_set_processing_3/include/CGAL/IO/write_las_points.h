@@ -134,57 +134,51 @@ namespace LAS {
     output_value (point, get(current.first, *it), current.second);
   }
 
-  template<typename Value, typename Tuple, std::size_t I>
-  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<I>) {
-    output_value(point, std::get<I>(v), std::get<I>(t));
-  }
-
-  template<typename Value, typename Tuple, std::size_t I, std::size_t... Is>
-  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<I, Is...>) {
-    output_value(point, std::get<I>(v), std::get<I>(t));
-    output_tuple(point, v, t, std::index_sequence<Is...>());
+  template<typename Value, typename Tuple, std::size_t... Is>
+  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<Is...>) {
+    (output_value(point, std::get<Is>(v), std::get<Is>(t)), ...);
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename ... T>
+            typename PropertyMap,
+            typename ... T>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::tuple<PropertyMap, T ...>&& current)
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current)
   {
     output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename T,
-    typename NextPropertyHandler,
-    typename ... PropertyHandler>
+            typename PropertyMap,
+            typename T,
+            typename NextPropertyHandler,
+            typename ... PropertyHandler>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::pair<PropertyMap, T>&& current,
-    NextPropertyHandler&& next,
-    PropertyHandler&& ... properties)
+                         ForwardIterator it,
+                         std::pair<PropertyMap, T>&& current,
+                         NextPropertyHandler&& next,
+                         PropertyHandler&& ... properties)
   {
-    output_value(point, get(current.first, *it), current.second);
-    output_properties(point, it, std::forward<NextPropertyHandler>(next),
-      std::forward<PropertyHandler>(properties)...);
+    output_value (point, get(current.first, *it), current.second);
+    output_properties (point, it, std::forward<NextPropertyHandler>(next),
+                       std::forward<PropertyHandler>(properties)...);
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename ... T,
-    typename NextPropertyHandler,
-    typename ... PropertyHandler>
+            typename PropertyMap,
+            typename ... T,
+            typename NextPropertyHandler,
+            typename ... PropertyHandler>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::tuple<PropertyMap, T ...>&& current,
-    NextPropertyHandler&& next,
-    PropertyHandler&& ... properties)
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current,
+                         NextPropertyHandler&& next,
+                         PropertyHandler&& ... properties)
   {
     output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
     output_properties(point, it, std::forward<NextPropertyHandler>(next),
-      std::forward<PropertyHandler>(properties)...);
+                      std::forward<PropertyHandler>(properties)...);
   }
 
 } // namespace LAS
@@ -341,7 +335,7 @@ bool write_LAS(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only), using the \ref IOStreamLAS.
+   writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -415,11 +409,6 @@ bool write_las_points(std::ostream& os, ///< output stream.
 
 /// \endcond
 
-/**
-  \ingroup PkgPointSetProcessing3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS_with_properties()` should be used instead.
-*/
 template <typename PointRange,
           typename PointMap,
           typename ... PropertyHandler>
@@ -434,11 +423,7 @@ CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
   return IO::write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);
 }
 
-/**
-   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS()` should be used instead.
-*/
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {

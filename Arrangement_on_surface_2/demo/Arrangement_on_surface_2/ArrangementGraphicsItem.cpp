@@ -961,15 +961,16 @@ findOtherInterestingPoints<demo_types::DemoTypes::Alg_seg_arr>
  const CGAL::Bbox_2& allowable_range) {
   using Traits = demo_types::DemoTypes::Alg_seg_traits;
   CGAL::Bbox_2 bb = {};
-  std::vector<CGAL::Object> intersections;
+  typedef std::pair<typename Traits::Point_2, unsigned int> Pt_m;
+  std::vector<Pt_m> intersections;
   for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
     for (auto& arc : getXyCurves(arr->traits()))
+    {
       if (arc.is_vertical() != it->curve().is_vertical())
-        it->curve().intersections(arc, std::back_inserter(intersections));
+        it->curve().intersections(arc, CGAL::dispatch_or_drop_output<Pt_m>(std::back_inserter(intersections)));
+      }
   }
-  for (auto it = intersections.begin(); it != intersections.end(); it++) {
-    std::pair<typename Traits::Point_2, unsigned int> point_multiplicity;
-    CGAL::assign(point_multiplicity, *it);
+  for (auto point_multiplicity :intersections) {
     auto& point = point_multiplicity.first;
     if (point.location() == CGAL::ARR_INTERIOR) {
       auto xy = point.to_double();

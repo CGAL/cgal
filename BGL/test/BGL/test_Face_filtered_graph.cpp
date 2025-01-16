@@ -2,6 +2,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/use.h>
 #include "test_Prefix.h"
 
@@ -18,7 +19,7 @@ typedef std::unordered_set<std::size_t> id_map;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Graph>
-void test_halfedge_around_vertex_iterator(const  Graph& g)
+void test_halfedge_around_vertex_iterator(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
@@ -35,7 +36,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
       assert(target(*havit, fg) == *vit);
 
       // check if we are really moving clockwise
-      halfedge_around_target_iterator step = boost::next(havit);
+      halfedge_around_target_iterator step = std::next(havit);
       if(step != havend) {
         halfedge_descriptor stepd = *step;
         assert(stepd == opposite(next(*havit, fg), fg));
@@ -317,17 +318,42 @@ void test_index_property_maps(const Graph& g)
 }
 
 template<typename Graph>
-void test_read(const Graph& g)
+void test_constructors(const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
+
+  Adapter fg0(g);
+  Adapter fg1(g, CGAL::parameters::default_values());
 
   std::map<g_face_descriptor, std::size_t> map;
   PMP::connected_components(g, boost::make_assoc_property_map(map));
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   assert(fg.is_selection_valid());
   assert(CGAL::is_valid_polygon_mesh(fg));
+
+  // patch ID type that is not a fundamental type
+  std::map<g_face_descriptor, CGAL::IO::Color> colors;
+  for(auto f : faces(fg))
+    colors[f] = CGAL::IO::blue();
+  auto color_map = boost::make_assoc_property_map(colors);
+  Adapter color_fg(g, CGAL::IO::blue(), color_map);
+  assert(color_fg.is_selection_valid());
+  assert(CGAL::is_valid_polygon_mesh(color_fg));
+  assert(num_faces(g) == num_faces(color_fg));
+
+  Adapter color_fg2(g, CGAL::IO::red(), color_map, CGAL::parameters::default_values());
+  assert(color_fg2.is_selection_valid());
+  assert(CGAL::is_valid_polygon_mesh(color_fg2));
+  assert(num_faces(color_fg2) == 0);
+
+  // range of non-fundamental ID types
+  std::vector<CGAL::IO::Color> selected_colors { CGAL::IO::blue(), CGAL::IO::red() };
+  Adapter color_fg3(g, selected_colors, color_map);
+  assert(color_fg3.is_selection_valid());
+  assert(CGAL::is_valid_polygon_mesh(color_fg3));
+  assert(num_faces(g) == num_faces(color_fg3));
 }
 
 template <typename Graph>
@@ -336,7 +362,7 @@ test_graph_range(const std::vector<Graph>& graphs)
 {
   for(Graph p : graphs)
   {
-    test_read(p);
+    test_constructors(p);
     test_vertex_iterators(p);
     test_out_edges(p);
     test_in_edges(p);
@@ -487,7 +513,7 @@ void test_invalid_selections()
   assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
-  clear(mesh);
+  CGAL::clear(mesh);
   read_a_mesh(mesh, "data/genus3.off");
   assert(is_valid_polygon_mesh(mesh));
 
@@ -498,20 +524,8 @@ void test_invalid_selections()
   assert(!many_umbrellas_fg.is_selection_valid());
 }
 
-int main()
+void test_SM_tetrahedron()
 {
-  test_graph_range(poly_data());
-
-#ifdef CGAL_USE_SURFACE_MESH
-  test_graph_range(sm_data());
-#endif
-
-#ifdef CGAL_USE_OPENMESH
-  test_graph_range(omesh_data());
-#endif
-
-  test_invalid_selections();
-
   // Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   typedef CGAL::Face_filtered_graph<SM> SM_Adapter;
   typedef SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> SM_FCCMap;
@@ -529,7 +543,10 @@ int main()
   pids.insert(2);
   SM_Adapter sm_adapter(*sm, pids, fccmap);
   test_mesh<SM,SM_FCCMap, SM_Adapter>(sm_adapter);
+}
 
+void test_Polyhedron_tetrahedron()
+{
   typedef boost::graph_traits<Polyhedron> PolyTraits;
   typedef boost::property_map<Polyhedron, boost::vertex_point_t>::const_type VPMap;
   typedef PolyTraits::face_descriptor poly_face_descriptor;
@@ -548,6 +565,9 @@ int main()
   std::map<poly_face_descriptor, PolyTraits::faces_size_type> fc_map;
   FCMap poly_fccmap(fc_map);
 
+  std::unordered_set<long unsigned int> pids;
+  pids.insert(0);
+  pids.insert(2);
   VPMap vpmap = get(boost::vertex_point, *poly);
   PMP::connected_components(*poly, poly_fccmap,
                             CGAL::parameters::edge_is_constrained_map(Constraint<Polyhedron, VPMap >(*poly, vpmap))
@@ -557,4 +577,121 @@ int main()
                                              .vertex_index_map(poly_vimap)
                                              .halfedge_index_map(poly_himap));
   test_mesh<Polyhedron, FCMap, Poly_Adapter>(poly_adapter);
+}
+
+void non_manifoldness_test1()
+{
+  // works out-of-the-box because Face_filtered_graph handles already non-manifold cycles
+  SM mesh;
+  SM::Vertex_index v0=add_vertex(mesh);
+  SM::Vertex_index v1=add_vertex(mesh);
+  SM::Vertex_index v2=add_vertex(mesh);
+  SM::Vertex_index v3=add_vertex(mesh);
+  SM::Vertex_index v4=add_vertex(mesh);
+  SM::Vertex_index v5=add_vertex(mesh);
+  SM::Vertex_index v6=add_vertex(mesh);
+
+  SM::Face_index f0=mesh.add_face(v0,v1,v2);
+  SM::Face_index f1=mesh.add_face(v0,v3,v4);
+  SM::Face_index f2=mesh.add_face(v0,v5,v6);
+  SM::Halfedge_index h = halfedge(f0,mesh);
+  while(target(h, mesh)!=v0)
+    h=next(h,mesh);
+  set_halfedge(v0, h, mesh);
+
+  std::vector<SM::Face_index> selection = {f1, f2};
+  CGAL::Face_filtered_graph<SM> ffg(mesh, selection);
+
+  SM out;
+  CGAL::copy_face_graph(ffg, out);
+
+  assert(vertices(out).size()==5);
+  assert(faces(out).size()==2);
+}
+
+void non_manifoldness_test2()
+{
+  SM mesh;
+  SM::Vertex_index v0=add_vertex(mesh);
+  SM::Vertex_index v0b=add_vertex(mesh);
+  SM::Vertex_index v0t=add_vertex(mesh);
+
+  SM::Vertex_index v1=add_vertex(mesh);
+  SM::Vertex_index v2=add_vertex(mesh);
+  SM::Vertex_index v3=add_vertex(mesh);
+
+  SM::Vertex_index v4=add_vertex(mesh);
+  SM::Vertex_index v5=add_vertex(mesh);
+  SM::Vertex_index v6=add_vertex(mesh);
+
+  SM::Vertex_index v7=add_vertex(mesh);
+  SM::Vertex_index v8=add_vertex(mesh);
+  SM::Vertex_index v9=add_vertex(mesh);
+
+  SM::Face_index f00=mesh.add_face(v1,v2,v0);
+  SM::Face_index f01=mesh.add_face(v2,v3,v0);
+  SM::Face_index f02=mesh.add_face(v3,v1,v0);
+
+  SM::Face_index f10=mesh.add_face(v4,v5,v0b);
+  SM::Face_index f11=mesh.add_face(v5,v6,v0b);
+  SM::Face_index f12=mesh.add_face(v6,v4,v0b);
+
+  SM::Face_index f20=mesh.add_face(v7,v8,v0t);
+  SM::Face_index f21=mesh.add_face(v8,v9,v0t);
+  SM::Face_index f22=mesh.add_face(v9,v7,v0t);
+
+  assert(f00!=SM::Face_index());
+  assert(f01!=SM::Face_index());
+  assert(f02!=SM::Face_index());
+  assert(f10!=SM::Face_index());
+  assert(f11!=SM::Face_index());
+  assert(f12!=SM::Face_index());
+  assert(f20!=SM::Face_index());
+  assert(f21!=SM::Face_index());
+  assert(f22!=SM::Face_index());
+
+  #define UPDATE_V(fX, vX) \
+  { SM::Halfedge_index h = halfedge(fX,mesh);\
+  while(target(h, mesh)!=vX) h=next(h,mesh);\
+  set_target(h, v0, mesh); }
+
+  UPDATE_V(f10, v0b)
+  UPDATE_V(f11, v0b)
+  UPDATE_V(f12, v0b)
+  UPDATE_V(f20, v0t)
+  UPDATE_V(f21, v0t)
+  UPDATE_V(f22, v0t)
+
+  remove_vertex(v0b, mesh);
+  remove_vertex(v0t, mesh);
+
+  std::vector<SM::Face_index> selection = {f10, f11, f12, f20, f21, f22};
+  CGAL::Face_filtered_graph<SM> ffg(mesh, selection);
+
+  SM out;
+  CGAL::copy_face_graph(ffg, out);
+
+  assert(vertices(out).size()==7);
+  assert(faces(out).size()==6);
+}
+
+int main(int, char**)
+{
+  test_graph_range(poly_data());
+#ifdef CGAL_USE_SURFACE_MESH
+  test_graph_range(sm_data());
+#endif
+#ifdef CGAL_USE_OPENMESH
+  test_graph_range(omesh_data());
+#endif
+
+  test_invalid_selections();
+  non_manifoldness_test1();
+  non_manifoldness_test2();
+
+  test_SM_tetrahedron();
+  test_Polyhedron_tetrahedron();
+
+  std::cout << "Done" << std::endl;
+  return EXIT_SUCCESS;
 }

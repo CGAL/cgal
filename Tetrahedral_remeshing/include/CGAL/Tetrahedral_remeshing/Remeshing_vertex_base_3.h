@@ -17,44 +17,46 @@
 
 #include <CGAL/Simplicial_mesh_vertex_base_3.h>
 
-namespace CGAL
-{
-namespace Tetrahedral_remeshing
-{
+namespace CGAL {
+namespace Tetrahedral_remeshing {
 
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
 
-The class `Remeshing_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
+The class `Remeshing_vertex_base_3` is a model of the concept `RemeshingVertexBase_3`.
 It is designed to serve as vertex base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
 \tparam Gt is the geometric traits class.
-It has to be a model of the concept `RemeshingTriangulationTraits_3`.
+It must be a model of the concept `RemeshingTriangulationTraits_3`.
 
 \tparam Vb is a vertex base class from which `Remeshing_vertex_base_3` derives.
-It must be a model of the `TriangulationVertexBase_3` concept.
-It has the default value `Triangulation_vertex_base_3<Gt>`.
+It must be a model of the concept `SimplicialMeshVertexBase_3`.
 
-\cgalModels `RemeshingVertexBase_3`
-\cgalModels `SimplicialMeshVertexBase_3`
+\cgalModels{RemeshingVertexBase_3,SimplicialMeshVertexBase_3}
 */
-template<typename GT,
-  typename Subdomain_index = int,
-  typename Surface_patch_index = int,
-  typename Curve_index = int,
-  typename Corner_index = int,
-  typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-using Remeshing_vertex_base_3
-  = CGAL::Simplicial_mesh_vertex_base_3<GT,
-                                        Subdomain_index,
-                                        Surface_patch_index,
-                                        Curve_index,
-                                        Corner_index,
-                                        Vb>;
+template<typename Gt,
+         typename Vb = CGAL::Simplicial_mesh_vertex_base_3<Gt,
+                         int /*Subdomain_index*/,
+                         int /*Surface_patch_index*/,
+                         int /*Curve_index*/,
+                         int /*Corner_index*/> >
+class Remeshing_vertex_base_3
+  : public Vb
+{
+public:
+  template <typename TDS2>
+  struct Rebind_TDS
+  {
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = Remeshing_vertex_base_3<Gt, Vb2>;
+  };
 
-}//end namespace Tetrahedral_remeshing
+public:
+  using Vb::Vb; // constructors
+};
 
-}//end namespace CGAL
+} // namespace Tetrahedral_remeshing
+} // namespace CGAL
 
 #endif //CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_3_H

@@ -23,7 +23,6 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
-#include <boost/mpl/if.hpp>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/NewKernel_d/Kernel_object_converter.h>
 
@@ -80,12 +79,12 @@ class KernelD_converter_
 
         // Explicit calls to boost::mpl functions to avoid parenthesis
         // warning on some versions of GCC
-        typedef typename boost::mpl::if_ <
+        typedef std::conditional_t <
                           // If Point==Vector, keep only one conversion
-          boost::mpl::or_<boost::mpl::bool_<duplicate::value>,
+                          duplicate::value ||
                           // For iterator objects, the default is make_transforming_iterator
-                          boost::mpl::bool_<(iterator_tag_traits<Tag_>::is_iterator && no_converter::value)> >,
-          Do_not_use,K1_Obj>::type argument_type;
+                          (iterator_tag_traits<Tag_>::is_iterator && no_converter::value),
+          Do_not_use,K1_Obj> argument_type;
         //typedef typename KOC::argument_type K1_Obj;
         //typedef typename KOC::result_type K2_Obj;
         public:
@@ -182,7 +181,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
                 return Object_converter<Possibilities>()(obj,*this);
         }
 
-        //TODO: convert boost::variant
+        //TODO: convert std::variant
 
 };
 

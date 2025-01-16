@@ -15,7 +15,7 @@
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <type_traits>
 
@@ -37,13 +37,13 @@ vertices_end(const Poly& aPoly,
 
 template <typename Poly>
 inline typename Poly::const_iterator
-vertices_begin(const boost::shared_ptr<Poly>& aPoly,
+vertices_begin(const std::shared_ptr<Poly>& aPoly,
                std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
 { return aPoly->begin(); }
 
 template <typename Poly>
 inline typename Poly::const_iterator
-vertices_end(const boost::shared_ptr<Poly> & aPoly,
+vertices_end(const std::shared_ptr<Poly> & aPoly,
              std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
 { return aPoly->end(); }
 
@@ -62,13 +62,13 @@ vertices_end(const PolyWithHoles& aPoly,
 
 template <typename PolyWithHoles>
 inline typename PolyWithHoles::Polygon_2::const_iterator
-vertices_begin(const boost::shared_ptr<PolyWithHoles>& aPoly,
+vertices_begin(const std::shared_ptr<PolyWithHoles>& aPoly,
                std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
 { return aPoly->outer_boundary().begin(); }
 
 template <typename PolyWithHoles>
 inline typename PolyWithHoles::Polygon_2::const_iterator
-vertices_end(const boost::shared_ptr<PolyWithHoles>& aPoly,
+vertices_end(const std::shared_ptr<PolyWithHoles>& aPoly,
              std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
 { return aPoly->outer_boundary().end(); }
 

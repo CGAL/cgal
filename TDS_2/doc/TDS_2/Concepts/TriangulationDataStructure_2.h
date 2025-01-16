@@ -64,7 +64,9 @@ the rank of this item in the output order.
 When dimension \f$ <\f$ 2, the same information is output
 for faces of maximal dimension instead of faces.
 
-\cgalHasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2::Face`
 \sa `TriangulationDataStructure_2::Vertex`
@@ -105,13 +107,13 @@ typedef unspecified_type Face_data;
 
 /*!
 Handle to a vertex.
-\cgalModels `Handle`
+\cgalModels{Handle}
 */
 typedef unspecified_type Vertex_handle;
 
 /*!
 Handle to a face.
-\cgalModels `Handle`
+\cgalModels{Handle}
 */
 typedef unspecified_type Face_handle;
 
@@ -726,7 +728,9 @@ In order to obtain new vertices or destruct unused vertices, the user must
 call the `create_vertex()` and `delete_vertex()` methods of the
 triangulation data structure.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_vertex_base_2<Tds>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDSVertexBase_2`
 \sa `TriangulationDataStructure_2::Face`
@@ -847,7 +851,9 @@ The methods `create_face()` and
 have to be used to
 define new faces and to delete no longer used faces.
 
-\cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_face_base_2<Tds>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDSFaceBase_2`
 \sa `TriangulationDataStructure_2`

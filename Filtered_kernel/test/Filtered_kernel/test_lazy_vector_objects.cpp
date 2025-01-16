@@ -42,7 +42,7 @@ int main()
     }
 
     V = nullptr;
-    if( !(V = boost::get<std::vector<Point_2> >(&(*o_variant)))  ){
+    if( !(V = std::get_if<std::vector<Point_2> >(&(*o_variant)))  ){
       std::cerr << "ERROR, something other than vector< point_2 >" << std::endl;
       return EXIT_FAILURE;
     }
@@ -82,7 +82,7 @@ int main()
     }
 
     V = nullptr;
-    if( !(V = boost::get<std::vector<Point_3> > (&(*o_variant)))  ){
+    if( !(V = std::get_if<std::vector<Point_3> > (&(*o_variant)))  ){
       std::cerr << "ERROR" << std::endl;
       return EXIT_FAILURE;
     }

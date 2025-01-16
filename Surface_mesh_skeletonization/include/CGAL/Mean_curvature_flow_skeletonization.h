@@ -528,6 +528,7 @@ public:
   /// after a number of `contract_geometry()`, keeping the specified
   /// vertices fixed in place.
   /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
+  ///
   /// \cgalAdvancedEnd
   template<class InputIterator>
   void set_fixed_vertices(InputIterator begin, InputIterator end)

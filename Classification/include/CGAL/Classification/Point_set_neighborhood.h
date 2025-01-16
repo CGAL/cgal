@@ -96,7 +96,7 @@ public:
     Functor that computes the neighborhood of an input point with a
     fixed number of neighbors.
 
-    \cgalModels CGAL::Classification::NeighborQuery
+    \cgalModels{CGAL::Classification::NeighborQuery}
 
     \sa Point_set_neighborhood
   */
@@ -131,7 +131,7 @@ public:
     as the points lying in a sphere of fixed radius centered at the
     input point.
 
-    \cgalModels CGAL::Classification::NeighborQuery
+    \cgalModels{CGAL::Classification::NeighborQuery}
 
     \sa Point_set_neighborhood
   */

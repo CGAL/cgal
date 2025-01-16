@@ -25,13 +25,13 @@ do_intersect(const CGAL::Bbox_2& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-typename boost::optional< typename boost::variant<Bbox_2> >
+typename std::optional< typename std::variant<Bbox_2> >
 inline
 intersection(const CGAL::Bbox_2& a,
              const CGAL::Bbox_2& b)
 {
-  typedef typename boost::variant<Bbox_2> variant_type;
-  typedef typename boost::optional<variant_type> result_type;
+  typedef typename std::variant<Bbox_2> variant_type;
+  typedef typename std::optional<variant_type> result_type;
 
   if(!do_intersect(a, b))
     return result_type();

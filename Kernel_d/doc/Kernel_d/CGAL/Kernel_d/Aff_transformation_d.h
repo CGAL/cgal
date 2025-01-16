@@ -17,10 +17,10 @@ by the constructors below.
 Affine Transformations are implemented by matrices of number type
 `RT` as a handle type. All operations like creation,
 initialization, input and output on a transformation \f$ t\f$ take time
-\f$ O(t.dimension()^2)\f$. `dimension()` takes constant time.
+\cgalBigO{t.dimension()^2}. `dimension()` takes constant time.
 The operations for inversion and composition have the cubic costs of
 the used matrix operations. The space requirement is
-\f$ O(t.dimension()^2)\f$.
+\cgalBigO{t.dimension()^2}.
 
 */
 template< typename Kernel >

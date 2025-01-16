@@ -142,7 +142,7 @@ For handles and indices of vertices, halfedges, faces, etc., we provide speciali
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
-This class is similar to `boost::any`.
+This class is similar to `std::any`.
 
 \section stl_uncertainty Uncertainty Management
 

@@ -57,16 +57,16 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
 void test_typedefs(){
     typedef CGAL::Cache<int,double> Cache;
     CGAL_USE_TYPE(Cache);
-    CGAL_static_assertion(( ::std::is_same< Cache::Input, int >::value ));
-    CGAL_static_assertion(( ::std::is_same< Cache::Output,double>::value ));
+    static_assert(::std::is_same< Cache::Input, int >::value );
+    static_assert(::std::is_same< Cache::Output,double>::value );
     typedef CGAL::Creator_1<int,double> Creator_double;
     CGAL_USE_TYPE(Creator_double);
-    CGAL_static_assertion(( ::std::is_same<Cache::Creator,Creator_double>::value ));
+    static_assert(::std::is_same<Cache::Creator,Creator_double>::value );
     typedef CGAL::Creator_1<int,int> Creator_int;
     CGAL_USE_TYPE(Creator_int);
-    CGAL_static_assertion(( ::std::is_same<Cache::Canonicalizer,Creator_int>::value ));
-    CGAL_static_assertion(( ::std::is_same<Cache::Compare,std::less<int> >::value ));
-    CGAL_static_assertion(( ::std::is_same<Cache::Self,CGAL::Cache<int,double> >::value ));
+    static_assert(::std::is_same<Cache::Canonicalizer,Creator_int>::value );
+    static_assert(::std::is_same<Cache::Compare,std::less<int> >::value );
+    static_assert(::std::is_same<Cache::Self,CGAL::Cache<int,double> >::value );
 }
 int main(){
     {

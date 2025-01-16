@@ -33,7 +33,7 @@ class Ref_count_obj
   typedef typename Get_functor<Kbase, Construct_ttag<Tag_> >::type CBase;
 
   typedef Ref_count_obj                        Self;
-  CGAL_static_assertion((std::is_same<Self, typename Get_type<R_, Tag_>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Tag_>::type>::value);
 
 public:
   typedef R_ R;

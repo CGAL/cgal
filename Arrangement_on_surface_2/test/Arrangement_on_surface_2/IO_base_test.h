@@ -697,11 +697,11 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   Subcurve_2 seg(point_vector.begin(), point_vector.end());
 
   //convert it into x-monotone bezier segment.
-  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
   std::vector<Make_x_monotone_result> objs;
   bezier_traits.make_x_monotone_2_object()(seg, std::back_inserter(objs));
   assert(! objs.empty());
-  const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+  const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(objs[0]));
   assert(x_seg_p);
   xseg = *x_seg_p;
 
@@ -724,7 +724,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
   auto make_x_monotone = bezier_traits.make_x_monotone_2_object();
   if ((type == 'x') || (type == 'X')) {
     for (unsigned int i=0; i<number_of_segments; ++i) {
@@ -745,7 +745,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       std::vector<Make_x_monotone_result> objs;
       make_x_monotone(seg, std::back_inserter(objs));
       assert(! objs.empty());
-      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+      const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(objs[0]));
       assert(x_seg_p);
       x_segments.push_back(*x_seg_p);
 
@@ -1491,7 +1491,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
   std::cout << std::endl;
-  typedef boost::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
   std::list<Make_x_monotone_result> x_objs;
   Curve_2 tmp_cv;
   is >> tmp_cv;
@@ -1509,7 +1509,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   size_t id(0);
   if (! is.eof()) is >> id;
   std::advance(xoit, id);
-  const auto* xcv_p = boost::get<X_monotone_curve_2>(&*xoit);
+  const auto* xcv_p = std::get_if<X_monotone_curve_2>(&*xoit);
   assert(xcv_p);
   xcv = *xcv_p;
   return false;

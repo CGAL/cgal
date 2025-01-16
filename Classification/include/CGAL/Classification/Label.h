@@ -105,7 +105,7 @@ public:
 
   \brief %Handle to a classification `Label`.
 
-  \cgalModels Handle
+  \cgalModels{Handle}
 */
 class Label_handle { };
 #else

@@ -21,13 +21,19 @@ namespace CGAL {
 
 template< class Base, class Derived >
 struct is_same_or_derived :
-  public ::boost::mpl::or_<
-    ::std::is_same< Base, Derived >,
-    ::boost::is_base_and_derived< Base, Derived >
-  >::type
+  public std::bool_constant<
+    ::std::is_same_v< Base, Derived > ||
+    ::boost::is_base_and_derived< Base, Derived >::value
+  >
 {};
 
 namespace cpp20 {
+
+  template<class T>
+  struct type_identity { using type = T; };
+
+  template<class T>
+  using type_identity_t = typename type_identity<T>::type;
 
   template< class T >
   struct remove_cvref {
@@ -38,6 +44,26 @@ namespace cpp20 {
   using remove_cvref_t = typename remove_cvref<T>::type;
 
 } // end namespace cpp20
+
+namespace details {
+  template <typename From, typename To, typename = void>
+  struct is_convertible_without_narrowing : std::false_type
+  {};
+
+  template <typename From, typename To>
+  struct is_convertible_without_narrowing<From,
+                                          To,
+                                          std::void_t<decltype(cpp20::type_identity_t<To[]>{std::declval<From>()})>>
+      : std::is_convertible<From, To>
+  {};
+}
+
+template <typename From, typename To>
+struct is_convertible_without_narrowing : details::is_convertible_without_narrowing<From, To>
+{};
+
+template <typename From, typename To>
+inline constexpr bool is_convertible_without_narrowing_v = is_convertible_without_narrowing<From, To>::value;
 
 } // end namespace CGAL
 

@@ -49,10 +49,10 @@ public:
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
     // usually will be true, but might not be the case if using custom type points
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::property_traits<VPM>::value_type>::value));
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::range_value<Point_container>::type>::value));
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::property_traits<VPM>::value_type>::value);
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::range_value<Point_container>::type>::value);
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_normal_map_t, NamedParameters,

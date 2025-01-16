@@ -9,7 +9,9 @@ The concept `LinearCellComplexItems` refines the concept of `GenericMapItems` by
 
 The first type in `Attributes` tuple must be a model of the `CellAttributeWithPoint` concept.
 
-\cgalHasModel `CGAL::Linear_cell_complex_min_items`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Linear_cell_complex_min_items}
+\cgalHasModelsEnd
 
 \sa `LinearCellComplex`
 \sa `CellAttributeWithPoint`

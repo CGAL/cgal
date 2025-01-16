@@ -32,7 +32,9 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
+#ifdef CGAL_USE_BOOST_MP
 #include <CGAL/boost_mp.h>
+#endif
 //Currently already included in boost_mp.h
 //#ifdef CGAL_USE_BOOST_MP
 //# include <boost/multiprecision/cpp_int.hpp>
@@ -318,7 +320,7 @@ void create_free_instance(CGAL::Quadratic_program_from_mps<IT>& qp,
                           const char *dir)
 {
   // This routine converts the given instance into an equivalent
-  // problem where all bounds are modelled by additional rows of A and
+  // problem where all bounds are modeled by additional rows of A and
   // where all variables are free.
   //
   // That is, the quantities c and D do not change, but A, b, and

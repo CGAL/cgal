@@ -5,7 +5,9 @@
  *
  * Traits class concept defining the requirements of the class `CGAL::Mean_curvature_flow_skeletonization`.
  *
- * \cgalHasModel Any \cgal `Kernel` with `double` as `%Kernel::%FT`
+ * \cgalHasModelsBegin
+ * \cgalHasModelsBare{Any \cgal `Kernel` with `double` as `%Kernel::%FT`}
+ * \cgalHasModelsEnd
  *
  *
  */
@@ -28,7 +30,7 @@ typedef unspecified_type FT;
 /*!
  * Function object type that provides
  * `Point_3 operator()(FT x, FT y, FT z) const`
- * returning the point with `x`, `y` and `z` as Cartesian coordinates.
+ * returning the point with `x`, `y` and `z` as %Cartesian coordinates.
  */
 typedef unspecified_type Construct_point_3;
 
@@ -186,4 +188,3 @@ compute_z_3_object();
 /// @}
 
 }; /* end DelaunayTriangulationTraits_2 */
-

@@ -2930,17 +2930,10 @@ public:
     typedef typename Point_2::Rep  Rep;
 
   public:
+    template <class ...Args>
     Rep // Point_2
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y) const
-    { return Rep(x, y); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
-    { return Rep(x, y, w); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
     Point_2
     operator()(const Line_2& l) const
@@ -2952,7 +2945,7 @@ public:
     }
 
     Point_2
-    operator()(const Line_2& l, const FT i) const
+    operator()(const Line_2& l, const FT& i) const
     {
       typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
@@ -2977,6 +2970,10 @@ public:
     { return Point_2(x, y); }
 
     Point_2
+    operator()(RT&& x, RT&& y) const
+    { return Point_2(std::move(x), std::move(y)); }
+
+    Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
     { return Point_2(x, y, w); }
   };
@@ -2990,34 +2987,10 @@ public:
     typedef typename Point_3::Rep        Rep;
 
   public:
-
-    template<typename>
-    struct result {
-      typedef Point_3 type;
-    };
-
-    template<typename F>
-    struct result<F(Weighted_point_3)> {
-      typedef const Point_3& type;
-    };
-
-    template<typename F>
-    struct result<F(Point_3)> {
-      typedef const Point_3& type;
-    };
-
-
+    template <class ...Args>
     Rep // Point_3
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Rep(x, y, z, w); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
     const Point_3&
     operator()(const Point_3 & p) const
@@ -3034,6 +3007,10 @@ public:
     Point_3
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Point_3(x, y, z); }
+
+    Point_3
+    operator()(RT&& x, RT&& y, RT&& z) const
+    { return Point_3(std::move(x), std::move(y), std::move(z)); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
@@ -3131,6 +3108,8 @@ public:
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
+    typedef typename K::Segment_2  Segment_2;
+    typedef typename K::Triangle_2 Triangle_2;
 
   public:
     Point_2
@@ -3141,6 +3120,14 @@ public:
       line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
       return construct_point_2(x, y);
     }
+
+    Point_2
+    operator()(const Segment_2& s, const Point_2& p) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(s, p, K()); }
+
+    Point_2
+    operator()(const Triangle_2& t, const Point_2& p) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
   };
 
 
@@ -3156,16 +3143,6 @@ public:
     typedef typename K::FT         FT;
 
   public:
-    template<typename>
-    struct result {
-      typedef const Point_3 type;
-    };
-
-    template<typename F>
-    struct result<F(Point_3, Point_3)> {
-      typedef const Point_3& type;
-    };
-
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
     {
@@ -3406,11 +3383,17 @@ public:
     operator()(Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
+    Rep
+    operator()(Return_base_tag, RT&& x, RT&& y) const
+    { return Rep(std::move(x), std::move(y)); }
+
     Rep // Vector_2
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
 
-
+    Rep
+    operator()(Return_base_tag, RT&& x, RT&& y, RT&& w) const
+    { return Rep(std::move(x), std::move(y), std::move(w)); }
 
     Vector_2
     operator()( const Point_2& p, const Point_2& q) const
@@ -3508,6 +3491,10 @@ public:
     Rep // Vector_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
+
+    Rep // Vector_3
+    operator()(Return_base_tag, RT&& x, RT&& y, RT&& z) const
+    { return Rep(std::move(x), std::move(y), std::move(z)); }
 
     Rep // Vector_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const

@@ -8,9 +8,9 @@
 #include "arr_exact_construction_segments.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Arrangement_with_history_2<Traits>              Arr_with_hist;
-typedef Arr_with_hist::Curve_handle                           Curve_handle;
-typedef CGAL::Arr_trapezoid_ric_point_location<Arr_with_hist> Point_location;
+using Arr_with_hist = CGAL::Arrangement_with_history_2<Traits>;
+using Curve_handle = Arr_with_hist::Curve_handle;
+using Point_location = CGAL::Arr_trapezoid_ric_point_location<Arr_with_hist>;
 
 int main() {
   // Insert 3 curves incrementally.

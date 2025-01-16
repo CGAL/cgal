@@ -306,7 +306,7 @@ public:
               double alpha)
   {
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<face_descriptor> interior_map(boost::begin(faces), boost::end(faces));
+    std::set<face_descriptor> interior_map(std::begin(faces), std::end(faces));
 
     // store boundary edges - to be used in relax
     std::set<halfedge_descriptor> border_edges;
@@ -325,7 +325,7 @@ public:
     std::map<vertex_descriptor, double> scale_attribute;
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
-    std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    std::vector<face_descriptor> all_faces(std::begin(faces), std::end(faces));
     #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
     #endif

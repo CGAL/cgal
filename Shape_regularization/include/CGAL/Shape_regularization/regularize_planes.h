@@ -296,7 +296,7 @@ namespace Planes {
 
     using PlaneIndexMap = typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type;
 
-    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value),
+    static_assert(!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value,
                               "Error: no plane index map");
 
     const PlaneIndexMap index_map =

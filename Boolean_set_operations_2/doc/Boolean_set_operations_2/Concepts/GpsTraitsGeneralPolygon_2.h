@@ -9,8 +9,10 @@ A model of this concept represents a simple general polygon.
 
 \cgalGeneralizes `GeneralPolygon_2`
 
-\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_2`
-\cgalHasModel `CGAL::Polygon_2<PolygonTraits_2, Container>`
+\cgalHasModelsBegin
+\cgalHasModels{GeneralPolygonSetTraits_2::Polygon_2}
+\cgalHasModels{CGAL::Polygon_2<PolygonTraits_2, Container>}
+\cgalHasModelsEnd
 
 \sa `GeneralPolygon_2`
 

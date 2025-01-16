@@ -22,8 +22,8 @@
  * Definition of the Arr_overlay_traits_2 class-template.
  */
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 
 #include <CGAL/Arr_tags.h>
 
@@ -105,30 +105,30 @@ public:
     RB_OVERLAP    // Red-blue overlap.
   };
 
-  typedef boost::variant<Halfedge_handle_red, Vertex_handle_red,
+  typedef std::variant<Halfedge_handle_red, Vertex_handle_red,
                          Face_handle_red>           Cell_handle_red;
-  typedef boost::optional<Cell_handle_red>          Optional_cell_red;
+  typedef std::optional<Cell_handle_red>          Optional_cell_red;
 
-  typedef boost::variant<Halfedge_handle_blue, Vertex_handle_blue,
+  typedef std::variant<Halfedge_handle_blue, Vertex_handle_blue,
                          Face_handle_blue>          Cell_handle_blue;
-  typedef boost::optional<Cell_handle_blue>         Optional_cell_blue;
+  typedef std::optional<Cell_handle_blue>         Optional_cell_blue;
 
   template <typename Handle_red>
   Optional_cell_red make_optional_cell_red(Handle_red handle_red)
-  { return boost::make_optional(Cell_handle_red(handle_red)); }
+  { return std::make_optional(Cell_handle_red(handle_red)); }
 
   template <typename Handle_blue>
   Optional_cell_red make_optional_cell_blue(Handle_blue handle_blue)
-  { return boost::make_optional(Cell_handle_blue(handle_blue)); }
+  { return std::make_optional(Cell_handle_blue(handle_blue)); }
 
 private:
   const Gt2* m_base_traits;        // The base traits object.
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_overlay_traits_2() {}
 
-  /*! Constructor from a base traits class. */
+  /*! constructs from a base traits class. */
   Arr_overlay_traits_2(const Gt2& base_tr) : m_base_traits(&base_tr) {}
 
   const Gt2* base_traits() const { return m_base_traits; }
@@ -148,21 +148,21 @@ public:
     Halfedge_handle_blue m_blue_halfedge_handle;  // The blue halfedge.
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     Ex_x_monotone_curve_2() :
       m_base_xcv(),
       m_red_halfedge_handle(),
       m_blue_halfedge_handle()
     {}
 
-    /*! Constructor from a curve. */
+    /*! constructs from a curve. */
     Ex_x_monotone_curve_2(const Base& xcv) :
       m_base_xcv(xcv),
       m_red_halfedge_handle(),
       m_blue_halfedge_handle()
     {}
 
-    /*! Constructor from a curve and halfedge handles. */
+    /*! constructs from a curve and halfedge handles. */
     Ex_x_monotone_curve_2(const Base& xcv,
                           Halfedge_handle_red  he_r,
                           Halfedge_handle_blue he_b) :
@@ -176,27 +176,27 @@ public:
                         (he_b->direction() == ARR_RIGHT_TO_LEFT));
     }
 
-    /*! Get the base curve (const version). */
+    /*! obtains the base curve (const version). */
     const Base& base() const { return m_base_xcv; }
 
-    /*! Get the base curve (non-const version). */
+    /*! obtains the base curve (non-const version). */
     Base& base() { return m_base_xcv; }
 
-    /*! Casting to a base curve (const version). */
+    /*! casts to a base curve (const version). */
     operator const Base&() const { return m_base_xcv; }
 
-    /*! Casting to a base curve (const version). */
+    /*! casts to a base curve (const version). */
     operator Base&() { return m_base_xcv; }
 
-    /*! Get the red halfedge handle. */
+    /*! obtains the red halfedge handle. */
     Halfedge_handle_red red_halfedge_handle() const
     { return m_red_halfedge_handle; }
 
-    /*! Get the blue halfedge handle. */
+    /*! obtains the blue halfedge handle. */
     Halfedge_handle_blue blue_halfedge_handle() const
     { return m_blue_halfedge_handle; }
 
-    /*! Set the red halfedge handle. */
+    /*! sets the red halfedge handle. */
     void set_red_halfedge_handle(Halfedge_handle_red he_r)
     {
       CGAL_precondition((he_r == Halfedge_handle_red()) ||
@@ -205,7 +205,7 @@ public:
       m_red_halfedge_handle = he_r;
     }
 
-    /*! Set the blue halfedge handle. */
+    /*! sets the blue halfedge handle. */
     void set_blue_halfedge_handle(Halfedge_handle_blue he_b)
     {
       CGAL_precondition((he_b == Halfedge_handle_blue()) ||
@@ -214,7 +214,7 @@ public:
       m_blue_halfedge_handle = he_b;
     }
 
-    /*! Get the color of the subcurve. */
+    /*! obtains the color of the subcurve. */
     Color color() const
     {
       Halfedge_handle_red null_red_he;
@@ -258,21 +258,21 @@ public:
     Optional_cell_blue m_blue_cell;     // The "blue" object.
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     Ex_point_2() :
       m_base_pt(),
       m_red_cell(),
       m_blue_cell()
     {}
 
-    /*! Constructor from a base point. */
+    /*! constructs from a base point. */
     Ex_point_2(const Base& pt) :
       m_base_pt(pt),
       m_red_cell(),
       m_blue_cell()
     {}
 
-    /*! Constructor from a base point with red and blue objects. */
+    /*! constructs from a base point with red and blue objects. */
     Ex_point_2(const Base& pt, const Optional_cell_red& cell_red,
                const Optional_cell_blue& cell_blue) :
       m_base_pt(pt),
@@ -280,57 +280,57 @@ public:
       m_blue_cell(cell_blue)
     {}
 
-    /*! Get the base point (const version). */
+    /*! obtains the base point (const version). */
     const Base& base() const { return m_base_pt; }
 
-    /*! Get the base point (non-const version). */
+    /*! obtains the base point (non-const version). */
     Base& base() { return m_base_pt; }
 
-    /*! Casting to a base point (const version). */
+    /*! casts to a base point (const version). */
     operator const Base&() const { return m_base_pt; }
 
-    /*! Casting to a base point (non-const version). */
+    /*! casts to a base point (non-const version). */
     operator Base&() { return m_base_pt; }
 
-    /*! Get the red object. */
+    /*! obtains the red object. */
     const Optional_cell_red& red_cell() const { return m_red_cell; }
 
-    /*! Get the blue object. */
+    /*! obtains the blue object. */
     const Optional_cell_blue& blue_cell() const { return m_blue_cell; }
 
-    /*! Check if the red object is empty. */
+    /*! checks if the red object is empty. */
     bool is_red_cell_empty() const { return !m_red_cell; }
 
-    /*! Check if the blue object is empty. */
+    /*! checks if the blue object is empty. */
     bool is_blue_cell_empty() const { return !m_blue_cell; }
 
-    /*! Set the red object. */
+    /*! sets the red object. */
     void set_red_cell(const Optional_cell_red& cell_red)
     { m_red_cell = cell_red; }
 
-    /*! Set the blue object. */
+    /*! sets the blue object. */
     void set_blue_cell(const Optional_cell_blue& cell_blue)
     { m_blue_cell = cell_blue; }
 
-    /*! Obtain the red cell handle or nullptr if it doesn't exist. */
+    /*! obtains the red cell handle or nullptr if it doesn't exist. */
     const Cell_handle_red* red_cell_handle() const
     { return m_red_cell ? &(*m_red_cell) : nullptr; }
 
-    /*! Obtain the blue cell handle or nullptr if it doesn't exist. */
+    /*! obtains the blue cell handle or nullptr if it doesn't exist. */
     const Cell_handle_blue* blue_cell_handle() const
     { return m_blue_cell ? &(*m_blue_cell) : nullptr; }
 
-    /*! Obtain the red vertex handle or nullptr if it doesn't exist. */
+    /*! obtains the red vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
-      return m_red_cell ? boost::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
+      return m_red_cell ? std::get_if<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
     }
 
-    /*! Obtain the blue vertex handle or nullptr if it doesn't exist. */
+    /*! obtains the blue vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_blue* blue_vertex_handle() const
     {
       return
-        m_blue_cell ? boost::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
+        m_blue_cell ? std::get_if<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
     }
   };
 
@@ -354,7 +354,7 @@ public:
     //! The base traits.
     const Arr_overlay_traits_2& m_traits;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -371,10 +371,10 @@ public:
                               OutputIterator oi)
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
 
       // In case the curves originate from the same arrangement, they are
@@ -440,7 +440,7 @@ public:
       // the extended X_monotone_curve_2.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_ipt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
         if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
@@ -450,16 +450,16 @@ public:
           if (xcv1.color() == RED) {
             CGAL_assertion(xcv2.color() == BLUE);
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
           }
           else {
             CGAL_assertion((xcv2.color() == RED) && (xcv1.color() == BLUE));
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
           }
 
           // Create the extended point and add the multiplicity.
@@ -470,7 +470,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* overlap_xcv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_xcv != nullptr);
 
         // We have a red-blue overlap, so we mark the curve accordingly.
@@ -500,7 +500,7 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   /*! A functor that splits an arc at a point. */
@@ -509,7 +509,7 @@ public:
     //! The base operator.
     Base_split_2 m_base_split;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -535,7 +535,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 functor object. */
+  /*! obtains a Split_2 functor object. */
   Split_2 split_2_object() const
   { return Split_2(m_base_traits->split_2_object()); }
 
@@ -546,7 +546,7 @@ public:
     Base_construct_min_vertex_2  m_base_min_v;
     Base_equal_2                 m_base_equal;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -574,21 +574,21 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return Point_2(base_p, red_cell, blue_cell);
     }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   {
     return
@@ -603,7 +603,7 @@ public:
     Base_construct_max_vertex_2  m_base_max_v;
     Base_equal_2                 m_base_equal;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -631,21 +631,21 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return (Point_2(base_p, red_cell, blue_cell));
     }
   };
 
-  /*! Obtain a Construct_max_vertex_2 functor object. */
+  /*! obtains a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   {
     return
@@ -659,7 +659,7 @@ public:
     //! The base operator.
     Base_is_vertical_2 m_base_is_vert;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -674,7 +674,7 @@ public:
     { return m_base_is_vert(xcv.base()); }
   };
 
-  /*! Obtain a Is_vertical_2 functor object. */
+  /*! obtains a Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object() const
   { return Is_vertical_2(m_base_traits->is_vertical_2_object()); }
 
@@ -686,7 +686,7 @@ public:
     //! The base operator.
     Base_equal_2 m_base_equal;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -705,7 +705,7 @@ public:
     { return m_base_equal(xcv1.base(), xcv2.base()); }
   };
 
-  /*! Obtain a Equal_2 functor object. */
+  /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const
   { return Equal_2(m_base_traits->equal_2_object()); }
 
@@ -715,7 +715,7 @@ public:
     //! The base operator.
     Base_compare_x_2 m_base_cmp_x;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -730,7 +730,7 @@ public:
     { return m_base_cmp_x(p1.base(), p2.base()); }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a Construct_min_vertex_2 functor object. */
   Compare_x_2 compare_x_2_object() const
   { return Compare_x_2(m_base_traits->compare_x_2_object()); }
 
@@ -740,7 +740,7 @@ public:
     //! The base operator.
     Base_compare_xy_2 m_base_cmp_xy;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -781,7 +781,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a Construct_min_vertex_2 functor object. */
   Compare_xy_2 compare_xy_2_object() const
   { return (Compare_xy_2(m_base_traits->compare_xy_2_object())); }
 
@@ -793,7 +793,7 @@ public:
     //! The base operator.
     Base_compare_y_at_x_2 m_base_cmp_y_at_x;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -811,7 +811,7 @@ public:
     { return m_base_cmp_y_at_x(p.base(), xcv.base()); }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a Construct_min_vertex_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return (Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object())); }
 
@@ -823,7 +823,7 @@ public:
     //! The base operator.
     Base_compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -842,7 +842,7 @@ public:
     { return m_base_cmp_y_at_x_right(xcv1.base(), xcv2.base(), p.base()); }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a Construct_min_vertex_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
     return
@@ -859,7 +859,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -949,7 +949,7 @@ public:
     }
   };
 
-  /*! Obtain an Parameter_space_in_x_2 functor object. */
+  /*! obtains an Parameter_space_in_x_2 functor object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(m_base_traits); }
 
@@ -961,7 +961,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -979,7 +979,7 @@ public:
     { return m_base->is_on_x_identification_2_object()(xcv.base()); }
   };
 
-  /*! Obtain an Is_on_x_identification_2 functor object. */
+  /*! obtains an Is_on_x_identification_2 functor object. */
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(m_base_traits); }
 
@@ -991,7 +991,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
      * The constructor is declared protected to allow only the functor
@@ -1008,7 +1008,7 @@ public:
     { return m_base->compare_y_on_boundary_2_object()(pt1.base(), pt2.base()); }
   };
 
-  /*! Obtain a Compare_y_on_boundary_2 functor. */
+  /*! obtains a Compare_y_on_boundary_2 functor. */
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(m_base_traits); }
 
@@ -1020,7 +1020,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
      * The constructor is declared protected to allow only the functor
@@ -1044,7 +1044,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_near_boundary_2 functor. */
+  /*! obtains a Compare_y_near_boundary_2 functor. */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(m_base_traits); }
 
@@ -1059,7 +1059,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -1081,7 +1081,7 @@ public:
     { return m_base->parameter_space_in_y_2_object()(xcv.base()); }
   };
 
-  /*! Obtain an Parameter_space_in_y_2 functor object. */
+  /*! obtains an Parameter_space_in_y_2 functor object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(m_base_traits); }
 
@@ -1093,7 +1093,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -1111,7 +1111,7 @@ public:
     { return m_base->is_on_y_identification_2_object()(xcv.base()); }
   };
 
-  /*! Obtain an Is_on_y_identification_2 functor object. */
+  /*! obtains an Is_on_y_identification_2 functor object. */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(m_base_traits); }
 
@@ -1123,7 +1123,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
      * The constructor is declared protected to allow only the functor
@@ -1157,7 +1157,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_on_boundary_2 functor. */
+  /*! obtains a Compare_x_on_boundary_2 functor. */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(m_base_traits); }
 
@@ -1169,7 +1169,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
      * The constructor is declared protected to allow only the functor
@@ -1192,7 +1192,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 functor. */
+  /*! obtains a Compare_x_near_boundary_2 functor. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(m_base_traits); }
 };

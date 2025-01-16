@@ -306,7 +306,7 @@ namespace CGAL {
     Location_result result = point_location.ray_shoot_up(q);
 
     if(const Halfedge_const_handle* e =
-       boost::get<Halfedge_const_handle>(&(result)))
+       std::get_if<Halfedge_const_handle>(&(result)))
       {
         CGAL_assertion((*e)->face() == face);
         Point_2 p(q.x(),
@@ -321,7 +321,7 @@ namespace CGAL {
         return (*e)->next()->ccb();
       }
     else if (const Vertex_const_handle* v =
-             boost::get<Vertex_const_handle>(&(result)))
+             std::get_if<Vertex_const_handle>(&(result)))
       {
         Halfedge_around_vertex_const_circulator cir =
         (*v)->incident_halfedges();

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Refiner.h"
 #include <QInputDialog>
 #include <CGAL/Memory_sizer.h>
 

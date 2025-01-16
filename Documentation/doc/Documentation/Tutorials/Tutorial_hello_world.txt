@@ -73,7 +73,7 @@ seems that the points are collinear, or perform a right turn.
 
 If you must ensure that your numbers get interpreted at their full precision
 you can use a \cgal kernel that performs exact predicates and
-extract constructions.
+exact constructions.
 
 \cgalExample{Kernel_23/exact.cpp}
 

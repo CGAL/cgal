@@ -120,8 +120,6 @@ namespace CircularFunctors {
                const typename CK::Circle_2 & c2,
                OutputIterator res )
   {
-    typedef typename CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
-      ::type result_type;
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2  Equation;
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
@@ -129,7 +127,7 @@ namespace CircularFunctors {
     Equation e2 = CircularFunctors::get_equation<CK>(c2);
 
     if (e1 == e2) {
-      *res++ = CGAL::internal::ck2_intersection_return<result_type>(c1);
+      *res++ = c1;
       return res;
     }
 
@@ -145,9 +143,7 @@ namespace CircularFunctors {
     for ( typename solutions_container::iterator it = solutions.begin();
           it != solutions.end(); ++it )
       {
-        *res++ = CGAL::internal::ck2_intersection_return<result_type>
-          (std::make_pair(Circular_arc_point_2(it->first),
-                                            it->second ));
+        *res++ = std::make_pair(Circular_arc_point_2(it->first), it->second );
       }
 
     return res;

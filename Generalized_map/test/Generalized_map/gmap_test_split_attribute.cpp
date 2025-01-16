@@ -54,7 +54,7 @@ bool test(const std::string& s)
   for(std::size_t i=0; i<NB; ++i)
   {
     typename GMap::Dart_descriptor
-      newd=m.insert_cell_1_in_cell_2(dd, m.template alpha<0,1,0>(dd));
+      newd=m.insert_cell_1_in_cell_2(dd, m.template alpha<0,1>(dd));
     if(m.template attribute<2>(newd)==GMap::null_descriptor)
     {
       std::cout<<"ERROR1: "<<s<<": "

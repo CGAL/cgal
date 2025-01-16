@@ -299,9 +299,9 @@ The 2-dimensional tree is a binary search tree on the first dimension. Each subl
 For the d-dimensional range tree, the figure shows one sublayer tree for each
 layer of the tree.
 
-The tree can be built in \f$ O(n\log^{d-1} n)\f$ time and
-needs \f$ O(n\log^{d-1} n)\f$ space. The ` d`-dimensional points that lie in the
-` d`-dimensional query interval can be reported in \f$ O(\log^dn+k)\f$ time,
+The tree can be built in \cgalBigO{n\log^{d-1} n} time and
+needs \cgalBigO{n\log^{d-1} n} space. The ` d`-dimensional points that lie in the
+` d`-dimensional query interval can be reported in \cgalBigO{\log^dn+k} time,
 where ` n` is the total number of points and ` k` is the number of
 reported points.
 
@@ -437,11 +437,11 @@ sublayer tree of a vertex `v` is a segment tree according to
 the second dimension of all data items of `v`.
 
 
-The tree can be built in \f$ O(n\log^{d} n)\f$ time and
-needs \f$ O(n\log^{d} n)\f$ space.
+The tree can be built in \cgalBigO{n\log^{d} n} time and
+needs \cgalBigO{n\log^{d} n} space.
 The processing time for inverse range
-queries in an ` d`-dimensional segment tree is \f$ O(\log^d n
-+k)\f$ time, where ` n` is the total number of intervals and ` k` is
+queries in an ` d`-dimensional segment tree is \cgalBigO{\log^d n
++k} time, where ` n` is the total number of intervals and ` k` is
 the number of reported intervals.
 
 One possible application of a two-dimensional segment tree is the

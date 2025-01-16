@@ -19,7 +19,7 @@ this is done with the global function `make_object()`. This
 encapsulation mechanism requires the use of `assign` or
 `object_cast` to use the functionality of the encapsulated class.
 
-This class is similar in spirit to `boost::any`.
+This class is similar in spirit to `std::any`.
 
 \cgalHeading{Example}
 
@@ -110,16 +110,16 @@ Object(const Object &o);
 
 /*!
 Implicit converting constructor for compatibility with
-`boost::variant`.
+`std::variant`.
 */
-Object(boost::variant<T...>);
+Object(std::variant<T...>);
 
 
 /*!
 Implicit converting constructor for compatibility with
-`boost::optional` and `boost::variant`.
+`std::optional` and `std::variant`.
  */
-Object(boost::optional< boost::variant<T...> >);
+Object(std::optional< std::variant<T...> >);
 
 /// @}
 

@@ -31,7 +31,7 @@ namespace Shape_detection {
   class Point_to_shape_index_map
   {
     typedef CGAL::Shape_detection::Shape_base<Traits> Shape;
-    boost::shared_ptr<std::vector<int> > m_indices;
+    std::shared_ptr<std::vector<int> > m_indices;
 
   public:
     typedef std::size_t key_type; ///< %Index of the point in the random access point range.
@@ -50,7 +50,7 @@ namespace Shape_detection {
 
       \tparam ShapeRange must be an `Iterator_range` with a bidirectional
       constant iterator type with value type
-      `boost::shared_ptr<CGAL::Shape_detection::Shape_base<Traits> >`.
+      `std::shared_ptr<CGAL::Shape_detection::Shape_base<Traits> >`.
      */
     template <typename PointRange, typename ShapeRange>
     Point_to_shape_index_map (const PointRange& points,
@@ -85,7 +85,7 @@ namespace Shape_detection {
   {
   public:
     typedef CGAL::Shape_detection::Plane<Traits> Plane_shape;
-    typedef boost::shared_ptr<Plane_shape> key_type;
+    typedef std::shared_ptr<Plane_shape> key_type;
     typedef typename Traits::Plane_3 value_type;
     typedef value_type reference;
     typedef boost::read_write_property_map_tag category;

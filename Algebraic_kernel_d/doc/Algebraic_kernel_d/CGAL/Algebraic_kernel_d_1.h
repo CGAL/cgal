@@ -27,7 +27,7 @@ approximation of an algebraic real root is a slightly modified
 (filtered) version of the one presented in \cgalCite{abbott-qir-06}. The
 method has quadratic convergence.
 
-\cgalModels `AlgebraicKernel_d_1`
+\cgalModels{AlgebraicKernel_d_1}
 
 \sa `AlgebraicKernel_d_1`
 \sa `Polynomial_d`

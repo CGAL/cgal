@@ -7,14 +7,14 @@
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CORE::BigInt                               Number_type;
-typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
-typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits;
+using Number_type = CORE::BigInt;
+using AK1 = CGAL::Algebraic_kernel_d_1<Number_type>;
+using Traits = CGAL::Arr_rational_function_traits_2<AK1>;
 
-typedef Traits::Polynomial_1                       Polynomial;
-typedef Traits::Algebraic_real_1                   Alg_real;
-typedef Traits::Bound                              Bound;
+using Polynomial = Traits::Polynomial_1;
+using Alg_real = Traits::Algebraic_real_1;
+using Bound = Traits::Bound;
 
-typedef CGAL::Arrangement_2<Traits>                Arrangement;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 
 #endif

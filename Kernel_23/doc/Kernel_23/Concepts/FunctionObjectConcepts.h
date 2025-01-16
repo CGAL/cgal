@@ -478,7 +478,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  A type representing an iterator to the Cartesian coordinates of a point
+  A type representing an iterator to the %Cartesian coordinates of a point
   in two dimensions.
 
   \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
@@ -495,7 +495,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  A type representing an iterator to the Cartesian coordinates of a point
+  A type representing an iterator to the %Cartesian coordinates of a point
   in three dimensions.
 
   \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
@@ -764,6 +764,32 @@ public:
                                const K::Point_3& b,
                                const K::Point_3& c,
                                const K::FT& cosine);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+  \f$ (a1, b1, c1)\f$ at the vertex `b1`, and \f$ \theta_2\f$
+  is the angle in \f$ [0, \pi]\f$ of the triangle \f$ (a2, b2, c2)\f$ at the vertex `b2`.
+  \pre `a1!=b1 && c1!=b1 && a2!=b2 && c2!=b2`.
+  */
+  Comparison_result operator()(const K::Point_3& a1,
+                               const K::Point_3& b1,
+                               const K::Point_3& c1,
+                               const K::Point_3& a2,
+                               const K::Point_3& b2,
+                               const K::Point_3& c2);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ between the vectors
+  \f$ u1\f$ and \f$ v1\f$, and \f$ \theta_2\f$ is the angle in \f$ [0, \pi]\f$
+  between the vectors \f$ u2\f$ and \f$ v2\f$.
+  \pre none of the vectors have zero length.
+  */
+  Comparison_result operator()(const K::Vector_3& u1,
+                               const K::Vector_3& v1,
+                               const K::Vector_3& u2,
+                               const K::Vector_3& v2);
 };
 
 /*!
@@ -1365,7 +1391,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian coordinates of points `p` and
+    Compares the %Cartesian coordinates of points `p` and
     `q` lexicographically in \f$ xyz\f$ order: first
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
     are compared. If they are equal, \f$ z\f$-coordinates are compared.
@@ -1395,7 +1421,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian coordinates of points `p` and
+    Compares the %Cartesian coordinates of points `p` and
     `q` lexicographically in \f$ xy\f$ order: first
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
     are compared.
@@ -1425,7 +1451,7 @@ public:
 
 
   /*!
-    Compares the Cartesian coordinates of points `p` and
+    Compares the %Cartesian coordinates of points `p` and
     `q` lexicographically in \f$ xy\f$ order: first
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
     are compared.
@@ -1458,7 +1484,7 @@ public:
   /// @{
 
   /*!
-    compares the Cartesian \f$ x\f$-coordinates of points `p` and `q`
+    compares the %Cartesian \f$ x\f$-coordinates of points `p` and `q`
   */
   Comparison_result operator()(const Kernel::Point_2&p,
                                const Kernel::Point_2&q);
@@ -1514,7 +1540,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian \f$ x\f$-coordinates of points `p` and
+    Compares the %Cartesian \f$ x\f$-coordinates of points `p` and
     `q`
   */
   Comparison_result operator()(const Kernel::Point_3&p,
@@ -1633,7 +1659,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian coordinates of points `p` and
+    Compares the %Cartesian coordinates of points `p` and
     `q` lexicographically in \f$ yx\f$ order: first
     \f$ y\f$-coordinates are compared, if they are equal, \f$ x\f$-coordinates
     are compared.
@@ -1666,7 +1692,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian \f$ y\f$-coordinates of points `p` and
+    Compares the %Cartesian \f$ y\f$-coordinates of points `p` and
     `q`
   */
   Comparison_result operator()(const Kernel::Point_2&p,
@@ -1725,7 +1751,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian \f$ y\f$-coordinates of points `p` and
+    Compares the %Cartesian \f$ y\f$-coordinates of points `p` and
     `q`
   */
   Comparison_result operator()(const Kernel::Point_3&p,
@@ -1752,7 +1778,7 @@ public:
   /// @{
 
   /*!
-    Compares the Cartesian \f$ z\f$-coordinates of points `p` and
+    Compares the %Cartesian \f$ z\f$-coordinates of points `p` and
     `q`
   */
   Comparison_result operator()(const Kernel::Point_3&p,
@@ -3983,25 +4009,25 @@ public:
 
 
   /*!
-    returns an iterator on the 0'th Cartesian coordinate of `p`.
+    returns an iterator on the 0'th %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
                                                 &p);
 
   /*!
-    returns the past the end iterator of the Cartesian coordinates of `p`.
+    returns the past the end iterator of the %Cartesian coordinates of `p`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th Cartesian coordinate of `v`.
+    returns an iterator on the 0'th %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
                                                 &v);
 
   /*!
-    returns the past the end iterator of the Cartesian coordinates of `v`.
+    returns the past the end iterator of the %Cartesian coordinates of `v`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
                                                 &v, int);
@@ -4028,25 +4054,25 @@ public:
   /// @{
 
   /*!
-    returns an iterator on the 0'th Cartesian coordinate of `p`.
+    returns an iterator on the 0'th %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3
                                                 &p);
 
   /*!
-    returns the past the end iterator of the Cartesian coordinates of `p`.
+    returns the past the end iterator of the %Cartesian coordinates of `p`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th Cartesian coordinate of `v`.
+    returns an iterator on the 0'th %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
                                                 &v);
 
   /*!
-    returns the past the end iterator of the Cartesian coordinates of `v`.
+    returns the past the end iterator of the %Cartesian coordinates of `v`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
                                                 &v, int);
@@ -5992,7 +6018,7 @@ public:
   /// @{
 
   /*!
-    introduces a variable with Cartesian coordinates
+    introduces a variable with %Cartesian coordinates
     \f$ (0,0)\f$.
   */
   Kernel::Point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
@@ -6033,7 +6059,7 @@ public:
   /// @{
 
   /*!
-    introduces a point with Cartesian coordinates\f$ (0,0,0)\f$.
+    introduces a point with %Cartesian coordinates\f$ (0,0,0)\f$.
   */
   Kernel::Point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
 
@@ -6077,6 +6103,18 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Line_2& l,
                              const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s,
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
+                             const Kernel::Point_3& p);
 
   /// @}
 
@@ -7287,19 +7325,19 @@ public:
   /// @{
 
   /*!
-    introduces a weighted point with Cartesian coordinates
+    introduces a weighted point with %Cartesian coordinates
     \f$ (0,0)\f$ and weight \f$ 0 \f$.
   */
   Kernel::Weighted_point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
 
  /*!
-    introduces a weighted point with Cartesian coordinates
+    introduces a weighted point with %Cartesian coordinates
     those of \f$ p \f$ and weight \f$ 0 \f$.
   */
   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p);
 
   /*!
-     introduces a weighted point with Cartesian coordinates
+     introduces a weighted point with %Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
    Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
@@ -7325,19 +7363,19 @@ public:
   /// @{
 
   /*!
-    introduces a weighted point with Cartesian coordinates
+    introduces a weighted point with %Cartesian coordinates
     \f$ (0,0,0)\f$ and weight \f$ 0 \f$.
   */
   Kernel::Weighted_point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
 
  /*!
-    introduces a weighted point with Cartesian coordinates
+    introduces a weighted point with %Cartesian coordinates
     those of \f$ p \f$ and weight \f$ 0 \f$.
   */
   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p);
 
   /*!
-     introduces a weighted point with Cartesian coordinates
+     introduces a weighted point with %Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
    Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT& w);
@@ -7590,8 +7628,8 @@ public:
 
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate
-    and the same Cartesian \f$ y\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ x\f$-coordinate
+    and the same %Cartesian \f$ y\f$-coordinate.
   */
   bool operator()(const Kernel::Point_3&p,
                   const Kernel::Point_3&q);
@@ -7617,7 +7655,7 @@ public:
   /// @{
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ x\f$-coordinate.
   */
   bool operator()(const Kernel::Point_2&p,
                   const Kernel::Point_2&q);
@@ -7643,7 +7681,7 @@ public:
   /// @{
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ x\f$-coordinate.
   */
   bool operator()(const Kernel::Point_3&p,
                   const Kernel::Point_3&q);
@@ -7669,7 +7707,7 @@ public:
   /// @{
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ y\f$-coordinate.
   */
   bool operator()(const Kernel::Point_2&p,
                   const Kernel::Point_2&q);
@@ -7695,7 +7733,7 @@ public:
   /// @{
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ y\f$-coordinate.
   */
   bool operator()(const Kernel::Point_3&p,
                   const Kernel::Point_3&q);
@@ -7721,7 +7759,7 @@ public:
   /// @{
 
   /*!
-    returns true iff `p` and `q` have the same Cartesian \f$ z\f$-coordinate.
+    returns true iff `p` and `q` have the same %Cartesian \f$ z\f$-coordinate.
   */
   bool operator()(const Kernel::Point_3&p,
                   const Kernel::Point_3&q);
@@ -8087,6 +8125,12 @@ public:
                   const Kernel::Point_3&p);
 
   /*!
+    returns true iff `p` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3& c,
+                  const Kernel::Point_3& p);
+
+  /*!
     returns true iff the line segment `ab` is inside the union of the
     bounded sides of `s1` and `s2`.
   */
@@ -8348,6 +8392,11 @@ public:
   bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
+  /*!
+    returns true iff `p` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3&c,
+                  const Kernel::Point_3&p);
 
   /// @}
 

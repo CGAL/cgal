@@ -2,19 +2,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> SM;
-typedef boost::graph_traits<SM>::vertex_descriptor           vertex_descriptor;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel    Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3>                    Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor           vertex_descriptor;
 
-typedef Kernel::Vector_3                                     Vector;
-typedef boost::property_map<SM, CGAL::vertex_point_t>::type  VPMap;
-typedef SM::template Property_map<vertex_descriptor, Vector> VNMap;
+typedef Kernel::Vector_3                                       Vector;
+typedef boost::property_map<Mesh, CGAL::vertex_point_t>::type  VPMap;
+typedef Mesh::template Property_map<vertex_descriptor, Vector> VNMap;
 
 struct Bottom
 {
@@ -52,7 +52,7 @@ struct Top
 
 int main(int argc, char* argv[])
 {
-  SM in, out;
+  Mesh in, out;
 
   std::string filename = (argc > 1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/cube-ouvert.off");
   double vlen = (argc > 2) ? std::stod(argv[2]) : 0.1;

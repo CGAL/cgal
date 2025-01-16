@@ -27,6 +27,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 29

@@ -17,7 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/collision_detection.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -76,7 +76,7 @@ class Rigid_triangle_mesh_collision_detection
 // AABB-tree type
   typedef AABB_face_graph_triangle_primitive<TriangleMesh,
                                              Vpm>             Default_primitive;
-  typedef AABB_traits<K, Default_primitive>                 Default_tree_traits;
+  typedef AABB_traits_3<K, Default_primitive>               Default_tree_traits;
   typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
   typedef typename Default::Get<AABBTree, Default_tree>::type              Tree;
   typedef typename Tree::AABB_traits                                Tree_traits;
@@ -250,7 +250,7 @@ public:
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion( (std::is_same<Local_vpm,Vpm>::value) );
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -260,7 +260,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
-    Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
+    Tree* t = new Tree(std::begin(faces(tm)), std::end(faces(tm)), tm, vpm);
     t->build();
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
@@ -562,7 +562,7 @@ public:
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion((std::is_same<Local_vpm,Vpm>::value));
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -600,7 +600,7 @@ public:
       }
     }
     // only one CC
-    points.push_back( get(vpm, *boost::begin(vertices(tm))) );
+    points.push_back( get(vpm, *std::begin(vertices(tm))) );
   }
 
  /*!

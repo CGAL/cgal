@@ -10,6 +10,8 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 template < class GT, class TDS >
@@ -680,11 +682,11 @@ static const int O[216][4] = {
   Vertex_handle vertices[36];
   Cell_handle cells[216];
 
-  // Initialise vertices:
+  // initialize vertices:
   for (int i=0; i<4; i++) {
     for (int j=0; j<3; j++) {
       for (int k=0; k<3; k++) {
-        // Initialise virtual vertices out of the domain for debugging
+        // initialize virtual vertices out of the domain for debugging
         vertices[9*i+3*j+k] = _tds.create_vertex();
         Point p(k*(1.0/3.0) + i*(1.0/6.0),
                 j*(1.0/3.0) + i*(1.0/6.0), i*(1.0/4.0) );

@@ -135,8 +135,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
           typedef typename Base::Point_cartesian_const_iterator result_type;
           // Kernel_d requires a common iterator type for points and vectors
           // TODO: provide this mixed functor in preKernel?
-          // CGAL_static_assertion((std::is_same<typename CGAL::decay<typename boost::result_of<CVI(Vector_d,CGAL::Begin_tag)>::type>::type, result_type>::value));
-          // CGAL_static_assertion((std::is_same<typename CGAL::decay<typename CVI::result_type>::type, result_type>::value));
+          // static_assert(std::is_same<typename CGAL::decay<typename boost::result_of<CVI(Vector_d,CGAL::Begin_tag)>::type>::type, result_type>::value);
+          // static_assert(std::is_same<typename CGAL::decay<typename CVI::result_type>::type, result_type>::value);
           template <class Tag_>
           auto operator()(Point_d const&p, Tag_ t)const{
             return CPI(this->kernel())(p,t);

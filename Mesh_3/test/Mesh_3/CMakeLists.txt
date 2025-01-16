@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project( Mesh_3_Tests )
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
@@ -30,18 +30,16 @@ create_single_source_cgal_program( "test_without_detect_features.cpp" )
 
 if(CGAL_ImageIO_USE_ZLIB)
   create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
-  create_single_source_cgal_program( "test_meshing_3D_image_deprecated.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_image_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_3D_gray_image.cpp" )
-  create_single_source_cgal_program( "test_meshing_3D_gray_image_deprecated.cpp" )
   create_single_source_cgal_program( "test_min_size_criteria.cpp")
 else()
   message(STATUS "NOTICE: The test 'test_meshing_3D_image' requires the ZLIB library, and will not be compiled.")
 endif()
 
 create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
-create_single_source_cgal_program( "test_meshing_implicit_function_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
+create_single_source_cgal_program( "test_meshing_polyhedral_complex_with_manifold_and_min_size.cpp")
 create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
 create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
@@ -56,6 +54,7 @@ create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step_with_features.cpp" )
 create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
+create_single_source_cgal_program( "test_max_edge_distance.cpp")
 
 foreach(target
     test_boost_has_xxx
@@ -67,12 +66,9 @@ foreach(target
     test_mesh_criteria_creation
     test_without_detect_features
     test_meshing_3D_image
-    test_meshing_3D_image_deprecated
     test_meshing_3D_image_with_features
     test_meshing_3D_gray_image
-    test_meshing_3D_gray_image_deprecated
     test_meshing_implicit_function
-    test_meshing_implicit_function_deprecated
     test_meshing_polyhedral_complex
     test_meshing_polyhedron
     test_meshing_polylines_only
@@ -88,10 +84,12 @@ foreach(target
     test_meshing_with_one_step
     test_meshing_with_one_step_with_features
     test_min_edge_length
+    test_max_edge_distance
     test_min_size_criteria
+    test_meshing_polyhedral_complex_with_manifold_and_min_size
     )
   if(TARGET ${target})
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endif()
 endforeach()
 
@@ -113,14 +111,15 @@ if(TARGET CGAL::TBB_support)
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3
       test_min_edge_length
+      test_max_edge_distance
       test_min_size_criteria
       )
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()
   endforeach()
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  test_meshing_verbose"
       "execution   of  test_meshing_polyhedron_with_features"
@@ -149,7 +148,7 @@ if(TARGET ITT::ITT)
   target_compile_definitions(test_meshing_verbose PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_meshing_polyhedron_with_features"
     "execution   of  test_meshing_verbose"

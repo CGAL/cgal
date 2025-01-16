@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_sweep_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -20,9 +20,9 @@ function(compile name source_file point_location traits)
   add_executable(${name} ${source_file})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${name})
   if(TARGET CGAL::CGAL_Core)
-    target_link_libraries(${name} CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL CGAL::CGAL_Core)
   else()
-    target_link_libraries(${name} CGAL::CGAL)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL)
   endif()
   target_compile_definitions(
     ${name} PRIVATE -DCGAL_ARR_TEST_POINT_LOCATION=${point_location}
@@ -31,7 +31,7 @@ endfunction()
 
 function(compile_and_run_sweep name source_file point_location traits data_set)
   compile(${ARGV})
-  if(NOT BUILD_TESTING)
+  if(NOT CGAL_ENABLE_TESTING)
     return()
   endif()
   cgal_add_compilation_test(${name})
@@ -49,7 +49,7 @@ endfunction()
 
 compile_and_run_sweep(test_sweep test_sweep.cpp ${NAIVE}
                       ${CGAL_SEGMENT_TRAITS} "data/segments_tight")
-compile_and_run_sweep(test_sweep_conic test_sweep_conic.cpp ${NAIVE}
+compile_and_run_sweep(test_sweep_conic test_sweep.cpp ${NAIVE}
                       ${CGAL_CONIC_TRAITS} "data/conics")
 compile_and_run_sweep(test_sweep_polyline test_sweep.cpp ${NAIVE}
                       ${CGAL_POLYLINE_TRAITS} "data/polylines")

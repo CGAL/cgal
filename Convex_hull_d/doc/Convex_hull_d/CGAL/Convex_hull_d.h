@@ -69,7 +69,7 @@ The time and space requirements are input dependent. Let \f$C_1\f$, \f$C_2\f$, \
 let \f$ k_i\f$ be the number of facets of \f$ C_i\f$ that are visible from \f$ x\f$
 and that are not already facets of \f$ C_{i-1}\f$.
 
-Then the time for inserting \f$ x\f$ is \f$ O(dim \sum_i k_i)\f$ and
+Then the time for inserting \f$ x\f$ is \cgalBigO{dim \sum_i k_i} and
 the number of new simplices constructed during the insertion of \f$x\f$
 is the number of facets of the hull which were not already facets
 of the hull before the insertion.
@@ -352,7 +352,7 @@ void print_statistics() ;
 
 /*!
 checks the
-validity of the data structure. If `throw_exceptions == thrue`
+validity of the data structure. If `throw_exceptions == true`
 then the program throws the following exceptions to inform about the
 problem.
 `chull_has_center_on_wrong_side_of_hull_facet` the

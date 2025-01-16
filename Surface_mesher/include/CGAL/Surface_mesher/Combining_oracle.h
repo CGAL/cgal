@@ -16,6 +16,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Combining_oracle.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <list>
@@ -51,9 +56,9 @@ namespace CGAL {
 
     typedef typename Oracle_a::Intersection_point Intersection_point;
 
-    CGAL_static_assertion((::std::is_same<
+    static_assert(::std::is_same<
                          Intersection_point,
-                         typename Oracle_b::Intersection_point>::value));
+                         typename Oracle_b::Intersection_point>::value);
 
 
     typedef ::CGAL::Multi_surface_3<typename Oracle_a::Surface_3,

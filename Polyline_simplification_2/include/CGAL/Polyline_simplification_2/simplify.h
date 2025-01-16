@@ -154,11 +154,11 @@ public:
       (*it)->set_removable(false);
       ++it;
       for(; it != ite; ++it){
-        if((boost::next(it) != ite) && (boost::prior(it)== boost::next(it))){
+        if((std::next(it) != ite) && (std::prev(it)== std::next(it))){
           (*it)->set_removable(false);
         }
       }
-      it = boost::prior(it);
+      it = std::prev(it);
       (*it)->set_removable(false);
     }
 
@@ -211,7 +211,7 @@ public:
         it != pct.vertices_in_constraint_end(cid);
         ++it){
       if((*it)->is_removable()){
-        boost::optional<FT> dist = cost(pct, it);
+        std::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
           if(! (*mpq).contains(*it)){
@@ -245,9 +245,9 @@ public:
     }
 
     Vertex_handle vh = *it;
-    Vertices_in_constraint_iterator u = boost::prior(it);
+    Vertices_in_constraint_iterator u = std::prev(it);
     Vertex_handle uh = *u;
-    Vertices_in_constraint_iterator w = boost::next(it);
+    Vertices_in_constraint_iterator w = std::next(it);
     Vertex_handle wh = *w;
 
     typename Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
@@ -322,11 +322,11 @@ operator()()
 
   Vertices_in_constraint_iterator vit = vertex_to_iterator[v].front();
   if(is_removable(vit)){
-    Vertices_in_constraint_iterator u = boost::prior(vit), w = boost::next(vit);
+    Vertices_in_constraint_iterator u = std::prev(vit), w = std::next(vit);
     pct.simplify(vit);
 
     if((*u)->is_removable()){
-      boost::optional<FT> dist = cost(pct, u);
+      std::optional<FT> dist = cost(pct, u);
       if(! dist){
         // cost is undefined
         if( mpq->contains(*u) ){
@@ -344,7 +344,7 @@ operator()()
     }
 
     if((*w)->is_removable()){
-      boost::optional<FT> dist = cost(pct, w);
+      std::optional<FT> dist = cost(pct, w);
       if(! dist){
         // cost is undefined
         if( mpq->contains(*w) ){

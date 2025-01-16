@@ -26,6 +26,11 @@
 #include <unordered_map>
 #include <functional>
 #include <utility>
+#include <optional>
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
 
 namespace CGAL
 {
@@ -41,6 +46,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   typedef typename C3t3::Triangulation       Tr;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3t3::Curve_index         Curve_index;
   typedef typename Tr::Geom_traits::Point_3 Point;
   typedef typename Tr::Facet                Facet;
   typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -69,6 +75,11 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
       CGAL_assertion(false);//e should be in complex
   }
   CGAL_assertion(dimension > 0);
+
+  // remove complex edge before splitting
+  const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
 
   struct Cell_info {
     Subdomain_index subdomain_index_;
@@ -194,26 +205,43 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     // will have its patch tagged from the other side, if needed
   }
 
+  // re-insert complex sub-edges
+  if (dimension == 1)
+  {
+    c3t3.add_to_complex(new_v, v1, curve_index);
+    c3t3.add_to_complex(new_v, v2, curve_index);
+  }
+
   set_index(new_v, c3t3);
 
   return new_v;
 }
 
+/**
+* returns [can_be_split, is_on_boundary]
+*/
 template<typename C3T3, typename CellSelector>
-bool can_be_split(const typename C3T3::Edge& e,
+auto can_be_split(const typename C3T3::Edge& e,
                   const C3T3& c3t3,
                   const bool protect_boundaries,
-                  CellSelector cell_selector)
+                  const CellSelector& cell_selector)
 {
+  struct Splittable
+  {
+    bool can_be_split;
+    bool on_boundary;
+  };
+
   if (is_outside(e, c3t3, cell_selector))
-    return false;
+    return Splittable{false, false};
+
+  const bool boundary = c3t3.is_in_complex(e)
+                     || is_boundary(c3t3, e, cell_selector);
 
   if (protect_boundaries)
   {
-    if (c3t3.is_in_complex(e))
-      return false;
-    else if (is_boundary(c3t3, e, cell_selector))
-      return false;
+    if (boundary)
+      return Splittable{false, boundary};
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     if (!is_internal(e, c3t3, cell_selector))
@@ -226,17 +254,22 @@ bool can_be_split(const typename C3T3::Edge& e,
 #endif
 
     CGAL_assertion(is_internal(e, c3t3, cell_selector));
-    return true;
+    return Splittable{true, boundary};
   }
   else
   {
-    return is_selected(e, c3t3, cell_selector);
+    return Splittable{is_selected(e, c3t3.triangulation(), cell_selector), boundary};
   }
 }
 
-template<typename C3T3, typename CellSelector, typename Visitor>
+
+
+template<typename C3T3,
+         typename Sizing,
+         typename CellSelector,
+         typename Visitor>
 void split_long_edges(C3T3& c3t3,
-                      const typename C3T3::Triangulation::Geom_traits::FT& high,
+                      const Sizing& sizing,
                       const bool protect_boundaries,
                       CellSelector cell_selector,
                       Visitor& visitor)
@@ -247,33 +280,32 @@ void split_long_edges(C3T3& c3t3,
   typedef typename T3::Vertex_handle         Vertex_handle;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
-  typedef typename T3::Geom_traits     Gt;
   typedef typename T3::Geom_traits::FT FT;
   typedef boost::bimap<
-  boost::bimaps::set_of<Edge_vv>,
+        boost::bimaps::set_of<Edge_vv>,
         boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type               long_edge;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Split long edges (" << high << ")...";
+  std::cout << "Split long edges...";
   std::cout.flush();
   std::size_t nb_splits = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
-  const FT sq_high = high*high;
 
   //collect long edges
   T3& tr = c3t3.triangulation();
   Boost_bimap long_edges;
   for (Edge e : tr.finite_edges())
   {
-    if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
+    auto [splittable, boundary] = can_be_split(e, c3t3, protect_boundaries, cell_selector);
+    if (!splittable)
       continue;
 
-    typename Gt::Compute_squared_length_3 sql
-      = tr.geom_traits().compute_squared_length_3_object();
-    FT sqlen = sql(tr.segment(e));
-    if (sqlen > sq_high)
-      long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen));
+    const std::optional<FT> sqlen = is_too_long(e, boundary, sizing, c3t3, cell_selector);
+    if(sqlen != std::nullopt)
+      long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -300,7 +332,8 @@ void split_long_edges(C3T3& c3t3,
       Edge edge(cell, i1, i2);
 
       //check that splittability has not changed
-      if (!can_be_split(edge, c3t3, protect_boundaries, cell_selector))
+      auto [splittable, _] = can_be_split(edge, c3t3, protect_boundaries, cell_selector);
+      if (!splittable)
         continue;
 
       visitor.before_split(tr, edge);
@@ -321,7 +354,7 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-      std::cout << "\rSplit (" << high << ")... ("
+      std::cout << "\rSplit... ("
                 << long_edges.left.size() << " long edges, "
                 << "length  = " << std::sqrt(sqlen) << ", "
                 << nb_splits << " splits)";
@@ -336,7 +369,9 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << " done (" << nb_splits << " splits)." << std::endl;
+  timer.stop();
+  std::cout << " done (" << nb_splits << " splits, in "
+            << timer.time() << " sec)." << std::endl;
 #endif
 }
 

@@ -11,7 +11,7 @@
 #include "arr_conics.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_naive_point_location<Arrangement>             Naive_pl;
+using Naive_pl = CGAL::Arr_naive_point_location<Arrangement>;
 
 int main() {
   Traits traits;

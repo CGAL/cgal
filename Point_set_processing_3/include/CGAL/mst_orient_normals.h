@@ -549,9 +549,6 @@ create_mst_graph(
    For this reason it should not be called on sorted containers.
    It is based on \cgalCite{cgal:hddms-srup-92}.
 
-   \warning This function may fail when Boost version 1.54 is used,
-   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
-
    \pre Normals must be unit vectors
    \pre `k >= 2`
 

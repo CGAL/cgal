@@ -137,12 +137,6 @@ inline bool possibly(Uncertain<bool> c);
 #    define CGAL_unreachable()  CGAL_assertion(false)
 #  endif // CGAL_UNREACHABLE
 
-# define CGAL_static_assertion(EX) \
-     static_assert(EX, #EX)
-
-# define CGAL_static_assertion_msg(EX,MSG) \
-     static_assert(EX, MSG)
-
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))

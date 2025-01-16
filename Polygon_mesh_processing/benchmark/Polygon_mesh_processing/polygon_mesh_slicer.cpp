@@ -13,7 +13,7 @@
 
 #include <CGAL/Polygon_mesh_slicer.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Timer.h>
 
@@ -34,7 +34,7 @@ typedef CGAL::Polyhedron_3<K> Mesh;
 #endif
 
 typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
-typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
+typedef CGAL::AABB_traits_3<K, HGSP>    AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 typedef std::vector<K::Point_3> Polyline;
 typedef std::list< Polyline > Polylines;

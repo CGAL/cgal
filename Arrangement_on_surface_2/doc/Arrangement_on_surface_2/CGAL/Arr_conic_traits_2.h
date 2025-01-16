@@ -57,17 +57,17 @@ namespace CGAL {
  * algebraic number of degree \f$d\f$ if there exist a polynomial \f$ p\f$ with
  * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
  * We therefore require separate representations of the curve
- * coefficients and the point coordinates. The `NtTraits` should be instantiated
- * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
+ * coefficients and the point coordinates. The `NtTraits` should be substituted
+ * by a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
  * results (for example, it can convert rational numbers to algebraic numbers
  * and can compute roots of polynomials with integer coefficients).  The other
  * template parameters, `RatKernel` and `AlgKernel` should be geometric kernels
  * instantiated with the `NtTraits::Rational` and `NtTraits::Algebraic` number
- * types, respectively.  It is recommended instantiating the
- * `CORE_algebraic_number_traits` class as the `NtTraits` parameter, with
- * `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
- * instantiating the two kernel types, respectively.  The number types in this
+ * types, respectively.  It is recommended substituting the
+ * `CORE_algebraic_number_traits` class for the `NtTraits` parameter, and
+ * the `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
+ * instances for two kernel types, respectively.  The number types in this
  * case are provided by the \core library, with its ability to exactly represent
  * simple algebraic numbers.
  *
@@ -80,9 +80,7 @@ namespace CGAL {
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */
@@ -262,11 +260,11 @@ public:
     /// \name Creation
     /// @{
 
-    /*! construct a default point.
+    /*! constructs a default point.
      */
     Point_2();
 
-    /*! construct a point from an algebraic point.
+    /*! constructs a point from an algebraic point.
      */
     Point_2(const typename Alg_kernel::Point_2& p);
 
@@ -274,7 +272,7 @@ public:
      */
     Point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz);
 
-    /*! constructs from Cartesian coordinates.
+    /*! constructs from %Cartesian coordinates.
      */
     Point_2(const Algebraic& x, const Algebraic& y);:
 
@@ -403,7 +401,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Curve_2& cv) const;
 
-    /*! Constructs an \f$x\f$-monotone curve connecting the two given endpoints.
+    /*! constructs an \f$x\f$-monotone curve connecting the two given endpoints.
      * \param source The first point.
      * \param target The second point.
      * \pre `source` and `target` must not be the same.
@@ -411,7 +409,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target) const;
 
-    /*! Constructs a special segment of a given line connecting to given
+    /*! constructs a special segment of a given line connecting to given
      * endpoints.
      * \param a, b, c The coefficients of the supporting line (\f$ax + by + c = 0\f$).
      * \param source The source point.
@@ -429,33 +427,34 @@ public:
    */
   class Construct_bbox_2 {
   public:
-    /*! Obtain a bounding box for a conic arc.
+    /*! obtains a bounding box for a conic arc.
      * \param cv The conic arc.
      * \return The bounding box.
      */
     Bbox_2 operator()(const Curve_2& cv) const { return bbox(cv); }
 
-    /*! Obtain a bounding box for an \f$x\f$-monotone conic arc.
+    /*! obtains a bounding box for an \f$x\f$-monotone conic arc.
      * \param xcv The \f$x\f$-monotone conic arc.
      * \return The bounding box.
      */
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
+  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks \
    * point-location strategy and the drawing function.
    */
   //@{
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
   typedef Approximate_kernel::Point_2                   Approximate_point_2;
+  //@}
 
   /*! \class Approximate_2
    * A functor that approximates a point and an \f$x\f$-monotone curve.
    */
   class Approximate_2 {
   public:
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre `i` is either 0 or 1.
@@ -464,25 +463,28 @@ public:
      */
     Approximate_number_type operator()(const Point_2& p, int i) const;
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      * \param p The exact point.
      */
     Approximate_point_2 operator()(const Point_2& p) const;
 
-    /*! Obtain a polyline that approximates an \f$x\f$-monotone curve. The
-     * polyline is defined by a range of approximate points beginning at
-     * `oi`. The type `OutputIterator` must dereference the type
-     * `Approximate_point_2`. The first and last points in the range are always
-     * the endpoints of the given arc `xcv`. The operator returns a
-     * past-the-end iterator of the destination range.
-     * \param oi An output iterator for the resulting polyline.
-     * \param error The error bound of the polyline approximation. This is
-     *              the Hausdorff distance between the arc and the polyline
-     *              that approximates the arc.
+    /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
+     * approximate points that represent an approximate polyline, and inserts
+     * them into an output container given through an output iterator.  The
+     * first and last points in the sequence are always approximations of the
+     * endpoints of the given arc.
+     *
+     * \param oi An output iterator for the output container.
+     * \param error The error bound of the polyline approximation. This is the
+     *        Hausdorff distance between the arc and the polyline that
+     *        approximates the arc.
      * \param xcv The exact \f$x\f$-monotone arc.
      * \param l2r A Boolean flag that indicates whether the arc direction is
-     *            left to right.
-     * \return The past-the-end iterator of the output iterator.
+     *        left to right.
+     * \return The past-the-end iterator of the output container.
+     *
+     * \pre Dereferencing `oi` must yield an object of type
+     *      `Arr_conic_traits_2::Approximate_point_2`.
      */
     template <typename OutputIterator>
     OutputIterator operator()(OutputIterator oi, double error,
@@ -495,7 +497,7 @@ public:
    */
   class Trim_2 {
   public:
-    /*! Trims the given \f$x\f$-monotone arc to new endpoints.
+    /*! trims the given \f$x\f$-monotone arc to new endpoints.
      * \param xcv The \f$x\f$-monotone arc
      * \param source The new source point.
      * \param target The new target point.
@@ -504,28 +506,28 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                   const Point_2& source,
                                   const Point_2& target) const;
-
   };
 
   /// \name Accessing Functor Objects
   /// @{
 
-  /*! Obtain a `Construct_curve_2` functor. */
+  /*! obtains a `Construct_curve_2` functor. */
   Construct_curve_2 construct_curve_2_object() const;
 
-  /*! Obtain a `Construct_x_monotone_curve_2` functor. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
-  /*! Obtain a `Bbox_2` functor. */
+  /*! obtains a `Bbox_2` functor. */
   Construct_bbox_2 construct_bbox_2_object() const;
 
-  /*! Obtain a `Trim_2` functor. */
+  /*! obtains a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
 
-  /*! Obtain an `Approximate_2` functor. */
-  Trim_2 approximate_2_object() const;
+  /*! obtains an `Approximate_2` functor. */
+  Approximate_2 approximate_2_object() const;
 
   /// @}
 
 }; /* end Arr_conic_traits_2 */
+
 } /* end namespace CGAL */

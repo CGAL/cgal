@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 project(Shape_regularization_Tests)
 
@@ -22,12 +22,13 @@ if(TARGET CGAL::OSQP_support)
   test_3_segments
   test_4_segments
   test_100_segments_angles
-  test_100_segments_offsets)
+  test_100_segments_offsets
+  test_cgal_solver)
 
   foreach(osqp_target ${osqp_targets})
     create_single_source_cgal_program("${osqp_target}.cpp")
     if(TARGET ${osqp_target})
-      target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
+      target_link_libraries(${osqp_target} PRIVATE CGAL::OSQP_support)
     endif()
   endforeach()
 else()

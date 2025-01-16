@@ -26,31 +26,27 @@ creationpath = args.creationpath
 
 doxystring = \
 r"""@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Put title of project here"
-INPUT        = ${CMAKE_SOURCE_DIR}/PACKAGENAME/doc/PACKAGENAME/ \
-               ${CMAKE_SOURCE_DIR}/PACKAGENAME/include
 """
 
 descrstring = \
 r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPACKAGE PRETTY PACKAGE NAME Reference
+/// \defgroup PkgPACKAGERef PRETTY PACKAGE NAME Reference
 /// \defgroup PkgPACKAGEConcepts Concepts
-/// \ingroup PkgPACKAGE
+/// \ingroup PkgPACKAGERef
 
 /// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
-/// \ingroup PkgPACKAGE
+/// \ingroup PkgPACKAGERef
 
 /// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGE
+/// \ingroup PkgPACKAGERef
 
 /// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGE
+/// \ingroup PkgPACKAGERef
 
 /*!
-\addtogroup PkgPACKAGE
-\todo check generated documentation
-
 \cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
 \cgalPkgPicture{pkg-small.png}
 
@@ -58,7 +54,7 @@ r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 \cgalPkgAuthors{PACKAGE AUTHOR}
 \cgalPkgDesc{PACKAGE DESCRIPTION.
 The package provides ... }
-\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
+\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGERef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

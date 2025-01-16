@@ -41,7 +41,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 
 This function calls `partition_is_valid_2()` using the function object
 `Is_convex_2` to determine the convexity of each partition polygon.
-Thus the time required by this function is \f$ O(n \log n + e \log e)\f$ where
+Thus the time required by this function is \cgalBigO{n \log n + e \log e} where
 \f$ n\f$ is the total number of vertices in the partition polygons and \f$ e\f$ the
 total number of edges.
 
@@ -103,7 +103,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 
 \cgalHeading{Implementation}
 
-This function requires \f$ O(n \log n + e \log e + \Sigma_{i=1}^p m_i)\f$ where \f$ n\f$
+This function requires \cgalBigO{n \log n + e \log e + \Sigma_{i=1}^p m_i} where \f$ n\f$
 is the total number of vertices of the \f$ p\f$ partition polygons, \f$ e\f$ is the
 total number of edges of the partition polygons and \f$ m_i\f$ is the time required
 by `Traits::Is_valid()` to test if partition polygon \f$ p_i\f$ is valid.
@@ -161,7 +161,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 
 This function uses the function `partition_is_valid_2()` together with
 the function object `Is_y_monotone_2` to determine if each polygon
-is \f$ y\f$-monotone or not. Thus the time required is \f$ O(n \log n + e \log e)\f$
+is \f$ y\f$-monotone or not. Thus the time required is \cgalBigO{n \log n + e \log e}
 where \f$ n\f$ is the total number of vertices of the partition polygons and
 \f$ e\f$ is the total number of edges.
 

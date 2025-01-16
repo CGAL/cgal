@@ -11,10 +11,12 @@ tag is provided for determining whether this functor is defined or not.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
-\cgalHasModel `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
-\cgalHasModel `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}
+\cgalHasModels{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
+\cgalHasModelsEnd
 
 \sa `DelaunayGraph_2`
 \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>`
@@ -113,7 +115,7 @@ It must provide the following operator:
 <CENTER>`result_type operator()(Delaunay_graph dg, Point_2 p)`</CENTER>
 
 where the result type `result_type` is
-`boost::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>`.
+`std::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>`.
 
 This type is required only if
 `Has_nearest_site_2` is equal to `CGAL::Tag_true`.

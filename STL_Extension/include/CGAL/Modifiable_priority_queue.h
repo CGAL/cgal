@@ -12,7 +12,7 @@
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
 #include <climits> // Needed by the following Boost header for CHAR_BIT.
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/STL_Extension/internal/boost/relaxed_heap.hpp>
 #include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
@@ -66,14 +66,14 @@ public:
 
   bool contains ( value_type const& v ) { return mHeap.contains(v) ; }
 
-  boost::optional<value_type> extract_top()
+  std::optional<value_type> extract_top()
   {
-    boost::optional<value_type> r ;
+    std::optional<value_type> r ;
     if ( !empty() )
     {
       value_type v = top();
       pop();
-      r = boost::optional<value_type>(v) ;
+      r = std::optional<value_type>(v) ;
     }
     return r ;
   }
@@ -238,14 +238,14 @@ public:
     return (mHandles[vid] != handle_type());
   }
 
-  boost::optional<value_type> extract_top()
+  std::optional<value_type> extract_top()
   {
-    boost::optional<value_type> r;
+    std::optional<value_type> r;
     if(!empty())
     {
       value_type v = top();
       pop();
-      r = boost::optional<value_type>(v);
+      r = std::optional<value_type>(v);
     }
 
     return r;

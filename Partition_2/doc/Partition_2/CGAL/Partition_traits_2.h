@@ -10,11 +10,7 @@ Traits class that can be used with all the
 \tparam R  a representation class
 \tparam PointPropertyMap a property map that maps to points of type `R::Point_2`
 
-\cgalModels `ConvexPartitionIsValidTraits_2`
-\cgalModels `IsYMonotoneTraits_2`
-\cgalModels `OptimalConvexPartitionTraits_2`
-\cgalModels `PartitionTraits_2`
-\cgalModels `YMonotonePartitionIsValidTraits_2`
+\cgalModels{ConvexPartitionIsValidTraits_2,IsYMonotoneTraits_2,OptimalConvexPartitionTraits_2,PartitionTraits_2,YMonotonePartitionIsValidTraits_2}
 
 \sa `CGAL::approx_convex_partition_2()`
 \sa `CGAL::convex_partition_is_valid_2()`

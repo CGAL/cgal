@@ -68,9 +68,9 @@ private:
 
     Polynomial poly_;
     int number_of_real_roots_;
-    IT* numerator;
-    IT* denominator_exponent;
-    bool* is_exact;
+    std::vector<IT> numerator;
+    std::vector<IT> denominator_exponent;
+    std::vector<bool> is_exact;
     IT LEFT,SCALE,DENOM;
     bool is_strong_;
     int k;
@@ -91,9 +91,9 @@ public:
           k(kk),
           interval_given(false) {
 
-        numerator = new IT[CGAL::degree(P)];
-        denominator_exponent = new IT[CGAL::degree(P)];
-        is_exact = new bool[CGAL::degree(P)];
+        numerator.resize(CGAL::degree(P));
+        denominator_exponent.resize(CGAL::degree(P));
+        is_exact.resize(CGAL::degree(P));
         number_of_real_roots_ = 0;
         if(CGAL::degree(P) == 0)
             {
@@ -116,9 +116,9 @@ public:
           k(kk),
           interval_given(true) {
 
-        numerator = new IT[CGAL::degree(P)];
-        denominator_exponent = new IT[CGAL::degree(P)];
-        is_exact = new bool[CGAL::degree(P)];
+        numerator.resize(CGAL::degree(P));
+        denominator_exponent.resize(CGAL::degree(P));
+        is_exact.resize(CGAL::degree(P));
         number_of_real_roots_ = 0;
         if(CGAL::degree(P) == 0)
             {
@@ -153,9 +153,9 @@ public:
           k(D.k),
           interval_given(D.interval_given) {
 
-        numerator = new IT[CGAL::degree(poly_)];
-        denominator_exponent = new IT[CGAL::degree(poly_)];
-        is_exact = new bool[CGAL::degree(poly_)];
+        numerator.resize(CGAL::degree(poly_));
+        denominator_exponent.resize(CGAL::degree(poly_));
+        is_exact.resize(CGAL::degree(poly_));
         for(int i=0; i<number_of_real_roots(); i++)
             {
                 numerator[i] = D.numerator[i];
@@ -166,9 +166,6 @@ public:
 
     // destructor
     ~Descartes() {
-        delete[] numerator;
-        delete[] denominator_exponent;
-        delete[] is_exact;
     }
 
 public: // functions

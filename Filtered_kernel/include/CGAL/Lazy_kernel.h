@@ -27,10 +27,8 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/none.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_cv.hpp>
+#include <CGAL/Lazy_exact_nt.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -154,6 +152,11 @@ public:
   C Cf() const { return C(); }
 
 #include <CGAL/Kernel/interface_macros.h>
+
+  // Useless meta-function, added to workaround a bug with Visual C++ 2022 and before
+  // See issue https://github.com/CGAL/cgal/issues/8140
+  template < typename T >
+  struct Handle { typedef T   type; };
 };
 
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >

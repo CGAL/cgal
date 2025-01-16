@@ -20,7 +20,7 @@ pushd Bounding_volumes_Demo_with_dlls;            zip -r ../bounding_volumes_2.z
 pushd Circular_kernel_2_Demo_with_dlls;           zip -r ../circular_kernel.zip    *    ;      popd
 pushd Periodic_3_triangulation_3_Demo_with_dlls;  zip -r ../periodic_3_triangulation_3.zip *;  popd
 pushd Periodic_Lloyd_3_Demo_with_dlls;            zip -r ../periodic_3_lloyd.zip *;            popd
-pushd Polyhedron_Demo_with_dlls;                  zip -r ../polyhedron_3.zip *       ;      popd
+#pushd Polyhedron_Demo_with_dlls;                  zip -r ../polyhedron_3.zip *       ;      popd
 pushd Segment_Delaunay_graph_2_Demo_with_dlls;    zip -r ../segment_voronoi_diagram_2.zip *;   popd
 #pushd Surface_mesher_Demo_with_dlls;              zip -r ../surface_mesher.zip *;              popd
 pushd Triangulation_2_Demo_with_dlls;
@@ -73,6 +73,10 @@ pushd Periodic_4_hyperbolic_triangulation_2_Demo_with_dlls; zip -r ../Periodic_4
 
 # CGAL-5.3
 pushd Triangulation_on_sphere_2_Demo_with_dlls; zip -r ../triangulation_on_sphere_2.zip *;         popd
+
+# CGAL-6.0
+pushd Lab_Demo_with_dlls; zip -r ../CGALlab.zip *; popd
+pushd Arrangement_on_surface_2_earth_Demo_with_dlls; zip -r ../arrangements_2_earth.zip *; popd
 
 # check
 echo CHECK now. The following lines should be empty.

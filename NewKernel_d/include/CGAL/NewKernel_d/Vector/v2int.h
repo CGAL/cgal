@@ -70,13 +70,13 @@ namespace CGAL {
     typedef Dimension_tag<2> Dimension;
     typedef Dimension_tag<2> Max_dimension;
     // No Rebind_dimension, this is a building block
-    template<class,bool=true> struct Property : boost::false_type {};
+    template<class,bool=true> struct Property : std::false_type {};
     //template<bool b> struct Property<Has_vector_plus_minus_tag,b>
-    //  : boost::true_type {};
+    //  : std::true_type {};
     template<bool b> struct Property<Has_determinant_of_vectors_tag,b>
-      : boost::true_type {};
+      : std::true_type {};
     //template<bool b> struct Property<Has_determinant_of_points_tag,b>
-    //  : boost::true_type {};
+    //  : std::true_type {};
     // Advertise somehow that the sign_of_determinant* are exact?
 
     typedef std::array<NT1,2> Vector;
