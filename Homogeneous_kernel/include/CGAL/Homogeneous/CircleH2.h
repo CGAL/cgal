@@ -137,7 +137,7 @@ typename R::Oriented_side
 CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   typename R::Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
   typename R::Oriented_side rel_pos = (vgl == LARGER ) ? ON_NEGATIVE_SIDE
                                                        : ((vgl == SMALLER) ? ON_POSITIVE_SIDE
@@ -190,7 +190,7 @@ typename R::Bounded_side
 CircleH2<R>::bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   typename R::Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
   return  (vgl == LARGER ) ? ON_UNBOUNDED_SIDE :
                                    ( (vgl == SMALLER ) ?
@@ -204,7 +204,7 @@ typename R::Boolean
 CircleH2<R>::has_on_bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   return ( sq_dist < sq_rad );
 }
 
@@ -214,7 +214,7 @@ typename R::Boolean
 CircleH2<R>::has_on_unbounded_side(const typename CircleH2<R>::Point_2&p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   return ( sq_rad < sq_dist );
 }
 
