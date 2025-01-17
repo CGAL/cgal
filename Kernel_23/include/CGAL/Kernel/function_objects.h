@@ -2148,10 +2148,10 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3 Plane;
     typedef typename K::Point_3 Point;
-    typename K::Construct_plane_3 construct_plane;
-  public:
-    typedef Point result_type;
 
+    typename K::Construct_plane_3 construct_plane;
+
+  public:
     Point
     operator()(const Point& p1, const Point& q1, const Point& r1,
                const Point& p2, const Point& q2, const Point& r2,
@@ -2184,10 +2184,10 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Segment_3 Segment;
     typedef typename K::Point_3 Point;
-    typename K::Construct_segment_3 construct_segment;
-  public:
-    typedef Point result_type;
 
+    typename K::Construct_segment_3 construct_segment;
+
+  public:
     Point
     operator()(const Point& p1, const Point& q1,
                const Point& p2, const Point& q2) const
@@ -2216,11 +2216,12 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_alpha_for_coplanar_triangle_intersection_3
   {
+    typedef typename K::FT FT;
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
+
   public:
-    typedef typename K::FT  result_type;
-    result_type
+    FT
     operator()(const Point_3& p1, const Point_3& p2,       // segment 1
                const Point_3& p3, const Point_3& p4) const // segment 2
     {

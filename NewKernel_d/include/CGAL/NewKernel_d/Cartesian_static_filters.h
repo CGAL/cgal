@@ -86,6 +86,8 @@ template <class Base_,class R_> struct Side_of_oriented_sphere_2 : private Store
 };
 
 template <class Base_,class R_> struct Adapter_3 {
+        typedef typename Get_type<R_, Orientation_tag>::type Orientation;
+        typedef typename Get_type<R_, Oriented_side_tag>::type Oriented_side;
         typedef typename Get_type<R_, Point_tag>::type Point;
         typedef typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type CC;
         typedef typename Get_functor<Base_, Orientation_of_points_tag>::type Orientation_base;
