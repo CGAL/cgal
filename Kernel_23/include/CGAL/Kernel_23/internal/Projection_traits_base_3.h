@@ -345,7 +345,7 @@ template <class Traits>
 class Less_xy_along_axis
 {
   // private members
-  typedef typename R::Comparison_result Comparison_result;
+  typedef typename Traits::Comparison_result Comparison_result;
   typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
@@ -416,6 +416,15 @@ public:
   }
 
   typedef Kernel K;
+
+  typedef typename K::Boolean                                Boolean;
+  typedef typename K::Sign                                   Sign;
+  typedef typename K::Comparison_result                      Comparison_result;
+  typedef typename K::Orientation                            Orientation;
+  typedef typename K::Oriented_side                          Oriented_side;
+  typedef typename K::Bounded_side                           Bounded_side;
+  typedef typename K::Angle                                  Angle;
+
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point_2;
   typedef typename K::Segment_3   Segment_2;
