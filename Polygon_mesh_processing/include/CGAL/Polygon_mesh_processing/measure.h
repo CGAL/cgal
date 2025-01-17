@@ -28,6 +28,11 @@
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 #include <CGAL/utils_classes.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_reduce.h>
+#include <tbb/blocked_range.h>
+#endif // CGAL_LINKED_WITH_TBB
+
 #include <boost/container/small_vector.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/dynamic_bitset.hpp>
@@ -243,6 +248,92 @@ average_edge_length(const PolygonMesh& pmesh,
   return avg_edge_length;
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
+namespace internal {
+
+template <typename EdgeRange,
+          typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+class MinMaxEdgeLength
+{
+  const EdgeRange& edge_range;
+  const PolygonMesh& pmesh;
+  const CGAL_NP_CLASS& np;
+
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+  static constexpr bool is_random_access =
+    std::is_convertible<typename std::iterator_traits<edge_iterator>::iterator_category,
+                        std::random_access_iterator_tag>::value;
+  std::shared_ptr<std::vector<edge_iterator> > iterators; // to store iterators, if needed
+
+public:
+  edge_descriptor min_edge, max_edge;
+  FT min_len, max_len;
+
+  MinMaxEdgeLength(const EdgeRange& edge_range,
+                    const PolygonMesh& pmesh,
+                    const CGAL_NP_CLASS& np)
+    : edge_range(edge_range), pmesh(pmesh), np(np),
+      min_len(FT(std::numeric_limits<double>::max())),
+      max_len(FT(-1))
+  {
+    if constexpr (!is_random_access)
+    {
+      // Store iterators for non-random access ranges
+      iterators = std::make_shared<std::vector<edge_iterator> >();
+      iterators->reserve(std::distance(edge_range.begin(), edge_range.end()));
+      for(edge_iterator it = edge_range.begin(); it != edge_range.end(); ++it)
+        iterators->push_back(it);
+    }
+  }
+
+  MinMaxEdgeLength(MinMaxEdgeLength& m, tbb::split)
+    : edge_range(m.edge_range), pmesh(m.pmesh), np(m.np),
+      iterators(m.iterators),
+      min_len(FT(std::numeric_limits<double>::max())),
+      max_len(FT(-1))
+  { }
+
+  void operator()(const tbb::blocked_range<std::size_t>& r) {
+    for(std::size_t i = r.begin(); i != r.end(); ++i) {
+      edge_descriptor e;
+      if constexpr (is_random_access)
+        e = *(edge_range.begin() + i);
+      else
+        e = *(iterators->at(i));
+
+      FT sq_len = squared_edge_length(e, pmesh, np);
+      if(sq_len < min_len) {
+        min_len = sq_len;
+        min_edge = e;
+      }
+      if(sq_len > max_len) {
+        max_len = sq_len;
+        max_edge = e;
+      }
+    }
+  }
+
+  void join(const MinMaxEdgeLength& other) {
+    if(other.min_len < min_len) {
+      min_len = other.min_len;
+      min_edge = other.min_edge;
+    }
+    if(other.max_len > max_len) {
+      max_len = other.max_len;
+      max_edge = other.max_edge;
+    }
+  }
+};
+
+} // namespace internal
+#endif // CGAL_LINKED_WITH_TBB
+
 /**
   * \ingroup PMP_measure_grp
   *
@@ -304,54 +395,57 @@ minmax_edge_length(const EdgeRange& edge_range,
   using parameters::get_parameter;
 
   using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+
   using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   using FT = typename Geom_traits::FT;
 
-  if(std::begin(edge_range) == std::end(edge_range))
+    edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+    if(first == beyond)
+    {
+      return std::make_pair(std::make_pair(edge_descriptor(), FT(0)),
+                            std::make_pair(edge_descriptor(), FT(0)));
+    }
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  // parallel
+  if constexpr (std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
-    return std::make_pair(std::make_pair(edge_descriptor(), FT(0)),
-                          std::make_pair(edge_descriptor(), FT(0)));
+    internal::MinMaxEdgeLength<EdgeRange, PolygonMesh, CGAL_NP_CLASS> reducer(edge_range, pmesh, np);
+    tbb::parallel_reduce(tbb::blocked_range<size_t>(0, edge_range.size()), reducer);
+
+    return std::make_pair(std::make_pair(reducer.min_edge, CGAL::approximate_sqrt(reducer.min_len)),
+                          std::make_pair(reducer.max_edge, CGAL::approximate_sqrt(reducer.max_len)));
   }
-
-  struct Extremas
+  else
+#endif
+  // sequential
   {
-    edge_descriptor low{};
-    edge_descriptor high{};
-    FT sq_lo{-1};
-    FT sq_hi{-1};
-#ifdef CGAL_LINKED_WITH_TBB
-    std::mutex mutex;
-#endif
-  };
-  Extremas extremas;
+    edge_iterator low = first, high = first, eit = first;
+    FT sq_lo, sq_hi;
+    sq_lo = sq_hi = squared_edge_length(*eit++, pmesh, np);
 
-  // Initialize with first edge
-  auto first = *std::begin(edge_range);
-  extremas.low = extremas.high = first;
-  extremas.sq_lo = extremas.sq_hi = squared_edge_length(first, pmesh, np);
+    for(; eit!=beyond; ++eit)
+    {
+      const FT sq_l = squared_edge_length(*eit, pmesh, np);
 
-  CGAL::for_each<ConcurrencyTag, EdgeRange>
-    (edge_range,
-     [&](const edge_descriptor& e) -> bool
-     {
-       const FT sq_l = squared_edge_length(e, pmesh, np);
+      if(sq_l < sq_lo) {
+        low = eit;
+        sq_lo = sq_l;
+      }
+      if(sq_l > sq_hi) {
+        high = eit;
+        sq_hi = sq_l;
+      }
+    }
 
-#ifdef CGAL_LINKED_WITH_TBB
-       std::lock_guard<std::mutex> lock(extremas.mutex);
-#endif
-       if(extremas.sq_lo < 0 || sq_l < extremas.sq_lo) {
-         extremas.low = e;
-         extremas.sq_lo = sq_l;
-       }
-       if(extremas.sq_hi < 0 || sq_l > extremas.sq_hi) {
-         extremas.high = e;
-         extremas.sq_hi = sq_l;
-       }
-       return true;
-     });
-
-  return std::make_pair(std::make_pair(extremas.low, CGAL::approximate_sqrt(extremas.sq_lo)),
-                        std::make_pair(extremas.high, CGAL::approximate_sqrt(extremas.sq_hi)));
+    CGAL_assertion(low != beyond && high != beyond);
+    return std::make_pair(std::make_pair(*low, CGAL::approximate_sqrt(sq_lo)),
+                          std::make_pair(*high, CGAL::approximate_sqrt(sq_hi)));
+  }
 }
 
 /*!
@@ -1251,6 +1345,118 @@ void match_faces(const PolygonMesh1& m1,
   }
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
+namespace internal {
+
+template <typename EdgeRange,
+          typename TriangleMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+class MinMaxDihedralAngle
+{
+  const EdgeRange& edge_range;
+  const TriangleMesh& tmesh;
+  const CGAL_NP_CLASS& np;
+
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<TriangleMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+  static constexpr bool is_random_access =
+    std::is_convertible<typename std::iterator_traits<edge_iterator>::iterator_category,
+                        std::random_access_iterator_tag>::value;
+  std::shared_ptr<std::vector<edge_iterator> > iterators; // to store iterators, if needed
+
+public:
+  edge_descriptor min_edge, max_edge;
+  FT min_angle, max_angle;
+
+  MinMaxDihedralAngle(const EdgeRange& edge_range,
+                       const TriangleMesh& tmesh,
+                       const CGAL_NP_CLASS& np)
+    : edge_range(edge_range), tmesh(tmesh), np(np),
+      min_angle(200), max_angle(-200)
+  {
+    if constexpr (!is_random_access)
+    {
+      // Store iterators for non-random access ranges
+      iterators = std::make_shared<std::vector<edge_iterator> >();
+      iterators->reserve(std::distance(edge_range.begin(), edge_range.end()));
+      for(edge_iterator it = edge_range.begin(); it != edge_range.end(); ++it)
+        iterators->push_back(it);
+    }
+  }
+
+  MinMaxDihedralAngle(MinMaxDihedralAngle& m, tbb::split)
+    : edge_range(m.edge_range), tmesh(m.tmesh), np(m.np),
+      iterators(m.iterators),
+      min_angle(200), max_angle(-200)
+  { }
+
+  void operator()(const tbb::blocked_range<std::size_t>& r)
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
+
+    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
+      gt.compute_approximate_dihedral_angle_3_object();
+
+    for(std::size_t i = r.begin(); i != r.end(); ++i)
+    {
+      edge_descriptor e;
+      if constexpr (is_random_access)
+        e = *(edge_range.begin() + i);
+      else
+        e = *(iterators->at(i));
+
+      if(is_border(e, tmesh))
+        continue;
+
+      const halfedge_descriptor h = halfedge(e, tmesh);
+      CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+
+      const vertex_descriptor p = source(h,tmesh);
+      const vertex_descriptor q = target(h,tmesh);
+      const vertex_descriptor r = target(next(h,tmesh),tmesh);
+      const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
+
+      const FT angle = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+      if(angle < min_angle) {
+        min_angle = angle;
+        min_edge = e;
+      }
+      if(angle > max_angle) {
+        max_angle = angle;
+        max_edge = e;
+      }
+    }
+  }
+
+  void join(const MinMaxDihedralAngle& other)
+  {
+    if(other.min_angle < min_angle) {
+      min_angle = other.min_angle;
+      min_edge = other.min_edge;
+    }
+    if(other.max_angle > max_angle) {
+      max_angle = other.max_angle;
+      max_edge = other.max_edge;
+    }
+  }
+};
+
+} // namespace internal
+#endif // CGAL_LINKED_WITH_TBB
 
 /*!
  * \ingroup PMP_measure_grp
@@ -1314,67 +1520,73 @@ minmax_dihedral_angle(const EdgeRange& edge_range,
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<TriangleMesh>::edge_iterator;
 
   using Geom_traits = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
-  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
-
   using FT = typename Geom_traits::FT;
 
-  typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
-
-  CGAL_precondition(is_triangle_mesh(tmesh));
-
-  struct Extremas
+  edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+  if(first == beyond)
   {
-    edge_descriptor low{};
-    edge_descriptor high{};
-    FT lo{200};
-    FT hi{-200};
-#ifdef CGAL_LINKED_WITH_TBB
-    std::mutex mutex;
+    return std::make_pair(std::make_pair(edge_descriptor(), FT(200)),
+                          std::make_pair(edge_descriptor(), FT(-200)));
+  }
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  // parallel
+  if constexpr (std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  {
+    internal::MinMaxDihedralAngle<EdgeRange, TriangleMesh, CGAL_NP_CLASS> reducer(edge_range, tmesh, np);
+    tbb::parallel_reduce(tbb::blocked_range<size_t>(0, edge_range.size()), reducer);
+
+    return std::make_pair(std::make_pair(reducer.min_edge, reducer.min_angle),
+                          std::make_pair(reducer.max_edge, reducer.max_angle));
+  }
+  else
 #endif
-  };
-  Extremas extremas;
+  // sequential
+  {
+    edge_descriptor min_edge, max_edge;
+    FT min_angle(200), max_angle(-200);
 
-  typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
-    gt.compute_approximate_dihedral_angle_3_object();
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
 
-  CGAL::for_each<ConcurrencyTag, EdgeRange>
-    (edge_range,
-     [&](const edge_descriptor& e) -> bool
-     {
-       if(is_border(e, tmesh))
-         return true;
+    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
+      gt.compute_approximate_dihedral_angle_3_object();
 
-       const halfedge_descriptor h = halfedge(e, tmesh);
-       CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+    for(edge_iterator eit = first; eit != beyond; ++eit)
+    {
+      if(is_border(*eit, tmesh))
+        continue;
+
+      const halfedge_descriptor h = halfedge(*eit, tmesh);
+      CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
 
        const vertex_descriptor p = source(h,tmesh);
        const vertex_descriptor q = target(h,tmesh);
        const vertex_descriptor r = target(next(h,tmesh),tmesh);
        const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
 
-       const FT da = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+       const FT angle = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+      if(angle < min_angle) {
+        min_angle = angle;
+        min_edge = *eit;
+      }
+      if(angle > max_angle) {
+        max_angle = angle;
+        max_edge = *eit;
+      }
+    }
 
-#ifdef CGAL_LINKED_WITH_TBB
-       std::lock_guard<std::mutex> lock(extremas.mutex);
-#endif
-       if(da < extremas.lo) {
-         extremas.low = e;
-         extremas.lo = da;
-       }
-       if(da > extremas.hi) {
-         extremas.high = e;
-         extremas.hi = da;
-       }
-
-       return true;
-     });
-
-  return std::make_pair(std::make_pair(extremas.low, extremas.lo),
-                        std::make_pair(extremas.high, extremas.hi));
+    return std::make_pair(std::make_pair(min_edge, min_angle),
+                          std::make_pair(max_edge, max_angle));
+  }
 }
 
 /*!

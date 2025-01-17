@@ -8,6 +8,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -109,8 +110,24 @@ void test_pmesh(const Mesh& pmesh)
   edge_descriptor longest_edge;
   FT longest_edge_length;
 
-  auto [shortest_edge_pair, longest_edge_pair] =
+  CGAL::Real_timer timer;
+  timer.start();
+  auto [shortest_edge_pair_par, longest_edge_pair_par] =
     PMP::minmax_edge_length<CGAL::Parallel_if_available_tag>(pmesh);
+  timer.stop();
+  std::cout << "minmax edge length (Parallel if available) took: " << timer.time() << std::endl;
+
+  timer.start();
+  auto [shortest_edge_pair, longest_edge_pair] =
+    PMP::minmax_edge_length<CGAL::Sequential_tag>(pmesh);
+  timer.stop();
+  std::cout << "minmax edge length (Sequential) took: " << timer.time() << std::endl;
+
+  assert(shortest_edge_pair_par.first == shortest_edge_pair.first);
+  assert(longest_edge_pair_par.first == longest_edge_pair.first);
+  assert(shortest_edge_pair_par.second == shortest_edge_pair.second);
+  assert(longest_edge_pair_par.second == longest_edge_pair.second);
+
   std::tie(shortest_edge, shortest_edge_length) = shortest_edge_pair;
   std::tie(longest_edge, longest_edge_length) = longest_edge_pair;
 
