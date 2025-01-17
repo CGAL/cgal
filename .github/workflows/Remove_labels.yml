@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   remove_label:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: contains(github.event.pull_request.labels.*.name, 'Tested')
     name: remove label
     steps:

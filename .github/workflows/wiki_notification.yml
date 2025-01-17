@@ -4,7 +4,7 @@ on: gollum
 
 jobs:
   prepare_email:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       messages: ${{ steps.set-result.outputs.result }}
     steps:
