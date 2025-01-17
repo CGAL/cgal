@@ -2,7 +2,7 @@
 
 EXTRACT_PRIVATE = NO
 
-PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Hyperbolic Surface Triangulations"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Triangulations on Hyperbolic Surfaces"
 
 IMAGE_PATH  +=  ${CGAL_PACKAGE_DOC_DIR}/fig/cover.svg
 
