@@ -81,7 +81,7 @@ std::size_t peel_slivers(C3T3& c3t3,
         if (patch.has_value() && patch.value() != spi)
         {
           //there are 2 different patches
-          patch = std::nullopt;
+          patch.reset();
           break;
         }
         else
