@@ -117,6 +117,7 @@ void test_pmesh(const Mesh& pmesh)
   timer.stop();
   std::cout << "minmax edge length (Parallel if available) took: " << timer.time() << std::endl;
 
+  timer.reset();
   timer.start();
   auto [shortest_edge_pair, longest_edge_pair] =
     PMP::minmax_edge_length<CGAL::Sequential_tag>(pmesh);
