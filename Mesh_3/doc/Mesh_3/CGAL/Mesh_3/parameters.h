@@ -457,7 +457,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * The function `parameters::initial_points_generator()` enables the user to specify a functor that follows
  * the `InitialPointsGenerator_3` concept to the mesh generation function `make_mesh_3()`. This functor is called
  * for the initialization of the meshing process, by inserting well-distributed surface vertices.
- * If this parameter is specified without arguments, the default behavior
+ * If this parameter is not specified, the default behavior
  * is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
