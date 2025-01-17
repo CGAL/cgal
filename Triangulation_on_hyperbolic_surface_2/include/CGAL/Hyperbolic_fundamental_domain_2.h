@@ -12,8 +12,10 @@
 
 // This file contains the declaration and the implementation of the class Hyperbolic_fundamental_domain_2
 
-#ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
-#define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
+#ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2_H
+#define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2_H
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Hyperbolic_isometry_2.h>
 #include <CGAL/basic.h>
@@ -201,4 +203,4 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
 
 } // namespace CGAL
 
-#endif // CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
+#endif // CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2_H

@@ -15,6 +15,8 @@
 #ifndef CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 #define CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
+
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/basic.h>
 #include <CGAL/Combinatorial_map.h>
