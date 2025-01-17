@@ -12,8 +12,10 @@
 
 // This file contains the declaration and the implementation of the class Hyperbolic_isometry_2
 
-#ifndef CGAL_HYPERBOLIC_ISOMETRY_2
-#define CGAL_HYPERBOLIC_ISOMETRY_2
+#ifndef CGAL_HYPERBOLIC_ISOMETRY_2_H
+#define CGAL_HYPERBOLIC_ISOMETRY_2_H
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Complex_number.h>
 
@@ -191,4 +193,4 @@ Hyperbolic_isometry_2<Traits> isometry_pairing_the_sides(const typename Traits::
 
 } // namespace CGAL
 
-#endif // CGAL_HYPERBOLIC_ISOMETRY_2
+#endif // CGAL_HYPERBOLIC_ISOMETRY_2_H

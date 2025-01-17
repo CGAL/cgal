@@ -13,9 +13,12 @@
 // This file contains the declaration and the implementation of the class Hyperbolic_surface_traits_2
 
 #ifndef CGAL_HYPERBOLIC_SURFACE_TRAITS_2
-#define CGAL_HYPERBOLIC_SURFACE_TRAITS_2
+#define CGAL_HYPERBOLIC_SURFACE_TRAITS_2_H
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Complex_number.h>
+
 #include <iostream>
 
 namespace CGAL {
@@ -30,4 +33,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_HYPERBOLIC_SURFACE_TRAITS_2
+#endif // CGAL_HYPERBOLIC_SURFACE_TRAITS_2_H

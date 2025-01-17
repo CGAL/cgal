@@ -12,12 +12,15 @@
 
 // This file contains the declaration and the implementation of the class Hyperbolic_fundamental_domain_factory_2
 
-#ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
-#define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
+#ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2_H
+#define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2_H
+
+#include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
-#include <cmath>
 #include <CGAL/Random.h>
+
+#include <cmath>
 
 namespace CGAL {
 
@@ -256,4 +259,4 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::sanity_check(_Cmplx& z0, _
 
 } // namespace CGAL
 
-#endif // CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
+#endif // CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2_H
