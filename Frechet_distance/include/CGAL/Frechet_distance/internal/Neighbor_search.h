@@ -55,23 +55,23 @@ class FrechetKdTree
     struct Point_d {
         using BB = Bbox_d<Dimension_tag<dim>>;
         Point ends[2];
-        BB endsbbox;
-        BB bbox;
-        // using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
-        using Bbcci = typename BB::Cartesian_const_iterator;
-        using Cartesian_const_iterator_d = Concatenate_iterator<Bbcci, Bbcci>;
+        std::vector<FT> bbox;
+        using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
+        using Cartesian_const_iterator_d = Concatenate_iterator<PP, typename std::vector<FT>::const_iterator>;
 
         Cartesian_const_iterator_d cartesian_begin() const
         {
-            Bbcci ppb = endsbbox.cartesian_begin();
-            Bbcci ppe = endsbbox.cartesian_end();
-          return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), ppb);
+          Construct_cartesian_const_iterator ccc;
+          PP ppb(ccc(ends[0],0), ccc(ends[1]), ccc(ends[0]));
+          PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
+          return Cartesian_const_iterator_d(ppe, bbox.begin(), ppb);
         }
 
         Cartesian_const_iterator_d cartesian_end() const
         {
-            Bbcci ppe = endsbbox.cartesian_end();
-            return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), bbox.cartesian_end(), 0);
+            Construct_cartesian_const_iterator ccc;
+            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
+            return Cartesian_const_iterator_d(ppe, bbox.begin(), bbox.end(), 0);
         }
 
         struct Construct_cartesian_const_iterator_d {
@@ -140,8 +140,8 @@ private:
                     return false;
                 }
             }
-            typename Point_d::BB::Cartesian_const_iterator pb = p.bbox.cartesian_begin();
-            typename Point_d::BB::Cartesian_const_iterator qb = q.bbox.cartesian_begin();
+            typename std::vector<FT>::const_iterator pb = p.bbox.cbegin();
+            typename std::vector<FT>::const_iterator qb = q.bbox.cbegin();
             for (size_t i = 0; i < 2*dim; ++i, ++pb, ++qb) {
                 // AF: certainly
                 // AN: yes, here we need certainly!
@@ -226,16 +226,21 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 {
     CGAL_precondition(!curve.empty());
 
-    Construct_bbox bbox = Traits().construct_bbox_d_object(); //  AF Do we have to pass a Traits object?
+    Construct_bbox construct_bbox = Traits().construct_bbox_d_object(); //  AF Do we have to pass a Traits object?
     Point_d res;
 
     res.ends[0] = curve.front();
     res.ends[1] = curve.back();
-    res.endsbbox = bbox(res.ends[0]) + bbox(res.ends[1]);
+    Bbox_d<Dimension_tag<dim>> bb;
     for (auto const& point : curve) {
-        Bbox_d<Dimension_tag<dim>> bb = bbox(point);
-        res.bbox +=  bb;
+        Bbox_d<Dimension_tag<dim>> bbb = construct_bbox(point);
+        bb +=  bbb;
     }
+    res.bbox.reserve(2*dim);
+    for(auto it = bb.cartesian_begin(); it != bb.cartesian_end(); ++it){
+        res.bbox.push_back(FT(*it));
+    }
+    CGAL_assertion(res.bbox.size() == 2*dim);
     return res;
 }
 
