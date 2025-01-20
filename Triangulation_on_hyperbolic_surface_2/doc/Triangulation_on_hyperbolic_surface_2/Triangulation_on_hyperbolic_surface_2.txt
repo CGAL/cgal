@@ -130,7 +130,7 @@ The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` enables to vi
 \section Section_Hyperbolic_Surface_Triangulations_Example Example
 
 The example below generates a convex fundamental domain of a surface of genus 2, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, saves and prints the Delaunay triangulation.
-\cgalExample{Triangulation_on_hyperbolic_surface_2/hyperbolic_surface_triangulation.cpp}
+\cgalExample{Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp}
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and Implementation History
 
