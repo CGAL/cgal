@@ -56,6 +56,8 @@ public:
   \sa `Kernel::ConstructPlane_3`
   \sa `Kernel::Equal_3`
   \sa `Kernel::HasOn_3`
+  \sa `Kernel::HasOnBoundedSide_3`
+  \sa `Kernel::HasOnUnboundedSide_3`
   \sa `Kernel::IsDegenerate_3`
 
 */
@@ -81,6 +83,7 @@ public:
   \sa `Kernel::ConstructDirection_2`
   \sa `Kernel::ConstructOppositeDirection_2`
   \sa `Kernel::ConstructPerpendicularDirection_2`
+  \sa `Kernel::ConstructRay_2`
   \sa `Kernel::CounterclockwiseInBetween_2`
   \sa `Kernel::Equal_2`
 
@@ -101,9 +104,12 @@ public:
   \cgalHasModels{CGAL::Direction_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::ConstructCircle_3`
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructOppositeDirection_3`
-  \sa `Kernel::Equal_2`
+  \sa `Kernel::ConstructPlane_3`
+  \sa `Kernel::ConstructRay_3`
+  \sa `Kernel::Equal_3`
 
 */
 class Direction_3 {
@@ -125,9 +131,17 @@ A type representing isocuboids in three dimensions.
 
 \sa `Kernel::BoundedSide_3`
 \sa `Kernel::ComputeVolume_3`
+\sa `Kernel::ComputeXmax_3`
+\sa `Kernel::ComputeXmin_3`
+\sa `Kernel::ComputeYmax_3`
+\sa `Kernel::ComputeYmin_3`
+\sa `Kernel::ComputeZmax_3`
+\sa `Kernel::ComputeZmin_3`
 \sa `Kernel::ConstructIsoCuboid_3`
+\sa `Kernel::ConstructMaxVertex_3`
+\sa `Kernel::ConstructMinVertex_3`
 \sa `Kernel::ConstructVertex_3`
-\sa `Kernel::Equal_2`
+\sa `Kernel::Equal_3`
 \sa `Kernel::HasOnBoundary_3`
 \sa `Kernel::HasOnBoundedSide_3`
 \sa `Kernel::HasOnUnboundedSide_3`
@@ -151,13 +165,15 @@ public:
   \cgalHasModelsEnd
 
   \sa `Kernel::ConstructIsoRectangle_2`
-  \sa `Kernel::ComputeXmin_2`
   \sa `Kernel::ComputeXmax_2`
-  \sa `Kernel::ComputeYmin_2`
+  \sa `Kernel::ComputeXmin_2`
   \sa `Kernel::ComputeYmax_2`
+  \sa `Kernel::ComputeYmin_2`
   \sa `Kernel::BoundedSide_2`
   \sa `Kernel::ComputeArea_2`
   \sa `Kernel::ConstructIsoRectangle_2`
+  \sa `Kernel::ConstructMaxVertex_2`
+  \sa `Kernel::ConstructMinVertex_2`
   \sa `Kernel::ConstructVertex_2`
   \sa `Kernel::DoIntersect_2`
   \sa `Kernel::Equal_2`
@@ -185,8 +201,11 @@ public:
   \cgalHasModelsEnd
 
   \sa `Kernel::CompareXAtY_2`
-  \sa `Kernel::ComputeSquaredDistance_2`
   \sa `Kernel::CompareYAtX_2`
+  \sa `Kernel::ComputeA_2`
+  \sa `Kernel::ComputeB_2`
+  \sa `Kernel::ComputeC_2`
+  \sa `Kernel::ComputeSquaredDistance_2`
   \sa `Kernel::ConstructBisector_2`
   \sa `Kernel::ConstructDirection_2`
   \sa `Kernel::ConstructLine_2`
@@ -194,6 +213,7 @@ public:
   \sa `Kernel::ConstructPerpendicularLine_2`
   \sa `Kernel::ConstructPointOn_2`
   \sa `Kernel::ConstructProjectedPoint_2`
+  \sa `Kernel::ConstructRay_2`
   \sa `Kernel::DoIntersect_2`
   \sa `Kernel::Equal_2`
   \sa `Kernel::HasOnNegativeSide_2`
@@ -222,6 +242,7 @@ public:
   \cgalHasModels{CGAL::Line_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructLine_3`
@@ -230,6 +251,7 @@ public:
   \sa `Kernel::ConstructPlane_3`
   \sa `Kernel::ConstructPointOn_3`
   \sa `Kernel::ConstructProjectedPoint_3`
+  \sa `Kernel::ConstructRay_3`
   \sa `Kernel::DoIntersect_3`
   \sa `Kernel::Equal_3`
   \sa `Kernel::HasOn_3`
@@ -299,18 +321,23 @@ public:
   \cgalHasModels{CGAL::Plane_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructBaseVector_3`
   \sa `Kernel::ConstructBisector_3`
+  \sa `Kernel::ConstructCircle_3`
   \sa `Kernel::ConstructLiftedPoint_3`
   \sa `Kernel::ConstructOppositePlane_3`
   \sa `Kernel::ConstructOrthogonalVector_3`
+  \sa `Kernel::ConstructProjectedXYPoint_2`
   \sa `Kernel::ConstructPerpendicularLine_3`
   \sa `Kernel::ConstructPerpendicularPlane_3`
   \sa `Kernel::ConstructPlane_3`
   \sa `Kernel::ConstructPointOn_3`
   \sa `Kernel::ConstructProjectedPoint_3`
   \sa `Kernel::ConstructProjectedXYPoint_2`
+  \sa `Kernel::ConstructRadicalPlane_3`
+  \sa `Kernel::ConstructSupportingPlane_3`
   \sa `Kernel::DoIntersect_3`
   \sa `Kernel::Equal_3`
   \sa `Kernel::HasOnNegativeSide_3`
@@ -365,6 +392,7 @@ public:
   \sa `Kernel::ConstructPoint_2`
   \sa `Kernel::ConstructProjectedPoint_2`
   \sa `Kernel::ConstructProjectedXYPoint_2`
+  \sa `Kernel::ConstructRay_2`
   \sa `Kernel::ConstructTranslatedPoint_2`
   \sa `Kernel::DoIntersect_2`
   \sa `Kernel::Equal_2`
@@ -425,6 +453,7 @@ public:
   \sa `Kernel::ConstructPointOn_3`
   \sa `Kernel::ConstructPoint_3`
   \sa `Kernel::ConstructProjectedPoint_3`
+  \sa `Kernel::ConstructRay_3`
   \sa `Kernel::ConstructTranslatedPoint_3`
   \sa `Kernel::CoplanarOrientation_3`
   \sa `Kernel::CoplanarSideOfBoundedCircle_3`
@@ -496,6 +525,7 @@ public:
   \cgalHasModels{CGAL::Ray_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructLine_3`
@@ -562,6 +592,7 @@ public:
   \cgalHasModels{CGAL::Segment_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ComputeSquaredLength_3`
   \sa `Kernel::ConstructDirection_3`
@@ -600,7 +631,7 @@ public:
   \sa `Kernel::ConstructOppositeSphere_3`
   \sa `Kernel::ConstructRadicalPlane_3`
   \sa `Kernel::ConstructSphere_3`
-  \sa `Kernel::Equal_2`
+  \sa `Kernel::Equal_3`
   \sa `Kernel::HasOnBoundary_3`
   \sa `Kernel::HasOnBoundedSide_3`
   \sa `Kernel::HasOnNegativeSide_3`
@@ -631,7 +662,7 @@ public:
   \sa `Kernel::ConstructCentroid_3`
   \sa `Kernel::ConstructTetrahedron_3`
   \sa `Kernel::ConstructVertex_3`
-  \sa `Kernel::Equal_2`
+  \sa `Kernel::Equal_3`
   \sa `Kernel::HasOnBoundary_3`
   \sa `Kernel::HasOnBoundedSide_3`
   \sa `Kernel::HasOnNegativeSide_3`
@@ -735,6 +766,7 @@ public:
   \sa `Kernel::ConstructDividedVector_2`
   \sa `Kernel::ConstructSumOfVectors_2`
   \sa `Kernel::ConstructDifferenceOfVectors_2`
+  \sa `Kernel::ConstructRay_2`
   \sa `Kernel::ConstructVector_2`
   \sa `Kernel::Equal_2`
   \sa `Kernel::Orientation_2`
@@ -764,13 +796,14 @@ A type representing vectors in three dimensions.
 \sa `Kernel::ComputeY_3`
 \sa `Kernel::ComputeZ_3`
 \sa `Kernel::ConstructCrossProductVector_3`
+\sa `Kernel::ConstructDifferenceOfVectors_3`
 \sa `Kernel::ConstructDirection_3`
+\sa `Kernel::ConstructDividedVector_3`
 \sa `Kernel::ConstructOppositeVector_3`
 \sa `Kernel::ConstructOrthogonalVector_3`
+\sa `Kernel::ConstructRay_3`
 \sa `Kernel::ConstructScaledVector_3`
-\sa `Kernel::ConstructDividedVector_3`
 \sa `Kernel::ConstructSumOfVectors_3`
-\sa `Kernel::ConstructDifferenceOfVectors_3`
 \sa `Kernel::ConstructVector_3`
 \sa `Kernel::Equal_3`
 \sa `Kernel::Orientation_3`

@@ -1,4 +1,4 @@
-# Doxygen for CGAL #
+\page Doxygen_for_CGAL Doxygen for CGAL
 
 This is the documentation of doxygen hacks that are applied to make
 the output of Doxygen more suitable to CGAL. It explains the general
@@ -14,17 +14,17 @@ hacks that create what you see.
 ### Package Overview ###
 
 The package overview is build by having a special command that is
-filtered by the python script pkglist_filter.py.
+filtered by the python script `pkglist_filter.py`.
 
-A command has to be of the form \package_listing{PKG_NAME}, where
-PKG_NAME cannot contain a closing }.
+A command has to be of the form `\package_listing{PKG_NAME}`, where
+`PKG_NAME` cannot contain a closing `}`.
 
 The command is replaced by the text between the two delimiters
-PkgDescBegin and PkgDescEnd in the file ../PKG_NAME/doc/PKG_NAME/PackageDescription.txt
+`cgalPkgDescriptionBegin` and `cgalPkgDescriptionEnd` in the file `../PKG_NAME/doc/PKG_NAME/PackageDescription.txt`
 
-If PKG_NAME is of the form A/B the selected file is
-../A/doc/B/PackageDescription.txt. This is to support packages like
-TDS_2, which don't reside in their own packages in the SCM.
+If `PKG_NAME` is of the form `A/B` the selected file is
+`../A/doc/B/PackageDescription.txt`. This is to support packages like
+`TDS_2`, which don't reside in their own packages in the SCM.
 
 ### Footnotes ###
 
@@ -50,13 +50,13 @@ LaTex.
 This hack fiddles with the internal structures and functions of the
 treeview to remove the unnecessary intermediate top-level module part.
 
-It assigns the first element of the module array (found in module.js)
+It assigns the first element of the module array (found in `module.js`)
 to the Reference Manual entry. This makes the tree view link go to
 that group directly instead of the intermediate link. It also removes
 one level of nesting.
 
 Unfortunately this changes the overall tree structure. To adjust for
-that we hijack the gotoNode function of navtree.js and *augment* it
+that we hijack the `gotoNode` function of `navtree.js` and *augment* it
 with an additional check for the specific tree level we borked and
 redirect it.
 

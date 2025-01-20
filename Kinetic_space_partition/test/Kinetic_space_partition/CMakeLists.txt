@@ -19,7 +19,7 @@ if(Boost_FOUND)
     message(STATUS "Found Eigen")
     include(CGAL_Eigen3_support)
 
-  set(targets kinetic_3d_test_all)
+  set(targets kinetic_3d_test_all issue_8624)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

@@ -365,6 +365,9 @@ run_test_on_platform()
     echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
   fi
   sed -n '/The CXX compiler/s/-- The CXX compiler identification is/COMPILER_VERSION =/p' < "${CGAL_BINARY_DIR}/installation.log" |sed -E "s/ = (.*)/\ = '\1\'/">> "$RESULT_FILE"
+if [ -n "${CGAL_SUMMARY_NAME}" ]; then
+  echo "CGAL_SUMMARY_NAME ${CGAL_SUMMARY_NAME}" >> "$RESULT_FILE"
+fi
   echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
