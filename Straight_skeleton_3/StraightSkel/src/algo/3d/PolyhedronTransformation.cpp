@@ -363,7 +363,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     return result;
 }
 
-// normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
+// normalize coefficients
 void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
@@ -395,7 +395,7 @@ void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
     }
 }
 
-// normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
+// normalize coefficients and ensure that coplanar facets have the same coefficients
 //
 // @todo no point doing this with EPECK since we have SQRT errors
 // and if the planes were singletons, we would benefit from static filters
@@ -403,15 +403,13 @@ void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::cout << "\n> harmonizeFacetPlanes()" << std::endl;
 
-    // @todo is it still useful to keep the parallel check?
+    // @todo also harmonize parallel but non equal planes (i.e., opposite normal directions)
 
     // @todo this needs to be rewritten to use kernel predicates to sort the planes
     // Order all the supporting planes in a global order
     // The order is completely arbitrary, the only thing that we care about
     // is to quickly find which planes are identical
-
-    // @todo also harmonize parallel but non equal planes (including opposite directions)
-
+    //
     // for now, abuse unordered containers because it's less code to write than above
     struct FEqual
     {
@@ -618,12 +616,17 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
     // to keep a triangulated input
     bool canUsePlaneTilts = true;
 
-    // copy because we will merge (almost) coplanar faces and check if the result is a mesh
-    // with degree 3 only vertices, which can be perturb in a manner that does not require
-    // a triangulated input
+    // copy the polyhedron because we will merge (almost) coplanar faces and check if the result
+    // is a mesh with only degree 3 vertices. Indeed, such a polyhedron can have its faces tilted
+    // to create the perturbation.
     PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
 
+    // @todo
+    // it would be nice to merge non connected faces too as to give them the same planes.
+    // often we have the same "base" plane, but with vertical faces that are going to cut
+    // it into separate connected components
     db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
+
     db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
                             false /*do_triangulate*/,
                             true /*convert_to_double*/);
