@@ -48,7 +48,7 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
     typedef CGAL::Random_points_in_square_2<Point_2> Point_generator;
 
     Polygon_2 poly;
-    CGAL::random_polygon_2(10, std::back_inserter(poly), Point_generator(0.25, rnd));
+    CGAL::random_polygon_2(hole_nv, std::back_inserter(poly), Point_generator(0.25, rnd));
     return poly;
   };
 
@@ -113,7 +113,7 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 
 //  CGAL::draw(pwh);
 
-  auto ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights);
+  Straight_skeleton_2_ptr ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights, K());
   assert(ss_ptr);
   if(!ss_ptr)
   {

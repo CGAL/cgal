@@ -22,10 +22,13 @@
 #include <CGAL/Straight_skeleton_2/IO/print.h>
 #include <CGAL/Timer.h>
 
-#include <memory>
+#include <CGAL/use.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -1128,6 +1131,7 @@ void test_kernel()
   std::cerr.precision(17);
 
   void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   // Artificial data
   test_offset_square<K>();

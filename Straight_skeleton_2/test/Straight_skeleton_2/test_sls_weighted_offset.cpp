@@ -12,6 +12,8 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
 
+#include <CGAL/use.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
@@ -271,6 +273,7 @@ template <typename K>
 void test_kernel()
 {
   void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 }
 
 int main(int, char**)
