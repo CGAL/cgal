@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "config.h"
-#ifdef DEBUG
+#if 0//def DEBUG // issues with linking with clang
     #include "util/SharedPtr.h"
     #define SHARED_PTR util::SharedPtr
 #else
