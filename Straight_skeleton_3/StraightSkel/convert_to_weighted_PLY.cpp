@@ -82,7 +82,7 @@ bool assign_weights(Mesh& sm,
     return false;
   }
 
-  eps_weight = 1e-2 * eps_weight;
+  eps_weight = 1e-10 * eps_weight;
 
   if(vx1 == 0.) { std::cout << "vx1 to eps weight" << std::endl; vx1 = eps_weight; }
   if(vx2 == 0.) { std::cout << "vx2 to eps weight" << std::endl; vx2 = eps_weight; }
