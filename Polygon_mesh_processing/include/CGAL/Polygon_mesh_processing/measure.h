@@ -343,7 +343,7 @@ public:
   * @tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
   *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
   * @tparam EdgeRange a model of `Range` whose iterator type is `InputIterator` with value type
-  *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
+  *                   `boost::graph_traits<PolygonMesh>::%edge_descriptor`.
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
@@ -1466,7 +1466,7 @@ public:
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
  *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * \tparam EdgeRange a model of `Range` whhose iterator type is `InputIterator` with value type
- *                   `boost::graph_traits<PolygonMesh>::edge_descriptor`.
+ *                   `boost::graph_traits<PolygonMesh>::%edge_descriptor`.
  * \tparam TriangleMesh a model of `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
