@@ -758,7 +758,8 @@ then the `%Mesh_domain::Intersection` object (a `%tuple` with three
 elements) is constructed using a call to the functor `construct_intersection`
 \snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h use construct intersection
 and eventually `%intersect_index` is the element \#1 of `%intersect`.
-\snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h get construct intersection.
+\snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h get construct intersection
+.
 The dimension of the underlying simplex is stored as the element \#2 of `%intersect``.
 
 The result of the custom initialization can be seen in
