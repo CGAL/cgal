@@ -18,6 +18,9 @@
 #define UTIL_CONFIGURATION_H
 
 #include "util/ptrs.h"
+
+#include "cgal_kernel.h"
+
 #include <string>
 #include <iostream>
 #include <map>
@@ -40,6 +43,7 @@ public:
     std::string getString(const std::string& section, const std::string& key);
     int getInt(const std::string& section, const std::string& key);
     double getDouble(const std::string& section, const std::string& key);
+    CGAL::FT getFT(const std::string& section, const std::string& key);
     bool getBool(const std::string& section, const std::string& key);
 
 protected:

@@ -148,6 +148,16 @@ double Configuration::getDouble(const std::string& section, const std::string& k
     return result;
 }
 
+CGAL::FT Configuration::getFT(const std::string& section, const std::string& key) {
+    CGAL::FT result = 0.0;
+    std::string value = getString(section, key);
+    if (value.length() != 0) {
+        std::istringstream iss(value.c_str());
+        iss >> result;
+    }
+    return result;
+}
+
 bool Configuration::getBool(const std::string& section, const std::string& key) {
     bool result = false;
     std::string value = getString(section, key);

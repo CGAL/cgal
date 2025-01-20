@@ -195,7 +195,7 @@ int main(int argc, const char* argv[]) {
 
     bool rand_move_points = false;
     bool rand_move_points_when_degenerated = false;
-    double rand_move_points_range = 0.001;
+    CGAL::FT rand_move_points_range = 0.001;
     bool translate_and_scale_polyhedron = false;
     bool translate_and_scale_view = false;
     float translate[3];
@@ -207,7 +207,7 @@ int main(int argc, const char* argv[]) {
         rand_move_points = config->getBool("main", "rand_move_points");
         rand_move_points_when_degenerated =
                 config->getBool("main", "rand_move_points_when_degenerated");
-        double value = config->getDouble("main", "rand_move_points_range");
+        CGAL::FT value = config->getFT("main", "rand_move_points_range");
         if (value != 0.0) {
             rand_move_points_range = value;
         }
