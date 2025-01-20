@@ -641,7 +641,11 @@ void Facet::storePlaneCoefficients()
 
     // need a different shared ptr here because plane_ will change with the perturbation
     cachedPlane_ = KernelFactory::createPlane3(*(plane_));
+
+// #define CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << "plane of Facet " << this->id_ << " was [" << *cachedPlane_ << "] (cached)" << std::endl;
+#endif
 }
 
 void Facet::perturbPlaneCoefficients()
@@ -650,34 +654,77 @@ void Facet::perturbPlaneCoefficients()
         this->initPlane();
     }
 
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
+    std::cout << "Nudging Face " << this->getID() << std::endl;
+#endif
+
+    // @todo this nudge planar coefficients, but if we want to really bound the distance
+    // from points on the input plane and points on the nudged plane, we need to ensure that
+    // the intersection line between the two planes is not too far from the face, otherwise
+    // the distance between the planes can be arbitrarily large.
+    // Since we define the plane using normal and a point of the (input) face, the current
+    // code should behave well enough for now.
     auto nudge = [](const CGAL::FT& v) {
         static std::random_device rd;
-        static std::mt19937 gen(rd());
+        auto s = rd();
+        // std::cout << "seed = " << s << std::endl;
+        static std::mt19937 gen(s);
+
+#if 1
         static std::uniform_real_distribution<> rdist(1e-10, 1e-9);
 
+        // Since we are perturbing, we might as well collapse the DAG of 'v'.
+        // the point is also that once 'nv' is a double, its interval will be a singleton,
+        // and we will have access to static filters
+        exact(v);
         CGAL::FT step = rdist(gen);
-        CGAL::FT nv = v + step;
+        CGAL::FT nv = CGAL::to_double(v + step);
         return nv;
+#else
+        static std::uniform_real_distribution<> rdist(0, 1);
+
+        // Since we are perturbing, we might as well collapse the DAG of 'v'.
+        exact(v);
+        double dv = CGAL::to_double(v);
+        double u = std::nextafter(dv, std::numeric_limits<double>::max()) - dv; // @todo v.approx() already gave that
+        std::cout << "dv u " << dv << " " << u << std::endl;
+        CGAL_assertion(!CGAL::is_zero(u));
+
+        return CGAL::FT{dv} + CGAL::FT{rdist(gen)} * 0.05 * CGAL::FT{u};
+#endif
     };
 
     CGAL::FT na = nudge(plane_->a());
     CGAL::FT nb = nudge(plane_->b());
     CGAL::FT nc = nudge(plane_->c());
-    CGAL::FT d = plane_->d(); // pointless to nudge d
+    CGAL::FT nd = nudge(plane_->d()); // @todo do not nudge 'd'? (mind the 'to_double()')
+
     CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
 
-    // @todo if it's zero, nudge differently
-    // @todo also, it shouldn't invert the face (bounded normal change)
+    // @todo if it's zero, re-nudge differently
     CGAL_assertion(!is_zero(n));
 
-    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, d/n);
+    // @todo cast to_double() *after* the normalization?
+    // the downside is that we won't have a^2 + b^2 + c^2 == 1
+    // but then again, who does
+    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
+
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
+    std::cout << plane_->a() << " to " << na << std::endl;
+    std::cout << plane_->b() << " to " << nb << std::endl;
+    std::cout << plane_->c() << " to " << nc << std::endl;
+    std::cout << plane_->d() << " to " << nd << std::endl;
+
     std::cout << "plane of Facet " << this->id_ << " is now [" << *plane_ << "]" << std::endl;
+#endif
 }
 
 void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
                                      CGAL::FT perturbationEndOffset)
 {
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << "plane of Facet " << this->id_ << " is [" << *plane_ << "]" << std::endl;
+#endif
 
     if (!cachedPlane_) {
         std::cerr << "Warning: no plane coefficients to restore" << std::endl;
@@ -706,9 +753,11 @@ void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
         speed = std::dynamic_pointer_cast<data::_3d::skel::SkelFacetData>(getData())->getSpeed();
     }
 
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << "OLD d = " << cachedPlane_->d() << std::endl;
     std::cout << "perturbationOffset = " << perturbationOffset << std::endl;
     std::cout << "perturbationEndOffset = " << perturbationEndOffset << std::endl;
+#endif
 
     // The minus sign "d - ..." is because we shrink, so the plane needs to be offset
     // by the difference of offsets, but in the direction opposite of its normal.
@@ -722,7 +771,9 @@ void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
     CGAL_assertion_code(CGAL::FT sq_n = CGAL::square(plane_->a()) + CGAL::square(plane_->b()) + CGAL::square(plane_->c()));
     CGAL_assertion((sq_n - 1) < 1e-5);
 
+#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << "plane of Facet " << this->id_ << " restored to [" << *plane_ << "]" << std::endl;
+#endif
 }
 
 bool Facet::makeFirstConvex() {
