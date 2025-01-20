@@ -49,7 +49,7 @@ def plot_data_from_directories(root_dir):
          plt.colorbar(scatter, cax=cbar_ax, label='Runtime')
 
          # Create a new set of axes for the zoomed-in plot
-         zoom_ax = ax.inset_axes([0.55, 0.15, 0.35, 0.35])  # [x0, y0, width, height] in axes coordinates
+         zoom_ax = ax.inset_axes([0.05, 0.6, 0.35, 0.35])  # [x0, y0, width, height] in axes coordinates
 
          # Filter the data for X values below 100
          zoom_x_values = [x for x in x_values if x < 100]
