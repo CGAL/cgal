@@ -64,7 +64,7 @@ set(util_SOURCES
         src/util/Configuration.cpp
         src/util/Timer.cpp)
 add_library(skelutil SHARED ${util_SOURCES})
-
+target_link_libraries(skelutil PUBLIC CGAL::CGAL)
 
 if(BUILD_OWN_KERNEL)
     set(kernel_SOURCES
