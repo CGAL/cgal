@@ -55,12 +55,13 @@ bool assign_weights(Mesh& sm,
     std::cout << "bottom & top info is present" << std::endl;
   } else {
     if(vx2 != vy2) {
-      std::cerr << "Error: unknown z-speeds, and x-speed and y-speed differ..." << std::endl;
-      return false;
+      std::cerr << "Warning: unknown z-speeds, and x-speed and y-speed differ..." << std::endl;
+      // arbitrary choice
+      vz2 = vy2;
+    } else {
+      // assign the uniform speed to the "up" direction
+      vz2 = vx2;
     }
-
-    // assign the uniform speed to the "up" direction
-    vz2 = vx2;
   }
 
   if(vx1 < 0 || vx2 < 0 || vy1 < 0 || vy2 < 0 || vz1 < 0 || vz2 < 0) {
