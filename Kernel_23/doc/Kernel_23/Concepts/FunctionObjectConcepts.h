@@ -8125,6 +8125,12 @@ public:
                   const Kernel::Point_3&p);
 
   /*!
+    returns true iff `p` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3& c,
+                  const Kernel::Point_3& p);
+
+  /*!
     returns true iff the line segment `ab` is inside the union of the
     bounded sides of `s1` and `s2`.
   */
@@ -8386,6 +8392,11 @@ public:
   bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
+  /*!
+    returns true iff `p` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3&c,
+                  const Kernel::Point_3&p);
 
   /// @}
 
