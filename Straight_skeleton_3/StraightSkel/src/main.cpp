@@ -269,7 +269,8 @@ int main(int argc, const char* argv[]) {
         }
         if (rand_move_points) {
             std::cout << "Points will be moved randomly." << std::endl;
-            algo::_2d::PolygonTransformation::randMovePoints(polygon, rand_move_points_range);
+            std::exit(1); // fix below to properly carry the "rand_move_points_range" value
+            algo::_2d::PolygonTransformation::randMovePoints(polygon, CGAL::to_double(rand_move_points_range));
         }
         if (translate_and_scale_view) {
             data::_2d::Point2SPtr p_box_min =
@@ -397,9 +398,9 @@ int main(int argc, const char* argv[]) {
         algo::_3d::PolyhedronTransformation::harmonizeFacetPlanes(polyhedron);
 
         // since we have modified plane coefficients, ensure that points are on the facets
-        // @fixme, what if 'shiftFacets()' fails?
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
+        CGAL_assertion(polyhedron); // @fixme, what if 'shiftFacets()' fails?
         // polyhedron->clearData(); // @fixme: as to not clear facet speeds,
         // but what are the side effects?
         polyhedron->setDescription(description);

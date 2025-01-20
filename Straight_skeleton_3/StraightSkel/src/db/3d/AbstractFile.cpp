@@ -44,8 +44,9 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
     if (facet_l && facet_r) {
-        if(epsilon == 0)
-          return (*(facet_l->plane()) == *(facet_r->plane())); // planes are normalized
+        if(epsilon == 0.) {
+            return (*(facet_l->plane()) == *(facet_r->plane())); // planes are normalized
+        }
 
         Vector3SPtr normal_l = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr normal_r = KernelFactory::createVector3(facet_r->plane());
@@ -75,7 +76,8 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     std::cout << "\n> Merging coplanar faces with epsilon = " << epsilon << std::endl;
     std::cout << "  initial face count: " << polyhedron->facets().size() << std::endl;
 
-    db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron, false /*do not triangulate*/);
+    // db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,
+    //                        false /*do not triangulate*/);
 
     int result = 0;
     std::list<EdgeSPtr> edges_toremove;

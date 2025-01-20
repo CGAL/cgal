@@ -62,8 +62,9 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
             if (line.find("v ") == 0) {  // vertex
                 std::vector<std::string> strs = util::StringFuncs::split(line, " \t", false);
                 if (strs.size() >= 4) {
-                    Point3SPtr point = KernelFactory::createPoint3(
-                            atof(strs[1].c_str()), atof(strs[2].c_str()), atof(strs[3].c_str()));
+                    Point3SPtr point = KernelFactory::createPoint3(atof(strs[1].c_str()),
+                                                                   atof(strs[2].c_str()),
+                                                                   atof(strs[3].c_str()));
                     VertexSPtr vertex = Vertex::create(point);
                     vertex->setID(vertex_id_new++);
                     result->addVertex(vertex);
@@ -214,7 +215,8 @@ bool OBJFile::save(const std::string& filename,
                    const bool convert_to_double)
 {
     std::cout << " -- Save OBJ " << filename << " --" << std::endl;
-    std::cout << "do_triangulate | convert to double: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
+    std::cout << "\tdo_triangulate: " << std::boolalpha << do_triangulate << "\n"
+              << "\tconvert_to_double: " << convert_to_double << std::endl;
 
     polyhedron->initializeAllIDs();
     // std::cout << polyhedron->toString() << std::endl;

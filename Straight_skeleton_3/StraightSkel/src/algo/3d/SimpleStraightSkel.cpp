@@ -1270,8 +1270,10 @@ bool SimpleStraightSkel::run() {
                 const bool recompute_positions = (shift != 0);
                 polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift, recompute_positions);
 
-                // will have degeneracies since we haven't treated the event yet
-                db::_3d::OBJFile::save("results/shift_" + std::to_string(event_id) + ".obj", polyhedron, false /*do not triangulate*/);
+                // below will have degeneracies since we haven't treated the event yet
+                // db::_3d::OBJFile::save("results/shift_" + std::to_string(event_id) + ".obj",
+                //                        polyhedron,
+                //                        false /*do not triangulate*/);
 
                 if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -1606,7 +1608,6 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     bool result = true;
 
     std::list<VertexSPtr>::iterator it_v;
-
     it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -1904,15 +1905,15 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPla
 {
 // #define CGAL_SS3_NO_CACHING
 #ifdef CGAL_SS3_NO_CACHING
-      Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
-      Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
-      Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
-      Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
-      CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
-      CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
-      CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
-      CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
-      return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+    Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
+    Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
+    Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
+    Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
+    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+    return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
 #endif
 
     std::size_t ids[] = {facet_0->getBasePlaneID(), facet_1->getBasePlaneID(), facet_2->getBasePlaneID(), facet_3->getBasePlaneID()};
@@ -2183,6 +2184,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
         if (usePerturbations) {
             parallelism = PLANES_PARALLELISM_NONE;
         } else {
+            std::exit(1); // @tmp
             parallelism = quadplane_parallelism(facetL, facetP, facetR, facetN);
         }
 

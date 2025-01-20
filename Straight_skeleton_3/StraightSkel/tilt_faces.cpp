@@ -62,7 +62,7 @@ int main(int, char** argv)
 
   // run the remeshing algorithm using filled properties
   std::vector<Vector_3> normal_map(num_faces(sm));
-  for(face_descriptor f:faces(sm))
+  for(face_descriptor f : faces(sm))
     normal_map[f] = plane_map[f].orthogonal_vector();
 
   Mesh out;
@@ -75,7 +75,7 @@ int main(int, char** argv)
                                     CGAL::parameters::patch_normal_map(CGAL::make_random_access_property_map(normal_map)),
                                     CGAL::parameters::do_not_triangulate_faces(true));
 
-  CGAL::IO::write_polygon_mesh("out_remeshed.off", out, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/out_remeshed.off", out, CGAL::parameters::stream_precision(17));
 
   // check the degree of each vertex
   for(vertex_descriptor v : vertices(out))
@@ -156,7 +156,7 @@ int main(int, char** argv)
     }
   }
 
-  CGAL::IO::write_polygon_mesh("out_remeshed_perturbed.off", out, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/out_remeshed_perturbed.off", out, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

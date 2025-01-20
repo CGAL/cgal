@@ -131,27 +131,15 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     }
 
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
-
-    // it_f = vertex->facets().begin();
-    // while (it_f != vertex->facets().end()) {
-    //     FacetWPtr facet_wptr = *it_f++;
-    //     if (!facet_wptr.expired()) {
-    //         FacetSPtr facet = FacetSPtr(facet_wptr);
-    //         Plane3SPtr plane = facet->plane();
-    //         if (facet->hasData()) {
-    //             std::cout << "speed = " << std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed() << std::endl;
-    //         }
-    //         std::cout << "distance = " << CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(*point, *plane))) << std::endl;
-
-    //     }
-    // }
-
     if (!point) {
         std::cerr << "Error: triplet of planes doesn't define a point!" << std::endl;
         Point3SPtr result = Point3SPtr();
         DEBUG_SPTR(result);
         return result;
     }
+
+    CGAL_assertion_code(for(Plane3SPtr pi : planes))
+    CGAL_assertion(pi->has_on(*point));
 
     return point;
 }
@@ -329,9 +317,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                 VertexSPtr offset_vertex = vertex_data->getOffsetVertex();
                 if (offset_vertex) {
                     offset_facet->addVertex(offset_vertex);
-
-                    // @tmp only a warning because sometimes I still run perturbed, non-triangulated cases
-                    CGAL_warning(offset_plane->has_on(*(offset_vertex->getPoint())));
+                    CGAL_assertion(offset_plane->has_on(*(offset_vertex->getPoint())));
                 }
             }
         }
@@ -610,7 +596,7 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
 }
 
 PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
-    db::_3d::OBJFile::save("results/randomized_input_pre.obj", polyhedron, false /*triangulate*/);
+    db::_3d::OBJFile::save("results/perturbation_before.obj", polyhedron, false /*triangulate*/);
 
     // check if we can just tilt plane coefficients directly without having
     // to keep a triangulated input
@@ -671,7 +657,7 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
         }
     }
 
-    db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron, false /*triangulate*/);
+    db::_3d::OBJFile::save("results/perturbation_after.obj", polyhedron, false /*triangulate*/);
 
     return polyhedron;
 }

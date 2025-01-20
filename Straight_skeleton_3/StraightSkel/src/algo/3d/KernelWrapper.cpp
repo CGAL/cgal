@@ -420,7 +420,6 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     }
 
     if (!usePerturbations) {
-        std::exit(1); // @tmp
         if(CGAL::is_zero(den))
         {
             std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
