@@ -5,6 +5,7 @@ project( Triangulation_on_hyperbolic_surface_2_Examples )
 # CGAL and its components
 find_package( CGAL REQUIRED  )
 
+include_directories(../../include/)
 
 # create a target per cppfile
 file(
