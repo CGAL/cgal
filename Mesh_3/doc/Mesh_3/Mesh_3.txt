@@ -801,7 +801,7 @@ a custom functor that initializes the triangulation.
 A struct `Custom_Initial_points_generator` that places 1D-feature points
 alongside a line is created.
 
-Finally, the exemple \ref Mesh_3/mesh_3D_image_with_initial_points.cpp features
+Finally, the example \ref Mesh_3/mesh_3D_image_with_initial_points.cpp features
 a point container that initializes the triangulation using the meshing parameter
 `parameters::initial_points()`.
 
