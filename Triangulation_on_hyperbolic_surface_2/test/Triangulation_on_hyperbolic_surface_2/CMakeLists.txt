@@ -9,6 +9,7 @@ find_package(CGAL REQUIRED)
 set(CMAKE_BUILD_TYPE "Debug")
 
 include_directories(../../include/)
+include_directories(/Users/pougetma/dev/cgal-loic-submission-2024/Installation/include/)
 
 # create a target per cppfile
 file(
