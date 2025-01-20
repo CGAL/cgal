@@ -107,6 +107,198 @@
 
 namespace algo { namespace _3d {
 
+enum class CDT2_Filtering {
+    ODD_EVEN = 0, // in domain := odd nesting levels, see mark_domain_in_triangulation()
+    NOT_OUT // in domain := everything that is not in the connected component incident to the infinite faces
+};
+
+auto triangulate_facet_with_CDT2(FacetSPtr facet,
+                                 CDT2_Filtering filtering_policy,
+                                 std::map<Point3, std::size_t>& pids,
+                                 std::vector<Point3>& points,
+                                 std::vector<std::vector<std::size_t> >& triangles)
+{
+    std::cout << "triangulate_facet_with_CDT2()" << std::endl;
+
+    if (facet->edges().size() < 3) {
+        std::cerr << "Warning: face with < 3 edges" << std::endl;
+        return;
+    } else {
+        // @todo factorize CDT usages, but mind the tags
+        using Itag = CGAL::Exact_intersections_tag; // since we do shift + epsilon, we could have intersections within a face
+        using PK = CGAL::Projection_traits_3<CGAL::K>;
+        using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
+        using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
+        using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
+        using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
+        using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
+        using PCDT_VH = PCDT::Vertex_handle;
+        using PCDT_FH = PCDT::Face_handle;
+
+        Vector3SPtr n = KernelFactory::createVector3(facet->plane());
+        CGAL_assertion(*n != CGAL::NULL_VECTOR);
+
+        PK projection_traits(*n);
+        PCDT pcdt(projection_traits);
+
+        std::map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
+
+        std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+        while (it_v != facet->vertices().end()) {
+            VertexSPtr vertex = *it_v++;
+            auto res = face_vhs.emplace(vertex, PCDT_VH());
+            if(res.second) // first time seeing this point
+            {
+                PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+                res.first->second = vh;
+            }
+        }
+
+        auto ne = 0;
+        std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+        while (it_e != facet->edges().end()) {
+            EdgeSPtr edge = *it_e++;
+            VertexSPtr v0 = edge->src(facet);
+            VertexSPtr v1 = edge->dst(facet);
+            std::cout << "CDT2 constraint: " << *(v0->getPoint()) << " || " << *(v1->getPoint()) << std::endl;
+
+            // degenerate edges can happen e.g. at t=0 for vertices with deg > 3
+            if(*(v0->getPoint()) == *(v1->getPoint())) {
+                std::cerr << "Warning: encountered degenerate edge" << std::endl;
+            } else {
+                PCDT_VH vh0 = face_vhs.at(v0);
+                PCDT_VH vh1 = face_vhs.at(v1);
+
+                try {
+                    pcdt.insert_constraint(vh0, vh1);
+                } catch(const typename PCDT::Intersection_of_constraints_exception&) {
+                    std::cerr << "Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point() << std::endl;
+                    DEBUG_VAR(facet->toString());
+                    CGAL_assertion_msg(false, "Intersections are allowed, throw shouldn't happen");
+                    std::exit(1);
+                }
+                ++ne;
+            }
+        }
+
+        if(ne < 3) { // degenerate face
+            std::cerr << "Warning: skipping degenerate face (ne < 3)" << std::endl;
+            return;
+        }
+
+        // @fixme there can be self-intersections, so doing the domain thing is wrong?
+#ifndef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+        std::unordered_map<PCDT_FH, bool> in_domain_map;
+        boost::associative_property_map<std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
+
+        if (filtering_policy == CDT2_Filtering::ODD_EVEN) {
+            CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+        } else {
+            for (PCDT_FH fh : pcdt.all_face_handles()) {
+                put(in_domain, fh, true);
+            }
+
+            PCDT_FH seed_fh = pcdt.infinite_vertex()->face();
+            std::stack<PCDT_FH> to_explore;
+            to_explore.push(seed_fh);
+            while (!to_explore.empty()) {
+                PCDT_FH fh = to_explore.top();
+                to_explore.pop();
+                if (!get(in_domain, fh)) {
+                    continue;
+                } else {
+                    put(in_domain, fh, false);
+                }
+                for (std::size_t j=0; j<3; ++j) {
+                    if (!fh->is_constrained(j)) {
+                        to_explore.push(fh->neighbor(j));
+                    }
+                }
+            }
+        }
+#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+
+        for(auto fh : pcdt.finite_face_handles()) {
+        std::cout << "Face handle " << fh->vertex(0)->point() << " " << fh->vertex(1)->point() << " " << fh->vertex(2)->point() << " in domain? " << get(in_domain, fh) << std::endl;
+#ifndef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+            if(!get(in_domain, fh)) {
+                continue;
+            }
+#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+
+            // purge degenerate faces as we will things conformal with autoref anyway
+            if (CGAL::collinear(fh->vertex(0)->point(),
+                                fh->vertex(1)->point(),
+                                fh->vertex(2)->point())) {
+                std::cerr << "Warning: degenerate face in autoref event handling" << std::endl;
+                continue;
+            }
+
+            auto get_pid = [&pids, &points] (PCDT_VH vh) -> std::size_t {
+                auto res = pids.emplace(vh->point(), points.size());
+                if(res.second) { // first time seeing the vertex handle
+                    points.push_back(vh->point());
+                }
+                return res.first->second;
+            };
+
+            // trying something to avoid inverted subparts of a face from surviving an event:
+            // compute the winding number with angles (obviously terrible both in complexity AND robustness!)
+#ifdef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+
+            // this doesn't work because we can't distinguish between doubly inverted faces pointing
+            // in the wrong direction, and non-inverted faces
+#               error
+
+            Point3 centroid = CGAL::centroid(fh->vertex(0)->point(),
+                                              fh->vertex(1)->point(),
+                                              fh->vertex(2)->point());
+
+            CGAL::FT cumulative_angle = 0;
+            CGAL::internal::Evaluate<CGAL::FT> evaluate;
+
+            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+            while (it_e != facet->edges().end()) {
+                EdgeSPtr edge = *it_e++;
+                VertexSPtr v_src = edge->src(facet);
+                VertexSPtr v_dst = edge->dst(facet);
+                CGAL_assertion(*(v_src->getPoint()) != *(v_dst->getPoint())); // @todo handle this, if it can happen
+
+                Vector3 ln = CGAL::cross_product(Vector3(centroid, *(v_src->getPoint())),
+                                                  Vector3(centroid, *(v_dst->getPoint())));
+                CGAL_assertion(ln != CGAL::NULL_VECTOR);
+                const CGAL::FT s = (CGAL::scalar_product(*n, ln) > 0) ? 1 : -1;
+
+                cumulative_angle += s * CGAL::approximate_angle(*(v_src->getPoint()), centroid, *(v_dst->getPoint()));
+                evaluate(cumulative_angle);
+
+                std::cout << centroid << " || " << *(v_src->getPoint()) << " || " << *(v_dst->getPoint()) << std::endl;
+                std::cout << "sign: " << s << std::endl;
+                std::cout << "angle: " << CGAL::approximate_angle(*(v_src->getPoint()), centroid, *(v_dst->getPoint())) << std::endl;
+            }
+
+            std::cout << "cumulative angle = " << cumulative_angle
+                      << " (factor = " << cumulative_angle / 360 << ")" << std::endl;
+            if (cumulative_angle > 180) { // && < 540
+                std::cout << "1" << std::endl;
+                triangles.push_back({get_pid(fh->vertex(0)),
+                                      get_pid(fh->vertex(1)),
+                                      get_pid(fh->vertex(2))});
+            } else if (cumulative_angle < -180) {
+                std::cout << "2" << std::endl;
+                triangles.push_back({get_pid(fh->vertex(0)),
+                                      get_pid(fh->vertex(2)), // invert
+                                      get_pid(fh->vertex(1))});
+            }
+#else
+            triangles.push_back({get_pid(fh->vertex(0)),
+                                  get_pid(fh->vertex(1)),
+                                  get_pid(fh->vertex(2))});
+#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
+        }
+    }
+}; // triangulate_facet_with_CDT2()
+
 template <typename ValueType,
           typename VisitorBase = CGAL::Polygon_mesh_processing::Autorefinement::Default_visitor>
 struct Range_updating_autoref_visitor : public VisitorBase {
@@ -4831,197 +5023,6 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
             std::cout << points[triangles.back()[0]] << " " << points[triangles.back()[1]] << " " << points[triangles.back()[2]] << std::endl;
         }
     }; // lambda 'triangulate_quad_with_CDT2'
-
-    enum class CDT2_Filtering {
-        ODD_EVEN = 0, // in domain := odd nesting levels, see mark_domain_in_triangulation()
-        NOT_OUT // in domain := everything that is not in the connected component incident to the infinite faces
-    };
-
-    auto triangulate_facet_with_CDT2 = [](FacetSPtr facet,
-                                          CDT2_Filtering filtering_policy,
-                                          std::map<Point3, PID>& pids,
-                                          std::vector<Point3>& points,
-                                          std::vector<std::vector<PID> >& triangles) {
-        std::cout << "triangulate_facet_with_CDT2()" << std::endl;
-
-        if (facet->edges().size() < 3) {
-            std::cerr << "Warning: face with < 3 edges" << std::endl;
-            return;
-        } else {
-            // @todo factorize CDT usages, but mind the tags
-            using Itag = CGAL::Exact_intersections_tag; // since we do shift + epsilon, we could have intersections within a face
-            using PK = CGAL::Projection_traits_3<CGAL::K>;
-            using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
-            using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
-            using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-            using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
-            using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
-            using PCDT_VH = PCDT::Vertex_handle;
-            using PCDT_FH = PCDT::Face_handle;
-
-            Vector3SPtr n = KernelFactory::createVector3(facet->plane());
-            CGAL_assertion(*n != CGAL::NULL_VECTOR);
-
-            PK projection_traits(*n);
-            PCDT pcdt(projection_traits);
-
-            std::map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
-
-            std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-            while (it_v != facet->vertices().end()) {
-                VertexSPtr vertex = *it_v++;
-                auto res = face_vhs.emplace(vertex, PCDT_VH());
-                if(res.second) // first time seeing this point
-                {
-                    PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
-                    res.first->second = vh;
-                }
-            }
-
-            auto ne = 0;
-            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-            while (it_e != facet->edges().end()) {
-                EdgeSPtr edge = *it_e++;
-                VertexSPtr v0 = edge->src(facet);
-                VertexSPtr v1 = edge->dst(facet);
-                std::cout << "CDT2 constraint: " << *(v0->getPoint()) << " || " << *(v1->getPoint()) << std::endl;
-
-                // degenerate edges can happen e.g. at t=0 for vertices with deg > 3
-                if(*(v0->getPoint()) == *(v1->getPoint())) {
-                    std::cerr << "Warning: encountered degenerate edge" << std::endl;
-                } else {
-                    PCDT_VH vh0 = face_vhs.at(v0);
-                    PCDT_VH vh1 = face_vhs.at(v1);
-
-                    try {
-                        pcdt.insert_constraint(vh0, vh1);
-                    } catch(const typename PCDT::Intersection_of_constraints_exception&) {
-                        std::cerr << "Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point() << std::endl;
-                        DEBUG_VAR(facet->toString());
-                        CGAL_assertion_msg(false, "Intersections are allowed, throw shouldn't happen");
-                        std::exit(1);
-                    }
-                    ++ne;
-                }
-            }
-
-            if(ne < 3) { // degenerate face
-                std::cerr << "Warning: skipping degenerate face (ne < 3)" << std::endl;
-                return;
-            }
-
-            // @fixme there can be self-intersections, so doing the domain thing is wrong?
-#ifndef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-            std::unordered_map<PCDT_FH, bool> in_domain_map;
-            boost::associative_property_map<std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
-
-            if (filtering_policy == CDT2_Filtering::ODD_EVEN) {
-                CGAL::mark_domain_in_triangulation(pcdt, in_domain);
-            } else {
-                for (PCDT_FH fh : pcdt.all_face_handles()) {
-                    put(in_domain, fh, true);
-                }
-
-                PCDT_FH seed_fh = pcdt.infinite_vertex()->face();
-                std::stack<PCDT_FH> to_explore;
-                to_explore.push(seed_fh);
-                while (!to_explore.empty()) {
-                    PCDT_FH fh = to_explore.top();
-                    to_explore.pop();
-                    if (!get(in_domain, fh)) {
-                        continue;
-                    } else {
-                        put(in_domain, fh, false);
-                    }
-                    for (std::size_t j=0; j<3; ++j) {
-                        if (!fh->is_constrained(j)) {
-                            to_explore.push(fh->neighbor(j));
-                        }
-                    }
-                }
-            }
-#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-
-            for(auto fh : pcdt.finite_face_handles()) {
-            std::cout << "Face handle " << fh->vertex(0)->point() << " " << fh->vertex(1)->point() << " " << fh->vertex(2)->point() << " in domain? " << get(in_domain, fh) << std::endl;
-#ifndef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-                if(!get(in_domain, fh)) {
-                    continue;
-                }
-#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-
-                // purge degenerate faces as we will things conformal with autoref anyway
-                if (CGAL::collinear(fh->vertex(0)->point(),
-                                    fh->vertex(1)->point(),
-                                    fh->vertex(2)->point())) {
-                    std::cerr << "Warning: degenerate face in autoref event handling" << std::endl;
-                    continue;
-                }
-
-                auto get_pid = [&pids, &points] (PCDT_VH vh) -> PID {
-                    auto res = pids.emplace(vh->point(), points.size());
-                    if(res.second) { // first time seeing the vertex handle
-                        points.push_back(vh->point());
-                    }
-                    return res.first->second;
-                };
-
-                // trying something to avoid inverted subparts of a face from surviving an event:
-                // compute the winding number with angles (obviously terrible both in complexity AND robustness!)
-#ifdef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-
-                // this doesn't work because we can't distinguish between doubly inverted faces pointing
-                // in the wrong direction, and non-inverted faces
-#               error
-
-                Point3 centroid = CGAL::centroid(fh->vertex(0)->point(),
-                                                 fh->vertex(1)->point(),
-                                                 fh->vertex(2)->point());
-
-                CGAL::FT cumulative_angle = 0;
-                CGAL::internal::Evaluate<CGAL::FT> evaluate;
-
-                std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-                while (it_e != facet->edges().end()) {
-                    EdgeSPtr edge = *it_e++;
-                    VertexSPtr v_src = edge->src(facet);
-                    VertexSPtr v_dst = edge->dst(facet);
-                    CGAL_assertion(*(v_src->getPoint()) != *(v_dst->getPoint())); // @todo handle this, if it can happen
-
-                    Vector3 ln = CGAL::cross_product(Vector3(centroid, *(v_src->getPoint())),
-                                                     Vector3(centroid, *(v_dst->getPoint())));
-                    CGAL_assertion(ln != CGAL::NULL_VECTOR);
-                    const CGAL::FT s = (CGAL::scalar_product(*n, ln) > 0) ? 1 : -1;
-
-                    cumulative_angle += s * CGAL::approximate_angle(*(v_src->getPoint()), centroid, *(v_dst->getPoint()));
-                    evaluate(cumulative_angle);
-
-                    std::cout << centroid << " || " << *(v_src->getPoint()) << " || " << *(v_dst->getPoint()) << std::endl;
-                    std::cout << "sign: " << s << std::endl;
-                    std::cout << "angle: " << CGAL::approximate_angle(*(v_src->getPoint()), centroid, *(v_dst->getPoint())) << std::endl;
-                }
-
-                std::cout << "cumulative angle = " << cumulative_angle
-                          << " (factor = " << cumulative_angle / 360 << ")" << std::endl;
-                if (cumulative_angle > 180) { // && < 540
-                    std::cout << "1" << std::endl;
-                    triangles.push_back({get_pid(fh->vertex(0)),
-                                         get_pid(fh->vertex(1)),
-                                         get_pid(fh->vertex(2))});
-                } else if (cumulative_angle < -180) {
-                    std::cout << "2" << std::endl;
-                    triangles.push_back({get_pid(fh->vertex(0)),
-                                         get_pid(fh->vertex(2)), // invert
-                                         get_pid(fh->vertex(1))});
-                }
-#else
-                triangles.push_back({get_pid(fh->vertex(0)),
-                                     get_pid(fh->vertex(1)),
-                                     get_pid(fh->vertex(2))});
-#endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
-            }
-        }
-    }; // lambda 'triangulate_facet_with_CDT2'
 
     auto fill_edge_map = [](const std::vector<Point3>& points,
                             const std::vector<std::vector<PID> >& triangles,
