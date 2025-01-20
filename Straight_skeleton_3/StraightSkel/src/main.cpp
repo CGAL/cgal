@@ -368,7 +368,9 @@ int main(int argc, const char* argv[]) {
 
         polyhedron->initializeAllIDs();
 
-        // @todo this should be a plane perturbation and not a vertex perturbation...
+        // @todo implement lazy perturbations where we only perturb if we encounter an issue?
+        // - Would cost more (detection of simultaneous events, etc.)
+        // - How to detect "hidden" simultaneous events?
         if (rand_move_points_when_degenerated && !rand_move_points) {
             std::cout << "Checking if all combinations of 3 facet supporting planes intersect in a point." << std::endl;
             std::cout << "In case this takes too long, "
@@ -394,20 +396,20 @@ int main(int argc, const char* argv[]) {
             polyhedron = algo::_3d::PolyhedronTransformation::perturb(polyhedron);
         }
 
-        // we need to harmonize, whether we have perturbed or not
-        algo::_3d::PolyhedronTransformation::harmonizeFacetPlanes(polyhedron);
+        algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
 
         // since we have modified plane coefficients, ensure that points are on the facets
-        std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
-        CGAL_assertion(polyhedron); // @fixme, what if 'shiftFacets()' fails?
-        // polyhedron->clearData(); // @fixme: as to not clear facet speeds,
-        // but what are the side effects?
-        polyhedron->setDescription(description);
 
-        if (!polyhedron->isConsistent()) {
-            std::cout << "Warning: Polyhedron is not consistent." << std::endl;
+        if (!polyhedron || !polyhedron->isConsistent()) {
+            // Failure here is likely from a bad perturbation (after all, there is a probabily
+            // epsilon that we create something that is degenerate).
+            // @todo try again with another perturbation, or smarter (iterative) perturbation
+            std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
+            return EXIT_FAILURE;
         }
+
+        db::_3d::OBJFile::save("results/perturbation_after.obj", polyhedron, false /*triangulate*/);
 
         if (translate_and_scale_view) {
             data::_3d::Point3SPtr p_box_min =

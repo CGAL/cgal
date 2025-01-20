@@ -684,6 +684,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::enablePerturbedMode(Poly
 #ifdef CGAL_SS3_PERTURB_PLANE_COEFFICIENTS
         facet->storePlaneCoefficients();
         facet->perturbPlaneCoefficients();
+        facet->normalizePlaneCoefficients();
 #else
         SkelFacetDataSPtr data;
         if (facet->hasData()) {

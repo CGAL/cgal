@@ -355,29 +355,7 @@ void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
-
-        Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
-
-#ifdef USE_CGAL
-        const CGAL::FT a = plane->a();
-        const CGAL::FT b = plane->b();
-        const CGAL::FT c = plane->c();
-        const CGAL::FT d = plane->d();
-        // this should be the only place with unavoidable SQRTs
-        const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
-#else
-        const double a = plane->getA();
-        const double b = plane->getB();
-        const double c = plane->getC();
-        const double d = plane->getD();
-        const double n = sqrt(a*a + b*b + c*c);
-#endif
-
-        if(!is_zero(n))
-        {
-          Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
-          facet->setPlane(normalized_plane);
-        }
+        facet->normalizePlaneCoefficients();
     }
 }
 
@@ -423,28 +401,8 @@ void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 
         auto res = facet_coefficients.emplace(facet, Plane3SPtr{});
         if(res.second) { // never seen this direction of planes before
-            Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
-
-#ifdef USE_CGAL
-            const CGAL::FT a = plane->a();
-            const CGAL::FT b = plane->b();
-            const CGAL::FT c = plane->c();
-            const CGAL::FT d = plane->d();
-            // this should be the only place with unavoidable SQRTs
-            const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
-#else
-            const double a = plane->getA();
-            const double b = plane->getB();
-            const double c = plane->getC();
-            const double d = plane->getD();
-            const double n = sqrt(a*a + b*b + c*c);
-#endif
-
-            CGAL_assertion(!is_zero(n)); // degenerate faces are not allowed
-
-            Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
-            facet->setPlane(normalized_plane);
-            res.first->second = normalized_plane;
+            facet->normalizePlaneCoefficients();
+            res.first->second = facet->getPlane();
         } else {
             std::cout << "Facet #" << facet->getID() << " is reusing coefficients from Facet #" << res.first->first->getID() << std::endl;
 
@@ -585,21 +543,25 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
 }
 
 PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
-    db::_3d::OBJFile::save("results/perturbation_before.obj", polyhedron, false /*triangulate*/);
-
-    // check if we can just tilt plane coefficients directly without having
-    // to keep a triangulated input
+    // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
+    // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
+    // of the plane will still yield a single intersection point.
+    // That's not the case (in general) for degree > 3 vertices as there would no longer be
+    // a single intersection point for the tilted planes.
+    //
+    // The advantage is that we can manipulate much smaller meshes since the faces are polygonal.
     bool canUsePlaneTilts = true;
 
     // copy the polyhedron because we will merge (almost) coplanar faces and check if the result
-    // is a mesh with only degree 3 vertices. Indeed, such a polyhedron can have its faces tilted
-    // to create the perturbation.
+    // is a mesh with only degree 3 vertices.
     PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
 
-    // @todo
-    // it would be nice to merge non connected faces too as to give them the same planes.
-    // often we have the same "base" plane, but with vertical faces that are going to cut
-    // it into separate connected components
+    // @todo?
+    // could we merge non-connected input faces as to assign them the same (tilted) plane?
+    // Often in inputs we have many faces that correspond to the same plane, but vertical faces
+    // split it into separate connected components.
+    // The important thing is that we don't want to create degenerate conditions so the CCs
+    // should NOT interact with each other; how to prevent that?...
     db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
 
     db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
@@ -619,34 +581,27 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
         }
     }
 
-    if (!canUsePlaneTilts) {
-        // this is not 'polyhedron_cpy' because the polyhedron must be triangulated
-        // for vertices to remain on their incident planes
-        randMovePoints(polyhedron);
-    } else {
-        std::cout << "All vertices are degree 3, tilt the polyhedron's faces" << std::endl;
-
-        // @todo not necessary if we do not try to un-tilt at the end
-        harmonizeFacetPlanes(polyhedron_cpy);
+    if (canUsePlaneTilts) {
+        std::cout << "All vertices are degree 3 ==> tilt the polyhedron's faces" << std::endl;
 
         std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
         while (it_f != polyhedron_cpy->facets().end()) {
             FacetSPtr facet = *it_f++;
+
+            // @todo these two are only useful if we plan on untilting at the end.
+            // We need the normalization because we will shift the base plane.
+            facet->normalizePlaneCoefficients();
             facet->storePlaneCoefficients();
+
             facet->perturbPlaneCoefficients();
         }
 
-        // recompute vertex positions with the perturbed planes
-        polyhedron_cpy = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron_cpy, 0.0);
-
-        if (polyhedron_cpy && polyhedron_cpy->isConsistent()) {
-            // @todo try again with another perturbation, or smarter (iterative) perturbation
-            std::cerr << "Warning: perturbed polyhedron is no longer valid" << std::endl;
-            polyhedron = polyhedron_cpy;
-        }
+        polyhedron = polyhedron_cpy;
+    } else {
+        // this is not 'polyhedron_cpy' because the polyhedron must be triangulated
+        // for vertices to remain on the planes of their incident facets
+        randMovePoints(polyhedron);
     }
-
-    db::_3d::OBJFile::save("results/perturbation_after.obj", polyhedron, false /*triangulate*/);
 
     return polyhedron;
 }

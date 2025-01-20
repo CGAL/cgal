@@ -633,6 +633,32 @@ Plane3SPtr Facet::plane() {
     return this->plane_;
 }
 
+void Facet::normalizePlaneCoefficients()
+{
+    if (!this->plane_) {
+        this->initPlane();
+    }
+
+#ifdef USE_CGAL
+    const CGAL::FT a = plane_->a();
+    const CGAL::FT b = plane_->b();
+    const CGAL::FT c = plane_->c();
+    const CGAL::FT d = plane_->d();
+    // this should be the only place with unavoidable SQRTs
+    const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+#else
+    const double a = plane_->getA();
+    const double b = plane_->getB();
+    const double c = plane_->getC();
+    const double d = plane_->getD();
+    const double n = sqrt(a*a + b*b + c*c);
+#endif
+
+    if(!is_zero(n)) {
+        plane_ = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
+    }
+}
+
 void Facet::storePlaneCoefficients()
 {
     if (!this->plane_) {

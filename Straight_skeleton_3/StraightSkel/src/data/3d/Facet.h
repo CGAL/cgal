@@ -115,6 +115,11 @@ public:
     Plane3SPtr plane();
 
     /**
+     * Normalize the plane coefficients to obtain a canonical plane representation
+     */
+    void normalizePlaneCoefficients();
+
+    /**
      * Store the current plane ahead of perturbation
      */
     void storePlaneCoefficients();
