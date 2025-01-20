@@ -18,6 +18,8 @@
 #include <CGAL/create_weighted_offset_polygons_2.h>
 #include <CGAL/extrude_skeleton.h>
 
+#include <CGAL/use.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <iostream>
@@ -62,7 +64,6 @@ void test_kernel(const int polygon_nv, CGAL::Random& rnd)
 {
   using FT = typename K::FT;
   using Point_2 = typename  K::Point_2;
-  using Vector_2 = typename  K::Vector_2;
   using Point_3 = typename K::Point_3;
 
   using Polygon_2 = CGAL::Polygon_2<K>;
@@ -73,6 +74,7 @@ void test_kernel(const int polygon_nv, CGAL::Random& rnd)
   using Mesh = CGAL::Surface_mesh<Point_3>;
 
   void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   typedef CGAL::Random_points_in_square_2<Point_2> Point_generator;
   Polygon_2 pol;
@@ -92,7 +94,7 @@ void test_kernel(const int polygon_nv, CGAL::Random& rnd)
 
   CGAL::draw(pol);
 
-  auto ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pol, weights);
+  Straight_skeleton_2_ptr ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pol, weights, K());
   assert(ss_ptr);
   if(!ss_ptr)
   {
@@ -102,7 +104,7 @@ void test_kernel(const int polygon_nv, CGAL::Random& rnd)
 
   CGAL::draw(*ss_ptr);
 
-  ss_ptr = CGAL::create_exterior_weighted_straight_skeleton_2(0.1, pol, weights);
+  ss_ptr = CGAL::create_exterior_weighted_straight_skeleton_2(0.1, pol, weights, K());
   assert(ss_ptr);
   if(!ss_ptr)
   {

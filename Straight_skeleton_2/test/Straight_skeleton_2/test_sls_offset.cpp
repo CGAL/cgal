@@ -21,6 +21,8 @@
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
 
+#include <CGAL/use.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
@@ -1122,6 +1124,7 @@ void test_kernel()
   std::cerr.precision(17);
 
   void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   // Artificial data
   test_offset_square<K>();
