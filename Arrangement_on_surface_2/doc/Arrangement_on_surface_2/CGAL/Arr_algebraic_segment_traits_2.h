@@ -108,7 +108,7 @@ public:
      * counted from the bottom, starting with zero.
      *
      * \pre (`cv` must not have a vertical line at `x`,
-     * and \f$0\leq arcno < c\f$, where \f$ c\f$ is the number of points
+     * and \f$0\leq arcno < c\f$, where \f$c\f$ is the number of points
      * in the fiber of `cv` at `x`.)
      */
     Point_2 operator()(Algebraic_real_1 x, Curve_2 cv, int arcno);
@@ -276,7 +276,7 @@ public:
      */
     int arcno() const;
 
-    /*! returns double-approximations of the \f$ x\f$- and \f$ y\f$-coordinates.
+    /*! returns double-approximations of the \f$x\f$- and \f$y\f$-coordinates.
      */
     std::pair<double,double> to_double() const;
 

@@ -315,7 +315,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given \f$x\f$-monotone curve to an from `src` to `tgt`.
      * \ pre `src` and `tgt` lies on the curve
      */
     X_monotone_curve_2(const X_monotone_curve_2& xcv,

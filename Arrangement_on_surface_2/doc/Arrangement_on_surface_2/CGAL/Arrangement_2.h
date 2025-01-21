@@ -250,7 +250,7 @@ void insert(Arrangement_2<Traits, Dcel>& arr,
  * <LI>The instantiated `Traits` class must model the restricted
  * `AosBasicTraits_2` concept, as no intersections are computed.
  * <LI>The point-location object `pl` must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename Traits, typename Dcel,typename PointLocation>
@@ -301,7 +301,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
  * by this concept are required. In fact the traits class must model the
  * `AosBasicTraits_2` concept, and support the splitting functionality.
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename Traits, typename Dcel, typename PointLocation>

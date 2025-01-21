@@ -160,8 +160,8 @@ public:
 
     /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$.
      * The function is defined over the interval
-     * \f$ I=[x,+\infty)\f$ if \f$right\f$ is true and
-     * \f$ I=(-\infty,x]\f$ otherwise.
+     * \f$I=[x,+\infty)\f$ if \f$right\f$ is true and
+     * \f$I=(-\infty,x]\f$ otherwise.
      */
     Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
                        const Algebraic_real_1& x, bool right) const;

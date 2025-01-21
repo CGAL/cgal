@@ -250,7 +250,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Trims the given x-monotone curve to an from src to tgt.
+    /*! Trims the given \f$x\f$-monotone curve to an from `src` to `tgt`.
      *
      * \ pre `src` and `tgt` lies on the curve
      */

@@ -5739,7 +5739,7 @@ topological entities and the implementation of the functions that
 handle these topological entities, used by the
 `Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>` class
 template and by the peripheral modules. Every topology traits class
-must model the basic concept `ArrangementBasicTopologyTraits`. A model
+must model the basic concept `AosBasicTopologyTraits`. A model
 of this basic concept holds the (\dcel) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
 and the incidence relations between them. At this point we do not

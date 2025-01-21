@@ -238,8 +238,8 @@ Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
   Halfedge_handle modify_edge_ex(Halfedge_handle e, const X_monotone_curve_2& c);
 
   /*! splits a given edge into two at the split point `p`, and associate the
-   * x-monotone curves `c1` and `c2` with the resulting edges, such that `c1`
-   * connects `he->source()` with `p` and `c2` connects `p` with
+   * \f$x\f$-monotone curves `c1` and `c2` with the resulting edges, such that
+   * `c1` connects `he->source()` with `p` and `c2` connects `p` with
    * `he->target()`. The function return a handle to the split halfedge directed
    * from `he->source()` to the split point `p`.
    *
@@ -251,8 +251,8 @@ Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
                                 const X_monotone_curve_2& c2);
 
   /*! splits a given edge into two at by the vertex `v`, and associate the
-   * x-monotone curves `c1` and `c2` with the resulting edges, such that `c1`
-   * connects `he->source()` with `v` and `c2` connects `v` with
+   * \f$x\f$-monotone curves `c1` and `c2` with the resulting edges, such that
+   * `c1` connects `he->source()` with `v` and `c2` connects `v` with
    * `he->target()`. The function return a handle to the split halfedge directed
    * from `he->source()` to `v`.
    *

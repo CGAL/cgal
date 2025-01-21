@@ -972,9 +972,10 @@ public:
   /*! merges the edges represented by `e1` and `e2` into
    * a single edge, associated with the given merged curve `c`.  Denote `e1`'s
    * end-vertices as \f$u_1\f$ and \f$v\f$, while `e2`'s end-vertices are
-   * denoted \f$u_2\f$ and \f$v\f$. The function removes the common vertex \f$
-   * v\f$ returns a handle for one of the merged halfedges, directed from \f$
-   * u_1\f$ to \f$u_2\f$.
+   * denoted \f$u_2\f$ and \f$v\f$. The function removes the common vertex
+   * \f$v\f$ returns a handle for one of the merged halfedges, directed from
+   * \f$u_1\f$ to \f$u_2\f$.
+   *
    * \pre `e1` and `e2` share a common end-vertex, such that the two other
    * end-vertices of the two edges are associated with `c`'s endpoints.
    */

@@ -36,14 +36,14 @@ public:
   /// \name Creation
   /// @{
 
-  /*! If with_guarantees is set to true, the construction performs rebuilds in
+  /*! If `with_guarantees` is set to true, the construction performs rebuilds in
    * order to guarantee a resulting structure with linear size and logarithmic
    * query time. Otherwise the structure has expected linear size and expected
    * logarithmic query time.
    */
   Arr_trapezoid_ric_point_location(bool with_guarantees = true);
 
-  /*! Constructs a point location search structure for the given arrangement.
+  /*! constructs a point location search structure for the given arrangement.
    * If with_guarantees is set to true, the construction performs rebuilds in
    * order to guarantee a resulting structure with linear size and logarithmic
    * query time. Otherwise the structure has expected linear size and expected

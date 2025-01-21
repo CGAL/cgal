@@ -30,12 +30,12 @@ namespace CGAL {
  * <LI>A full ellipse (or a circle) \f$C\f$.
  *
  * <LI>The tuple \f$\langle C, p_s, p_t, o \rangle\f$, where \f$C\f$ is the
- * supporting conic curve, with the arc endpoints being \f$p_s\f$ and \f$
- * p_t\f$ (the source and target points, respectively). The orientation \f$o\f$
- * indicates whether we proceed from \f$p_s\f$ to \f$p_t\f$ in a clockwise or
- * in a counterclockwise direction. Note that \f$C\f$ may also correspond to a
- * line or to pair of lines---in this case \f$o\f$ may specify a `COLLINEAR`
- * orientation.
+ * supporting conic curve, with the arc endpoints being \f$p_s\f$ and
+ * \f$p_t\f$ (the source and target points, respectively). The orientation
+ * \f$o\f$ indicates whether we proceed from \f$p_s\f$ to \f$p_t\f$ in a
+ * clockwise or in a counterclockwise direction. Note that \f$C\f$ may also
+ * correspond to a line or to pair of lines---in this case \f$o\f$ may specify a
+ * `COLLINEAR` orientation.
  *
  * </UL>
  *
