@@ -231,7 +231,7 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 
     res.ends[0] = curve.front();
     res.ends[1] = curve.back();
-    Bbox_d<Dimension_tag<dim>> bb;
+    Bbox_d<Dimension_tag<dim>> bb(dim);
     for (auto const& point : curve) {
         Bbox_d<Dimension_tag<dim>> bbb = construct_bbox(point);
         bb +=  bbb;
