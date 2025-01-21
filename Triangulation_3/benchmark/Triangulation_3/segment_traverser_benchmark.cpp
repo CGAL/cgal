@@ -21,7 +21,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 #include <iostream>
 #include <vector>
@@ -30,8 +30,8 @@
 #include <CGAL/Timer.h>
 
 // Define the kernel.
-typedef CGAL::Exact_predicates_exact_constructions_kernel     Epeck;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epick;
+using Epeck = CGAL::Exact_predicates_exact_constructions_kernel;
+using Epick = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 
 template<typename Kernel>
@@ -40,11 +40,11 @@ void bench_segment_traverser(const int nb_queries,
                              const double rad,
                              CGAL::Random& rng)
 {
-  typedef CGAL::Delaunay_triangulation_3<Kernel>             DT;
-  typedef CGAL::Triangulation_segment_simplex_iterator_3<DT> Simplex_traverser;
-  typedef CGAL::Triangulation_segment_cell_iterator_3<DT>    Cell_traverser;
-  typedef typename DT::Point_3                               Point_3;
-  typedef typename DT::Cell_handle                           Cell_handle;
+  using DT = CGAL::Delaunay_triangulation_3<Kernel>;
+  using Tds = typename DT::Triangulation_data_structure;
+  using Point_3 = typename DT::Point_3;
+  using Cell_handle = typename DT::Cell_handle;
+  using Simplex_3 = CGAL::Triangulation_simplex_3<Tds>;
 
   std::cout << "\nBench :\t " << nb_queries << " queries," << std::endl
     << "\t in triangulation of size " << nbv << std::endl
@@ -83,29 +83,26 @@ void bench_segment_traverser(const int nb_queries,
   {
     //Simplex traverser
     timer_st.start();
-    Simplex_traverser st(&dt, segments[2*i], segments[2*i + 1]);
 
     // Count the number of finite cells traversed.
     unsigned int inf = 0, fin = 0;
-    for (; st != st.end(); ++st)
+    for (Simplex_3 st : dt.segment_traverser_simplices(segments[2 * i], segments[2 * i + 1]))
     {
-      Cell_handle c = st.get_cell();
-      // if (dt.is_infinite(c)) ++inf;
-      // else                  ++fin;
+      Cell_handle c = st.incident_cell();
+      if (dt.is_infinite(c)) ++inf;
+      else                   ++fin;
     }
     timer_st.stop();
 
     //Cell traverser
     timer_ct.start();
-    Cell_traverser ct(&dt, segments[2*i], segments[2*i + 1]);
 
     // Count the number of finite cells traversed.
     inf = 0, fin = 0;
-    for (; ct != ct.end(); ++ct)
+    for (Cell_handle c : dt.segment_traverser_cell_handles(segments[2 * i], segments[2 * i + 1]))
     {
-      Cell_handle c = ct.handle();
-      // if (dt.is_infinite(c)) ++inf;
-      // else                  ++fin;
+      if (dt.is_infinite(c)) ++inf;
+      else                   ++fin;
     }
     timer_ct.stop();
   }
@@ -128,4 +125,6 @@ int main(int argc, char* argv[])
 
 //  bench_segment_traverser<Epeck>(nb_queries, nbv, rad, rng);
   bench_segment_traverser<Epick>(nb_queries, nbv, rad, rng);
+
+  return EXIT_SUCCESS;
 }
