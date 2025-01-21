@@ -34,7 +34,6 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 {
   using FT = typename K::FT;
   using Point_2 = typename K::Point_2;
-  using Vector_2 = typename K::Vector_2;
   using Point_3 = typename K::Point_3;
 
   using Polygon_2 = CGAL::Polygon_2<K>;
