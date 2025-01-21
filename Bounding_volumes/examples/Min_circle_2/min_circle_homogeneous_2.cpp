@@ -2,7 +2,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
-
+#include <vector>
 #include <iostream>
 
 // typedefs
@@ -16,15 +16,15 @@ int
 main( int, char**)
 {
   const int n = 100;
-  Point P[n];
+  std::vector<Point> P(n);
 
   for ( int i = 0; i < n; ++i){
-    P[i] = Point( (i%2 == 0 ? i : -i), 0, 1);
+    P.at(i) = Point( (i%2 == 0 ? i : -i), 0, 1);
     // (0,0), (-1,0), (2,0), (-3,0), ...
   }
 
-  Min_circle  mc1( P, P+n, false);    // very slow
-  Min_circle  mc2( P, P+n, true);     // fast
+  Min_circle  mc1( P.begin(), P.begin() + n, false);    // very slow
+  Min_circle  mc2( P.begin(), P.begin() +n, true);     // fast
 
   CGAL::IO::set_pretty_mode( std::cout);
   std::cout << mc2;
