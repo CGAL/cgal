@@ -49,10 +49,10 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Default constructor. */
+  /*! constructs default */
   Arr_spherical_topology_traits_2();
 
-  /*! Constructor from a geometry-traits object.
+  /*! constructs from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_spherical_topology_traits_2(const GeometryTraits_2* traits);
@@ -62,36 +62,36 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! Obtain the \dcel (const version). */
+  /*! obtains the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the \dcel (non-const version). */
+  /*! obtains the \dcel (non-const version). */
   Dcel& dcel();
 
-  /*! Obtain the spherical face (const version). */
+  /*! obtains the spherical face (const version). */
   const Face* spherical_face() const;
 
-  /*! Obtain the spherical face (non-const version). */
+  /*! obtains the spherical face (non-const version). */
   Face* spherical_face();
 
-  /*! Obtain the south pole (const version). */
+  /*! obtains the south pole (const version). */
   const Vertex* south_pole() const;
 
-  /*! Obtain the south pole (non-const version). */
+  /*! obtains the south pole (non-const version). */
   Vertex* south_pole();
 
-  /*! Obtain the north pole (const version). */
+  /*! obtains the north pole (const version). */
   const Vertex* north_pole() const;
 
-  /*! Obtain the north pole (non-const version). */
+  /*! obtains the north pole (non-const version). */
   Vertex* north_pole();
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   const Vertex* discontinuity_vertex(const Point_2& pt) const;
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const Point_2& pt);

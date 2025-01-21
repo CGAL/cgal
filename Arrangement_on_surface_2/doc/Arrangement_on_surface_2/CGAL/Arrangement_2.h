@@ -201,7 +201,7 @@ template <typename Traits, typename Dcel, typename Curve, typename PointLocation
 void insert(Arrangement_2<Traits,Dcel>& arr, const Curve& c,
             const PointLocation& pl = walk_pl);
 
-/*! Inserts the<I>\f$ x\f$-monotone (only)</I> curve `xc` into the arrangement
+/*! Inserts the<I>\f$x\f$-monotone (only)</I> curve `xc` into the arrangement
  * `arr`. The object `obj`, which wraps a `Vertex_const_handle`, a
  * `Halfedge_const_handle`, or a `Face_const_handle`, represents the location of
  * `xc`'s left endpoint in the arrangement. The zone of `xc` is computed
@@ -304,7 +304,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template<typename Traits, typename Dcel, typename PointLocation>
+template <typename Traits, typename Dcel, typename PointLocation>
 typename Arrangement_2<Traits,Dcel>::Vertex_handle
 insert_point(Arrangement_2<Traits,Dcel>& arr,
              const typename Traits::Point_2& p,
@@ -328,7 +328,7 @@ insert_point(Arrangement_2<Traits,Dcel>& arr,
  * The instantiated traits class must model the concept
  * `ArranagmentXMonotoneTraits_2`.
  */
-template<typename Traits, typename Dcel>
+template <typename Traits, typename Dcel>
 bool is_valid(const Arrangement_2<Traits, Dcel>& arr);
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
@@ -363,8 +363,8 @@ remove_edge(Arrangement_2<Traits,Dcel>& arr,
  * Attempts to removed a given vertex from a given arrangement. The vertex can
  * be removed if it is either an isolated vertex, (and has no incident edge,) or
  * if it is a <I>redundant</I> vertex. That is, it has exactly two incident
- * edges, whose associated curves can be merged to form a single \f$
- * x\f$-monotone curve.  The function returns a boolean value that indicates
+ * edges, whose associated curves can be merged to form a single \f$x\f$-monotone
+ * curve.  The function returns a boolean value that indicates
  * whether it succeeded removing the vertex from the arrangement.
  *
  * \cgalHeading{Requirements}

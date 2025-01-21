@@ -17,13 +17,12 @@ namespace CGAL {
  * interval \f$[x_{\rm min}, x_{\rm max}]\f$ or defined over a ray
  * \f$(-\infty,x_{\rm max}]\f$ or over \f$[x_{\rm min}, \infty)\f$.  Rational
  * functions are represented by the nested type `Curve_2`.  Note that a rational
- * function may be not continuous since roots of \f$Q\f$ induce vertical
- * asymptotes, which would contradict the notion of an \f$x\f$-monotone curve as
- * it is introduced by the `AosTraits_2` concept.  Thus, continuous
- * portions of rational functions are represented by the nested type
- * `X_monotone_curve_2`, which is different from `Curve_2`.  Constructors for
- * both classes are provided by the traits.  A `Curve_2` may be split up into
- * several `X_monotone_curve_2` using `Make_x_monotone_2`.
+ * function may be not continuous since roots of \f$Q\f$ induce vertical asymptotes,
+ * which would contradict the notion of an \f$x\f$-monotone curve as it is introduced
+ * by the `AosTraits_2` concept.  Thus, continuous portions of rational functions are
+ * represented by the nested type `X_monotone_curve_2`, which is different from
+ * `Curve_2`.  Constructors for both classes are provided by the traits.  A `Curve_2`
+ * may be split up into several `X_monotone_curve_2` using `Make_x_monotone_2`.
  *
  * The template parameter of the traits must be a model of the concept
  * `AlgebraicKernel_d_1`.  A rational function is then represented by two
@@ -86,19 +85,19 @@ public:
   /// \name Operations
   /// @{
 
-  /*! Returns an instance of `Construct_curve_2`.
+  /*! returns an instance of `Construct_curve_2`.
    */
   Construct_curve_2 construct_curve_2_object() const;
 
-  /*! Returns an instance of `Construct_x_monotone_curve_2`.
+  /*! returns an instance of `Construct_x_monotone_curve_2`.
    */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
-  /*! Deletes all curves from the cache that exist only there.
+  /*! deletes all curves from the cache that exist only there.
    */
   void cleanup_cache() const;
 
-  /*! Returns a pointer to the used algebraic kernel object.
+  /*! returns a pointer to the used algebraic kernel object.
    */
   const Algebraic_kernel_d_1* algebraic_kernel_d_1() const;
 
@@ -138,60 +137,58 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$.
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$.
      */
     Curve_2 operator()(Polynomial_1 P) const;
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$.
-     * The function is defined over the interval \f$[x,+\infty)\f$ if
-     * \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$.
+     * The function is defined over the interval \f$[x,+\infty)\f$ if \f$right\f$
+     * is true and \f$(-\infty,x]\f$ otherwise.
      */
     Curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& x,
                        bool right) const;
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$.
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$.
      * The function is defined over the interval \f$[lower,upper]\f$.
      */
     Curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& lower,
                        const Algebraic_real_1& upper) const;
 
-    /*! Constructs a curve representing the rational function
-     * \f$y = P(x)/Q(x)\f$.
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$.
      */
     Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q) const;
 
-    /*! Constructs a curve representing the rational function
-     * \f$y = P(x)/Q(x)\f$.
-     * The function is defined over the interval \f$I=[x,+\infty)\f$ if
-     * \f$right\f$ is true and \f$I=(-\infty,x]\f$ otherwise.
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$.
+     * The function is defined over the interval
+     * \f$ I=[x,+\infty)\f$ if \f$right\f$ is true and
+     * \f$ I=(-\infty,x]\f$ otherwise.
      */
     Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
                        const Algebraic_real_1& x, bool right) const;
 
-    /*! Constructs a curve representing the rational function
-     * \f$y = P(x)/Q(x)\f$.
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$.
      * The function is defined over the interval \f$I=[lower,upper]\f$.
      */
     Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
                        const Algebraic_real_1& lower,
                        const Algebraic_real_1& upper) const;
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$,
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$,
      * where the coefficients of \f$P\f$ are given in the range `[begin,end)`.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end) const;
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$,
-     * where the coefficients of \f$P\f$ are given in the range
-     * `[begin,end)`. The function is defined over the interval
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$,
+     * where the coefficients of \f$P\f$ are given in the range `[begin,end)`.
+     * The function is defined over the interval
      * \f$[x,+\infty)\f$ if \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end,
                        const Algebraic_real_1& x, bool right) const;
 
-    /*! Constructs a curve representing the polynomial function \f$y = P(x)\f$,
+    /*! constructs a curve representing the polynomial function \f$y = P(x)\f$,
      * where the coefficients of \f$P\f$ are given in the range `[begin,end)`.
      * The function is defined over the interval \f$[lower,upper]\f$.
      */
@@ -200,32 +197,29 @@ public:
                        const Algebraic_real_1& lower,
                        const Algebraic_real_1& upper) const;
 
-    /*! Constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$,
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$,
      * where the coefficients of \f$P\f$ and \f$Q\f$ are given in the ranges
-     * `[begin_numer,end_numer)` and `[begin_denom,end_denom)`,
-     * respectively.
+     * `[begin_numer,end_numer)` and `[begin_denom,end_denom)`, respectively.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
                        InputIterator begin_denom, InputIterator end_denom) const;
 
-    /*! Constructs a curve representing the rational function
-     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
-     * given in the ranges `[begin_numer,end_numer)` and `[begin_denom,end_denom)`,
-     * respectively. The function is defined over the interval
-     * \f$I=[x,+\infty)\f$ if \f$right\f$ is true and \f$I=(-\infty,x]\f$
-     * otherwise.
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$,
+     * where the coefficients of \f$P\f$ and \f$Q\f$ are given in the ranges
+     * `[begin_numer,end_numer)` and `[begin_denom,end_denom)`, respectively.
+     * The function is defined over the interval \f$I=[x,+\infty)\f$
+     * if \f$right\f$ is true and \f$I=(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
                        InputIterator begin_denom, InputIterator end_denom,
                        const Algebraic_real_1& x, bool right) const;
 
-    /*! Constructs a curve representing the rational function
-     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
-     * given in the ranges `[begin_numer,end_numer)` and `[begin_denom,end_denom)`,
-     * respectively. The function is defined over the interval
-     * \f$I=[lower,upper]\f$.
+    /*! constructs a curve representing the rational function \f$y = P(x)/Q(x)\f$,
+     * where the coefficients of \f$P\f$ and \f$Q\f$ are given in the ranges
+     * `[begin_numer,end_numer)` and `[begin_denom,end_denom)`, respectively.
+     * The function is defined over the interval \f$I=[lower,upper]\f$.
      */
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
@@ -236,8 +230,8 @@ public:
     /// @}
   }; /* end Arr_rational_function_traits_2::Construct_curve_2 */
 
-  /*! Functor to construct a `X_monotone_curve_2`. To enable caching the class
-   * is not default constructible and must be obtained via the function
+  /*! Functor to construct a `X_monotone_curve_2`. To enable caching the class is
+   * not default constructible and must be obtained via the function
    * `construct_x_monotone_curve_2_object()`, which is a member of the traits.
    *
    * \cgalModels{Assignable,CopyConstructible,AdaptableBinaryFunction,AdaptableUnaryFunction}
@@ -270,35 +264,36 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$.
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$.
      */
     X_monotone_curve_2 operator()(Polynomial_1 P) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$. The function is defined over the interval
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$. The function is defined over the interval
      * \f$[x,+\infty)\f$ if \f$right\f$ is true and \f$(-\infty,x]\f$
      * otherwise.
      */
-    X_monotone_curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& x,
+    X_monotone_curve_2 operator()(Polynomial_1 P,
+                                  const Algebraic_real_1& x,
                                   bool right) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$. The function is defined over the interval
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$. The function is defined over the interval
      * \f$[lower,upper]\f$.
      */
     X_monotone_curve_2 operator()(Polynomial_1 P,
                                   const Algebraic_real_1& lower,
-                                  const Algebraic_real_1& upper); const
+                                  const Algebraic_real_1& upper) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
      * \f$y = P(x)/Q(x)\f$.
      *
      * \pre \f$Q\f$ has no real roots.
      */
-    X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q); const
+    X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
      * \f$y = P(x)/Q(x)\f$. The function is defined over the interval
      * \f$I=[x,+\infty)\f$ if \f$right\f$ is true and \f$I=(-\infty,x]\f$
      * otherwise.
@@ -307,62 +302,60 @@ public:
      */
     X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
                                   const Algebraic_real_1& x,
-                                  bool right); const
+                                  bool right) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
      * \f$y = P(x)/Q(x)\f$. The function is defined over the interval
      * \f$I=[lower,upper]\f$.
-     *
      * \pre \f$Q\f$ has no real roots in the interior of \f$I\f$.
      */
     X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
                                   const Algebraic_real_1& lower,
-                                  const Algebraic_real_1& upper); const
+                                  const Algebraic_real_1& upper) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given
-     * in the range `[begin,end)`.
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in the range
+     * `[begin,end)`.
      */
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in
-     * the range `[begin,end)`. The function is defined over the interval
-     * \f$[x,+\infty)\f$ if \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in the range
+     * `[begin,end)`. The function is defined over the interval \f$[x,+\infty)\f$
+     * if \f$right\f$ is true and \f$(-\infty,x]\f$ otherwise.
      */
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
                                   const Algebraic_real_1& x, bool right) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the polynomial
-     * function \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in
-     * the range `[begin,end)`. The function is defined over the interval
+    /*! constructs an \f$x\f$-monotone curve supported by the polynomial function
+     * \f$y = P(x)\f$, where the coefficients of \f$P\f$ are given in the range
+     * `[begin,end)`. The function is defined over the interval
      * \f$[lower,upper]\f$.
      */
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end
                                   const Algebraic_real_1& lower,
-                                  const Algebraic_real_1& upper); const
+                                  const Algebraic_real_1& upper) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
      * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
      * given in the ranges `[begin_numer,end_numer)` and
      * `[begin_denom,end_denom)`, respectively.
-     *
      * \pre \f$Q\f$ has no real roots.
      */
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin_numer,
                                   InputIterator end_numer,
                                   InputIterator begin_denom,
-                                  InputIterator end_denom); const
+                                  InputIterator end_denom) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
-     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$
-     * are given in the ranges `[begin_numer,end_numer)` and
-     * `[begin_denom,end_denom)`, respectively. The function is defined over
-     * the interval \f$I=[x,+\infty)\f$ if \f$right\f$ is true and
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
+     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
+     * given in the ranges `[begin_numer,end_numer)` and
+     * `[begin_denom,end_denom)`, respectively. The function is defined over the
+     * interval \f$I=[x,+\infty)\f$ if \f$right\f$ is true and
      * \f$I=(-\infty,x]\f$ otherwise.
      *
      * \pre \f$Q\f$ has no real roots in the interior of \f$I\f$.
@@ -372,14 +365,13 @@ public:
                                   InputIterator end_numer,
                                   InputIterator begin_denom,
                                   InputIterator end_denom,
-                                  const Algebraic_real_1& x, bool right); const
+                                  const Algebraic_real_1& x, bool right) const;
 
-    /*! Constructs an \f$x\f$-monotone curve supported by the rational function
-     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$
-     * are given in the ranges `[begin_numer,end_numer)` and
-     * `[begin_denom,end_denom)`, respectively. The function is defined over
-     * the interval \f$I=[lower,upper]\f$.
-     *
+    /*! constructs an \f$x\f$-monotone curve supported by the rational function
+     * \f$y = P(x)/Q(x)\f$, where the coefficients of \f$P\f$ and \f$Q\f$ are
+     * given in the ranges `[begin_numer,end_numer)` and
+     * `[begin_denom,end_denom)`, respectively. The function is defined over the
+     * interval \f$I=[lower,upper]\f$.
      * \pre \f$Q\f$ has no real roots in the interior of \f$I\f$.
      */
     template <typename InputIterator>
@@ -388,13 +380,13 @@ public:
                                   InputIterator begin_denom,
                                   InputIterator end_denom,
                                   const Algebraic_real_1& lower,
-                                  const Algebraic_real_1& upper); const
+                                  const Algebraic_real_1& upper) const;
 
     /// @}
   }; /* end Arr_rational_function_traits_2::Construct_x_monotone_curve_2 */
 
-  /*! The `Curve_2` class nested within the traits is used to
-   * represent rational functions which may be restricted to a certain x-range.
+  /*! The `Curve_2` class nested within the traits is used to represent rational
+   * functions which may be restricted to a certain \f$x\f$-range.
    *
    * \cgalModels{ArrTraits::Curve_2}
    */
@@ -438,12 +430,14 @@ public:
     Arr_parameter_space right_parameter_space_in_x() const;
 
     /*! returns the \f$x\f$-coordinate of the left end.
-     * \pre left_boundary_in_x()==ARR_INTERIOR
+     *
+     * \pre `left_boundary_in_x()` == `ARR_INTERIOR`
      */
     Algebraic_real_1 left_x() const;
 
     /*! returns the \f$x\f$-coordinate of the right end.
-     * \pre right_boundary_in_x()==ARR_INTERIOR
+     *
+     * \pre `right_boundary_in_x()` == `ARR_INTERIOR`
      */
     Algebraic_real_1 right_x() const;
 
@@ -489,12 +483,12 @@ public:
      */
     Algebraic_real_1 x() const;
 
-    /*! obtains the y-coordinates of the point. <B>Attention:</B> As described
-     * above, points are not stored by their y-coordinate in `Algebraic_real_1`
-     * representation. In fact, this representation must be computed on demand,
-     * and might become quite costly for points defined by high-degree
-     * polynomials.  Therefore, it is recommended to avoid calls to this
-     * function as much as possible.
+    /*! obtains the \f$y\f$-coordinates of the point. <B>Attention:</B> As
+     * described above, points are not stored by their \f$y\f$-coordinate in
+     * `Algebraic_real_1` representation. In fact, this representation must be
+     * computed on demand, and might become quite costly for points defined by
+     * high-degree polynomials.  Therefore, it is recommended to avoid calls to
+     * this function as much as possible.
      */
     Algebraic_real_1 y() const;
 
@@ -518,15 +512,15 @@ public:
      * respect to the given relative precision \f$r\f$.
      *
      * \post \f$p.first \leq x \leq p.second\f$
-     * \post \f$p.second - p.first \leq 2^{-r}|x|\f$
+     * \post \f$p.second - p.first \leq2^{-r}|x|\f$
      */
     std::pair<Bound,Bound> approximate_relative_x(int r) const;
 
-    /*! Computes a pair \f$p\f$ approximating the \f$y\f$-coordinate with
+    /*! computes a pair \f$p\f$ approximating the \f$y\f$-coordinate with
      * respect to the given relative precision \f$r\f$.
      *
      * \post \f$p.first \leq y \leq p.second\f$
-     * \post \f$p.second - p.first \leq 2^{-r}|y|\f$
+     * \post \f$p.second - p.first \leq2^{-r}|y|\f$
      */
     std::pair<Bound,Bound> approximate_relative_y(int r) const;
 
@@ -534,10 +528,10 @@ public:
 
   }; /* end Arr_rational_function_traits_2::Point_2 */
 
-  /*! The `X_monotone_curve_2` class nested within the traits is used
-   * to represent \f$x\f$-monotone parts of rational functions. In particular,
-   * such an \f$x\f$-monotone curve may not contain a vertical asymptote in
-   * its interior \f$x\f$-range.
+  /*! The `X_monotone_curve_2` class nested within the traits is used to represent
+   * \f$x\f$-monotone parts of rational functions. In particular, such as
+   * \f$x\f$-monotone curve may not contain a vertical asymptote in its interior
+   * \f$x\f$-range.
    *
    * \cgalModels{ArrTraits::XMonotoneCurve_2}
    */
@@ -579,7 +573,6 @@ public:
     Arr_parameter_space source_parameter_space_in_y() const;
 
     /*! returns the source point of the arc.
-     *
      * \pre Both the \f$x\f$- and \f$y\f$-coordinates of the source point is
      * finite.
      */
@@ -602,7 +595,6 @@ public:
     Arr_parameter_space target_parameter_space_in_y() const;
 
     /*! returns the target point of the arc.
-     *
      * \pre Both the \f$x\f$- and \f$y\f$-coordinates of the target point is
      * finite.
      */
@@ -610,24 +602,23 @@ public:
 
     /*! returns the \f$x\f$-coordinate of the target point.
      *
-     *\pre The \f$x\f$-coordinate of the target point is finite.
+     * \pre The \f$x\f$-coordinate of the target point is finite.
      */
     Algebraic_real_1 target_x() const;
 
-    /*! returns whether the \f$x\f$-coordinate of the left curve end is finite
-     * or whether it is \f$\pm\infty\f$.
+    /*! returns whether the \f$x\f$-coordinate of the left curve end is finite or
+     * whether it is \f$\pm\infty\f$.
      */
     Arr_parameter_space left_parameter_space_in_x() const;
 
-    /*! returns whether the \f$y\f$-coordinate of the left curve end is finite
-     * or whether it is \f$\pm\infty\f$.
+    /*! returns whether the \f$y\f$-coordinate of the left curve end is finite or
+     * whether it is \f$\pm\infty\f$.
      */
     Arr_parameter_space left_parameter_space_in_y() const;
 
     /*! returns the left point of the arc.
      *
-     * \pre Both the \f$x\f$- and \f$y\f$-coordinates of the left point is
-     * finite.
+     * \pre Both the \f$x\f$- and \f$y\f$-coordinates of the left point is finite.
      */
     const Point_2& left() const;
 
@@ -637,18 +628,17 @@ public:
      */
     Algebraic_real_1 left_x() const;
 
-    /*! returns whether the \f$x\f$-coordinate of the right curve end is finite
-     * or whether it is \f$\pm\infty\f$.
+    /*! returns whether the \f$x\f$-coordinate of the right curve end is finite or
+     * whether it is \f$\pm\infty\f$.
      */
-    Arr_parameter_space right_parameter_space_in_x() const;
+    Arr_parameter_space right_parameter_space_in_x () const;
 
-    /*! returns whether the \f$y\f$-coordinate of the right curve end is finite
-     * or whether it is \f$\pm\infty\f$.
+    /*! returns whether the \f$y\f$-coordinate of the right curve end is finite or
+     * whether it is \f$\pm\infty\f$.
      */
-    Arr_parameter_space right_parameter_space_in_y() const;
+    Arr_parameter_space right_parameter_space_in_y () const;
 
     /*! returns the right point of the arc.
-     *
      * \pre Both the \f$x\f$- and \f$y\f$-coordinates of The right point is
      * finite.
      */
@@ -665,6 +655,7 @@ public:
     bool is_left_to_right() const;
 
     /// @}
+
   }; /* end Arr_rational_function_traits_2::X_monotone_curve_2 */
 }; /* end Arr_rational_function_traits_2 */
 

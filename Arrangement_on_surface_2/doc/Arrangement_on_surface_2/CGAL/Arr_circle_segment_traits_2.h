@@ -184,7 +184,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
+    /*! constructs default
      */
     Point_2();
 
@@ -315,12 +315,12 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given x-monotone curve to an from src to tgt.
      * \ pre `src` and `tgt` lies on the curve
      */
     X_monotone_curve_2(const X_monotone_curve_2& xcv,
                        const Point_2& src,
-                       const Point_2& tgt)const
+                       const Point_2& tgt) const
 
     /// @}
   } /* end Arr_circle_segment_traits_2::Trim_2 */

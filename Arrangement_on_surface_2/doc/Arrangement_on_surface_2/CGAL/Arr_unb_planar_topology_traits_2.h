@@ -49,10 +49,10 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_unb_planar_topology_traits_2();
 
-  /*! Constructor from a geometry-traits object.
+  /*! constructs from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_unb_planar_topology_traits_2(const GeometryTraits_2* traits);

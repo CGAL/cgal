@@ -11,8 +11,8 @@ namespace CGAL {
  * or line segments. We call such a compound curve a polycurve.  A polycurve
  * is a chain of subcurves, where each two neighboring subcurves in the chain
  * share a common endpoint; that is, the polycurve is continuous. Furthermore,
- * the target of the \f$i\f$th segment of a polycurve has to coincide with
- * the source of the \f$i+1\f$st segment; that is, the polycurve has to be
+ * the target of the \f$i\f$-th segment of a polycurve has to coincide with
+ * the source of the \f$i+1\f$-st segment; that is, the polycurve has to be
  * \a well-oriented. Note that it is possible to construct general polycurves
  * that are neither continuous nor well-oriented, as it is impossible to
  * enforce this precondition (using the set of predicates required by the
@@ -66,7 +66,7 @@ namespace CGAL {
  * earlier) any object of the `X_monotone_curve_2` type nested in
  * `Arr_polycurve_traits_2` which in that version was called
  * `Arr_polyline_tratis_2` maintained a direction invariant; namely, its
- * vertices were ordered in an \a ascending lexicographical \f$(xy)\f$-order.
+ * vertices were ordered in an \a ascending lexicographical \f$xy\f$-order.
  * This restriction is no longer imposed and `X_monotone_curve_2` can be now
  * directed either from right-to-left \a or left-to-right. If you wish to
  * maintain a left-to-right orientations of the \f$x\f$-monotone polycurve,
@@ -116,22 +116,21 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Obtain a polycurve that comprises of one given subcurve.
+    /*! obtains a polycurve that comprises of one given subcurve.
      * \param subcurve input subcurve.
+     *
      * \pre `subcurve` is not degenerated (not tested).
      * \return A polycurve with one subcurve, namely `subcurve`.
      */
     Curve_2 operator()(const Subcurve_2& subcurve) const;
 
-    /*! Construct a well-oriented polycurve from a range of either
+    /*! constructs a well-oriented polycurve from a range of either
      * `SubcurveTraits_2::Point_2` or `SubcurveTraits_2::Curve_2`.
      *
-     * \param begin iterator pointing to the first element in the
-     *        range.
-     * \param end iterator pointing to the past-the-end
-     *        element in the range.
-     * \pre The given range form a continuous and well-oriented polycurve
-     *      (not tested).
+     * \param begin iterator pointing to the first element in the range.
+     * \param end iterator pointing to the past-the-end element in the range.
+     *
+     * \pre The given range form a continuous and well-oriented polycurve (not tested).
      * \pre Contains no degenerated subcurves (not tested)
      * \return A polycurve using the corresponding construction implementation.
      */
@@ -166,7 +165,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a subcurve `subcurve` to an existing polycurve `cv` at the back.
+    /*! appends a subcurve `subcurve` to an existing polycurve `cv` at the back.
      * If `cv` is empty, `subcurve` will be its first subcurve.
      * \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param subcurve a subcurve (not necessarily \f$x\f$-monotone) to be
@@ -174,7 +173,7 @@ public:
      */
     void operator()(Curve_2& cv, const Subcurve_2& subcurve) const;
 
-    /*! Append a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
+    /*! appends a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
      * `xcv` at the back. If `xcv` is empty, `subcurve` will be its first
      * subcurve.
      * \param xcv existing \f$x\f$-monotone polycurve
@@ -182,6 +181,7 @@ public:
      * \pre If `xcv` is not empty then `subcurve` extends `xcv` to the right
      *      if `xcv` is oriented right-to-left. Otherwise, `subcurve` extends
      *      `xcv` to the left.
+     *
      * \pre `subcurve` is not degenerated.
      * \pre `xcv` and `subcurve` should have the same orientation
      */
@@ -198,7 +198,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a subcurve `subcurve` to an existing polycurve `cv` at the
+    /*! appends a subcurve `subcurve` to an existing polycurve `cv` at the
      * front. If `cv` is empty, `subcurve` will be its first subcurve.
      * \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param subcurve a subcurve (not necessarily \f$x\f$-monotone) to be
@@ -206,11 +206,12 @@ public:
      */
     void operator()(Curve_2& cv, const Subcurve_2& subcurve) const;
 
-    /*! Append a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
+    /*! appends a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
      * `xcv` at the front. If `xcv` is empty, `subcurve` will be its first
      * subcurve.
      * \param xcv existing \f$x\f$-monotone polycurve
      * \param subcurve the subcurve to be added
+     *
      * \pre If `xcv` is not empty then `subcurve` extends `xcv` to the left if
      *      `xcv` is oriented right-to-left. Otherwise, `subcurve` extends
      *      `xcv` to the right.
@@ -225,9 +226,9 @@ public:
 
   class Trim_2 {
   public:
-    /*! Obtain a trimmed version of the polycurve with src and tgt as end
+    /*! obtains a trimmed version of the polycurve with src and tgt as end
       * vertices.
-      * Src and tgt will be swapped if they do not conform to the direction of
+      * `src` and `tgt` will be swapped if they do not conform to the direction of
       * the polycurve.
       */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
@@ -235,7 +236,7 @@ public:
                                   const Point_2& tgt) const;
   };
 
-  /*! Subdivide a given subcurve into \f$x\f$-monotone subcurves and
+  /*! subdivides a given subcurve into \f$x\f$-monotone subcurves and
    * isolated points, and insert them into an output container. An object in
    * the output container is represented by a discriminated union container
    * that holds either a point or an \f$x\f$-monotone curve.
@@ -278,17 +279,17 @@ public:
    */
   template <typename SubcurveType_2, typename PointType_2>
   class Curve_2 {
-  public:
-
   protected:
     /// \name Types
     /// @{
 
-    /// The container of the subcurves that comprises the polycurve.
+    /*! The container of the subcurves that comprises the polycurve.
+     */
     typedef typename std::vector<Subcurve_2>        Subcurves_container;
 
   public:
-    /// The size of the container that comprises the polycurve.
+    /*! The size of the container that comprises the polycurve.
+     */
     typedef typename Subcurves_container::size_type Size;
     typedef typename Subcurves_container::size_type size_type;
 
@@ -319,15 +320,15 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Default constructor that constructs an empty polycurve.
+    /*! constructs default; constructs an empty polycurve.
      */
     Curve_2();
 
-    /*! Construct a polycurve from one subcurve.
+    /*! constructs a polycurve from one subcurve.
      */
     Curve_2(const Subcurve_2 subcurve);
 
-    /*! Construct a polycurve defined by the given range of subcurves
+    /*! constructs a polycurve defined by the given range of subcurves
      * `[first, last)` (the value-type of `InputIterator` must be
      * `SubcurveTraits_2::Curve_2`. In general, the subcurves might not
      * be \f$x\f$-monotone, furthermore, they might not form a
@@ -353,7 +354,7 @@ public:
     /// @{
 
     /*! \deprecated
-     * Obtain the number of subcurve end-points that comprise the polycurve.
+     * obtains the number of subcurve end-points that comprise the polycurve.
      * Note that for a bounded polycurve, if there are \f$n\f$ points in the
      * polycurve, it comprises \f$(n - 1)\f$ subcurves.
      * Currently, only bounded polycurves are supported.
@@ -361,60 +362,62 @@ public:
     unsigned_int points() const;
 
     /*! \deprecated
-     * Obtain an iterator pointing at the source point of the polycurve.
+     * obtains an iterator pointing at the source point of the polycurve.
      */
     const_iterator begin() const;
 
-    /*! Obtain an iterator pointing at the first subcurve of the polycurve.
+    /*! obtains an iterator pointing at the first subcurve of the polycurve.
      */
     Subcurve_const_iterator begin_subcurves() const;
 
     /*! \deprecated
-     * Obtain an iterator pointing after the end of the polycurve.
+     * obtains an iterator pointing after the end of the polycurve.
      */
     const_iterator end() const;
 
-    /*! Get an iterator pointing at the past-the-end subcurve of the polycurve.
+    /*! obtains an iterator pointing at the past-the-end subcurve of the
+     * polycurve.
      */
     Subcurve_const_iterator end_subcurves() const;
 
     /*! \deprecated
-     * Obtain an iterator pointing at the target point of the polycurve.
+     * obtains an iterator pointing at the target point of the polycurve.
      */
     const_iterator rbegin() const;
 
-    /*! Obtain an iterator pointing at the last subcurve of the polycurve.
+    /*! obtains an iterator pointing at the last subcurve of the polycurve.
      */
     Subcurve_const_reverse_iterator rbegin_subcurves() const;
 
     /*! \deprecated
-     * Obtain an iterator pointing before the beginning of the polycurve.
+     * obtains an iterator pointing before the beginning of the polycurve.
      */
     const_iterator rend() const;
 
-    /*! Obtain an iterator pointing at the past-the-end subcurve of
+    /*! obtains an iterator pointing at the past-the-end subcurve of
      * the polycurve in reverse order.
      */
     Subcurve_const_reverse_iterator rend_subcurves() const;
 
     /*! \deprecated
-     * Obtain the number of subcurves composing the polycurve
+     * obtains the number of subcurves composing the polycurve
      * (equivalent to `pi.points() - 1`). Was replaced by number_of_subcurves()
      */
     size_type size() const;
 
-    /*! Obtain the number of subcurves that comprise the polycurve.
+    /*! obtains the number of subcurves that comprise the polycurve.
      */
     size_type number_of_subcurves() const;
 
-    /*! Obtain the \f$k\f$th subcurve of the polycurve.
+    /*! obtains the \f$k\f$-th subcurve of the polycurve.
+     *
      * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
      *      \f$n\f$ is the number of subcurves.
      */
     typename SubcurveTraits_2::X_monotone_curve_2
-    operator[](std::size_t k) const;
+    operator[](size_t k) const;
 
-    /*! Obtain the bounding box of the polycurve.
+    /*! obtains the bounding box of the polycurve.
      */
     Bbox_2 bbox() const;
 
@@ -423,22 +426,24 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a subcurve to the polycurve at the back.
+    /*! appends a subcurve to the polycurve at the back.
      * \a Warning: This function does not perform the precondition test
      *             that the `Push_back_2` functor does. Thus, it is
      *             recommended to use the latter.
      * \param subcurve The new subcurve to be appended to the polycurve.
+     *
      * \pre If the polycurve is not empty, the source of `subcurve` must
      *      coincide with the target point of the last subcurve in the
      *      polycurve.
      */
     inline void push_back(const Subcurve_2& subcurve);
 
-    /*! Append a subcurve to the polycurve at the front.
+    /*! appends a subcurve to the polycurve at the front.
      * \a Warning: This is a risky function! Don't use it! Prefer the
      *             corresponding functor which is provided in the traits
      *             class.
      * \param subcurve The new subcurve to be appended to the polycurve.
+     *
      * \pre If the polycurve is not empty, the target of `subcurve` must
      *      coincide with the source point of the first subcurve in the
      *      polycurve.
@@ -446,30 +451,31 @@ public:
     inline void push_front(const Subcurve_2& subcurve);
 
     /*! \deprecated
-     * Add a new point to the polycurvs, which becomes the new target point
+     * adds a new point to the polycurvs, which becomes the new target point
      * of `pi`.
      */
     void push_back(const Point_2 & p);
 
-    /*! Reset the polycurve.
+    /*! resets the polycurve.
      */
     void clear();
 
     /// @} /* End of Operations */
+
   }; /* end Arr_polycurve_traits_2::Curve_2 */
 
   /*! The `X_monotone_curve_2` class nested within the polycurve traits is
    * used to represent \f$x\f$-monotone piecewise linear subcurves.
    *
    * It inherits from the `Curve_2` type. `X_monotone_curve_2` can be
-   * constructed just like `Curve_2`. However, there is precondition (which
-   * is not tested) that the input defines an \f$x\f$-monotone polycurve.
-   * Furthermore, in contrast to the general `Curve_2` type, in this case,
-   * the subcurves that an `X_monotone_curve_2` comprises have to be
-   * instances of the type `SubcurveTraits_2::X_monotone_curve_2`. Note that
-   * the \f$x\f$-monotonicity ensures that an \f$x\f$-monotone polycurve is
-   * not self-intersecting. (A self-intersecting polycurve is subdivided
-   * into several interior-disjoint \f$x\f$-monotone subcurves).
+   * constructed just like `Curve_2`. However, there is precondition (which is
+   * not tested) that the input defines an \f$x\f$-monotone
+   * polycurve. Furthermore, in contrast to the general `Curve_2` type, in this
+   * case, the subcurves that an `X_monotone_curve_2` comprises have to be
+   * instances of the type `SubcurveTraits_2::X_monotone_curve_2`. Note that the
+   * \f$x\f$-monotonicity ensures that an \f$x\f$-monotone polycurve is not
+   * self-intersecting. (A self-intersecting polycurve is subdivided into
+   * several interior-disjoint \f$x\f$-monotone subcurves).
    *
    * The defined \f$x\f$-monotone polycurve can be directed either from
    * right-to-left (and in turn its vertices are stored in an ascending

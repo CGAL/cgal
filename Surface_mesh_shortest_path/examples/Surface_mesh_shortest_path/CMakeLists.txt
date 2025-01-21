@@ -15,11 +15,11 @@ create_single_source_cgal_program("shortest_path_with_locate.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")
 
   create_single_source_cgal_program("shortest_paths_OpenMesh.cpp")
-  target_link_libraries(shortest_paths_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(shortest_paths_OpenMesh PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

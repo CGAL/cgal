@@ -32,6 +32,7 @@ public:
 
   /// \name Functor Types
   /// @{
+  /// @}
 
   /// \name Accessing Functor Objects
   /// @{

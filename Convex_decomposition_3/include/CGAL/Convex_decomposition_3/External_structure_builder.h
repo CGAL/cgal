@@ -76,62 +76,13 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
 
     SNC_structure* sncp(sncpl.sncp);
     SNC_point_locator* pl(sncpl.pl);
-
-
-
-    Unique_hash_map<SHalfedge_handle, SFace_handle> sedge2sface;
-    /*
-    SFace_iterator sfi;
-    CGAL_forall_sfaces(sfi, *sncp) {
-      SFace_cycle_iterator sfc;
-      for(sfc = sfi->sface_cycles_begin(); sfc != sfi->sface_cycles_end(); ++sfc) {
-        if(sfc.is_shalfedge()){
-          SHalfedge_around_sface_circulator eaf(sfc), end(eaf);
-          CGAL_For_all(eaf,end) {
-            SHalfedge_handle se(eaf);
-            sedge2sface[eaf] = sfi;
-          }
-        }
-      }
-    }
-
-    //    CGAL::SNC_io_parser<SNC_structure> O0(std::cerr, *sncp, false);
-    //    O0.print();
-
-    SHalfedge_iterator sei;
-    CGAL_forall_shalfedges(sei, *sncp) {
-      SHalfedge_handle se(sei);
-      if(sedge2sface[se] == SFace_handle()) {
-        SM_decorator SD(&*sei->source()->source());
-        SFace_handle sf_new = SD.new_sface();
-        sf_new->mark() = sei->incident_sface()->mark();
-
-        CGAL_NEF_TRACEN("new entry sedge " << sei->source()->point()
-                        << "->" << sei->twin()->source()->point()
-                        << " at " << sei->source()->source()->point());
-
-        SD.link_as_face_cycle(sei, sf_new);
-
-        SHalfedge_around_sface_circulator eaf(se), end(eaf);
-        CGAL_For_all(eaf,end) {
-          SHalfedge_handle se(eaf);
-          sedge2sface[eaf] = sf_new;
-        }
-
-        // TODO: relink inner sface cycles
-      }
-    }
-    */
     SNC_point_locator* old_pl = pl;
     pl = pl->clone();
     sncpl.pl = pl;
-    delete old_pl;
     SNC_external_structure C(*sncp,pl);
     C.clear_external_structure();
     C.build_external_structure();
-
-    //    CGAL::SNC_io_parser<SNC_structure> Ox(std::cerr, *sncp, false);
-    //    Ox.print();
+    delete old_pl;
   }
 };
 

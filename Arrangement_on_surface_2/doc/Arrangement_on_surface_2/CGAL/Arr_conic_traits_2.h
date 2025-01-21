@@ -254,11 +254,11 @@ public:
     /// \name Creation
     /// @{
 
-    /*! construct a default point.
+    /*! constructs a default point.
      */
     Point_2();
 
-    /*! construct a point from an algebraic point.
+    /*! constructs a point from an algebraic point.
      */
     Point_2(const typename Alg_kernel::Point_2& p);
 
@@ -396,7 +396,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Curve_2& cv) const;
 
-    /*! Constructs an \f$x\f$-monotone curve connecting the two given endpoints.
+    /*! constructs an \f$x\f$-monotone curve connecting the two given endpoints.
      * \param source The first point.
      * \param target The second point.
      * \pre `source` and `target` must not be the same.
@@ -405,7 +405,7 @@ public:
     X_monotone_curve_2 operator()(const Point_2& source,
                                   const Point_2& target) const;
 
-    /*! Constructs a special segment of a given line connecting to given
+    /*! constructs a special segment of a given line connecting to given
      * endpoints.
      * \param a, b, c The coefficients of the supporting line
      *        (\f$ax + by + c = 0\f$).
@@ -425,20 +425,21 @@ public:
    */
   class Construct_bbox_2 {
   public:
-    /*! Obtain a bounding box for a conic arc.
+    /*! obtains a bounding box for a conic arc.
      * \param cv The conic arc.
      * \return The bounding box.
      */
     Bbox_2 operator()(const Curve_2& cv) const { return bbox(cv); }
 
-    /*! Obtain a bounding box for an \f$x\f$-monotone conic arc.
+    /*! obtains a bounding box for an \f$x\f$-monotone conic arc.
      * \param xcv The \f$x\f$-monotone conic arc.
      * \return The bounding box.
      */
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \name Auxiliary Functor definitions.
+  /*! \name Auxiliary Functor definitions, used for, e.g., the landmarks \
+   * point-location strategy and the drawing function.
    */
   /// @{
   typedef double                                        Approximate_number_type;
@@ -451,7 +452,7 @@ public:
    */
   class Trim_2 {
   public:
-    /*! Trims the given \f$x\f$-monotone arc to new endpoints.
+    /*! trims the given \f$x\f$-monotone arc to new endpoints.
      * \param xcv The \f$x\f$-monotone arc
      * \param source The new source point.
      * \param target The new target point.
@@ -460,22 +461,21 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                   const Point_2& source,
                                   const Point_2& target) const;
-
   };
 
   /// \name Accessing Functor Objects
   /// @{
 
-  /*! Obtain a `Construct_curve_2` functor. */
+  /*! obtains a `Construct_curve_2` functor. */
   Construct_curve_2 construct_curve_2_object() const;
 
-  /*! Obtain a `Construct_x_monotone_curve_2` functor. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
-  /*! Obtain a `Bbox_2` functor. */
+  /*! obtains a `Bbox_2` functor. */
   Construct_bbox_2 construct_bbox_2_object() const;
 
-  /*! Obtain a `Trim_2` functor. */
+  /*! obtains a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
 
   /// @}

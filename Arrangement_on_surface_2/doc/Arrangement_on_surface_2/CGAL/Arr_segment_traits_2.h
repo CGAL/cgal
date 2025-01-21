@@ -121,6 +121,7 @@ public:
     X_monotone_curve_2(const X_monotone_curve_2& xcv,
                        const Point_2& src, const Point_2& tgt) const;
 
+    //! @}
   } /* end Arr_segment_traits_2::Trim_2 */
 }; /* end Arr_segment_traits_2 */
 

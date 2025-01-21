@@ -5,8 +5,8 @@ namespace CGAL {
  * The traits class `Arr_algebraic_segment_traits_2` is a model of the
  * `AosTraits_2` concept that handles planar algebraic curves of arbitrary
  * degree, and \f$x\f$-monotone of such curves.  A planar (real) <I>algebraic
- * curve</I> is the vanishing set of a polynomial in two variables, that is, the
- * curve is defined by the defining equation
+ * curve</I> is the vanishing set of a polynomial in two variables, that is,
+ * the curve is defined by the defining equation
  * \f[f(x):=\sum_{i+j\leq n} a_{ij} x^i y^j =0, \f] where \f$n\f$ is the
  * degree of the curve.
  *
@@ -20,16 +20,18 @@ namespace CGAL {
  *
  * \cgalModels{AosTraits_2}
  */
+
 template <typename Coefficient>
 class Arr_algebraic_segment_traits_2 {
 public:
+
   /// \name Types
   /// @{
 
   /*! Value to specify whether a point should be in the interior of a segment, or
    * its minimal point, or its maximal point in lexicographic order.
    */
-  enum Site_of_point {POINT_IN_INTERIOR = 0, MIN_ENDPOINT = -1, MAX_ENDPOINT = 1};
+  enum Site_of_point { POINT_IN_INTERIOR = 0, MIN_ENDPOINT = -1, MAX_ENDPOINT = 1 };
 
   /*! the type for bivariate polynomials, with innermost coefficient type
    * `Coefficient`.  Constitutes a model of the concept `Polynomial_d` with two
@@ -39,7 +41,8 @@ public:
    */
   typedef unspecified_type Polynomial_2;
 
-  /// model for the concept `AlgebraicKernel_1`
+  /*! model for the concept `AlgebraicKernel_1`
+   */
   typedef unspecified_type Algebraic_kernel_1;
 
   /*! represents coordinates of points.
@@ -55,13 +58,16 @@ public:
   /// \name Accessing functor objects
   /// @{
 
-  ///
+  /*!
+   */
   Construct_curve_2 construct_curve_2_object() const;
 
-  ///
+  /*!
+   */
   Construct_point_2 construct_point_2_object() const;
 
-  ///
+  /*!
+   */
   Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object() const;
 
   /// @}
@@ -73,18 +79,18 @@ public:
     /// \name Object Creation Functors
     /// @{
 
-    /*! Returns a `Curve_2` object that represents the curve defined by the
-     * polynomial `p`.
+    /*! returns a `Curve_2` object that represents the curve defined by the
+     * polynomial `p`
      */
-    Curve_2 operator()(Polynomial_2 p);
+    Curve_2 operator() (Polynomial_2 p);
 
-    /*! Returns a `Curve_2` object specified by `s`. The passed string
-     * represents the defining polynomial of the curve and must be given in a
-     * MAPLE-readable format using "x" as first and "y" as second variable,
-     * e.g., \f$(x^3*y-2*x)*(-6*x-y^3*x^6)\f$ for integer coefficients, and
+    /*! returns a `Curve_2` object specified by `s`.  The passed string represents
+     * the defining polynomial of the curve and must be given in a MAPLE-readable
+     * format using "x" as first and "y" as second variable, e.g.,
+     * \f$(x^3*y-2*x)*(-6*x-y^3*x^6)\f$ for integer coefficients, and
      * \f$3/2*x*y^4-5/7*x^2+3/1\f$ for rational coefficients.
      */
-    Curve_2 operator()(std::string s);
+    Curve_2 operator() (std::string s);
 
     /// @}
 
@@ -97,36 +103,36 @@ public:
     /// \name Object Creation Functors
     /// @{
 
-    /*! Returns a `Point_2` object that represents the `arcno`-th
+    /*! returns a `Point_2` object that represents the `arcno`-th
      * point in the fiber of `cv` at \f$x\f$-coordinate `x`,
      * counted from the bottom, starting with zero.
      *
-     * \pre `cv` must not have a vertical line at `x`,
-     * and \f$0\leq arcno < c\f$, where \f$c\f$ is the number of points
-     * in the fiber of `cv` at `x`.
+     * \pre (`cv` must not have a vertical line at `x`,
+     * and \f$0\leq arcno < c\f$, where \f$ c\f$ is the number of points
+     * in the fiber of `cv` at `x`.)
      */
     Point_2 operator()(Algebraic_real_1 x, Curve_2 cv, int arcno);
 
-    /*! Returns a `Point_2` object that represents the point on
-     * `xcv` at \f$x\f$-coordinate `x`
+    /*! returns a `Point_2` object that represents the
+     * point on `xcv` at \f$x\f$-coordinate `x`
      *
-     * \pre `x` is in the \f$x\f$-range of `xcv`.
+     * \pre (`x` is in the \f$x\f$-range of `xcv`.)
      */
     Point_2 operator()(Algebraic_real_1 x, X_monotone_curve_2 xcv);
 
-    /*! Returns a `Point_2` object that represents (x,y)
+    /*! returns a `Point_2` object that represents (x,y)
      */
     Point_2 operator()(Algebraic_real_1 x, Algebraic_real_1 y);
 
-    /*! Returns a `Point_2` object that represents (x,y)
+    /*! returns a `Point_2` object that represents (x,y)
      */
     Point_2 operator()(Coefficient x, Coefficient y);
 
-    /*! Returns a `Point_2` object that represents (x,y)
+    /*! returns a `Point_2` object that represents (x,y)
      */
     Point_2 operator()(Bound x, Bound y);
 
-    /*! Returns a `Point_2` object that represents (x,y)
+    /*! returns a `Point_2` object that represents (x,y)
      */
     Point_2 operator()(int x, int y);
 
@@ -141,10 +147,10 @@ public:
     /// \name Object Creation Functors
     /// @{
 
-    /*! inserts a sequence of `X_monotone_curve_2` objects (terminal segments)
-     * into an output container given through an output iterator. These terminal
-     * segments compose an \f$x\f$-monotone (or vertical) segment of a given
-     * curve that starts in `end_min`, and ends in `end_max`.
+    /*! inserts a sequence of `X_monotone_curve_2` objects (terminal segments) into
+     * an output container given through an output iterator. These terminal segments
+     * compose an \f$x\f$-monotone (or vertical) segment of a given curve that
+     * starts in `end_min`, and ends in `end_max`.
      *
      * \param cv The input curve.
      * \param end_min The starting point.
@@ -152,18 +158,18 @@ public:
      * \param oi The output iterator that points at the output container.
      * \return The past-the-end iterator of the output container.
      *
-     * \pre `end_min` must have a unique \f$x\f$-monotone segment to its right,
-     *      or `end_max` must have a unique \f$x\f$-monotone segment to its
+     * \pre `end_min` must have a unique \f$x\f$-monotone segment to its right, or
+     *      `end_max` must have a unique \f$x\f$-monotone segment to its left.
      *      Furthermore, `end_min` and `end_max` must be connected by an
-     *      left. \f$x\f$-monotone segment of `cv`)
+     *      \f$x\f$-monotone segment of `cv`)
      */
     template <typename OutputIterator>
     OutputIterator operator()(Curve_2 cv, Point_2 end_min, Point_2 end_max,
                               OutputIterator oi);
 
-    /*! inserts a sequence of `X_monotone_curve_2` objects into an output
-     * container given through an output iterator.  These segments form an
-     * \f$x\f$-monotone (or vertical) segment of the curve `cv`.
+    /*! inserts a sequence of `X_monotone_curve_2` objects into an output container
+     * given through an output iterator.  These segments form an \f$x\f$-monotone
+     * (or vertical) segment of the curve `cv`.
      *
      * If `site_of_p` == `POINT_IN_INTERIOR`, the maximal segment that contains
      * `p` in its interior is returned .
@@ -178,12 +184,10 @@ public:
      * of an \f$x\f$-monotone or a vertical segment.
      *
      * \pre If `site_of_p` == `MIN_ENDPOINT`, `p` must either have a unique
-     * \f$x\f$-monotone segment to the right, or a vertical segment from `p`
-     * upwards.
+     * \f$x\f$-monotone segment to the right, or a vertical segment from `p` upwards.
      *
      * \pre If `site_of_p` == `MAX_ENDPOINT`, `p` must either have a unique
-     * \f$x\f$-monotone segment to the left, or a vertical segment from `p`
-     * downwards.
+     * \f$x\f$-monotone segment to the left, or a vertical segment from `p` downwards.
      */
     template <typename OutputIterator>
     OutputIterator operator()(Curve_2 cv, Point_2 p, Site_of_point site_of_p,
@@ -195,7 +199,7 @@ public:
      * share the same \f$x\f$-coordinate, the constructed vertical segment
      * consists of only one `X_monotone_curve_2` object and can be computed
      * efficiently. In the non-vertical case, the construction is only possible
-     * if `p` and `q` have both rational x- and y-coordinates.
+     * if `p` and `q` have both rational \f$x\f$- and \f$y\f$-coordinates.
      *
      * \pre `p` must not be equal to `q`.
      */
@@ -205,7 +209,7 @@ public:
     /// @}
   }; /* end Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2 */
 
-  /*! Models the `AosTraits_2::Curve_2` concept.
+  /*! A model of the the `AosTraits_2::Curve_2` concept.
    * Represents algebraic curves. Internally, the type stores
    * topological-geometric information about the particular curve.
    * In order to use internal caching, instances should only be created
@@ -213,6 +217,7 @@ public:
    */
   class Curve_2 {
   public:
+
     /// \name Modifiers
     /// @{
 
@@ -221,15 +226,16 @@ public:
     Polynomial_2 polynomial() const;
 
     /// @}
+
   }; /* end Arr_algebraic_segment_traits_2::Curve_2 */
 
-  /*! Models the `AosBasicTraits_2::Point_2` concept.
+  /*! A model of the `AosBasicTraits_2::Point_2` concept.
    * Represents points in \f$\mathbb{R}^2\f$. Intersection points of algebraic
    * curves are in general non-rational, so we need a data structure that is
    * capable of representing arbitrary points with algebraic coordinates.
    *
    * The traits class represents algebraic coordinates by the type
-   * `Algebraic_real_1`, which is a model of the `AlgebraicReal_1` concept.  A
+   * `Algebraic_real_1`, which is a model of the `AlgebraicReal_1` concept. A
    * point \f$p\f$ is stored by a triple \f$(x,cv,arcno)\f$, where \f$x\f$ is
    * the \f$x\f$-coordinate of a point, \f$cv\f$ is an instance of `Curve_2`
    * that contains the point, (and has no vertical line at \f$x\f$), and
@@ -237,8 +243,8 @@ public:
    * point when shooting a vertical ray at \f$x\f$, starting from \f$-\infty\f$
    * (where counting starts with \f$0\f$).
    *
-   * In addition to the methods listed below, the copy constructor and
-   * assignment operator for `Point_2` objects are also supported.
+   * In addition to the methods listed below, the copy constructor and assignment
+   * operator for `Point_2` objects are also supported.
    *
    * The functor `Construct_point_2` constructs `Point_2` instances.
    */
@@ -254,7 +260,7 @@ public:
 
     /*! returns the \f$y\f$-coordinates of `p`.
      *
-     * <B>Attention:</B> As described above, points are not stored  by their
+     * <B>Attention:</B> As described above, points are not stored by their
      * \f$y\f$-coordinate in `Algebraic_real_1` representation. In fact,
      * this representation must be computed on demand, and might become quite
      * costly for points defined by high-degree polynomials. Therefore, it is
@@ -270,14 +276,15 @@ public:
      */
     int arcno() const;
 
-    /*! returns double-approximations of the \f$x\f$- and \f$y\f$-coordinates.
+    /*! returns double-approximations of the \f$ x\f$- and \f$ y\f$-coordinates.
      */
     std::pair<double,double> to_double() const;
 
     /// @}
+
   }; /* end Arr_algebraic_segment_traits_2::Point_2 */
 
-  /*! Models the `AosBasicTraits_2::X_monotone_curve_2` concept.
+  /*! A model of the `AosBasicTraits_2::X_monotone_curve_2` concept.
    * Represents terminal segments of an algebraic curves, that means vertical
    * segments or \f$x\f$-monotone segments with no critical \f$x\f$-coordinate
    * in the interior of their \f$x\f$-range.  Terminal segments might either be
@@ -297,6 +304,7 @@ public:
    */
   class X_monotone_curve_2 {
   public:
+
     /// \name Modifiers
     /// @{
 
@@ -312,23 +320,23 @@ public:
      */
     bool is_finite(CGAL::Arr_curve_end ce) const;
 
-    /*! \pre The corresponding curve end is finite.
+    /*! \pre (The corresponding curve end is finite)
      */
     Point_2 curve_end(CGAL::Arr_curve_end ce) const;
 
     /*! returns the arc number of the segment.
-     *
-     * \pre The segment is non-vertical.
+     * \pre (The segment is non-vertical)
      */
     int arcno() const;
 
     /*! returns the \f$x\f$-coordinate of a vertical segment.
      *
-     * \pre The segment is vertical.
+     * \pre (The segment is vertical)
      */
     Algebraic_real_1 x() const;
 
     /// @}
+
   }; /* end Arr_algebraic_segment_traits_2::X_monotone_curve_2 */
 }; /* end Arr_algebraic_segment_traits_2 */
 

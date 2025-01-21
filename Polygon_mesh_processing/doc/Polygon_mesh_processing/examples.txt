@@ -19,6 +19,10 @@
 \example Polygon_mesh_processing/refine_fair_example.cpp
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
 \example Polygon_mesh_processing/isotropic_remeshing_example.cpp
+\example Polygon_mesh_processing/isotropic_remeshing_of_patch_example.cpp
+\example Polygon_mesh_processing/isotropic_remeshing_with_allow_move.cpp
+\example Polygon_mesh_processing/isotropic_remeshing_with_custom_sizing_example.cpp
+\example Polygon_mesh_processing/isotropic_remeshing_with_sizing_example.cpp
 \example Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp
 \example Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp
 \example Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp
@@ -48,5 +52,4 @@
 \example Polygon_mesh_processing/remesh_almost_planar_patches.cpp
 \example Polygon_mesh_processing/sample_example.cpp
 \example Polygon_mesh_processing/soup_autorefinement.cpp
-
 */

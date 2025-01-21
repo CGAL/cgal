@@ -81,7 +81,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Constructs a point from a direction and a location.
+    /*! constructs a point from a direction and a location.
      * \param[in] dir the direction.
      * \param[in] location indicates the location of the point pre-image
      *            in the parameter space.
@@ -93,13 +93,13 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Set the location of the point pre-image in the parameter space.
+    /*! sets the location of the point pre-image in the parameter space.
      * \param[in] location the updated location of the point pre-image in
      *            the parameter space.
      */
     void set_location(Location_type location);
 
-    /*! Obtain the location of the point.
+     /*! obtains the location of the point.
      * \return the location of the point pre-image in the parameter space.
      */
     Location_type location() const;
@@ -125,7 +125,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Constructs an \f$x\f$-monotone geodesic arc.
+    /*! constructs an \f$x\f$-monotone geodesic arc.
      * \param[in] source the source point of the arc.
      * \param[in] target the target point of the arc.
      * \param[in] normal the normal of the plane that contains the arc.
@@ -134,6 +134,7 @@ public:
      * \param[in] is_full is the arc a full great circle?
      * \param[in] is_degenerate is the arc degenerate (single point)?
      * \param[in] is_empty is the arc empty?
+     *
      * \pre Both endpoints lie on the given plane.
      */
     X_monotone_curve_2(const Point_2& source,
@@ -145,19 +146,21 @@ public:
                        bool is_degenerate = false,
                        bool is_empty = false);
 
-    /*! Construct an \f$x\f$-monotone geodesic arc.
+    /*! constructs an \f$x\f$-monotone geodesic arc.
      * \param[in] normal the normal of the plane containing the arc.
      * \param[in] source the source-point direction.
      * \param[in] target the target-point direction.
+     *
      * \pre Both endpoints lie on the given plane.
      */
     X_monotone_curve_2(const Point_2& source,
                        const Point_2& target,
                        const Direction_3& normal);
 
-    /*! Construct a full great-circle.
+    /*! constructs a full great-circle.
      * \param[in] point the endpoint of the full great-circle.
      * \param[in] normal the normal of the plane containing the arc.
+     *
      * \pre the point lies on the given plane.
      * \pre the point pre-image lies on the identified left and right sides
      *      of the boundary of the parameter space.
@@ -170,66 +173,66 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Sets the source endpoint.
+    /*! sets the source endpoint.
      * \param[in] source the updated source endpoint.
      */
     void set_source(const Point_2& source);
 
-    /*! Sets the target endpoint.
+    /*! sets the target endpoint.
      * \param[in] target the updated target endpoint.
      */
     void set_target(const Point_2& target);
 
-    /*! Sets the normal of the underlying plane.
+    /*! sets the normal of the underlying plane.
      * \param[in] normal the updated normal of the underlying plane.
      */
     void set_normal(const Direction_3& normal);
 
-    /*! Sets the flag that indicates whether the arc is vertical.
+    /*! sets the flag that indicates whether the arc is vertical.
      * \param[in] flag indicates whether the arc pre-image in the parameter
      *            space is vertical.
      */
     void set_is_vertical(bool flag);
 
-    /*! Sets the flag that indicates whether the direction of the arc
+    /*! sets the flag that indicates whether the direction of the arc
      * pre-image in the parameter space is from left to right.
      * \param flag indicates whether the arc pre-image in the parameter
      *             space is from left to right.
      */
     void set_is_directed_right(bool flag);
 
-    /*! Sets the flag that indicates whether the arc is a full great circle.
+    /*! sets the flag that indicates whether the arc is a full great circle.
      * \param[in] flag indicates whether the arc is a full great circle.
      */
     void set_is_full(bool flag);
 
-    /*! Sets the flag that indicates whether the arc degenerates to a point.
+    /*! sets the flag that indicates whether the arc degenerates to a point.
      * \param[in] flag indicates whether the arc degenerates to a point.
      */
     void set_is_degenerate(bool flag);
 
-    /*! Sets the flag that indicates whether the arc is empty.
+    /*! sets the flag that indicates whether the arc is empty.
      * \param[in] flag indicates whether the arc is empty.
      */
     void set_is_empty(bool flag);
 
-    /*! Obtains the source point.
+    /*! obtains the source point.
      */
     const Point_2& source() const;
 
-    /*! Obtains the target point.
+    /*! obtains the target point.
      */
     const Point_2& target() const;
 
-    /*! Obtains the normal to the containing plane.
+    /*! obtains the normal to the containing plane.
      */
     const Direction_3& normal() const;
 
-    /*! Obtains the (lexicographically) left endpoint direction.
+    /*! obtains the (lexicographically) left endpoint direction.
      */
     const Point_2& left() const;
 
-    /*! Obtains the (lexicographically) right endpoint.
+    /*! obtains the (lexicographically) right endpoint.
      */
     const Point_2& right() const;
 
@@ -237,23 +240,22 @@ public:
      */
     bool is_vertical() const;
 
-    /*! Determines whether the arc is directed lexicographically from left to
-     * right.
+    /*! determines whether the arc is directed lexicographically from left to right.
      */
     bool is_directed_right() const;
 
-    /*! Determines whether the arc is a great circle.
+    /*! determines whether the arc is a great circle.
      */
     bool is_full() const;
 
-    /*! Determines whether the arc is degenerate.
+    /*! determines whether the arc is degenerate.
      */
     bool is_degenerate() const;
 
-    /*! Determines whether the arc is empty. */
+    /*! determines whether the arc is empty. */
     bool is_empty() const;
 
-    /*! Determines whether the arc is a meridian.
+    /*! determines whether the arc is a meridian.
      */
     bool is_meridian() const;
 
@@ -296,7 +298,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Construct a point on the sphere from three coordinates, which define
+    /*! constructs a point on the sphere from three coordinates, which define
      * a (not necessarily normalized) direction.
      * \param[in] x the x coordinate
      * \param[in] y the y coordinate
@@ -304,7 +306,7 @@ public:
      */
     Point_2 operator()(const FT& x, const FT& y, const FT& z);
 
-    /*! Construct a point on the sphere from a (not necessarily normalized)
+    /*! constructs a point on the sphere from a (not necessarily normalized)
      * direction.
      * \param other the other direction
      */
@@ -330,17 +332,17 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Construct the minor geodesic arc from two endpoints. The minor arc
+    /*! constructs the minor geodesic arc from two endpoints. The minor arc
      * is the one with the smaller angle among the two geodesic arcs with
      * the given endpoints.
-     * 1. Find out whether the arc is x-monotone.
-     * 2. If it is x-monotone,
+     * 1. Find out whether the arc is \f$x\f$-monotone.
+     * 2. If it is \f$x\f$-monotone,
      *    2.1 Find out whether it is vertical, and
      *    2.2 whether the target is larger than the source (directed right).
      *
      * An arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
-     * 2. the projections of the endpoint directions onto the xy-plane coincide.
+     * 2. the projections of the endpoint directions onto the \f$xy\f$-plane coincide.
      * \param[in] p the first endpoint.
      * \param[in] q the second endpoint.
      * \pre p and q must not coincide.
@@ -350,7 +352,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q);
 
-    /*! Construct a full great circle from a normal to a plane.
+    /*! constructs a full great circle from a normal to a plane.
      * Observe that the constructed arc has one endpoint that lies on
      * the identification curve. This point is considered both the source and
      * target (and also the left and right) point of the arc.
@@ -359,7 +361,7 @@ public:
      */
     X_monotone_curve_2 operator()(const Direction_3& normal);
 
-    /*! Construct a geodesic arc from two endpoints and a normal to the plane
+    /*! constructs a geodesic arc from two endpoints and a normal to the plane
      * containing the arc. The two endpoints determine the plane. The normal
      * determines the orientation of the plane and the final arc (whether its
      * the minor arc or the major arc). The right-hand rule can be used
@@ -394,22 +396,22 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Construct a full great circle from a normal to a plane.
+    /*! constructs a full great circle from a normal to a plane.
      * \param normal the normal to the plane containing the great circle.
      */
     X_monotone_curve_2 operator()(const Direction_3& normal);
 
-    /*! Construct the minor geodesic arc from two endpoints. The minor arc
+    /*! constructs the minor geodesic arc from two endpoints. The minor arc
      * is the one with the smaller angle among the two geodesic arcs with
      * the given endpoints.
-     * 1. Find out whether the arc is x-monotone.
-     * 2. If it is x-monotone,
+     * 1. Find out whether the arc is \f$x\f$-monotone.
+     * 2. If it is \f$x\f$-monotone,
      *     1. Find out whether it is vertical, and
      *     2. whether the target is larger than the source (directed right).
      *
      * An arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
-     * 2. the projections of the endpoint directions onto the xy-plane coincide.
+     * 2. the projections of the endpoint directions onto the \f$xy\f$-plane coincide.
      *
      * \param[in] p the first endpoint.
      * \param[in] q the second endpoint.
@@ -418,7 +420,7 @@ public:
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q);
 
-    /*! Construct a geodesic arc from two endpoints and a normal to the plane
+    /*! constructs a geodesic arc from two endpoints and a normal to the plane
      * containing the arc. The two endpoints determine the plane. The normal
      * determines the orientation of the plane and the final arc (whether its
      * the minor arc or the major arc). The right-hand rule can be used
@@ -426,6 +428,7 @@ public:
      * \param[in] p the first endpoint.
      * \param[in] q the second endpoint.
      * \param[in] normal the normal to the oriented plane containing the arc.
+     *
      * \pre Both endpoints lie on the given oriented plane.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q,
@@ -433,15 +436,15 @@ public:
     /// @}
   };
 
-  /*! Returns an instance of `Construct_point_2`.
+  /*! returns an instance of `Construct_point_2`.
    */
   Construct_point_2 construct_point_2_object() const;
 
-  /*! Returns an instance of `Construct_x_monotone_curve_2`.
+  /*! returns an instance of `Construct_x_monotone_curve_2`.
    */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
-  /*! Returns an instance of `Construct_curve_2`.
+  /*! returns an instance of `Construct_curve_2`.
    */
   Construct_curve_2 construct_curve_2_object() const;
 };

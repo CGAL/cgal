@@ -168,7 +168,8 @@ Remarks
   of segments in all the polylines together. The same holds for the
   more general type <em>polycurve</em>, which are piecewise curves
   that are not necessarily linear; see Section \ref
-  arr_sssectr_polycurves.  </li>
+  arr_sssectr_polycurves.
+</li>
 
 </ol>
 
@@ -1188,7 +1189,7 @@ functions are of little use. However, you should keep in mind that
 there may be extraneous data (probably non-geometric) associated with
 the point objects or with the curve objects, as defined by the traits
 class. With these two functions you can modify this data; see more
-details in Section \ref arr_ssecmeta_tr. In addition, you can use
+details in Section \ref arr_sssec_tr_data_decorators. In addition, you can use
 these functions to replace a geometric object (a point or a curve)
 with an equivalent object that has a more compact representation. For
 example, if we use some simple rational-number type to represent the
@@ -1435,14 +1436,15 @@ vary according to the user choice.} for answering queries:
   points or choosing points on a grid, are also available; see the
   Reference Manual for more details.
 
-  The landmark strategy requires that the type of the attached
-  arrangement be an instance of the `Arrangement_2<Traits,Dcel>` class
-  template, where the `Traits` parameter is substituted by a
-  geometry-traits class that models the `AosLandmarkTraits_2`
-  concept, which refines the basic `AosBasicTraits_2` concept;
-  see Section \ref aos_sssec-tr_landmarks_concept for details. Most
-  traits classes included in the \ref PkgArrangementOnSurface2 package
-  are models of this refined concept.
+  The arrangement attached to the landmark strategy must be either (i)
+  an instance of the `Arrangement_2<GeomTraits,Dcel>` class template,
+  where the `GeomTraits` parameter is substituted by a geometry-traits
+  class that models the `AosLandmarkTraits_2` concept, or (ii) an
+  instance of the `Arrangement_on_surface_2<GeomTraits,TopolTraits>`
+  class template, where the `GeomTraits` is similarly substituted;
+  see Section \ref aos_sssec-tr_landmarks_concept for details about
+  this concept. Most traits classes included in the \ref
+  PkgArrangementOnSurface2 package are models of this refined concept.
 
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements an
   improved variant of Mulmuley's point-location algorithm
@@ -1489,7 +1491,7 @@ educational purposes, and thus we do not elaborate on this strategy.
 The data structure needed by the landmark and the trapezoidal map RIC
 strategies can be constructed in \cgalBigO{N \log N} time, where \f$N\f$
 is the overall number of edges in the arrangement, but the constant
-hidden in the \cgalBigO{&nbsp;} notation for the trapezoidal map RIC strategy
+hidden in the \cgalBigO{~} notation for the trapezoidal map RIC strategy
 is much larger. Thus, construction needed by the landmark algorithm is
 in practice significantly faster than the construction needed by the
 trapezoidal map RIC strategy. In addition, although both resulting
@@ -2035,8 +2037,8 @@ so it must be construct from scratch.
 
 In the first case, we sweep over the input curves, compute their
 intersection points, and construct the \dcel that represents their
-arrangement. This process is performed in \cgalBigO{left((n + k)\log
-n\right} time, where \f$k\f$ is the total number of intersection
+arrangement. This process is performed in \cgalBigO{(n + k)\log
+n} time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
 for incremental insertion if the arrangement is relatively sparse
 (when \f$k\f$ is \cgalBigO{\frac{n^2}{\log n}}), but it is recommended
@@ -3530,6 +3532,10 @@ The concept `AosConstructCurveTraits_2` refines the concept
 must support the operation below (in addition to fulfilling the
 requirements listed by the `AosBasicTraits_2` concept).
 
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection aos_sssec-tr_additional_concepts The Construct Curve Concept
+<!-- ----------------------------------------------------------------------- -->
+
 <DL>
 <DT>\link AosConstructCurveTraits_2::Construct_curve_2 <B>`Construct_curve_2`</B>\endlink:
 <DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
@@ -4398,12 +4404,13 @@ size \f$m\f$ typically take \cgalBigO{\log m} time.
 
 You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected
-intersection points; see Section \ref arr_ssectr_segs. Moreover, it
-is possible to substitute the `SubcurveTraits_2` template parameter
-with a traits class that handles segments with some additional data
-attached to each individual segment; see Section
-\ref arr_ssecmeta_tr. This makes it possible to associate different
-data objects with the different segments that compose a polyline.
+intersection points; see Section \ref arr_ssectr_segs. Moreover, it is
+possible to substitute the `SubcurveTraits_2` template parameter with
+a traits class that handles segments with some additional data
+attached to each individual segment; see Section \ref
+arr_sssec_tr_data_decorators. This makes it possible to associate
+different data objects with the different segments that compose a
+polyline.
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-polylines,polylines.png}
@@ -5513,7 +5520,17 @@ with source endpoint and ending at the target endpoint.
 <!-- ----------------------------------------------------------------------- -->
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection arr_ssecmeta_tr Traits-Class Decorators
+\subsection arr_ssec_tr_decorators Traits-Class Decorators
+<!-- ----------------------------------------------------------------------- -->
+
+Decorator is a structural pattern that allows adding new behaviors to
+objects by placing them inside special wrapper objects, called
+decorators. One type of decorators attaches auxiliary data to the
+geometric objects handled by the original traits. Another type enables
+the retrieval of debugging and informative metadata.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection arr_sssec_tr_data_decorators Data Decorators
 <!-- ----------------------------------------------------------------------- -->
 
 Geometric traits-class decorators allow you to attach auxiliary data
@@ -5686,6 +5703,33 @@ line cannot overlap, so we use a dummy merge functor to instantiate
 the curve-data traits:
 
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
+
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection arr_sssec_tr_metadata_decorators Metadata Decorators
+<!-- ----------------------------------------------------------------------- -->
+
+The package provides two traits-class decorators, namely
+`Arr_counting_traits_2<BaseTraits>` and
+`Arr_tracing_traits_2<BaseTraits>`, that can be used to insert
+debugging and informative metadata to an output stream. The former is
+used to count the number of invocations of traits-class functors, and
+the latter is used to trace these invocations. Note that the
+constructors of each of these class templates apply perfect
+forwarding. The counting traits also exports the count of traits-class
+objects of specific types constructed during the execution of the
+program. The tracing traits supports filtering of traced functors. The
+calls `traits.enable_trace(id)` and `traits.disable_trace(id)` enables
+and disables the tracing of a functor identified by `id`,
+respectively. A functor is identified by an enumeration. For example,
+the functor \link AosTraits_2::Make_x_monotone_2
+`Make_x_monotone_2`\endlink is identified by the enumeration
+`Arr_tracing_traits_2::MAKE_X_MONOTONE_OP`. The calls
+`traits.enable_all_traces()` and `traits.disable_all_traces()` enables
+and disables the traces of all functors, respectively. The example
+program listed below demonstrates the use of both of these metadata
+decorators.
+
+\cgalExample{Arrangement_on_surface_2/count_and_trace.cpp}
 
 <!-- ======================================================================= -->
 \section aos_sec-topol_traits The Topology Traits
@@ -5919,7 +5963,7 @@ edges (halfedge pairs) are associated with \link
 Arrangement_on_surface_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink objects, both defined by the traits
 class. Extending the geometric traits-class types by using a
-traits-class decorator, as explained in Section \ref arr_ssecmeta_tr,
+traits-class decorator, as explained in Section \ref arr_ssec_tr_decorators,
 might be a sufficient solution for some applications.  However, the
 \dcel faces are not associated with any geometric object, so
 traits-class decorators cannot help here. Extending the \dcel face
@@ -6136,7 +6180,7 @@ The overlay of two given arrangements, conveniently referred to as the
 algorithm employing a dedicated visitor; see Section
 \ref arr_ssec_sweep.  The \f$x\f$-monotone curve type is extended with
 a color attribute (whose value is either blue or red); see Section \ref
-arr_ssecmeta_tr. With the help of the extended type unnecessary
+arr_ssec_tr_decorators. With the help of the extended type unnecessary
 computations are filtered out while the plane is swept, yielding an
 efficient process. For example, monochromatic intersections are not
 computed.

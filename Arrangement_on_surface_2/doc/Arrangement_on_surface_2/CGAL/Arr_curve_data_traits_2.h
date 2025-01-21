@@ -88,8 +88,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
-     */
+    /*! constructs default */
     Curve_2();
 
     /*! constructs curve from the given `base` curve with uninitialized
@@ -127,8 +126,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
-     */
+    /*! constructs default */
     X_monotone_curve_2();
 
     /*! constructs an \f$x\f$-monotone curve from the given `base` curve with
@@ -136,8 +134,8 @@ public:
      */
     X_monotone_curve_2(const Base_x_monotone_curve_2& base);
 
-    /*! constructs an \f$x\f$-monotone curve from the given `base` \f$
-     * x\f$-monotone curve with an attached `data` field.
+    /*! constructs an \f$x\f$-monotone curve from the given `base`
+     * \f$x\f$-monotone curve with an attached `data` field.
      */
     X_monotone_curve_2(const Base_x_monotone_curve_2& base,
                        const X_monotone_curve_data& data);

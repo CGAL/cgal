@@ -3,11 +3,12 @@ namespace CGAL {
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The class `Arr_consolidated_curve_data_traits_2` is a model of the concept
- * `AosTraits_2`, and serves as a decorator class that enables the extension of
- * the curve type defined by the `Traits` parameter. The traits class inherits
- * its point type from `Traits::Point_2`, and defines the types `Curve_2` and
- * `X_monotone_curve_2` extended with extraneous data fields of type `Data`.
-
+ * `AosTraits_2`, and serves as a decorator class that enables the
+ * extension of the curve type defined by the `Traits` parameter. The traits
+ * class inherits its point type from `Traits::Point_2`, and defines the types
+ * `Curve_2` and `X_monotone_curve_2` extended with extraneous data fields of
+ * type `Data`.
+ *
  * Each `Curve_2` object is associated with a single data field of type `Data`,
  * and each `X_monotone_curve_2` object is associated with a set of unique data
  * objects. When a curve is subdivided into \f$x\f$-monotone subcurves, all
@@ -17,7 +18,7 @@ namespace CGAL {
  * resulting subcurves. In case two (or more) \f$x\f$-monotone curves overlap,
  * their data sets are consolidated, and are inserted into the set of the
  * \f$x\f$-monotone curve that represents the overlap.
-
+ *
  * \cgalModels{AosTraits_2}
  */
 template <typename Traits, typename Data>
@@ -28,19 +29,19 @@ public:
   /// \name Types
   /// @{
 
-  /// the base traits-class.
+  //! the base traits-class.
   typedef Traits Base_traits_2;
 
-  /// the base curve.
+  //! the base curve.
   typedef typename Base_traits_2::Curve_2 Base_curve_2;
 
-  /// the base \f$x\f$-monotone curve curve.
+  //! the base \f$x\f$-monotone curve curve.
   typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2;
 
-  /// a set of data objects that is associated with an \f$x\f$-monotone curve.
+  //! a set of data objects that is associated with an \f$x\f$-monotone curve.
   typedef unspecified_type typedef Data_container;
 
-  /// a non-mutable iterator for the data objects in the data container.
+  //! a non-mutable iterator for the data objects in the data container.
   typedef unspecified_type typedef Data_iterator;
 
   /// @}
@@ -57,7 +58,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
+    /*! constructs default.
      */
     Data_container();
 
@@ -83,12 +84,14 @@ public:
     Data_iterator end() const;
 
     /*! returns the first data object inserted into the set.
+     *
      * \pre The number of data objects is not \f$0\f$.
      */
     const Data& front() const;
 
     /*! returns the last data object inserted into the set.
-     * \pre The number of data objects is not \f$0\f$.
+     *
+     *  \pre The number of data objects is not \f$0\f$.
      */
     const Data& back() const;
 
@@ -97,12 +100,12 @@ public:
     /// \name Predicates
     /// @{
 
-    /*! check if the two sets contain the same data objects
-     * (regardless of order).
+    /*! checks whether the two sets contain the same data objects (regardless of
+     * order).
      */
     bool operator==(const Data_container& other) const;
 
-    /*! find the given `data` object in the set and returns an iterator
+    /*! finds the given `data` object in the set and returns an iterator
      * for this object, or `end()` if it is not found.
      */
     Data_iterator find(const Data& data);
