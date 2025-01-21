@@ -44,7 +44,6 @@ Documentation/Doxyfile text eol=lf
 Documentation/pkglist_filter text eol=lf
 Installation/update_CHANGES text eol=lf
 Scripts/developer_scripts/autotest_cgal text eol=lf
-Scripts/developer_scripts/autotest_cgal_with_cmake text eol=lf
 Scripts/developer_scripts/cgal_build text eol=lf
 Scripts/developer_scripts/cgal_depend text eol=lf
 Scripts/developer_scripts/cgal_git_update_hooks_for_client text eol=lf

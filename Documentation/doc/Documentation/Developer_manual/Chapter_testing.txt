@@ -46,7 +46,7 @@ Then you need to compile this flat release and set `CGAL_DIR` accordingly as exp
 To run the test-suite simply do:
 \code
   > cd CGAL-I-FOO/test
-  > ./run_testsuite_with_cmake
+  > ./run_testsuite_with_ctest
 \endcode
 and wait for the results to be written in the file `error.txt`.
 
