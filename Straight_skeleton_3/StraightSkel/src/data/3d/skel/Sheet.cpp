@@ -110,7 +110,7 @@ bool Sheet::removeNode(NodeSPtr node) {
 }
 
 void Sheet::addArc(ArcSPtr arc) {
-    std::list<ArcSPtr>::iterator it = arcs_.insert(arcs_.end(), arc);
+    /*std::list<ArcSPtr>::iterator it =*/ arcs_.insert(arcs_.end(), arc);
     arc->addSheet(shared_from_this());
 }
 

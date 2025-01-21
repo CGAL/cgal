@@ -14,6 +14,8 @@
  * @date   2012-03-08
  */
 
+// ----
+
 // @todo figure out a proper stack so shared pointers do not contaminate everything
 // currently, we have:
 // - event -> polyhedron
@@ -22,8 +24,15 @@
 // etc.
 #define CGAL_SS3_NO_SKELETON_DS
 
-// #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+// ----
+
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+// #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#define CGAL_SS3_NO_CACHING
+
+// ----
+// Macros for (now obsolete) tries to handle degenerate configurations
+
 // #define CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
 #define CGAL_SS3_USE_AUTOREF_FOR_SIMULTANEOUS_EVENTS
 #define CGAL_SS3_FILTER_VOLUMES_WITH_ONLY_REACHABLE_FACES
@@ -35,9 +44,15 @@
 # endif
 #endif
 
-// debug
-// #define CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-#define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+// ----
+
+#ifdef DEBUG
+# define CGAL_SS3_DEBUG_PRINT_QUEUE
+// # define CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
+# define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+#endif // DEBUG
+
+// ----
 
 #include "algo/3d/SimpleStraightSkel.h"
 
@@ -118,8 +133,6 @@ auto triangulate_facet_with_CDT2(FacetSPtr facet,
                                  std::vector<Point3>& points,
                                  std::vector<std::vector<std::size_t> >& triangles)
 {
-    std::cout << "triangulate_facet_with_CDT2()" << std::endl;
-
     if (facet->edges().size() < 3) {
         std::cerr << "Warning: face with < 3 edges" << std::endl;
         return;
@@ -219,7 +232,11 @@ auto triangulate_facet_with_CDT2(FacetSPtr facet,
 #endif // CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
 
         for(auto fh : pcdt.finite_face_handles()) {
-        std::cout << "Face handle " << fh->vertex(0)->point() << " " << fh->vertex(1)->point() << " " << fh->vertex(2)->point() << " in domain? " << get(in_domain, fh) << std::endl;
+        std::cout << "Face handle "
+                  << fh->vertex(0)->point() << " "
+                  << fh->vertex(1)->point() << " "
+                  << fh->vertex(2)->point()
+                  << " in domain? " << get(in_domain, fh) << std::endl;
 #ifndef CGAL_SS3_FILTER_CDT2_FACES_WITH_WINDING_NUMBER
             if(!get(in_domain, fh)) {
                 continue;
@@ -464,24 +481,6 @@ void SimpleStraightSkel::initEdgeEvent() {
         s_edge_event = "convex";
     }
     skel_result_->appendConfig("edge_event="+s_edge_event+"; ");
-}
-
-bool SimpleStraightSkel::isLocked(VertexSPtr vertex) {
-    return false;
-
-    Point3SPtr recomputed_point = PolyhedronTransformation::shiftPoint(vertex, 0);
-
-    if (!recomputed_point) {
-        std::cout << vertex->getID() << " is locked" << std::endl;
-    }
-
-    return (recomputed_point == Point3SPtr());
-}
-
-bool SimpleStraightSkel::isLocked(EdgeSPtr edge) {
-    // only lock degenerate edges, as we should not have to recompute the position otherwise
-    return (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) &&
-            (isLocked(edge->getVertexSrc()) || isLocked(edge->getVertexDst()));
 }
 
 // @fixme return three states to handle flat cases?
@@ -1015,7 +1014,10 @@ bool SimpleStraightSkel::run() {
 
     DEBUG_PRINT("== Straight Skeleton 3D started ==");
 
-    double t_start = util::Timer::now();
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
 
@@ -1030,22 +1032,22 @@ bool SimpleStraightSkel::run() {
 
     db::_3d::OBJFile::save("results/init_pre.obj", polyhedron, false /*do not triangulate*/);
 
-// #define CGAL_SSE_ACUTE_WEIGHTS
-// #define CGAL_SSE_MERGING_WEIGHTS
-// #define CGAL_SSE_PERFORMANCE_WEIGHTS
+// #define CGAL_SS3_ACUTE_WEIGHTS
+// #define CGAL_SS3_MERGING_WEIGHTS
+// #define CGAL_SS3_PERFORMANCE_WEIGHTS
 
-#if defined(CGAL_SSE_ACUTE_WEIGHTS) || defined(CGAL_SSE_MERGING_WEIGHTS) || defined(CGAL_SSE_PERFORMANCE_WEIGHTS)
-# ifdef CGAL_SSE_ACUTE_WEIGHTS
+#if defined(CGAL_SS3_ACUTE_WEIGHTS) || defined(CGAL_SS3_MERGING_WEIGHTS) || defined(CGAL_SS3_PERFORMANCE_WEIGHTS)
+# ifdef CGAL_SS3_ACUTE_WEIGHTS
     const CGAL::FT x_speed = 20;
     const CGAL::FT y_speed = 20;
     const CGAL::FT z_speed = 20;
     const CGAL::FT other_speed = 18.7939;
-# elif defined(CGAL_SSE_MERGING_WEIGHTS)
+# elif defined(CGAL_SS3_MERGING_WEIGHTS)
     const CGAL::FT x_speed = 20;
     const CGAL::FT y_speed = 20;
     const CGAL::FT z_speed = 20;
     const CGAL::FT other_speed = 19.8777;
-# elif defined(CGAL_SSE_PERFORMANCE_WEIGHTS)
+# elif defined(CGAL_SS3_PERFORMANCE_WEIGHTS)
     const CGAL::FT x_speed = 5;
     const CGAL::FT y_speed = 5;
     const CGAL::FT z_speed = 2;
@@ -1105,7 +1107,6 @@ bool SimpleStraightSkel::run() {
 
     DEBUG_VAL("Using " << vertex_splitter_->toString() << " to initialize polyhedron.");
     if (init(polyhedron)) {
-
         if (controller_) {
             controller_->wait();
         }
@@ -1119,15 +1120,36 @@ bool SimpleStraightSkel::run() {
         for(;;) {
             static int event_id = 0;
 
-            std::cout << " =========== ITERATION #" << event_id << " AT OFFSET " << offset << std::endl;
+            DEBUG_PRINT(" =========== ITERATION #" << event_id << " AT OFFSET " << offset);
+            DEBUG_PRINT(polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
-            // db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
-            // db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
+            // std::stringstream ss_filename;
+            // ss_filename << "results/" << save_path_.string() << "/face_count.txt";
+            // std::ofstream out(ss_filename.str(), std::ios::app);
+            // if (out) {
+            //     out.precision(17);
+            //     out << polyhedron->facets().size() << "\n";
+            //     out.close();
+            // }
+
+            // @debug +
+            DEBUG_PRINT(intersectionCache_.size() << " elements in crash cache");
+
+            std::list<FacetSPtr>::iterator it_f_tmp = polyhedron->facets().begin();
+            while (it_f_tmp != polyhedron->facets().end()) {
+                FacetSPtr facet = *it_f_tmp++;
+                CGAL_assertion(facet->getPlane()->a() == basePlanes_.at(facet->getBasePlaneID())->a());
+                CGAL_assertion(facet->getPlane()->b() == basePlanes_.at(facet->getBasePlaneID())->b());
+                CGAL_assertion(facet->getPlane()->c() == basePlanes_.at(facet->getBasePlaneID())->c());
+                CGAL_assertion_code(CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();)
+                CGAL_assertion(facet->getPlane()->d() == basePlanes_.at(facet->getBasePlaneID())->d() - speed * offset);
+            }
+            // @debug -
 
             PQ queue;
             collectEvents(polyhedron, offset, queue);
 
-            // @debug +
+#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
             {
                 std::cout << "------------------------------" << std::endl;
                 std::cout << "--- Event queue (" << event_id << ") ---" << std::endl;
@@ -1146,7 +1168,7 @@ bool SimpleStraightSkel::run() {
                 std::cout << "-------------------" << std::endl;
                 std::cout << "-------------------" << std::endl;
             }
-            // @ debug -
+#endif
 
             if (queue.empty()) {
                 break; // we are done
@@ -1174,20 +1196,23 @@ bool SimpleStraightSkel::run() {
 
             // @tmp +
             if (simultaneousEvents) {
-              std::cerr << "Error: you should not be encountering simultaneous events these days" << std::endl;
+              std::cerr << "Error: there should not be any simultaneous events these days" << std::endl;
+              std::cerr << "Forgot to enable perturbations in the config file?" << std::endl;
               std::exit(1);
             }
             // @tmp -
 
             offset_next = event->getOffset();
 
-            std::cout << " current offset: " << offset << "\n"
-                      << " next offset: " << offset_next << " (type " << event->getType() << ")\n"
-                      << " simultaneous? " << simultaneousEvents << "\n"
-                      << " save? " << doSave << "\n"
-                      << " in perturbed mode? " << usingTemporaryPerturbedMode_
-                      << " @ " << simultaneousOffset_ << std::endl;
-            std::cout << "current elapsed time: " << util::Timer::now() - t_start << std::endl;
+            DEBUG_PRINT(" current offset: " << offset << "\n"
+                     << " next offset: " << offset_next << " (type " << event->getType() << ")\n"
+                     << " simultaneous? " << simultaneousEvents << "\n"
+                     << " save? " << doSave << "\n"
+                     << " in perturbed mode? " << usingTemporaryPerturbedMode_
+                     << " @ " << simultaneousOffset_);
+#ifdef CGAL_SS3_RUN_TIMERS
+            std::cout << "current elapsed time: " << timer.time(); << std::endl;
+#endif
 
 #ifdef CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
             std::cout << "============== USING AUTOREF APPROACH =============" << std::endl;
@@ -1197,7 +1222,7 @@ bool SimpleStraightSkel::run() {
             // switch ON perturbation if needed
             if (simultaneousEvents) {
                 if (doSave) {
-                    std::cout << "!!!! SAVE EVENT AT SIMULTANEITY !!!!" << std::endl;
+                    std::cout << "Save event at simultaneity" << std::endl;
                     return handleSaveEventAtSimultaneity(polyhedron, offset, offset_next);
                 }
 
@@ -1230,9 +1255,9 @@ bool SimpleStraightSkel::run() {
                 }
             }
 
-            std::cout << "\n-----------------------------------------------------" << std::endl;
-            std::cout << "-- Event #" << event_id << " " << event->toString() << " --" << std::endl;
-            std::cout << "-----------------------------------------------------\n" << std::endl;
+            DEBUG_PRINT("\n-----------------------------------------------------");
+            DEBUG_PRINT("-- Event #" << event_id << " " << event->toString() << " --");
+            DEBUG_PRINT("-----------------------------------------------------\n");
 
             if (controller_) {
                 controller_->wait();
@@ -1279,8 +1304,9 @@ bool SimpleStraightSkel::run() {
                 if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
 #ifndef CGAL_SS3_NO_SKELETON_DS
                     event->setPolyhedronResult(polyhedron);
-                    skel_result_->addEvent(event);
 #endif
+                    skel_result_->addEvent(event);
+
                     bool screenshot_on_const_offset_event =
                             util::Configuration::getInstance()->getBool(
                             "algo_3d_SimpleStraightSkel", "screenshot_on_const_offset_event");
@@ -1317,25 +1343,23 @@ bool SimpleStraightSkel::run() {
             }
 #endif // CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
 
-            std::cout << "-- Finished handling Event --" << std::endl;
+            DEBUG_PRINT("-- Finished handling Event --");
 
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
 
-            // @debug +
-            DEBUG_PRINT("-- Degen count --");
-            std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-            while (it_f != polyhedron->facets().end()) {
-                FacetSPtr facet = *it_f++;
-                auto it_v = facet->vertices().begin();
-                Point3SPtr p0 = (*(it_v++))->getPoint();
-                Point3SPtr p1 = (*(it_v++))->getPoint();
-                Point3SPtr p2 = (*it_v)->getPoint();
-                if (CGAL::collinear(*p0, *p1, *p2)) {
-                    std::cout << *p0 << " " << *p1 << " " << *p2 << " is degen" << std::endl;
-                }
-            }
-            // @debug -
+            // std::cout << "-- Degen count --" << std::endl;
+            // std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+            // while (it_f != polyhedron->facets().end()) {
+            //     FacetSPtr facet = *it_f++;
+            //     auto it_v = facet->vertices().begin();
+            //     Point3SPtr p0 = (*(it_v++))->getPoint();
+            //     Point3SPtr p1 = (*(it_v++))->getPoint();
+            //     Point3SPtr p2 = (*it_v)->getPoint();
+            //     if (CGAL::collinear(*p0, *p1, *p2)) {
+            //         std::cout << *p0 << " " << *p1 << " " << *p2 << " is degen" << std::endl;
+            //     }
+            // }
 
             CGAL_assertion(polyhedron->isConsistent());
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -1374,9 +1398,12 @@ bool SimpleStraightSkel::run() {
 
 
         DEBUG_PRINT("== Straight Skeleton 3D finished ==");
-        double time = util::Timer::now() - t_start;
-        skel_result_->appendDescription("time=" +
-                util::StringFactory::fromDouble(time) + "; ");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+        timer.stop();
+        skel_result_->appendDescription("time=" + timer.time() + "; ");
+#endif
+
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
         std::cout << skel_result_->toString() << std::endl;
@@ -1603,8 +1630,6 @@ SheetSPtr SimpleStraightSkel::createSheet(EdgeSPtr edge) {
 }
 
 bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
-    std::cout << "Simple Skeleton -- Initialization" << std::endl;
-
     WriteLock l(polyhedron->mutex());
     bool result = true;
 
@@ -1643,7 +1668,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         }
     }
 
-    std::cout << vertices_tosplit.size() << " vertices to split" << std::endl;
+    DEBUG_PRINT(vertices_tosplit.size() << " vertices to split");
 
     if (controller_) {
         l.unlock();
@@ -1661,7 +1686,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     it_v = vertices_tosplit.begin();
     while (it_v != vertices_tosplit.end()) {
         VertexSPtr vertex = *it_v++;
-        std::cout << "Split #" << v2s_i++ << ": " << vertex->toString() << std::endl;
+        DEBUG_PRINT("Split #" << v2s_i++ << ": " << vertex->toString());
 
         bool equal_speeds = true;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
@@ -1683,15 +1708,13 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         }
 
         if (use_fast_vertex_splitter_ && equal_speeds && vertex->isConvex()) {
-            std::cout << "Split convex vertex" << std::endl;
             AbstractVertexSplitter::splitConvexVertex(vertex);
         } else if (use_fast_vertex_splitter_ && equal_speeds && vertex->isReflex()) {
-            std::cout << "Split reflex vertex" << std::endl;
             AbstractVertexSplitter::splitReflexVertex(vertex);
         } else {
             l.unlock();
+            DEBUG_PRINT("Split generic vertex");
             DEBUG_VAR(vertex->toString());
-            std::cout << "Split generic vertex" << std::endl;
             vertex_splitter_->splitVertex(vertex);
             if (controller_) {
                 controller_->setDispPolyhedron(polyhedron);
@@ -1904,7 +1927,6 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPla
                                                                                              FacetSPtr facet_2,
                                                                                              FacetSPtr facet_3)
 {
-// #define CGAL_SS3_NO_CACHING
 #ifdef CGAL_SS3_NO_CACHING
     Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
     Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
@@ -1991,8 +2013,6 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairOpposite(Fa
                                                                               FacetSPtr facet_2,
                                                                               FacetSPtr facet_3)
 {
-    std::cout << "vanishesAtOnePairOpposite()" << std::endl;
-
     Point3SPtr point = Point3SPtr();
 
     Plane3SPtr plane_0 = facet_0->plane();
@@ -2067,7 +2087,6 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairOpposite(Fa
             std::cerr << "No intersection of shifted planes" << std::endl;
             return { };
         } else {
-            std::cout << "---> " << *point << " at " << t << std::endl;
             return { point, t };
         }
     } else {
@@ -2185,12 +2204,14 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
         if (usePerturbations) {
             parallelism = PLANES_PARALLELISM_NONE;
         } else {
+            // @todo get rid of all the degenerate code
+            std::cerr << "You are not supposed to encounter degenerate configurations" << std::endl;
             std::exit(1); // @tmp
             parallelism = quadplane_parallelism(facetL, facetP, facetR, facetN);
         }
 
         if(parallelism != PLANES_PARALLELISM_NONE)
-          std::cout << "parallelism = " << parallelism << std::endl;
+          std::cerr << "parallelism = " << parallelism << std::endl;
 
         if (parallelism == PLANES_PARALLELISM_NONE) {
             // generic case
@@ -2688,7 +2709,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
                                            CGAL::FT& current_offset_to_nearest_event,
                                            PQ& queue)
 {
-    std::cout << ">>> Collect Edge Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Edge Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2699,10 +2720,6 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
         VertexSPtr vertex_src = edge->getVertexSrc();
         VertexSPtr vertex_dst = edge->getVertexDst();
         if (vertex_src->getPoint() == vertex_dst->getPoint()) {
-            continue;
-        }
-
-        if (isLocked(edge)) { // one of the vertices cannot be rebuilt from its incident faces
             continue;
         }
 
@@ -2900,7 +2917,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                 CGAL::FT& current_offset_to_nearest_event,
                                                 PQ& queue)
 {
-    std::cout << ">>> Collect Edge Merge Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Edge Merge Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3048,7 +3065,7 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
                                                CGAL::FT& current_offset_to_nearest_event,
                                                PQ& queue)
 {
-    std::cout << ">>> Collect Triangle Event" << std::endl;
+    DEBUG_PRINT(">>> Collect Triangle Event");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3157,17 +3174,13 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                    CGAL::FT& current_offset_to_nearest_event,
                                                    PQ& queue)
 {
-    std::cout << ">>> Collect Dbl Edge Merge Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Dbl Edge Merge Events");
 
     ReadLock l(polyhedron->mutex());
 
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
-
-        if (isLocked(edge)) {
-            continue;
-        }
 
         if (!isReflex(edge)) {
             continue;
@@ -3278,7 +3291,7 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
                                                   CGAL::FT& current_offset_to_nearest_event,
                                                   PQ& queue)
 {
-    std::cout << ">>> Collect Dbl Triangle Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Dbl Triangle Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3346,7 +3359,7 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                                                   CGAL::FT& current_offset_to_nearest_event,
                                                   PQ& queue)
 {
-    std::cout << ">>> Collect Tetrahedron Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Tetrahedron Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3426,7 +3439,7 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
                                              CGAL::FT& current_offset_to_nearest_event,
                                              PQ& queue)
 {
-    std::cout << ">>> Collect Vertex Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Vertex Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3604,7 +3617,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
                                                  CGAL::FT& current_offset_to_nearest_event,
                                                  PQ& queue)
 {
-    std::cout << ">>> Collect Flip Vertex Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Flip Vertex Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3783,7 +3796,7 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                                               CGAL::FT& current_offset_to_nearest_event,
                                               PQ& queue)
 {
-    std::cout << ">>> Collect Surface Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Surface Events");
     CGAL::Real_timer timer;
     timer.start();
 
@@ -3934,16 +3947,16 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-            std::cout << "accepted surface event " << event->toString() << std::endl;
-
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
             current_offset_to_nearest_event = offset_event;
 #endif
         }
     }
 
+#ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     std::cout << "Sought Surface Events in: " << timer.time() << std::endl;
+#endif
 }
 
 void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
@@ -3951,7 +3964,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
                                                       CGAL::FT& current_offset_to_nearest_event,
                                                       PQ& queue)
 {
-    std::cout << ">>> Collect Polyhedron Split Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Polyhedron Split Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -4049,7 +4062,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
                                                  CGAL::FT& current_offset_to_nearest_event,
                                                  PQ& queue)
 {
-    std::cout << ">>> Collect Split Merge Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Split Merge Events");
 
     ReadLock l(polyhedron->mutex());
 
@@ -4223,15 +4236,17 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
                                                 CGAL::FT& current_offset_to_nearest_event,
                                                 PQ& queue)
 {
-    std::cout << ">>> Collect Edge Split Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Edge Split Events");
 
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     unsigned int filtered_candidates = 0;
     unsigned int tested_candidates = 0;
 #endif
 
+#ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
+#endif
 
     ReadLock l(polyhedron->mutex());
 
@@ -4244,7 +4259,16 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     std::cout << edges_reflex.size() << " reflex edges" << std::endl;
+
+    std::stringstream ss_filename;
+    ss_filename << save_path_.string() << "/reflex_edge_count.txt";
+    std::ofstream out(ss_filename.str(), std::ios::app);
+    out.precision(17);
+    out << edges_reflex.size() << "\n";
+    out.close();
+#endif
 
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex.begin();
     while (it_e1 != edges_reflex.end()) {
@@ -4442,8 +4466,11 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     std::cout << "Sought Edge Split Events in: " << timer.time() << std::endl;
+#endif
+
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     std::cout << "  " << filtered_candidates << " filtered, " << tested_candidates << " tests" << std::endl;
 #endif
@@ -4454,10 +4481,12 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                                              CGAL::FT& current_offset_to_nearest_event,
                                              PQ& queue)
 {
-    std::cout << ">>> Collect Pierce Events" << std::endl;
+    DEBUG_PRINT(">>> Collect Pierce Events");
 
+#ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
+#endif
 
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     unsigned int pierce_vertex_counter = 0;
@@ -4470,9 +4499,6 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
-        if (isLocked(vertex)) {
-            continue;
-        }
 
         // actual check
         if (isReflex(vertex)) {
@@ -4722,7 +4748,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                     }
 
                     if (boundary_rejection) {
-                        std::cout << "Pierce event on boundary --> rejected" << std::endl;
+                        DEBUG_PRINT("Pierce event on boundary --> rejected");
                         continue;
                     }
 
@@ -4738,8 +4764,6 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                     event->setFacet(facet);
                     event->setVertex(vertex);
 
-                    // std::cout << "Accepted pierce event " << event->toString() << std::endl;
-
                     queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
@@ -4750,11 +4774,15 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     std::cout << "Sought Pierce Events in: " << timer.time() << std::endl;
+#endif
+
+
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-    std::cout << "  " << pierce_vertex_counter << " reflex vertices" << std::endl;
-    std::cout << "  " << filtered_candidates << " filtered, " << tested_candidates << " tests" << std::endl;
+    DEBUG_PRINT("  " << pierce_vertex_counter << " reflex vertices");
+    DEBUG_PRINT("  " << filtered_candidates << " filtered, " << tested_candidates << " tests");
 #endif
 }
 
@@ -4767,8 +4795,10 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
         return;
     }
 
+#ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
+#endif
 
     // To handle save events at simultaneous events, save events are dealt with directly in the loop
     // if (!save_offsets_.empty()) {
@@ -4811,8 +4841,10 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     collectSurfaceEvents(polyhedron, current_offset, current_offset_to_nearest_event, queue);
     collectEdgeSplitEvents(polyhedron, current_offset, current_offset_to_nearest_event, queue);
 
+#ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     std::cout << "Sought All Events in: " << timer.time() << std::endl;
+#endif
 }
 
 // Note that this takes care of the pop
@@ -5968,8 +6000,8 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 
     return { polyhedron, event->getOffset() + delta };
 }
@@ -5991,12 +6023,13 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     vertex_src_offset->setPoint(node->getPoint());
     vertex_dst_offset->setPoint(node->getPoint());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#########  Handle Edge Event  ##########" << std::endl;
-    std::cout << "########################################" << std::endl;
-    std::cout << node->toString() << std::endl;
-    std::cout << edge->toString() << std::endl;
-    std::cout << "Edge Offset: " << edge_offset->toString() << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#########  Handle Edge Event  ##########");
+    DEBUG_PRINT("########################################");
+
+    DEBUG_PRINT(node->toString());
+    DEBUG_PRINT(edge->toString());
+    DEBUG_PRINT("Edge Offset: " << edge_offset->toString());
 
     // grab vertices and facets counter clockwise around node
     VertexSPtr vertices[4];
@@ -6019,6 +6052,7 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     facets[0] = facets[3]->next(vertex_src_offset);
     facets[2] = facets[1]->next(vertex_dst_offset);
 
+#if 0
     std::cout << "vertices:\n"
               << "     " << *(vertices[0]->getPoint()) << "\n"
               << "     " << *(vertices[1]->getPoint()) << "\n"
@@ -6031,19 +6065,14 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         for(auto p : facets[i]->vertices_)
             std::cout << "  " << *(p->getPoint()) << "\n";
     }
+#endif
 
     // check if edge should be flipped
-    // @todo if one fails, just take the other immediately without SI checks
     bool flip_edge = true;
 
-    bool do_tests = (!isLocked(edge->getVertexSrc()) && !isLocked(edge->getVertexDst()) &&
-                     !isLocked(vertices[0]) && !isLocked(vertices[1]) &&
-                     !isLocked(vertices[2]) && !isLocked(vertices[3]));
-
     bool not_flipped_valid = false;
-    if(do_tests)
     {
-        std::cout << "== Trying WITHOUT a flip ==" << std::endl;
+        DEBUG_PRINT("== Trying WITHOUT a flip ==");
 
         /*
         NO FLIP:
@@ -6106,16 +6135,17 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         }
     }
 
-    std::cout << "not_flipped_valid = " << not_flipped_valid << std::endl;
+    DEBUG_VAR(not_flipped_valid);
 
     bool flipped_valid = false;
 #if 0
-    if (!do_tests || !not_flipped_valid) { // redundant but for clarity
+    // @todo if one fails, just take the other immediately without SI checks
+    if (!not_flipped_valid) { // redundant but for clarity
         flipped_valid = true;
     } else
 #endif
     {
-        std::cout << "== Trying WITH a flip ==" << std::endl;
+        DEBUG_PRINT("== Trying WITH a flip ==");
 
         /*
         FLIP:
@@ -6177,7 +6207,7 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         }
     }
 
-    std::cout << "flipped_valid = " << flipped_valid << std::endl;
+    DEBUG_VAR(flipped_valid);
 
     if (flipped_valid && !not_flipped_valid) {
         flip_edge = true;
@@ -6310,17 +6340,17 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     skel_result_->addSheet(sheet);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "######  Handle Edge Merge Event  #######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Edge Merge Event  #######");
+    DEBUG_PRINT("########################################");
 
     SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
             event->getFacet()->getData());
@@ -6403,8 +6433,8 @@ void SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event, Polyhedr
     ArcSPtr arc = createArc(vertex);
     skel_result_->addArc(arc);
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 
 #if 0 // using EPECK for now so we are exact
     if (crashAt(edge_1, edge_b).first || crashAt(edge_b, edge_1).first) {
@@ -6426,9 +6456,9 @@ void SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event, Polyhedron
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#######  Handle Triangle Event  ########" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#######  Handle Triangle Event  ########");
+    DEBUG_PRINT("########################################");
 
     VertexSPtr vertices[3];
     event->getVertices(vertices);
@@ -6443,14 +6473,14 @@ void SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event, Polyhedron
             event->getFacet()->getData());
     FacetSPtr facet_offset = facet_data->getOffsetFacet();
 
-    std::cout << "VS:\n"
-              << vertices[0]->toString() << "\n"
-              << vertices[1]->toString() << "\n"
-              << vertices[2]->toString() << std::endl;
-    std::cout << "VSO:\n"
-              << vertices_offset[0]->toString() << "\n"
-              << vertices_offset[1]->toString() << "\n"
-              << vertices_offset[2]->toString() << std::endl;
+    DEBUG_PRINT("VS:\n"
+             << vertices[0]->toString() << "\n"
+             << vertices[1]->toString() << "\n"
+             << vertices[2]->toString());
+    DEBUG_PRINT("VSO:\n"
+             << vertices_offset[0]->toString() << "\n"
+             << vertices_offset[1]->toString() << "\n"
+             << vertices_offset[2]->toString());
 
     if (facet_offset->vertices().size() == 3) {
         polyhedron->removeFacet(facet_offset);
@@ -6492,17 +6522,17 @@ void SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event, Polyhedron
     ArcSPtr arc = createArc(vertex_offset);
     skel_result_->addArc(arc);
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#######  Handle Dbl Edge Event  ########" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#######  Handle Dbl Edge Event  ########");
+    DEBUG_PRINT("########################################");
 
     SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
             event->getEdge11()->getData());
@@ -6586,17 +6616,17 @@ void SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event, Po
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#####  Handle Dbl Triangle Event  ######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#####  Handle Dbl Triangle Event  ######");
+    DEBUG_PRINT("########################################");
 
     EdgeSPtr edge = event->getEdge();
 
@@ -6696,17 +6726,17 @@ void SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event, Poly
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "######  Handle Tetrahedron Event  ######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Tetrahedron Event  ######");
+    DEBUG_PRINT("########################################");
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
@@ -6763,17 +6793,17 @@ void SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event, Poly
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#######  Handle Vertex Event  #########" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("########  Handle Vertex Event  #########");
+    DEBUG_PRINT("########################################");
 
     SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex1()->getData());
@@ -6890,17 +6920,17 @@ void SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event, PolyhedronSPtr
     skel_result_->addSheet(sheet);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "######  Handle Flip Vertex Event  ######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Flip Vertex Event  ######");
+    DEBUG_PRINT("########################################");
 
     SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex1()->getData());
@@ -6967,23 +6997,23 @@ void SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event, Polyhe
     skel_result_->addArc(arc_2);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#######  Handle Surface Event  #########" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#######  Handle Surface Event  #########");
+    DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
     appendEventNode(node);
 
-    std::cout << "Node = " << *(node->getPoint()) << std::endl;
-    std::cout << "Edge A = " << event->getEdge1()->toString() << std::endl;
-    std::cout << "Edge B = " << event->getEdge2()->toString() << std::endl;
+    DEBUG_PRINT("Node = " << *(node->getPoint()));
+    DEBUG_PRINT("Edge A = " << event->getEdge1()->toString());
+    DEBUG_PRINT("Edge B = " << event->getEdge2()->toString());
 
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
             event->getEdge1()->getData());
@@ -7090,23 +7120,23 @@ void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSP
     skel_result_->addSheet(sheet);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "####  Handle Polyhedron Split Event  ###" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("####  Handle Polyhedron Split Event  ###");
+    DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
     appendEventNode(node);
 
-    std::cout << "Node = " << *(node->getPoint()) << std::endl;
-    std::cout << "Edge A = " << event->getEdge1()->toString() << std::endl;
-    std::cout << "Edge B = " << event->getEdge2()->toString() << std::endl;
+    DEBUG_PRINT("Node = " << *(node->getPoint()));
+    DEBUG_PRINT("Edge A = " << event->getEdge1()->toString());
+    DEBUG_PRINT("Edge B = " << event->getEdge2()->toString());
 
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
             event->getEdge1()->getData());
@@ -7201,17 +7231,17 @@ void SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr eve
     skel_result_->addArc(arc_r);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
     appendEventNode(event->getNode());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "#####  Handle Split Merge Event  #######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#####  Handle Split Merge Event  #######");
+    DEBUG_PRINT("########################################");
 
     SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex1()->getData());
@@ -7348,20 +7378,16 @@ void SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event, Polyhe
     skel_result_->addArc(arc_2);
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
-
-    std::cout << "########################################" << std::endl;
-    std::cout << "###  Handle Split Merge Event (END)  ###" << std::endl;
-    std::cout << "########################################" << std::endl;
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "######  Handle Edge Split Event  #######" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Edge Split Event  #######");
+    DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
     appendEventNode(node);
@@ -7433,22 +7459,22 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
     }
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
-    std::cout << "########################################" << std::endl;
-    std::cout << "########  Handle Pierce Event  #########" << std::endl;
-    std::cout << "########################################" << std::endl;
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("########  Handle Pierce Event  #########");
+    DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
 
-    std::cout << "Node: " << node->toString() << std::endl;
-    std::cout << "V: " << event->getVertex()->toString() << std::endl;
-    std::cout << "F: " << event->getFacet()->toString() << std::endl;
+    DEBUG_PRINT("Node: " << node->toString());
+    DEBUG_PRINT("V: " << event->getVertex()->toString());
+    DEBUG_PRINT("F: " << event->getFacet()->toString());
 
     SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex()->getData());
@@ -7529,8 +7555,6 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
     PCDT::Locate_type lt;
     PCDT_FH fh = pcdt.locate(*(node->getPoint()), lt, li);
 
-    std::cout << "lt = " << lt << std::endl;
-
     if (lt == PCDT::VERTEX || lt == PCDT::EDGE) {
         CGAL_assertion(false); // @todo handle this by looping over incident faces
     } else if (lt == PCDT::FACE) {
@@ -7542,12 +7566,10 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
     if (reject_event) {
         std::cout << "Pierce Event rejected" << std::endl;
         event->setPolyhedronResult(polyhedron);
-        // skel_result_->addEvent(event);
+        skel_result_->addEvent(event);
         return;
     }
 #endif // CGAL_SS3_FILTER_PIERCE_EVENTS_AT_POP_TIME
-
-    std::cout << "Pierce accepted" << std::endl;
 
     appendEventNode(node);
 
@@ -7607,14 +7629,14 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
     }
 
     event->setPolyhedronResult(polyhedron);
-    skel_result_->addEvent(event);
 #endif
+    skel_result_->addEvent(event);
 }
 
 
 StraightSkeletonSPtr SimpleStraightSkel::getResult() const {
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    std::cerr << "No skeleton to return, it was not built" << std::endl;
+    std::cerr << "No skeleton to return: it was not built" << std::endl;
     std::exit(1);
 #endif
     return this->skel_result_;

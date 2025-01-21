@@ -214,9 +214,9 @@ bool OBJFile::save(const std::string& filename,
                    const bool do_triangulate,
                    const bool convert_to_double)
 {
-    std::cout << " -- Save OBJ " << filename << " --" << std::endl;
-    std::cout << "\tdo_triangulate: " << std::boolalpha << do_triangulate << "\n"
-              << "\tconvert_to_double: " << convert_to_double << std::endl;
+    DEBUG_PRINT(" -- Save OBJ " << filename << " --");
+    DEBUG_PRINT("    do_triangulate: " << std::boolalpha << do_triangulate << "\n"
+             << "    convert_to_double: " << convert_to_double);
 
     polyhedron->initializeAllIDs();
     // std::cout << polyhedron->toString() << std::endl;
@@ -269,7 +269,6 @@ bool OBJFile::save(const std::string& filename,
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
-            unsigned int id = facet->getID();
 
             bool do_triangulate_face = do_triangulate;
             if (facet->edges().size() < 3)
@@ -309,7 +308,7 @@ bool OBJFile::save(const std::string& filename,
 
                     if(*(v0->getPoint()) == *(v1->getPoint()))
                     {
-                        std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+                        // std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
 
                         CGAL_assertion(v0->degree() != 1); // @todo handle that...
                         VertexSPtr vm1 = edge->prev(facet)->src(facet);
@@ -406,10 +405,10 @@ bool OBJFile::save(const std::string& filename,
         //           polyhedron->facets().size() == facet_id);
         ofs.close();
     } else {
-        std::cerr << "Error: failed to open file" << std::endl;
+        DEBUG_PRINT("Warning: failed to open file");
         CGAL_assertion(false);
     }
-    std::cout << "-- Write OBJ end --" << std::endl;
+    DEBUG_PRINT("-- Write OBJ end --");
     return result;
 }
 

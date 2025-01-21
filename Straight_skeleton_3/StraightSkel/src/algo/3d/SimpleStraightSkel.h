@@ -68,9 +68,6 @@ public:
     void initVertexSplitter();
     void initEdgeEvent();
 
-    static bool isLocked(VertexSPtr vertex);
-    static bool isLocked(EdgeSPtr edge);
-
     static bool isReflex(EdgeSPtr edge);
     static bool isReflex(VertexSPtr vertex);
     static bool isConvex(VertexSPtr vertex);

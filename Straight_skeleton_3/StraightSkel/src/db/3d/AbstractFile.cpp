@@ -73,8 +73,8 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
                                       double epsilon)
 {
-    std::cout << "\n> Merging coplanar faces with epsilon = " << epsilon << std::endl;
-    std::cout << "  initial face count: " << polyhedron->facets().size() << std::endl;
+    DEBUG_PRINT("\n> Merging coplanar faces with epsilon = " << epsilon);
+    DEBUG_PRINT("  initial face count: " << polyhedron->facets().size());
 
     // db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,
     //                        false /*do not triangulate*/);
@@ -88,7 +88,8 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
             edges_toremove.push_back(edge);
         }
     }
-    std::cout << edges_toremove.size() << " edges to merge" << std::endl;
+
+    DEBUG_PRINT(edges_toremove.size() << " edges to merge");
     if (edges_toremove.size() > 0) {
         DEBUG_PRINT("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
     }
@@ -112,8 +113,12 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
         }
         result++;
     }
-    std::cout << "  final face count: " << polyhedron->facets().size() << std::endl;
-    db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron, false /*do not triangulate*/);
+
+    DEBUG_PRINT("  final face count: " << polyhedron->facets().size());
+
+    // db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
+    //                        false /*do not triangulate*/);
+
     return result;
 }
 
@@ -123,7 +128,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
-        std::cout << "Considering " << vertex->toString() << std::endl;
+        DEBUG_PRINT("Considering " << vertex->toString());
         if (vertex->degree() < 3) {
             vertices_toremove.push_back(vertex);
         }
@@ -131,7 +136,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
         VertexSPtr vertex = *it_v++;
-        std::cout << "Removing " << vertex->toString() << std::endl;
+        DEBUG_PRINT("Removing " << vertex->toString());
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;

@@ -160,7 +160,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,
                                                      const bool recompute_positions)
 {
-    std::cout << "~~~~ Shift by " << offset << std::endl;
+    DEBUG_PRINT("~~~~ Shift by " << offset);
 
     std::ofstream shift_out("results/last_shift.polylines.txt");
     shift_out.precision(17);
@@ -365,11 +365,9 @@ void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
 // and if the planes were singletons, we would benefit from static filters
 void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
-    std::cout << "\n> harmonizeFacetPlanes()" << std::endl;
-
     // @todo also harmonize parallel but non equal planes (i.e., opposite normal directions)
 
-    // @todo this needs to be rewritten to use kernel predicates to sort the planes
+    // @todo this must be rewritten to use kernel predicates to sort the planes
     // Order all the supporting planes in a global order
     // The order is completely arbitrary, the only thing that we care about
     // is to quickly find which planes are identical
@@ -404,7 +402,7 @@ void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
             facet->normalizePlaneCoefficients();
             res.first->second = facet->getPlane();
         } else {
-            std::cout << "Facet #" << facet->getID() << " is reusing coefficients from Facet #" << res.first->first->getID() << std::endl;
+            // std::cout << "Facet #" << facet->getID() << " is reusing coefficients from Facet #" << res.first->first->getID() << std::endl;
 
             // a parallel plane already exists, so we re-use its a, b, c coordinates
             // but need the 'd' to be shifted so the plane goes through the facet's vertices
@@ -503,8 +501,6 @@ Vector3SPtr PolyhedronTransformation::randVec(double min, double max) {
 }
 
 void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
-    std::cout << "Points will be moved randomly..." << std::endl;
-
     double range = 0.001;
     util::ConfigurationSPtr config = util::Configuration::getInstance();
     if (config->isLoaded()) {
@@ -514,7 +510,8 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
         }
     }
 
-    std::cout << "rand_move_points_range=" << range << std::endl;
+    DEBUG_PRINT("Points will be moved randomly...");
+    DEBUG_PRINT("rand_move_points_range=" << range);
 
     // Store coefficients for possible un-tilting post-offset
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
@@ -575,14 +572,14 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
     while (it_v != polyhedron_cpy->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() != 3) {
-            std::cerr << "Can't use plane tilts because of " << vertex->toString() << std::endl;
+            DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
             canUsePlaneTilts = false;
             break;
         }
     }
 
     if (canUsePlaneTilts) {
-        std::cout << "All vertices are degree 3 ==> tilt the polyhedron's faces" << std::endl;
+        DEBUG_PRINT("All vertices are degree 3 ==> tilt the polyhedron's faces");
 
         std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
         while (it_f != polyhedron_cpy->facets().end()) {
@@ -697,7 +694,7 @@ bool PolyhedronTransformation::isInsideBox(PolyhedronSPtr polyhedron,
             if (!((*p_box_min)[i] <= (*p)[i] &&
                     (*p)[i] <= (*p_box_max)[i])) {
                 result = false;
-                std::cout << *p << " is not in the box " << *p_box_min << " " << *p_box_max << std::endl;
+                // std::cout << *p << " is not in the box " << *p_box_min << " " << *p_box_max << std::endl;
                 break;
             }
         }
