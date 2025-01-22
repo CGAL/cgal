@@ -1,4 +1,4 @@
-#option :
+#options:
 # GIT_REPO the path to the Git repository, default is the current working directory
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
@@ -201,8 +201,7 @@ foreach(manpage ${MANPAGES})
   configure_file(${GIT_REPO}/Installation/${manpage} ${release_dir}/${manpage} @ONLY)
 endforeach()
 
-# make an extra copy of examples and demos for the testsuite and generate
-# create_cgal_test_with_cmake for tests, demos, and examples
+# make an extra copy of examples and demos for the testsuite
 if (TESTSUITE)
   SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from master:%n")
   execute_process(
@@ -221,23 +220,6 @@ if (TESTSUITE)
 #append result in .scm-branch
   file(APPEND ${release_dir}/.scm-branch "${OUT_VAR}")
 
-  file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
-  foreach(d ${tests})
-    if(IS_DIRECTORY "${release_dir}/test/${d}")
-      if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}")
-        endif()
-      endif()
-    endif()
-  endforeach()
-
   file(MAKE_DIRECTORY "${release_dir}/tmp")
   #copy demo/PKG to test/PKG_Demo
   file(GLOB demos RELATIVE "${release_dir}/demo" "${release_dir}/demo/*")
@@ -250,17 +232,6 @@ if (TESTSUITE)
         #do the copy in 2 pass since we cannot specify the target name
         file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/tmp")
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
-        if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
-          execute_process(
-            COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
-            WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
-            RESULT_VARIABLE RESULT_VAR
-            OUTPUT_VARIABLE OUT_VAR
-          )
-          if(NOT "${RESULT_VAR}" STREQUAL "0")
-            message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Demo")
-          endif()
-        endif()
       endif()
     endif()
   endforeach()
@@ -271,17 +242,6 @@ if (TESTSUITE)
       #do the copy in 2 pass since we cannot specify the target name
       file(COPY "${release_dir}/examples/${d}" DESTINATION "${release_dir}/tmp")
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
-      if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Examples")
-        endif()
-      endif()
     endif()
   endforeach()
   file(REMOVE_RECURSE "${release_dir}/tmp")
