@@ -3,7 +3,7 @@
  *
  * The concept `AosApproximateTraits_2` refines the concept
  * `AosApproximatePointTraits_2`. A model of this concept is able to
- * approximate a point and a curve (in addition to the ability to apprximate the
+ * approximate a point and a curve (in addition to the ability to approximate the
  * coordinates of a point).
  *
  * \cgalRefines{AosApproximatePointTraits_2}
