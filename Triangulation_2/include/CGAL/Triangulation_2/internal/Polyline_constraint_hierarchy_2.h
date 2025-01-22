@@ -482,15 +482,12 @@ public:
   { return cid.vl_ptr()->all_end(); }
 
   bool enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const;
-  bool next_along_sc(T va, T vb, T& w) const;
-  void oriented_end(T va, T vb, T& vc) const;
 
   Context context(T va, T vb);
   size_type number_of_enclosing_constraints(T va, T vb) const;
   Context_iterator contexts_begin(T va, T vb) const;
   Context_iterator contexts_end(T va, T vb) const;
-  Iterator_range<Context_iterator> contexts_range(T va, T vb) const;
-  Iterator_range<Context_iterator> contexts(T va, T vb) const; // alias to contexts_range
+  Iterator_range<Context_iterator> contexts(T va, T vb) const;
   Context_list* get_context_list(T va, T vb) const;
 
   size_type number_of_constraints() const  { return constraints_set.size();}
@@ -780,12 +777,6 @@ auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_end(T va, T vb) const -> Context_iterator
 {
   return contexts(vb, vb).end();
-}
-
-template <class T, class Compare, class Point>
-auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
-contexts_range(T va, T vb) const -> Iterator_range<Context_iterator> {
-  return contexts(va, vb);
 }
 
 template <class T, class Compare, class Point>
@@ -1169,35 +1160,6 @@ clear()
 }
 
 
-template <class T, class Compare, class Point>
-bool Polyline_constraint_hierarchy_2<T,Compare,Point>::
-next_along_sc(T va, T vb, T& w) const
-{
-  // find the next vertex after vb along any enclosing constrained
-  // return false if there is no ....
-  const auto& ctxts = contexts(va, vb);
-  CGAL_assertion(ctxts.empty() == false);
-  for(const auto& ctxt : ctxts) {
-    Vertex_it pos = ctxt.pos;
-    if((*pos) == va) {
-      ++pos;
-      ++pos;
-      if(pos != ctxt.enclosing.end()) {
-        w = *pos;
-        return true;
-      }
-    } else {
-      if(pos != ctxt.enclosing.begin()) {
-        --pos;
-        w = *pos;
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-
 /*
   same as add_Steiner
   precondition : va,vb est une souscontrainte.
@@ -1325,20 +1287,6 @@ get_pos(T va, T vb) const
 {
     return (*sc_to_c_map.find(sorted_pair(va,vb))).second->begin().pos;
 }
-
-template <class T, class Compare, class Point>
-void
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-oriented_end(T va, T vb, T& vc) const
-{
-  auto [ctxt, past] = contexts(va, vb);
-  CGAL_assertion(ctxt != past); CGAL_USE(past);
-  if(*(ctxt->pos) == va)
-    vc = ctxt->enclosing.back();
-  else
-    vc = ctxt->enclosing.front();
-}
-
 
 template <class T, class Compare, class Point>
 void
