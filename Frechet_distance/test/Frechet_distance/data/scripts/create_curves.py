@@ -10,17 +10,17 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # dimensionality of the curves
-D = 100
+D = 2
 # approximate average distance between two consecutive vertices
 verbose = False
-plot = False # plots only the first two dimensions
+plot = True # plots only the first two dimensions
 # number of curves and how many different start and end points
-num_curves = 10
+num_curves = 6
 num_start_end = 3
 start_mean = np.array(D*[0.])
-end_mean = np.array(D*[20.])
+end_mean = np.array(D*[50.])
 # random seed
-seed = 42
+seed = 1237
 # curve directory
 curve_name_prefix = f'../curves/generated_{D}d/'
 
@@ -29,8 +29,8 @@ rng = np.random.default_rng(seed)
 def norm(x):
     return la.norm(x, np.inf)
 
-def create_random_point(mean=np.zeros(D)):
-    return rng.normal(mean, 1.3)
+def create_random_point(mean=np.zeros(D), stddev=1.3):
+    return rng.normal(mean, stddev)
 
 def create_curve(start, end):
     curve = [start]
@@ -64,8 +64,8 @@ def write_to_file(curves, prefix = "curve"):
 starts = []
 ends = []
 for i in range(num_start_end):
-    starts.append(create_random_point(start_mean))
-    ends.append(create_random_point(end_mean))
+    starts.append(create_random_point(start_mean, 8.))
+    ends.append(create_random_point(end_mean, 8.))
 
 curves = create_curves(starts, ends, num_curves)
 
@@ -75,10 +75,19 @@ if verbose:
 
 # plot
 if plot:
-    for curve in curves:
+    for i, curve in enumerate(curves):
         X = [p[0] for p in curve]
         Y = [p[1] for p in curve]
-        plt.plot(X, Y)
+        if i == 5:
+            plt.plot(X, Y, linewidth=5)
+        elif i == 1 or i == 3:
+            plt.plot(X, Y, linewidth=2)
+        elif i == 0:
+            plt.plot(X, Y, color="gray", linewidth=2)
+        else:
+            plt.plot(X, Y, color="gray", alpha=.3)
+    plt.axis('scaled')
+    plt.tight_layout()
     plt.show()
 
 # export
