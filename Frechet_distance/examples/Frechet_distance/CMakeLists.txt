@@ -12,6 +12,7 @@ include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program( "Frechet_distance_2.cpp" )
 create_single_source_cgal_program( "Frechet_distance_3.cpp" )
+create_single_source_cgal_program( "Frechet_DS_2.cpp" )
 create_single_source_cgal_program( "Frechet_DS_3.cpp" )
 
 if(TARGET CGAL::Eigen3_support)
