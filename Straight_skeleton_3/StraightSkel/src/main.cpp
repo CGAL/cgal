@@ -153,11 +153,11 @@ std::filesystem::path parseSavePath(const char* chr_save_path) {
 
 
 int main(int argc, const char* argv[]) {
-    std::cout << "USING K = " << typeid(CGAL::K).name() << std::endl;
-    std::cout << "USING FT = " << typeid(CGAL::FT).name() << std::endl;
-
     std::cout.precision(17);
     std::cerr.precision(17);
+
+    std::cout << "USING K = " << typeid(CGAL::K).name() << std::endl;
+    std::cout << "USING FT = " << typeid(CGAL::FT).name() << std::endl;
 
     printCommand(argc, argv);
 
@@ -392,6 +392,8 @@ int main(int argc, const char* argv[]) {
                     polyhedron, p_box_min, p_box_max);
         }
 
+
+        // @todo don't duplicate with MeshOffset.h|.cpp
         if (rand_move_points) {
             polyhedron = algo::_3d::PolyhedronTransformation::perturb(polyhedron);
         }

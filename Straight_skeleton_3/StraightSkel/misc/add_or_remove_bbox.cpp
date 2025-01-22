@@ -1,8 +1,8 @@
+#include "algo/3d/MeshOffset.h"
+
 // For now, there are issues when EPECK is embedded back into doubles,
 // so dump files with EPECK and read them again with EPECK
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Bbox_3.h>
@@ -22,8 +22,6 @@
 #include <type_traits>
 #include <unordered_map>
 
-namespace PMP = ::CGAL::Polygon_mesh_processing;
-
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 using K = EPECK;
 using FT = K::FT;
@@ -35,103 +33,7 @@ using Mesh = CGAL::Surface_mesh<Point>;
 using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
-bool invert_and_add_bbox(Mesh& sm)
-{
-  std::cout << "Inverting and adding a Bbox..." << std::endl;
-
-  PMP::triangulate_faces(sm);
-
-  // check the sanity of the input
-  bool has_SI = PMP::does_self_intersect(sm);
-  if(has_SI) {
-    std::cerr << "Error: input has self intersections" << std::endl;
-    return false;
-  }
-
-  auto vol_id_map = sm.add_property_map<face_descriptor, std::size_t>().first;
-  std::size_t vccn = PMP::volume_connected_components(sm, vol_id_map,
-                                                      CGAL::parameters::do_orientation_tests(false));
-  std::size_t ccn = PMP::internal::number_of_connected_components(sm);
-  if(vccn != ccn) {
-    std::cerr << "Error: input has nested connected components" << std::endl;
-    return false;
-  }
-
-  PMP::orient_to_bound_a_volume(sm);
-  PMP::reverse_face_orientations(sm);
-
-  const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
-  Mesh bbox_mesh;
-  CGAL::make_hexahedron(Iso_cuboid(Point(bb.xmin(), bb.ymin(), bb.zmin()),
-                                   Point(bb.xmax(), bb.ymax(), bb.zmax())),
-                        bbox_mesh,
-                        CGAL::parameters::do_not_triangulate_faces(false));
-
-  // if the face:weight pmap exists, get the smallest value
-  // as to assign an even smaller value to the bounding box's faces
-  auto fwm = sm.property_map<face_descriptor, double>("f:weight");
-
-  double min_weight = std::numeric_limits<double>::max();
-  if(fwm)
-    for(face_descriptor f : faces(sm))
-      min_weight = (std::min)(min_weight, get(*fwm, f));
-
-  std::unordered_map<face_descriptor, face_descriptor> f2f;
-  CGAL::copy_face_graph(bbox_mesh, sm,
-                        CGAL::parameters::face_to_face_output_iterator(
-                          std::inserter(f2f, f2f.end())));
-
-  if(fwm)
-    for(const auto& e : f2f)
-      put(*fwm, e.second, 0.01 * min_weight);
-
-  if(CGAL::is_empty(sm) || !CGAL::is_closed(sm)) {
-    std::cerr << "Error: empty or open output" << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-bool remove_bbox_and_invert(Mesh& sm)
-{
-  std::cout << "Removing Bbox and inverting..." << std::endl;
-
-  CGAL_precondition(!CGAL::is_empty(sm));
-
-  auto vpm = get(CGAL::vertex_point, sm);
-
-  vertex_descriptor extreme_v = *(vertices(sm).begin());
-  for(vertex_descriptor v : vertices(sm)) {
-    if(get(vpm, v).z() > get(vpm, extreme_v).z())
-      extreme_v = v;
-  }
-
-  face_descriptor extreme_f = face(halfedge(extreme_v, sm), sm);
-  CGAL_assertion(extreme_f != boost::graph_traits<Mesh>::null_face());
-
-  std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF (with BBOX)" << std::endl;
-
-  std::vector<face_descriptor> fs { extreme_f };
-  PMP::remove_connected_components(sm, fs);
-
-  std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
-
-  PMP::orient_to_bound_a_volume(sm);
-
-  if(CGAL::is_empty(sm)) {
-    std::cerr << "Error: empty output" << std::endl;
-    return false;
-  } else if(!CGAL::is_closed(sm)) {
-    std::cerr << "Error: open output" << std::endl;
-    return false;
-  } else if(!CGAL::is_triangle_mesh(sm)) {
-    std::cerr << "Warning: non-triangle output" << std::endl;
-    return false;
-  }
-
-  return true;
-}
+namespace PMP = ::CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
@@ -186,7 +88,7 @@ int main(int argc, char** argv)
   }
 
   if(do_add) {
-    if(!invert_and_add_bbox(sm)) {
+    if(!algo::_3d::MeshOffset::invert_and_add_bbox(sm)) {
         return EXIT_FAILURE;
     }
 
@@ -203,7 +105,7 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
   } else {
-    if (!remove_bbox_and_invert(sm)) {
+    if (!algo::_3d::MeshOffset::remove_bbox_and_invert(sm)) {
       return EXIT_FAILURE;
     }
 

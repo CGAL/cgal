@@ -33,7 +33,7 @@
 #define LOC DBGOUT << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 /* macro using var args */
-#define DEBUG_PRINT(...) /*LOC*/ fprintf(stdout, __VA_ARGS__); DBGOUT << std::endl;
+#define DEBUG_PRINT(...) /*LOC*/ DBGOUT << __VA_ARGS__ << std::endl;
 
 /* macro for general debug print statements. */
 #define DEBUG_VAL(var) /*LOC*/ DBGOUT << var << std::endl;

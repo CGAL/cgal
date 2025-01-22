@@ -31,20 +31,15 @@ configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/confi
 
 find_package(CGAL)
 
-create_single_source_cgal_program("add_or_remove_bbox.cpp")
-create_single_source_cgal_program("analyze_input.cpp")
-create_single_source_cgal_program("color_ply_inputs.cpp")
-create_single_source_cgal_program("convert_to_weighted_PLY.cpp")
-create_single_source_cgal_program("compare_outputs.cpp")
-
-create_single_source_cgal_program("arrange_and_carve.cpp")
+create_single_source_cgal_program("misc/analyze_input.cpp")
+create_single_source_cgal_program("misc/color_ply_inputs.cpp")
 
 find_package(Eigen3 3.1.0)
 if(Eigen3_FOUND)
   message(STATUS "Found Eigen")
   include(CGAL_Eigen3_support)
 
-  create_single_source_cgal_program("tilt_faces.cpp")
+  create_single_source_cgal_program("misc/tilt_faces.cpp")
   target_link_libraries(tilt_faces PRIVATE CGAL::Eigen3_support)
 endif()
 
@@ -281,8 +276,22 @@ endif()
 set(StraightSkel_SOURCES src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
 target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+
+add_executable(offset_mesh src/offset_mesh.cpp)
+target_link_libraries(offset_mesh PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+
+add_executable(convert_to_weighted_PLY misc/convert_to_weighted_PLY.cpp)
+target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+
+add_executable(add_or_remove_bbox misc/add_or_remove_bbox.cpp)
+target_link_libraries(add_or_remove_bbox PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+
+add_executable(compare_outputs misc/compare_outputs.cpp)
+target_link_libraries(compare_outputs PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+
+# copy config file to build dir
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StraightSkel.ini
-    ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)
+               ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)
 
 
 if(BUILD_TESTS)

@@ -73,7 +73,7 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
                                       double epsilon)
 {
-    DEBUG_PRINT("\n> Merging coplanar faces with epsilon = " << epsilon);
+    DEBUG_PRINT("\nMerging coplanar faces with epsilon = " << epsilon);
     DEBUG_PRINT("  initial face count: " << polyhedron->facets().size());
 
     // db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,

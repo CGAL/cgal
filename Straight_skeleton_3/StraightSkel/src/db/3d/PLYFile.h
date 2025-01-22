@@ -12,6 +12,10 @@
 #define DB_3D_PLYFILE_H
 
 #include "db/3d/AbstractFile.h"
+#include "cgal_kernel.h"
+
+#include <CGAL/Surface_mesh.h>
+
 #include <string>
 
 namespace db { namespace _3d {
@@ -24,6 +28,9 @@ using namespace data::_3d;
 class PLYFile : public AbstractFile {
 public:
     virtual ~PLYFile();
+
+    static PolyhedronSPtr load(const CGAL::Surface_mesh<Point3>& sm,
+                               const std::string& description = {});
 
     static PolyhedronSPtr load(const std::string& filename);
 

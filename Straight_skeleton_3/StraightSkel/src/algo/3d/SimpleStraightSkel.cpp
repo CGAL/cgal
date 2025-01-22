@@ -4800,7 +4800,10 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     timer.start();
 #endif
 
-    // To handle save events at simultaneous events, save events are dealt with directly in the loop
+    // save events are created directly in the main event loop
+    // @todo when simultaneous event code is purged, it can be here again, which is better
+    // because it's easier to set 'current_offset_to_nearest_event'
+
     // if (!save_offsets_.empty()) {
     //     queue.push(SaveOffsetEvent::create(save_offsets_.front()));
     // }
@@ -4815,6 +4818,7 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
 
         queue.push(ConstOffsetEvent::create(next_offset));
     }
+
     // two types of useless events:
     // - events that are in the past (i.e., offset > current_offset) (values are negative and decreasing!)
     // - events that are (stricly) later than the current next tentative offset (i.e., offset < curr_earliest_next_offset)
