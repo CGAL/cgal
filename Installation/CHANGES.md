@@ -11,6 +11,10 @@
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 -   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+-   Renamed the prefix of the names of all concepts in the Arrangement_on_surface_2 package from "Arrangement" to "Aos".
+-   Renamed the old concept `AosApproximateTraits_2` to `AosApproximatePointTraits_2` to make room for the new concept `AosApproximateTraits_2`. This concept requires the provision of a functor called `Approximate_2` that has an operator that approximates the coordinates of a point.
+-   Introduced a new concept called `AosApproximateTraits_2`. It refines the concept `AosApproximatePointTraits_2`. This concept requires the provision of a functor called `Approximate_2`. In addition to an operator that approximates the coordinates of a point, it also requires the provision of (i) an operator that approximates a points, and (ii) an operator that approximates a curve.
+-   Changed all "typedef" style statements in the user manual to "using" style. (Observe that a similar update to the examples has already been made in a previous release.)
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
