@@ -32,18 +32,17 @@ auto nb_of_vertices(CDTP &cdtp, Constraint_id id)
                                                   cdtp.vertices_in_constraint_end(id)));
 }
 
-auto value_check_expected =
-    [](auto&& value, [[maybe_unused]] const auto& expected) -> decltype(auto)
-    {
-        assert(value == expected);
-        return std::forward<decltype(value)>(value);
-    };
+template <typename V, typename E>
+decltype(auto) value_check_expected(V&& value, [[maybe_unused]] const E& expected)
+{
+  assert(value == expected);
+  return std::forward<V>(value);
+};
 
-auto oformat =
-    [](Vertex_handle vh)
-    {
-        return CGAL::IO::oformat(vh, CGAL::With_point_tag{});
-    };
+auto oformat(Vertex_handle vh)
+{
+    return CGAL::IO::oformat(vh, CGAL::With_point_tag{});
+};
 
 int main()
 {
@@ -113,13 +112,13 @@ int main()
 
 
     // Let's insert a constraint with a loop
-    //       (1,1)
-    //         /|
-    //        / |
-    // (0,0) X->(1,0)
-    //      /
-    //     /
-    //    X  (-1,-1)
+    //                  (1,1)
+    //                  /  |
+    //                 /   |
+    //  start-->(0,0) X-->(1,0)
+    //               /
+    //              /
+    //           (-1,-1)
     const std::array<Point, 4> looping_cid = {
         Point(0,0), Point(1,0), Point(1,1), Point(-1,-1)
     };
@@ -130,17 +129,15 @@ int main()
               << value_check_expected(cdtp.number_of_subconstraints(), 4U) << std::endl;
 
     // NOW test another scenario
-    // Let's insert a constraint with identical sub-constraints
-    //       (1,1)
-    //         /|
-    //        / |
-    // (0,0) X->(1,0)--->X(3,0)
     cdtp.clear();
     print_cdtp("\nAfter clearing the constrained triangulation");
-
-    const std::array<Point, 5> overlaping_cid = {
-        Point(0,0), Point(1,0), Point(1,1), Point(0,0), Point(3, 0)
-    };
+    // Let's insert a constraint with identical sub-constraints
+    //               (1,1)
+    //              /   |
+    //             /    |
+    // start-->(0,0)-->(1,0)--->(3,0)
+    const std::array<Point, 5> overlaping_cid = {Point(0, 0), Point(1, 0), Point(1, 1),
+                                                 Point(0, 0), Point(3, 0)};
     cdtp.insert_constraint(overlaping_cid.begin(), overlaping_cid.end());
     print_cdtp("\nAfter inserting a constraint with overlapping subconstraints");
     std::cout << "\nnumber of subconstraints: "
@@ -151,14 +148,13 @@ int main()
     // NOW test another scenario
     cdtp.clear();
     print_cdtp("\nAfter clearing the constrained triangulation");
-
     // Let's insert two constraints with four points each and one common segment in the middle
-    const std::array<Point, 4> first_cid = {
-        Point(0,0), Point(1,0), Point(2,0), Point(3,0)
-    };
-    const std::array<Point, 4> second_cid = {
-        Point(3,0), Point(1,0), Point(2,0), Point(2,2)
-    };
+    //     start-->(0,1)             (3,1)
+    //                 \             /
+    //                  \           /
+    // start-->(0,0)--->(1,0)===>(2,0)--->(3,0)
+    const std::array<Point, 4> first_cid =  {Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0)};
+    const std::array<Point, 4> second_cid = {Point(0, 1), Point(1, 0), Point(2, 0), Point(3, 1)};
     cdtp.insert_constraint(first_cid.begin(), first_cid.end());
     cdtp.insert_constraint(second_cid.begin(), second_cid.end());
     print_cdtp("\nAfter inserting two constraints with a common segment in the middle");

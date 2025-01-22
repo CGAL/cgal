@@ -51,7 +51,7 @@ struct CGAL_DEPRECATED No_intersection_tag :
 
 namespace internal {
 
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#if defined(CGAL_CDT_2_DEBUG_INTERSECTIONS) || defined(CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2)
   struct Indentation_level {
     int n;
     Indentation_level() : n(0) {}
@@ -68,7 +68,7 @@ namespace internal {
     };
     Exit_guard open_new_scope() { return Exit_guard(*this); }
   } cdt_2_indent_level;
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS || CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
 
 template <typename K>
 struct Itag {
