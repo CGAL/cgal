@@ -17,15 +17,23 @@ using Curves = std::vector<Curve>;
 int main()
 {
     Curves curves;
-    const std::filesystem::path data{"./data"};
-    for (auto const& dir_entry : std::filesystem::directory_iterator{data}){
-        std::ifstream in(dir_entry.path());
+
+    const std::filesystem::path data{"./data_2d"};
+    std::vector<std::string> filenames;
+    for (auto const& dir_entry : std::filesystem::directory_iterator{data}) {
+        filenames.push_back(dir_entry.path());
+    }
+    std::sort(filenames.begin(), filenames.end());
+
+    for (auto const& filename : filenames) {
+        std::cout << filename << std::endl;
+        std::ifstream in(filename);
         curves.push_back(Curve());
         CGAL::IO::read_linestring_WKT(in, curves.back());
     }
 
+    // last curve is the query curve
     Curve query = curves.back();
-
     curves.pop_back();
 
     CGAL::Frechet_distance::Neighbor_search<Curve, Traits> ds;

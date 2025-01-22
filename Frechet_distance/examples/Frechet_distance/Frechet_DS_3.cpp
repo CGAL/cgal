@@ -18,7 +18,7 @@ int main()
 {
 
   Curves curves;
-  const std::filesystem::path data{"./data"};
+  const std::filesystem::path data{"./data_3d"};
   for (auto const& dir_entry : std::filesystem::directory_iterator{data}){
     std::ifstream in(dir_entry.path());
     curves.push_back(Curve());
