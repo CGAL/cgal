@@ -106,5 +106,66 @@ int main()
     std::cout << "number of vertex in collinear constraint: "
               << value_check_expected(nb_of_vertices(cdtp, non_collinear_cid), 5U) << std::endl;
 
+
+    // NOW test another scenario, that has nothing to do with the issue #4025
+    cdtp.clear();
+    print_cdtp("\nAfter clearing the constrained triangulation");
+
+
+    // Let's insert a constraint with a loop
+    //       (1,1)
+    //         /|
+    //        / |
+    // (0,0) X->(1,0)
+    //      /
+    //     /
+    //    X  (-1,-1)
+    const std::array<Point, 4> looping_cid = {
+        Point(0,0), Point(1,0), Point(1,1), Point(-1,-1)
+    };
+
+    cdtp.insert_constraint(looping_cid.begin(), looping_cid.end());
+    print_cdtp("\nAfter inserting a looping constraint");
+    std::cout << "\nnumber of subconstraints: "
+              << value_check_expected(cdtp.number_of_subconstraints(), 4U) << std::endl;
+
+    // NOW test another scenario
+    // Let's insert a constraint with identical sub-constraints
+    //       (1,1)
+    //         /|
+    //        / |
+    // (0,0) X->(1,0)--->X(3,0)
+    cdtp.clear();
+    print_cdtp("\nAfter clearing the constrained triangulation");
+
+    const std::array<Point, 5> overlaping_cid = {
+        Point(0,0), Point(1,0), Point(1,1), Point(0,0), Point(3, 0)
+    };
+    cdtp.insert_constraint(overlaping_cid.begin(), overlaping_cid.end());
+    print_cdtp("\nAfter inserting a constraint with overlapping subconstraints");
+    std::cout << "\nnumber of subconstraints: "
+              << value_check_expected(cdtp.number_of_subconstraints(), 4U)
+              << "\ncdtp.subconstraints.size(): "
+              << value_check_expected(cdtp.subconstraints().size(), 4U) << std::endl;
+
+    // NOW test another scenario
+    cdtp.clear();
+    print_cdtp("\nAfter clearing the constrained triangulation");
+
+    // Let's insert two constraints with four points each and one common segment in the middle
+    const std::array<Point, 4> first_cid = {
+        Point(0,0), Point(1,0), Point(2,0), Point(3,0)
+    };
+    const std::array<Point, 4> second_cid = {
+        Point(3,0), Point(1,0), Point(2,0), Point(2,2)
+    };
+    cdtp.insert_constraint(first_cid.begin(), first_cid.end());
+    cdtp.insert_constraint(second_cid.begin(), second_cid.end());
+    print_cdtp("\nAfter inserting two constraints with a common segment in the middle");
+    std::cout << "\nnumber of subconstraints: "
+              << value_check_expected(cdtp.number_of_subconstraints(), 5U)
+              << "\ncdtp.subconstraints.size(): "
+              << value_check_expected(cdtp.subconstraints().size(), 5U) << std::endl;
+
     return 0;
 }
