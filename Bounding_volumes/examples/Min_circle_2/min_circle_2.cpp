@@ -21,7 +21,7 @@ main( int, char**)
       P.at(i) = Point(r.get_double(), r.get_double());
     }
 
-    Min_circle  mc( P.begin(), P.begin() + n);
+    Min_circle  mc( P.begin(), P.end());
 
     Min_circle::Cartesian_const_iterator ccib = mc.center_cartesian_begin(), ccie = mc.center_cartesian_end();
     std::cout << "center:";
