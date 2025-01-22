@@ -802,7 +802,7 @@ public:
 
   Contexts contexts(Vertex_handle va, Vertex_handle vb) const
   {
-    return Contexts(contexts_begin(va,vb),contexts_end(va,vb));
+    return hierarchy.contexts(va, vb);
   }
 
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;

@@ -490,6 +490,9 @@ public:
   Context_iterator contexts_begin(T va, T vb) const;
   Context_iterator contexts_end(T va, T vb) const;
   Iterator_range<Context_iterator> contexts_range(T va, T vb) const;
+  Iterator_range<Context_iterator> contexts(T va, T vb) const; // alias to contexts_range
+  Context_list* get_context_list(T va, T vb) const;
+
   size_type number_of_constraints() const  { return constraints_set.size();}
   size_type number_of_subconstraints()const {return sc_to_c_map.size();}
 
@@ -615,11 +618,6 @@ private:
     const auto& [va, vb] = sc; return sorted_pair(va, vb);
   }
   Vertex_it get_pos(T va, T vb) const;
-  bool      get_contexts(T va, T vb,
-                         Context_iterator& ctxt,
-                         Context_iterator& past) const;
-
-  Context_list* get_context_list(T va, T vb) const;
 
   //to_debug
 public:
@@ -729,8 +727,8 @@ template <class T, class Compare, class Point>
 bool Polyline_constraint_hierarchy_2<T,Compare,Point>::
 enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 {
-  Context_iterator hcit, past;
-  if ( !get_contexts(vaa,vbb, hcit ,past)) return false;
+  auto [hcit, past] = contexts(vaa, vbb);
+  if (hcit == past) return false;
   // va = hcit->enclosing.front().vertex();
   // vb = hcit->enclosing.back().vertex();
   // Vertex_list_ptr vl = hcit->enclosing;
@@ -753,19 +751,17 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 }
 
 template <class T, class Compare, class Point>
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Context
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-context(T va, T vb)
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+context(T va, T vb) -> Context
 {
-  Context_iterator hcit, past;
-  if(!get_contexts(va,vb, hcit ,past)) CGAL_assertion(false);
+  auto [hcit, past] = contexts(va, vb);
+  CGAL_assertion(hcit != past); CGAL_USE(past);
   return *hcit;
 }
 
 template <class T, class Compare, class Point>
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::size_type
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-number_of_enclosing_constraints(T va, T vb) const
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+number_of_enclosing_constraints(T va, T vb) const -> size_type
 {
   Context_list* hcl = get_context_list(va,vb);
   CGAL_assertion(nullptr != hcl);
@@ -773,32 +769,23 @@ number_of_enclosing_constraints(T va, T vb) const
 }
 
 template <class T, class Compare, class Point>
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Context_iterator
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-contexts_begin(T va, T vb) const
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+contexts_begin(T va, T vb) const -> Context_iterator
 {
-   Context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
-   return first;
+  return contexts(vb, vb).begin();
 }
 
 template <class T, class Compare, class Point>
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Context_iterator
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-contexts_end(T va, T vb) const
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+contexts_end(T va, T vb) const -> Context_iterator
 {
-   Context_iterator first, last;
-   if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
-   return last;
+  return contexts(vb, vb).end();
 }
 
 template <class T, class Compare, class Point>
-auto
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_range(T va, T vb) const -> Iterator_range<Context_iterator> {
-  Context_iterator first, last;
-  if( !get_contexts(va,vb,first,last)) return { first, first };
-  else return { first, last };
+  return contexts(va, vb);
 }
 
 template <class T, class Compare, class Point>
@@ -1188,20 +1175,19 @@ next_along_sc(T va, T vb, T& w) const
 {
   // find the next vertex after vb along any enclosing constrained
   // return false if there is no ....
-  Context_iterator  ctxtit, past;
-  if(!get_contexts(va, vb, ctxtit, past)) CGAL_assertion(false);
-
-  for(; ctxtit != past; ctxtit++) {
-    Vertex_it pos = ctxtit->pos;
+  const auto& ctxts = contexts(va, vb);
+  CGAL_assertion(ctxts.empty() == false);
+  for(const auto& ctxt : ctxts) {
+    Vertex_it pos = ctxt.pos;
     if((*pos) == va) {
       ++pos;
       ++pos;
-      if(pos != ctxtit->enclosing.end()) {
+      if(pos != ctxt.enclosing.end()) {
         w = *pos;
         return true;
       }
     } else {
-      if(pos != ctxtit->enclosing.begin()) {
+      if(pos != ctxt.enclosing.begin()) {
         --pos;
         w = *pos;
         return true;
@@ -1320,17 +1306,12 @@ get_context_list(T va, T vb) const
 
 template <class T, class Compare, class Point>
 inline
-bool
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-get_contexts(T va, T vb,
-             Context_iterator& ctxt,
-             Context_iterator& past) const
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+contexts(T va, T vb) const -> Iterator_range<Context_iterator>
 {
   Context_list* hcl = get_context_list(va,vb);
-  if (nullptr == hcl) return false;
-  ctxt = hcl->begin();
-  past = hcl->end();
-  return true;
+  if (nullptr == hcl) return {};
+  else return {hcl->begin(), hcl->end()};
 }
 
 
@@ -1350,8 +1331,8 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 oriented_end(T va, T vb, T& vc) const
 {
-  Context_iterator ctxt, past;
-  if(!get_contexts(va,vb, ctxt, past) ) CGAL_assertion(false);
+  auto [ctxt, past] = contexts(va, vb);
+  CGAL_assertion(ctxt != past); CGAL_USE(past);
   if(*(ctxt->pos) == va)
     vc = ctxt->enclosing.back();
   else
@@ -1410,14 +1391,12 @@ print(std::ostream& os) const
   for(const auto& subconstraint : subconstraints()) {
     os << "subconstraint (";
     os << disp_vertex(subconstraint.first) << ", "
-              << disp_vertex(subconstraint.second) << ")";
-    Context_iterator cb, ce;
-    get_contexts(subconstraint.first, subconstraint.second, cb, ce);
+       << disp_vertex(subconstraint.second) << ")";
 
     os << "  enclosing:  ";
-    for(; cb != ce; cb++) {
-      os << "(cid " << cb->id().id << ") " << cb->id().vl_ptr();
-      os << ", pos: " << std::distance(cb->vertices_begin(), cb->pos) << "   ";
+    for(const auto& ctxt : contexts(subconstraint.first, subconstraint.second)) {
+      os << "(cid " << ctxt.id().id << ") " << ctxt.id().vl_ptr();
+      os << ", pos: " << std::distance(ctxt.vertices_begin(), ctxt.pos) << "   ";
     }
     os << std::endl;
   }
