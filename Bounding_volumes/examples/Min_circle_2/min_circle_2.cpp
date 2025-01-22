@@ -4,7 +4,7 @@
 #include <CGAL/Random.h>
 
 #include <iostream>
-#include <vector>
+#include <array>
 typedef  CGAL::Simple_cartesian<double>                   K;
 typedef  CGAL::Min_sphere_of_points_d_traits_2<K,double>  Traits;
 typedef  CGAL::Min_sphere_of_spheres_d<Traits>            Min_circle;
@@ -14,7 +14,7 @@ int
 main( int, char**)
 {
     const int n = 100;
-    std::vector<Point> P(n);
+    std::array<Point, n> P;
     CGAL::Random  r;                     // random number generator
 
     for ( int i = 0; i < n; ++i){

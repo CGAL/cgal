@@ -2,7 +2,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
-#include <vector>
+#include <array>
 #include <iostream>
 
 // typedefs
@@ -16,7 +16,7 @@ int
 main( int, char**)
 {
   const int n = 100;
-  std::vector<Point> P(n);
+  std::array<Point, n> P;
 
   for ( int i = 0; i < n; ++i){
     P.at(i) = Point( (i%2 == 0 ? i : -i), 0, 1);
