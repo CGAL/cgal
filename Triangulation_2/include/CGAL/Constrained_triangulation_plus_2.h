@@ -1146,16 +1146,12 @@ intersect(Face_handle f, int i,
 // (the  constraint edge (f,i) will be split in hierarchy by insert)
 // and return the Vertex_handle of the new Vertex
 {
-  Vertex_handle  vc, vd, va, vb;
-  Vertex_handle  vcc, vdd;
-  vcc = f->vertex(cw(i));
-  vdd = f->vertex(ccw(i));
-  CGAL_assertion_code( bool b1 = )
-  hierarchy.enclosing_constraint(vcc,vdd,vc,vd);
-  CGAL_assertion_code( bool b2 = )
-  hierarchy.enclosing_constraint(vaa,vbb,va,vb);
-  CGAL_assertion(b1);
-  CGAL_assertion(b2);
+  const Vertex_handle vcc = f->vertex(cw(i));
+  const Vertex_handle vdd = f->vertex(ccw(i));
+  const auto [vc, vd] = hierarchy.enclosing_constraint(vcc, vdd);
+  const auto [va, vb] = hierarchy.enclosing_constraint(vaa, vbb);
+  CGAL_assertion(vc != vd);
+  CGAL_assertion(va != vb);
 
   const Point& pa = va->point();
   const Point& pb = vb->point();

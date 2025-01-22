@@ -21,6 +21,7 @@
 #include <map>
 #include <set>
 #include <list>
+#include <array>
 
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
@@ -215,10 +216,12 @@ public:
   class Context {
     friend class Polyline_constraint_hierarchy_2<T,Compare,Point>;
   private:
-    Constraint_id enclosing;
-    Vertex_it     pos;
+    Constraint_id enclosing = nullptr;
+    Vertex_it     pos{};
   public:
-    Context() : enclosing(nullptr) {}
+    Context() = default;
+    Context(Constraint_id enclosing, Vertex_it pos) : enclosing(enclosing), pos(pos) {}
+    Context(Constraint_id enclosing, typename Vertex_list::skip_iterator pos) : enclosing(enclosing), pos(pos) {}
 
     Vertex_it    vertices_begin()const { return enclosing.begin();}
     Vertex_it    current()const {return pos;}
@@ -341,8 +344,8 @@ public:
         return false;
       }
       auto [va, vb] = this->operator*();
-      auto it = hierarchy->sc_to_c_map.find(hierarchy->sorted_pair(va, vb));
-      CGAL_assertion(it != hierarchy->sc_to_c_map.end());
+      auto it = hierarchy->find_contexts(va, vb);
+      CGAL_assertion(it != hierarchy->contexts_end());
 
       const Context_list& ctx_list = *it->second;
 
@@ -481,7 +484,7 @@ public:
   Point_it points_in_constraint_end(Constraint_id cid) const
   { return cid.vl_ptr()->all_end(); }
 
-  bool enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const;
+  std::array<Vertex_handle, 2> enclosing_constraint(T vaa, T vbb) const;
 
   Context context(T va, T vb);
   size_type number_of_enclosing_constraints(T va, T vb) const;
@@ -542,8 +545,6 @@ public:
                                   this);
   }
 
-  Sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
-  Sc_iterator sc_end()   const{ return sc_to_c_map.end();   }
   Constraint_iterator  constraints_begin()  const{ return constraints_set.begin(); }
   Constraint_iterator  constraints_end()    const{ return constraints_set.end();   }
 
@@ -560,13 +561,28 @@ public:
   void swap(Polyline_constraint_hierarchy_2& ch);
 
 private:
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) {
+    return sc_to_c_map.find(sorted_pair(va, vb));
+  }
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) const {
+    return sc_to_c_map.find(sorted_pair(va, vb));
+  }
+  auto contexts_end()       { return sc_to_c_map.end(); }
+  auto contexts_end() const { return sc_to_c_map.end(); }
+  void erase_context(Sc_iterator it) {
+    sc_to_c_map.erase(it);
+  }
+
+  auto& contexts_of(Vertex_handle va, Vertex_handle vb) {
+    return sc_to_c_map[sorted_pair(va, vb)];
+  }
   template <typename F>
   void for_context_lists_of_all_subconstraints(Constraint_id cid, const F& f)
   {
     auto vl = cid.vl_ptr();
     for(Vertex_it it = vl->skip_begin(), succ = it, end = vl->skip_end(); ++succ != end; ++it) {
-      auto scit = sc_to_c_map.find(sorted_pair(*it, *succ));
-      CGAL_assertion(scit != sc_to_c_map.end());
+      auto scit = find_contexts(*it, *succ);
+      CGAL_assertion(scit != contexts_end());
       Context_list* hcl = scit->second;
       f(hcl, it, scit);
     }
@@ -610,11 +626,12 @@ private:
     auto id = number_of_constraints() == 0 ? 0 : constraints_set.rbegin()->id + 1;
     return Constraint_id(new Vertex_list_with_info{this}, id);
   }
-  Subconstraint sorted_pair(T va, T vb) const;
+  Subconstraint sorted_pair(T va, T vb) const {
+    return comp(va, vb) ? Subconstraint(va,vb) : Subconstraint(vb,va);
+  }
   Subconstraint sorted_pair(Subconstraint sc) {
     const auto& [va, vb] = sc; return sorted_pair(va, vb);
   }
-  Vertex_it get_pos(T va, T vb) const;
 
   //to_debug
 public:
@@ -675,22 +692,16 @@ copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle,Vertex
   }
   // copy sc_to_c_map
   for(const auto& [sc1, hcl1] : other.subconstraints_and_contexts()) {
-    Context_list* hcl2 = new Context_list;
     Vertex_handle uu2 = vmap[sc1.first];
     Vertex_handle vv2 = vmap[sc1.second];
-    Subconstraint sc2 = sorted_pair(uu2, vv2);
-    sc_to_c_map[sc2] = hcl2;
-    for(const Context& ctxt1 : *hcl1) {
+    Context_list* hcl2 = new Context_list;
+    contexts_of(uu2, vv2) = hcl2;
+    for(const auto& [cid1, pos1] : *hcl1) {
       // vertices of the enclosing constraints
-      Context ctxt2;
-      ctxt2.enclosing = cstr_map[ctxt1.enclosing];
-      ctxt2.pos = ctxt2.enclosing.begin();
-      Vertex_it aux = ctxt1.enclosing.begin();
-      while(aux != ctxt1.pos) {
-        ++aux;
-        ++ctxt2.pos;
-      }
-      hcl2->push_back(ctxt2);
+      Constraint_id cid2 = cstr_map[cid1];
+      auto pos2 = std::next(Vertex_it(cid2.begin()),
+                            std::distance(Vertex_it(cid1.begin()), pos1));
+      hcl2->emplace_back(cid2, pos2);
     }
   }
 
@@ -715,17 +726,18 @@ template <class T, class Compare, class Point>
 bool Polyline_constraint_hierarchy_2<T,Compare,Point>::
 is_subconstraint(T va, T vb) const
 {
-  return( sc_to_c_map.find(sorted_pair(va, vb)) != sc_to_c_map.end() );
+  return( find_contexts(va, vb) != contexts_end() );
 }
 
 
 // used by Constrained_triangulation_plus_2::intersect with Exact_intersection_tag
 template <class T, class Compare, class Point>
-bool Polyline_constraint_hierarchy_2<T,Compare,Point>::
-enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+enclosing_constraint(T vaa, T vbb) const -> std::array<Vertex_handle, 2>
 {
+  std::array<Vertex_handle, 2> result;
   auto [hcit, past] = contexts(vaa, vbb);
-  if (hcit == past) return false;
+  if (hcit == past) return result;
   // va = hcit->enclosing.front().vertex();
   // vb = hcit->enclosing.back().vertex();
   // Vertex_list_ptr vl = hcit->enclosing;
@@ -736,15 +748,14 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
   while(!pos.input()){
     --pos;
   }
-  va = *pos;
-  pos = hcit->pos;
-  ++pos;
+  result[0] = *pos;
+  pos = std::next(hcit->pos);
   CGAL_assertion(vbb == *pos);
   while(!pos.input()){
     ++pos;
   }
-  vb = *pos;
-  return true;
+  result[1] = *pos;
+  return result;
 }
 
 template <class T, class Compare, class Point>
@@ -769,14 +780,14 @@ template <class T, class Compare, class Point>
 auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_begin(T va, T vb) const -> Context_iterator
 {
-  return contexts(vb, vb).begin();
+  return contexts(va, vb).begin();
 }
 
 template <class T, class Compare, class Point>
 auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_end(T va, T vb) const -> Context_iterator
 {
-  return contexts(vb, vb).end();
+  return contexts(va, vb).end();
 }
 
 template <class T, class Compare, class Point>
@@ -816,7 +827,7 @@ remove_constraint(Constraint_id cid)
 
     // If this was the only context in the list, delete the context list
     if(hcl->empty()) {
-      sc_to_c_map.erase(scit);
+      erase_context(scit);
       delete hcl;
     }
   });
@@ -834,8 +845,8 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
 {
   // TODO: How do we (want to) deal with u == w ???
   Vertex_handle u = *uc, v = *vc, w = *wc;
-  typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(sorted_pair(u, v));
-  typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(sorted_pair(v, w));
+  typename Sc_to_c_map::iterator uv_sc_iter = find_contexts(u, v);
+  typename Sc_to_c_map::iterator vw_sc_iter = find_contexts(v, w);
   Context_list*  uv_hcl = uv_sc_iter->second;
   Context_list*  vw_hcl = vw_sc_iter->second;
   // AF:  what is input() about???
@@ -879,11 +890,11 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
   uv_hcl->splice(uv_hcl->end(),*vw_hcl);
   delete vw_hcl;
 
-  sc_to_c_map.erase(uv_sc_iter);
-  sc_to_c_map.erase(vw_sc_iter);
+  erase_context(uv_sc_iter);
+  erase_context(vw_sc_iter);
 
   // reuse other context list
-  sc_to_c_map[sorted_pair(u,w)] = uv_hcl;
+  contexts_of(u,w) = uv_hcl;
 }
 
 
@@ -1085,22 +1096,18 @@ insert_constraint(T va, T vb){
             << "C_hierachy.insert_constraint( "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
-  Subconstraint sc = sorted_pair(va, vb);
   Constraint_id cid = new_constraint_id();
-  auto children = cid.vl_ptr();
-  auto& fathers = sc_to_c_map[sc];
-  if(fathers == nullptr){
-    fathers = new Context_list;
+  auto& context_list_ptr = contexts_of(va, vb);
+  if(context_list_ptr == nullptr){
+    context_list_ptr = new Context_list;
   }
 
-  children->push_front(Node(va, true));  // was sc.first
-  children->push_back(Node(vb, true));   // was sc.second
+  auto children = cid.vl_ptr();
+  children->push_front(Node(va, true));
+  children->push_back(Node(vb, true));
   constraints_set.insert(cid);
-  Context ctxt;
-  ctxt.enclosing = cid;
-  ctxt.pos       = children->skip_begin();
-  fathers->push_front(ctxt);
-  fix_contexts(*fathers);
+  context_list_ptr->emplace_front(cid, cid.begin());
+  fix_contexts(*context_list_ptr);
 
   return cid;
 }
@@ -1124,20 +1131,16 @@ append_constraint(Constraint_id cid, T va, T vb){
             << "C_hierachy.append_constraint( ..., "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
-  Subconstraint sc = sorted_pair(va, vb);
-  auto& fathers = sc_to_c_map[sc];
-  if(fathers == nullptr){
-    fathers = new Context_list;
+  auto& context_list_ptr = contexts_of(va, vb);
+  if(context_list_ptr == nullptr){
+    context_list_ptr = new Context_list;
   }
 
-  typename Vertex_list::skip_iterator last_pos = std::prev(cid.end());
-  CGAL_assertion(last_pos->vertex() == va);
+  auto pos_va = std::prev(cid.end());
+  CGAL_assertion(pos_va->vertex() == va);
   cid.vl_ptr()->push_back(Node(vb, true));
-  Context ctxt;
-  ctxt.enclosing = cid;
-  ctxt.pos       = last_pos;
-  fathers->push_front(ctxt);
-  fix_contexts(*fathers);
+  context_list_ptr->emplace_front(cid, pos_va);
+  fix_contexts(*context_list_ptr);
 }
 
 
@@ -1182,8 +1185,8 @@ add_Steiner(const T va, const T vb, const T vc){
             << IO::oformat(va) << ", " << IO::oformat(vb) << ", " << IO::oformat(vc)
             << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
-  Sc_iterator sc_iter_va_vb = sc_to_c_map.find(sorted_pair(va, vb));
-  if(sc_iter_va_vb == sc_to_c_map.end()) {
+  Sc_iterator sc_iter_va_vb = find_contexts(va, vb);
+  if(sc_iter_va_vb == contexts_end()) {
 #ifdef CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "  -> the constraint is already split\n";
@@ -1192,7 +1195,7 @@ add_Steiner(const T va, const T vb, const T vc){
   }
 
   Context_list* va_vb_cl = sc_iter_va_vb->second;
-  sc_to_c_map.erase(sc_iter_va_vb);
+  erase_context(sc_iter_va_vb);
   Context_list* va_vc_cl = get_context_list(va,vc);
   Context_list* vc_vb_cl = get_context_list(vc,vb);
 
@@ -1233,11 +1236,11 @@ add_Steiner(const T va, const T vb, const T vc){
     delete va_vb_cl;
   } else {
     va_vc_cl = va_vb_cl;
-    sc_to_c_map.emplace(sorted_pair(va,vc), va_vc_cl);
+    contexts_of(va,vc) = va_vc_cl;
   }
 
   if (false == vc_vb_was_already_a_subconstraint) {
-    sc_to_c_map.emplace(sorted_pair(vc,vb), vc_vb_cl);
+    contexts_of(vc,vb) = vc_vb_cl;
   }
   fix_contexts(*va_vc_cl);
   fix_contexts(*vc_vb_cl);
@@ -1246,21 +1249,12 @@ add_Steiner(const T va, const T vb, const T vc){
 
 template <class T, class Compare, class Point>
 inline
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Subconstraint
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-sorted_pair(T va, T vb) const
-{
-  return comp(va, vb) ? Subconstraint(va,vb) : Subconstraint(vb,va);
-}
-
-template <class T, class Compare, class Point>
-inline
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Context_list*
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 get_context_list(T va, T vb) const
 {
-  Sc_iterator sc_iter = sc_to_c_map.find(sorted_pair(va, vb));
-  if(sc_iter == sc_to_c_map.end())
+  Sc_iterator sc_iter = find_contexts(va, vb);
+  if(sc_iter == contexts_end())
     return nullptr;
   else
     return sc_iter->second;
@@ -1276,17 +1270,6 @@ contexts(T va, T vb) const -> Iterator_range<Context_iterator>
   else return {hcl->begin(), hcl->end()};
 }
 
-
-
-template <class T, class Compare, class Point>
-inline
-typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Vertex_it
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-get_pos(T va, T vb) const
-  //return pos in the first context
-{
-    return (*sc_to_c_map.find(sorted_pair(va,vb))).second->begin().pos;
-}
 
 template <class T, class Compare, class Point>
 void
