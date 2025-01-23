@@ -496,9 +496,8 @@ public:
   Contexts contexts(T va, T vb) const;
   Context_list* get_context_list(T va, T vb) const;
 
-  size_type number_of_constraints() const  { return constraints_set.size();}
-  size_type number_of_subconstraints()const {return sc_to_c_map.size();}
-
+  size_type number_of_constraints() const { return constraints_set.size(); }
+  size_type number_of_subconstraints() const { return sc_to_c_map.size(); }
 
   // insert/remove
   void add_Steiner(const T va, const T vb, const T vx);
@@ -510,9 +509,7 @@ public:
 
   void split_constraint(T va, T vb, T vc);
 
-  void simplify(Vertex_it u,
-                Vertex_it v,
-                Vertex_it w);
+  void simplify(Vertex_it u, Vertex_it v, Vertex_it w);
 
   size_type remove_points_without_corresponding_vertex(Constraint_id);
   size_type remove_points_without_corresponding_vertex();
@@ -564,21 +561,17 @@ public:
   void swap(Polyline_constraint_hierarchy_2& ch);
 
 private:
-  auto find_contexts(Vertex_handle va, Vertex_handle vb) {
-    return sc_to_c_map.find(sorted_pair(va, vb));
-  }
-  auto find_contexts(Vertex_handle va, Vertex_handle vb) const {
-    return sc_to_c_map.find(sorted_pair(va, vb));
-  }
-  auto contexts_not_found()       { return sc_to_c_map.end(); }
+  // a few member functions to encapsulate more of the uses of `sc_to_c_map`
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) { return sc_to_c_map.find(sorted_pair(va, vb)); }
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) const { return sc_to_c_map.find(sorted_pair(va, vb)); }
+  auto contexts_not_found() { return sc_to_c_map.end(); }
   auto contexts_not_found() const { return sc_to_c_map.end(); }
-  void erase_context(Sc_iterator it) {
-    sc_to_c_map.erase(it);
-  }
+  void erase_context(Sc_iterator it) { sc_to_c_map.erase(it); }
+  auto& contexts_of(Vertex_handle va, Vertex_handle vb) { return sc_to_c_map[sorted_pair(va, vb)]; }
 
-  auto& contexts_of(Vertex_handle va, Vertex_handle vb) {
-    return sc_to_c_map[sorted_pair(va, vb)];
-  }
+  //
+  // functions to traverse and act on the context lists
+  //
   template <typename F>
   void for_context_lists_of_all_subconstraints(Constraint_id cid, const F& f)
   {
@@ -590,10 +583,10 @@ private:
       f(hcl, it, scit);
     }
   }
-
+  //
   static void replace_first_in_context_list(Context_list* hcl, Constraint_id old_id, Constraint_id new_id)
   {
-    // std::find_if is a sort of std::for_each with a break
+    // std::find_if is a sort of std::for_each with a break when the lambda returns true
     [[maybe_unused]] auto it = std::find_if(hcl->begin(), hcl->end(), [&](Context& ctxt) {
       if(ctxt.enclosing == old_id) {
         ctxt.enclosing = new_id;
@@ -602,7 +595,7 @@ private:
       return false;
     });
   }
-
+  //
   static void update_first_context_position(Context_list* hcl, Constraint_id id, Vertex_it new_pos)
   {
     [[maybe_unused]] auto it = std::find_if(hcl->begin(), hcl->end(), [&](Context& ctxt) {
@@ -613,7 +606,7 @@ private:
       return false;
     });
   }
-
+  //
   static void remove_first_in_context_list(Context_list* hcl, Constraint_id id)
   {
     auto it = std::find_if(hcl->begin(), hcl->end(), [&](Context& ctxt) {
@@ -624,6 +617,9 @@ private:
     }
   }
 
+  //
+  // other utilities as private member functions
+  //
   Constraint_id new_constraint_id() const {
     // TODO: handle ids
     auto id = number_of_constraints() == 0 ? 0 : constraints_set.rbegin()->id + 1;
@@ -636,9 +632,9 @@ private:
     const auto& [va, vb] = sc; return sorted_pair(va, vb);
   }
 
-  //to_debug
 public:
-  void   print(std::ostream& os = std::cout) const;
+  //to_debug
+  void print(std::ostream& os = std::cout) const;
 };
 
 template <class T, class Compare, class Point>
