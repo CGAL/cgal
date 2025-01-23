@@ -179,7 +179,7 @@ public:
       CGAL_postcondition( is_valid() );
     }
 
-  virtual ~Constrained_Delaunay_triangulation_2() {}
+  ~Constrained_Delaunay_triangulation_2() override {}
 
 
   // Ensure rule-of-five: define the copy- and move- constructors
@@ -296,17 +296,17 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
 protected:
-  virtual Vertex_handle virtual_insert(const Point & a,
-                                       Face_handle start = Face_handle());
-  virtual Vertex_handle virtual_insert(const Point& a,
-                                       Locate_type lt,
-                                       Face_handle loc,
-                                       int li );
+  Vertex_handle virtual_insert(const Point & a,
+                               Face_handle start = Face_handle()) override;
+  Vertex_handle virtual_insert(const Point& a,
+                               Locate_type lt,
+                               Face_handle loc,
+                               int li ) override;
 //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void remove_2D(Vertex_handle v );
-  virtual void triangulate_hole(List_faces& intersected_faces,
-                                List_edges& conflict_boundary_ab,
-                                List_edges& conflict_boundary_ba);
+  void triangulate_hole(List_faces& intersected_faces,
+                        List_edges& conflict_boundary_ab,
+                        List_edges& conflict_boundary_ba) override;
 
 public:
   // MESHING

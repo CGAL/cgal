@@ -204,7 +204,7 @@ public:
 
   Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
 
-  virtual ~Constrained_triangulation_plus_2() {}
+  ~Constrained_triangulation_plus_2() override {}
 
   Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
   {
@@ -693,9 +693,9 @@ public:
     return cid;
   }
 
-  virtual Vertex_handle intersect(Face_handle f, int i,
-                                  Vertex_handle vaa,
-                                  Vertex_handle vbb);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb) override;
   Vertex_handle intersect(Face_handle f, int i,
                           Vertex_handle vaa,
                           Vertex_handle vbb,
