@@ -492,7 +492,8 @@ public:
   size_type number_of_enclosing_constraints(T va, T vb) const;
   Context_iterator contexts_begin(T va, T vb) const;
   Context_iterator contexts_end(T va, T vb) const;
-  Iterator_range<Context_iterator> contexts(T va, T vb) const;
+  using Contexts = Iterator_range<Context_iterator>;
+  Contexts contexts(T va, T vb) const;
   Context_list* get_context_list(T va, T vb) const;
 
   size_type number_of_constraints() const  { return constraints_set.size();}
