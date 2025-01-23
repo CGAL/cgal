@@ -345,7 +345,7 @@ public:
       }
       auto [va, vb] = this->operator*();
       auto it = hierarchy->find_contexts(va, vb);
-      CGAL_assertion(it != hierarchy->contexts_end());
+      CGAL_assertion(it != hierarchy->contexts_not_found());
 
       const Context_list& ctx_list = *it->second;
 
@@ -567,8 +567,8 @@ private:
   auto find_contexts(Vertex_handle va, Vertex_handle vb) const {
     return sc_to_c_map.find(sorted_pair(va, vb));
   }
-  auto contexts_end()       { return sc_to_c_map.end(); }
-  auto contexts_end() const { return sc_to_c_map.end(); }
+  auto contexts_not_found()       { return sc_to_c_map.end(); }
+  auto contexts_not_found() const { return sc_to_c_map.end(); }
   void erase_context(Sc_iterator it) {
     sc_to_c_map.erase(it);
   }
@@ -582,7 +582,7 @@ private:
     auto vl = cid.vl_ptr();
     for(Vertex_it it = vl->skip_begin(), succ = it, end = vl->skip_end(); ++succ != end; ++it) {
       auto scit = find_contexts(*it, *succ);
-      CGAL_assertion(scit != contexts_end());
+      CGAL_assertion(scit != contexts_not_found());
       Context_list* hcl = scit->second;
       f(hcl, it, scit);
     }
@@ -726,7 +726,7 @@ template <class T, class Compare, class Point>
 bool Polyline_constraint_hierarchy_2<T,Compare,Point>::
 is_subconstraint(T va, T vb) const
 {
-  return( find_contexts(va, vb) != contexts_end() );
+  return( find_contexts(va, vb) != contexts_not_found() );
 }
 
 
@@ -1186,7 +1186,7 @@ add_Steiner(const T va, const T vb, const T vc){
             << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   Sc_iterator sc_iter_va_vb = find_contexts(va, vb);
-  if(sc_iter_va_vb == contexts_end()) {
+  if(sc_iter_va_vb == contexts_not_found()) {
 #ifdef CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "  -> the constraint is already split\n";
@@ -1254,7 +1254,7 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 get_context_list(T va, T vb) const
 {
   Sc_iterator sc_iter = find_contexts(va, vb);
-  if(sc_iter == contexts_end())
+  if(sc_iter == contexts_not_found())
     return nullptr;
   else
     return sc_iter->second;
