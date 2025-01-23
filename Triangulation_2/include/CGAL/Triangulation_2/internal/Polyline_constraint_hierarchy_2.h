@@ -681,13 +681,13 @@ copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle,Vertex
   // copy constraints_set
   for(const auto& cid1: other.constraints()) {
     Constraint_id cid2 = new_constraint_id();
+    constraints_set.insert(cid2);
     cstr_map[cid1] = cid2;
     for(const auto& node : cid1.elements()) {
       cid2.vl_ptr()->push_back(Node(vmap[node.vertex()], node.input()));
     }
     cid2.vl_with_info_ptr->may_share_subconstraint_with_others =
         cid1.vl_with_info_ptr->may_share_subconstraint_with_others;
-    constraints_set.insert(cid2);
   }
   // copy sc_to_c_map
   for(const auto& [sc1, hcl1] : other.subconstraints_and_contexts()) {
@@ -1096,6 +1096,7 @@ insert_constraint(T va, T vb){
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   Constraint_id cid = new_constraint_id();
+  constraints_set.insert(cid);
   auto& context_list_ptr = contexts_of(va, vb);
   if(context_list_ptr == nullptr){
     context_list_ptr = new Context_list;
@@ -1104,7 +1105,6 @@ insert_constraint(T va, T vb){
   auto children = cid.vl_ptr();
   children->push_front(Node(va, true));
   children->push_back(Node(vb, true));
-  constraints_set.insert(cid);
   context_list_ptr->emplace_front(cid, cid.begin());
   fix_contexts(*context_list_ptr);
 
