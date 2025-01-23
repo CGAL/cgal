@@ -150,7 +150,7 @@ public:
       //check if the ray source is above or below the triangle and compare it
       //with the direction of the ray
       //TODO and if yes return
-      //this is just an optimisation, the current code is valid
+      //this is just an optimization, the current code is valid
 
       this->m_status.first=boost::logic::indeterminate;
       this->m_stop=true;

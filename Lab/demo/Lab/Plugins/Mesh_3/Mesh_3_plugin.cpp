@@ -750,7 +750,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
 
-    if(mesh_type != Mesh_type::SURFACE_ONLY && !material_ids_valid)
+    if(mesh_type != Mesh_type::SURFACE_ONLY
+      && !material_ids_valid
+      && bounding_sm_item != nullptr)
     {
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }

@@ -18,6 +18,6 @@ endif()
 include_directories(BEFORE include)
 
 create_single_source_cgal_program("points_to_RT_to_off.cpp")
-target_link_libraries(points_to_RT_to_off PUBLIC CGAL::Eigen3_support)
+target_link_libraries(points_to_RT_to_off PRIVATE CGAL::Eigen3_support)
 create_single_source_cgal_program("points_to_DT_to_off.cpp")
-target_link_libraries(points_to_DT_to_off PUBLIC CGAL::Eigen3_support)
+target_link_libraries(points_to_DT_to_off PRIVATE CGAL::Eigen3_support)

@@ -37,7 +37,7 @@ namespace Intern{
 
 /*! \ingroup CGAL_Sqrt_extension
     \ingroup CGAL_Fraction_traits_spec
-    \brief Specialisation of CGAL::Fraction_traits for CGAL::Sqrt_extension.
+    \brief Specialization of CGAL::Fraction_traits for CGAL::Sqrt_extension.
  *
  *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.

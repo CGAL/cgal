@@ -35,10 +35,10 @@ foreach(
   target
   polyfit_example_without_input_planes polyfit_example_user_provided_planes
   polyfit_example_model_complexity_control polyfit_example_with_region_growing)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   if(TARGET CGAL::SCIP_support)
-    target_link_libraries(${target} PUBLIC CGAL::SCIP_support)
+    target_link_libraries(${target} PRIVATE CGAL::SCIP_support)
   else()
-    target_link_libraries(${target} PUBLIC CGAL::GLPK_support)
+    target_link_libraries(${target} PRIVATE CGAL::GLPK_support)
   endif()
 endforeach()
