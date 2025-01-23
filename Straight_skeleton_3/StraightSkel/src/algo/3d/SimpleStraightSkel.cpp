@@ -4832,6 +4832,16 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     CGAL::FT current_offset_to_nearest_event = queue.empty() ? - (std::numeric_limits<double>::max())
                                                              : (queue.top()->getOffset() - current_offset);
 
+    if (!save_offsets_.empty()) {
+        util::ConfigurationSPtr config = util::Configuration::getInstance();
+        if (config->isLoaded()) {
+            if ((config->contains("main", "stop_after_last_save_event") &&
+                 config->getBool("main", "stop_after_last_save_event"))) {
+                current_offset_to_nearest_event = (std::min)(current_offset_to_nearest_event, save_offsets_.back());
+            }
+        }
+    }
+
     // --- Vanish Events
     collectEdgeEvents(polyhedron, current_offset, current_offset_to_nearest_event, queue);
     collectEdgeMergeEvents(polyhedron, current_offset, current_offset_to_nearest_event, queue);
