@@ -1110,10 +1110,14 @@ namespace internal {
 
 
     // run PMP::fair() on each vertex neighborhood
-    void fairing_impl()
+    template<typename NamedParameters>
+    void fairing_impl(const NamedParameters& np)
     {
-      const bool fair_constraints = false;
-      const int continuity = 1;
+      using parameters::get_parameter;
+      using parameters::choose_parameter;
+
+      const unsigned int continuity
+        = choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Fairing C^"<< continuity << "...";
@@ -1126,7 +1130,7 @@ namespace internal {
       // property map of constrained vertices for relaxation
       auto vertex_constraint = [&](const vertex_descriptor v)
         {
-          return !is_move_allowed(v, fair_constraints)
+          return !is_move_allowed(v, false/*fairing of constrained edges is forbidden*/)
               || neighbors_from_border.find(v) != neighbors_from_border.end();
         };
       auto constrained_vertices_pmap
@@ -1144,24 +1148,27 @@ namespace internal {
         for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
         {
           const vertex_descriptor vs = source(h, mesh_);
-          if ( !get(constrained_vertices_pmap, vs))
+          if (!get(constrained_vertices_pmap, vs))
           {
             vertices_for_fairing.insert(vs);
-
-            for (halfedge_descriptor hh : halfedges_around_target(vs, mesh_))
-            {
-              const vertex_descriptor vss = source(hh, mesh_);
-              if ( !get(constrained_vertices_pmap, vss))
-                vertices_for_fairing.insert(vss);
-            }
           }
         }
 
-        CGAL::Polygon_mesh_processing::fair(mesh_,
-                                            vertices_for_fairing,
-                                            parameters::vertex_point_map(vpmap_)
-                                            .fairing_continuity(continuity)
-                                            .geom_traits(gt_));
+        for (unsigned int c = 0; c < continuity; ++c)
+        {
+          std::unordered_set<vertex_descriptor> tmp_vs;
+          for (vertex_descriptor vs : vertices_for_fairing)
+          {
+            for (halfedge_descriptor hh : halfedges_around_target(vs, mesh_))
+            {
+              const vertex_descriptor vss = source(hh, mesh_);
+              if (!get(constrained_vertices_pmap, vss))
+                tmp_vs.insert(vss);
+            }
+          }
+          vertices_for_fairing.insert(tmp_vs.begin(), tmp_vs.end());
+        }
+        CGAL::Polygon_mesh_processing::fair(mesh_, vertices_for_fairing, np);
       }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));

@@ -351,7 +351,7 @@ void isotropic_remeshing(const FaceRange& faces
     switch (smoothing_algo)
     {
     case FAIR :
-      remesher.fairing_impl();
+      remesher.fairing_impl(np);
       break;
     case SMOOTH_SHAPE :
       remesher.smooth_shape_impl(nb_laplacian);
