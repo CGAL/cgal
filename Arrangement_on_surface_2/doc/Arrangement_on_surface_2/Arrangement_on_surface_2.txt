@@ -3573,12 +3573,11 @@ of the curves.
 The `AosApproximateTraits_2` refines the concept
 `AosApproximatePointTraits_2`. In addition to the type
 `Approximate_number_type` required by the latter, a model of the
-`AosApproximateTraits_2` concept must define the types
-`Approximate_kernel` and `Approximate_point_2`, which are
-typically defined as `CGAL::Cartesian<Approximate_number_type>`
-and `Approximate_kernel::Point_2`, respectively. Also, it
-must support the operations below (in addition to the operation
-required by the concept `AosApproximatePointTraits_2`).
+`AosApproximateTraits_2` concept must define the type
+`Approximate_point_2`, which is typically defined as
+`CGAL::Cartesian<Approximate_number_type>::Point_2`. Also, it must
+support the operations below (in addition to the operation required by
+the concept `AosApproximatePointTraits_2`).
 
 <DL>
 <DT>\link AosApproximateTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:

@@ -24,9 +24,6 @@ public:
   /// \name Types
   /// @{
 
-  //! the approximate kernel.
-  typedef unspecified_type Approximate_kernel;
-
   //! the approximate point.
   typedef unspecified_type Approximate_point_2;
 
