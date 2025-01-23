@@ -1123,40 +1123,39 @@ namespace internal {
       std::unordered_set<vertex_descriptor> neighbors_from_border;
       collect_vertices_from_boundaries(continuity + 1, neighbors_from_border);
 
+      // property map of constrained vertices for relaxation
+      auto vertex_constraint = [&](const vertex_descriptor v)
+        {
+          return !is_move_allowed(v, fair_constraints)
+              || neighbors_from_border.find(v) != neighbors_from_border.end();
+        };
+      auto constrained_vertices_pmap
+        = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
+
       // warning : fairing targetting continuity C^k
       // needs a (k+1)-ring of vertices
+      // here k = 1, so we need a 2-ring of vertices
       for(const vertex_descriptor v : vertices(mesh_))
       {
-        if (!is_move_allowed(v, fair_constraints))
+        if (get(constrained_vertices_pmap, v))
           continue;
 
-        std::unordered_set<vertex_descriptor> neighbors;
+        std::unordered_set<vertex_descriptor> vertices_for_fairing;
         for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
         {
           const vertex_descriptor vs = source(h, mesh_);
-          if ( is_move_allowed(vs, fair_constraints))
+          if ( !get(constrained_vertices_pmap, vs))
           {
-            neighbors.insert(vs);
+            vertices_for_fairing.insert(vs);
+
             for (halfedge_descriptor hh : halfedges_around_target(vs, mesh_))
             {
               const vertex_descriptor vss = source(hh, mesh_);
-              if ( is_move_allowed(vss, fair_constraints))
-                neighbors.insert(vss);
+              if ( !get(constrained_vertices_pmap, vss))
+                vertices_for_fairing.insert(vss);
             }
           }
         }
-
-        std::unordered_set<vertex_descriptor> vertices_for_fairing;
-        std::copy_if(neighbors.begin(), neighbors.end(),
-          std::inserter(vertices_for_fairing, vertices_for_fairing.begin()),
-          [&neighbors_from_border](vertex_descriptor vd)
-          {
-            return neighbors_from_border.find(vd) == neighbors_from_border.end();
-          });
-
-        std::unordered_map<vertex_descriptor, Point> vp;
-        for (vertex_descriptor v : vertices_for_fairing)
-          vp[v] = get(vpmap_, v);
 
         CGAL::Polygon_mesh_processing::fair(mesh_,
                                             vertices_for_fairing,
