@@ -259,8 +259,7 @@ function process_file_single_function {
   echo "WEIGHT_FILE: ${WEIGHT_FILE}"
 
   LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_offset.txt
-  OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result.obj
-  CMD="./offset_mesh ${FILE} ${WEIGHT_FILE} ${OUTPUT}"
+  CMD="./offset_mesh_outwards ${FILE} ${WEIGHT_FILE} ${OUTPUT_DIRECTORY}/${FULL_ID}"
 
   if [ ! -f $WEIGHT_FILE ]; then
     echo "====== [ERROR]: missing offset file?! ======"
@@ -314,6 +313,7 @@ function process_file_single_function {
     # ----------------------------------------------------------------
     # Compare
 
+    OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result_-1.obj
     CMD="./compare_outputs ${OUTPUT} ${OC_OUTPUT}"
     LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_comparison.txt
 

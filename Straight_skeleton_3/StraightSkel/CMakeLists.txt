@@ -223,6 +223,7 @@ set(algo_2d_SOURCES
         src/algo/2d/SkelMeshGenerator.cpp)
 set(algo_3d_SOURCES
         src/algo/3d/KernelWrapper.cpp
+        src/algo/3d/OutwardMeshOffset.cpp
         src/algo/3d/SimpleStraightSkel.cpp
         src/algo/3d/PolyhedronBuilder.cpp
         src/algo/3d/LineInFacet.cpp
