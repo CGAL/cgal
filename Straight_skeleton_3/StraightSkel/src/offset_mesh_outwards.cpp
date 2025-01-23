@@ -22,10 +22,11 @@ int main(int argc, char** argv)
   // path of the directory where the output is written
   const std::filesystem::path save_path = (argc > 3) ? argv[3] : std::filesystem::current_path();
 
-  // the offset(s) are global, but the geometric translation of the face
-  // takes into account their respective speed.
+  // the offset(s) are global, but the geometric translations of thes faces
+  // take into account their respective speed.
   std::list<CGAL::FT> save_offsets = { -1 };
 
+  // this call will generate files called "result_[offset].obj" in the save directory
   bool success = algo::_3d::OutwardMeshOffset::run(input_filename,
                                                    weights_filename,
                                                    save_offsets,
