@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.1...3.15)
 
 project( Triangulation_on_hyperbolic_surface_2_Demo )
 
-include_directories(/Users/pougetma/dev/cgal-loic-submission-2024/Installation/include/)
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${CMAKE_BINARY_DIR})
