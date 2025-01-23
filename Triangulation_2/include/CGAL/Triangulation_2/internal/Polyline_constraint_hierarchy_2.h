@@ -49,11 +49,15 @@ namespace CGAL {
 template <class T, class Compare, class Point>
 class Polyline_constraint_hierarchy_2
 {
+  using T_point_ref = decltype(std::declval<T>()->point());
+  static_assert(std::is_same_v<Point&, T_point_ref>,
+                "The point type of the vertex handle must be the same as the point type of the hierarchy.");
 public:
-  typedef T                                       Vertex_handle;
-  typedef std::pair<T, T>                         Subconstraint;
+  using Vertex_handle = T;
+  using Vertex_handle_compare = Compare;
+  using Subconstraint = std::pair<T, T>;
 
-  using size_type = std::size_t;
+  using size_type = typename Vertex_handle::size_type;
 
 private:
   class Node {
@@ -71,8 +75,8 @@ private:
     bool input_;
   };
 
-  typedef CGAL::Skiplist<Node>  Vertex_list;
-  typedef Vertex_list* Vertex_list_ptr;
+  using Vertex_list = CGAL::Skiplist<Node>;
+  using Vertex_list_ptr = Vertex_list*;
 
 public:
   // the base line is always
@@ -100,7 +104,7 @@ public:
     , std::bidirectional_iterator_tag
     , Vertex_handle>
   {
-    typedef typename Vertex_list::skip_iterator Base_it;
+    using Base_it = typename Vertex_list::skip_iterator;
   public:
     Vertex_it() : Vertex_it::iterator_adaptor_() {}
     Vertex_it(Base_it it) : Vertex_it::iterator_adaptor_(it) {}
@@ -230,8 +234,8 @@ public:
     size_type    number_of_vertices() const {return enclosing.size(); }
   };
 
-  typedef std::list<Context>              Context_list;
-  typedef typename Context_list::iterator Context_iterator;
+  using Context_list = std::list<Context>;
+  using Context_iterator = typename Context_list::iterator;
 
   static void fix_contexts(Context_list& context_list) {
     const bool multiple_contexts = context_list.size() > 1;
@@ -242,20 +246,18 @@ public:
     }
   }
 
-  typedef std::set<Constraint_id>           Constraints_set;
+  using Constraints_set = std::set<Constraint_id>;
 #if CGAL_USE_BARE_STD_MAP
-  typedef std::map<Subconstraint, Context_list*,
-                   Pair_compare>            Sc_to_c_map;
+  using Sc_to_c_map = std::map<Subconstraint, Context_list*, Pair_compare>;
 #else
-  typedef CGAL::unordered_flat_map<Subconstraint, Context_list*,
-                                   boost::hash<Subconstraint>> Sc_to_c_map;
+  using Sc_to_c_map = CGAL::unordered_flat_map<Subconstraint, Context_list*, boost::hash<Subconstraint>>;
 #endif
-  typedef typename Constraints_set::iterator Constraint_iterator;
-  typedef const Constraints_set& Constraints;
-  typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
-  typedef typename Sc_to_c_map::iterator Sc_it;
-  typedef Sc_iterator Subconstraint_and_contexts_iterator;
-  typedef const Sc_to_c_map& Subconstraints_and_contexts;
+  using Constraint_iterator = typename Constraints_set::iterator;
+  using Constraints = const Constraints_set&;
+  using Sc_iterator = typename Sc_to_c_map::const_iterator;
+  using Sc_it = typename Sc_to_c_map::iterator;
+  using Subconstraint_and_contexts_iterator = Sc_iterator;
+  using Subconstraints_and_contexts = const Sc_to_c_map&;
 
   class Subconstraint_iterator : public boost::stl_interfaces::proxy_iterator_interface<
 #if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
@@ -445,7 +447,7 @@ public:
       return *this;
     }
   }; // end class Subconstraint_iterator
-  typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  using Subconstraints = Iterator_range<Subconstraint_iterator>;
 
 private:
   Compare          comp;
