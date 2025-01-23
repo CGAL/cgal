@@ -28,7 +28,6 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
 
-  add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   add_executable(Otr2_demo glviewer.cpp scene.cpp Otr2_demo.cpp window.cpp render.cpp dialog_options.cpp

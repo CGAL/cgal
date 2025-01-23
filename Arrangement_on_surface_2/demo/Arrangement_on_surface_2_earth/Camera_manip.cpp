@@ -1,4 +1,4 @@
-// Copyright(c) 2023, 2024 Tel-Aviv University(Israel).
+// Copyright (c) 2023, 2024 Tel-Aviv University(Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).

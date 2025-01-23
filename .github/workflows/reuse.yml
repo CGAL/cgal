@@ -10,17 +10,18 @@ jobs:
   reuse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: REUSE version
-      uses: fsfe/reuse-action@v3
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Display reuse-tool version
+      uses: fsfe/reuse-action@v5
       with:
         args: --version
-    - name: REUSE lint
-      uses: fsfe/reuse-action@v3
+    - name: REUSE Compliance Check
+      uses: fsfe/reuse-action@v5
       with:
         args: --include-submodules lint
     - name: REUSE SPDX SBOM
-      uses: fsfe/reuse-action@v3
+      uses: fsfe/reuse-action@v5
       with:
         args: spdx
     - name: install dependencies
@@ -29,7 +30,7 @@ jobs:
       run: |
         mkdir -p ./release
         cmake -DDESTINATION=./release -DCGAL_VERSION=9.9 -P ./Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
-    - name: REUSE lint release tarball
-      uses: fsfe/reuse-action@v3
+    - name: REUSE Compliance Check of release tarball
+      uses: fsfe/reuse-action@v5
       with:
         args: --root ./release/CGAL-9.9 --include-submodules lint

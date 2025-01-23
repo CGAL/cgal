@@ -46,6 +46,11 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iterator_range.h>
+#ifdef CGAL_SD_RG_USE_PMP
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#else
+#include <CGAL/centroid.h>
+#endif
 
 namespace CGAL {
 namespace Shape_detection {
@@ -61,7 +66,7 @@ namespace internal {
     mutable T it;
   };
 
-  // TODO: this should be customisable in named function parameters
+  // TODO: this should be customizable in named function parameters
   template<class T, bool = CGAL::is_iterator<T>::value>
   struct hash_item {};
 
@@ -329,6 +334,30 @@ namespace internal {
     return create_plane(tmp, item_map, traits);
   }
 
+  template <class Traits>
+  void
+  triangulate_face(const std::vector<typename Traits::Point_3>& points,
+                         std::vector<typename Traits::Triangle_3>& triangles)
+  {
+#ifdef CGAL_SD_RG_USE_PMP
+    std::vector<CGAL::Triple<int, int, int>> output;
+
+    Polygon_mesh_processing::triangulate_hole_polyline(points, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
+
+    triangles.reserve(output.size());
+    for (const auto& t : output)
+      triangles.emplace_back(points[t.first], points[t.second], points[t.third]);
+#else
+    //use a triangulation using the centroid
+    std::size_t nb_edges = points.size();
+    typename Traits::Point_3 c = CGAL::centroid(points.begin(), points.end());
+    triangles.reserve(nb_edges);
+    for (std::size_t i=0; i<nb_edges-1; ++i)
+      triangles.emplace_back(points[i], points[i+1], c);
+    triangles.emplace_back(points.back(), points.front(), c);
+#endif
+  }
+
   template<
   typename Traits,
   typename FaceGraph,
@@ -369,16 +398,62 @@ namespace internal {
       if (points.size()==3)
         triangles.push_back(ITriangle_3(points[0], points[1], points[2]));
       else
-      {
-        //use a triangulation using the centroid
-        std::size_t nb_edges = points.size();
-        IPoint_3 c = CGAL::centroid(points.begin(), points.end());
-        points.push_back(points.front());
-        for (std::size_t i=0; i<nb_edges; ++i)
-          triangles.push_back(ITriangle_3(points[i], points[i+1], c));
-      }
+        triangulate_face<ITraits>(points, triangles);
     }
     CGAL_precondition(triangles.size() >= region.size());
+    IPlane_3 fitted_plane;
+    IPoint_3 fitted_centroid;
+    const IFT score = CGAL::linear_least_squares_fitting_3(
+      triangles.begin(), triangles.end(),
+      fitted_plane, fitted_centroid,
+      CGAL::Dimension_tag<2>(), ITraits(),
+      CGAL::Eigen_diagonalize_traits<IFT, 3>());
+
+    const Plane_3 plane(
+      static_cast<FT>(fitted_plane.a()),
+      static_cast<FT>(fitted_plane.b()),
+      static_cast<FT>(fitted_plane.c()),
+      static_cast<FT>(fitted_plane.d()));
+    return std::make_pair(plane, static_cast<FT>(score));
+  }
+
+  template<
+    typename Traits,
+    typename Region,
+    typename FaceToTrianglesMap>
+  std::pair<typename Traits::Plane_3, typename Traits::FT>
+    create_plane_from_triangulated_faces(
+      const Region& region,
+      const FaceToTrianglesMap &face_to_triangles_map, const Traits&) {
+
+    using FT = typename Traits::FT;
+    using Plane_3 = typename Traits::Plane_3;
+    using Triangle_3 = typename Traits::Triangle_3;
+
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = CGAL::Cartesian_converter<Traits, ITraits>;
+
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using ITriangle_3 = typename ITraits::Triangle_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+
+    std::vector<ITriangle_3> triangles;
+    CGAL_precondition(region.size() > 0);
+    triangles.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const typename Region::value_type face : region) {
+      const std::vector<Triangle_3>& tris = get(face_to_triangles_map, face);
+
+      // Degenerate polygons are omitted.
+      if (tris.empty())
+        continue;
+
+      for (const auto &tri : tris)
+        triangles.push_back(iconverter(tri));
+    }
+    CGAL_precondition(!triangles.empty());
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(

@@ -6,6 +6,8 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 template<typename VertexInfoType, typename FaceInfoType, typename Itag>
 struct TriangulationTraitsTemplate_2 {
 

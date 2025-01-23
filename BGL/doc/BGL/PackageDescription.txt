@@ -482,6 +482,10 @@ the requirement for traversal of all faces in a graph.
 /// I/O Functions for the \ref IOStreamOBJ
 /// \ingroup PkgBGLIOFct
 
+/// \defgroup PkgBGLIoFuncsOM OM I/O Functions
+/// I/O Functions for the \ref IOStreamOM
+/// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
 /// I/O Functions for the \ref IOStreamOFF
 /// \ingroup PkgBGLIOFct

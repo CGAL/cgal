@@ -387,7 +387,7 @@ void test()
     assert(vertices(tm1).size() == 0);
   }
 
-  // test combinaison of use_compact_clipper and clip_volume
+  // test combinations of use_compact_clipper and clip_volume
   {
     TriangleMesh tm1;
     std::ifstream("data-coref/cube.off") >> tm1;

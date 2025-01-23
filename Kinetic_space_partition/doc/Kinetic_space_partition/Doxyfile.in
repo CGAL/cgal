@@ -4,4 +4,3 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Kinetic Space Partition"
 EXTRACT_ALL                =  NO
 HIDE_UNDOC_CLASSES         =  YES
 WARN_IF_UNDOCUMENTED       =  NO
-PREDEFINED                 +=  DOXYGEN_RUNNING

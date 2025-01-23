@@ -280,7 +280,7 @@ private:
 
   //according to the tag, a,b,c dim change but not the scale. We look for the max dimension of the whole image.
   //A high scale factor will often go with a low dimension, to compensate it. So we don't want a max being the
-  //higher scale * the higher dim, hence the tag specialisation.
+  //higher scale * the higher dim, hence the tag specialization.
 //TODO: set the scale factors according to the dimensipon to avoid doing that.
   double compute_maxDim(x_tag) const
   {

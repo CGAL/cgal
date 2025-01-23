@@ -24,7 +24,7 @@ namespace CGAL {
    * - GMap_cell_iterator<Map,i,dim>: one dart per each i-cell
    * - GMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
    * - GMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
-   * - one specialisation of the CMap_cell_iterator for the
+   * - one specialization of the CMap_cell_iterator for the
    *    GMap_dart_iterator_basic_of_all iterator
    */
 

@@ -12,7 +12,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_kernel.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Dualizer.h>
 #include <CGAL/translate.h>
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -95,6 +94,7 @@ void CGAL_Lab_kernel_plugin::on_actionKernel_triggered()
 
     // get inside point
     Point inside_point = kernel.inside_point();
+
     Vector translate = inside_point - CGAL::ORIGIN;
 
     // compute dual of translated polyhedron w.r.t. inside point.
@@ -132,9 +132,6 @@ void CGAL_Lab_kernel_plugin::on_actionKernel_triggered()
     typedef CGAL::Dual<SMesh> Dual;
     typedef boost::graph_traits<Dual>::vertex_descriptor dual_vertex_descriptor;
 
-    std::ofstream out("primal.off");
-    out << convex_hull << std::endl;
-    out.close();
     Dual dual(convex_hull);
 
     std::map<dual_vertex_descriptor,Point> vpm;

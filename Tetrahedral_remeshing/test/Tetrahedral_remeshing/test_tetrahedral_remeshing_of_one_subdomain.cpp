@@ -18,7 +18,7 @@ typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_tria
 
 void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulation& tr)
 {
-  CGAL::Random rng;
+  CGAL::Random& rng = CGAL::get_default_random();
 
   typedef Remeshing_triangulation::Point Point;
   typedef Remeshing_triangulation::Cell_handle Cell_handle;

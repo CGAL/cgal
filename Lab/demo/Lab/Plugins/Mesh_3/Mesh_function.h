@@ -139,28 +139,30 @@ QStringList
 Mesh_parameters::
 log() const
 {
+  auto is_valid = [](const double d)->bool { return d > 0. && d != DBL_MAX; };
+
   QStringList res("Mesh criteria");
 
   // doubles
-  if(edge_sizing > 0)
+  if(is_valid(edge_sizing))
     res << QString("edge max size: %1").arg(edge_sizing);
-  if(edge_min_sizing > 0)
+  if(is_valid(edge_min_sizing))
     res << QString("edge min size: %1").arg(edge_min_sizing);
-  if(edge_distance > 0)
+  if(is_valid(edge_distance))
     res << QString("edge max distance: %1").arg(edge_distance);
-  if(facet_angle > 0)
+  if(is_valid(facet_angle))
     res << QString("facet min angle: %1").arg(facet_angle);
-  if(facet_sizing > 0)
+  if(is_valid(facet_sizing))
     res << QString("facet max size: %1").arg(facet_sizing);
-  if(facet_min_sizing > 0)
+  if(is_valid(facet_min_sizing))
     res << QString("facet min size: %1").arg(facet_min_sizing);
-  if(facet_approx > 0)
+  if(is_valid(facet_approx))
     res << QString("facet approx error: %1").arg(facet_approx);
-  if(tet_shape > 0)
+  if(is_valid(tet_shape))
     res << QString("tet shape (radius-edge): %1").arg(tet_shape);
-  if(tet_sizing > 0)
+  if(is_valid(tet_sizing))
     res << QString("tet max size: %1").arg(tet_sizing);
-  if(tet_min_sizing > 0)
+  if(is_valid(tet_min_sizing))
     res << QString("tet min size: %1").arg(tet_min_sizing);
 
   // booleans
@@ -171,8 +173,10 @@ log() const
              .arg(detect_connected_components);
     res << QString("use weights: %1").arg(weights_ptr != nullptr);
   }
-  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
-  res << QString("manifold: %1").arg(manifold);
+  if(use_sizing_field_with_aabb_tree)
+    res << QString("use sizing field with aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  if(manifold)
+    res << QString("manifold: %1").arg(manifold);
 
   return res;
 }

@@ -13,12 +13,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
-#include <CGAL/IO/helpers.h>
 #include <CGAL/enum.h>
 
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 template <typename PolygonWithHoles>
 bool read_dat_polygon(const char* filename,
@@ -36,7 +36,7 @@ bool read_dat_polygon(const char* filename,
   }
 
   bool is_number_of_CC_in_input = false;
-  if(CGAL::IO::internal::get_file_extension(filename) == "poly")
+  if(std::filesystem::path(filename).extension().string() == ".poly")
   {
     is_number_of_CC_in_input = true;
   }
@@ -109,8 +109,8 @@ template <typename PolygonWithHoles>
 bool read_input_polygon(const char* filename,
                         PolygonWithHoles& p)
 {
-  std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "dat")
+  std::string ext = std::filesystem::path(filename).extension().string();
+  if(ext == ".dat")
   {
     return read_dat_polygon(filename, p);
   }

@@ -1,4 +1,4 @@
-// Copyright(c) 2019  Foundation for Research and Technology-Hellas (Greece).
+// Copyright (c) 2019  Foundation for Research and Technology-Hellas (Greece).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).

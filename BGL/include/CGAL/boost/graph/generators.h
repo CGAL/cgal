@@ -300,8 +300,8 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
  *     \cgalParamNEnd
  *   \cgalNamedParamsEnd
  **/
-template<typename P,
-         typename Graph,
+template<typename Graph,
+         typename P,
          typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,

@@ -59,7 +59,6 @@ public:
     std::size_t order;
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > faces; // For each intersecting support plane there is one pair of adjacent faces (or less if the edge is on the bbox)
     std::set<std::size_t> planes;
-    std::set<std::size_t> crossed;
     std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
@@ -67,10 +66,8 @@ public:
 
     const Edge_property& operator=(const Edge_property& other) {
       line = other.line;
-      // order = other.order;
       faces = other.faces;
       planes = other.planes;
-      crossed = other.crossed;
       intervals = other.intervals;
 
       return *this;
@@ -137,7 +134,6 @@ private:
 
   std::vector<bool> m_initial_part_of_partition;
   std::vector<std::map<std::size_t, Kinetic_interval> > m_initial_intervals;
-  std::vector<std::set<std::size_t> > m_initial_crossed;
 
 public:
   Intersection_graph() :
@@ -290,14 +286,11 @@ public:
 
   void initialization_done() {
     auto e = edges();
-    m_initial_crossed.resize(e.size());
     m_initial_intervals.resize(e.size());
 
     std::size_t idx = 0;
-    for (const auto& edge : e) {
-      m_initial_intervals[idx] = m_graph[edge].intervals;
-      m_initial_crossed[idx++] = m_graph[edge].crossed;
-    }
+    for (const auto& edge : e)
+      m_initial_intervals[idx++] = m_graph[edge].intervals;
 
     m_initial_part_of_partition.resize(m_ifaces.size());
     for (idx = 0; idx < m_ifaces.size(); idx++)
@@ -306,14 +299,11 @@ public:
 
   void reset_to_initialization() {
     auto e = edges();
-    CGAL_assertion(e.size() == m_initial_crossed.size());
     CGAL_assertion(e.size() == m_initial_intervals.size());
     std::size_t idx = 0;
 
-    for (auto edge : e) {
-      m_graph[edge].intervals = m_initial_intervals[idx];
-      m_graph[edge].crossed = m_initial_crossed[idx++];
-    }
+    for (auto edge : e)
+      m_graph[edge].intervals = m_initial_intervals[idx++];
 
     CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
     for (idx = 0; idx < m_ifaces.size(); idx++)
@@ -413,15 +403,6 @@ public:
     return Line_3(
       m_graph[boost::source(edge, m_graph)].point,
       m_graph[boost::target(edge, m_graph)].point);
-  }
-
-  bool has_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
-    return m_graph[edge].crossed.count(sp_idx) == 1;
-  }
-
-  void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
-    CGAL_assertion(false);
-    m_graph[edge].crossed.insert(sp_idx);
   }
 };
 

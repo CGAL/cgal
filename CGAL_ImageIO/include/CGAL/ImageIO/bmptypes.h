@@ -108,8 +108,8 @@ typedef std::uint32_t CGAL_UINT32;
 */
 
 /*
- * Bitmapfileheader defines a single bitmap image.  Its analogue in the
- * Windows SDK is the Bitmapfileheader.  Its analogues in the OS/2 Toolkit are
+ * Bitmapfileheader defines a single bitmap image.  Its analog in the
+ * Windows SDK is the Bitmapfileheader.  Its analogs in the OS/2 Toolkit are
  * the Bitmapfileheader and Bitmapfileheader2 structures.
  *
  * A BITMAPHEADER structure is always concatenated to the end of a
@@ -128,7 +128,7 @@ typedef struct Bitmapfileheader
 /*
  * BITMAPARRAYHEADER is used to establish a linked list of Bitmapfileheader
  * structures for a bitmap file with multiple images in it.  There is no
- * equivalent structure in the Windows SDK.  Its analogues in the OS/2 toolkit
+ * equivalent structure in the Windows SDK.  Its analogs in the OS/2 toolkit
  * are the BITMAPARRAYFILEHEADER and BITMAPARRAYFILEHEADER2 structures.
  *
  * A Bitmapfileheader structure is always concatenated to the end of a
@@ -145,9 +145,9 @@ typedef struct BITMAPARRAYHEADER
 
 
 /*
- * BITMAPHEADER defines the properties of a bitmap.  Its analogues in the
+ * BITMAPHEADER defines the properties of a bitmap.  Its analogs in the
  * Windows SDK are the BITMAPCOREINFOHEADER and BITMAPINFOHEADER structures.
- * Its analogues in the OS/2 Toolkit are the BITMAPINFOHEADER and
+ * Its analogs in the OS/2 Toolkit are the BITMAPINFOHEADER and
  * BITMAPINFOHEADER2 structures.
  *
  * A color table is concatenated to this structure.  The number of elements in
@@ -188,8 +188,8 @@ typedef struct BITMAPHEADER
 
 
 /*
- * RGB defines a single color palette entry.  Its analogues in the Windows SDK
- * are the RGBTRIPLE and RGBQUAD structures.  Its analogues in the OS/2
+ * RGB defines a single color palette entry.  Its analogs in the Windows SDK
+ * are the RGBTRIPLE and RGBQUAD structures.  Its analogs in the OS/2
  * Toolkit are the RGB and RGB2 structure.
  */
 typedef struct RGB

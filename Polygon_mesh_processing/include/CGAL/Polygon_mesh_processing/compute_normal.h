@@ -619,7 +619,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 * \brief computes the unit normal at vertex `v` as a function of the normals of incident faces.
 *
 * The implementation is inspired by Aubry et al. "On the most 'normal' normal" \cgalCite{cgal:al-otmnn-08},
-* which aims to compute a normal that maximises the visibility to the incident faces.
+* which aims to compute a normal that maximizes the visibility to the incident faces.
 * If such normal does not exist or if the optimization process fails to find it, a fallback normal is computed
 * as a sine-weighted sum of the normals of the incident faces.
 *
