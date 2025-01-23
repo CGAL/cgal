@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
                            CGAL::parameters::number_of_iterations(nb_iter)
-                           .smoothing_algo(PMP::FAIRING)
+                           .smoothing_algo(PMP::FAIR)
                            .do_project(false)
                            );
 
