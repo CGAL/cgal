@@ -1382,8 +1382,15 @@ bool SimpleStraightSkel::run() {
                                false /*attempt untilting*/);
 
                 save_offsets_.pop_front();
+
                 if (save_offsets_.empty()) {
-                    break; // @todo ought to be a config flag
+                    util::ConfigurationSPtr config = util::Configuration::getInstance();
+                    if (config->isLoaded()) {
+                        if ((config->contains("main", "stop_after_last_save_event") &&
+                             config->getBool("main", "stop_after_last_save_event"))) {
+                            break;
+                        }
+                    }
                 }
             }
 
