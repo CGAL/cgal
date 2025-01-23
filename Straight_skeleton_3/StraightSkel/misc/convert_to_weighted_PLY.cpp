@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include "algo/3d/MeshOffset.h"
+#include "algo/3d/OutwardMeshOffset.h"
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << num_vertices(sm) << " NV " << num_faces(sm) << " NF" << std::endl;
 
-  if(!algo::_3d::MeshOffset::assign_weights(sm, weights_filename))
+  if(!algo::_3d::OutwardMeshOffset::assign_weights(sm, weights_filename))
     return EXIT_FAILURE;
 
   std::ofstream out(output_filename);

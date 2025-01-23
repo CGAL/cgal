@@ -8,8 +8,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef ALGO_3D_MESHOFFSET_H
-#define ALGO_3D_MESHOFFSET_H
+#ifndef ALGO_3D_OUTWARDMESHOFFSET_H
+#define ALGO_3D_OUTWARDMESHOFFSET_H
 
 #include "data/3d/ptrs.h"
 #include "cgal_kernel.h"
@@ -38,14 +38,14 @@ namespace algo { namespace _3d {
 
 using namespace data::_3d;
 
-class MeshOffset
+class OutwardMeshOffset
 {
     using Mesh = CGAL::Surface_mesh<Point3>;
 
     using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
     using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
 
-    virtual ~MeshOffset();
+    virtual ~OutwardMeshOffset();
 
 public:
     // @todo customer specific, belongs into a .cpp
@@ -295,10 +295,10 @@ public:
     }
 
 public:
-    // @todo missing parameters
-    // - config file path
-    // - inwards or outwards offsetting
+    // @todo add missing parameters:
     // - save offset(s)
+    // - inwards or outwards offsetting
+    // - config file path
     static bool run(const char* mesh_filename,
                     const char* weights_filename,
                     const char* out_filename)
@@ -379,4 +379,4 @@ public:
 
 } }
 
-#endif /* ALGO_3D_MESHOFFSET_H */
+#endif /* ALGO_3D_OUTWARDMESHOFFSET_H */

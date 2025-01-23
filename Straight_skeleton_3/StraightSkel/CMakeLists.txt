@@ -277,8 +277,8 @@ set(StraightSkel_SOURCES src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
 target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 
-add_executable(offset_mesh src/offset_mesh.cpp)
-target_link_libraries(offset_mesh PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+add_executable(offset_mesh_outwards src/offset_mesh_outwards.cpp)
+target_link_libraries(offset_mesh_outwards PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 
 add_executable(convert_to_weighted_PLY misc/convert_to_weighted_PLY.cpp)
 target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)

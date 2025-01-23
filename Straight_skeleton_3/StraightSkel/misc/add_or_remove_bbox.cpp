@@ -1,4 +1,4 @@
-#include "algo/3d/MeshOffset.h"
+#include "algo/3d/OutwardMeshOffset.h"
 
 // For now, there are issues when EPECK is embedded back into doubles,
 // so dump files with EPECK and read them again with EPECK
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
   }
 
   if(do_add) {
-    if(!algo::_3d::MeshOffset::invert_and_add_bbox(sm)) {
+    if(!algo::_3d::OutwardMeshOffset::invert_and_add_bbox(sm)) {
         return EXIT_FAILURE;
     }
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
   } else {
-    if (!algo::_3d::MeshOffset::remove_bbox_and_invert(sm)) {
+    if (!algo::_3d::OutwardMeshOffset::remove_bbox_and_invert(sm)) {
       return EXIT_FAILURE;
     }
 

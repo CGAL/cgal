@@ -393,7 +393,7 @@ int main(int argc, const char* argv[]) {
         }
 
 
-        // @todo don't duplicate with MeshOffset.h|.cpp
+        // @todo don't duplicate with OutwardMeshOffset.h|.cpp
         if (rand_move_points) {
             polyhedron = algo::_3d::PolyhedronTransformation::perturb(polyhedron);
         }
