@@ -3401,8 +3401,6 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            std::cout << "potential tet event @ " << *point << " (t=" << offset_event << ")" << std::endl;
-
             if (offset_event < 0 && offset_event >= current_offset_to_nearest_event) {
                 TetrahedronEventSPtr event = TetrahedronEvent::create(polyhedron);
                 NodeSPtr node = Node::create(point);
@@ -4054,8 +4052,6 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
 #endif
 
             queue.push(event);
-
-            std::cout << "accepted polyhedron split: " << event->toString() << std::endl;
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
             current_offset_to_nearest_event = offset_event;
@@ -4807,10 +4803,8 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     timer.start();
 #endif
 
-    // save events are created directly in the main event loop
-    // @todo when simultaneous event code is purged, it can be here again, which is better
-    // because it's easier to set 'current_offset_to_nearest_event'
-
+    // save events are now created directly in the main event loop
+    // @todo when simultaneous event code is purged, it can be here again
     // if (!save_offsets_.empty()) {
     //     queue.push(SaveOffsetEvent::create(save_offsets_.front()));
     // }

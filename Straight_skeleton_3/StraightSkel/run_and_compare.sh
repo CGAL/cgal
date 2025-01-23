@@ -234,6 +234,11 @@ function process_file {
 }
 
 function process_file_single_function {
+  if [ "${OFFSET_DIRECTION}" != "out" ]; then
+    echo "====== [ERROR]: process_file_single_function() is currently only usable if OFFSET_DIRECTION is 'out' ======"
+    return
+  fi
+
   FILE=$1
   BASE_NAME=$(basename "$FILE" | sed 's/\.[^.]*$//')
 
