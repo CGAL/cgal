@@ -1438,14 +1438,15 @@ vary according to the user choice.} for answering queries:
   points or choosing points on a grid, are also available; see the
   Reference Manual for more details.
 
-  The landmark strategy requires that the type of the attached
-  arrangement be an instance of the `Arrangement_2<Traits,Dcel>` class
-  template, where the `Traits` parameter is substituted by a
-  geometry-traits class that models the `ArrangementLandmarkTraits_2`
-  concept, which refines the basic `ArrangementBasicTraits_2` concept;
-  see Section \ref aos_sssec-tr_landmarks_concept for details. Most
-  traits classes included in the \ref PkgArrangementOnSurface2 package
-  are models of this refined concept.
+  The arrangement attached to the landmark strategy must be either (i)
+  an instance of the `Arrangement_2<Geom,Dcel>` class template, where
+  the `Traits` parameter is substituted by a geometry-traits class
+  that models the `ArrangementLandmarkTraits_2` concept, or (ii) an
+  instance of the `Arrangement_on_surface_2<GeomTraits,TopolTraits>`
+  class template, where the `GeomTraits` is similarly substituted;
+  see Section \ref aos_sssec-tr_landmarks_concept for details about
+  this concept. Most traits classes included in the \ref
+  PkgArrangementOnSurface2 package are models of this refined concept.
 
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements an
   improved variant of Mulmuley's point-location algorithm
@@ -1492,7 +1493,7 @@ educational purposes, and thus we do not elaborate on this strategy.
 The data structure needed by the landmark and the trapezoidal map RIC
 strategies can be constructed in \cgalBigO{N \log N} time, where \f$N\f$
 is the overall number of edges in the arrangement, but the constant
-hidden in the \cgalBigO{&nbsp;} notation for the trapezoidal map RIC strategy
+hidden in the \cgalBigO{~} notation for the trapezoidal map RIC strategy
 is much larger. Thus, construction needed by the landmark algorithm is
 in practice significantly faster than the construction needed by the
 trapezoidal map RIC strategy. In addition, although both resulting
@@ -2039,8 +2040,8 @@ so it must be construct from scratch.
 
 In the first case, we sweep over the input curves, compute their
 intersection points, and construct the \dcel that represents their
-arrangement. This process is performed in \cgalBigO{left((n + k)\log
-n\right} time, where \f$k\f$ is the total number of intersection
+arrangement. This process is performed in \cgalBigO{(n + k)\log
+n} time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
 for incremental insertion if the arrangement is relatively sparse
 (when \f$k\f$ is \cgalBigO{\frac{n^2}{\log n}}), but it is recommended
