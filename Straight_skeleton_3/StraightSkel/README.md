@@ -1,29 +1,28 @@
  S t r a i g h t S k e l
 =========================
 
-StraightSkel is an implementation of the Straight Skeleton in 2- and
-3-dimensional space. It is used to animate the computation of offsets
-of polygons and polyhedrons.
-StraightSkel was written by Gernot Walzl in the years 2011, 2012, 2013.
+StraightSkel is an implementation of Straight Skeleton in 2- and 3-dimensional space.
+It is used to compute offsets of closed polygons and polyhedrons.
 
+The straight skeleton is always interior to the shape, and the offsetting is always inwards.
 
  Requirements
 --------------
 
-* C++ Compiler  (of course)
+* C++ Compiler
   http://gcc.gnu.org/
-* Boost C++ Libraries
-  http://www.boost.org/
 * CMake build system
   http://www.cmake.org/
-* SQLite
-  http://www.sqlite.org/
-* OpenGL Utility Toolkit (GLUT)  (often part of the graphics card driver)
-  http://freeglut.sourceforge.net/
-
-Optional:
+* Boost C++ Libraries
+  http://www.boost.org/
 * Computational Geometry Algorithms Library (CGAL)
   http://www.cgal.org/
+
+Optional:
+* SQLite
+  http://www.sqlite.org/
+* OpenGL Utility Toolkit (GLUT)
+  http://freeglut.sourceforge.net/
 * Doxygen
   http://www.stack.nl/~dimitri/doxygen/
 
@@ -31,63 +30,45 @@ Optional:
  Building
 ----------
 
-"build.sh" does an "out-of-source build".
-It creates the binaries in a directory called "build".
-A database of some given polygons is created also.
-
 CMake is used as build system.
 Therefore you may use "ccmake" or "cmake-gui" to configure the build process.
-
-This is useful to switch to the exact geometric kernel of CGAL.
-The included kernel uses double precision only.
-
 
  Running
 ---------
 
-Key bindings and various options may be found in the configuration file
-called "StraightSkel.ini". This file is located in the same directory as the
-executable itself.
-
-The usage of StraightSkel is printed to standard output when the command
+The main executable is `StraightSkel`. Its usage is printed to standard output when the command
 is invoked with no options.
 
-Common problems:
-* Plane equations are not exact:
-  Many commonly used file formats (like Wavefront's .obj) have a
-  number representation with limitations. It is not always possible
-  that more than 3 points are exactly on the same plane.
-* Degenerated input:
-  More than 1 event occurs exactly on the same offset.
+Various advanced options can be found in the configuration file called "StraightSkel.ini".
+This file is located in the same directory as the executable itself (build directory).
 
-Creating animations:
-The OpenGL window can be dumped to a bitmap file (.bmp) by pressing the
-associated button. (default: F10)
-A series of bitmap files may be converted to an animated GIF using
-ImageMagick's convert:
+For outward offset mesh generation, a helper function is provided, which handles creating
+an outside bounding box, inverting the mesh, etc. See sample code: src/offset_mesh.cpp
 
-convert  -delay 100  -loop 0  -colors 64  *.bmp  animated.gif
+ Testing
+---------
 
-To create a movie you may use mencoder:
+"test.sh" tests the code by generating skeleton & offset of many simple polyhedrons.
+A summary is shown at the end.
 
-mencoder 'mf://*.bmp' -mf type=bmp:fps=10 -ovc xvid -xvidencopts bitrate=1000 -o output.avi
+Unit tests also document the usage of the code.
+The build process needs to be configured to build the tests.
+"make test" will sequentially run all "*TestRunner".
+"*TestRunner --log_level=all" gives detailed output.
 
+Debugging:
+gdb --args ./StraightSkel 3d load anything.obj
 
- Documentation
----------------
+Profiling:
 
-The build process can be configured to use doxygen to create documentation
-from the source code.
-Once the makefile is configured, "make doc" will invoke doxygen.
-
-Additional documentation may be found inside the "doc" folder.
-
+valgrind --tool=callgrind ./StraightSkel 3d load anything.obj --no-window
+kcachegrind callgrind.out.*
 
  Development
 -------------
 
 To avoid segmentation fault errors, standard C pointers are used very rarely.
-A slightly modified version of Boost's Smart Pointer is used instead.
+A slightly modified version of the STL's Smart Pointer may be used instead.
 (Modification: Print the stack trace in case of an error.)
 
 Organization of Source Code:
@@ -100,31 +81,9 @@ src/
   ui/       User Interface
     gl/     OpenGL
     ps/     PostScript
-  util/
+  util/     Tools
+  misc/     Miscellaneous (pre- and post-processing helpers for mesh offsetting)
 test/       Unit Test Cases
-
-Testing:
-Testing is a very important part to improve the quality of the code.
-"test.sh" tests the executable by invoking the command on many polyhedrons.
-A summary is shown at the end.
-
-Unit Test Cases:
-Unit tests also document the usage of the code.
-The build process needs to be configured to build the tests.
-"make test" will sequentially run all "*TestRunner".
-"*TestRunner --log_level=all" gives detailed output.
-
-Debugging:
-gdb is useful to detect errors.
-
-gdb ./StraightSkel
-run 3d load anything.obj
-
-Profiling:
-
-valgrind --tool=callgrind ./StraightSkel 3d load anything.obj --no-window
-kcachegrind callgrind.out.*
-
 
  Database
 ----------
@@ -132,9 +91,36 @@ kcachegrind callgrind.out.*
 sqlite3 skeldata2d.db3 "SELECT * FROM Polygons"
 sqlite3 skeldata3d.db3 "SELECT * FROM Polyhedrons"
 
+ Visualization
+---------------
 
- Disclaimer
-------------
+Keybindings for the OpenGL window can be found and modified in the configuration file ("StraightSkel.ini",
+in the build directory).
+
+Creating animations:
+The OpenGL window can be dumped to a bitmap file (.bmp) by pressing the associated button. (default: F10)
+A series of bitmap files may be converted to an animated GIF using ImageMagick's convert:
+
+```
+convert  -delay 100  -loop 0  -colors 64  *.bmp  animated.gif
+```
+
+To create a movie you may use mencoder:
+
+```
+mencoder 'mf://*.bmp' -mf type=bmp:fps=10 -ovc xvid -xvidencopts bitrate=1000 -o output.avi
+```
+
+ History
+---------
+
+StraightSkel was started by Gernot Walzl in the years 2011, 2012, 2013 (MIT).
+
+StraightSkel was further developed by GeometryFactory since 2024 (GPL-3.0-or-later OR LicenseRef-Commercial).
+
+
+ Disclaimer (MIT code)
+----------------------
 
 THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
