@@ -883,7 +883,7 @@ insert_subconstraint(Vertex_handle vaa,
   stack.push(std::make_pair(vaa,vbb));
 
   while(! stack.empty()){
-    boost::tie(vaa,vbb) = stack.top();
+    std::tie(vaa,vbb) = stack.top();
     stack.pop();
     CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS

@@ -185,7 +185,7 @@ namespace CGAL {
 
         int number_of_roots;
         FT root_1, root_2;
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         const Vector ab = vector(a, b);
@@ -291,7 +291,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
@@ -353,7 +353,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 && root_2 > FT(0) )
@@ -392,7 +392,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 )

@@ -322,7 +322,7 @@ public:
                        "A degenerate segment is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
-        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+        std::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = cast_and_return_minimum(segment, skip, accept_if_acute);
       } else {
         Ray ray(center, ray_direction);
@@ -332,7 +332,7 @@ public:
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
-        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+        std::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = ray_casting(ray, skip, accept_if_acute);
       }
 

@@ -116,7 +116,7 @@ void set_vcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
   SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
     smesh->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
   bool created;
-  boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::IO::Color>("v:color",CGAL::IO::Color(0,0,0));
+  std::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::IO::Color>("v:color",CGAL::IO::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
   for(vertex_descriptor vd : vertices(*smesh))
@@ -130,7 +130,7 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
   SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
     smesh->property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
   bool created;
-   boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::IO::Color>("f:color",CGAL::IO::Color(0,0,0));
+   std::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::IO::Color>("f:color",CGAL::IO::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
   for(face_descriptor fd : faces(*smesh))

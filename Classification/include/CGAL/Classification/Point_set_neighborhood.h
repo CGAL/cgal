@@ -318,7 +318,7 @@ private:
                  std::floor(p.y() / voxel_size),
                  std::floor(p.z() / voxel_size));
       typename std::map<Point, std::vector<std::uint32_t> >::iterator it;
-      boost::tie (it, boost::tuples::ignore)
+      std::tie (it, boost::tuples::ignore)
         = grid.insert (std::make_pair (ref, std::vector<std::uint32_t>()));
       it->second.push_back (i);
     }
