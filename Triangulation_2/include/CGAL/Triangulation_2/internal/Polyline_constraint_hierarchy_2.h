@@ -22,6 +22,7 @@
 #include <set>
 #include <list>
 #include <array>
+#include <queue>
 
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
@@ -470,9 +471,10 @@ private:
 #endif
     {}
 
-    Compare          comp;
-    Sc_to_c_map      sc_to_c_map;
-    Constraints_set  constraints_set;
+    Compare               comp;
+    Sc_to_c_map           sc_to_c_map;
+    std::queue<size_type> free_ids;
+    Constraints_set       constraints_set;
   } priv;
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
@@ -587,13 +589,20 @@ private:
   //
   // then the uses of `constraints_set`
   Constraint_id create_new_constraint() {
-    auto id{number_of_constraints() == 0 ? 0 : priv.constraints_set.rbegin()->index() + 1};
+    size_type id; // uninitialized
+    if(priv.free_ids.empty()) {
+      id = priv.constraints_set.size();
+    } else {
+      id = priv.free_ids.front();
+      priv.free_ids.pop();
+    }
     Constraint_id cid{new Vertex_list_with_info{this}, id};
     priv.constraints_set.insert(cid);
     return cid;
   }
 
   void erase_constraint(Constraint_id cid) {
+    priv.free_ids.push(cid.index());
     priv.constraints_set.erase(cid);
     cid.destroy();
   }
@@ -719,6 +728,7 @@ swap(Polyline_constraint_hierarchy_2& ch)
 {
   using std::swap;
   swap(priv.comp, ch.priv.comp);
+  priv.free_ids.swap(ch.priv.free_ids);
   priv.constraints_set.swap(ch.priv.constraints_set);
   priv.sc_to_c_map.swap(ch.priv.sc_to_c_map);
 }
@@ -1164,8 +1174,7 @@ clear()
     cl_ptr->clear();
     delete cl_ptr;
   }
-  priv.sc_to_c_map.clear();
-  priv.constraints_set.clear();
+  priv = Priv(priv.comp);
 }
 
 
