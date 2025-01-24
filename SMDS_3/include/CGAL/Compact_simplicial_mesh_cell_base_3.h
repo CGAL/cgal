@@ -47,9 +47,7 @@ public:
 
 public:
   // Constructors
-  Compact_simplicial_mesh_cell_3()
-    : time_stamp_(std::size_t(-1))
-  {}
+  Compact_simplicial_mesh_cell_3() {}
 
   Compact_simplicial_mesh_cell_3(const Compact_simplicial_mesh_cell_3& rhs)
     : N(rhs.N)
@@ -279,7 +277,7 @@ private:
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
 
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ =  std::size_t(-1);
 
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};

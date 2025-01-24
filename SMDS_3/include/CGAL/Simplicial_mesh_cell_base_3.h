@@ -96,9 +96,7 @@ public:
   };
 
 public:
-  Simplicial_mesh_cell_base_3()
-    : time_stamp_(std::size_t(-1))
-  {}
+  Simplicial_mesh_cell_base_3() {}
 
   Simplicial_mesh_cell_base_3(const Simplicial_mesh_cell_base_3& rhs)
     : Cb(static_cast<const Cb&>(rhs)),
@@ -191,7 +189,7 @@ private:
   /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
 
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-1);
 
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};

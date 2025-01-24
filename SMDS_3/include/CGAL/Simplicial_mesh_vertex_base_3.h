@@ -130,7 +130,6 @@ public:
     , index_()
     , dimension_(-1)
     , cache_validity(false)
-    , time_stamp_(std::size_t(-1))
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -218,7 +217,7 @@ private:
   // that contains me. Negative values are a marker for special vertices.
   short dimension_;
   bool cache_validity;
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-1);
 
 public:
   friend std::istream& operator>>(std::istream& is,
