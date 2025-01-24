@@ -386,14 +386,14 @@ public:
   {
     if(pos == vertices_in_constraint_begin(cid)){
       // cid is [P, A, ..., B] -> split to aux=[P, A] and cid=[A...B]
-      Constraint_id aux = hierarchy().split2(cid, std::next(pos));
+      Constraint_id aux = hierarchy().split_head(cid, std::next(pos));
       remove_constraint(aux, out);
       return vertices_in_constraint_begin(cid);
     }
 
     if(pos == std::prev(vertices_in_constraint_end(cid))){
       // cid is [A, ..., B, P] -> split to cid=[A...B] and aux=[B,P]
-      Constraint_id aux = hierarchy().split(cid, std::prev(pos));
+      Constraint_id aux = hierarchy().split_tail(cid, std::prev(pos));
       remove_constraint(aux, out);
       return vertices_in_constraint_end(cid);
     }
@@ -408,7 +408,7 @@ public:
       //    head = [A...B] and,
       //    cid =  [B, P, C...D]
       // split off head
-      head = hierarchy().split2(cid, std::prev(pos));
+      head = hierarchy().split_head(cid, std::prev(pos));
     }
     if(pos != next_to_last_vertex_of_cid){
       // cid is now [B, P, C, ..., D]
@@ -416,7 +416,7 @@ public:
       //    cid = [B, P, C] and,
       //    tail = [C...D]
       // split off tail
-      tail = hierarchy().split(cid,std::next(pos));
+      tail = hierarchy().split_tail(cid,std::next(pos));
     }
 
     // now:
@@ -430,25 +430,26 @@ public:
     Vertex_handle c = *std::next(pos);
 
     Face_container<Constrained_triangulation_plus_2> fc(*this);
-    Constraint_id aux = insert_constraint(b, c, std::back_inserter(fc));
+    Constraint_id bc = insert_constraint(b, c, std::back_inserter(fc));
 
-    auto pos_before_c = std::prev(vertices_in_constraint_end(aux), 2);
-    // `pos_before_c` is not necessarily == vertices_in_constraint_begin(aux)
+    auto pos_before_c = std::prev(vertices_in_constraint_end(bc), 2);
+    // `pos_before_c` is not necessarily == vertices_in_constraint_begin(bc)
     // there might have been intersecting constraints
 
-    hierarchy().swap(cid, aux);
-    remove_constraint(aux, std::back_inserter(fc)); // removes [B, P, C]
+    hierarchy().swap(cid, bc);
+    remove_constraint(bc, std::back_inserter(fc)); // removes [B, P, C]
+    // now cid is [B, C]
 
     if(head != nullptr){
-      hierarchy().concatenate2(head, cid);
+      hierarchy().prepend(std::move(head), cid);
     }
 
     if(tail != nullptr){
-      hierarchy().concatenate(cid, tail);
+      hierarchy().concatenate(cid, std::move(tail));
     }
     fc.write_faces(out);
 
-    // we went one too far back because the last vertex `c` gets removed by concatenate
+    // we went one too far back because the last vertex `c` gets removed by concatenate/prepend
     return std::next(pos_before_c);
   }
 
@@ -458,65 +459,77 @@ public:
   template <class OutputIterator>
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos,
-                              Vertex_handle vh, OutputIterator out)
+                              Vertex_handle v, OutputIterator out)
   {
     // Insertion before the first vertex
     if(pos == vertices_in_constraint_begin(cid)){
       //std::cout << "insertion before first vertex" << std::endl;
-      Constraint_id head = insert_constraint(vh, *pos, out);
-      hierarchy().concatenate2(head, cid);
+      Constraint_id head = insert_constraint(v, *pos, out);
+      hierarchy().prepend(std::move(head), cid);
       return vertices_in_constraint_begin(cid);
     }
 
     // Insertion after the last vertex
     if(pos == vertices_in_constraint_end(cid)){
       //std::cout << "insertion after last vertex" << std::endl;
-      Constraint_id tail = insert_constraint(*std::prev(pos), vh, out);
-      auto returned_pos = std::prev(vertices_in_constraint_end(tail));
-      hierarchy().concatenate(cid, tail);
-      return returned_pos;
+      Constraint_id tail = insert_constraint(*std::prev(pos), v, out);
+      auto new_pos = std::prev(vertices_in_constraint_end(tail));
+      hierarchy().concatenate(cid, std::move(tail));
+      CGAL_assertion(v == *new_pos);
+      return new_pos;
     }
     Vertices_in_constraint_iterator pred = std::prev(pos);
-    Vertices_in_constraint_iterator last = std::prev(vertices_in_constraint_end(cid));
+    Vertices_in_constraint_iterator latest_vertex = std::prev(vertices_in_constraint_end(cid));
     Vertex_handle a = *pred;
     Vertex_handle b = *pos;
+    if(v == a || v == b){
+      return pos;
+    }
 
-    // cid is [..., A, B, ...] and M=*vh will be inserted between A and B
+    // cid is [..., A, B, ...] and V=*v will be inserted between A and B
 
     Face_container<Constrained_triangulation_plus_2> fc(*this);
-    Constraint_id aux1 = insert_constraint(a, vh, std::back_inserter(fc));
-    Constraint_id aux2 = insert_constraint(vh, b, std::back_inserter(fc));
-    auto returned_pos = vertices_in_constraint_begin(aux2);
-    concatenate(aux1, aux2);
+    Constraint_id a_v_b = insert_constraint(a, v, std::back_inserter(fc));
+    Constraint_id aux = insert_constraint(v, b, std::back_inserter(fc));
+    auto new_pos = vertices_in_constraint_begin(aux);
+    concatenate(a_v_b, std::move(aux));
+
     // here:
-    //   aux1 is [A, M, B]
-    //   aux2 is empty
-    // and returned_pos is the iterator to M
+    //   a_v_b is [A,.. V,.. B]
+    //   aux is empty
+    // and new_pos is the iterator to V
+    CGAL_assertion(v == *new_pos);
+
+    CGAL_assertion(std::distance(vertices_in_constraint_begin(a_v_b), new_pos) > 0 &&
+                   std::distance(new_pos,   vertices_in_constraint_end(a_v_b)) > 0);
+    // new_pos still points to something in a_v_b. In general a_v_b should only have three vertices,
+    // but there might have been intersectiong constraints or vertices.
 
     const auto second_vertex_of_cid = std::next(vertices_in_constraint_begin(cid));
     // If the constraint consists only of a segment, and we want to insert
     // in the middle: cid is just the segment [A, B]
-    if((pos == second_vertex_of_cid) && (second_vertex_of_cid == last)){
+    if((pos == second_vertex_of_cid) && (second_vertex_of_cid == latest_vertex)){
       //std::cout << "insertion in constraint which is a segment" << std::endl;
-      hierarchy().swap(cid, aux1);
-      remove_constraint(aux1, std::back_inserter(fc));
+      hierarchy().swap(cid, a_v_b);
+      remove_constraint(a_v_b, std::back_inserter(fc));
       fc.write_faces(out);
-      return returned_pos;
+      return new_pos;
     }
 
     Constraint_id head = nullptr, tail = nullptr;
     if(pos != second_vertex_of_cid){
       //std::cout << "split head" << std::endl;
-      head = split(cid, pred);
-      std::swap(head,cid); // split2 does the job
+      head = hierarchy().split_head(cid, pred);
       pred = vertices_in_constraint_begin(cid);
       pos = std::next(pred);
     }
     // head is now [..., A] or null
     //  cid is now [A, B, ...]
-    if(pos != last){
+    CGAL_assertion(*pred == a);
+    CGAL_assertion(*pos == b);
+    if(pos != latest_vertex){
       //std::cout << "split tail" << std::endl;
-      tail = split(cid, pos);
+      tail = hierarchy().split_tail(cid, pos);
     }
     // head is now [..., A] or null
     //  cid is now [A, B]
@@ -524,20 +537,23 @@ public:
 
     if(head != nullptr){
       //std::cout << "concatenate head" << std::endl;
-      remove_constraint(cid, std::back_inserter(fc));
-      hierarchy().concatenate(head, aux1);
+      hierarchy().concatenate(head, std::move(a_v_b));
+      hierarchy().swap(cid, head);
+      remove_constraint(head, std::back_inserter(fc));
     } else {
-      hierarchy().swap(cid, aux1);
-      remove_constraint(aux1, std::back_inserter(fc));
-      head = cid;
+      hierarchy().swap(cid, a_v_b);
+      remove_constraint(a_v_b, std::back_inserter(fc));
     }
+    // cid is now [..., A, V, B]
+    // head is now null empty
+    // a_v_b is now empty
 
     if(tail != nullptr){
       //std::cout << "concatenate tail" << std::endl;
-      concatenate(head, tail);
+      concatenate(cid, std::move(tail));
     }
     fc.write_faces(out);
-    return pos;
+    return new_pos;
   }
 
   template < class InputIterator, class OutputIterator>
@@ -659,7 +675,7 @@ public:
         id = id_next;
         is >> id_next;
         Constraint_id cid2 = insert_constraint(vertices[id], vertices[id_next]);
-        cid = concatenate(cid, cid2);
+        cid = concatenate(cid, std::move(cid2));
       }
     }
     return is;
@@ -758,7 +774,10 @@ public:
   // split a constraint in two constraints, so that vcit becomes the first
   // vertex of the new constraint
   // returns the new constraint
-  using Constraint_hierarchy::split;
+  Constraint_id
+  split(Constraint_id first, Vertices_in_constraint_iterator vcit) {
+    return hierarchy().split_tail(first, vcit);
+  }
 
   // Query of the constraint hierarchy
 

@@ -68,12 +68,14 @@ int main()
     print_cdtp("Initial state");
 
     Vertices_in_constraint_iterator vertex_it = std::next(cdtp.vertices_in_constraint_begin(collinear_cid), 2);
+    Vertex_handle v = *vertex_it;
     [[maybe_unused]] auto next_it = std::next(vertex_it);
     std::cout << "\n-> attempt to remove vertex " << oformat(*vertex_it) << std::endl;
     vertex_it = cdtp.remove_vertex_from_constraint(collinear_cid, vertex_it);
     std::cout << "   cdtp.remove_vertex_from_constraint(collinear_cid, vertex_it) returned the vertex "
               << oformat(*vertex_it) << std::endl;
     assert(vertex_it == next_it);
+    assert(cdtp.tds().is_vertex(v)); // v (0, 2) is still in the triangulation
 
     print_cdtp("\nAfter removing third vertex from the collinear constraint");
 
@@ -89,12 +91,14 @@ int main()
               << value_check_expected(nb_of_vertices(cdtp, collinear_cid), 6U) << std::endl;
 
     vertex_it = std::next(cdtp.vertices_in_constraint_begin(non_collinear_cid), 2);
+    Vertex_handle v2 = *vertex_it;
     next_it = std::next(vertex_it);
     std::cout << "\n-> attempt to remove vertex " << oformat(*vertex_it) << std::endl;
     vertex_it = cdtp.remove_vertex_from_constraint(non_collinear_cid, vertex_it);
     std::cout << "   cdtp.remove_vertex_from_constraint(non_collinear_cid, vertex_it) returned the vertex "
               << oformat(*vertex_it) << std::endl;
     assert(vertex_it == next_it);
+    assert(cdtp.tds().is_vertex(v2)); // v2 (4, 2) is still in the triangulation
 
     print_cdtp("\nAfter removing third vertex from the non-collinear constraint");
 
@@ -102,9 +106,31 @@ int main()
               << value_check_expected(cdtp.number_of_subconstraints(), 9U) << std::endl;
     std::cout << "number of constraints: "
               << value_check_expected(cdtp.number_of_constraints(), 2U) << std::endl;
-    std::cout << "number of vertex in collinear constraint: "
+    std::cout << "number of vertex in non-collinear constraint: "
               << value_check_expected(nb_of_vertices(cdtp, non_collinear_cid), 5U) << std::endl;
 
+    // re-insert v and v2 in the their constraints
+    vertex_it = cdtp.insert_vertex_in_constraint(collinear_cid,
+                                                 std::next(cdtp.vertices_in_constraint_begin(collinear_cid), 2),
+                                                 v);
+    assert(*vertex_it == v);
+    assert(std::distance(cdtp.vertices_in_constraint_begin(collinear_cid), vertex_it) == 2);
+    vertex_it = cdtp.insert_vertex_in_constraint(non_collinear_cid,
+                                                 std::next(cdtp.vertices_in_constraint_begin(non_collinear_cid), 2),
+                                                 v2);
+    assert(*vertex_it == v2);
+    assert(std::distance(cdtp.vertices_in_constraint_begin(non_collinear_cid), vertex_it) == 2);
+
+    print_cdtp("\nAfter re-inserting the two vertices in their constraint");
+
+    std::cout << "number of subconstraints: "
+              << value_check_expected(cdtp.number_of_subconstraints(), 10U) << std::endl;
+    std::cout << "number of constraints: "
+              << value_check_expected(cdtp.number_of_constraints(), 2U) << std::endl;
+    std::cout << "number of vertex in collinear constraint: "
+              << value_check_expected(nb_of_vertices(cdtp, collinear_cid), 6U) << std::endl;
+    std::cout << "number of vertex in non-collinear constraint: "
+              << value_check_expected(nb_of_vertices(cdtp, non_collinear_cid), 6U) << std::endl;
 
     // NOW test another scenario, that has nothing to do with the issue #4025
     cdtp.clear();

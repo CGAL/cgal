@@ -86,7 +86,7 @@ public:
       if(current == Constraint_id())
         current = cid;
       else
-        current = ctp2.concatenate(current, cid);
+        current = ctp2.concatenate(current, std::move(cid));
     }
     latest_vertex = vh;
   }

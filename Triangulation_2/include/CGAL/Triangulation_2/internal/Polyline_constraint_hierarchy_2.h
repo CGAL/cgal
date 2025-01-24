@@ -128,11 +128,11 @@ public:
     bool may_share_subconstraint_with_others = false;
   };
 
-  struct Constraint_id
+  class Constraint_id
   {
     Vertex_list_with_info* vl_with_info_ptr = nullptr;
     size_type id = (std::numeric_limits<size_type>::max)();
-
+  public:
     Constraint_id(std::nullptr_t = nullptr) {}
     Constraint_id(Vertex_list_with_info* ptr, size_type id) : vl_with_info_ptr(ptr), id(id) {}
 
@@ -143,9 +143,14 @@ public:
       }
     }
 
+    auto index() const { return id; }
+
     Vertex_list_ptr vl_ptr() const {
       return vl_with_info_ptr == nullptr ? nullptr : std::addressof(vl_with_info_ptr->vl);
     }
+
+    bool  may_share() const { return vl_with_info_ptr->may_share_subconstraint_with_others; }
+    bool& may_share()       { return vl_with_info_ptr->may_share_subconstraint_with_others; }
 
     operator std::pair<Subconstraint, Vertex_list_ptr>() const {
       Subconstraint subconstraint = vl_with_info_ptr == nullptr
@@ -160,8 +165,7 @@ public:
     }
 
     Constraint_id& operator=(std::nullptr_t) {
-      vl_with_info_ptr = nullptr;
-      id = (std::numeric_limits<size_type>::max)();
+      *this = Constraint_id{};
       return *this;
     }
     bool operator==(std::nullptr_t n) const { return vl_with_info_ptr == n; }
@@ -170,22 +174,22 @@ public:
     bool operator==(const Constraint_id& other) const
     {
       CGAL_assertion(same_hierarchy(other));
-      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (id == other.id));
+      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (index() == other.index()));
       return vl_ptr() == other.vl_ptr();
     }
 
     bool operator!=(const Constraint_id& other) const
     {
       CGAL_assertion(same_hierarchy(other));
-      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (id == other.id));
+      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (index() == other.index()));
       return vl_ptr() != other.vl_ptr();
     }
 
     bool operator<(const Constraint_id& other) const
     {
       CGAL_assertion(same_hierarchy(other));
-      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (id == other.id));
-      return id < other.id;
+      CGAL_assertion((vl_ptr() == other.vl_ptr()) == (index() == other.index()));
+      return index() < other.index();
     }
 
     // forward a new Vertex_list operations
@@ -237,12 +241,18 @@ public:
   using Context_list = std::list<Context>;
   using Context_iterator = typename Context_list::iterator;
 
-  static void fix_contexts(Context_list& context_list) {
-    const bool multiple_contexts = context_list.size() > 1;
-    if(false == multiple_contexts) return;
-    for(auto& context : context_list) {
-      CGAL_assertion(context.enclosing != nullptr);
-      context.enclosing.vl_with_info_ptr->may_share_subconstraint_with_others = true;
+  static void fix_may_share_in_contexts_constraints(Context_list& context_list) {
+    const auto cl_size = context_list.size();
+    switch(cl_size) {
+    case 0:
+      CGAL_unreachable();
+    case 1:
+      return;
+    default:
+      for(auto& context : context_list) {
+        CGAL_assertion(context.enclosing != nullptr);
+        context.enclosing.may_share() = true;
+      }
     }
   }
 
@@ -299,7 +309,7 @@ public:
       if(constraint_it == Constraint_iterator{}) {
         return false;
       }
-      if(constraint_it == hierarchy->constraints_set.end()) {
+      if(constraint_it == hierarchy->constraints_end()) {
         return vertex_it == Vertex_it{};
       }
       if(vertex_it == Vertex_it{}) {
@@ -309,17 +319,17 @@ public:
     }
 
     bool is_end() const {
-      return constraint_it == hierarchy->constraints_set.end();
+      return constraint_it == hierarchy->constraints_end();
     }
 
     bool is_begin() const {
-      return constraint_it == hierarchy->constraints_set.begin() &&
+      return constraint_it == hierarchy->constraints_begin() &&
              vertex_it == begin_or_null(constraint_it);
     }
 
     bool is_dereferenceable() const {
       return is_valid() &&
-          constraint_it != hierarchy->constraints_set.end() &&
+          constraint_it != hierarchy->constraints_end() &&
           vertex_it != constraint_it->end() &&
           std::next(vertex_it) != constraint_it->end();
     }
@@ -332,7 +342,7 @@ public:
     }
 
     Vertex_it begin_or_null(Constraint_iterator constraint_it) const {
-      if(constraint_it == hierarchy->constraints_set.end()) {
+      if(constraint_it == hierarchy->constraints_end()) {
         return Vertex_it();
       }
       return constraint_it->begin();
@@ -342,7 +352,7 @@ public:
       if(is_end()) {
         return false;
       }
-      if(false == constraint_it->vl_with_info_ptr->may_share_subconstraint_with_others) {
+      if(false == constraint_it->may_share()) {
         return false;
       }
       auto [va, vb] = this->operator*();
@@ -392,8 +402,8 @@ public:
     explicit Subconstraint_iterator(typename Construction_access::Begin_tag,
                                     const Polyline_constraint_hierarchy_2* hierarchy)
         : hierarchy(non_null(hierarchy))
-        , constraint_it(hierarchy->constraints_set.begin())
-        , vertex_it(begin_or_null(hierarchy->constraints_set.begin()))
+        , constraint_it(hierarchy->constraints_begin())
+        , vertex_it(begin_or_null(hierarchy->constraints_begin()))
     {
       if(already_seen()) {
         ++(*this);
@@ -404,7 +414,7 @@ public:
     explicit Subconstraint_iterator(typename Construction_access::End_tag,
                                     const Polyline_constraint_hierarchy_2* hierarchy)
         : hierarchy(non_null(hierarchy))
-        , constraint_it(hierarchy->constraints_set.end())
+        , constraint_it(hierarchy->constraints_end())
         , vertex_it() {}
 
     Subconstraint operator*() const {
@@ -437,7 +447,7 @@ public:
       CGAL_precondition(is_valid() && false == is_begin());
 
       do {
-        if(constraint_it == hierarchy->constraints_set.end() || vertex_it == constraint_it->begin()) {
+        if(constraint_it == hierarchy->constraints_end() || vertex_it == constraint_it->begin()) {
           --constraint_it;
           vertex_it = std::prev(constraint_it->end(), 2);
         } else {
@@ -450,24 +460,29 @@ public:
   using Subconstraints = Iterator_range<Subconstraint_iterator>;
 
 private:
-  Compare          comp;
-  Constraints_set  constraints_set;
-  Sc_to_c_map      sc_to_c_map;
-
-public:
-  Polyline_constraint_hierarchy_2(const Compare& comp)
+  struct Priv { // encapsulate the private members in a struct, to detect direct access to them
+    Priv(Compare comp)
     : comp(comp)
-#if CGAL_USE_BARE_STD_MAP
+    #if CGAL_USE_BARE_STD_MAP
     , sc_to_c_map(Pair_compare(comp))
 #else
     , sc_to_c_map()
 #endif
-  { }
-  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
+    {}
+
+    Compare          comp;
+    Sc_to_c_map      sc_to_c_map;
+    Constraints_set  constraints_set;
+  } priv;
+public:
+  Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
+  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) {}
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
+
   ~Polyline_constraint_hierarchy_2(){ clear();}
   void clear();
-  Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch);
+
+  Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch) { return copy(ch); }
   Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
 
   // Query
@@ -496,8 +511,8 @@ public:
   Contexts contexts(T va, T vb) const;
   Context_list* get_context_list(T va, T vb) const;
 
-  size_type number_of_constraints() const { return constraints_set.size(); }
-  size_type number_of_subconstraints() const { return sc_to_c_map.size(); }
+  size_type number_of_constraints() const { return priv.constraints_set.size(); }
+  size_type number_of_subconstraints() const { return priv.sc_to_c_map.size(); }
 
   // insert/remove
   void add_Steiner(const T va, const T vb, const T vx);
@@ -514,21 +529,21 @@ public:
   size_type remove_points_without_corresponding_vertex(Constraint_id);
   size_type remove_points_without_corresponding_vertex();
 
-  Constraint_id concatenate(Constraint_id first, Constraint_id second);
-  Constraint_id concatenate2(Constraint_id first, Constraint_id second);
-  Constraint_id split(Constraint_id first, Vertex_it vcit);
-  Constraint_id split2(Constraint_id first, Vertex_it vcit);
+  Constraint_id concatenate(Constraint_id first, Constraint_id&& second);
+  Constraint_id prepend(Constraint_id&& first, Constraint_id second);
+  Constraint_id split_tail(Constraint_id first, Vertex_it vcit);
+  Constraint_id split_head(Constraint_id first, Vertex_it vcit);
 
   // iterators
 
   Subconstraint_and_contexts_iterator subconstraints_and_contexts_begin() const
   {
-    return sc_to_c_map.begin();
+    return priv.sc_to_c_map.begin();
   }
 
   Subconstraint_and_contexts_iterator subconstraints_and_contexts_end() const
   {
-    return sc_to_c_map.end();
+    return priv.sc_to_c_map.end();
   }
 
   Subconstraint_iterator subconstraints_begin() const {
@@ -545,29 +560,43 @@ public:
                                   this);
   }
 
-  Constraint_iterator  constraints_begin()  const{ return constraints_set.begin(); }
-  Constraint_iterator  constraints_end()    const{ return constraints_set.end();   }
+  Constraint_iterator  constraints_begin()  const{ return priv.constraints_set.begin(); }
+  Constraint_iterator  constraints_end()    const{ return priv.constraints_set.end();   }
 
   // Ranges
-  const auto& constraints() const { return constraints_set; }
-  const auto& subconstraints_and_contexts() const { return sc_to_c_map; }
+  const auto& constraints() const { return priv.constraints_set; }
+  const auto& subconstraints_and_contexts() const { return priv.sc_to_c_map; }
   auto subconstraints() const {
     return Iterator_range<Subconstraint_iterator>(subconstraints_begin(), subconstraints_end());
   }
 
   // Helper functions
-  void copy(const Polyline_constraint_hierarchy_2& ch);
-  void copy(const Polyline_constraint_hierarchy_2& ch, std::map<Vertex_handle,Vertex_handle>& vmap);
+  Polyline_constraint_hierarchy_2& copy(const Polyline_constraint_hierarchy_2& ch);
+  Polyline_constraint_hierarchy_2& copy(const Polyline_constraint_hierarchy_2& ch,
+                                        std::map<Vertex_handle,Vertex_handle>& vmap);
   void swap(Polyline_constraint_hierarchy_2& ch);
 
 private:
   // a few member functions to encapsulate more of the uses of `sc_to_c_map`
-  auto find_contexts(Vertex_handle va, Vertex_handle vb) { return sc_to_c_map.find(sorted_pair(va, vb)); }
-  auto find_contexts(Vertex_handle va, Vertex_handle vb) const { return sc_to_c_map.find(sorted_pair(va, vb)); }
-  auto contexts_not_found() { return sc_to_c_map.end(); }
-  auto contexts_not_found() const { return sc_to_c_map.end(); }
-  void erase_context(Sc_iterator it) { sc_to_c_map.erase(it); }
-  auto& contexts_of(Vertex_handle va, Vertex_handle vb) { return sc_to_c_map[sorted_pair(va, vb)]; }
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) { return priv.sc_to_c_map.find(sorted_pair(va, vb)); }
+  auto find_contexts(Vertex_handle va, Vertex_handle vb) const { return priv.sc_to_c_map.find(sorted_pair(va, vb)); }
+  auto contexts_not_found() { return priv.sc_to_c_map.end(); }
+  auto contexts_not_found() const { return priv.sc_to_c_map.end(); }
+  void erase_context(Sc_iterator it) { priv.sc_to_c_map.erase(it); }
+  auto& contexts_of(Vertex_handle va, Vertex_handle vb) { return priv.sc_to_c_map[sorted_pair(va, vb)]; }
+  //
+  // then the uses of `constraints_set`
+  Constraint_id create_new_constraint() {
+    auto id{number_of_constraints() == 0 ? 0 : priv.constraints_set.rbegin()->index() + 1};
+    Constraint_id cid{new Vertex_list_with_info{this}, id};
+    priv.constraints_set.insert(cid);
+    return cid;
+  }
+
+  void erase_constraint(Constraint_id cid) {
+    priv.constraints_set.erase(cid);
+    cid.destroy();
+  }
 
   //
   // functions to traverse and act on the context lists
@@ -620,13 +649,8 @@ private:
   //
   // other utilities as private member functions
   //
-  Constraint_id new_constraint_id() const {
-    // TODO: handle ids
-    auto id = number_of_constraints() == 0 ? 0 : constraints_set.rbegin()->id + 1;
-    return Constraint_id(new Vertex_list_with_info{this}, id);
-  }
   Subconstraint sorted_pair(T va, T vb) const {
-    return comp(va, vb) ? Subconstraint(va,vb) : Subconstraint(vb,va);
+    return priv.comp(va, vb) ? Subconstraint(va,vb) : Subconstraint(vb,va);
   }
   Subconstraint sorted_pair(Subconstraint sc) {
     const auto& [va, vb] = sc; return sorted_pair(va, vb);
@@ -638,26 +662,8 @@ public:
 };
 
 template <class T, class Compare, class Point>
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
-  : comp(ch.comp)
-  , sc_to_c_map()
-{
-  copy(ch);
-}
-
-template <class T, class Compare, class Point>
-Polyline_constraint_hierarchy_2<T,Compare,Point>&
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-operator=(const Polyline_constraint_hierarchy_2& ch){
-  copy(ch);
-  return *this;
-}
-
-template <class T, class Compare, class Point>
-void
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-copy(const Polyline_constraint_hierarchy_2& other)
+auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
+copy(const Polyline_constraint_hierarchy_2& other) -> Polyline_constraint_hierarchy_2&
 {
   // create a identity transfer vertex map
   std::map<Vertex_handle, Vertex_handle>  vmap;
@@ -667,27 +673,25 @@ copy(const Polyline_constraint_hierarchy_2& other)
       vmap[v] = v;
     }
   }
-  copy(other, vmap);
+  return copy(other, vmap);
 }
 
 template <class T, class Compare, class Point>
-void
-Polyline_constraint_hierarchy_2<T,Compare,Point>::
-copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle,Vertex_handle>& vmap)
-  // copy with a transfer vertex map
+auto Polyline_constraint_hierarchy_2<T, Compare, Point>::
+copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle, Vertex_handle>& vmap)
+    -> Polyline_constraint_hierarchy_2&
+// copy with a transfer vertex map
 {
   std::map<Constraint_id, Constraint_id> cstr_map;
   clear();
   // copy constraints_set
   for(const auto& cid1: other.constraints()) {
-    Constraint_id cid2 = new_constraint_id();
-    constraints_set.insert(cid2);
+    Constraint_id cid2 = create_new_constraint();
     cstr_map[cid1] = cid2;
     for(const auto& node : cid1.elements()) {
       cid2.vl_ptr()->push_back(Node(vmap[node.vertex()], node.input()));
     }
-    cid2.vl_with_info_ptr->may_share_subconstraint_with_others =
-        cid1.vl_with_info_ptr->may_share_subconstraint_with_others;
+    cid2.may_share() = cid1.may_share();
   }
   // copy sc_to_c_map
   for(const auto& [sc1, hcl1] : other.subconstraints_and_contexts()) {
@@ -704,10 +708,9 @@ copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle,Vertex
     }
   }
 
-  comp = other.comp;
-  return;
+  priv.comp = other.priv.comp;
+  return *this;
 }
-
 
 template <class T, class Compare, class Point>
 void
@@ -715,9 +718,9 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::
 swap(Polyline_constraint_hierarchy_2& ch)
 {
   using std::swap;
-  swap(comp, ch.comp);
-  constraints_set.swap(ch.constraints_set);
-  sc_to_c_map.swap(ch.sc_to_c_map);
+  swap(priv.comp, ch.priv.comp);
+  priv.constraints_set.swap(ch.priv.constraints_set);
+  priv.sc_to_c_map.swap(ch.priv.sc_to_c_map);
 }
 
 
@@ -799,16 +802,12 @@ swap(Constraint_id constr_a, Constraint_id constr_b) {
     });
   };
 
-  Vertex_list_ptr constr_a_vl = constr_a.vl_ptr();
-  Vertex_list_ptr constr_b_vl = constr_b.vl_ptr();
-
   substitute_enclosing_in_vertex_list(constr_a, constr_a, nullptr);
   substitute_enclosing_in_vertex_list(constr_b, constr_b, constr_a);
   substitute_enclosing_in_vertex_list(constr_a, nullptr, constr_b);
 
-  constr_a_vl->swap(*constr_b_vl);
-  std::swap(constr_a.vl_with_info_ptr->may_share_subconstraint_with_others,
-            constr_b.vl_with_info_ptr->may_share_subconstraint_with_others);
+  constr_a.vl_ptr()->swap(*constr_b.vl_ptr());
+  std::swap(constr_a.may_share(), constr_b.may_share());
 }
 
 template <class T, class Compare, class Point>
@@ -816,8 +815,6 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 remove_constraint(Constraint_id cid)
 {
-  constraints_set.erase(cid);
-
   for_context_lists_of_all_subconstraints(cid, [&](Context_list* hcl, Vertex_it, Sc_it scit) {
     remove_first_in_context_list(hcl, cid);
 
@@ -830,7 +827,8 @@ remove_constraint(Constraint_id cid)
       delete hcl;
     }
   });
-  cid.destroy();
+
+  erase_constraint(cid);
 }
 
 
@@ -919,7 +917,7 @@ typename Polyline_constraint_hierarchy_2<T,Compare,Point>::size_type
 Polyline_constraint_hierarchy_2<T,Compare,Point>::remove_points_without_corresponding_vertex()
 {
   size_type n = 0;
-  for(const auto& cid : constraints_set){
+  for(const auto& cid : constraints()){
     n+= remove_points_without_corresponding_vertex(cid);
   }
   return n;
@@ -928,8 +926,13 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::remove_points_without_correspo
 
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id constr_a, Constraint_id constr_b)
+Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id constr_a, Constraint_id&& constr_b)
 {
+  if(constr_a == nullptr) {
+    swap(constr_a, constr_b);
+  };
+  if(constr_b == nullptr) return constr_a;
+
   // constr_a is [A, ..., M]
   // constr_b is [M, ..., B]
   // we want:
@@ -939,7 +942,6 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id cons
   // std::cerr << std::format("concatenate({}, {}) ", constr_a.id, constr_b.id) << std::endl;
   Vertex_list_ptr constr_a_vl = constr_a.vl_ptr();
   Vertex_list_ptr constr_b_vl = constr_b.vl_ptr();
-  constraints_set.erase(constr_b);
 
   for_context_lists_of_all_subconstraints(constr_b, [&](Context_list* hcl, Vertex_it, Sc_it) {
     replace_first_in_context_list(hcl, constr_b, constr_a);
@@ -956,17 +958,22 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate(Constraint_id cons
     update_first_context_position(hcl, constr_a, it);
   });
 
-  if(constr_b.vl_with_info_ptr->may_share_subconstraint_with_others) {
-    constr_a.vl_with_info_ptr->may_share_subconstraint_with_others = true;
+  if(constr_b.may_share()) {
+    constr_a.may_share() = true;
   }
-  constr_b.destroy();
+  erase_constraint(constr_b);
   return constr_a;
 }
 
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id constr_a, Constraint_id constr_b)
+Polyline_constraint_hierarchy_2<T,Compare,Point>::prepend(Constraint_id&& constr_a, Constraint_id constr_b)
 {
+  if(constr_b == nullptr) {
+    swap(constr_a, constr_b);
+  };
+  if(constr_a == nullptr) return constr_b;
+
   // constr_a is [A, ..., M]
   // constr_b is [M, ..., B]
   // we want:
@@ -975,7 +982,6 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id con
 
   Vertex_list_ptr constr_a_vl = constr_a.vl_ptr();
   Vertex_list_ptr constr_b_vl = constr_b.vl_ptr();
-  constraints_set.erase(constr_a); // DIFF
 
   for_context_lists_of_all_subconstraints(constr_a, [&](Context_list* hcl, Vertex_it, Sc_it) { // DIFF
     replace_first_in_context_list(hcl, constr_a, constr_b); // DIFF
@@ -987,16 +993,14 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id con
   constr_a_vl->pop_back(); // because it is the same as constr_b_vl.front()
   constr_b_vl->splice(constr_b_vl->skip_begin(), *constr_a_vl, constr_a_vl->skip_begin(), constr_a_vl->skip_end()); // DIFF
 
-  // Note that for VC8 with iterator debugging the iterators pointing into constr_a
-  // are NOT valid      So we have to update them
   for_context_lists_of_all_subconstraints(constr_b /*DIFF*/, [&](Context_list* hcl, Vertex_it it, Sc_it) {
     update_first_context_position(hcl, constr_b, it); // DIFF
   });
 
-  if(constr_a.vl_with_info_ptr->may_share_subconstraint_with_others) {
-    constr_b.vl_with_info_ptr->may_share_subconstraint_with_others = true;
+  if(constr_a.may_share()) {
+    constr_b.may_share() = true;
   }
-  constr_a.destroy(); // DIFF
+  erase_constraint(constr_a); // DIFF
   return constr_b; // DIFF
 }
 
@@ -1006,12 +1010,11 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::concatenate2(Constraint_id con
   // returns the new constraint
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Compare,Point>::split(Constraint_id constr, Vertex_it vcit)
+Polyline_constraint_hierarchy_2<T,Compare,Point>::split_tail(Constraint_id constr, Vertex_it vcit)
 {
   // constr is [A, ..., B], vcit points to M in [A, ..., B]
 
-  Constraint_id new_constr = new_constraint_id();
-  constraints_set.insert(new_constr);
+  Constraint_id new_constr = create_new_constraint();
 
   Vertex_list_ptr constr_vl = constr.vl_ptr();
   Vertex_list_ptr new_vl = new_constr.vl_ptr();
@@ -1033,23 +1036,25 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::split(Constraint_id constr, Ve
   CGAL_assertion(new_vl->front().input() == true);
   CGAL_assertion(constr_vl->back().input() == true);
 
+  bool new_constr_share = false;
   for_context_lists_of_all_subconstraints(new_constr, [&](Context_list* hcl, Vertex_it, Sc_it) {
+    if(constr.may_share() && hcl->size() > 1) {
+      new_constr_share = true;
+    }
     replace_first_in_context_list(hcl, constr, new_constr);
   });
 
-  new_constr.vl_with_info_ptr->may_share_subconstraint_with_others =
-      constr.vl_with_info_ptr->may_share_subconstraint_with_others;
+  new_constr.may_share() = new_constr_share;
   return new_constr;
 }
 
 template <class T, class Compare, class Point>
 typename Polyline_constraint_hierarchy_2<T,Compare,Point>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Compare,Point>::split2(Constraint_id constr, Vertex_it vcit)
+Polyline_constraint_hierarchy_2<T,Compare,Point>::split_head(Constraint_id constr, Vertex_it vcit)
 {
   // constr is [A, ..., B], vcit points to M in [A, ..., B]
 
-  Constraint_id new_constr = new_constraint_id();
-  constraints_set.insert(new_constr);
+  Constraint_id new_constr = create_new_constraint();
 
   Vertex_list_ptr constr_vl = constr.vl_ptr();
   Vertex_list_ptr new_vl = new_constr.vl_ptr();
@@ -1071,12 +1076,15 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::split2(Constraint_id constr, V
   CGAL_assertion(constr_vl->front().input() == true);
   CGAL_assertion(new_vl->back().input() == true);
 
+  bool new_constr_share = false;
   for_context_lists_of_all_subconstraints(new_constr, [&](Context_list* hcl, Vertex_it, Sc_it) {
+    if(constr.may_share() && hcl->size() > 1) {
+      new_constr_share = true;
+    }
     replace_first_in_context_list(hcl, constr, new_constr);
   });
 
-  new_constr.vl_with_info_ptr->may_share_subconstraint_with_others =
-      constr.vl_with_info_ptr->may_share_subconstraint_with_others;
+  new_constr.may_share() = new_constr_share;
   return new_constr;
 }
 
@@ -1095,8 +1103,7 @@ insert_constraint(T va, T vb){
             << "C_hierachy.insert_constraint( "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
-  Constraint_id cid = new_constraint_id();
-  constraints_set.insert(cid);
+  Constraint_id cid = create_new_constraint();
   auto& context_list_ptr = contexts_of(va, vb);
   if(context_list_ptr == nullptr){
     context_list_ptr = new Context_list;
@@ -1106,7 +1113,7 @@ insert_constraint(T va, T vb){
   children->push_front(Node(va, true));
   children->push_back(Node(vb, true));
   context_list_ptr->emplace_front(cid, cid.begin());
-  fix_contexts(*context_list_ptr);
+  fix_may_share_in_contexts_constraints(*context_list_ptr);
 
   return cid;
 }
@@ -1139,7 +1146,7 @@ append_constraint(Constraint_id cid, T va, T vb){
   CGAL_assertion(pos_va->vertex() == va);
   cid.vl_ptr()->push_back(Node(vb, true));
   context_list_ptr->emplace_front(cid, pos_va);
-  fix_contexts(*context_list_ptr);
+  fix_may_share_in_contexts_constraints(*context_list_ptr);
 }
 
 
@@ -1153,12 +1160,12 @@ clear()
     cid.destroy();
   }
   // clean and delete context lists
-  for(auto& [_, cl_ptr] : sc_to_c_map) {
+  for(auto& [_, cl_ptr] : priv.sc_to_c_map) {
     cl_ptr->clear();
     delete cl_ptr;
   }
-  sc_to_c_map.clear();
-  constraints_set.clear();
+  priv.sc_to_c_map.clear();
+  priv.constraints_set.clear();
 }
 
 
@@ -1241,8 +1248,8 @@ add_Steiner(const T va, const T vb, const T vc){
   if (false == vc_vb_was_already_a_subconstraint) {
     contexts_of(vc,vb) = vc_vb_cl;
   }
-  fix_contexts(*va_vc_cl);
-  fix_contexts(*vc_vb_cl);
+  fix_may_share_in_contexts_constraints(*va_vc_cl);
+  fix_may_share_in_contexts_constraints(*vc_vb_cl);
 }
 
 
@@ -1301,7 +1308,7 @@ print(std::ostream& os) const
 
   os << "# number of constraints: " << number_of_constraints() << std::endl;
   for(const auto& cid : constraints()) {
-    os << "constraint(" << cid.id << ") ";
+    os << "constraint(" << cid.index() << ") ";
     os << cid.vl_ptr();
     os << "\n  vertex list ";
     for(const auto& node : cid.elements()) {
@@ -1311,13 +1318,13 @@ print(std::ostream& os) const
     for(const auto& node : cid.elements()) {
       os << node.point() << "   ";
     }
-    if(cid.vl_with_info_ptr->may_share_subconstraint_with_others) {
+    if(cid.may_share()) {
       os << "\n  (may have non-simple context lists)";
     }
     os << std::endl;
   }
   os << std::endl;
-  os << "# number of subconstraints: " << sc_to_c_map.size() << std::endl;
+  os << "# number of subconstraints: " << number_of_subconstraints() << std::endl;
   for(const auto& subconstraint : subconstraints()) {
     os << "subconstraint (";
     os << disp_vertex(subconstraint.first) << ", "
@@ -1325,7 +1332,7 @@ print(std::ostream& os) const
 
     os << "  enclosing:  ";
     for(const auto& ctxt : contexts(subconstraint.first, subconstraint.second)) {
-      os << "(cid " << ctxt.id().id << ") " << ctxt.id().vl_ptr();
+      os << "(cid " << ctxt.id().index() << ") " << ctxt.id().vl_ptr();
       os << ", pos: " << std::distance(ctxt.vertices_begin(), ctxt.pos) << "   ";
     }
     os << std::endl;
