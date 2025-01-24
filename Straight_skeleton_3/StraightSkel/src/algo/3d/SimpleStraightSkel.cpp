@@ -696,7 +696,7 @@ bool SimpleStraightSkel::run() {
                      << " save? " << doSave << "\n"
                      << " @ " << simultaneousOffset_);
 #ifdef CGAL_SS3_RUN_TIMERS
-            std::cout << "current elapsed time: " << timer.time(); << std::endl;
+            std::cout << "current elapsed time: " << timer.time() << std::endl;
 #endif
 
             DEBUG_PRINT("\n-----------------------------------------------------");
@@ -820,7 +820,7 @@ bool SimpleStraightSkel::run() {
 
 #ifdef CGAL_SS3_RUN_TIMERS
         timer.stop();
-        skel_result_->appendDescription("time=" + timer.time() + "; ");
+        skel_result_->appendDescription("time=" + std::to_string(timer.time()) + "; ");
 #endif
 
         //skel_result_->appendDescription("controller=" +
