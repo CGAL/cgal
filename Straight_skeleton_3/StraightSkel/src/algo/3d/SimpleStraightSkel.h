@@ -75,11 +75,6 @@ public:
     static Line3SPtr line(EdgeSPtr edge);
 
     /**
-     * Offset, don't treat the simultaneous events, and dump the polyhedron
-     */
-    bool handleSaveEventAtSimultaneity(PolyhedronSPtr polyhedron, CGAL::FT current_offset, CGAL::FT simultaneity_offset);
-
-    /**
      * Save offset, attempt to un-tilt if there is a tilt
      */
     bool savePolyhedron(PolyhedronSPtr polyhedron,
@@ -163,18 +158,6 @@ public:
                                                       FacetSPtr facet_2,
                                                       FacetSPtr facet_3,
                                                       CGAL::FT current_offset);
-    std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairOpposite(FacetSPtr facet_0,
-                                                              FacetSPtr facet_1,
-                                                              FacetSPtr facet_2,
-                                                              FacetSPtr facet_3);
-    std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairContiguous(FacetSPtr facet_0,
-                                                                FacetSPtr facet_1,
-                                                                FacetSPtr facet_2,
-                                                                FacetSPtr facet_3);
-    std::pair<Point3SPtr, CGAL::FT> vanishesAtTwoPairs(FacetSPtr facet_0,
-                                                       FacetSPtr facet_1,
-                                                       FacetSPtr facet_2,
-                                                       FacetSPtr facet_3);
 
     /**
      * Returns the point where the edge will vanish.
@@ -300,14 +283,6 @@ public:
      */
     std::pair<AbstractEventSPtr, bool> nextEvent(PQ& queue);
 
-    std::pair<PolyhedronSPtr, CGAL::FT> enablePerturbedMode(PolyhedronSPtr polyhedron,
-                                                            CGAL::FT currentOffset,
-                                                            CGAL::FT simultaneousOffset);
-
-    std::pair<PolyhedronSPtr, CGAL::FT> disablePerturbedMode(PolyhedronSPtr polyhedron,
-                                                             CGAL::FT currentOffset,
-                                                             CGAL::FT nextEventOffset);
-
     /**
      * Appends a node of an event to the skeleton.
      * It links all adjacent arcs and sheets to this node.
@@ -318,10 +293,6 @@ public:
                                              const std::vector<std::vector<std::size_t> >& triangles,
                                              const std::vector<Plane3SPtr>& planes,
                                              const std::vector<CGAL::FT>& speeds);
-
-    std::pair<PolyhedronSPtr, CGAL::FT> handleEventWithAutoref(AbstractEventSPtr event,
-                                                               CGAL::FT currentOffset,
-                                                               PolyhedronSPtr polyhedron);
 
     void handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr polyhedron);
     void handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron);
