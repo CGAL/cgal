@@ -41,9 +41,15 @@ The function `is_Frechet_distance_larger()` decides if the Fréchet distance
 between two polylines is larger than a given bound.
 
 Both functions have as template parameter a traits class defining the dimension and the point type.
-The traits classes have as template parameter a kernel. This may be a kernel such as `Simple_cartesian`
-with a floating point number type, or a filtered kernel such as `Exact_predicates_inexact_constructions_kernel`.
-In both cases the result is guaranteed to be correct.
+The traits classes have as template parameter a kernel, model of the concept `Kernel`.
+In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
+combine interval arithmetic with a fallback to exact computing in case comparisons of intervals
+are uncertain.  This means for `Simple_cartesian<double>` that there are no guarantees, for
+`Simple_cartesian<Exact_rational>` that all computation is done with exact rationals,
+and for kernels such as `Exact_predicates_inexact_constructions_kernel`,  `Exact_predicates_exact_constructions_kernel`,
+`Exact_predicates_exact_constructions_kernel_with_sqrt`,
+as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence fast and at
+the same time guaranteed to be correct.
 
 
 \section secFrechetDistanceImplementation Implementation
@@ -51,11 +57,9 @@ In both cases the result is guaranteed to be correct.
 The algorithms in this package are an adaption of the implementation of \cgalCite{cgal:bkn-wdfp-19}
 and \cgalCite{cgal:bkn-wdfp-21}. In particular, the implementation can decide non-difficult cases very
 fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet
-distance algorithm by Alt and Godau cgalCite{ag-cfdbt-95}. This is achieved by using fast filtering methods
-and a divide and conquer algorithm with pruning rules on the free-space diagram.
+distance algorithm by Alt and Godau cgalCite{ag-cfdbt-95}. This is achieved by using fast bounding
+box filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
 
-Internally all computations are done using interval arithmetic. In case of filter failures
-the algorithm switches to the usage of square root extensions.
 
 \section secFrechetDistanceExamples Examples
 
@@ -73,6 +77,8 @@ distance between two polylines in the Euclidean plane is at most a given value.
 
 The following example shows how we can compute the Fréchet distance up to a given error bound on two
 polylines in 3-dimensional Euclidean space using `bounded_error_Frechet_distance()`.
+As we use `Simple_cartesian<double>` the algorithm uses plain floating point arithmetic
+without guarantees for correctness.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
 
