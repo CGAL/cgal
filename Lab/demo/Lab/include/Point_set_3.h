@@ -409,21 +409,15 @@ public:
       {
         if (other.template has_property_map<unsigned char>("red"))
           {
-            std::tie (m_red, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("red", 0);
-            std::tie (m_green, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("green", 0);
-            std::tie (m_blue, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("blue", 0);
+            m_red = this->template add_property_map<unsigned char>("red", 0).first;
+            m_green = this->template add_property_map<unsigned char>("green", 0).first;
+            m_blue = this->template add_property_map<unsigned char>("blue", 0).first;
           }
         else
           {
-            std::tie (m_red, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("r", 0);
-            std::tie (m_green, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("g", 0);
-            std::tie (m_blue, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("b", 0);
+            m_red = this->template add_property_map<unsigned char>("r", 0).first;
+            m_green = this->template add_property_map<unsigned char>("g", 0).first;
+            m_blue = this->template add_property_map<unsigned char>("b", 0).first;
           }
       }
 
