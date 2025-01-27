@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <array>
+
 typedef CGAL::Simple_cartesian<double>           K;
 typedef CGAL::Min_sphere_of_points_d_traits_3<K,double> Traits;
 typedef CGAL::Min_sphere_of_spheres_d<Traits>    Min_sphere;
@@ -16,16 +16,16 @@ const int d = 3;                         // dimension of points
 
 int main ()
 {
-    std::array<Point, n>         P;                  // n points
+    Point         P[n];                  // n points
     CGAL::Random  r;                     // random number generator
 
     for (int i=0; i<n; ++i) {
         for (int j = 0; j < d; ++j) {
-            P.at(i) = Point(r.get_double(), r.get_double(), r.get_double()); // random point
+            P[i] = Point(r.get_double(), r.get_double(), r.get_double()); // random point
         }
     }
 
-    Min_sphere  ms(P.begin(), P.end());             // smallest enclosing sphere
+    Min_sphere  ms(P, P+n);             // smallest enclosing sphere
 
     Min_sphere::Cartesian_const_iterator ccib = ms.center_cartesian_begin(), ccie = ms.center_cartesian_end();
     std::cout << "center:";
