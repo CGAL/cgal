@@ -22,7 +22,7 @@ int main()
   {
     CGAL_USE(ed);
   }
-  for (halfedge_descriptor hd : edges(om))
+  for (halfedge_descriptor hd : halfedges(om))
   {
     CGAL_USE(hd);
   }
