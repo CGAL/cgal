@@ -13,6 +13,7 @@ using Point_set = CGAL::Point_set_3<Point>;
 using Point_map = Point_set::Point_map;
 using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 
+
 int main(int argc, char **argv) {
 
   // Point set will be used to hold our points
