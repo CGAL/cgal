@@ -23,8 +23,8 @@ main( int, char**)
     // (0,0), (-1,0), (2,0), (-3,0), ...
   }
 
-  Min_circle  mc1( P.begin(), P.end(), false);    // very slow
-  Min_circle  mc2( P.begin(), P.end(), true);     // fast
+  Min_circle  mc1( P.begin(), P.begin() + n, false);    // very slow
+  Min_circle  mc2( P.begin(), P.begin() +n, true);     // fast
 
   CGAL::IO::set_pretty_mode( std::cout);
   std::cout << mc2;
