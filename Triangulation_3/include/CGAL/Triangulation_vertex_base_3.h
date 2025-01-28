@@ -49,6 +49,7 @@ public:
   Triangulation_vertex_base_3(Cell_handle c)
     : DSVb(c), _p() {}
 
+private:
   const Point & point() const
   { return _p; }
 
@@ -58,17 +59,33 @@ public:
   void set_point(const Point & p)
   { _p = p; }
 
+public:
+  const Point & ipoint() const
+  { return point(); }
+
+  Point & ipoint()
+  { return point(); }
+
+  void iset_point(const Point & p)
+  { set_point(p); }
+
+  
 private:
   Point _p;
 };
 
+<<<<<<< HEAD
+  
+  // AF: We need a triangulation in the loop 
+=======
+>>>>>>> cgal/master
 
 template < class GT, class DSVb >
 std::istream&
 operator>>(std::istream &is, Triangulation_vertex_base_3<GT, DSVb> &v)
   // non combinatorial information. Default = point
 {
-  return is >> static_cast<DSVb&>(v) >> v.point();
+  return is >> static_cast<DSVb&>(v) >> v.ipoint();
 }
 
 template < class GT, class DSVb >
@@ -76,8 +93,14 @@ std::ostream&
 operator<<(std::ostream &os, const Triangulation_vertex_base_3<GT, DSVb> &v)
   // non combinatorial information. Default = point
 {
+<<<<<<< HEAD
+  return os << static_cast<const DSVb&>(v) << v.ipoint();
+=======
   return os << static_cast<const DSVb&>(v) << IO::serialize(v.point());
+>>>>>>> cgal/master
 }
+
+  
 
 } //namespace CGAL
 

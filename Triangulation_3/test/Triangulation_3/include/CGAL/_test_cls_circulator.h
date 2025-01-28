@@ -53,8 +53,8 @@ _test_circulator( const Triangulation &T )
     Cell_handle ch = cc0; // Test the conversion.
     (void) ch;
     do {
-      assert(cc->has_vertex(eit->first->vertex(eit->second)));
-      assert(cc->has_vertex(eit->first->vertex(eit->third)));
+      assert(T.tds().has_vertex(cc, T.tds().vertex(eit->first, eit->second)));
+      assert(T.tds().has_vertex(cc, T.tds().vertex(eit->first, eit->third)));
       cc++; n++;
     } while (cc != cc0);
   }
@@ -63,9 +63,15 @@ _test_circulator( const Triangulation &T )
   {
     cc0=cc=T.incident_cells(feit->first, feit->second, feit->third);
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(cc, T.tds().vertex(feit->first, feit->second)));
+	assert(T.tds().has_vertex(cc,T.tds().vertex(feit->first, feit->third)));
+	cc--; n++;
+=======
         assert(cc->has_vertex(feit->first->vertex(feit->second)));
         assert(cc->has_vertex(feit->first->vertex(feit->third)));
         cc--; n++;
+>>>>>>> cgal/master
       } while (cc != cc0);
     }
   // testing incident_cells(edge *,cell *); and ++
@@ -74,8 +80,8 @@ _test_circulator( const Triangulation &T )
   {
     cc0=cc=T.incident_cells(*eit, eit->first);
     do {
-      assert(cc->has_vertex(eit->first->vertex(eit->second)));
-      assert(cc->has_vertex(eit->first->vertex(eit->third)));
+      assert(T.tds().has_vertex(cc, T.tds().vertex(eit->first, eit->second)));
+      assert(T.tds().has_vertex(cc, T.tds().vertex(eit->first, eit->third)));
       cc++; n++;
     } while (cc != cc0);
   }
@@ -85,9 +91,15 @@ _test_circulator( const Triangulation &T )
     cc0=cc=T.incident_cells(feit->first, feit->second, feit->third,
                             feit->first);
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(cc, T.tds().vertex(feit->first, feit->second)));
+	assert(T.tds().has_vertex(cc, T.tds().vertex(feit->first, feit->third)));
+	cc--; n++;
+=======
         assert(cc->has_vertex(feit->first->vertex(feit->second)));
         assert(cc->has_vertex(feit->first->vertex(feit->third)));
         cc--; n++;
+>>>>>>> cgal/master
       } while (cc != cc0);
     }
   // the following is not useful here, it tests iterators more than
@@ -112,7 +124,7 @@ _test_circulator( const Triangulation &T )
   std::vector<Vertex_handle > vertices;
   std::vector<Facet > facets;
 
-  Vertex_handle vh = T.vertices_begin();
+  Vertex_handle vh = *T.vertices_begin();
 
   T.incident_cells(vh, std::back_inserter(cells));
   // old name (up to CGAL 3.4)
@@ -125,14 +137,14 @@ _test_circulator( const Triangulation &T )
   for(typename std::vector<Cell_handle>::const_iterator cit = cells.begin(),
                                                         end = cells.end();
                                                         cit != end; ++cit)
-    assert((*cit)->has_vertex(vh));
+    assert(T.tds().has_vertex(*cit, vh));
 
   for(typename std::vector<Facet>::const_iterator fit = facets.begin(),
                                                   end = facets.end();
                                                   fit != end; ++fit)
   {
-    assert( (fit->first)->has_vertex(vh) );
-    assert( fit->second != (fit->first)->index(vh) );
+    assert( T.tds().has_vertex(fit->first, vh) );
+    assert( fit->second != T.tds().index(fit->first, vh) );
   }
 
    Facet_circulator fc, fc0, fc1;
@@ -143,10 +155,17 @@ _test_circulator( const Triangulation &T )
    {
      fc0=fc=T.incident_facets(*eit);
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->second), i));
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->third), j));
+	assert(fc->second == T.next_around_edge(i, j) );
+	fc++; n++;
+=======
         assert(fc->first->has_vertex(eit->first->vertex(eit->second), i));
         assert(fc->first->has_vertex(eit->first->vertex(eit->third), j));
         assert(fc->second == T.next_around_edge(i, j) );
         fc++; n++;
+>>>>>>> cgal/master
       } while (fc != fc0);
     }
    //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
@@ -154,10 +173,17 @@ _test_circulator( const Triangulation &T )
     {
      fc0=fc=T.incident_facets(feit->first, feit->second, feit->third);
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->second), i));
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->third), j));
+	assert(fc->second == T.next_around_edge(i, j) );
+	fc--; n++;
+=======
         assert(fc->first->has_vertex(feit->first->vertex(feit->second), i));
         assert(fc->first->has_vertex(feit->first->vertex(feit->third), j));
         assert(fc->second == T.next_around_edge(i, j) );
         fc--; n++;
+>>>>>>> cgal/master
       } while (fc != fc0);
     }
 //   int fi;
@@ -170,10 +196,17 @@ _test_circulator( const Triangulation &T )
         fc0=fc=T.incident_facets(*eit, eit->first,
                                  T.next_around_edge(eit->second, eit->third));
         do {
+<<<<<<< HEAD
+	  assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->second), i));
+	  assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->third), j));
+	  assert(fc->second == T.next_around_edge(i, j) );
+   	  fc++; n++;
+=======
           assert(fc->first->has_vertex(eit->first->vertex(eit->second), i));
           assert(fc->first->has_vertex(eit->first->vertex(eit->third), j));
           assert(fc->second == T.next_around_edge(i, j) );
              fc++; n++;
+>>>>>>> cgal/master
         } while (fc != fc0);
 //       }
     }
@@ -184,10 +217,17 @@ _test_circulator( const Triangulation &T )
                               feit->first,
                               T.next_around_edge(feit->second, feit->third));
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->second), i));
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->third), j));
+	assert(fc->second == T.next_around_edge(i, j) );
+	fc--; n++;
+=======
         assert(fc->first->has_vertex(feit->first->vertex(feit->second), i));
         assert(fc->first->has_vertex(feit->first->vertex(feit->third), j));
         assert(fc->second == T.next_around_edge(i, j) );
         fc--; n++;
+>>>>>>> cgal/master
       } while (fc != fc0);
     }
 
@@ -200,10 +240,17 @@ _test_circulator( const Triangulation &T )
                                         T.next_around_edge(eit->second,
                                                            eit->third)) );
         do {
+<<<<<<< HEAD
+          assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->second), i));
+          assert(T.tds().has_vertex(fc->first, T.tds().vertex(eit->first, eit->third), j));
+	assert(fc->second == T.next_around_edge(i, j) );
+   	  fc++; n++;
+=======
         assert(fc->first->has_vertex(eit->first->vertex(eit->second), i));
         assert(fc->first->has_vertex(eit->first->vertex(eit->third), j));
         assert(fc->second == T.next_around_edge(i, j) );
              fc++; n++;
+>>>>>>> cgal/master
         } while (fc != fc0);
 //       }
     }
@@ -215,10 +262,17 @@ _test_circulator( const Triangulation &T )
                                T.next_around_edge(feit->second,
                                                   feit->third)) );
       do {
+<<<<<<< HEAD
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->second), i));
+	assert(T.tds().has_vertex(fc->first, T.tds().vertex(feit->first, feit->third), j));
+	assert(fc->second == T.next_around_edge(i, j) );
+	fc--; n++;
+=======
         assert(fc->first->has_vertex(feit->first->vertex(feit->second), i));
         assert(fc->first->has_vertex(feit->first->vertex(feit->third), j));
         assert(fc->second == T.next_around_edge(i, j) );
         fc--; n++;
+>>>>>>> cgal/master
       } while (fc != fc0);
     }
 

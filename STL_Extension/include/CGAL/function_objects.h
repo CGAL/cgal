@@ -87,6 +87,17 @@ struct Project_point {
 };
 
 template < class Node>
+struct Project_ipoint {
+  typedef Node                  argument_type;
+  typedef typename Node::Point  Point;
+  typedef Point                 result_type;
+  Point&       operator()( Node& x)       const { return x.ipoint(); }
+  const Point& operator()( const Node& x) const { return x.ipoint(); }
+};
+
+
+
+template < class Node>
 struct Project_normal {
   typedef Node                  argument_type;
   typedef typename Node::Normal Normal;

@@ -506,7 +506,10 @@ public:
     {
       this->parrays_.swap (other.parrays_);
       std::swap(this->size_, other.size_);
+<<<<<<< HEAD
+=======
       std::swap(this->capacity_, other.capacity_);
+>>>>>>> cgal/master
     }
 
 private:

@@ -17,6 +17,8 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 
+#define CGAL_TDS_PROPERTY 1
+
 #include <CGAL/license/TDS_3.h>
 
 #include <CGAL/disable_warnings.h>
@@ -35,7 +37,10 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
+#include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Iterator_range.h>
+
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
@@ -58,9 +63,129 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/array.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <CGAL/Surface_mesh/Properties.h>
 #include <type_traits>
 
 namespace CGAL {
+
+/// Base class for vertex and cell index.
+///
+/// \attention Note that `Index` is not a model of the concept `Handle`,
+/// because it cannot be dereferenced.
+/// \sa `Vertex_index`, `Cell_index`, `Edge_index`, `Face_index`.
+template<typename T>
+class T3_Index
+{
+public:
+  typedef boost::uint32_t size_type;
+  /// Constructor. %Default construction creates an invalid index.
+  /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
+  /// <tt>std::numeric_limits<size_type>::max()</tt></a>
+  /// as `size_type` is an unsigned type.
+  explicit T3_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+
+  /// Get the underlying index of this index
+  operator size_type() const { return idx_; }
+
+  /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
+  void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
+
+  /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
+  bool is_valid() const {
+    size_type inf = (std::numeric_limits<size_type>::max)();
+    return idx_ != inf;
+  }
+
+  /// are two indices equal?
+  bool operator==(const T& _rhs) const {
+    return idx_ == _rhs.idx_;
+  }
+
+  /// are two indices different?
+  bool operator!=(const T& _rhs) const {
+    return idx_ != _rhs.idx_;
+  }
+
+  /// Comparison by index.
+  bool operator<(const T& _rhs) const {
+    return idx_ < _rhs.idx_;
+  }
+
+  // Compatibility with OpenMesh handle
+  size_type idx() const {
+    return idx_;
+  }
+
+  /// increments the internal index. This operation does not
+  /// guarantee that the index is valid or undeleted after the
+  /// increment.
+  T3_Index& operator++() { ++idx_; return *this; }
+  /// decrements the internal index. This operation does not
+  /// guarantee that the index is valid or undeleted after the
+  /// decrement.
+  T3_Index& operator--() { --idx_; return *this; }
+
+  /// increments the internal index. This operation does not
+  /// guarantee that the index is valid or undeleted after the
+  /// increment.
+  T3_Index operator++(int) { T3_Index tmp(*this); ++idx_; return tmp; }
+  /// decrements the internal index. This operation does not
+  /// guarantee that the index is valid or undeleted after the
+  /// decrement.
+  T3_Index operator--(int) { T3_Index tmp(*this); --idx_; return tmp; }
+
+  T3_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
+
+private:
+  size_type idx_;
+};
+
+template <class T>
+std::size_t hash_value(const T3_Index<T>&  i)
+{
+  std::size_t ret = i;
+  return ret;
+}
+
+// Implementation for Tetrahedral_mesh_3::Vertex_index
+
+class T3_Vertex_index
+  : public T3_Index<T3_Vertex_index>
+{
+public:
+
+  T3_Vertex_index() : T3_Index<T3_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
+
+  explicit T3_Vertex_index(size_type _idx) : T3_Index<T3_Vertex_index>(_idx) {}
+
+
+  friend std::ostream& operator<<(std::ostream& os, T3_Vertex_index const& v)
+  {
+    return (os << 'v' << (size_type)v );
+  }
+};
+
+
+class T3_Cell_index
+  : public T3_Index<T3_Cell_index>
+{
+public:
+
+  T3_Cell_index() : T3_Index<T3_Cell_index>((std::numeric_limits<size_type>::max)()) {}
+
+  explicit T3_Cell_index(size_type _idx) : T3_Index<T3_Cell_index>(_idx) {}
+
+
+  friend std::ostream& operator<<(std::ostream& os, T3_Cell_index const& c)
+  {
+    return (os << 'c' << (size_type)c );
+  }
+};
+
 
 // TODO : noms : Vb != Vertex_base : clarifier.
 
@@ -72,45 +197,170 @@ class Triangulation_data_structure_3
   : public Triangulation_utils_3
 {
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
-
+  typedef Tds Self;
 public:
   typedef Concurrency_tag_            Concurrency_tag;
+
 
   // This tag is used in the parallel operations of RT_3 to access some functions
   // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
   // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
   typedef CGAL::Tag_true              Is_CGAL_TDS_3;
 
-  // Tools to change the Vertex and Cell types of the TDS.
-  template < typename Vb2 >
-  struct Rebind_vertex {
-    typedef Triangulation_data_structure_3<Vb2, Cb, Concurrency_tag> Other;
-  };
-
-  template < typename Cb2 >
-  struct Rebind_cell {
-    typedef Triangulation_data_structure_3<Vb, Cb2, Concurrency_tag> Other;
-  };
-
-  // Put this TDS inside the Vertex and Cell types.
-  typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
-  typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
 
   class Cell_data {
-    unsigned char conflict_state;
+    mutable unsigned char conflict_state;
   public:
     Cell_data() : conflict_state(0) {}
 
-    void clear()            { conflict_state = 0; }
-    void mark_in_conflict() { conflict_state = 1; }
-    void mark_on_boundary() { conflict_state = 2; }
-    void mark_processed()   { conflict_state = 1; }
+    void clear() const          { conflict_state = 0; }
+    void mark_in_conflict() const { conflict_state = 1; }
+    void mark_on_boundary() const { conflict_state = 2; }
+    void mark_processed() const   { conflict_state = 1; }
 
     bool is_clear()       const { return conflict_state == 0; }
     bool is_in_conflict() const { return conflict_state == 1; }
     bool is_on_boundary() const { return conflict_state == 2; }
     bool processed() const { return conflict_state == 1; }
   };
+
+
+public:
+  template <class I, class T>
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
+  {
+    typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
+    typedef typename Base::reference reference;
+    Property_map() : Base() {}
+    Property_map(const Base& pm): Base(pm) {}
+  };
+
+  template <typename Key, typename T>
+  struct Get_property_map {
+    typedef Property_map<Key, T> type;
+  };
+
+
+  /// The type used to represent an index.
+  typedef boost::uint32_t size_type;
+  typedef boost::uint32_t difference_type; // AF needed by T3 testsuite
+  typedef T3_Vertex_index Vertex_index;
+  typedef T3_Cell_index Cell_index;
+
+  typedef Vertex_index Vertex_handle;
+  typedef Cell_index Cell_handle;
+
+
+    struct Vertex
+    {
+      Cell_index c;
+      bool visited_for_vertex_extractor;
+    };
+
+    struct Cell
+    {
+      typedef std::array<Cell_index,4> Cells;
+      typedef std::array<Vertex_index,4> Vertices;
+      Cells   N;
+      Vertices V;
+      Cell_data data;
+    };
+
+    template<typename Index_>
+    class Index_iterator
+      : public boost::iterator_facade< Index_iterator<Index_>,
+                                       Index_,
+                                       std::random_access_iterator_tag
+                                       >
+    {
+        typedef boost::iterator_facade< Index_iterator<Index_>,
+                                        Index_,
+                                        std::random_access_iterator_tag
+                                        > Facade;
+    public:
+        Index_iterator() : hnd_(), mesh_(nullptr) {}
+        Index_iterator(const Index_& h, const Tds* m)
+          : hnd_(h), mesh_(m) {
+          if (mesh_ && mesh_->has_garbage()){
+              while (mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
+          }
+        }
+    private:
+        friend class boost::iterator_core_access;
+        void increment()
+        {
+            ++hnd_;
+            CGAL_assertion(mesh_ != nullptr);
+
+            if(mesh_->has_garbage())
+              while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
+        }
+
+        void decrement()
+        {
+            --hnd_;
+            CGAL_assertion(mesh_ != nullptr);
+            if(mesh_->has_garbage())
+               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
+        }
+
+        void advance(std::ptrdiff_t n)
+        {
+            CGAL_assertion(mesh_ != nullptr);
+
+            if (mesh_->has_garbage())
+            {
+              if (n > 0)
+                for (std::ptrdiff_t i = 0; i < n; ++ i)
+                  increment();
+              else
+                for (std::ptrdiff_t i = 0; i < -n; ++ i)
+                  decrement();
+            }
+            else
+              hnd_ += n;
+        }
+
+        std::ptrdiff_t distance_to(const Index_iterator& other) const
+        {
+            if (mesh_->has_garbage())
+            {
+              bool forward = (other.hnd_ > hnd_);
+
+              std::ptrdiff_t out = 0;
+              Index_iterator it = *this;
+              while (!it.equal(other))
+              {
+                if (forward)
+                {
+                  ++ it;
+                  ++ out;
+                }
+                else
+                {
+                  -- it;
+                  -- out;
+                }
+              }
+              return out;
+            }
+
+            // else
+            return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+        }
+
+        bool equal(const Index_iterator& other) const
+        {
+            return this->hnd_ == other.hnd_;
+        }
+
+        Index_& dereference() const { return const_cast<Index_&>(hnd_); }
+
+        Index_ hnd_;
+        const Tds* mesh_;
+
+    };
+
 
 private:
 
@@ -122,6 +372,12 @@ private:
 
 public:
 
+#ifdef CGAL_T3_INDEXED
+
+  typedef Index_iterator<Vertex_index> Vertex_iterator;
+  typedef Index_iterator<Cell_index> Cell_iterator;
+
+#else // CGAL_T3_INDEXED
   // Cells
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
@@ -157,9 +413,10 @@ public:
 
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
+#endif // CGAL_T3_INDEXED
 
-  typedef typename Cell_range::iterator        Cell_iterator;
-  typedef typename Vertex_range::iterator      Vertex_iterator;
+  typedef Iterator_range<Vertex_iterator> Vertex_range;
+  typedef Iterator_range<Cell_iterator> Cell_range;
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
@@ -167,17 +424,11 @@ public:
   typedef internal::Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef internal::Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
-  typedef Iterator_range<Prevent_deref<Cell_iterator> >    Cell_handles;
-  typedef Iterator_range<Prevent_deref<Vertex_iterator> >  Vertex_handles;
-
   typedef Iterator_range<Facet_iterator> Facets;
   typedef Iterator_range<Edge_iterator> Edges;
 
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
-
-  typedef Vertex_iterator                          Vertex_handle;
-  typedef Cell_iterator                            Cell_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
@@ -231,13 +482,29 @@ public:
 public:
   Triangulation_data_structure_3()
     : _dimension(-2)
-  {}
-
-  Triangulation_data_structure_3(const Tds & tds)
   {
-    copy_tds(tds);
+    vconn_    = add_property_map<Vertex_index, Vertex>("v:connectivity").first;
+    cconn_    = add_property_map<Cell_index, Cell>("c:connectivity").first;
+    vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+    cremoved_ = add_property_map<Cell_index, bool>("c:removed", false).first;
+    removed_vertices_ = removed_cells_ = 0;
+    vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
+    garbage_ = false;
+    anonymous_property_ = 0;
   }
 
+  Triangulation_data_structure_3(const Tds & rhs)
+  {
+    *this = rhs;
+  }
+
+  void reserve(size_type nv, size_type nc)
+  {
+    vprops_.reserve(nv);
+    cprops_.reserve(nc);
+  }
+
+/**/ AF  strange merge conflicts
   Triangulation_data_structure_3(Tds && tds)
     noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
              noexcept(Vertex_range(std::move(tds._vertices))))
@@ -248,12 +515,183 @@ public:
   }
 
   Tds & operator= (const Tds & tds)
-  {
-    if (&tds != this) {
-      Tds tmp(tds);
-      swap(tmp);
+  */
+
+#ifndef DOXYGEN_RUNNING
+   /// returns the number of used and removed vertices.
+    size_type num_vertices() const { return (size_type) vprops_.size(); }
+
+      /// returns the number of used and removed cells.
+    size_type num_cells() const { return (size_type) cprops_.size(); }
+#endif
+    /// returns the number of vertices which are marked removed.
+    size_type number_of_removed_vertices() const { return removed_vertices_; }
+
+    /// returns the number of cells which are marked removed.
+    size_type number_of_removed_cells() const { return removed_cells_; }
+
+    /// returns whether vertex `v` is marked removed.
+    /// \sa `collect_garbage()`
+    bool is_removed(Vertex_index v) const
+    {
+        return vremoved_[v];
     }
+    /// returns whether cell `c` is marked removed.
+    /// \sa `collect_garbage()`
+    bool is_removed(Cell_index c) const
+    {
+        return cremoved_[c];
+    }
+    /// checks if any vertices, halfedges, edges, or faces are marked as removed.
+    /// \sa collect_garbage
+    bool has_garbage() const { return garbage_; }
+
+    void shrink_to_fit()
+    {
+        vprops_.shrink_to_fit();
+        cprops_.shrink_to_fit();
+    }
+
+    // Property_selector maps an index type to a property_container, the
+    // dummy is necessary to make it a partial specialization (full
+    // specializations are only allowed at namespace scope).
+    template<typename, bool = true>
+    struct Property_selector {};
+
+    template<bool dummy>
+    struct Property_selector<typename Self::Vertex_index, dummy> {
+      Self* m_;
+      Property_selector(Self* m) : m_(m) {}
+      Properties::Property_container<Self,
+                                     typename Self::Vertex_index>&
+      operator()() { return m_->vprops_; }
+    };
+
+    template<bool dummy>
+    struct Property_selector<typename Self::Cell_index, dummy> {
+      Self* m_;
+      Property_selector(Self* m) : m_(m) {}
+      Properties::Property_container<Self,
+                                     typename Self::Cell_index>&
+      operator()() { return m_->cprops_; }
+    };
+
+
+    template<class I, class T>
+    std::pair<Property_map<I, T>, bool>
+    add_property_map(std::string name=std::string(), const T t=T()) {
+      if(name.empty()){
+        std::ostringstream oss;
+        oss << "anonymous-property-" << anonymous_property_++;
+        name = std::string(oss.str());
+      }
+      return Property_selector<I>(this)().template add<T>(name, t);
+    }
+
+    /// returns a property map named `name` with key type `I` and value type `T`,
+    /// and a Boolean that is `true` if the property exists.
+    /// In case it does not exist the Boolean is `false` and the behavior of
+    /// the property map is undefined.
+    template <class I, class T>
+    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
+    {
+      return Property_selector<I>(const_cast<Tds*>(this))().template get<T>(name);
+    }
+
+
+    /// removes property map `p`. The memory allocated for that property map is
+    /// freed.
+    template<class I, class T>
+    void remove_property_map(Property_map<I, T>& p)
+    {
+      (Property_selector<I>(this)()).template remove<T>(p);
+    }
+
+    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// returns the std::type_info of the value type of the
+    /// property identified by `name`.  `typeid(void)` if `name`
+    /// does not identify any property.
+    ///
+    /// @tparam I The key type of the property.
+
+    template<class I>
+    const std::type_info& property_type(const std::string& name)
+    {
+      return Property_selector<I>(this)().get_type(name);
+    }
+    /// @endcond
+
+    /// returns a vector with all strings that describe properties with the key type `I`.
+    /// @tparam I The key type of the properties.
+    template<class I>
+    std::vector<std::string> properties() const
+    {
+      return Property_selector<I>(const_cast<Self*>(this))().properties();
+    }
+
+
+    /// returns `Vertex_index(std::numeric_limits<size_type>::%max())`.
+    static Vertex_index null_vertex()
+    {
+      return Vertex_index((std::numeric_limits<size_type>::max)());
+    }
+
+    /// returns `Cell_index(std::numeric_limits<size_type>::%max())`.
+    static Cell_index null_cell()
+    {
+      return Cell_index((std::numeric_limits<size_type>::max)());
+    }
+
+    bool has_valid_index(Vertex_index v) const
+    {
+      return ((size_type)v < num_vertices());
+    }
+
+    bool has_valid_index(Cell_index c) const
+    {
+      return ((size_type)c < num_cells());
+    }
+  private:
+    Properties::Property_container<Tds, Vertex_index> vprops_;
+    Properties::Property_container<Tds, Cell_index>   cprops_;
+    Property_map<Vertex_index, Vertex>    vconn_;
+    Property_map<Cell_index, Cell>        cconn_;
+
+    Property_map<Vertex_index, bool>  vremoved_;
+    Property_map<Cell_index, bool>    cremoved_;
+
+    size_type removed_vertices_;
+    size_type removed_cells_;
+    size_type vertices_freelist_;
+    size_type cells_freelist_;
+    bool garbage_;
+    size_type anonymous_property_;
+public:
+
+  Tds & operator= (const Tds & rhs)
+  {
+    if (&rhs != this) {
+      vprops_ = rhs.vprops_;
+      cprops_ = rhs.cprops_;
+      vconn_    = property_map<Vertex_index, Vertex>("v:connectivity").first;
+      cconn_    = property_map<Cell_index, Cell>("c:connectivity").first;
+      vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
+      cremoved_ = property_map<Cell_index, bool>("c:removed").first;
+      removed_vertices_ = rhs.removed_vertices_;
+      removed_cells_ = rhs.removed_cells_;
+      vertices_freelist_ = rhs.vertices_freelist_;
+      cells_freelist_ = rhs.cells_freelist_;
+      garbage_ = rhs.garbage_;
+      anonymous_property_ = rhs.anonymous_property_;
+      _dimension = rhs._dimension;
+    }
+
     return *this;
+  }
+
+  size_type number_of_vertices() const
+  {
+    return num_vertices() - number_of_removed_vertices();
   }
 
   Tds & operator= (Tds && tds)
@@ -267,14 +705,12 @@ public:
 
   ~Triangulation_data_structure_3() = default; // for the rule-of-five
 
-  size_type number_of_vertices() const { return vertices().size(); }
-
   int dimension() const {return _dimension;}
 
   size_type number_of_cells() const
     {
       if ( dimension() < 3 ) return 0;
-      return cells().size();
+      return num_cells() - number_of_removed_cells();
     }
 
   size_type number_of_facets() const
@@ -295,40 +731,80 @@ public:
 
   void set_dimension(int n) { _dimension = n; }
 
-  Vertex_handle create_vertex(const Vertex &v)
+  Vertex_handle create_vertex(const Vertex_handle &v)
   {
-      return vertices().insert(v);
+    return create_vertex();
+  // AF WAS:      return vertices().insert(v);
+  }
+
+  const Vertex& vertex(Vertex_index v) const
+  {
+    return vconn_[v];
   }
 
   Vertex_handle create_vertex()
   {
-      return vertices().emplace();
+    size_type inf = (std::numeric_limits<size_type>::max)();
+    if(vertices_freelist_ != inf){
+      size_type idx = vertices_freelist_;
+      vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].c;
+      --removed_vertices_;
+      vremoved_[Vertex_index(idx)] = false;
+      vprops_.reset(Vertex_index(idx));
+      return Vertex_index(idx);
+    } else {
+      vprops_.push_back();
+      return Vertex_index(num_vertices()-1);
+    }
   }
 
+#if 0 // AF
   Vertex_handle create_vertex(Vertex_handle v)
   {
       return create_vertex(*v);
   }
 
+
   Cell_handle create_cell(const Cell &c)
     {
       return cells().insert(c);
     }
+#endif
 
   Cell_handle create_cell()
     {
-      return cells().emplace();
+      size_type inf = (std::numeric_limits<size_type>::max)();
+      if(cells_freelist_ != inf){
+        size_type idx = cells_freelist_;
+        cells_freelist_ = (size_type)cconn_[Cell_index(cells_freelist_)].V[0];
+        --removed_cells_;
+        cremoved_[Cell_index(idx)] = false;
+        cprops_.reset(Cell_index(idx));
+        return Cell_index(idx);
+      } else {
+        cprops_.push_back();
+        return Cell_index(num_cells()-1);
+      }
     }
 
+#if 1 // AF
   Cell_handle create_cell(Cell_handle c)
-    {
-      return create_cell(*c);
+  {
+      return create_cell();
     }
+#endif
+
+  const Cell& cell(Cell_index v) const
+  {
+    return cconn_[v];
+  }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3)
     {
-      return cells().emplace(v0, v1, v2, v3);
+      Cell_index ci = create_cell();
+      set_vertices(ci, v0, v1, v2, v3);
+      return ci;
     }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
@@ -336,7 +812,10 @@ public:
                           Cell_handle n0, Cell_handle n1,
                           Cell_handle n2, Cell_handle n3)
     {
-      return cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
+      Cell_index ci = create_cell();
+      set_vertices(ci, v0, v1, v2, v3);
+      set_neighbors(ci, n0, n1, n2, n3);
+      return ci;
     }
 
   Cell_handle create_face()
@@ -349,7 +828,9 @@ public:
                           Vertex_handle v2)
     {
       CGAL_precondition(dimension()<3);
-      return cells().emplace(v0, v1, v2, Vertex_handle());
+      Cell_index ci = create_cell();
+      set_vertices(ci, v0, v1, v2, Vertex_handle());
+      return ci;
     }
 
   // The following functions come from TDS_2.
@@ -358,9 +839,9 @@ public:
                           Cell_handle f2, int i2)
     {
       CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f0->vertex(cw(i0)),
-                                     f1->vertex(cw(i1)),
-                                     f2->vertex(cw(i2)));
+      Cell_handle newf = create_face(vertex(f0, cw(i0)),
+                                     vertex(f1, cw(i1)),
+                                     vertex(f2, cw(i2)));
       set_adjacency(newf, 2, f0, i0);
       set_adjacency(newf, 0, f1, i1);
       set_adjacency(newf, 1, f2, i2);
@@ -371,9 +852,9 @@ public:
                           Cell_handle f1, int i1)
     {
       CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f0->vertex(cw(i0)),
-                                     f1->vertex(cw(i1)),
-                                     f1->vertex(ccw(i1)));
+      Cell_handle newf = create_face(vertex(f0, cw(i0)),
+                                     vertex(f1, cw(i1)),
+                                     vertex(f1, ccw(i1)));
       set_adjacency(newf, 2, f0, i0);
       set_adjacency(newf, 0, f1, i1);
       return newf;
@@ -382,8 +863,8 @@ public:
   Cell_handle create_face(Cell_handle f, int i, Vertex_handle v)
     {
       CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f->vertex(cw(i)),
-                                     f->vertex(ccw(i)),
+      Cell_handle newf = create_face(vertex(f, cw(i)),
+                                     vertex(f, ccw(i)),
                                      v);
       set_adjacency(newf, 2, f, i);
       return newf;
@@ -394,20 +875,24 @@ public:
                   std::size_t & m, std::vector< Cell_handle > &C);
   // not documented
   void print_cells(std::ostream& os,
-                   const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
+                   const Unique_hash_map<Vertex_handle, size_type> &V ) const;
 
   // ACCESS FUNCTIONS
 
   void delete_vertex( Vertex_handle v )
   {
-      CGAL_expensive_precondition( is_vertex(v) );
-      vertices().erase(v);
+    CGAL_expensive_precondition( is_vertex(v) );
+    vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
+    vconn_[v].c = Cell_index(vertices_freelist_);
+    vertices_freelist_ = (size_type)v;
   }
 
   void delete_cell( Cell_handle c )
   {
       CGAL_expensive_precondition( is_simplex(c) );
-      cells().erase(c);
+      cremoved_[c] = true; ++removed_cells_; garbage_ = true;
+      cconn_[c].V[0] = Vertex_index(cells_freelist_);
+      cells_freelist_ = (size_type)c;
   }
 
   template <class InputIterator>
@@ -453,6 +938,132 @@ public:
                  Cell_handle n, int j) const;
   bool are_equal(const Facet & f, const Facet & g) const;
   bool are_equal(const Facet & f, Cell_handle n, int j) const;
+
+
+  // Functions that were member functions of the vertex and cell class
+
+  Cell_data& tds_data(Cell_handle c)
+  {
+    return cconn_[c].data;
+  }
+
+  const Cell_data& tds_data(Cell_handle c) const
+  {
+    return cconn_[c].data;
+  }
+
+
+  bool& visited_for_vertex_extractor(Vertex_handle v)
+  {
+    return vconn_[v].visited_for_vertex_extractor;
+  }
+
+
+  Vertex_index vertex(Cell_index c, int i) const
+  {
+    return cconn_[c].V[i];
+  }
+
+  int index(Cell_index c, Vertex_index v) const
+  {
+    typename Cell::Vertices& V = cconn_[c].V;
+    if (v == V[0]) { return 0; }
+    if (v == V[1]) { return 1; }
+    if (v == V[2]) { return 2; }
+    CGAL_assertion( v == V[3] );
+      return 3;
+  }
+
+  int index(Cell_index c, Cell_index n) const
+  {
+    typename Cell::Cells& N = cconn_[c].N;
+    if (n == N[0]) return 0;
+    if (n == N[1]) return 1;
+    if (n == N[2]) return 2;
+    CGAL_assertion( n == N[3] );
+    return 3;
+  }
+
+
+  Cell_index neighbor(Cell_index c, int i) const
+  {
+    return cconn_[c].N[i];
+  }
+
+
+  bool has_vertex(Cell_handle c, Vertex_handle v) const
+  {
+    typename Cell::Vertices& V = cconn_[c].V;
+    return (V[0] == v) || (V[1] == v) || (V[2] == v) || (V[3] == v);
+  }
+
+  bool has_vertex(Cell_index c, Vertex_index v, int& i) const
+  {
+    typename Cell::Vertices& V = cconn_[c].V;
+    if(v == V[0]){ i = 0; return true; }
+    if(v == V[1]){ i = 1; return true; }
+    if(v == V[2]){ i = 2; return true; }
+    if(v == V[3]){ i = 3; return true; }
+    return false;
+  }
+
+  void set_vertex(Cell_index c, int i, Vertex_index v)
+  {
+    cconn_[c].V[i] = v;
+  }
+
+  void set_vertices(Cell_index c, Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
+  {
+    typename Cell::Vertices& V = cconn_[c].V;
+      V[0] = v0;
+      V[1] = v1;
+      V[2] = v2;
+      V[3] = v3;
+  }
+
+  void set_neighbor(Cell_index c, int i, Cell_index n)
+  {
+    cconn_[c].N[i] = n;
+  }
+
+
+
+  void set_neighbors(Cell_index c, Cell_index n0, Cell_index n1, Cell_index n2, Cell_index n3)
+  {
+    typename Cell::Cells& N = cconn_[c].N;
+    N[0] = n0;
+    N[1] = n1;
+    N[2] = n2;
+    N[3] = n3;
+  }
+
+  bool has_neighbor(Cell_index c, Cell_index n) const
+  {
+    typename Cell::Cells& N = cconn_[c].N;
+    return (N[0] == n) || (N[1] == n) || (N[2] == n) || (N[3] == n);
+  }
+
+
+  bool has_neighbor(Cell_index c, Cell_index n, int& i) const
+  {
+    typename Cell::Cells& N = cconn_[c].N;
+    if(n == N[0]){ i = 0; return true; }
+    if(n == N[1]){ i = 1; return true; }
+    if(n == N[2]){ i = 2; return true; }
+    if(n == N[3]){ i = 3; return true; }
+    return false;
+  }
+
+  Cell_index cell(Vertex_index v) const
+  {
+    return vconn_[v].c;
+  }
+
+  void set_cell(Vertex_index v, Cell_index c)
+  {
+    vconn_[v].c = c;
+  }
+
 
   // MODIFY
 
@@ -518,7 +1129,7 @@ public:
       else
           cnew = create_star_2(newv, begin, i);
 
-      newv->set_cell(cnew);
+      set_cell(newv,cnew);
       delete_cells(cell_begin, cell_end);
       return newv;
   }
@@ -538,7 +1149,7 @@ public:
                                Vertex_handle newv)
   {
       for (CellIt cit = cell_begin; cit != cell_end; ++cit)
-          (*cit)->tds_data().mark_in_conflict();
+          tds_data(*cit).mark_in_conflict();
 
       return _insert_in_hole(cell_begin, cell_end, begin, i, newv);
   }
@@ -645,7 +1256,7 @@ public:
       CGAL_precondition(dimension() >= 1);
       for (Cell_iterator i = cells().begin();
               i != cells().end(); ++i)
-          change_orientation(i);
+          change_orientation(*i);
   }
 
   // ITERATOR METHODS
@@ -654,14 +1265,15 @@ public:
   {
     if ( dimension() < 3 )
         return cells_end();
-    return cells().begin();
+    return Cell_iterator(Cell_index(0), this);
   }
 
   Cell_iterator cells_end() const
   {
-    return cells().end();
+    return Cell_iterator(Cell_index(num_cells()), this);
   }
 
+ // AF:  from master
   Cell_handles cell_handles() const
   {
     return { cells_begin(), cells_end() };
@@ -669,12 +1281,12 @@ public:
 
   Cell_iterator raw_cells_begin() const
   {
-    return cells().begin();
+    return Cell_iterator(Cell_index(0), this);
   }
 
   Cell_iterator raw_cells_end() const
   {
-    return cells().end();
+    return Cell_iterator(Cell_index(num_cells()), this);
   }
 
   Facet_iterator facets_begin() const
@@ -713,14 +1325,15 @@ public:
 
   Vertex_iterator vertices_begin() const
   {
-    return vertices().begin();
+    return Vertex_iterator(Vertex_index(0), this);
   }
 
   Vertex_iterator vertices_end() const
   {
-    return vertices().end();
+    return Vertex_iterator(Vertex_index(num_vertices()), this);
   }
 
+  // AF: from master
   Vertex_handles vertex_handles() const
   {
     return { vertices_begin(), vertices_end() };
@@ -732,66 +1345,66 @@ public:
   Cell_circulator incident_cells(const Edge & e) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Cell_circulator(e);
+    return Cell_circulator(this, e);
   }
   Cell_circulator incident_cells(Cell_handle ce, int i, int j) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Cell_circulator(ce, i, j);
+    return Cell_circulator(this, ce, i, j);
   }
 
   Cell_circulator incident_cells(const Edge &e, Cell_handle start) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Cell_circulator(e, start);
+    return Cell_circulator(this, e, start);
   }
   Cell_circulator incident_cells(Cell_handle ce, int i, int j,
                                  Cell_handle start) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Cell_circulator(ce, i, j, start);
+    return Cell_circulator(this, ce, i, j, start);
   }
 
   //facets around an edge
   Facet_circulator incident_facets(const Edge & e) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(e);
+    return Facet_circulator(this, e);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(ce, i, j);
+    return Facet_circulator(this, ce, i, j);
   }
   Facet_circulator incident_facets(const Edge & e, const Facet & start) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(e, start);
+    return Facet_circulator(this, e, start);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j,
                                    const Facet & start) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(ce, i, j, start);
+    return Facet_circulator(this, ce, i, j, start);
   }
   Facet_circulator incident_facets(const Edge & e,
                                    Cell_handle start, int f) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(e, start, f);
+    return Facet_circulator(this, e, start, f);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j,
                                    Cell_handle start, int f) const
   {
     CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(ce, i, j, start, f);
+    return Facet_circulator(this, ce, i, j, start, f);
   }
 
   // 2D : circulates on the faces adjacent to a vertex.
   Face_circulator incident_faces(Vertex_handle v) const
   {
     CGAL_precondition( dimension() == 2 );
-    return Face_circulator(v, v->cell());
+    return Face_circulator(this, v, cell(v));
   }
 
   // around a vertex
@@ -807,7 +1420,7 @@ private:
 
         std::stack<Cell_handle, boost::container::small_vector<Cell_handle, 128>> cell_stack;
         cell_stack.push(d);
-        d->tds_data().mark_in_conflict();
+        tds_data(d).mark_in_conflict();
         *it.first++ = d;
 
         do {
@@ -815,15 +1428,15 @@ private:
                 cell_stack.pop();
 
                 for (int i=0; i<4; ++i) {
-                        if (c->vertex(i) == v)
+                  if (vertex(c, i) == v)
                                 continue;
-                        Cell_handle next = c->neighbor(i);
+                        Cell_handle next = neighbor(c,i);
                         if (c < next)
                                 *it.second++ = Facet(c, i); // Incident facet.
-                        if (! next->tds_data().is_clear())
+                        if (! tds_data(next).is_clear())
                                 continue;
                         cell_stack.push(next);
-                        next->tds_data().mark_in_conflict();
+                        tds_data(next).mark_in_conflict();
                         *it.first++ = next;
                 }
         } while(!cell_stack.empty());
@@ -850,9 +1463,9 @@ private:
       Cell_handle c = cells[head];
 
       for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
+        if (vertex(c, i) == v)
           continue;
-        Cell_handle next = c->neighbor(i);
+        Cell_handle next = neighbor(c, i);
         if (c < next)
           *facet_it++ = Facet(c, i); // Incident facet
         if (! found_cells.insert(next).second )
@@ -869,23 +1482,23 @@ private:
   {
     CGAL_precondition(dimension() == 3);
 
-    Cell_handle d = v->cell();
+    Cell_handle d = cell(v);
     cells.push_back(d);
-    d->tds_data().mark_in_conflict();
+    tds_data(d).mark_in_conflict();
     int head=0;
     int tail=1;
     do {
       Cell_handle c = cells[head];
 
       for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
+        if (vertex(c, i) == v)
           continue;
-        Cell_handle next = c->neighbor(i);
-        if (! next->tds_data().is_clear())
+        Cell_handle next = neighbor(c, i);
+        if (! tds_data(next).is_clear())
           continue;
         cells.push_back(next);
         ++tail;
-        next->tds_data().mark_in_conflict();
+        tds_data(next).mark_in_conflict();
       }
       ++head;
     } while(head != tail);
@@ -1013,14 +1626,14 @@ public:
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter)
+      v(_v), treat(_output, _t), t(_t), filter(_filter)
     {
       tmp_vertices.reserve(64);
     }
 
     void operator()(Cell_handle c) {
       for (int j=0; j<= t->dimension(); ++j) {
-        Vertex_handle w = c->vertex(j);
+        Vertex_handle w = t->vertex(c, j);
         if(filter(w))
           continue;
         if (w != v) {
@@ -1045,23 +1658,23 @@ public:
     std::vector<Vertex_handle> tmp_vertices;
 
     Treatment treat;
-    const Tds* t;
+    Tds* t;
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter) {
+      v(_v), treat(_output, _t), t(const_cast<Tds*>(_t)), filter(_filter) {
       tmp_vertices.reserve(64);
     }
 
     void operator()(Cell_handle c) {
       for (int j=0; j<= t->dimension(); ++j) {
-        Vertex_handle w = c->vertex(j);
-        if(filter(w))
-          continue;
-        if (w != v){
+	Vertex_handle w = t->vertex(c, j);
+	if(filter(w))
+	  continue;
+	if (w != v){
 
-          if(! w->visited_for_vertex_extractor){
-            w->visited_for_vertex_extractor = true;
+          if(! t->visited_for_vertex_extractor(w)){
+            t->visited_for_vertex_extractor(w) = true;
             tmp_vertices.push_back(w);
             treat(c, v, j);
           }
@@ -1081,7 +1694,7 @@ public:
     ~Vertex_extractor()
     {
       for(std::size_t i=0; i < tmp_vertices.size(); ++i){
-        tmp_vertices[i]->visited_for_vertex_extractor = false;
+        t->visited_for_vertex_extractor(tmp_vertices[i]) = false;
       }
     }
 
@@ -1099,10 +1712,11 @@ public:
   template<class OutputIterator>
   class Vertex_feeder_treatment {
     OutputIterator output;
+    const Tds* t;
   public:
-    Vertex_feeder_treatment(OutputIterator _output): output(_output) {};
+    Vertex_feeder_treatment(OutputIterator _output, const Tds* t): output(_output), t(t) {};
     void operator()(Cell_handle c, Vertex_handle, int index) {
-      *output++ = c->vertex(index);
+      *output++ = t->vertex(c,index);
     }
     OutputIterator result() {
       return output;
@@ -1114,10 +1728,11 @@ public:
   template<class OutputIterator>
   class Edge_feeder_treatment {
     OutputIterator output;
+    const Tds* t;
   public:
-    Edge_feeder_treatment(OutputIterator _output): output(_output) {};
+    Edge_feeder_treatment(OutputIterator _output, const Tds* t): output(_output), t(t) {};
     void operator()(Cell_handle c, Vertex_handle v, int index) {
-      *output++ = Edge(c, c->index(v), index);
+      *output++ = Edge(c, t->index(c,v), index);
     }
     OutputIterator result() {
       return output;
@@ -1149,7 +1764,7 @@ public:
               cit != end;
               ++cit)
     {
-      (*cit)->tds_data().clear();
+      tds_data(*cit).clear();
     }
   }
 
@@ -1210,16 +1825,16 @@ public:
   {
     CGAL_assertion (dimension() == 1);
     CGAL_assertion( number_of_vertices() >= 3);
-    Cell_handle n0 = v->cell();
-    const int index_v_in_n0 = n0->index(v);
+    Cell_handle n0 = cell(v);
+    const int index_v_in_n0 = index(n0, v);
     CGAL_assume(index_v_in_n0 <= 1);
-    Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
-    const int index_v_in_n1 = n1->index(v);
+    Cell_handle n1 = neighbor(n0, 1-index_v_in_n0);
+    const int index_v_in_n1 = index(n1, v);
     CGAL_assume(index_v_in_n1 <= 1);
-    if(!f(n0->vertex(1-index_v_in_n0)))
-      *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
-    if(!f(n1->vertex(1-index_v_in_n1)))
-      *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
+    if(!f(vertex(n0, 1-index_v_in_n0)))
+      *edges++ = Edge(n0, index(n0, v), 1-index_v_in_n0);
+    if(!f(vertex(n1, 1-index_v_in_n1)))
+      *edges++ = Edge(n1, index(n1, v), 1-index_v_in_n1);
     return edges;
   }
 
@@ -1288,21 +1903,21 @@ public:
     return vertices;
 
     if (dimension() == 0) {
-      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      Vertex_handle v1 = vertex(neighbor(cell(v),0), 0);
       if(!f(v1)) *vertices++ = v1;
       return vertices;
     }
 
     if (dimension() == 1) {
       CGAL_assertion( number_of_vertices() >= 3);
-      Cell_handle n0 = v->cell();
-      const int index_v_in_n0 = n0->index(v);
+      Cell_handle n0 = cell(v);
+      const int index_v_in_n0 = index(n0, v);
       CGAL_assume(index_v_in_n0 <= 1);
-      Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
-      const int index_v_in_n1 = n1->index(v);
+      Cell_handle n1 = neighbor(n0, 1-index_v_in_n0);
+      const int index_v_in_n1 = index(n1, v);
       CGAL_assume(index_v_in_n1 <= 1);
-      Vertex_handle v1 = n0->vertex(1-index_v_in_n0);
-      Vertex_handle v2 = n1->vertex(1-index_v_in_n1);
+      Vertex_handle v1 = vertex(n0, 1-index_v_in_n0);
+      Vertex_handle v2 = vertex(n1, 1-index_v_in_n1);
       if(!f(v1)) *vertices++ = v1;
       if(!f(v2)) *vertices++ = v2;
       return vertices;
@@ -1389,14 +2004,14 @@ public:
 
     boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
-    incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
+    incident_cells_3(v, cell(v), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
     else
-    incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+    incident_cells_2(v, cell(v), std::back_inserter(tmp_cells));
 
     for(auto c : tmp_cells)
     {
-      c->tds_data().clear();
-      visit(c);
+      tds_data(*cit).clear();
+      visit(*cit);
     }
 
     return visit.result();
@@ -1418,9 +2033,9 @@ public:
     boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
       incident_cells_3_threadsafe(
-        v, v->cell(), tmp_cells, visit.facet_it());
+        v, cell(v), tmp_cells, visit.facet_it());
     else
-      incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+      incident_cells_2(v, cell(v), std::back_inserter(tmp_cells));
 
     for(auto c : tmp_cells)
     {
@@ -1444,16 +2059,16 @@ public:
     Visitor visit(v, output, this, f);
 
     if ( dimension() == 3 )
-    incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(cells), visit.facet_it()));
+    incident_cells_3(v, cell(v), std::make_pair(std::back_inserter(cells), visit.facet_it()));
     else
-    incident_cells_2(v, v->cell(), std::back_inserter(cells));
+    incident_cells_2(v, cell(v), std::back_inserter(cells));
 
     typename std::vector<Cell_handle>::iterator cit;
     for(cit = cells.begin();
         cit != cells.end();
         ++cit)
     {
-      (*cit)->tds_data().clear();
+      tds_data(*cit).clear();
       visit(*cit);
     }
     return visit.result();
@@ -1477,14 +2092,14 @@ public:
     if ( dimension() == 3 )
       just_incident_cells_3(v, tmp_cells);
     else
-    incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+    incident_cells_2(v, cell(v), std::back_inserter(tmp_cells));
 
     typename std::vector<Cell_handle>::iterator cit;
     for(cit = tmp_cells.begin();
         cit != tmp_cells.end();
         ++cit)
     {
-      (*cit)->tds_data().clear();
+      tds_data(*cit).clear();
       visit(*cit);
     }
     return visit.result();
@@ -1550,41 +2165,41 @@ public:
   void clear();
 
   void set_adjacency(Cell_handle c0, int i0,
-                     Cell_handle c1, int i1) const
+                     Cell_handle c1, int i1)
   {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
       CGAL_assertion(c0 != c1);
-      c0->set_neighbor(i0,c1);
-      c1->set_neighbor(i1,c0);
+      set_neighbor(c0,i0,c1);
+      set_neighbor(c1,i1,c0);
   }
 
   int mirror_index(Cell_handle c, int i) const
   {
       CGAL_precondition ( i>=0 && i<4 );
-      return c->neighbor(i)->index(c);
+      return index(neighbor(c,i), c);
   }
 
   Vertex_handle mirror_vertex(Cell_handle c, int i) const
   {
-      return c->neighbor(i)->vertex(mirror_index(c, i));
+    return vertex(neighbor(c,i), mirror_index(c, i));
   }
 
   Facet mirror_facet(Facet f) const
   {
-    Cell_handle neighbor_cell = f.first->neighbor(f.second);
-    const int opposite_index = neighbor_cell->index(f.first);
+    Cell_handle neighbor_cell = neighbor(f.first, f.second);
+    const int opposite_index = index(neighbor_cell, f.first);
     return Facet(neighbor_cell, opposite_index);
   }
 
-  // We need the const_cast<>s because TDS is not const-correct.
-  Cell_range & cells() { return _cells; }
-  Cell_range & cells() const
-  { return const_cast<Tds*>(this)->_cells; }
 
-  Vertex_range & vertices() {return _vertices;}
-  Vertex_range & vertices() const
-  { return const_cast<Tds*>(this)->_vertices; }
+  Vertex_range vertices() const {
+    return make_range(vertices_begin(), vertices_end());
+  }
+
+  Cell_range cells() const {
+    return make_range(Cell_iterator(Cell_index(0), this), cells_end());  //as cells_begin() is end for dim<3
+  }
 
   bool is_small_hole(std::size_t s)
   {
@@ -1661,22 +2276,20 @@ public:
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
-  void change_orientation(Cell_handle c) const
+  void change_orientation(Cell_handle c)
   {
-      Vertex_handle tmp_v = c->vertex(0);
-      c->set_vertex(0, c->vertex(1));
-      c->set_vertex(1, tmp_v);
-      Cell_handle tmp_c = c->neighbor(0);
-      c->set_neighbor(0, c->neighbor(1));
-      c->set_neighbor(1, tmp_c);
+    Vertex_handle tmp_v = vertex(c, 0);
+    set_vertex(c, 0, vertex(c, 1));
+    set_vertex(c, 1, tmp_v);
+    Cell_handle tmp_c = neighbor(c,0);
+    set_neighbor(c, 0, neighbor(c,1));
+    set_neighbor(c, 1, tmp_c);
   }
 
   // in dimension i, number of vertices >= i+2
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
   int _dimension;
 
-  Cell_range   _cells;
-  Vertex_range _vertices;
 
   // used by is-valid :
   bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;
@@ -1710,31 +2323,31 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 
     // Look for the other neighbors of cnew.
     for (int ii=0; ii<4; ++ii) {
-      if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
+      if (ii == prev_ind2 || neighbor(cnew, ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_cell(vertex(cnew, ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
-      Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
-      Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
+      Vertex_handle vj1 = vertex(c, next_around_edge(ii, li));
+      Vertex_handle vj2 = vertex(c, next_around_edge(li, ii));
       Cell_handle cur = c;
       int zz = ii;
-      Cell_handle n = cur->neighbor(zz);
+      Cell_handle n = neighbor(cur, zz);
       // turn around the oriented edge vj1 vj2
-      while ( n->tds_data().is_in_conflict() ) {
+      while ( tds_data(n).is_in_conflict() ) {
         CGAL_assertion( n != c );
         cur = n;
-        zz = next_around_edge(n->index(vj1), n->index(vj2));
-        n = cur->neighbor(zz);
+        zz = next_around_edge(index(n, vj1), index(n, vj2));
+        n = neighbor(cur, zz);
       }
       // Now n is outside region, cur is inside.
-      n->tds_data().clear(); // Reset the flag for boundary cells.
+      tds_data(n).clear(); // Reset the flag for boundary cells.
 
-      int jj1 = n->index(vj1);
-      int jj2 = n->index(vj2);
-      Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
-      Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
-      int zzz = nnn->index(vvv);
+      int jj1 = index(n, vj1);
+      int jj2 = index(n, vj2);
+      Vertex_handle vvv = vertex(n, next_around_edge(jj1, jj2));
+      Cell_handle nnn = neighbor(n, next_around_edge(jj2, jj1));
+      int zzz = index(nnn, vvv);
       if (nnn == cur) {
         // Neighbor relation is reciprocal, ie
         // the cell we are looking for is not yet created.
@@ -1755,44 +2368,44 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
 {
     if ( depth == 100 ) return non_recursive_create_star_3(v,c,li,prev_ind2);
     CGAL_precondition( dimension() == 3);
-    CGAL_precondition( c->tds_data().is_in_conflict() );
-    CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+    CGAL_precondition( tds_data(c).is_in_conflict() );
+    CGAL_precondition( ! tds_data(neighbor(c,li)).is_in_conflict() );
 
-    Cell_handle cnew = create_cell(c->vertex(0),
-                                   c->vertex(1),
-                                   c->vertex(2),
-                                   c->vertex(3));
-    cnew->set_vertex(li, v);
-    Cell_handle c_li = c->neighbor(li);
-    set_adjacency(cnew, li, c_li, c_li->index(c));
+    Cell_handle cnew = create_cell(vertex(c, 0),
+                                   vertex(c, 1),
+                                   vertex(c, 2),
+                                   vertex(c, 3));
+    set_vertex(cnew, li, v);
+    Cell_handle c_li = neighbor(c,li);
+    set_adjacency(cnew, li, c_li, index(c_li, c));
 
     // Look for the other neighbors of cnew.
     for (int ii=0; ii<4; ++ii) {
-      if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
+      if (ii == prev_ind2 || neighbor(cnew, ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_cell(vertex(cnew, ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
-      Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
-      Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
+      Vertex_handle vj1 = vertex(c, next_around_edge(ii, li));
+      Vertex_handle vj2 = vertex(c, next_around_edge(li, ii));
       Cell_handle cur = c;
       int zz = ii;
-      Cell_handle n = cur->neighbor(zz);
+      Cell_handle n = neighbor(cur, zz);
       // turn around the oriented edge vj1 vj2
-      while ( n->tds_data().is_in_conflict() ) {
+      while ( tds_data(n).is_in_conflict() ) {
         CGAL_assertion( n != c );
         cur = n;
-        zz = next_around_edge(n->index(vj1), n->index(vj2));
-        n = cur->neighbor(zz);
+        zz = next_around_edge(index(n, vj1), index(n, vj2));
+        n = neighbor(cur, zz);
       }
       // Now n is outside region, cur is inside.
-      n->tds_data().clear(); // Reset the flag for boundary cells.
+      tds_data(n).clear(); // Reset the flag for boundary cells.
 
-      int jj1 = n->index(vj1);
-      int jj2 = n->index(vj2);
-      Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
-      Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
-      int zzz = nnn->index(vvv);
+      int jj1 = index(n, vj1);
+      int jj2 = index(n, vj2);
+      Vertex_handle vvv = vertex(n, next_around_edge(jj1, jj2));
+      Cell_handle nnn = neighbor(n, next_around_edge(jj2, jj1));
+      int zzz = index(nnn, vvv);
       if (nnn == cur) {
         // Neighbor relation is reciprocal, ie
         // the cell we are looking for is not yet created.
@@ -1813,16 +2426,16 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::
 non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 {
     CGAL_precondition( dimension() == 3);
-    CGAL_precondition( c->tds_data().is_in_conflict() );
-    CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+    CGAL_precondition( tds_data(c).is_in_conflict() );
+    CGAL_precondition( ! tds_data(neighbor(c, li)).is_in_conflict() );
 
-    Cell_handle cnew = create_cell(c->vertex(0),
-                                   c->vertex(1),
-                                   c->vertex(2),
-                                   c->vertex(3));
-    cnew->set_vertex(li, v);
-    Cell_handle c_li = c->neighbor(li);
-    set_adjacency(cnew, li, c_li, c_li->index(c));
+    Cell_handle cnew = create_cell(vertex(c, 0),
+                                   vertex(c, 1),
+                                   vertex(c, 2),
+                                   vertex(c, 3));
+    set_vertex(cnew, li, v);
+    Cell_handle c_li = neighbor(c, li);
+    set_adjacency(cnew, li, c_li, index(c_li, c));
 
     std::stack<iAdjacency_info> adjacency_info_stack;
 
@@ -1830,30 +2443,30 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
     do
     {
       // Look for the other neighbors of cnew.
-      if ( ! (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle()) ){
-        cnew->vertex(ii)->set_cell(cnew);
+      if ( ! (ii == prev_ind2 || neighbor(cnew, ii) != Cell_handle()) ){
+        set_cell(vertex(cnew, ii), cnew);
 
         // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
-        Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
-        Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
+        Vertex_handle vj1 = vertex(c, next_around_edge(ii, li));
+        Vertex_handle vj2 = vertex(c, next_around_edge(li, ii));
         Cell_handle cur = c;
         int zz = ii;
-        Cell_handle n = cur->neighbor(zz);
+        Cell_handle n = neighbor(cur, zz);
         // turn around the oriented edge vj1 vj2
-        while ( n->tds_data().is_in_conflict() ) {
+        while ( tds_data(n).is_in_conflict() ) {
           CGAL_assertion( n != c );
           cur = n;
-          zz = next_around_edge(n->index(vj1), n->index(vj2));
-          n = cur->neighbor(zz);
+          zz = next_around_edge(index(n, vj1), index(n, vj2));
+          n = neighbor(cur, zz);
         }
         // Now n is outside region, cur is inside.
-        n->tds_data().clear(); // Reset the flag for boundary cells.
+        tds_data(n).clear(); // Reset the flag for boundary cells.
 
-        int jj1 = n->index(vj1);
-        int jj2 = n->index(vj2);
-        Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
-        Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
-        int zzz = nnn->index(vvv);
+        int jj1 = index(n, vj1);
+        int jj2 = index(n, vj2);
+        Vertex_handle vvv = vertex(n, next_around_edge(jj1, jj2));
+        Cell_handle nnn = neighbor(n, next_around_edge(jj2, jj1));
+        int zzz = index(nnn, vvv);
         if (nnn == cur) {
           // Neighbor relation is reciprocal, ie
           // the cell we are looking for is not yet created.
@@ -1861,12 +2474,12 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
           adjacency_info_stack.push( iAdjacency_info(zzz,cnew,ii,c,li,prev_ind2) );
           c=nnn;  li=zz; prev_ind2=zzz; ii=0;
           //copy-pasted from beginning to avoid if ii==0
-          CGAL_precondition( c->tds_data().is_in_conflict() );
-          CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
-          cnew = create_cell(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3));
-          cnew->set_vertex(li, v);
-          c_li = c->neighbor(li);
-          set_adjacency(cnew, li, c_li, c_li->index(c));
+          CGAL_precondition( tds_data(c).is_in_conflict() );
+          CGAL_precondition( ! tds_data(neighbor(c, li)).is_in_conflict() );
+          cnew = create_cell(vertex(c, 0),vertex(c, 1),vertex(c, 2),vertex(c, 3));
+          set_vertex(cnew, li, v);
+          c_li = neighbor(c, li);
+          set_adjacency(cnew, li, c_li, index(c_li, c));
           continue;
         }
         set_adjacency(nnn, zzz, cnew, ii);
@@ -1897,39 +2510,39 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
   // traversal of the boundary of region in ccw order to create all
   // the new facets
   Cell_handle bound = c;
-  Vertex_handle v1 = c->vertex(i1);
-  int ind = c->neighbor(li)->index(c); // to be able to find the
+  Vertex_handle v1 = vertex(c, i1);
+  int ind = index(neighbor(c, li), c); // to be able to find the
                                        // first cell that will be created
   Cell_handle cur;
   Cell_handle pnew = Cell_handle();
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-    while ( cur->neighbor(cw(i1))->tds_data().is_in_conflict() ) {
+    while ( tds_data(neighbor(cur, cw(i1))).is_in_conflict() ) {
       // neighbor in conflict
-      cur = cur->neighbor(cw(i1));
-      i1 = cur->index( v1 );
+      cur = neighbor(cur, cw(i1));
+      i1 = index(cur,  v1 );
     }
-    cur->neighbor(cw(i1))->tds_data().clear();
+    tds_data(neighbor(cur, cw(i1))).clear();
     // here cur has an edge on the boundary of region
-    cnew = create_face( v, v1, cur->vertex( ccw(i1) ) );
-    set_adjacency(cnew, 0, cur->neighbor(cw(i1)),
-                           cur->neighbor(cw(i1))->index(cur));
-    cnew->set_neighbor(1, Cell_handle());
-    cnew->set_neighbor(2, pnew);
+    cnew = create_face( v, v1, vertex(cur,  ccw(i1) ) );
+    set_adjacency(cnew, 0, neighbor(cur, cw(i1)),
+                  index(neighbor(cur, cw(i1)), cur));
+    set_neighbor(cnew, 1, Cell_handle());
+    set_neighbor(cnew, 2, pnew);
     // pnew is null at the first iteration
-    v1->set_cell(cnew);
+    set_cell(v1, cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
+    if (pnew != Cell_handle()) { set_neighbor(pnew, 1, cnew );}
 
     bound = cur;
     i1 = ccw(i1);
-    v1 = bound->vertex(i1);
+    v1 = vertex(bound, i1);
     pnew = cnew;
     //} while ( ( bound != c ) || ( li != cw(i1) ) );
-  } while ( v1 != c->vertex(ccw(li)) );
+  } while ( v1 != vertex(c, ccw(li)) );
   // missing neighbors between the first and the last created cells
-  cur = c->neighbor(li)->neighbor(ind); // first created cell
+  cur = neighbor(neighbor(c, li), ind); // first created cell
   set_adjacency(cnew, 1, cur, 2);
   return cnew;
 }
@@ -1997,6 +2610,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   typedef typename Tds::size_type               size_type;
   typedef typename Tds::Vertex_handle           Vertex_handle;
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
+  typedef typename Tds::Vertex_index        Vertex_index;
 
 
   Unique_hash_map<Vertex_handle, size_type> V(0, tds.number_of_vertices());
@@ -2017,7 +2631,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
 
   // index the vertices
   size_type i = 0;
-  for (Vertex_iterator it=tds.vertices_begin(); it != tds.vertices_end(); ++it)
+  for (Vertex_index it : tds.vertices())
     V[it] = i++;
 
   CGAL_assertion( i == n );
@@ -2036,8 +2650,8 @@ is_simplex( Cell_handle c ) const
     case 3 : return is_cell(c);
     case 2 : return is_facet(c, 3);
     case 1 : return is_edge(c, 0, 1);
-    case 0 : return is_vertex(c->vertex(0));
-    case -1 : return c == cells().begin();
+  case 0 : return is_vertex(vertex(c, 0));
+  case -1 : return c == *(cells().begin());
   }
   return false;
 }
@@ -2047,7 +2661,8 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_vertex(Vertex_handle v) const
 {
-    return vertices().owns_dereferenceable(v);
+  return true;
+  // AF WAS    return vertices().owns_dereferencable(v);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2138,7 +2753,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return cells().owns_dereferenceable(c);
+  return true;   //  AF  WAS: return cells().owns_dereferencable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2164,9 +2779,9 @@ is_facet(Vertex_handle u, Vertex_handle v,
 
     for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
               cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j) && (*cit)->has_vertex(w, k)) {
+      if (has_vertex(*cit, v, j) && has_vertex(*cit, w, k)) {
             c = *cit;
-            i = c->index(u);
+            i = index(c, u);
             return true;
         }
     return false;
@@ -2185,7 +2800,7 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return cells().owns_dereferenceable(c);
+    return true; // AF WAS: cells().owns_dereferencable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2196,8 +2811,8 @@ is_cell( Cell_handle c ) const
 {
     if (dimension() < 3)
         return false;
-
-    return cells().owns_dereferenceable(c);
+    return true;
+    // AF WAS return cells().owns_dereferencable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2222,10 +2837,10 @@ is_cell(Vertex_handle u, Vertex_handle v,
 
     for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
               cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j) && (*cit)->has_vertex(w, k) &&
-            (*cit)->has_vertex(t, l)) {
+      if (has_vertex(*cit, v, j) && has_vertex(*cit, w, k) &&
+          has_vertex(*cit, t, l)) {
             c = *cit;
-            i = c->index(u);
+            i = index(c, u);
             return true;
         }
     return false;
@@ -2254,7 +2869,7 @@ has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   // j has no meaning if false is returned
 {
   CGAL_precondition( dimension() == 3 );
-  return ( c->has_vertex(v,j) && (j != i) );
+  return ( has_vertex(c,v,j) && (j != i) );
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2266,7 +2881,7 @@ has_vertex(Cell_handle c, int i, Vertex_handle v) const
 {
   CGAL_precondition( dimension() == 3 );
   int j;
-  return ( c->has_vertex(v,j) && (j != i) );
+  return ( has_vertex(c,v,j) && (j != i) );
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2297,17 +2912,17 @@ are_equal(Cell_handle c, int i, Cell_handle n, int j) const
   // the neighbor relations between c and  n are not tested either,
   // which allows to use this method before setting these relations
   // (see remove in Delaunay_3)
-  //   if ( c->neighbor(i) != n ) return false;
-  //   if ( n->neighbor(j) != c ) return false;
+  //   if ( neighbor(c, i) != n ) return false;
+  //   if ( neighbor(n, j) != c ) return false;
 {
   CGAL_precondition( dimension() == 3 );
 
   if ( (c==n) && (i==j) ) return true;
 
   int j1,j2,j3;
-  return( n->has_vertex( c->vertex((i+1)&3), j1 ) &&
-          n->has_vertex( c->vertex((i+2)&3), j2 ) &&
-          n->has_vertex( c->vertex((i+3)&3), j3 ) &&
+  return( has_vertex(n, vertex(c, (i+1)&3), j1 ) &&
+          has_vertex(n, vertex(c, (i+2)&3), j2 ) &&
+          has_vertex(n, vertex(c, (i+3)&3), j3 ) &&
           ( j1+j2+j3+j == 6 ) );
 }
 
@@ -2340,12 +2955,12 @@ flip( Cell_handle c, int i )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  Cell_handle n = c->neighbor(i);
-  int in = n->index(c);
+  Cell_handle n = neighbor(c, i);
+  int in = index(n, c);
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  if (is_edge(c->vertex(i), n->vertex(in)))
+  if (is_edge(vertex(c, i), vertex(n, in)))
       return false;
 
   flip_really(c,i,n,in);
@@ -2363,13 +2978,13 @@ flip_flippable(Cell_handle c, int i )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  Cell_handle n = c->neighbor(i);
-  int in = n->index(c);
+  Cell_handle n = neighbor(c, i);
+  int in = index(n, c);
 
   // checks that the facet is flippable,
   // ie the future edge does not already exist
-  CGAL_expensive_precondition( !is_edge(c->vertex(i),
-                                                      n->vertex(in)));
+  CGAL_expensive_precondition( !is_edge(vertex(c, i),
+                                                      vertex(n, in)));
   flip_really(c,i,n,in);
 }
 
@@ -2384,31 +2999,31 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   int i2 = (i+2)&3;
   int i3 = (i+3)&3;
 
-  int in1 = n->index(c->vertex(i1));
-  int in2 = n->index(c->vertex(i2));
-  int in3 = n->index(c->vertex(i3));
+  int in1 = index(n, vertex(c, i1));
+  int in2 = index(n, vertex(c, i2));
+  int in3 = index(n, vertex(c, i3));
 
-  set_adjacency(c, i, n->neighbor(in3), n->neighbor(in3)->index(n));
-  c->set_vertex( i3, n->vertex(in) );
+  set_adjacency(c, i, neighbor(n, in3), index(neighbor(n, in3), n));
+  set_vertex(c, i3, vertex(n, in) );
 
-  set_adjacency(n, in, c->neighbor(i1), c->neighbor(i1)->index(c));
-  n->set_vertex( in1, c->vertex(i) );
+  set_adjacency(n, in, neighbor(c, i1), index(neighbor(c, i1), c));
+  set_vertex(n, in1, vertex(c, i) );
 
-  Cell_handle cnew = create_cell(c->vertex(i), c->vertex(i1),
-                                 n->vertex(in), n->vertex(in3));
+  Cell_handle cnew = create_cell(vertex(c, i), vertex(c, i1),
+                                 vertex(n, in), vertex(n, in3));
 
-  set_adjacency(cnew, 0, n->neighbor(in2), n->neighbor(in2)->index(n));
+  set_adjacency(cnew, 0, neighbor(n, in2), index(neighbor(n, in2), n));
   set_adjacency(cnew, 1, n, in2);
-  set_adjacency(cnew, 2, c->neighbor(i2), c->neighbor(i2)->index(c));
+  set_adjacency(cnew, 2, neighbor(c, i2), index(neighbor(c, i2), c));
   set_adjacency(cnew, 3, c, i2);
   set_adjacency(c, i1, n, in3);
 
   if ((i&1) != 0)
       change_orientation(cnew);
 
-  c->vertex(i1)->set_cell(cnew);
-  c->vertex(i2)->set_cell(c);
-  n->vertex(in3)->set_cell(n);
+  set_cell(vertex(c, i1), cnew);
+  set_cell(vertex(c, i2), c);
+  set_cell(vertex(n, in3), n);
   // to be implemented : 2d case
   // CGAL_precondition( (0<=i) && (i<3) );
 }
@@ -2441,24 +3056,24 @@ flip( Cell_handle c, int i, int j )
   if ( degree != 3 ) return false;
 
   int next = next_around_edge(i,j);
-  Cell_handle c1 = c->neighbor( next );
-  Vertex_handle v1 = c->vertex( next ); // will become vertex of c1
-  int i1 = c1->index( c->vertex(i) );
-  int j1 = c1->index( c->vertex(j) );
+  Cell_handle c1 = neighbor(c,  next );
+  Vertex_handle v1 = vertex(c,  next ); // will become vertex of c1
+  int i1 = index(c1,  vertex(c, i) );
+  int j1 = index(c1,  vertex(c, j) );
 
   int next1 = next_around_edge(i1,j1);
-  Cell_handle c2  = c1->neighbor( next1 );
-  Vertex_handle v2 = c1->vertex( next1 ); // will become vertex of c2
-  int i2 = c2->index( c->vertex(i) );
-  int j2 = c2->index( c->vertex(j) );
+  Cell_handle c2  = neighbor(c1,  next1 );
+  Vertex_handle v2 = vertex(c1,  next1 ); // will become vertex of c2
+  int i2 = index(c2,  vertex(c, i) );
+  int j2 = index(c2,  vertex(c, j) );
 
   int next2 = next_around_edge(i2,j2);
-  Vertex_handle v3 = c2->vertex( next2 );
+  Vertex_handle v3 = vertex(c2,  next2 );
 
   // checks that the edge is flippable,
   // is the future cells do not already exist
-  if ( is_cell(v1,v2,v3,c->vertex(i)) ) return false;
-  if ( is_cell(v1,v2,v3,c->vertex(j)) ) return false;
+  if ( is_cell(v1,v2,v3,vertex(c, i)) ) return false;
+  if ( is_cell(v1,v2,v3,vertex(c, j)) ) return false;
 
   flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 
@@ -2492,24 +3107,24 @@ flip_flippable( Cell_handle c, int i, int j )
   CGAL_precondition( degree == 3 );
 
   int next = next_around_edge(i,j);
-  Cell_handle c1 = c->neighbor( next );
-  Vertex_handle v1 = c->vertex( next ); // will become vertex of c1
-  int i1 = c1->index( c->vertex(i) );
-  int j1 = c1->index( c->vertex(j) );
+  Cell_handle c1 = neighbor(c,  next );
+  Vertex_handle v1 = vertex(c,  next ); // will become vertex of c1
+  int i1 = index(c1,  vertex(c, i) );
+  int j1 = index(c1,  vertex(c, j) );
 
   int next1 = next_around_edge(i1,j1);
-  Cell_handle c2  = c1->neighbor( next1 );
-  Vertex_handle v2 = c1->vertex( next1 ); // will become vertex of c2
-  int i2 = c2->index( c->vertex(i) );
-  int j2 = c2->index( c->vertex(j) );
+  Cell_handle c2  = neighbor(c1,  next1 );
+  Vertex_handle v2 = vertex(c1,  next1 ); // will become vertex of c2
+  int i2 = index(c2,  vertex(c, i) );
+  int j2 = index(c2,  vertex(c, j) );
 
   int next2 = next_around_edge(i2,j2);
-  Vertex_handle v3 = c2->vertex( next2 );
+  Vertex_handle v3 = vertex(c2,  next2 );
 
   // checks that the edge is flippable,
   // is the future cells do not already exist
-  CGAL_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(i)) );
-  CGAL_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(j)) );
+  CGAL_expensive_precondition( !is_cell(v1,v2,v3,vertex(c, i)) );
+  CGAL_expensive_precondition( !is_cell(v1,v2,v3,vertex(c, j)) );
 
   flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 }
@@ -2525,23 +3140,23 @@ flip_really( Cell_handle c, int i, int j,
              int i2, int j2, int next2,
              Vertex_handle v3 )
 {
-  c->vertex(i)->set_cell(c1);
-  c->vertex(j)->set_cell(c2);
+  set_cell(vertex(c, i), c1);
+  set_cell(vertex(c, j), c2);
 
-  c1->set_vertex( j1, v1 );
-  v1->set_cell(c1);
-  c2->set_vertex( i2, v2 );
-  v2->set_cell(c2);
+  set_vertex(c1, j1, v1 );
+  set_cell(v1, c1);
+  set_vertex(c2, i2, v2 );
+  set_cell(v2, c2);
 
-  set_adjacency(c1, next1,c2->neighbor(j2), c2->neighbor(j2)->index(c2));
-  set_adjacency(c2,c2->index(v1),c1->neighbor(i1),c1->neighbor(i1)->index(c1));
+  set_adjacency(c1, next1, neighbor(c2, j2), index(neighbor(c2, j2), c2));
+  set_adjacency(c2,index(c2, v1), neighbor(c1, i1),index(neighbor(c1, i1), c1));
 
   set_adjacency(c1, i1, c2, j2);
 
-  set_adjacency(c1, 6-i1-j1-next1, c->neighbor(j), c->neighbor(j)->index(c));
-  set_adjacency(c2, next2, c->neighbor(i), c->neighbor(i)->index(c));
+  set_adjacency(c1, 6-i1-j1-next1, neighbor(c, j), index(neighbor(c, j), c));
+  set_adjacency(c2, next2, neighbor(c, i), index(neighbor(c, i), c));
 
-  v3->set_cell( c2 );
+  set_cell(v3, c2 );
 
   delete_cell( c );
 }
@@ -2573,8 +3188,8 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
                is >> ik;
             else
               read(is, ik);
-            c->set_vertex(k, V[ik]);
-            V[ik]->set_cell(c);
+            set_vertex(c, k, V[ik]);
+            set_cell(V[ik], c);
         }
         C[i] = c;
       }
@@ -2586,7 +3201,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
               is >> ik;
             else
               read(is, ik);
-            c->set_neighbor(k, C[ik]);
+            set_neighbor(c, k, C[ik]);
         }
       }
       break;
@@ -2599,11 +3214,11 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       for (int i=0; i < 2; i++) {
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
         C[i] = c;
-        V[i]->set_cell(c);
+        set_cell(V[i], c);
       }
       for (int j=0; j < 2; j++) {
         Cell_handle c = C[j];
-        c->set_neighbor(0, C[1-j]);
+        set_neighbor(c, 0, C[1-j]);
       }
       break;
     }
@@ -2614,7 +3229,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       //      CGAL_assertion( n == 1 );
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
-      V[0]->set_cell(c);
+      set_cell(V[0], c);
       break;
     }
   }
@@ -2623,7 +3238,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
 template <class Vb, class Cb, class Ct>
 void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
-print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
+print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, size_type> &V ) const
 {
   Unique_hash_map<Cell_handle, std::size_t > C(0, number_of_cells());
   std::size_t i = 0;
@@ -2640,17 +3255,17 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the cells
       Cell_iterator it;
       for(it = cells_begin(); it != cells_end(); ++it) {
-        C[it] = i++;
+        C[*it] = i++;
         for(int j = 0; j < 4; j++){
-          if(IO::is_ascii(os)) {
-            os << V[it->vertex(j)];
+          if(is_ascii(os)) {
+            os << V[vertex(*it, j)];
             if ( j==3 )
               os << '\n';
             else
               os << ' ';
           }
           else
-            write(os, V[it->vertex(j)]);
+            write(os, V[vertex(*it, j)]);
         }
       }
       CGAL_assertion( i == m );
@@ -2658,15 +3273,15 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
         for (int j = 0; j < 4; j++) {
-          if(IO::is_ascii(os)){
-            os << C[it->neighbor(j)];
+          if(is_ascii(os)){
+            os << C[neighbor(*it, j)];
             if(j==3)
               os << '\n';
             else
               os <<  ' ';
           }
           else
-            write(os, C[it->neighbor(j)]);
+            write(os, C[neighbor(*it, j)]);
         }
       }
       break;
@@ -2684,15 +3299,15 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = facets_begin(); it != facets_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 3; j++){
-          if(IO::is_ascii(os)) {
-            os << V[(*it).first->vertex(j)];
+          if(is_ascii(os)) {
+            os << V[vertex((*it).first, j)];
             if ( j==2 )
               os << '\n';
             else
               os <<  ' ';
           }
           else {
-            write(os,  V[(*it).first->vertex(j)]);
+            write(os,  V[vertex((*it).first, j)]);
           }
         }
       }
@@ -2701,15 +3316,15 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
         for (int j = 0; j < 3; j++) {
-          if(IO::is_ascii(os)){
-            os << C[(*it).first->neighbor(j)];
+          if(is_ascii(os)){
+            os << C[neighbor((*it).first, j)];
             if(j==2)
               os << '\n';
             else
               os <<  ' ';
           }
           else {
-            write(os, C[(*it).first->neighbor(j)]);
+            write(os, C[neighbor((*it).first,j)]);
           }
         }
       }
@@ -2727,15 +3342,15 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = edges_begin(); it != edges_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 2; j++){
-          if(IO::is_ascii(os)) {
-            os << V[(*it).first->vertex(j)];
+          if(is_ascii(os)) {
+            os << V[vertex((*it).first, j)];
             if ( j==1 )
               os << '\n';
             else
               os <<  ' ';
           }
           else {
-            write(os, V[(*it).first->vertex(j)]);
+            write(os, V[vertex((*it).first, j)]);
           }
         }
       }
@@ -2744,15 +3359,15 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
         for (int j = 0; j < 2; j++) {
-          if(IO::is_ascii(os)){
-            os << C[(*it).first->neighbor(j)];
+          if(is_ascii(os)){
+            os << C[neighbor((*it).first, j)];
             if(j==1)
               os << '\n';
             else
               os <<  ' ';
           }
           else {
-            write(os, C[(*it).first->neighbor(j)]);
+            write(os, C[neighbor((*it).first, j)]);
           }
         }
       }
@@ -2788,11 +3403,11 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::insert_first_finite_cell(
   Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
   Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
 
-  v_infinite->set_cell(ci012);
-  v0->set_cell(c0123);
-  v1->set_cell(c0123);
-  v2->set_cell(c0123);
-  v3->set_cell(c0123);
+  set_cell(v_infinite, ci012);
+  set_cell(v0, c0123);
+  set_cell(v1, c0123);
+  set_cell(v2, c0123);
+  set_cell(v3, c0123);
 
   set_adjacency(c0123, 0, ci132, 0);
   set_adjacency(c0123, 1, ci023, 0);
@@ -2820,14 +3435,14 @@ insert_in_cell(Cell_handle c)
 
   Vertex_handle v = create_vertex();
 
-  Vertex_handle v0 = c->vertex(0);
-  Vertex_handle v1 = c->vertex(1);
-  Vertex_handle v2 = c->vertex(2);
-  Vertex_handle v3 = c->vertex(3);
+  Vertex_handle v0 = vertex(c, 0);
+  Vertex_handle v1 = vertex(c, 1);
+  Vertex_handle v2 = vertex(c, 2);
+  Vertex_handle v3 = vertex(c, 3);
 
-  Cell_handle n1 = c->neighbor(1);
-  Cell_handle n2 = c->neighbor(2);
-  Cell_handle n3 = c->neighbor(3);
+  Cell_handle n1 = neighbor(c, 1);
+  Cell_handle n2 = neighbor(c, 2);
+  Cell_handle n3 = neighbor(c, 3);
 
   // c will be modified to have v,v1,v2,v3 as vertices
   Cell_handle c3 = create_cell(v0,v1,v2,v);
@@ -2842,14 +3457,14 @@ insert_in_cell(Cell_handle c)
   set_adjacency(c1, 3, c3, 1);
   set_adjacency(c1, 2, c2, 1);
 
-  set_adjacency(n1, n1->index(c), c1, 1);
-  set_adjacency(n2, n2->index(c), c2, 2);
-  set_adjacency(n3, n3->index(c), c3, 3);
+  set_adjacency(n1, index(n1, c), c1, 1);
+  set_adjacency(n2, index(n2, c), c2, 2);
+  set_adjacency(n3, index(n3, c), c3, 3);
 
-  c->set_vertex(0,v);
+  set_vertex(c, 0,v);
 
-  v0->set_cell(c1);
-  v->set_cell(c);
+  set_cell(v0, c1);
+  set_cell(v, c);
 
   return v;
 }
@@ -2885,77 +3500,77 @@ insert_in_facet(Cell_handle c, int i)
       // so v will "replace" the vertices in this order
       // when creating the new cells one after another from c
 
-      Vertex_handle vi=c->vertex(i);
-      Vertex_handle v1=c->vertex(i1);
-      Vertex_handle v2=c->vertex(i2);
-      Vertex_handle v3=c->vertex(i3);
+      Vertex_handle vi=vertex(c, i);
+      Vertex_handle v1=vertex(c, i1);
+      Vertex_handle v2=vertex(c, i2);
+      Vertex_handle v3=vertex(c, i3);
 
       // new cell with v in place of i1
-      Cell_handle nc = c->neighbor(i1);
+      Cell_handle nc = neighbor(c, i1);
       Cell_handle cnew1 = create_cell(vi,v,v2,v3);
-      set_adjacency(cnew1, 1, nc, nc->index(c));
+      set_adjacency(cnew1, 1, nc, index(nc, c));
       set_adjacency(cnew1, 3, c, i1);
 
-      v3->set_cell(cnew1);
+      set_cell(v3, cnew1);
 
       // new cell with v in place of i2
-      nc = c->neighbor(i2);
+      nc = neighbor(c, i2);
       Cell_handle cnew2 = create_cell(vi,v1,v,v3);
-      set_adjacency(cnew2, 2, nc, nc->index(c));
+      set_adjacency(cnew2, 2, nc, index(nc, c));
       set_adjacency(cnew2, 3, c, i2);
       set_adjacency(cnew1, 2, cnew2, 1);
 
       // v replaces i3 in c
-      c->set_vertex(i3,v);
+      set_vertex(c,i3,v);
 
       // other side of facet containing v
-      Cell_handle d = c->neighbor(i);
-      int j = d->index(c);
-      int j1=d->index(v1);// triangulation supposed to be valid
-      int j2=d->index(v2);
+      Cell_handle d = neighbor(c, i);
+      int j = index(d, c);
+      int j1=index(d, v1);// triangulation supposed to be valid
+      int j2=index(d, v2);
       int j3=6-j-j1-j2;
       // then the orientation of j,j1,j2,j3 depends on the parity
       // of i-j
 
       // new cell with v in place of j1
-      Cell_handle nd = d->neighbor(j1);
-      Cell_handle dnew1 = create_cell(d->vertex(j),v,v3,v2);
-      set_adjacency(dnew1, 1, nd, nd->index(d));
+      Cell_handle nd = neighbor(d, j1);
+      Cell_handle dnew1 = create_cell(vertex(d, j),v,v3,v2);
+      set_adjacency(dnew1, 1, nd, index(nd, d));
       set_adjacency(dnew1, 2, d, j1);
       set_adjacency(dnew1, 0, cnew1, 0);
 
       // new cell with v in place of j2
-      nd = d->neighbor(j2);
-      Cell_handle dnew2 = create_cell(d->vertex(j),v1,v3,v);
+      nd = neighbor(d, j2);
+      Cell_handle dnew2 = create_cell(vertex(d, j),v1,v3,v);
 
-      set_adjacency(dnew2, 3, nd, nd->index(d));
+      set_adjacency(dnew2, 3, nd, index(nd, d));
       set_adjacency(dnew2, 2, d, j2);
       set_adjacency(dnew2, 0, cnew2, 0);
       set_adjacency(dnew1, 3, dnew2, 1);
 
       // v replaces i3 in d
-      d->set_vertex(j3,v);
-      v->set_cell(d);
+      set_vertex(d, j3,v);
+      set_cell(v, d);
 
       break;
     }
   case 2:
     {
       CGAL_expensive_precondition( is_facet(c,i) );
-      Cell_handle n = c->neighbor(2);
-      Cell_handle cnew = create_face(c->vertex(0),c->vertex(1),v);
-      set_adjacency(cnew, 2, n, n->index(c));
+      Cell_handle n = neighbor(c, 2);
+      Cell_handle cnew = create_face(vertex(c, 0),vertex(c, 1),v);
+      set_adjacency(cnew, 2, n, index(n, c));
       set_adjacency(cnew, 0, c, 2);
-      c->vertex(0)->set_cell(cnew);
+      set_cell(vertex(c, 0), cnew);
 
-      n = c->neighbor(1);
-      Cell_handle dnew = create_face(c->vertex(0),v,c->vertex(2));
-      set_adjacency(dnew, 1, n, n->index(c));
+      n = neighbor(c, 1);
+      Cell_handle dnew = create_face(vertex(c, 0),v,vertex(c, 2));
+      set_adjacency(dnew, 1, n, index(n, c));
       set_adjacency(dnew, 0, c, 1);
       set_adjacency(dnew, 2, cnew, 1);
 
-      c->set_vertex(0,v);
-      v->set_cell(c);
+      set_vertex(c,0,v);
+      set_cell(v,c);
       break;
     }
   }
@@ -2985,7 +3600,7 @@ insert_in_edge(Cell_handle c, int i, int j)
       do {
           Cell_handle cc = ccir;
           cells.push_back(cc);
-          cc->tds_data().mark_in_conflict();
+          tds_data(cc).mark_in_conflict();
           ++ccir;
       } while (c != ccir);
 
@@ -2997,49 +3612,49 @@ insert_in_edge(Cell_handle c, int i, int j)
 
       Vertex_handle v = create_vertex();
       int k=3-i-j; // index of the third vertex of the facet
-      Cell_handle d = c->neighbor(k);
-      int kd = d->index(c);
-      int id = d->index(c->vertex(i));
-      int jd = d->index(c->vertex(j));
+      Cell_handle d = neighbor(c, k);
+      int kd = index(d, c);
+      int id = index(d, vertex(c, i));
+      int jd = index(d, vertex(c, j));
 
       Cell_handle cnew = create_cell();
-      cnew->set_vertex(i,c->vertex(i));
-      c->vertex(i)->set_cell(cnew);
-      cnew->set_vertex(j,v);
-      cnew->set_vertex(k,c->vertex(k));
-      c->set_vertex(i,v);
+      set_vertex(cnew, i, vertex(c, i));
+      set_cell(vertex(c, i), cnew);
+      set_vertex(cnew, j, v);
+      set_vertex(cnew, k, vertex(c, k));
+      set_vertex(c, i, v);
 
       Cell_handle dnew = create_cell();
-      dnew->set_vertex(id,d->vertex(id));
-      // d->vertex(id)->cell() is cnew OK
-      dnew->set_vertex(jd,v);
-      dnew->set_vertex(kd,d->vertex(kd));
-      d->set_vertex(id,v);
+      set_vertex(dnew, id, vertex(d, id));
+      // vertex(d, id)->cell() is cnew OK
+      set_vertex(dnew, jd,v);
+      set_vertex(dnew, kd,vertex(d, kd));
+      set_vertex(d, id,v);
 
-      Cell_handle nj = c->neighbor(j);
+      Cell_handle nj = neighbor(c, j);
       set_adjacency(cnew, i, c, j);
-      set_adjacency(cnew, j, nj, nj->index(c));
+      set_adjacency(cnew, j, nj, index(nj, c));
 
-      nj = d->neighbor(jd);
+      nj = neighbor(d, jd);
       set_adjacency(dnew, id, d, jd);
-      set_adjacency(dnew, jd, nj, nj->index(d));
+      set_adjacency(dnew, jd, nj, index(nj, d));
 
       set_adjacency(cnew, k, dnew, kd);
 
-      v->set_cell(cnew);
+      set_cell(v, cnew);
       return v;
     }
   default: // case 1:
     {
       Vertex_handle v = create_vertex();
       CGAL_expensive_precondition( is_edge(c,i,j) );
-      Cell_handle cnew = create_face(v, c->vertex(1), Vertex_handle());
-      c->vertex(1)->set_cell(cnew);
-      c->set_vertex(1,v);
-      set_adjacency(cnew, 0, c->neighbor(0), 1);
+      Cell_handle cnew = create_face(v, vertex(c, 1), Vertex_handle());
+      set_cell(vertex(c, 1), cnew);
+      set_vertex(c, 1, v);
+      set_adjacency(cnew, 0, neighbor(c, 0), 1);
       set_adjacency(cnew, 1, c, 0);
 
-      v->set_cell(cnew);
+      set_cell(v, cnew);
       return v;
     }
   }
@@ -3077,7 +3692,7 @@ insert_increase_dimension(Vertex_handle star)
       // ( geometrically : infinite vertex )
     {
       Cell_handle c = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(c);
+      set_cell(v,c);
       break;
     }
 
@@ -3086,8 +3701,8 @@ insert_increase_dimension(Vertex_handle star)
     // ( geometrically : first finite vertex )
     {
       Cell_handle d = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(d);
-      set_adjacency(d, 0, star->cell(), 0);
+      set_cell(v, d);
+      set_adjacency(d, 0, cell(star), 0);
       break;
     }
 
@@ -3095,17 +3710,17 @@ insert_increase_dimension(Vertex_handle star)
     // insertion of the third vertex
     // ( geometrically : second finite vertex )
     {
-      Cell_handle c = star->cell();
-      Cell_handle d = c->neighbor(0);
+      Cell_handle c = cell(star);
+      Cell_handle d = neighbor(c, 0);
 
-      c->set_vertex(1,d->vertex(0));
-      d->set_vertex(1,v);
-      d->set_neighbor(1,c);
+      set_vertex(c, 1,vertex(d, 0));
+      set_vertex(d,1,v);
+      set_neighbor(d,1,c);
       Cell_handle e = create_face( v, star, Vertex_handle() );
       set_adjacency(e, 0, c, 1);
       set_adjacency(e, 1, d, 0);
 
-      v->set_cell(d);
+      set_cell(v,d);
       break;
     }
 
@@ -3113,23 +3728,23 @@ insert_increase_dimension(Vertex_handle star)
     // general case : 4th vertex ( geometrically : 3rd finite vertex )
     // degenerate cases geometrically : 1st non collinear vertex
     {
-      Cell_handle c = star->cell();
-      int i = c->index(star); // i== 0 or 1
+      Cell_handle c = cell(star);
+      int i = index(c, star); // i== 0 or 1
       CGAL_assertion(i==0 || i==1);
       int j = (i == 0) ? 1 : 0;
-      Cell_handle d = c->neighbor(j);
+      Cell_handle d = neighbor(c, j);
 
-      c->set_vertex(2,v);
+      set_vertex(c, 2,v);
 
-      Cell_handle e = c->neighbor(i);
+      Cell_handle e = neighbor(c, i);
       Cell_handle cnew = c;
       Cell_handle enew = Cell_handle();
 
       while( e != d ){
         enew = create_cell();
-        enew->set_vertex(i,e->vertex(j));
-        enew->set_vertex(j,e->vertex(i));
-        enew->set_vertex(2,star);
+        set_vertex(enew, i,vertex(e, j));
+        set_vertex(enew, j,vertex(e, i));
+        set_vertex(enew, 2,star);
 
         set_adjacency(enew, i, cnew, j);
         // false at the first iteration of the loop where it should
@@ -3138,21 +3753,21 @@ insert_increase_dimension(Vertex_handle star)
         set_adjacency(enew, 2, e, 2);
         // neighbor j will be set during next iteration of the loop
 
-        e->set_vertex(2,v);
+        set_vertex(e, 2, v);
 
-        e = e->neighbor(i);
+        e = neighbor(e, i);
         cnew = enew;
       }
 
-      d->set_vertex(2,v);
+      set_vertex(d, 2, v);
       set_adjacency(enew, j, d, 2);
 
-      // corrections for star->cell() :
-      c = star->cell();
-      c->set_neighbor(2,c->neighbor(i)->neighbor(2));
-      c->set_neighbor(j,d);
+      // corrections for cell(star) :
+      c = cell(star);
+      set_neighbor(c, 2, neighbor(neighbor(c, i), 2));
+      set_neighbor(c, j,d);
 
-      v->set_cell(d);
+      set_cell(v, d);
 
       break;
     }
@@ -3169,23 +3784,20 @@ insert_increase_dimension(Vertex_handle star)
       Cell_iterator it = cells_begin();
       // allowed since the dimension has already been set to 3
 
-      v->set_cell(it); // ok since there is at least one ``cell''
+      set_cell(v, *it); // ok since there is at least one ``cell''
       for(; it != cells_end(); ++it) {
         // Here we must be careful since we create_cells in a loop controlled
         // by an iterator.  So we first take care of the cells newly created
         // by the following test :
-        if (it->neighbor(0) == Cell_handle())
+        if (neighbor(*it, 0) == Cell_handle())
           continue;
-        it->set_neighbor(3, Cell_handle());
-        it->set_vertex(3, v);
-        if ( ! it->has_vertex(star) ) {
-          Cell_handle cnew = create_cell( it->vertex(0), it->vertex(2),
-                                          it->vertex(1), star);
-          // The Intel compiler has a problem with passing "it" directly to
-          // function "set_adjacency": the adjacency is not changed.
-          Cell_handle ch_it = it;
-          set_adjacency(cnew, 3, ch_it, 3);
-          cnew->set_neighbor(0, Cell_handle());
+        set_neighbor(*it, 3, Cell_handle());
+        set_vertex(*it, 3, v);
+        if ( ! has_vertex(*it, star) ) {
+          Cell_handle cnew = create_cell( vertex(*it, 0), vertex(*it, 2),
+                                          vertex(*it, 1), star);
+           set_adjacency(cnew, 3, *it, 3);
+          set_neighbor(cnew, 0, Cell_handle());
           new_cells.push_back(cnew);
         }
       }
@@ -3193,23 +3805,23 @@ insert_increase_dimension(Vertex_handle star)
       // traversal of the new cells only, to add missing neighbors
       for(typename std::vector<Cell_handle>::iterator ncit = new_cells.begin();
            ncit != new_cells.end(); ++ncit) {
-        Cell_handle n = (*ncit)->neighbor(3); // opposite to star
+        Cell_handle n = neighbor(*ncit,3); // opposite to star
         for ( int i=0; i<3; i++ ) {
           int j;
           if ( i==0 ) j=0;
           else j=3-i; // vertex 1 and vertex 2 are always switched when
           // creating a new cell (see above)
-          Cell_handle c = n->neighbor(i)->neighbor(3);
+          Cell_handle c = neighbor(neighbor(n, i), 3);
           if ( c != Cell_handle() ) {
-            // i.e. star is not a vertex of n->neighbor(i)
-            (*ncit)->set_neighbor(j, c);
+            // i.e. star is not a vertex of neighbor(n, i)
+            set_neighbor(*ncit, j, c);
             // opposite relation will be set when ncit arrives on c
             // this avoids to look for the correct index
             // and to test whether *ncit already has neighbor i
           }
           else {
-            // star is a vertex of n->neighbor(i)
-            set_adjacency(*ncit, j, n->neighbor(i), 3);//neighbor opposite to v
+            // star is a vertex of neighbor(n, i)
+            set_adjacency(*ncit, j, neighbor(n, i), 3);//neighbor opposite to v
           }
         }
       }
@@ -3233,7 +3845,7 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
     CGAL_precondition( degree(v) == number_of_vertices()-1 );
 
     if (dimension() <= 0) {
-        delete_cell(v->cell());
+        delete_cell(cell(v));
     }
     else {
         // the cells incident to w are down graded one dimension
@@ -3242,29 +3854,29 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 
         for (Cell_iterator ib = cells().begin();
             ib != cells().end(); ++ib) {
-            if ( ib->has_vertex(w) )
-                to_downgrade.push_back(ib);
+          if ( has_vertex(*ib, w) )
+                to_downgrade.push_back(*ib);
             else
-                to_delete.push_back(ib);
+                to_delete.push_back(*ib);
         }
 
         typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
         for( ; lfit != to_downgrade.end(); ++lfit) {
             Cell_handle f = *lfit;
-            int j = f->index(w);
-            int k; if (f->has_vertex(v, k)) f->set_vertex(k, w);
+            int j = index(f, w);
+            int k; if (has_vertex(f, v, k)) set_vertex(f, k, w);
             if (j != dimension()) {
-                f->set_vertex(j, f->vertex(dimension()));
-                f->set_neighbor(j, f->neighbor(dimension()));
+              set_vertex(f, j, vertex(f, dimension()));
+              set_neighbor(f, j, neighbor(f, dimension()));
                 if (dimension() >= 1)
                     change_orientation(f);
             }
-            f->set_vertex(dimension(), Vertex_handle());
-            f->set_neighbor(dimension(), Cell_handle());
+            set_vertex(f, dimension(), Vertex_handle());
+            set_neighbor(f, dimension(), Cell_handle());
 
-            // Update vertex->cell() pointers.
+            // Update cell(vertex) pointers.
             for (int i = 0; i < dimension(); ++i)
-                f->vertex(i)->set_cell(f);
+              set_cell(vertex(f, i), f);
         }
 
         delete_cells(to_delete.begin(), to_delete.end());
@@ -3312,23 +3924,23 @@ remove_degree_2(Vertex_handle v)
     // Indices of v in these cells.
     int i0, i1;
 
-    c0 = v->cell();
-    i0 = c0->index(v);
-    c1 = c0->neighbor((i0 == 0) ? 1 : 0);
-    i1 = c1->index(v);
+    c0 = cell(v);
+    i0 = index(c0, v);
+    c1 = neighbor(c0, (i0 == 0) ? 1 : 0);
+    i1 = index(c1, v);
 
     // New cell : we copy the content of c0, so we keep the orientation.
-    Cell_handle newc = create_face(c0->vertex(0),
-                                   c0->vertex(1),
+    Cell_handle newc = create_face(vertex(c0, 0),
+                                   vertex(c0, 1),
                                    Vertex_handle());
 
-    newc->set_vertex(i0, c1->vertex(c1->index(c0)));
+    set_vertex(newc, i0, vertex(c1, index(c1, c0)));
 
-    set_adjacency(newc,    i0, c0->neighbor(i0), mirror_index(c0, i0));
-    set_adjacency(newc,  1-i0, c1->neighbor(i1), mirror_index(c1, i1));
+    set_adjacency(newc,    i0, neighbor(c0, i0), mirror_index(c0, i0));
+    set_adjacency(newc,  1-i0, neighbor(c1, i1), mirror_index(c1, i1));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
+    set_cell(vertex(newc, 0), newc);
+    set_cell(vertex(newc, 1), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3351,27 +3963,27 @@ remove_degree_3(Vertex_handle v)
     // Indices of v in these cells.
     int i0, i1, i2;
 
-    c0 = v->cell();
-    i0 = c0->index(v);
-    c1 = c0->neighbor(cw(i0));
-    i1 = c1->index(v);
-    c2 = c0->neighbor(ccw(i0));
-    i2 = c2->index(v);
+    c0 = cell(v);
+    i0 = index(c0, v);
+    c1 = neighbor(c0, cw(i0));
+    i1 = index(c1, v);
+    c2 = neighbor(c0, ccw(i0));
+    i2 = index(c2, v);
 
     // New cell : we copy the content of c0, so we keep the orientation.
-    Cell_handle newc = create_face(c0->vertex(0),
-                                   c0->vertex(1),
-                                   c0->vertex(2));
+    Cell_handle newc = create_face(vertex(c0, 0),
+                                   vertex(c0, 1),
+                                   vertex(c0, 2));
 
-    newc->set_vertex(i0, c1->vertex(c1->index(c0)));
+    set_vertex(newc, i0, vertex(c1, index(c1, c0)));
 
-    set_adjacency(newc,      i0, c0->neighbor(i0), mirror_index(c0, i0));
-    set_adjacency(newc,  cw(i0), c1->neighbor(i1), mirror_index(c1, i1));
-    set_adjacency(newc, ccw(i0), c2->neighbor(i2), mirror_index(c2, i2));
+    set_adjacency(newc,      i0, neighbor(c0, i0), mirror_index(c0, i0));
+    set_adjacency(newc,  cw(i0), neighbor(c1, i1), mirror_index(c1, i1));
+    set_adjacency(newc, ccw(i0), neighbor(c2, i2), mirror_index(c2, i2));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
+    set_cell(vertex(newc, 0), newc);
+    set_cell(vertex(newc, 1), newc);
+    set_cell(vertex(newc, 2), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3395,32 +4007,32 @@ remove_degree_4(Vertex_handle v)
     // Indices of v in these cells.
     int i0, i1, i2, i3;
 
-    c0 = v->cell();
-    i0 = c0->index(v);
-    c1 = c0->neighbor(i0^1);
-    i1 = c1->index(v);
-    c2 = c0->neighbor(i0^2);
-    i2 = c2->index(v);
-    c3 = c0->neighbor(i0^3);
-    i3 = c3->index(v);
+    c0 = cell(v);
+    i0 = index(c0, v);
+    c1 = neighbor(c0, i0^1);
+    i1 = index(c1, v);
+    c2 = neighbor(c0, i0^2);
+    i2 = index(c2, v);
+    c3 = neighbor(c0, i0^3);
+    i3 = index(c3, v);
 
     // New cell : we copy the content of c0, so we keep the orientation.
-    Cell_handle newc = create_cell(c0->vertex(0),
-                                   c0->vertex(1),
-                                   c0->vertex(2),
-                                   c0->vertex(3));
+    Cell_handle newc = create_cell(vertex(c0, 0),
+                                   vertex(c0, 1),
+                                   vertex(c0, 2),
+                                   vertex(c0, 3));
 
-    newc->set_vertex(i0, c1->vertex(c1->index(c0)));
+    set_vertex(newc, i0, vertex(c1, index(c1, c0)));
 
-    set_adjacency(newc,   i0, c0->neighbor(i0), mirror_index(c0, i0));
-    set_adjacency(newc, i0^1, c1->neighbor(i1), mirror_index(c1, i1));
-    set_adjacency(newc, i0^2, c2->neighbor(i2), mirror_index(c2, i2));
-    set_adjacency(newc, i0^3, c3->neighbor(i3), mirror_index(c3, i3));
+    set_adjacency(newc,   i0, neighbor(c0, i0), mirror_index(c0, i0));
+    set_adjacency(newc, i0^1, neighbor(c1, i1), mirror_index(c1, i1));
+    set_adjacency(newc, i0^2, neighbor(c2, i2), mirror_index(c2, i2));
+    set_adjacency(newc, i0^3, neighbor(c3, i3), mirror_index(c3, i3));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
-    newc->vertex(3)->set_cell(newc);
+    set_cell(vertex(newc, 0), newc);
+    set_cell(vertex(newc, 1), newc);
+    set_cell(vertex(newc, 2), newc);
+    set_cell(vertex(newc, 3), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3440,10 +4052,10 @@ decrease_dimension(Cell_handle c, int i)
   CGAL_precondition( dimension() >= 2);
   CGAL_precondition( number_of_vertices() >
                                    (size_type) dimension() + 1 );
-  CGAL_precondition( degree(c->vertex(i)) == number_of_vertices()-1 );
+  CGAL_precondition( degree(vertex(c, i)) == number_of_vertices()-1 );
 
-  Vertex_handle v = c->vertex(i);
-  Vertex_handle w = c->vertex(i);
+  Vertex_handle v = vertex(c, i);
+  Vertex_handle w = vertex(c, i);
 
   // the cells incident to w are down graded one dimension
   // the other cells are deleted
@@ -3451,30 +4063,30 @@ decrease_dimension(Cell_handle c, int i)
 
   for (Cell_iterator ib = cells().begin();
        ib != cells().end(); ++ib) {
-    if ( ib->has_vertex(w) )
-      to_downgrade.push_back(ib);
+    if ( has_vertex(*ib, w) )
+      to_downgrade.push_back(*ib);
     else
-      to_delete.push_back(ib);
+      to_delete.push_back(*ib);
   }
 
   typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
   for( ; lfit != to_downgrade.end(); ++lfit) {
     Cell_handle f = *lfit;
-    int j = f->index(w);
+    int j = index(f, w);
     int k;
-    if (f->has_vertex(v, k)) f->set_vertex(k, w);
+    if (has_vertex(f,v, k)) set_vertex(f, k, w);
     if (j != dimension()) {
-      f->set_vertex(j, f->vertex(dimension()));
-      f->set_neighbor(j, f->neighbor(dimension()));
+      set_vertex(f, j, vertex(f, dimension()));
+      set_neighbor(f, j, neighbor(f, dimension()));
       if (dimension() >= 1)
         change_orientation(f);
     }
-    f->set_vertex(dimension(), Vertex_handle());
-    f->set_neighbor(dimension(), Cell_handle());
+    set_vertex(f, dimension(), Vertex_handle());
+    set_neighbor(f, dimension(), Cell_handle());
 
-    // Update vertex->cell() pointers.
+    // Update cell(vertex) pointers.
     for (int i = 0; i < dimension(); ++i)
-      f->vertex(i)->set_cell(f);
+      set_cell(vertex(f, i), f);
   }
 
   delete_cells(to_delete.begin(), to_delete.end());
@@ -3484,86 +4096,86 @@ decrease_dimension(Cell_handle c, int i)
 
   if(dimension() == 2)
   {
-    Cell_handle n0 = c->neighbor(0);
-    Cell_handle n1 = c->neighbor(1);
-    Cell_handle n2 = c->neighbor(2);
-    Vertex_handle v0 = c->vertex(0);
-    Vertex_handle v1 = c->vertex(1);
-    Vertex_handle v2 = c->vertex(2);
+    Cell_handle n0 = neighbor(c, 0);
+    Cell_handle n1 = neighbor(c, 1);
+    Cell_handle n2 = neighbor(c, 2);
+    Vertex_handle v0 = vertex(c, 0);
+    Vertex_handle v1 = vertex(c, 1);
+    Vertex_handle v2 = vertex(c, 2);
 
     int i0 = 0, i1 = 0, i2 = 0;
 
-    for(int i=0; i<3; i++) if(n0->neighbor(i) == c) { i0 = i; break; }
-    for(int i=0; i<3; i++) if(n1->neighbor(i) == c) { i1 = i; break; }
-    for(int i=0; i<3; i++) if(n2->neighbor(i) == c) { i2 = i; break; }
+    for(int i=0; i<3; i++) if(neighbor(n0, i) == c) { i0 = i; break; }
+    for(int i=0; i<3; i++) if(neighbor(n1, i) == c) { i1 = i; break; }
+    for(int i=0; i<3; i++) if(neighbor(n2, i) == c) { i2 = i; break; }
 
     Cell_handle c1 = create_cell(v, v0, v1, Vertex_handle());
     Cell_handle c2 = create_cell(v, v1, v2, Vertex_handle());
 
-    c->set_vertex(0, v);
-    c->set_vertex(1, v2);
-    c->set_vertex(2, v0);
-    c->set_vertex(3, Vertex_handle());
+    set_vertex(c, 0, v);
+    set_vertex(c, 1, v2);
+    set_vertex(c, 2, v0);
+    set_vertex(c, 3, Vertex_handle());
 
     //Cell_handle c3 = create_cell(v, v2, v0, Vertex_handle());
     Cell_handle c3 = c;
 
-    c1->set_neighbor(0, n2); n2->set_neighbor(i2, c1);
-    c1->set_neighbor(1, c2);
-    c1->set_neighbor(2, c3);
-    c1->set_neighbor(3, Cell_handle());
+    set_neighbor(c1, 0, n2); set_neighbor(n2, i2, c1);
+    set_neighbor(c1, 1, c2);
+    set_neighbor(c1, 2, c3);
+    set_neighbor(c1, 3, Cell_handle());
 
-    c2->set_neighbor(0, n0); n0->set_neighbor(i0, c2);
-    c2->set_neighbor(1, c3);
-    c2->set_neighbor(2, c1);
-    c2->set_neighbor(3, Cell_handle());
+    set_neighbor(c2, 0, n0); set_neighbor(n0, i0, c2);
+    set_neighbor(c2, 1, c3);
+    set_neighbor(c2, 2, c1);
+    set_neighbor(c2, 3, Cell_handle());
 
-    c3->set_neighbor(0, n1); n1->set_neighbor(i1, c3);
-    c3->set_neighbor(1, c1);
-    c3->set_neighbor(2, c2);
-    c3->set_neighbor(3, Cell_handle());
+    set_neighbor(c3, 0, n1); set_neighbor(n1, i1, c3);
+    set_neighbor(c3, 1, c1);
+    set_neighbor(c3, 2, c2);
+    set_neighbor(c3, 3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c1);
-    v2->set_cell(c2);
+    set_cell(v, c1);
+    set_cell(v0, c1);
+    set_cell(v1, c1);
+    set_cell(v2, c2);
   }
 
   if(dimension() == 1)
   {
-    Cell_handle n0 = c->neighbor(0);
-    Cell_handle n1 = c->neighbor(1);
-    Vertex_handle v0 = c->vertex(0);
-    Vertex_handle v1 = c->vertex(1);
+    Cell_handle n0 = neighbor(c, 0);
+    Cell_handle n1 = neighbor(c, 1);
+    Vertex_handle v0 = vertex(c, 0);
+    Vertex_handle v1 = vertex(c, 1);
 
     int i0 = 0 , i1 = 0;
 
-    for(int i=0; i<2; i++) if(n0->neighbor(i) == c) { i0 = i; break; }
-    for(int i=0; i<2; i++) if(n1->neighbor(i) == c) { i1 = i; break; }
+    for(int i=0; i<2; i++) if(neighbor(n0, i) == c) { i0 = i; break; }
+    for(int i=0; i<2; i++) if(neighbor(n1, i) == c) { i1 = i; break; }
 
     Cell_handle c1 = create_cell(v0, v, Vertex_handle(), Vertex_handle());
 
-    c->set_vertex(0, v);
-    c->set_vertex(1, v1);
-    c->set_vertex(2, Vertex_handle());
-    c->set_vertex(3, Vertex_handle());
+    set_vertex(c, 0, v);
+    set_vertex(c, 1, v1);
+    set_vertex(c, 2,Vertex_handle());
+    set_vertex(c, 3, Vertex_handle());
 
     //Cell_handle c2 = create_cell(v, v1, Vertex_handle(), Vertex_handle());
     Cell_handle c2 = c;
 
-    c1->set_neighbor(0, c2);
-    c1->set_neighbor(1, n1); n1->set_neighbor(i1, c1);
-    c1->set_neighbor(2, Cell_handle());
-    c1->set_neighbor(3, Cell_handle());
+    set_neighbor(c1, 0, c2);
+    set_neighbor(c1, 1, n1); set_neighbor(n1, i1, c1);
+    set_neighbor(c1, 2, Cell_handle());
+    set_neighbor(c1, 3, Cell_handle());
 
-    c2->set_neighbor(0, n0); n0->set_neighbor(i0, c2);
-    c2->set_neighbor(1, c1);
-    c2->set_neighbor(2, Cell_handle());
-    c2->set_neighbor(3, Cell_handle());
+    set_neighbor(c2, 0, n0); set_neighbor(n0, i0, c2);
+    set_neighbor(c2, 1, c1);
+    set_neighbor(c2, 2, Cell_handle());
+    set_neighbor(c2, 3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c2);
+    set_cell(v, c1);
+    set_cell(v0, c1);
+    set_cell(v1, c2);
   }
 
   CGAL_postcondition(is_valid());
@@ -3749,8 +4361,8 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_valid(Vertex_handle v, bool verbose, int level) const
 {
-  bool result = v->is_valid(verbose,level);
-  result = result && v->cell()->has_vertex(v);
+  bool result = cell(v) != Cell_handle(); // AF WAS: v->is_valid(verbose,level);
+  result = result && has_vertex(cell(v), v);
   if ( ! result ) {
     if ( verbose )
       std::cerr << "invalid vertex" << std::endl;
@@ -3764,29 +4376,29 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
-    if ( ! c->is_valid(verbose, level) )
-        return false;
+  // AF if ( ! c->iis_valid(verbose, level) )
+  //      return false;
 
     switch (dimension()) {
     case -2:
     case -1:
     {
-      if ( c->vertex(0) == Vertex_handle() ) {
+      if ( vertex(c, 0) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0 nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      is_valid(c->vertex(0),verbose,level);
-      if ( c->vertex(1) != Vertex_handle() || c->vertex(2) != Vertex_handle()) {
+      is_valid(vertex(c, 0),verbose,level);
+      if ( vertex(c, 1) != Vertex_handle() || vertex(c, 2) != Vertex_handle()) {
         if (verbose)
             std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      if ( c->neighbor(0) != Cell_handle() ||
-           c->neighbor(1) != Cell_handle() ||
-           c->neighbor(2) != Cell_handle()) {
+      if ( neighbor(c, 0) != Cell_handle() ||
+           neighbor(c, 1) != Cell_handle() ||
+           neighbor(c, 2) != Cell_handle()) {
         if (verbose)
             std::cerr << "one neighbor != nullptr" << std::endl;
         CGAL_assertion(false);
@@ -3797,35 +4409,35 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
     case 0:
       {
-      if ( c->vertex(0) == Vertex_handle() ) {
+        if ( vertex(c, 0) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0 nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      is_valid(c->vertex(0),verbose,level);
-      if ( c->neighbor (0) == Cell_handle() ) {
+        is_valid(vertex(c, 0),verbose,level);
+        if ( neighbor(c, 0) == Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 0 nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      if ( c->vertex(1) != Vertex_handle() ||
-           c->vertex(2) != Vertex_handle() ) {
+      if ( vertex(c, 1) != Vertex_handle() ||
+           vertex(c, 2) != Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      if ( c->neighbor(1) != Cell_handle() ||
-           c->neighbor(2) != Cell_handle() ) {
+      if ( neighbor(c, 1) != Cell_handle() ||
+           neighbor(c, 2) != Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 1 or 2 != nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
 
-      if ( ! c->neighbor(0)->has_vertex(c->vertex(0)) ) {
+      if ( ! has_vertex(neighbor(c, 0), vertex(c, 0)) ) {
         if (verbose)
             std::cerr << "neighbor 0 does not have vertex 0" << std::endl;
         CGAL_assertion(false);
@@ -3836,10 +4448,10 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
     case 1:
       {
-      Vertex_handle v0 = c->vertex(0);
-      Vertex_handle v1 = c->vertex(1);
-      Cell_handle n0 = c->neighbor(0);
-      Cell_handle n1 = c->neighbor(1);
+        Vertex_handle v0 = vertex(c, 0);
+        Vertex_handle v1 = vertex(c, 1);
+        Cell_handle n0 = neighbor(c, 0);
+        Cell_handle n1 = neighbor(c, 1);
 
       if ( v0 == Vertex_handle() || v1 == Vertex_handle() ) {
         if (verbose)
@@ -3847,8 +4459,8 @@ is_valid(Cell_handle c, bool verbose, int level) const
         CGAL_assertion(false);
         return false;
       }
-      is_valid(c->vertex(0),verbose,level);
-      is_valid(c->vertex(1),verbose,level);
+      is_valid(vertex(c, 0),verbose,level);
+      is_valid(vertex(c, 1),verbose,level);
       if ( n0 == Cell_handle() || n1 == Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 0 or 1 nullptr" << std::endl;
@@ -3856,14 +4468,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
         return false;
       }
 
-      if ( v0 !=  n1->vertex(1) ) {
+      if ( v0 !=  vertex(n1, 1) ) {
         if (verbose)
             std::cerr << "neighbor 1 does not have vertex 0 as vertex 1"
                       << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      if ( v1 != n0->vertex(0) ) {
+      if ( v1 != vertex(n0, 0) ) {
         if (verbose)
             std::cerr << "neighbor 0 does not have vertex 1 as vertex 0"
                       << std::endl;
@@ -3871,14 +4483,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
         return false;
       }
 
-      if ( n0->neighbor(1) != c ) {
+      if ( neighbor(n0, 1) != c ) {
         if (verbose)
             std::cerr << "neighbor 0 does not have this as neighbor 1"
                       << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      if ( n1->neighbor(0) != c ) {
+      if ( neighbor(n1, 0) != c ) {
         if (verbose)
             std::cerr << "neighbor 1 does not have this as neighbor 0"
                       << std::endl;
@@ -3891,28 +4503,28 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
     case 2:
       {
-      if ( c->vertex(0) == Vertex_handle() ||
-           c->vertex(1) == Vertex_handle() ||
-           c->vertex(2) == Vertex_handle() ) {
+        if ( vertex(c, 0) == Vertex_handle() ||
+             vertex(c, 1) == Vertex_handle() ||
+             vertex(c, 2) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0, 1, or 2 nullptr" << std::endl;
         CGAL_assertion(false);
         return false;
       }
-      is_valid(c->vertex(0),verbose,level);
-      is_valid(c->vertex(1),verbose,level);
-      is_valid(c->vertex(2),verbose,level);
+        is_valid(vertex(c, 0),verbose,level);
+        is_valid(vertex(c, 1),verbose,level);
+        is_valid(vertex(c, 2),verbose,level);
       int in;
       Cell_handle n;
       for(int i = 0; i < 3; i++) {
-        n = c->neighbor(i);
+        n = neighbor(c, i);
         if ( n == Cell_handle() ) {
           if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
           CGAL_assertion(false);
           return false;
         }
-        if ( ! n->has_vertex(c->vertex(cw(i)),in ) ) {
+        if ( ! has_vertex(n, vertex(c, cw(i)),in ) ) {
           if (verbose)
               std::cerr << "vertex " << cw(i)
                         << " not vertex of neighbor " << i << std::endl;
@@ -3920,7 +4532,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
           return false;
         }
         in = cw(in);
-        if ( n->neighbor(in) != c ) {
+        if ( neighbor(n, in) != c ) {
           if (verbose)
               std::cerr << "neighbor " << i
                         << " does not have this as neighbor "
@@ -3928,7 +4540,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
           CGAL_assertion(false);
           return false;
         }
-        if ( c->vertex(ccw(i)) != n->vertex(cw(in)) ) {
+        if ( vertex(c, ccw(i)) != vertex(n, cw(in)) ) {
           if (verbose)
               std::cerr << "vertex " << ccw(i)
                         << " is not vertex " << cw(in)
@@ -3944,17 +4556,17 @@ is_valid(Cell_handle c, bool verbose, int level) const
       {
         int i;
         for(i = 0; i < 4; i++) {
-          if ( c->vertex(i) == Vertex_handle() ) {
+          if ( vertex(c, i) == Vertex_handle() ) {
             if (verbose)
                 std::cerr << "vertex " << i << " nullptr" << std::endl;
             CGAL_assertion(false);
             return false;
           }
-          is_valid(c->vertex(i),verbose,level);
+          is_valid(vertex(c, i),verbose,level);
         }
 
         for(i = 0; i < 4; i++) {
-          Cell_handle n = c->neighbor(i);
+          Cell_handle n = neighbor(c, i);
           if ( n == Cell_handle() ) {
             if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
@@ -3964,10 +4576,10 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
           int in = 5;
           // if ( ! n->has_neighbor(handle(), in) ) {
-          if ( n->neighbor(0) == c) in = 0;
-          if ( n->neighbor(1) == c) in = 1;
-          if ( n->neighbor(2) == c) in = 2;
-          if ( n->neighbor(3) == c) in = 3;
+          if ( neighbor(n, 0) == c) in = 0;
+          if ( neighbor(n, 1) == c) in = 1;
+          if ( neighbor(n, 2) == c) in = 2;
+          if ( neighbor(n, 3) == c) in = 3;
           if (in == 5) {
             if (verbose)
               std::cerr << "neighbor of c has not c as neighbor" << std::endl;
@@ -3976,21 +4588,21 @@ is_valid(Cell_handle c, bool verbose, int level) const
           }
 
           int j1n=4,j2n=4,j3n=4;
-          if ( ! n->has_vertex(c->vertex((i+1)&3),j1n) ) {
+          if ( ! has_vertex(n, vertex(c, (i+1)&3),j1n) ) {
             if (verbose) { std::cerr << "vertex (+1) " << ((i+1)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
             CGAL_assertion(false);
             return false;
           }
-          if ( ! n->has_vertex(c->vertex((i+2)&3),j2n) ) {
-            if (verbose) { std::cerr << "vertex (+2) " << ((i+2)&3)
+          if ( ! has_vertex(n, vertex(c, (i+2)&3),j2n) ) {
+            if (verbose) { std::cerr << "vertex (+2)" << ((i+2)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
             CGAL_assertion(false);
             return false;
           }
-          if ( ! n->has_vertex(c->vertex((i+3)&3),j3n) ) {
+          if ( ! has_vertex(n, vertex(c, (i+3)&3),j3n) ) {
             if (verbose) { std::cerr << "vertex (+3) " << ((i+3)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
@@ -4085,11 +4697,26 @@ copy_tds(const TDS_src& tds,
   clear();
   set_dimension(tds.dimension());
 
-  if(tds.number_of_vertices() == 0)
-    return Vertex_handle();
+  if (n == 0)  return Vertex_handle();   // AF:  in master if(tds.number_of_vertices() == 0)
 
   // Number of pointers to cell/vertex to copy per cell.
   const int dim = (std::max)(1, dimension() + 1);
+
+#if  0   // coming from head
+  for (typename TDS_src::Vertex_index vit : tds.vertices())
+    TV[i++] = vit;
+
+  CGAL_assertion( i == n );
+
+  Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V;
+  Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
+
+  for (i=0; i <= n-1; ++i){
+    Vertex_handle vh =create_vertex( convert_vertex(TV[i]) );
+    V[ TV[i] ] = vh;
+    convert_vertex(TV[i],vh);
+
+#else // coming from master
 
   // Number of neighbors to set
   const int nn = (std::max)(0, dimension() + 1);
@@ -4104,28 +4731,29 @@ copy_tds(const TDS_src& tds,
     Vertex_handle vh = create_vertex( convert_vertex(*vit) );
     V[vit] = vh;
     convert_vertex(*vit,*vh);
+#endif
   }
 
   // Create the cells.
   for (typename TDS_src::Cell_iterator cit = tds.cells().begin();
           cit != tds.cells_end(); ++cit) {
-      Cell_handle ch=create_cell(convert_cell(*cit));
-      F[cit]=ch;
+    Cell_handle ch =create_cell(convert_cell(*cit));
+      F[*cit]=ch;
       for (int j = 0; j < dim; j++)
-        ch->set_vertex(j, V[cit->vertex(j)] );
-      convert_cell(*cit,*ch);
+        set_vertex(ch, j, V[vertex(*cit,j)] );
+      convert_cell(*cit,ch);
   }
 
   // Link the vertices to a cell.
   for (typename TDS_src::Vertex_iterator vit2 = tds.vertices_begin();
        vit2 != tds.vertices_end(); ++vit2)
-    V[vit2]->set_cell( F[vit2->cell()] );
+    set_cell(V[*vit2], F[cell(*vit2)] );
 
   // Hook neighbor pointers of the cells.
   for (typename TDS_src::Cell_iterator cit2 = tds.cells().begin();
           cit2 != tds.cells_end(); ++cit2) {
-    for (int j = 0; j < nn; j++)
-      F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
+    for (int j = 0; j < dim; j++) // AF  in master j < nn
+      set_neighbor(F[*cit2], j, F[neighbor(*cit2, j)] );
   }
 
   CGAL_postcondition( is_valid() );
@@ -4139,7 +4767,7 @@ namespace internal { namespace TDS_3{
   struct Default_vertex_converter
   {
     Vertex_tgt operator()(const Vertex_src& src) const {
-      return Vertex_tgt(src.point());
+      return Vertex_tgt();
     }
 
     void operator()(const Vertex_src&,Vertex_tgt&) const {}
@@ -4181,8 +4809,8 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 copy_tds(const TDS_src& src,typename TDS_src::Vertex_handle vert)
 {
-  internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
-  internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
+  internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex_handle,Vertex_handle> setv;
+  internal::TDS_3::Default_cell_converter<typename TDS_src::Cell_handle,Cell_handle>  setc;
   return copy_tds(src,vert,setv,setc);
 }
 
@@ -4192,10 +4820,23 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::
 swap(Tds & tds)
 {
   CGAL_expensive_precondition(tds.is_valid() && is_valid());
-
+  std::swap(removed_vertices_, tds.removed_vertices_);
+  std::swap(removed_cells_, tds.removed_cells_);
+  std::swap(vertices_freelist_, tds.vertices_freelist_);
+  std::swap(cells_freelist_, tds.cells_freelist_);
   std::swap(_dimension, tds._dimension);
-  cells().swap(tds.cells());
-  vertices().swap(tds.vertices());
+  std::swap(garbage_, tds.garbage_);
+  vprops_.swap(tds.vprops_);
+  cprops_.swap(tds.cprops_);
+      vconn_    = property_map<Vertex_index, Vertex>("v:connectivity").first;
+      cconn_    = property_map<Cell_index, Cell>("c:connectivity").first;
+      vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
+      cremoved_ = property_map<Cell_index, bool>("c:removed").first;
+
+      tds.vconn_    = tds.property_map<Vertex_index, Vertex>("v:connectivity").first;
+      tds.cconn_    = tds.property_map<Cell_index, Cell>("c:connectivity").first;
+      tds.vremoved_ = tds.property_map<Vertex_index, bool>("v:removed").first;
+      tds.cremoved_ = tds.property_map<Cell_index, bool>("c:removed").first;
 }
 
 template <class Vb, class Cb, class Ct>
@@ -4203,9 +4844,14 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 clear()
 {
-  cells().clear();
-  vertices().clear();
-  set_dimension(-2);
+  vprops_.resize(0);
+  cprops_.resize(0);
+  vprops_.shrink_to_fit();
+  cprops_.shrink_to_fit();
+  removed_vertices_ = removed_cells_ = 0;
+  vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  anonymous_property_ = 0;
 }
 
 template <class Vb, class Cb, class Ct>
@@ -4216,7 +4862,7 @@ count_vertices(size_type & i, bool verbose, int level) const
 {
   i = 0;
 
-  for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
+  for (Vertex_index it : vertices()) {
     if ( ! is_valid(it,verbose,level) ) {
       if (verbose)
           std::cerr << "invalid vertex" << std::endl;
@@ -4255,7 +4901,6 @@ count_edges(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
   i = 0;
-
   for (Edge_iterator it = edges_begin(); it != edges_end(); ++it) {
     if ( ! is_valid((*it).first,verbose, level) ) {
       if (verbose)
@@ -4276,7 +4921,7 @@ count_cells(size_type & i, bool verbose, int level) const
 {
   i = 0;
 
-  for (Cell_iterator it = cells_begin(); it != cells_end(); ++it) {
+  for (Cell_index it : cells()) {
     if ( ! is_valid(it,verbose, level) ) {
       if (verbose)
           std::cerr << "invalid cell" << std::endl;
@@ -4286,6 +4931,28 @@ count_cells(size_type & i, bool verbose, int level) const
     ++i;
   }
   return true;
+}
+
+namespace internal{
+  namespace handle {
+    template <>
+    struct Hash_functor<T3_Vertex_index>{
+      std::size_t
+      operator()(const T3_Vertex_index i)
+      {
+        return i;
+      }
+    };
+
+    template <>
+    struct Hash_functor<T3_Cell_index>{
+      std::size_t
+      operator()(const T3_Cell_index i)
+      {
+        return i;
+      }
+    };
+  }
 }
 
 } //namespace CGAL

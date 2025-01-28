@@ -58,19 +58,21 @@ public:
                                      Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
+  /*  
   template <typename GT_>
   Point_3 circumcenter(const GT_& gt) const
   {
-    return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-                                                this->vertex(1)->point(),
-                                                this->vertex(2)->point(),
-                                                this->vertex(3)->point());
+    return gt.construct_circumcenter_3_object()(this->ivertex(0)->point(),
+                                                this->ivertex(1)->point(),
+                                                this->ivertex(2)->point(),
+                                                this->ivertex(3)->point());
   }
 
   Point_3 circumcenter() const
   {
     return circumcenter(Geom_traits());
   }
+  */ 
 };
 
 } //namespace CGAL

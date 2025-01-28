@@ -40,20 +40,35 @@ public:
     : _c(c), visited_for_vertex_extractor(false)
   {}
 
+<<<<<<< HEAD
+#if 0
+  Cell_handle cell() const 
+  { return _c; }  
+=======
   Cell_handle cell() const
   { return _c; }
+>>>>>>> cgal/master
 
   void set_cell(Cell_handle c)
   {
     _c = c;
   }
+#else
 
+  Cell_handle icell() const 
+  { return _c; }  
+
+  void iset_cell(Cell_handle c)
+  {
+    _c = c;
+  }
+#endif  
   // the following trivial is_valid allows
   // the user of derived cell base classes
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const
   {
-    return cell() != Cell_handle();
+    return icell() != Cell_handle();
   }
 
   // For use by the Compact_container.
@@ -71,6 +86,7 @@ private:
   public:
   typedef bool Has_visited_for_vertex_extractor;
   bool visited_for_vertex_extractor;
+
 };
 
 template < class TDS >

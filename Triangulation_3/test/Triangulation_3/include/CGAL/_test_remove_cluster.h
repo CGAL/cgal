@@ -33,8 +33,13 @@ void _test_rc_random_1()
         fit != dt.finite_vertices_end(); fit++) {
                 Sphere_3 s1 = Sphere_3(Sphere_center(0.25, 0.25, 0.25), 0.01);
                 Sphere_3 s2 = Sphere_3(Sphere_center(0.75, 0.75, 0.75), 0.01);
+<<<<<<< HEAD
+                if(s1.has_on_unbounded_side(cp(dt.point(fit))) &&
+                   s2.has_on_unbounded_side(cp(dt.point(fit)))) to_remove.push_back(fit);
+=======
                 if(s1.has_on_unbounded_side(cp(fit->point())) &&
                    s2.has_on_unbounded_side(cp(fit->point()))) to_remove.push_back(fit);
+>>>>>>> cgal/master
   }
 
         std::size_t s1 = dt.number_of_vertices();
@@ -75,8 +80,13 @@ void _test_rc_random_2()
         fit != dt.finite_vertices_end(); fit++) {
                 Sphere_3 s1 = Sphere_3(Sphere_center(0.25, 0.25, 0.25), 0.01);
                 Sphere_3 s2 = Sphere_3(Sphere_center(0.75, 0.75, 0.75), 0.01);
+<<<<<<< HEAD
+		if(s1.has_on_bounded_side(cp(dt.point(fit)))) to_remove.push_back(fit);
+		if(s2.has_on_bounded_side(cp(dt.point(fit)))) to_remove.push_back(fit);
+=======
                 if(s1.has_on_bounded_side(cp(fit->point()))) to_remove.push_back(fit);
                 if(s2.has_on_bounded_side(cp(fit->point()))) to_remove.push_back(fit);
+>>>>>>> cgal/master
   }
 
         std::size_t s1 = dt.number_of_vertices();
@@ -642,6 +652,26 @@ void _test_rc_grid_3()
         typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;
   typedef Point                                  Point_3;
 
+<<<<<<< HEAD
+	std::cout << "_test_rc_grid_3" << std::endl;
+	
+	CGAL::Random random;	
+		
+	std::vector<Point> to_insert;
+	std::vector<Vertex_handle> to_remove;
+	D3 dt;
+	
+	for(int i=1; i<=(1<<10); i<<=1)
+	  for(int j=1; j<=(1<<10); j<<=1)
+		  for(int k=1; k<=(1<<10); k<<=1)
+	    to_insert.push_back(Point_3(i,j,k));
+	
+	dt.insert(to_insert.begin(), to_insert.end());
+	
+	for(Finite_vertices_iterator fit = dt.finite_vertices_begin(); 
+	fit != dt.finite_vertices_end(); fit++) {
+		if(dt.point(fit).x() == (1<<5)) to_remove.push_back(fit);
+=======
         std::cout << "_test_rc_grid_3" << std::endl;
 
         CGAL::Random random;
@@ -660,6 +690,7 @@ void _test_rc_grid_3()
         for(Finite_vertices_iterator fit = dt.finite_vertices_begin();
         fit != dt.finite_vertices_end(); fit++) {
                 if(fit->point().x() == (1<<5)) to_remove.push_back(fit);
+>>>>>>> cgal/master
   }
 
         std::size_t s1 = dt.number_of_vertices();
