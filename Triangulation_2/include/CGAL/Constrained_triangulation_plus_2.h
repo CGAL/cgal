@@ -117,7 +117,7 @@ public:
   using Triangulation = Tr;
   using Intersection_tag = typename Tr::Intersection_tag;
 
-  // using-declaration of types or member functions from the two bases
+  // using-declarations of types or member functions from the two bases
   using Triangulation::vertices_begin;
   using Triangulation::vertices_end;
   using Triangulation::is_infinite;
@@ -125,7 +125,11 @@ public:
 
   using typename Triangulation::Edge;
   using typename Triangulation::Vertex;
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+  using Vertex_handle = typename Triangulation::Vertex_handle; // workaround for VC++ 19.16 (from MSVC 2017)
+#else
   using typename Triangulation::Vertex_handle;
+#endif
   using typename Triangulation::Face_handle;
   using typename Triangulation::Face_circulator;
   using typename Triangulation::Vertex_iterator;
@@ -158,8 +162,8 @@ public:
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
 
-  using Point = typename Geom_traits::Point_2;
-  using Segment = typename Geom_traits::Segment_2;
+  using Point = typename Triangulation::Geom_traits::Point_2;
+  using Segment = typename Triangulation::Geom_traits::Segment_2;
 
   // Tag to mark the presence of a hierarchy of constraints
   using Constraint_hierarchy_tag = Tag_true;

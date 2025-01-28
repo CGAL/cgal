@@ -1301,6 +1301,7 @@ print(std::ostream& os) const
           constexpr bool star_v_has_timestamp =
               internal::has_timestamp_v<CGAL::cpp20::remove_cvref_t<decltype(*v)>>;
           if constexpr(star_v_has_timestamp) {
+            CGAL_USE(vertex_num_map);
             return os << '#' << v->time_stamp();
           } else {
             auto it = vertex_num_map.find(v);
