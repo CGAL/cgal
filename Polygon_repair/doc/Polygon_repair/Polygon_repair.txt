@@ -98,8 +98,13 @@ Input (left), non-zero (middle) even-odd (right).
 
 \section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
 
-Given several valid polygons this rule computes their union or intersection.
-This approximates from outside and from inside, respectively.
+Given several valid polygons these rules apply a %Boolean operation:
+In the arrangement of two valid multipolygons with holes, the faces that are in any and both multipolygons
+with holes are in the resulting multipolygon with holes for a union and intersection, respectively.
+
+While this %Boolean operation works for any two valid multipolygons, in the scope of repairing
+it serves to obtain an approximation from outside and inside when applying union and intersection, respectively,
+when the input is similar.
 
 \cgalFigureBegin{UnionIntersection, UnionIntersection.svg}
 Union (top) and Intersection (bottom).
