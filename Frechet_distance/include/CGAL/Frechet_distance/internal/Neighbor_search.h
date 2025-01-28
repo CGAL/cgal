@@ -132,10 +132,8 @@ private:
             for (size_t i = 0; i < 2; ++i) {
                 const Point& a = p.ends[i];
                 const Point& b = q.ends[i];
-                // AF: In case Point stays the input point type we have
-                // to robustify with interval arithmetic
-                // here: certainly
-                // AN: yes, here we need certainly!
+                // No need for interval arithmetic and certainlyL
+                // Will be correct for a filtered kernel as well as for a kernel with an exact number type
                 if (Compare_squared_distance()(a, b, distance_sqr) == LARGER) {
                     return false;
                 }
