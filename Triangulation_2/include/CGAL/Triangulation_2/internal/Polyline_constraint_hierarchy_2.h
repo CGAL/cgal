@@ -1211,14 +1211,13 @@ add_Steiner(const T va, const T vb, const T vc){
 
   Context_list* va_vb_cl = sc_iter_va_vb->second;
   erase_context(sc_iter_va_vb);
-  Context_list* va_vc_cl = get_context_list(va,vc);
-  Context_list* vc_vb_cl = get_context_list(vc,vb);
+  Context_list*& vc_vb_cl_ref = contexts_of(vc,vb);
 
-  bool vc_vb_was_already_a_subconstraint = vc_vb_cl != nullptr;
-
-  if(vc_vb_cl == nullptr) {
-    vc_vb_cl = new Context_list;
+  if(vc_vb_cl_ref == nullptr) {
+    vc_vb_cl_ref = new Context_list;
   }
+
+  Context_list* vc_vb_cl = vc_vb_cl_ref;
 
   for(Context& ctxt : *va_vb_cl) {
     Vertex_it pos = ctxt.current();
@@ -1246,17 +1245,14 @@ add_Steiner(const T va, const T vb, const T vc){
     vc_vb_cl->push_back(vc_vb_ctxt);
   }
 
+  Context_list*& va_vc_cl = contexts_of(va,vc);
   if (va_vc_cl != nullptr) { // (va,vc) was already a subconstraint
     va_vc_cl->splice(va_vc_cl->end(), *va_vb_cl);
     delete va_vb_cl;
   } else {
     va_vc_cl = va_vb_cl;
-    contexts_of(va,vc) = va_vc_cl;
   }
 
-  if (false == vc_vb_was_already_a_subconstraint) {
-    contexts_of(vc,vb) = vc_vb_cl;
-  }
   fix_may_share_in_contexts_constraints(*va_vc_cl);
   fix_may_share_in_contexts_constraints(*vc_vb_cl);
 }

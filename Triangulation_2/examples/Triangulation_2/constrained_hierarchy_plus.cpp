@@ -23,7 +23,7 @@ int
 main( )
 {
   Triangulation cdt;
-  std::cout << "Inserting a grid 5 x 5 of  constraints " << std::endl;
+  std::cout << "Inserting a grid 5 x 5 of 10 intersecting constraints " << std::endl;
     for (int i = 1; i < 6; ++i)
     cdt.insert_constraint( Point(0,i), Point(6,i));
     for (int j = 1; j < 6; ++j)
