@@ -1,4 +1,5 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/cut_with_plane.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -856,6 +857,53 @@ void test_isocuboid()
   assert(vertices(meshes[0]).size() == 20);
   assert(vertices(meshes[1]).size() == 4);
 }
+
+template <class TriangleMesh>
+void test_new_clip()
+{
+  {
+    TriangleMesh e;
+    std::ifstream("data-clip/ee.off") >> e;
+    PMP::cut_with_plane(e, K::Plane_3(1,0,0,-2));
+    assert(faces(e).size()==5);
+    assert(vertices(e).size()==24);
+  }
+
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/c.off") >> c;
+    PMP::cut_with_plane(c, K::Plane_3(1,0,0,-2));
+    assert(faces(c).size()==2);
+    assert(vertices(c).size()==8);
+  }
+
+  {
+    TriangleMesh e;
+    std::ifstream("data-clip/ee.off") >> e;
+    PMP::triangulate_faces(e);
+    PMP::cut_with_plane(e, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(e).size()==30);
+    assert(vertices(e).size()==28);
+  }
+
+  {
+    TriangleMesh c;
+    std::ifstream("data-clip/c.off") >> c;
+    PMP::triangulate_faces(c);
+    PMP::cut_with_plane(c, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
+    assert(faces(c).size()==8);
+    assert(vertices(c).size()==9);
+  }
+
+  {
+    TriangleMesh ele;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> ele;
+    PMP::new_clip(ele, K::Plane_3(1,0,0,0));
+    PMP::new_clip(ele, K::Plane_3(0,1,0,0));
+    PMP::new_clip(ele, K::Plane_3(0,0,1,0));
+  }
+}
+
 int main()
 {
   std::cout << "Surface Mesh" << std::endl;
@@ -878,5 +926,11 @@ int main()
   std::cout << "running test_iso_cuboid with Polyhedron\n";
   test_isocuboid<Polyhedron>();
   std::cout << "Done!" << std::endl;
+  std::cout << "running test_new_clip with Surface_mesh\n";
+  test_new_clip<Surface_mesh>();
+  std::cout << "Done!" << std::endl;
+//  std::cout << "running test_new_clip with Polyhedron\n";
+//  test_new_clip<Polyhedron>();
+//  std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
