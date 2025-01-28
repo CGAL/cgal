@@ -2589,3 +2589,1820 @@ std::vector<std::vector<std::size_t> > allowedInteractions_; // CGAL_SS3_USE_BOX
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+
+#if 0 // individual events of a given type
+EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
+                                                const CGAL::FT current_offset,
+                                                CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Edge Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    EdgeEventSPtr result = EdgeEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        VertexSPtr vertex_src = edge->getVertexSrc();
+        VertexSPtr vertex_dst = edge->getVertexDst();
+        if (vertex_src->getPoint() == vertex_dst->getPoint()) {
+            continue;
+        }
+
+        if (isLocked(edge)) { // one of the vertices cannot be rebuilt from its incident faces
+            continue;
+        }
+
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
+            // triangle event
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+        if (!point) {
+            continue;
+        }
+
+        std::cout << "Tentative edge event @ " << edge->toString() << std::endl;
+        std::cout << "Would give: " << *point << " (at t=" << offset_event << ")" << std::endl;
+
+        FacetSPtr facet_src = getFacetSrc(edge);
+        FacetSPtr facet_dst = getFacetDst(edge);
+
+        // This does not work when there is more than one edge between both facets.
+        // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
+        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst);
+
+        bool split_event = false;
+        std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
+        while (it_e2 != edges_2.end()) {
+            EdgeSPtr edge_2 = *it_e2++;
+
+            if (isLocked(edge_2)) {
+                continue;
+            }
+
+            // @todo exit as soon as there is a single rejection (to be done once the old code is safe to remove)
+#if defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
+            bool split_event_current_1 = true;
+            bool split_event_current_2 = true;
+            bool split_event_current_3 = true;
+
+            SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
+            Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
+            Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
+            if (KernelWrapper::orientation(line(edge_2), line_normal_2) < 0) {
+                // out of bounded area
+                split_event_current_1 = false;
+            }
+            SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_2->getVertexSrc()->getData());
+            ArcSPtr arc_2_src = data_2_src->getArc();
+            if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
+                // out of bounded area
+                split_event_current_2 = false;
+            }
+            SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_2->getVertexDst()->getData());
+            ArcSPtr arc_2_dst = data_2_dst->getArc();
+            if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
+                // out of bounded area
+                split_event_current_3 = false;
+            }
+
+            const bool split_event_current = (split_event_current_1 &&
+                                              split_event_current_2 &&
+                                              split_event_current_3);
+#endif
+
+#if !defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
+            bool split_event_current_1_b = true;
+            bool split_event_current_2_b = true;
+            bool split_event_current_3_b = true;
+
+            FacetSPtr facet_l2 = edge_2->getFacetL();
+            FacetSPtr facet_r2 = edge_2->getFacetR();
+            FacetSPtr facet_2_src = getFacetSrc(edge_2);
+            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+
+            Plane3SPtr plane_l2 = facet_l2->plane();
+            Plane3SPtr plane_r2 = facet_r2->plane();
+            CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+            CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+
+            CGAL::FT l2a = plane_l2->a();
+            CGAL::FT l2b = plane_l2->b();
+            CGAL::FT l2c = plane_l2->c();
+            CGAL::FT l2d = plane_l2->d();
+            CGAL::FT r2a = plane_r2->a();
+            CGAL::FT r2b = plane_r2->b();
+            CGAL::FT r2c = plane_r2->c();
+            CGAL::FT r2d = plane_r2->d();
+
+            CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+            CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;
+            CGAL_assertion(lt2 == rt2);
+
+            if ((lt2 > 0) || (rt2 > 0)) {
+                split_event_current_1_b = false;
+            }
+
+            if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
+                split_event_current_2_b = false;
+            }
+
+            if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
+                split_event_current_3_b = false;
+            }
+
+            const bool split_event_current_b = (split_event_current_1_b &&
+                                                split_event_current_2_b &&
+                                                split_event_current_3_b);
+#endif
+
+#ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
+            CGAL_assertion(split_event_current_1 == split_event_current_1_b);
+            CGAL_assertion(split_event_current_2 == split_event_current_2_b);
+            CGAL_assertion(split_event_current_3 == split_event_current_3_b);
+
+            CGAL_assertion(split_event_current == split_event_current_b);
+#endif
+
+            if (split_event_current_b) {
+                split_event = true;
+                break;
+            }
+        }
+        if (split_event) {
+            continue;
+        }
+        // edge merge event
+        EdgeSPtr edge_prev = edge->prev(facet_l);
+        EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_l)->prev(facet_l);
+        edge_next = edge->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_r);
+        edge_next = edge->next(facet_r)->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_r)->prev(facet_r);
+        edge_next = edge->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        // @todo could move up this check
+        if (offset_event < 0 && offset_event > current_offset_to_nearest_event)
+        {
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = EdgeEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setEdge(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+            SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge->getVertexSrc()->getData());
+            SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge->getVertexDst()->getData());
+            node->addArc(data_src->getArc());
+            node->addArc(data_dst->getArc());
+            SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge->getData());
+            node->addSheet(data_edge->getSheet());
+#endif
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+
+    return result;
+}
+
+EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhedron,
+                                                          const CGAL::FT current_offset,
+                                                          CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Edge Merge Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    EdgeMergeEventSPtr result = EdgeMergeEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+
+        VertexSPtr vertex_src = edge->getVertexSrc();
+        VertexSPtr vertex_dst = edge->getVertexDst();
+        if (vertex_src->getPoint() == vertex_dst->getPoint()) {
+            continue;
+        }
+
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
+            // triangle event
+            continue;
+        }
+
+        FacetSPtr facet_other = edge->getFacetL();
+        EdgeSPtr edge_next = edge->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        if (edge_next == edge) {
+            // dbl edge merge event
+            continue;
+        }
+
+        facet_other = edge->getFacetR();
+        edge_next = edge->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        if (edge_next == edge) {
+            // dbl edge merge event
+            continue;
+        }
+
+        FacetSPtr facet = FacetSPtr();
+        EdgeSPtr edge_1 = EdgeSPtr();
+        EdgeSPtr edge_2 = EdgeSPtr();
+        EdgeSPtr edge_prev = edge->prev(facet_l);
+        edge_next = edge->next(facet_l)->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_l;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+        // @todo do we need to test these other combinations if above matched?
+        edge_prev = edge->prev(facet_l)->prev(facet_l);
+        edge_next = edge->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_l;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+        edge_prev = edge->prev(facet_r);
+        edge_next = edge->next(facet_r)->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_r;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+        edge_prev = edge->prev(facet_r)->prev(facet_r);
+        edge_next = edge->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_r;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+        if (!(facet && edge_1 && edge_2)) {
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+        if (!point) {
+            continue;
+        }
+        if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = EdgeMergeEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setFacet(facet);
+            result->setEdge1(edge_1);
+            result->setEdge2(edge_2);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+            EdgeSPtr edge_toremove_1 = edge_1->next(facet);
+            EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
+            SkelVertexDataSPtr data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_toremove_1->src(facet)->getData());
+            node->addArc(data_vertex->getArc());
+            data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_toremove_1->dst(facet)->getData());
+            node->addArc(data_vertex->getArc());
+            data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_toremove_2->dst(facet)->getData());
+            node->addArc(data_vertex->getArc());
+            SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_toremove_1->getData());
+            node->addSheet(data_edge->getSheet());
+            data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_toremove_2->getData());
+            node->addSheet(data_edge->getSheet());
+#endif
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+
+    if(result)
+    {
+      std::cout << "Best Edge Merge Event with time increment of: " << result->getOffset() << std::endl;
+    }
+
+    return result;
+}
+
+TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedron,
+                                                        const CGAL::FT current_offset,
+                                                        CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Triangle Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    TriangleEventSPtr result = TriangleEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+
+        if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
+            continue;
+        }
+
+        if (isTetrahedron(edge)) {
+            // tetrahedron event
+            continue;
+        }
+
+        FacetSPtr facet;
+        if (isTriangle(edge->getFacetL(), edge)) {
+            facet = edge->getFacetL();
+        } else if (isTriangle(edge->getFacetR(), edge)) {
+            facet = edge->getFacetR();
+        } else {
+            continue;
+        }
+
+        bool dbl_triangle_event = false;
+        EdgeSPtr edge_tmp = edge;
+        for (unsigned int i = 0; i < 3; i++) {
+            FacetSPtr facet_tmp_l = edge_tmp->getFacetL();
+            FacetSPtr facet_tmp_r = edge_tmp->getFacetR();
+            if (facet_tmp_l && facet_tmp_r) {
+                if (isTriangle(facet_tmp_l, edge_tmp) &&
+                        isTriangle(facet_tmp_r, edge_tmp)) {
+                    dbl_triangle_event = true;
+                    break;
+                }
+            }
+            edge_tmp = edge_tmp->next(facet);
+        }
+        if (dbl_triangle_event) {
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+        if (!point) {
+            continue;
+        }
+
+        if ((KernelWrapper::side(edge->getFacetL()->plane(), point) > 0) ||
+                KernelWrapper::side(edge->getFacetR()->plane(), point) > 0) {
+            // triangle may not be a hole
+            // after pierce event
+            continue;
+        }
+
+        if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = TriangleEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setFacet(facet);
+            result->setEdgeBegin(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+            VertexSPtr vertices[3];
+            result->getVertices(vertices);
+            for (unsigned int i = 0; i < 3; i++) {
+                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
+                        vertices[i]->getData());
+                ArcSPtr arc = data->getArc();
+                node->addArc(arc);
+            }
+            EdgeSPtr edges[3];
+            result->getEdges(edges);
+            for (unsigned int i = 0; i < 3; i++) {
+                SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
+                        edges[i]->getData());
+                SheetSPtr sheet = data->getSheet();
+                node->addSheet(sheet);
+            }
+#endif
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr polyhedron,
+                                                                const CGAL::FT current_offset,
+                                                                CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Dbl Edge Merge Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    DblEdgeMergeEventSPtr result = DblEdgeMergeEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+
+        if (isLocked(edge)) {
+            continue;
+        }
+
+        if (!isReflex(edge)) {
+            continue;
+        }
+
+        bool is_dbl_edge_merge_event = false;
+        FacetSPtr facet_1;
+        EdgeSPtr edge_11;
+        EdgeSPtr edge_12;
+        FacetSPtr facet_2;
+        EdgeSPtr edge_21;
+        EdgeSPtr edge_22;
+        FacetSPtr facet_other = edge->getFacetL();
+        EdgeSPtr edge_next = edge->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        if (edge_next == edge) {
+            is_dbl_edge_merge_event = true;
+            facet_1 = edge->getFacetL();
+            edge_11 = edge->prev(facet_1);
+            edge_12 = edge->next(facet_1)->next(facet_1);
+            facet_2 = edge->getFacetR();
+            edge_21 = edge->prev(facet_2);
+            edge_22 = edge->next(facet_2)->next(facet_2);
+        }
+
+        facet_other = edge->getFacetR();
+        edge_next = edge->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        if (edge_next == edge) {
+            is_dbl_edge_merge_event = true;
+            facet_1 = edge->getFacetR();
+            edge_11 = edge->prev(facet_1)->prev(facet_1);
+            edge_12 = edge->next(facet_1);
+            facet_2 = edge->getFacetL();
+            edge_21 = edge->prev(facet_2)->prev(facet_2);
+            edge_22 = edge->next(facet_2);
+        }
+
+        if (edge_11 == edge_12 || edge_21 == edge_22) {
+            // double triangle event
+            continue;
+        }
+
+        if (!is_dbl_edge_merge_event) {
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+        if (!point) {
+            continue;
+        }
+        if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = DblEdgeMergeEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setFacet1(facet_1);
+            result->setEdge11(edge_11);
+            result->setEdge12(edge_12);
+            result->setFacet2(facet_2);
+            result->setEdge21(edge_21);
+            result->setEdge22(edge_22);
+            VertexSPtr vertices[4];
+            result->getVertices(vertices);
+            for (unsigned int i = 0; i < 4; i++) {
+                SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
+                        vertices[i]->getData());
+                ArcSPtr arc = vertex_data->getArc();
+                node->addArc(arc);
+            }
+            EdgeSPtr edges[4];
+            result->getEdges(edges);
+            for (unsigned int i = 0; i < 4; i++) {
+                SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
+                        edges[i]->getData());
+                SheetSPtr sheet = edge_data->getSheet();
+                node->addSheet(sheet);
+            }
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+DblTriangleEventSPtr SimpleStraightSkel::nextDblTriangleEvent(PolyhedronSPtr polyhedron,
+                                                              const CGAL::FT current_offset,
+                                                              CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Dbl Triangle Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    DblTriangleEventSPtr result = DblTriangleEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        if (isTetrahedron(edge)) {
+            continue;
+        }
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (!facet_l || !facet_r) {
+            continue;
+        }
+        if (!(isTriangle(facet_l, edge) &&
+                isTriangle(facet_r, edge))) {
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+        if (!point) {
+            continue;
+        }
+        if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = DblTriangleEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setEdge(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+            VertexSPtr vertices[4];
+            result->getVertices(vertices);
+            for (unsigned int i = 0; i < 4; i++) {
+                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
+                        vertices[i]->getData());
+                ArcSPtr arc = data->getArc();
+                node->addArc(arc);
+            }
+            EdgeSPtr edges[5];
+            result->getEdges(edges);
+            for (unsigned int i = 0; i < 5; i++) {
+                SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
+                        edges[i]->getData());
+                SheetSPtr sheet = data->getSheet();
+                node->addSheet(sheet);
+            }
+#endif
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+TetrahedronEventSPtr SimpleStraightSkel::nextTetrahedronEvent(PolyhedronSPtr polyhedron,
+                                                              const CGAL::FT current_offset,
+                                                              CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Tetrahedron Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    TetrahedronEventSPtr result = TetrahedronEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        if (isTetrahedron(edge)) {
+            FacetSPtr facet = edge->getFacetL();
+            Point3SPtr point = Point3SPtr();
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = vanishesAt(edge, current_offset);
+            if (!point) {
+                continue;
+            }
+            if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+                NodeSPtr node;
+                if (!result) {
+                    node = Node::create(point);
+                    result = TetrahedronEvent::create(polyhedron);
+                    result->setNode(node);
+                }
+                node = result->getNode();
+                node->clear();
+                node->setOffset(current_offset + offset_event);
+                node->setPoint(point);
+                result->setEdgeBegin(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+                VertexSPtr vertices[4];
+                result->getVertices(vertices);
+                for (unsigned int i = 0; i < 4; i++) {
+                    SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
+                            vertices[i]->getData());
+                    ArcSPtr arc = vertex_data->getArc();
+                    node->addArc(arc);
+                }
+                EdgeSPtr edges[6];
+                result->getEdges(edges);
+                for (unsigned int i = 0; i < 6; i++) {
+                    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
+                            edges[i]->getData());
+                    SheetSPtr sheet = edge_data->getSheet();
+                    node->addSheet(sheet);
+                }
+#endif
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+                current_offset_to_nearest_event = offset_event;
+#endif
+            }
+        }
+    }
+    return result;
+}
+
+VertexEventSPtr SimpleStraightSkel::nextVertexEvent(PolyhedronSPtr polyhedron,
+                                                    const CGAL::FT current_offset,
+                                                    CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Vertex Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    VertexEventSPtr result = VertexEventSPtr();
+
+    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
+    while (it_v1 != polyhedron->vertices().end()) {
+        VertexSPtr vertex_1 = *it_v1++;
+
+        if (isLocked(vertex_1)) {
+            continue;
+        }
+
+        if (isConvex(vertex_1)) {
+            continue;
+        }
+
+        std::list<VertexSPtr> vertices_2;
+        std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
+        while (it_f != vertex_1->facets().end()) {
+            FacetWPtr facet_wptr = *it_f++;
+            if (!facet_wptr.expired()) {
+                FacetSPtr facet(facet_wptr);
+                vertices_2.insert(vertices_2.end(),
+                        facet->vertices().begin(), facet->vertices().end());
+            }
+        }
+        std::list<VertexSPtr>::iterator it_v2 = vertices_2.begin();
+        while (it_v2 != vertices_2.end()) {
+            VertexSPtr vertex_2 = *it_v2++;
+            if (vertex_1 == vertex_2) {
+                continue;
+            }
+            // @fixme is this really meant to be a shared ptr comparison?
+            if (vertex_1->getPoint() == vertex_2->getPoint()) {
+                continue;
+            }
+            if (isLocked(vertex_2)) {
+                continue;
+            }
+            if (isConvex(vertex_2)) {
+                continue;
+            }
+
+            if (vertex_1->findEdge(vertex_2)) {
+                // edge event
+                continue;
+            }
+
+            FacetSPtr facet_1;
+            FacetSPtr facet_2;
+            int num_equal_facets = 0;
+            std::list<FacetWPtr>::iterator it_f1 = vertex_1->facets().begin();
+            while (it_f1 != vertex_1->facets().end()) {
+                FacetWPtr facet_1_wptr = *it_f1++;
+                if (!facet_1_wptr.expired()) {
+                    std::list<FacetWPtr>::iterator it_f2 = vertex_2->facets().begin();
+                    while (it_f2 != vertex_2->facets().end()) {
+                        FacetWPtr facet_2_wptr = *it_f2++;
+                        if (facet_1_wptr == facet_2_wptr) {
+                            if (num_equal_facets == 0) {
+                                facet_1 = FacetSPtr(facet_1_wptr);
+                            } else {
+                                facet_2 = FacetSPtr(facet_2_wptr);
+                            }
+                            num_equal_facets++;
+                        }
+                    }
+                }
+            }
+            if (num_equal_facets != 2) {
+                continue;
+            }
+            if (facet_1->next(vertex_1) != facet_2) {
+                FacetSPtr facet_tmp = facet_1;
+                facet_1 = facet_2;
+                facet_2 = facet_tmp;
+            }
+            if (vertex_1->next(facet_1)->next(facet_1) == vertex_2 ||
+                    vertex_1->next(facet_2)->next(facet_2) == vertex_2 ||
+                    vertex_1->prev(facet_1)->prev(facet_1) == vertex_2 ||
+                    vertex_1->prev(facet_2)->prev(facet_2) == vertex_2) {
+                // edge merge event
+                continue;
+            }
+
+            EdgeSPtr edge_11 = EdgeSPtr();
+            EdgeSPtr edge_12 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
+            while (it_e1 != vertex_1->edges().end()) {
+                EdgeWPtr edge_1_wptr = *it_e1++;
+                if (!edge_1_wptr.expired()) {
+                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                    FacetSPtr facet_1l = edge_1->getFacetL();
+                    FacetSPtr facet_1r = edge_1->getFacetR();
+                    if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+                            (facet_1r == facet_1 && facet_1l != facet_2)) {
+                        edge_11 = edge_1;
+                    } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                            (facet_1r == facet_2 && facet_1l != facet_1)) {
+                        edge_12 = edge_1;
+                    }
+                }
+            }
+            EdgeSPtr edge_21 = EdgeSPtr();
+            EdgeSPtr edge_22 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
+            while (it_e2 != vertex_2->edges().end()) {
+                EdgeWPtr edge_2_wptr = *it_e2++;
+                if (!edge_2_wptr.expired()) {
+                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                    FacetSPtr facet_2l = edge_2->getFacetL();
+                    FacetSPtr facet_2r = edge_2->getFacetR();
+                    if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+                            (facet_2r == facet_1 && facet_2l != facet_2)) {
+                        edge_21 = edge_2;
+                    } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                            (facet_2r == facet_2 && facet_2l != facet_1)) {
+                        edge_22 = edge_2;
+                    }
+                }
+            }
+            if (!((edge_11->next(vertex_1) == edge_12 && edge_22->next(vertex_2) == edge_21) ||
+                    (edge_12->next(vertex_1) == edge_11 && edge_21->next(vertex_2) == edge_22))) {
+                // flip vertex event
+                continue;
+            }
+            bool conv_split_event = false;
+            FacetSPtr facet_1b = facet_2->next(vertex_1);
+            FacetSPtr facet_2b = facet_1->next(vertex_2);
+            EdgeSPtr edge_cur = edge_11->next(facet_1b);
+            while (edge_cur != edge_11) {
+                if ((edge_cur->getFacetL() == facet_1b && edge_cur->getFacetR() == facet_2b) ||
+                        (edge_cur->getFacetR() == facet_1b && edge_cur->getFacetL() == facet_2b)) {
+                    conv_split_event = true;
+                    break;
+                }
+                edge_cur = edge_cur->next(facet_1b);
+            }
+            if (conv_split_event) {
+                continue;
+            }
+
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+            CGAL_assertion(offset_event > current_offset_to_nearest_event);
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = VertexEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_1->getData());
+            node->addArc(data_1->getArc());
+            SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_2->getData());
+            node->addArc(data_2->getArc());
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setVertex1(vertex_1);
+            result->setVertex2(vertex_2);
+            result->setFacet1(facet_1);
+            result->setFacet2(facet_2);
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+FlipVertexEventSPtr SimpleStraightSkel::nextFlipVertexEvent(PolyhedronSPtr polyhedron,
+                                                            const CGAL::FT current_offset,
+                                                            CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Flip Vertex Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    FlipVertexEventSPtr result = FlipVertexEventSPtr();
+
+    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
+    while (it_v1 != polyhedron->vertices().end()) {
+        VertexSPtr vertex_1 = *it_v1++;
+        if (isConvex(vertex_1)) {
+            continue;
+        }
+
+        std::list<VertexSPtr> vertices_2;
+        std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
+        while (it_f != vertex_1->facets().end()) {
+            FacetWPtr facet_wptr = *it_f++;
+            if (!facet_wptr.expired()) {
+                FacetSPtr facet(facet_wptr);
+                vertices_2.insert(vertices_2.end(),
+                        facet->vertices().begin(), facet->vertices().end());
+            }
+        }
+        std::list<VertexSPtr>::iterator it_v2 = vertices_2.begin();
+        while (it_v2 != vertices_2.end()) {
+            VertexSPtr vertex_2 = *it_v2++;
+            if (vertex_1 == vertex_2) {
+                continue;
+            }
+            if (vertex_1->getPoint() == vertex_2->getPoint()) {
+                continue;
+            }
+            if (isConvex(vertex_2)) {
+                continue;
+            }
+
+            if (vertex_1->findEdge(vertex_2)) {
+                // edge event
+                continue;
+            }
+
+            FacetSPtr facet_1;
+            FacetSPtr facet_2;
+            int num_equal_facets = 0;
+            std::list<FacetWPtr>::iterator it_f1 = vertex_1->facets().begin();
+            while (it_f1 != vertex_1->facets().end()) {
+                FacetWPtr facet_1_wptr = *it_f1++;
+                if (!facet_1_wptr.expired()) {
+                    std::list<FacetWPtr>::iterator it_f2 = vertex_2->facets().begin();
+                    while (it_f2 != vertex_2->facets().end()) {
+                        FacetWPtr facet_2_wptr = *it_f2++;
+                        if (facet_1_wptr == facet_2_wptr) {
+                            if (num_equal_facets == 0) {
+                                facet_1 = FacetSPtr(facet_1_wptr);
+                            } else {
+                                facet_2 = FacetSPtr(facet_2_wptr);
+                            }
+                            num_equal_facets++;
+                        }
+                    }
+                }
+            }
+            if (num_equal_facets != 2) {
+                continue;
+            }
+            if (facet_1->next(vertex_1) != facet_2) {
+                FacetSPtr facet_tmp = facet_1;
+                facet_1 = facet_2;
+                facet_2 = facet_tmp;
+            }
+            if (vertex_1->next(facet_1)->next(facet_1) == vertex_2 ||
+                    vertex_1->next(facet_2)->next(facet_2) == vertex_2 ||
+                    vertex_1->prev(facet_1)->prev(facet_1) == vertex_2 ||
+                    vertex_1->prev(facet_2)->prev(facet_2) == vertex_2) {
+                // edge merge event
+                continue;
+            }
+
+            EdgeSPtr edge_11 = EdgeSPtr();
+            EdgeSPtr edge_12 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
+            while (it_e1 != vertex_1->edges().end()) {
+                EdgeWPtr edge_1_wptr = *it_e1++;
+                if (!edge_1_wptr.expired()) {
+                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                    FacetSPtr facet_1l = edge_1->getFacetL();
+                    FacetSPtr facet_1r = edge_1->getFacetR();
+                    if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+                            (facet_1r == facet_1 && facet_1l != facet_2)) {
+                        edge_11 = edge_1;
+                    } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                            (facet_1r == facet_2 && facet_1l != facet_1)) {
+                        edge_12 = edge_1;
+                    }
+                }
+            }
+            EdgeSPtr edge_21 = EdgeSPtr();
+            EdgeSPtr edge_22 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
+            while (it_e2 != vertex_2->edges().end()) {
+                EdgeWPtr edge_2_wptr = *it_e2++;
+                if (!edge_2_wptr.expired()) {
+                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                    FacetSPtr facet_2l = edge_2->getFacetL();
+                    FacetSPtr facet_2r = edge_2->getFacetR();
+                    if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+                            (facet_2r == facet_1 && facet_2l != facet_2)) {
+                        edge_21 = edge_2;
+                    } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                            (facet_2r == facet_2 && facet_2l != facet_1)) {
+                        edge_22 = edge_2;
+                    }
+                }
+            }
+            if (!(edge_12->next(vertex_1) == edge_11 && edge_22->next(vertex_2) == edge_21)) {
+                // vertex event
+                continue;
+            }
+            bool conv_split_event = false;
+            FacetSPtr facet_1b = facet_2->next(vertex_1);
+            FacetSPtr facet_2b = facet_2->next(vertex_2);
+            EdgeSPtr edge_cur = edge_11->next(facet_1b);
+            while (edge_cur != edge_11) {
+                if ((edge_cur->getFacetL() == facet_1b && edge_cur->getFacetR() == facet_2b) ||
+                        (edge_cur->getFacetR() == facet_1b && edge_cur->getFacetL() == facet_2b)) {
+                    conv_split_event = true;
+                    break;
+                }
+                edge_cur = edge_cur->next(facet_1b);
+            }
+            if (conv_split_event) {
+                continue;
+            }
+
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+            CGAL_assertion(offset_event > current_offset_to_nearest_event);
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = FlipVertexEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_1->getData());
+            node->addArc(data_1->getArc());
+            SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_2->getData());
+            node->addArc(data_2->getArc());
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setVertex1(vertex_1);
+            result->setVertex2(vertex_2);
+            result->setFacet1(facet_1);
+            result->setFacet2(facet_2);
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+SurfaceEventSPtr SimpleStraightSkel::nextSurfaceEvent(PolyhedronSPtr polyhedron,
+                                                      const CGAL::FT current_offset,
+                                                      CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Surface Event" << std::endl;
+    CGAL::Real_timer timer;
+    timer.start();
+
+    ReadLock l(polyhedron->mutex());
+    SurfaceEventSPtr result = SurfaceEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e1 = polyhedron->edges().begin();
+    while (it_e1 != polyhedron->edges().end()) {
+        EdgeSPtr edge_1 = *it_e1++;
+        FacetSPtr facet_1_src = getFacetSrc(edge_1);
+        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+        std::list<EdgeSPtr> edges_2;
+        edges_2.insert(edges_2.end(),
+                facet_1_src->edges().begin(), facet_1_src->edges().end());
+        edges_2.insert(edges_2.end(),
+                facet_1_dst->edges().begin(), facet_1_dst->edges().end());
+        std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
+        while (it_e2 != edges_2.end()) {
+            EdgeSPtr edge_2 = *it_e2++;
+            if (edge_1 == edge_2) {
+                continue;
+            }
+            if (edge_1->getFacetL() == edge_2->getFacetL() ||
+                    edge_1->getFacetL() == edge_2->getFacetR() ||
+                    edge_1->getFacetR() == edge_2->getFacetL() ||
+                    edge_1->getFacetR() == edge_2->getFacetR()) {
+                // on same facet
+                continue;
+            }
+            if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+                // share a vertex
+                continue;
+            }
+            // vertex of edge_1 splits edge_2
+            if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
+                    (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
+                    (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
+                    (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src))) {
+                // no surface event
+                continue;
+            }
+            FacetSPtr facet_2_src = getFacetSrc(edge_2);
+            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
+                    (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
+                    (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
+                    (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
+                // flip vertex event
+                continue;
+            }
+            if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
+                    edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
+                    edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
+                    edge_1->getVertexDst()->findEdge(edge_2->getVertexDst()) ) {
+                // edge event (when a pyramid grows outwards)
+                // a surface split is not possible with only one edge in between
+                continue;
+            }
+            if ((edge_1->getFacetL() == facet_2_src && facet_1_src == edge_2->getFacetL()) ||
+                    (edge_1->getFacetL() == facet_2_dst && facet_1_src == edge_2->getFacetR()) ||
+                    (edge_1->getFacetR() == facet_2_src && facet_1_dst == edge_2->getFacetL()) ||
+                    (edge_1->getFacetR() == facet_2_dst && facet_1_dst == edge_2->getFacetR()) ||
+                    (edge_1->getFacetR() == facet_2_src && facet_1_src == edge_2->getFacetR()) ||
+                    (edge_1->getFacetR() == facet_2_dst && facet_1_src == edge_2->getFacetL()) ||
+                    (edge_1->getFacetL() == facet_2_src && facet_1_dst == edge_2->getFacetR()) ||
+                    (edge_1->getFacetL() == facet_2_dst && facet_1_dst == edge_2->getFacetL())) {
+                // vertex event
+                continue;
+            }
+            bool is_conv_split_event = false;
+            std::list<EdgeSPtr> edges = edge_1->getFacetL()->findEdges(edge_1->getFacetR());
+            std::list<EdgeSPtr>::iterator it_e = edges.begin();
+            while (it_e != edges.end()) {
+                EdgeSPtr edge = *it_e++;
+                if (edge == edge_1) {
+                    continue;
+                }
+                FacetSPtr facet_src = getFacetSrc(edge);
+                FacetSPtr facet_dst = getFacetDst(edge);
+                if (facet_1_src == edge_2->getFacetL() ||
+                        facet_1_dst == edge_2->getFacetL()) {
+                    if (facet_src == edge_2->getFacetR() ||
+                            facet_dst == edge_2->getFacetR()) {
+                        is_conv_split_event = true;
+                        break;
+                    }
+                } else if (facet_1_src == edge_2->getFacetR() ||
+                        facet_1_dst == edge_2->getFacetR()) {
+                    if (facet_src == edge_2->getFacetL() ||
+                            facet_dst == edge_2->getFacetL()) {
+                        is_conv_split_event = true;
+                        break;
+                    }
+                }
+            }
+            if (is_conv_split_event) {
+                continue;
+            }
+
+            // calculate intersection point
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+
+            CGAL_assertion(offset_event > current_offset_to_nearest_event);
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = SurfaceEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setEdge1(edge_1);
+            result->setEdge2(edge_2);
+
+            SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_1->getData());
+            SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_2->getData());
+            node->addSheet(data_1->getSheet());
+            node->addSheet(data_2->getSheet());
+
+            if (facet_1_src == edge_2->getFacetL() ||
+                    facet_1_src == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexSrc()->getData());
+                node->addArc(data_1_src->getArc());
+            }
+            if (facet_1_dst == edge_2->getFacetL() ||
+                    facet_1_dst == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexDst()->getData());
+                node->addArc(data_1_dst->getArc());
+            }
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+
+    timer.stop();
+    std::cout << "Sought Surface Event in: " << timer.time() << std::endl;
+
+    return result;
+}
+
+PolyhedronSplitEventSPtr SimpleStraightSkel::nextPolyhedronSplitEvent(PolyhedronSPtr polyhedron,
+                                                                      const CGAL::FT current_offset,
+                                                                      CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Polyhedron Split Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    PolyhedronSplitEventSPtr result = PolyhedronSplitEventSPtr();
+
+    std::list<EdgeSPtr>::iterator it_e1 = polyhedron->edges().begin();
+    while (it_e1 != polyhedron->edges().end()) {
+        EdgeSPtr edge_1 = *it_e1++;
+        std::cout << "consider edge " << edge_1->toString() << std::endl;
+        if (isLocked(edge_1)) {
+            continue;
+        }
+        if (!isReflex(edge_1)) {
+            continue;
+        }
+        FacetSPtr facet_1_src = getFacetSrc(edge_1);
+        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+        std::list<EdgeSPtr>::iterator it_e2 = facet_1_src->edges().begin();
+        while (it_e2 != facet_1_src->edges().end()) {
+            EdgeSPtr edge_2 = *it_e2++;
+            if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+                // share a vertex
+                continue;
+            }
+            if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() == facet_1_dst) ||
+                    (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() == facet_1_src))) {
+                // no polyhedron split event
+                continue;
+            }
+            if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
+                    edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
+                    edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
+                    edge_1->getVertexDst()->findEdge(edge_2->getVertexDst())) {
+                // does not work when there is only one edge in between
+                continue;
+            }
+
+            // calculate intersection point
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = PolyhedronSplitEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setEdge1(edge_1);
+            result->setEdge2(edge_2);
+
+            SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_1->getData());
+            SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_2->getData());
+            node->addSheet(data_1->getSheet());
+            node->addSheet(data_2->getSheet());
+
+            if (facet_1_src == edge_2->getFacetL() ||
+                    facet_1_src == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexSrc()->getData());
+                node->addArc(data_1_src->getArc());
+            }
+            if (facet_1_dst == edge_2->getFacetL() ||
+                    facet_1_dst == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexDst()->getData());
+                node->addArc(data_1_dst->getArc());
+            }
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+SplitMergeEventSPtr SimpleStraightSkel::nextSplitMergeEvent(PolyhedronSPtr polyhedron,
+                                                            const CGAL::FT current_offset,
+                                                            CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Split Merge Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    SplitMergeEventSPtr result = SplitMergeEventSPtr();
+
+    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
+    while (it_v1 != polyhedron->vertices().end()) {
+        VertexSPtr vertex_1 = *it_v1++;
+        if (isConvex(vertex_1)) {
+            continue;
+        }
+
+        std::list<VertexSPtr> vertices_2;
+        std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
+        while (it_f != vertex_1->facets().end()) {
+            FacetWPtr facet_wptr = *it_f++;
+            if (!facet_wptr.expired()) {
+                FacetSPtr facet(facet_wptr);
+                vertices_2.insert(vertices_2.end(),
+                        facet->vertices().begin(), facet->vertices().end());
+            }
+        }
+        std::list<VertexSPtr>::iterator it_v2 = vertices_2.begin();
+        while (it_v2 != vertices_2.end()) {
+            VertexSPtr vertex_2 = *it_v2++;
+            if (vertex_1 == vertex_2) {
+                continue;
+            }
+            if (vertex_1->getPoint() == vertex_2->getPoint()) {
+                continue;
+            }
+            if (isConvex(vertex_2)) {
+                continue;
+            }
+
+            if (vertex_1->findEdge(vertex_2)) {
+                // edge event
+                continue;
+            }
+
+            FacetSPtr facet_1;
+            FacetSPtr facet_2;
+            int num_equal_facets = 0;
+            std::list<FacetWPtr>::iterator it_f1 = vertex_1->facets().begin();
+            while (it_f1 != vertex_1->facets().end()) {
+                FacetWPtr facet_1_wptr = *it_f1++;
+                if (!facet_1_wptr.expired()) {
+                    std::list<FacetWPtr>::iterator it_f2 = vertex_2->facets().begin();
+                    while (it_f2 != vertex_2->facets().end()) {
+                        FacetWPtr facet_2_wptr = *it_f2++;
+                        if (facet_1_wptr == facet_2_wptr) {
+                            if (num_equal_facets == 0) {
+                                facet_1 = FacetSPtr(facet_1_wptr);
+                            } else {
+                                facet_2 = FacetSPtr(facet_2_wptr);
+                            }
+                            num_equal_facets++;
+                        }
+                    }
+                }
+            }
+            if (num_equal_facets != 2) {
+                continue;
+            }
+            if (facet_1->next(vertex_1) != facet_2) {
+                FacetSPtr facet_tmp = facet_1;
+                facet_1 = facet_2;
+                facet_2 = facet_tmp;
+            }
+            if (vertex_1->next(facet_1)->next(facet_1) == vertex_2 ||
+                    vertex_1->next(facet_2)->next(facet_2) == vertex_2 ||
+                    vertex_1->prev(facet_1)->prev(facet_1) == vertex_2 ||
+                    vertex_1->prev(facet_2)->prev(facet_2) == vertex_2) {
+                // edge merge event
+                continue;
+            }
+
+            EdgeSPtr edge_11 = EdgeSPtr();
+            EdgeSPtr edge_12 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
+            while (it_e1 != vertex_1->edges().end()) {
+                EdgeWPtr edge_1_wptr = *it_e1++;
+                if (!edge_1_wptr.expired()) {
+                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                    FacetSPtr facet_1l = edge_1->getFacetL();
+                    FacetSPtr facet_1r = edge_1->getFacetR();
+                    if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+                            (facet_1r == facet_1 && facet_1l != facet_2)) {
+                        edge_11 = edge_1;
+                    } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                            (facet_1r == facet_2 && facet_1l != facet_1)) {
+                        edge_12 = edge_1;
+                    }
+                }
+            }
+            EdgeSPtr edge_21 = EdgeSPtr();
+            EdgeSPtr edge_22 = EdgeSPtr();
+            std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
+            while (it_e2 != vertex_2->edges().end()) {
+                EdgeWPtr edge_2_wptr = *it_e2++;
+                if (!edge_2_wptr.expired()) {
+                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                    FacetSPtr facet_2l = edge_2->getFacetL();
+                    FacetSPtr facet_2r = edge_2->getFacetR();
+                    if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+                            (facet_2r == facet_1 && facet_2l != facet_2)) {
+                        edge_21 = edge_2;
+                    } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                            (facet_2r == facet_2 && facet_2l != facet_1)) {
+                        edge_22 = edge_2;
+                    }
+                }
+            }
+            bool conv_split_event = false;
+            FacetSPtr facet_1b = facet_2->next(vertex_1);
+            FacetSPtr facet_2b = facet_1->next(vertex_2);
+            if (facet_2b == facet_2) {
+                // flip vertex event
+                facet_2b = facet_2b->next(vertex_2);
+            }
+            EdgeSPtr edge_cur = edge_11->next(facet_1b);
+            while (edge_cur != edge_11) {
+                if ((edge_cur->getFacetL() == facet_1b && edge_cur->getFacetR() == facet_2b) ||
+                        (edge_cur->getFacetR() == facet_1b && edge_cur->getFacetL() == facet_2b)) {
+                    conv_split_event = true;
+                    break;
+                }
+                edge_cur = edge_cur->next(facet_1b);
+            }
+            if (!conv_split_event) {
+                continue;
+            }
+
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = SplitMergeEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_1->getData());
+            node->addArc(data_1->getArc());
+            SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex_2->getData());
+            node->addArc(data_2->getArc());
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setVertex1(vertex_1);
+            result->setVertex2(vertex_2);
+            result->setFacet1(facet_1);
+            result->setFacet2(facet_2);
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+    return result;
+}
+
+EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhedron,
+                                                          const CGAL::FT current_offset,
+                                                          CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Edge Split Event" << std::endl;
+    CGAL::Real_timer timer;
+    timer.start();
+
+    ReadLock l(polyhedron->mutex());
+    EdgeSplitEventSPtr result = EdgeSplitEventSPtr();
+
+    std::list<EdgeSPtr> edges_reflex;
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        if (isLocked(edge)) {
+            continue; // I have no idea what this does
+        }
+        if (isReflex(edge)) {
+            edges_reflex.push_back(edge);
+        }
+    }
+
+    std::list<EdgeSPtr>::iterator it_e1 = edges_reflex.begin();
+    while (it_e1 != edges_reflex.end()) {
+        EdgeSPtr edge_1 = *it_e1++;
+        FacetSPtr facet_1_src = getFacetSrc(edge_1);
+        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+
+        std::list<EdgeSPtr>::iterator it_e2 = it_e1;
+        while (it_e2 != edges_reflex.end()) {
+            EdgeSPtr edge_2 = *it_e2++;
+            if (edge_1->getFacetL() == edge_2->getFacetL() ||
+                    edge_1->getFacetL() == edge_2->getFacetR() ||
+                    edge_1->getFacetR() == edge_2->getFacetL() ||
+                    edge_1->getFacetR() == edge_2->getFacetR()) {
+                // on same facet
+                continue;
+            }
+            if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+                    edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+                // share a vertex
+                continue;
+            }
+            if (((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() == facet_1_dst) ||
+                    (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() == facet_1_src))) {
+                // polyhedron split event
+                continue;
+            }
+            FacetSPtr facet_2_src = getFacetSrc(edge_2);
+            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            if ((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
+                    (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
+                    (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
+                    (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src)) {
+                // surface event
+                continue;
+            }
+            if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
+                    (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
+                    (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
+                    (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
+                // surface event
+                continue;
+            }
+
+            // calculate intersection point
+            Point3SPtr point;
+            CGAL::FT offset_event;
+            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, current_offset_to_nearest_event);
+            if (!point)
+                continue;
+
+            NodeSPtr node;
+            if (!result) {
+                node = Node::create(point);
+                result = EdgeSplitEvent::create(polyhedron);
+                result->setNode(node);
+            }
+            node = result->getNode();
+            node->clear();
+            node->setOffset(current_offset + offset_event);
+            node->setPoint(point);
+            result->setEdge1(edge_1);
+            result->setEdge2(edge_2);
+
+            SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_1->getData());
+            SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edge_2->getData());
+            node->addSheet(data_1->getSheet());
+            node->addSheet(data_2->getSheet());
+
+            if (facet_1_src == edge_2->getFacetL() ||
+                    facet_1_src == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexSrc()->getData());
+                node->addArc(data_1_src->getArc());
+            }
+            if (facet_1_dst == edge_2->getFacetL() ||
+                    facet_1_dst == edge_2->getFacetR()) {
+                SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                    edge_1->getVertexDst()->getData());
+                node->addArc(data_1_dst->getArc());
+            }
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+            current_offset_to_nearest_event = offset_event;
+#endif
+        }
+    }
+
+    timer.stop();
+    std::cout << "Sought Edge Split Event in: " << timer.time() << std::endl;
+
+    return result;
+}
+
+PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
+                                                    const CGAL::FT current_offset,
+                                                    CGAL::FT& current_offset_to_nearest_event)
+{
+    std::cout << ">>> Seek -- Next Pierce Event" << std::endl;
+
+    ReadLock l(polyhedron->mutex());
+    PierceEventSPtr result = PierceEventSPtr();
+
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (isLocked(vertex)) {
+            continue;
+        }
+
+        if (isReflex(vertex)) {
+            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+            ArcSPtr arc = data->getArc();
+
+            std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+            while (it_f != polyhedron->facets().end()) {
+                FacetSPtr facet = *it_f++;
+                bool contains_vertex = false;
+                std::list<VertexSPtr>::iterator it_v2 = facet->vertices().begin();
+                while (it_v2 != facet->vertices().end()) {
+                    VertexSPtr vertex_2 = *it_v2++;
+                    if (vertex_2->getPoint() == vertex->getPoint()) {
+                        contains_vertex = true;
+                        break;
+                    }
+                }
+                if (contains_vertex) {
+                    continue;
+                }
+
+                bool has_edge_to_facet = false;
+                std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
+                while (it_e != vertex->edges().end()) {
+                    EdgeWPtr edge_wptr = *it_e++;
+                    if (!edge_wptr.expired()) {
+                        EdgeSPtr edge(edge_wptr);
+                        // @todo checking both because we don't know if vertex is the src or the dst of the edge?
+                        FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
+                        FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
+                        if (facet == facet_src || facet == facet_dst) {
+                            has_edge_to_facet = true;
+                            break;
+                        }
+                    }
+                }
+                if (has_edge_to_facet) {
+                    continue;
+                }
+
+                // @fixme assumes positive weights
+                if (KernelWrapper::side(facet->plane(), vertex->getPoint()) > 0) {
+                    continue;
+                }
+
+                Point3SPtr point;
+                CGAL::FT offset_event;
+
+// #define CGAL_SS3_OLD_CODE_PIERCE_EVENT
+#ifdef CGAL_SS3_OLD_CODE_PIERCE_EVENT
+                // @fixme this filter seems overly restrictive?
+                // Could not we have an intersection between the OFFSET face
+                // and the arc's supporting line (but we don't know at what offset yet)?
+                if (!IsLineInFacet(facet, arc->line())) {
+                    continue;
+                }
+
+                FacetSPtr facet_vertex = FacetSPtr(vertex->facets().front());
+                CGAL::FT facet_speed_vertex = 1.0;
+                if (facet_vertex->hasData()) {
+                    facet_speed_vertex = std::dynamic_pointer_cast<SkelFacetData>(
+                            facet_vertex->getData())->getSpeed();
+                }
+                Plane3SPtr plane_vertex_offset = KernelWrapper::offsetPlane(facet_vertex->plane(), -facet_speed_vertex);
+                Point3SPtr point_vertex_offset = KernelWrapper::intersection(plane_vertex_offset, arc->line());
+                CGAL::FT speed_vertex = KernelWrapper::distance(vertex->getPoint(), point_vertex_offset);
+
+                Point3SPtr point_facet = KernelWrapper::intersection(facet->plane(), arc->line());
+                CGAL::FT facet_speed = 1.0;
+                if (facet->hasData()) {
+                    facet_speed = std::dynamic_pointer_cast<SkelFacetData>(
+                            facet->getData())->getSpeed();
+                }
+                Plane3SPtr plane_facet_offset = KernelWrapper::offsetPlane(facet->plane(), -facet_speed);
+                Point3SPtr point_facet_offset = KernelWrapper::intersection(plane_facet_offset, arc->line());
+                CGAL::FT speed_facet = KernelWrapper::distance(point_facet, point_facet_offset);
+
+                CGAL::FT distance = KernelWrapper::distance(vertex->getPoint(), point_facet);
+                CGAL::FT dist_vertex = (distance * speed_vertex) / (speed_vertex + speed_facet);
+                if (KernelWrapper::comparePoints(arc->getDirection(),
+                        point_facet, point_facet_offset) < 0) {
+                    // for weighted straight skeleton
+                    // reflex vertex and facet move into same direction
+                    if (speed_facet < speed_vertex) {
+                        // facet to slow
+                        continue;
+                    }
+                    dist_vertex = (distance * speed_vertex) / (speed_facet - speed_vertex);
+                }
+
+                offset_event = -dist_vertex / speed_vertex;
+                point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
+                // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
+#else
+                CGAL_assertion(vertex->facets().size() == 3);
+
+                FacetWPtr wf0 = *(std::next(vertex->facets().begin(), 0)); // @todo can be factorized
+                FacetWPtr wf1 = *(std::next(vertex->facets().begin(), 1));
+                FacetWPtr wf2 = *(std::next(vertex->facets().begin(), 2));
+
+                CGAL_assertion(!wf0.expired());
+                CGAL_assertion(!wf1.expired());
+                CGAL_assertion(!wf2.expired());
+
+                FacetSPtr f0(wf0);
+                FacetSPtr f1(wf1);
+                FacetSPtr f2(wf2);
+
+                Plane3SPtr plane = facet->plane();
+                Plane3SPtr plane_0 = f0->plane();
+                Plane3SPtr plane_1 = f1->plane();
+                Plane3SPtr plane_2 = f2->plane();
+
+                CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(f0->getData())->getSpeed();
+                CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
+                CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
+
+                std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+                    plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
+
+                // std::cout << " **" << std::endl;
+                // std::cout << "facet = " << facet->getID() << std::endl;
+                // std::cout << "plane = " << *plane << std::endl;
+                // std::cout << "f0 = " << f0->getID() << std::endl;
+                // std::cout << "f1 = " << f1->getID() << std::endl;
+                // std::cout << "f2 = " << f2->getID() << std::endl;
+                // std::cout << "ipoint: " << *point << " time: " << offset_event << std::endl;
+
+                // Now, we might naively wish to filter using bisectors like in 2D SLS code,
+                // but unlike a segment, a face in the 3D SS code has no reason to be convex,
+                // which changes everything and can result in false positives.
+                //
+                // The bisector filter in 2D is equivalent to checking if the point is on the offset
+                // face. We could check this here, but determining what is the offset face at this
+                // point (i.e., while searching for events) is rough: plenty of other events
+                // might modify the face before this particular pierce event appears, and so
+                // we can't just do shift(facet) because the result might be a self-intersecting
+                // polygon with holes.
+                //
+                // Instead, we do not filter here, but simply put it in the queue. When the event
+                // will be popped, then we know it's the next event globally and nothing else
+                // can mess up the face, and we can do the in-test check then.
+                //
+                // See HandlePierceEvent()
+
+#endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
+                std::cout << "Accepted event" << std::endl;
+
+                if (offset_event == 0)
+                {
+                  // @fixme this should be <= like the other nextSomethingEvent
+                  // but since we handle filtering at pop time, it will just loop indefinitely.
+                  CGAL_assertion_msg(false, "this should have been accepted!!");
+                }
+
+                if (offset_event < 0 && offset_event > current_offset_to_nearest_event) {
+                    NodeSPtr node;
+                    if (!result) {
+                        node = Node::create(point);
+                        result = PierceEvent::create(polyhedron);
+                        result->setNode(node);
+                    }
+                    node = result->getNode();
+                    node->clear();
+                    node->addArc(arc);
+                    node->setOffset(current_offset + offset_event);
+                    node->setPoint(point);
+                    result->setFacet(facet);
+                    result->setVertex(vertex);
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+                    current_offset_to_nearest_event = offset_event;
+#endif
+                }
+            }
+        }
+    }
+    return result;
+}
+#endif // individual events of a certain type
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
