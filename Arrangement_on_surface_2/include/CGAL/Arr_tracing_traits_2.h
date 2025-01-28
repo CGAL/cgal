@@ -76,9 +76,9 @@ public:
     NUMBER_OF_OPERATIONS
   };
 
-private:
   using Base = BaseTraits;
 
+private:
   //! A set of bits that indicate whether operations should be traced.
   unsigned long long m_flags;
 
@@ -833,9 +833,16 @@ public:
       std::cout << "approximate_2" << std::endl
                 << "  xcv: " << xcv << ", error: " << error
                 << ", l2r: " << l2r << std::endl;
-      auto res = m_object(xcv, error, oi, l2r);
-      std::cout << "  result: " << res << std::endl;
-      return res;
+      std::list<Approximate_point_2> container;
+      m_object(xcv, error, std::back_inserter(container), l2r);
+      if (container.empty()) return oi;
+
+      std::size_t i = 0;
+      for (const auto& point : container) {
+        std::cout << "  result[" << i++ << "]: " << point << std::endl;
+        *oi++ = point;
+      }
+      return oi;
     }
   };
 
