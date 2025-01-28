@@ -3918,7 +3918,7 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
         if (config->isLoaded()) {
             if ((config->contains("main", "stop_after_last_save_event") &&
                  config->getBool("main", "stop_after_last_save_event"))) {
-                offset_of_nearest_event = (std::min)(offset_of_nearest_event, save_offsets_.back());
+                offset_of_nearest_event = (std::max)(offset_of_nearest_event, save_offsets_.back());
             }
         }
     }
