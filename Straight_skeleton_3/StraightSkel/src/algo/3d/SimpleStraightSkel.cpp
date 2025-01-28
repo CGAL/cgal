@@ -1859,178 +1859,177 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset);
-        if (offset_event >= offset_of_nearest_event) { // @todo remove all of these filters
-            FacetSPtr facet_src = getFacetSrc(edge);
-            FacetSPtr facet_dst = getFacetDst(edge);
+        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
-            // This does not work when there is more than one edge between both facets.
-            // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
-            std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check with findEdges happen in other events?...
+        FacetSPtr facet_src = getFacetSrc(edge);
+        FacetSPtr facet_dst = getFacetDst(edge);
 
-            bool split_event = false;
-            std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
-            while (it_e2 != edges_2.end()) {
-                EdgeSPtr edge_2 = *it_e2++;
+        // This does not work when there is more than one edge between both facets.
+        // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
+        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check with findEdges happen in other events?...
+
+        bool split_event = false;
+        std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
+        while (it_e2 != edges_2.end()) {
+            EdgeSPtr edge_2 = *it_e2++;
 
 #if defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
-                bool split_event_current_1 = true;
-                bool split_event_current_2 = true;
-                bool split_event_current_3 = true;
+            bool split_event_current_1 = true;
+            bool split_event_current_2 = true;
+            bool split_event_current_3 = true;
 
-                SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-                Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
-                Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
-                if (KernelWrapper::orientation(line(edge_2), line_normal_2) < 0) {
-                    // out of bounded area
-                    split_event_current_1 = false;
-                }
-                SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge_2->getVertexSrc()->getData());
-                ArcSPtr arc_2_src = data_2_src->getArc();
-                if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
-                    // out of bounded area
-                    split_event_current_2 = false;
-                }
-                SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge_2->getVertexDst()->getData());
-                ArcSPtr arc_2_dst = data_2_dst->getArc();
-                if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
-                    // out of bounded area
-                    split_event_current_3 = false;
-                }
+            SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
+            Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
+            Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
+            if (KernelWrapper::orientation(line(edge_2), line_normal_2) < 0) {
+                // out of bounded area
+                split_event_current_1 = false;
+            }
+            SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_2->getVertexSrc()->getData());
+            ArcSPtr arc_2_src = data_2_src->getArc();
+            if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
+                // out of bounded area
+                split_event_current_2 = false;
+            }
+            SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_2->getVertexDst()->getData());
+            ArcSPtr arc_2_dst = data_2_dst->getArc();
+            if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
+                // out of bounded area
+                split_event_current_3 = false;
+            }
 
-                const bool split_event_current = (split_event_current_1 &&
-                                                  split_event_current_2 &&
-                                                  split_event_current_3);
+            const bool split_event_current = (split_event_current_1 &&
+                                              split_event_current_2 &&
+                                              split_event_current_3);
 #endif
 
 #if !defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
-                bool split_event_current_1_b = true;
-                bool split_event_current_2_b = true;
-                bool split_event_current_3_b = true;
+            bool split_event_current_1_b = true;
+            bool split_event_current_2_b = true;
+            bool split_event_current_3_b = true;
 
-                FacetSPtr facet_l2 = edge_2->getFacetL();
-                FacetSPtr facet_r2 = edge_2->getFacetR();
-                FacetSPtr facet_2_src = getFacetSrc(edge_2);
-                FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            FacetSPtr facet_l2 = edge_2->getFacetL();
+            FacetSPtr facet_r2 = edge_2->getFacetR();
+            FacetSPtr facet_2_src = getFacetSrc(edge_2);
+            FacetSPtr facet_2_dst = getFacetDst(edge_2);
 
-                Plane3SPtr plane_l2 = facet_l2->plane();
-                Plane3SPtr plane_r2 = facet_r2->plane();
-                CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-                CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+            Plane3SPtr plane_l2 = facet_l2->plane();
+            Plane3SPtr plane_r2 = facet_r2->plane();
+            CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+            CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
-                CGAL::FT l2a = plane_l2->a();
-                CGAL::FT l2b = plane_l2->b();
-                CGAL::FT l2c = plane_l2->c();
-                CGAL::FT l2d = plane_l2->d();
-                CGAL::FT r2a = plane_r2->a();
-                CGAL::FT r2b = plane_r2->b();
-                CGAL::FT r2c = plane_r2->c();
-                CGAL::FT r2d = plane_r2->d();
+            CGAL::FT l2a = plane_l2->a();
+            CGAL::FT l2b = plane_l2->b();
+            CGAL::FT l2c = plane_l2->c();
+            CGAL::FT l2d = plane_l2->d();
+            CGAL::FT r2a = plane_r2->a();
+            CGAL::FT r2b = plane_r2->b();
+            CGAL::FT r2c = plane_r2->c();
+            CGAL::FT r2d = plane_r2->d();
 
-                CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
-                CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;
-                CGAL_assertion(lt2 == rt2);
+            CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+            CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;
+            CGAL_assertion(lt2 == rt2);
 
-                if ((lt2 > 0) || (rt2 > 0)) {
+            if ((lt2 > 0) || (rt2 > 0)) {
 #ifdef CGAL_SS3_EXIT_ASAP
-                    // can 'break' directly because it's the same value for all 'edge_2's
-                    // @todo take it out of the loop
-                    break;
+                // can 'break' directly because it's the same value for all 'edge_2's
+                // @todo take it out of the loop
+                break;
 #else
-                    split_event_current_1_b = false;
+                split_event_current_1_b = false;
 #endif
-                }
+            }
 
-                if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
+            if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
 #ifdef CGAL_SS3_EXIT_ASAP
-                   continue;
+                continue;
 #else
-                   split_event_current_2_b = false;
+                split_event_current_2_b = false;
 #endif
-                }
+            }
 
-                if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
+            if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
 #ifdef CGAL_SS3_EXIT_ASAP
-                    continue;
+                continue;
 #else
-                    split_event_current_3_b = false;
+                split_event_current_3_b = false;
 #endif
-                }
+            }
 
-                const bool split_event_current_b = (split_event_current_1_b &&
-                                                    split_event_current_2_b &&
-                                                    split_event_current_3_b);
+            const bool split_event_current_b = (split_event_current_1_b &&
+                                                split_event_current_2_b &&
+                                                split_event_current_3_b);
 #endif
 
 #ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
 # ifdef CGAL_SS3_EXIT_ASAP
 #  error "Cannot compare if doing early exits"
 # endif
-                CGAL_assertion(split_event_current_1 == split_event_current_1_b);
-                CGAL_assertion(split_event_current_2 == split_event_current_2_b);
-                CGAL_assertion(split_event_current_3 == split_event_current_3_b);
+            CGAL_assertion(split_event_current_1 == split_event_current_1_b);
+            CGAL_assertion(split_event_current_2 == split_event_current_2_b);
+            CGAL_assertion(split_event_current_3 == split_event_current_3_b);
 
-                CGAL_assertion(split_event_current == split_event_current_b);
+            CGAL_assertion(split_event_current == split_event_current_b);
 #endif
 
-                if (split_event_current_b) {
-                    split_event = true;
-                    break;
-                }
+            if (split_event_current_b) {
+                split_event = true;
+                break;
             }
-            if (split_event) {
-                continue;
-            }
-            // edge merge event
-            EdgeSPtr edge_prev = edge->prev(facet_l);
-            EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
-            if (edge_prev->hasSameFacets(edge_next)) {
-                continue;
-            }
-            edge_prev = edge->prev(facet_l)->prev(facet_l);
-            edge_next = edge->next(facet_l);
-            if (edge_prev->hasSameFacets(edge_next)) {
-                continue;
-            }
-            edge_prev = edge->prev(facet_r);
-            edge_next = edge->next(facet_r)->next(facet_r);
-            if (edge_prev->hasSameFacets(edge_next)) {
-                continue;
-            }
-            edge_prev = edge->prev(facet_r)->prev(facet_r);
-            edge_next = edge->next(facet_r);
-            if (edge_prev->hasSameFacets(edge_next)) {
-                continue;
-            }
+        }
+        if (split_event) {
+            continue;
+        }
+        // edge merge event
+        EdgeSPtr edge_prev = edge->prev(facet_l);
+        EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_l)->prev(facet_l);
+        edge_next = edge->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_r);
+        edge_next = edge->next(facet_r)->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
+        edge_prev = edge->prev(facet_r)->prev(facet_r);
+        edge_next = edge->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            continue;
+        }
 
-            NodeSPtr node = Node::create(point);
-            EdgeEventSPtr event = EdgeEvent::create(polyhedron);
-            event->setNode(node);
-            node->clear();
-            node->setOffset(offset_event);
-            node->setPoint(point);
-            event->setEdge(edge);
+        NodeSPtr node = Node::create(point);
+        EdgeEventSPtr event = EdgeEvent::create(polyhedron);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setEdge(edge);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-            SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge->getVertexSrc()->getData());
-            SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge->getVertexDst()->getData());
-            node->addArc(data_src->getArc());
-            node->addArc(data_dst->getArc());
-            SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
-                    edge->getData());
-            node->addSheet(data_edge->getSheet());
+        SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexSrc()->getData());
+        SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexDst()->getData());
+        node->addArc(data_src->getArc());
+        node->addArc(data_dst->getArc());
+        SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                edge->getData());
+        node->addSheet(data_edge->getSheet());
 #endif
 
-            queue.push(event);
+        queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-            offset_of_nearest_event = offset_event;
+        offset_of_nearest_event = offset_event;
 #endif
-        }
     }
 }
 
@@ -2143,44 +2142,43 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset);
-        if (offset_event >= offset_of_nearest_event) {
-            EdgeMergeEventSPtr event = EdgeMergeEvent::create(polyhedron);
-            NodeSPtr node = Node::create(point);
-            event->setNode(node);
-            node->clear();
-            node->setOffset(offset_event);
-            node->setPoint(point);
-            event->setFacet(facet);
-            event->setEdge1(edge_1);
-            event->setEdge2(edge_2);
+        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+
+        EdgeMergeEventSPtr event = EdgeMergeEvent::create(polyhedron);
+        NodeSPtr node = Node::create(point);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setFacet(facet);
+        event->setEdge1(edge_1);
+        event->setEdge2(edge_2);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-            EdgeSPtr edge_toremove_1 = edge_1->next(facet);
-            EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
-            SkelVertexDataSPtr data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge_toremove_1->src(facet)->getData());
-            node->addArc(data_vertex->getArc());
-            data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge_toremove_1->dst(facet)->getData());
-            node->addArc(data_vertex->getArc());
-            data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
-                    edge_toremove_2->dst(facet)->getData());
-            node->addArc(data_vertex->getArc());
-            SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
-                    edge_toremove_1->getData());
-            node->addSheet(data_edge->getSheet());
-            data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
-                    edge_toremove_2->getData());
-            node->addSheet(data_edge->getSheet());
+        EdgeSPtr edge_toremove_1 = edge_1->next(facet);
+        EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
+        SkelVertexDataSPtr data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_toremove_1->src(facet)->getData());
+        node->addArc(data_vertex->getArc());
+        data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_toremove_1->dst(facet)->getData());
+        node->addArc(data_vertex->getArc());
+        data_vertex = std::dynamic_pointer_cast<SkelVertexData>(
+                edge_toremove_2->dst(facet)->getData());
+        node->addArc(data_vertex->getArc());
+        SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                edge_toremove_1->getData());
+        node->addSheet(data_edge->getSheet());
+        data_edge = std::dynamic_pointer_cast<SkelEdgeData>(
+                edge_toremove_2->getData());
+        node->addSheet(data_edge->getSheet());
 #endif
 
-            queue.push(event);
+        queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-            offset_of_nearest_event = offset_event;
+        offset_of_nearest_event = offset_event;
 #endif
-        }
     }
 }
 
@@ -2248,49 +2246,48 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset);
-        if (offset_event >= offset_of_nearest_event) {
-            if ((KernelWrapper::side(edge->getFacetL()->plane(), point) > 0) ||
-                    KernelWrapper::side(edge->getFacetR()->plane(), point) > 0) {
-                // triangle may not be a hole
-                // after pierce event
-                continue;
-            }
+        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
-            TriangleEventSPtr event = TriangleEvent::create(polyhedron);
-            NodeSPtr node = Node::create(point);
-            event->setNode(node);
-            node->clear();
-            node->setOffset(offset_event);
-            node->setPoint(point);
-            event->setFacet(facet);
-            event->setEdgeBegin(edge);
+        if ((KernelWrapper::side(edge->getFacetL()->plane(), point) > 0) ||
+                KernelWrapper::side(edge->getFacetR()->plane(), point) > 0) {
+            // triangle may not be a hole
+            // after pierce event
+            continue;
+        }
+
+        TriangleEventSPtr event = TriangleEvent::create(polyhedron);
+        NodeSPtr node = Node::create(point);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setFacet(facet);
+        event->setEdgeBegin(edge);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-            VertexSPtr vertices[3];
-            event->getVertices(vertices);
-            for (unsigned int i = 0; i < 3; i++) {
-                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
-                        vertices[i]->getData());
-                ArcSPtr arc = data->getArc();
-                node->addArc(arc);
-            }
-            EdgeSPtr edges[3];
-            event->getEdges(edges);
-            for (unsigned int i = 0; i < 3; i++) {
-                SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
-                        edges[i]->getData());
-                SheetSPtr sheet = data->getSheet();
-                node->addSheet(sheet);
-            }
+        VertexSPtr vertices[3];
+        event->getVertices(vertices);
+        for (unsigned int i = 0; i < 3; i++) {
+            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertices[i]->getData());
+            ArcSPtr arc = data->getArc();
+            node->addArc(arc);
+        }
+        EdgeSPtr edges[3];
+        event->getEdges(edges);
+        for (unsigned int i = 0; i < 3; i++) {
+            SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edges[i]->getData());
+            SheetSPtr sheet = data->getSheet();
+            node->addSheet(sheet);
+        }
 #endif
 
-            queue.push(event);
+        queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-            offset_of_nearest_event = offset_event;
+        offset_of_nearest_event = offset_event;
 #endif
-        }
     }
 }
 
@@ -2370,46 +2367,45 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset);
-        if (offset_event >= offset_of_nearest_event) {
-            DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create(polyhedron);
-            NodeSPtr node = Node::create(point);
-            event->setNode(node);
-            node->clear();
-            node->setOffset(offset_event);
-            node->setPoint(point);
-            event->setFacet1(facet_1);
-            event->setEdge11(edge_11);
-            event->setEdge12(edge_12);
-            event->setFacet2(facet_2);
-            event->setEdge21(edge_21);
-            event->setEdge22(edge_22);
+        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+
+        DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create(polyhedron);
+        NodeSPtr node = Node::create(point);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setFacet1(facet_1);
+        event->setEdge11(edge_11);
+        event->setEdge12(edge_12);
+        event->setFacet2(facet_2);
+        event->setEdge21(edge_21);
+        event->setEdge22(edge_22);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-            VertexSPtr vertices[4];
-            event->getVertices(vertices);
-            for (unsigned int i = 0; i < 4; i++) {
-                SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                        vertices[i]->getData());
-                ArcSPtr arc = vertex_data->getArc();
-                node->addArc(arc);
-            }
-            EdgeSPtr edges[4];
-            event->getEdges(edges);
-            for (unsigned int i = 0; i < 4; i++) {
-                SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                        edges[i]->getData());
-                SheetSPtr sheet = edge_data->getSheet();
-                node->addSheet(sheet);
-            }
+        VertexSPtr vertices[4];
+        event->getVertices(vertices);
+        for (unsigned int i = 0; i < 4; i++) {
+            SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertices[i]->getData());
+            ArcSPtr arc = vertex_data->getArc();
+            node->addArc(arc);
+        }
+        EdgeSPtr edges[4];
+        event->getEdges(edges);
+        for (unsigned int i = 0; i < 4; i++) {
+            SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edges[i]->getData());
+            SheetSPtr sheet = edge_data->getSheet();
+            node->addSheet(sheet);
+        }
 #endif
 
-            queue.push(event);
+        queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-            offset_of_nearest_event = offset_event;
+        offset_of_nearest_event = offset_event;
 #endif
-        }
     }
 }
 
@@ -2445,41 +2441,40 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset);
-        if (offset_event >= offset_of_nearest_event) {
-            DblTriangleEventSPtr event = DblTriangleEvent::create(polyhedron);
-            NodeSPtr node = Node::create(point);
-            event->setNode(node);
-            node->clear();
-            node->setOffset(offset_event);
-            node->setPoint(point);
-            event->setEdge(edge);
+        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+
+        DblTriangleEventSPtr event = DblTriangleEvent::create(polyhedron);
+        NodeSPtr node = Node::create(point);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setEdge(edge);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-            VertexSPtr vertices[4];
-            event->getVertices(vertices);
-            for (unsigned int i = 0; i < 4; i++) {
-                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
-                        vertices[i]->getData());
-                ArcSPtr arc = data->getArc();
-                node->addArc(arc);
-            }
-            EdgeSPtr edges[5];
-            event->getEdges(edges);
-            for (unsigned int i = 0; i < 5; i++) {
-                SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
-                        edges[i]->getData());
-                SheetSPtr sheet = data->getSheet();
-                node->addSheet(sheet);
-            }
+        VertexSPtr vertices[4];
+        event->getVertices(vertices);
+        for (unsigned int i = 0; i < 4; i++) {
+            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertices[i]->getData());
+            ArcSPtr arc = data->getArc();
+            node->addArc(arc);
+        }
+        EdgeSPtr edges[5];
+        event->getEdges(edges);
+        for (unsigned int i = 0; i < 5; i++) {
+            SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(
+                    edges[i]->getData());
+            SheetSPtr sheet = data->getSheet();
+            node->addSheet(sheet);
+        }
 #endif
 
-            queue.push(event);
+        queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-            offset_of_nearest_event = offset_event;
+        offset_of_nearest_event = offset_event;
 #endif
-        }
     }
 }
 
@@ -2523,41 +2518,40 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset);
-            if (offset_event >= offset_of_nearest_event) {
-                TetrahedronEventSPtr event = TetrahedronEvent::create(polyhedron);
-                NodeSPtr node = Node::create(point);
-                event->setNode(node);
-                node->clear();
-                node->setOffset(offset_event);
-                node->setPoint(point);
-                event->setEdgeBegin(edge);
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+
+            TetrahedronEventSPtr event = TetrahedronEvent::create(polyhedron);
+            NodeSPtr node = Node::create(point);
+            event->setNode(node);
+            node->clear();
+            node->setOffset(offset_event);
+            node->setPoint(point);
+            event->setEdgeBegin(edge);
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-                VertexSPtr vertices[4];
-                event->getVertices(vertices);
-                for (unsigned int i = 0; i < 4; i++) {
-                    SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                            vertices[i]->getData());
-                    ArcSPtr arc = vertex_data->getArc();
-                    node->addArc(arc);
-                }
-                EdgeSPtr edges[6];
-                event->getEdges(edges);
-                for (unsigned int i = 0; i < 6; i++) {
-                    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                            edges[i]->getData());
-                    SheetSPtr sheet = edge_data->getSheet();
-                    node->addSheet(sheet);
-                }
+            VertexSPtr vertices[4];
+            event->getVertices(vertices);
+            for (unsigned int i = 0; i < 4; i++) {
+                SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
+                        vertices[i]->getData());
+                ArcSPtr arc = vertex_data->getArc();
+                node->addArc(arc);
+            }
+            EdgeSPtr edges[6];
+            event->getEdges(edges);
+            for (unsigned int i = 0; i < 6; i++) {
+                SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
+                        edges[i]->getData());
+                SheetSPtr sheet = edge_data->getSheet();
+                node->addSheet(sheet);
+            }
 #endif
 
-                queue.push(event);
+            queue.push(event);
 
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-                offset_of_nearest_event = offset_event;
+            offset_of_nearest_event = offset_event;
 #endif
-            }
         }
     }
 }
@@ -2707,8 +2701,11 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
             Point3SPtr point;
             CGAL::FT offset_event;
             std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, offset_of_nearest_event);
-            if (!point)
+            if (!point) {
                 continue;
+            }
+
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             VertexEventSPtr event = VertexEvent::create(polyhedron);
             NodeSPtr node = Node::create(point);
@@ -2888,8 +2885,11 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
             Point3SPtr point;
             CGAL::FT offset_event;
             std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, offset_of_nearest_event);
-            if (!point)
+            if (!point) {
                 continue;
+            }
+
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             FlipVertexEventSPtr event = FlipVertexEvent::create(polyhedron);
             NodeSPtr node = Node::create(point);
@@ -3039,8 +3039,11 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
             Point3SPtr point;
             CGAL::FT offset_event;
             std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, offset_of_nearest_event);
-            if (!point)
+            if (!point) {
                 continue;
+            }
+
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             SurfaceEventSPtr event = SurfaceEvent::create(polyhedron);
             NodeSPtr node = Node::create(point);
@@ -3133,8 +3136,11 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
             Point3SPtr point;
             CGAL::FT offset_event;
             std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, offset_of_nearest_event);
-            if (!point)
+            if (!point) {
                 continue;
+            }
+
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             CGAL::FT shift = offset_event - current_offset;
             Point3SPtr e1so = PolyhedronTransformation::shiftPoint(edge_1->getVertexSrc(), shift);
@@ -3327,8 +3333,11 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
             Point3SPtr point;
             CGAL::FT offset_event;
             std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, offset_of_nearest_event);
-            if (!point)
+            if (!point) {
                 continue;
+            }
+
+            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             SplitMergeEventSPtr event = SplitMergeEvent::create(polyhedron);
             NodeSPtr node = Node::create(point);
