@@ -54,6 +54,12 @@ result type is either `CGAL::Bbox_2`, `CGAL::Bbox_3` or `CGAL::Bbox_d` depending
 */
 using Construct_bbox_d = unspecified_type;
 
+/*!
+Functor with operator to compare the squared distance of two objects of type `Point_d` with a bound of type `FT`,
+returning a `CGAL::Comparison_result`.
+\note Only needed by class template `CGAL::Frechet_distance_Neighor_search`.
+*/
+using Compare_squared_distance_d = unspecified_type;
 /// @}
 
 /// \name Operations
@@ -69,5 +75,9 @@ Function used to construct an object of type `Construct_bbox_d`.
 */
 Construct_bbox_d construct_bbox_d_object() const;
 
+/*!
+Function used to construct an object of type `Compare_squared_distance_d`.
+*/
+Compare_squared_distance_d compare_squared_distance_d_object() const;
 /// @}
 };
