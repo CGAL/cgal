@@ -49,6 +49,14 @@ public:
     static Plane3SPtr shiftPlane(FacetSPtr vertex, CGAL::FT offset);
 
     /**
+     * Offsets the polyhedron `polyhedron`
+     * Negative offset points to the interior of the polyhedron.
+     */
+    static void shiftFacetsInPlace(PolyhedronSPtr polyhedron,
+                                   CGAL::FT offset,
+                                   const bool recompute_positions = true);
+
+    /**
      * Creates an offset polyhedron.
      * Negative offset points to the interior of the polyhedron.
      */

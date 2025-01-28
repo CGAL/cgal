@@ -177,7 +177,97 @@ Plane3SPtr PolyhedronTransformation::shiftPlane(FacetSPtr facet,
     return KernelWrapper::offsetPlane(facet->plane(), facet_speed*offset);
 }
 
-// @todo plenty of needless recomputations
+// This function is for the main shift in the event loop.
+// @todo it could be adapted to also work for the smaller polyhedra that are used on-the-fly,
+// for example in handleEdgeEvent, but then we would need to temporarily store points
+// in this degree 3 loop because we need to use old positions in to compute the offset
+// of degree 1 vertices.
+void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
+                                                  CGAL::FT offset,
+                                                  const bool recompute_positions)
+{
+    DEBUG_PRINT("~~~~ Shift [in place] by " << offset);
+
+    std::ofstream shift_out("results/last_shift.polylines.txt");
+    shift_out.precision(17);
+
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+
+        // See comment at the top of the function
+        CGAL_assertion(vertex->degree() == 3);
+
+        Point3SPtr old_point = vertex->getPoint(), new_point;
+        if (offset != 0 || recompute_positions) {
+            new_point = shiftPoint(vertex, offset);
+            if (!new_point) {
+                std::cerr << "Warning: Failed to shift polyhedron" << std::endl;
+                return;
+            }
+        }
+
+        // the old point position is not used to compute new point position: we need only the planes
+        vertex->setPoint(new_point);
+
+        // @fixme check correctness when the skeleton matters once again
+
+        // trick while events still use getOffsetXYZ() to access elements in the shifted polyhedron
+        // if getOffsetXYZ is no longer needed, it also means that combinatorics stored
+        // in the events can be weak pointers
+        SkelVertexDataSPtr data;
+        if (vertex->hasData()) {
+            data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+        } else {
+            data = SkelVertexData::create(vertex);
+        }
+        data->setOffsetVertex(vertex); // @todo trick
+
+        // std::cout << *old_point << " to " << *new_point << std::endl;
+        shift_out << "2 " << *old_point << " " << *new_point << std::endl;
+    }
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        SkelEdgeDataSPtr data;
+        if (edge->hasData()) {
+            data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+        } else {
+            data = SkelEdgeData::create(edge);
+        }
+        data->setOffsetEdge(edge); // @todo trick
+    }
+
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+
+        SkelFacetDataSPtr data;
+        if (facet->hasData()) {
+            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+        } else {
+            data = SkelFacetData::create(facet);
+        }
+        data->setOffsetFacet(facet); // @todo trick
+
+        CGAL::FT speed = data->getSpeed();
+        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+        facet->setPlane(offset_plane);
+    }
+
+    // @fixme this very likely changes IDs of elements (e.g. if a vertex got removed, everything
+    // afterwards will shift).
+    // That shouldn't be an issue as long as IDs are informative, but if the IDs are
+    // used in the future, e.g. for events, then that will be an issue
+    polyhedron->initializeAllIDs();
+}
+
+// @todo plenty of needless recomputations:
+// - when we do shiftPoint for adjacent points
+// - when we call shiftPoint, and then call shiftPlane later on
+// - ...
+// @todo get rid of recompute_positions, seems unused now
 PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,
                                                      const bool recompute_positions)
