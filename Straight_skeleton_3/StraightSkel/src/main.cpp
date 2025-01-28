@@ -401,6 +401,7 @@ int main(int argc, const char* argv[]) {
         algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
 
         // since we have modified plane coefficients, ensure that points are on the facets
+        // @todo use resetpoint to avoid zero offset plane shifts
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
 
         if (!polyhedron || !polyhedron->isConsistent()) {

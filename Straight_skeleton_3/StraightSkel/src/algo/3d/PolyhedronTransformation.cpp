@@ -105,6 +105,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)
 {
     // std::cout << "shift vertex " << vertex->toString() << "\noffset = " << offset << std::endl;
+    CGAL_precondition(vertex->degree() >= 3);
 
     Plane3SPtr planes[3];
     unsigned int i = 0;
@@ -114,7 +115,6 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
         if (!facet_wptr.expired()) {
             FacetSPtr facet = FacetSPtr(facet_wptr);
             Plane3SPtr plane = facet->plane();
-            // std::cout << "Facet #" << facet->toString() << std::endl;
 
             // @fixme only valid if we are doing perturbations
             if (vertex->degree() != 3) {
@@ -123,7 +123,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                 if (i == 1) {
                     independent = !(CGAL::parallel(*(planes[0]), *plane));
                 } else if (i == 2) {
-                    // @todo a little redundant to compute the intersection from scratch later
+                    // @todo avoid recomputing the intersection from scratch later
                     independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
                                                             planes[1]->a(), planes[1]->b(), planes[1]->c(),
                                                             plane->a(), plane->b(), plane->c()));
@@ -148,7 +148,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     }
 
     if (i < 3) {
-        std::cerr << "Warning: Couldn't find three independent planes for vertex " << *(vertex->getPoint()) << std::endl;
+        std::cerr << "Warning: Couldn't find three independent planes for " << vertex->toString() << std::endl;
         return { };
     }
 
@@ -282,22 +282,22 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
-        Point3SPtr point = vertex->getPoint();
 
         // those are treated in the next loop
         if (vertex->degree() == 1) {
             continue;
         }
 
+        Point3SPtr old_point = vertex->getPoint(), new_point;
         if (offset != 0 || recompute_positions) {
-            point = shiftPoint(vertex, offset);
-            if (!point) {
+            new_point = shiftPoint(vertex, offset);
+            if (!new_point) {
                 std::cerr << "Warning: Failed to create shifted polyhedron" << std::endl;
                 return { };
             }
         }
 
-        VertexSPtr offset_vertex = Vertex::create(point);
+        VertexSPtr offset_vertex = Vertex::create(new_point);
         // SkelVertexData for each vertex should be created by init
         SkelVertexDataSPtr data;
         if (vertex->hasData()) {
@@ -310,8 +310,8 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         data->setOffsetVertex(offset_vertex);
         result->addVertex(offset_vertex);
 
-        // std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
-        shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
+        // std::cout << *old_point << " to " << *new_point << std::endl;
+        shift_out << "2 " << *old_point << " " << *new_point << std::endl;
     }
 
     // Now, deal with degree 1 vertices.

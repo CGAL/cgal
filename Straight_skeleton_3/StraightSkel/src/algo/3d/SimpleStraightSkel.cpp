@@ -14,6 +14,8 @@
  * @date   2012-03-08
  */
 
+// - handle the case where the queue is empty (possibly because of the bound) but there is still a save offset
+
 // ----
 
 // @todo figure out a proper stack so shared pointers do not contaminate everything
@@ -226,7 +228,6 @@ void SimpleStraightSkel::initEdgeEvent() {
     skel_result_->appendConfig("edge_event="+s_edge_event+"; ");
 }
 
-// @fixme return three states to handle flat cases?
 bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
     bool result = false;
 
@@ -291,6 +292,7 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
     return result;
 }
 
+// @speed cache this, it doesn't change when we shift facets
 bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     if (vertex->degree() == 0) {
         return false;
@@ -633,13 +635,15 @@ bool SimpleStraightSkel::run() {
             }
             // @debug -
 
+#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
             PQ queue;
             collectEvents(polyhedron, offset, queue);
+#endif
 
 #ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
             {
                 std::cout << "------------------------------" << std::endl;
-                std::cout << "--- Event queue (" << event_id << ") ---" << std::endl;
+                std::cout << "--- Event queue (size = " << queue.size() << "; iter = " << event_id << ") ---" << std::endl;
                 std::cout << "------------------------------" << std::endl;
                 PQ duplicate_queue = queue;
                 while (!duplicate_queue.empty()) {
@@ -681,13 +685,11 @@ bool SimpleStraightSkel::run() {
                 doSave = false;
             }
 
-            // @tmp +
             if (simultaneousEvents) {
               std::cerr << "Error: there should not be any simultaneous events these days" << std::endl;
               std::cerr << "Forgot to enable perturbations in the config file?" << std::endl;
               return false;
             }
-            // @tmp -
 
             offset_next = event->getOffset();
 
@@ -1411,7 +1413,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
         }
 
         // Ignore the event if it happens further the future compared to the soonest top event.
-        if(offset_event <= offset_future_bound) {
+        if (offset_event <= offset_future_bound) {
 #ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
             std::cout << "event is too far in the future" << std::endl;
 #endif
@@ -1588,7 +1590,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     }
 
     // Ignore the event if it happens further the future compared to the soonest top event.
-    if(offset_event <= offset_future_bound) {
+    if (offset_event <= offset_future_bound) {
 #ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         std::cout << "event is too far in the future" << std::endl;
 #endif
@@ -3509,7 +3511,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
             // a very important point is that the shifted edge could definitely be different due
             // to other events... but then another event will come first to modify the shifted edge!
 
-            // let's just check bbox overlaps first
+            // let's just check if bboxes overlap first
             Point3SPtr offset_e1so = PolyhedronTransformation::shiftPoint(edge_1->getVertexSrc(), offset_of_nearest_event);
             Point3SPtr offset_e1to = PolyhedronTransformation::shiftPoint(edge_1->getVertexDst(), offset_of_nearest_event);
             CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
@@ -4392,7 +4394,7 @@ void SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event, Polyhedr
     DEBUG_PRINT("########################################");
 
     SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet()->getData());
+                event->getFacet()->getData());
     FacetSPtr facet = facet_data->getOffsetFacet();
     SkelEdgeDataSPtr edge_data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
                 event->getEdge1()->getData());
@@ -5430,6 +5432,9 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
 
     NodeSPtr node = event->getNode();
     appendEventNode(node);
+
+    DEBUG_PRINT("edge_1 = " << event->getEdge1()->toString());
+    DEBUG_PRINT("edge_2 = " << event->getEdge2()->toString());
 
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
             event->getEdge1()->getData());

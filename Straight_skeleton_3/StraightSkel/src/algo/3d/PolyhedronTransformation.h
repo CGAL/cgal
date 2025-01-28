@@ -64,7 +64,6 @@ public:
                                       CGAL::FT offset,
                                       const bool recompute_positions = true);
 
-
     /**
      * Normalize facet planes
     */

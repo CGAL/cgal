@@ -185,7 +185,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
             }
         }
 
-        std::cout << "Loaded OBJ: " << result->toString() << std::endl;
+        // std::cout << "Loaded OBJ: " << result->toString() << std::endl;
 
         util::ConfigurationSPtr config = util::Configuration::getInstance();
         if (config->isLoaded() &&

@@ -43,7 +43,7 @@
 
 /* macro that warns, if a smart pointer is invalid */
 #define DEBUG_SPTR(sptr) if (!sptr) { LOC DBGOUT << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(DBGOUT); }
-#define DEBUG_WPTR(wptr) if (wptr.expired()) { LOC DBGOUT << "weak pointer is expired: " << (#wptr) << std::endl; }
+#define DEBUG_WPTR(wptr) if (wptr.expired()) { LOC DBGOUT << "weak pointer is expired: " << (#wptr) << std::endl; util::StackTrace::print(DBGOUT); }
 
 #else
 
