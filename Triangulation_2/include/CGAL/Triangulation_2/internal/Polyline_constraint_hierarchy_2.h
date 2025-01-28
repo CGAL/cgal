@@ -67,7 +67,7 @@ private:
       : vertex_(vh), point_(vertex_->point()), input_(input)
     {}
     const Point& point() const { return point_; }
-    Vertex_handle vertex() const { return vertex_; }
+    const Vertex_handle& vertex() const { return vertex_; }
     bool& input() { return input_; }
     const bool& input() const { return input_; }
   private:
@@ -81,47 +81,82 @@ private:
 
 public:
   // the base line is always
-  class Point_it
-    : public boost::iterator_adaptor<
-    Point_it
-    , typename Vertex_list::all_iterator
-    , const Point&
-    >
+  class Point_it : public boost::stl_interfaces::iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+      Point_it,
+#endif
+      std::bidirectional_iterator_tag,
+      const Point>
   {
-  public:
-    Point_it() : Point_it::iterator_adaptor_() {}
-    Point_it(typename Vertex_list::all_iterator it) : Point_it::iterator_adaptor_(it) {}
+public:
+    using Base_it = typename Vertex_list::all_iterator;
+    using Self = Point_it;
+
+    Base_it base() const { return it; }
+    Base_it& base_reference() { return it; }
+    const Base_it& base_reference() const { return it; }
+
+    Point_it() = default;
+    Point_it(Base_it it) : it(it) {}
+
+    const Point& operator*() const { return base()->point(); }
   private:
-    friend class boost::iterator_core_access;
-    const Point& dereference() const { return this->base()->point(); }
+    friend bool operator==(const Self& lhs, const Self& rhs) {
+      return lhs.base() == rhs.base();
+    }
+    friend bool operator==(const Self& lhs, const Base_it& rhs) {
+      return lhs.base() == rhs;
+    }
+    friend bool operator==(const Base_it& lhs, const Self& rhs) {
+      return lhs == rhs.base();
+    }
+    Base_it it;
   };
+
+  BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Point_it, std::bidirectional_iterator);
+  BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(Point_it, std::bidirectional_iterator_tag,
+    std::bidirectional_iterator, Point, const Point&, const Point*, std::ptrdiff_t);
 
   // only nodes with a vertex_handle that is still in the triangulation
-  class Vertex_it
-    : public boost::iterator_adaptor<
-    Vertex_it
-    , typename Vertex_list::skip_iterator
-    , Vertex_handle
-    , std::bidirectional_iterator_tag
-    , Vertex_handle>
+  class Vertex_it : public boost::stl_interfaces::iterator_interface<
+  #if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+        Vertex_it,
+  #endif
+        std::bidirectional_iterator_tag,
+        const Vertex_handle>
   {
-    using Base_it = typename Vertex_list::skip_iterator;
   public:
-    Vertex_it() : Vertex_it::iterator_adaptor_() {}
-    Vertex_it(Base_it it) : Vertex_it::iterator_adaptor_(it) {}
+    using Base_it = typename Vertex_list::skip_iterator;
+    using Self = Vertex_it;
+
+    Base_it base() const { return it; }
+    Base_it& base_reference() { return it; }
+    const Base_it& base_reference() const { return it; }
+
+    Vertex_it() = default;
+    Vertex_it(Base_it it) : it(it) {}
+
+    const Vertex_handle& operator*() const { return this->base()->vertex(); }
+
     operator Point_it() const { return Point_it(this->base()); }
+
     bool& input() { return this->base()->input(); }
     const bool& input() const { return this->base()->input(); }
-
-    friend bool operator==(const Vertex_it& a, const Base_it& it) { return a.base() == it; }
-    friend bool operator==(const Base_it& it, const Vertex_it& a) { return a.base() == it; }
-    friend bool operator!=(const Vertex_it& a, const Base_it& it) { return a.base() != it; }
-    friend bool operator!=(const Base_it& it, const Vertex_it& a) { return a.base() != it; }
-
   private:
-    friend class boost::iterator_core_access;
-    Vertex_handle dereference() const { return this->base()->vertex(); }
+    friend bool operator==(const Self& lhs, const Self& rhs) {
+      return lhs.base() == rhs.base();
+    }
+    friend bool operator==(const Self& lhs, const Base_it& rhs) {
+      return lhs.base() == rhs;
+    }
+    friend bool operator==(const Base_it& lhs, const Self& rhs) {
+      return lhs == rhs.base();
+    }
+    Base_it it;
   };
+  BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Vertex_it, std::bidirectional_iterator);
+  BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(Vertex_it, std::bidirectional_iterator_tag,
+    std::bidirectional_iterator, Vertex_handle, const Vertex_handle&, const Vertex_handle*, std::ptrdiff_t);
 
   struct Vertex_list_with_info {
     const Polyline_constraint_hierarchy_2* hierarchy_ptr = nullptr;
@@ -708,7 +743,9 @@ copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle, Verte
     Vertex_handle vv2 = vmap[sc1.second];
     Context_list* hcl2 = new Context_list;
     contexts_of(uu2, vv2) = hcl2;
-    for(const auto& [cid1, pos1] : *hcl1) {
+    for(const auto& ctxt : *hcl1) {
+      const auto cid1 = ctxt.id();
+      const auto pos1 = ctxt.current();
       // vertices of the enclosing constraints
       Constraint_id cid2 = cstr_map[cid1];
       auto pos2 = std::next(Vertex_it(cid2.begin()),
