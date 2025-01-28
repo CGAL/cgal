@@ -78,6 +78,28 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
             util::StringFactory::fromDouble(CGAL::to_double((*v_s)[2])) + ">; ");
 }
 
+void PolyhedronTransformation::resetPoint(VertexSPtr vertex)
+{
+  CGAL_precondition(vertex->degree() == 3);
+
+  Plane3SPtr planes[3];
+  unsigned int i = 0;
+  std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+  while (i < 3 && it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (!facet_wptr.expired()) {
+          FacetSPtr facet = FacetSPtr(facet_wptr);
+          planes[i++] = facet->plane();
+      }
+  }
+  CGAL_postcondition(i == 3);
+
+  Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+  CGAL_assertion(bool(point));
+
+  vertex->setPoint(point);
+}
+
 // @todo this function cannot deal with degree 1 vertices
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)

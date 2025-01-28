@@ -33,6 +33,12 @@ public:
     static void scale(PolyhedronSPtr polyhedron, Vector3SPtr s);
 
     /**
+     * returns the position of the vertex of a polyhedron, computed from the planes of
+     * its incident faces.
+     */
+    static void resetPoint(VertexSPtr vertex);
+
+    /**
      * returns the shifted position of the vertex of a polyhedron
      */
     static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
