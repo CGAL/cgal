@@ -21,7 +21,7 @@ int main()
     const std::filesystem::path data{"./data_2d"};
     std::vector<std::string> filenames;
     for (auto const& dir_entry : std::filesystem::directory_iterator{data}) {
-        filenames.push_back(dir_entry.path());
+        filenames.push_back(dir_entry.path().string());
     }
     std::sort(filenames.begin(), filenames.end());
 

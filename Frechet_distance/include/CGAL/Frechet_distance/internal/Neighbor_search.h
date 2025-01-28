@@ -143,7 +143,8 @@ private:
             for (size_t i = 0; i < 2*dim; ++i, ++pb, ++qb) {
                 // AF: certainly
                 // AN: yes, here we need certainly!
-                if (CGAL::abs(*pb - *qb) > distance) {
+                CGAL::Interval_nt<true> ip = to_interval(*pb), iq = to_interval(*qb);
+                if (certainly(CGAL::abs(ip - iq) > distance)) {
                     return false;
                 }
             }
@@ -154,10 +155,9 @@ private:
         {
             typename Point_d::Cartesian_const_iterator_d pb = p.cartesian_begin();
             for (int d = 0; d < D::value; ++d, ++pb) {
-                if (rect.min_coord(d) > *pb + distance &&
-                    rect.max_coord(d) + distance < *pb) {
-                    // AF: certainly
-                    // AN: yes, here is really certainly!
+                CGAL::Interval_nt<true> irmin = to_interval(rect.min_coord(d)), ip = to_interval(*pb), irmax = to_interval(rect.max_coord(d));
+                if (certainly(  irmin> ip + distance &&
+                                irmax + distance < ip)){
                     return false;
                 }
             }
