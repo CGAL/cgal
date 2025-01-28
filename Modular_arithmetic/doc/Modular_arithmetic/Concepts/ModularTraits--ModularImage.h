@@ -3,42 +3,42 @@
 \ingroup PkgModularArithmeticConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` computes the modular image of the given value 
-with respect to a homomorphism \f$ \varphi\f$ from the 
-`ModularTraits::Type` into the `ModularTraits::Residue_type`. 
+This `AdaptableUnaryFunction` computes the modular image of the given value
+with respect to a homomorphism \f$ \varphi\f$ from the
+`ModularTraits::Type` into the `ModularTraits::Residue_type`.
 
-The homomorphism preserves the mapping of `int` into both types 
-, i.e., \f$ \varphi(\mathrm{Type}(i)) == \mathrm{Residue\_type}(i)\f$. 
+The homomorphism preserves the mapping of `int` into both types
+, i.e., \f$ \varphi(\mathrm{Type}(i)) == \mathrm{Residue\_type}(i)\f$.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
-\sa `ModularTraits` 
+\sa `ModularTraits`
 
 */
 
 class ModularTraits::ModularImage {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef ModularTraits::Residue_type result_type; 
+*/
+typedef ModularTraits::Residue_type result_type;
 
 /*!
 
-*/ 
-typedef ModularTraits::Type argument_type; 
+*/
+typedef ModularTraits::Type argument_type;
 
 /*!
 
-computes \f$ \varphi(x)\f$. 
+computes \f$ \varphi(x)\f$.
 
-*/ 
-result_type 
-operator()(const argument_type & x); 
+*/
+result_type
+operator()(const argument_type & x);
 
 /// @}
 

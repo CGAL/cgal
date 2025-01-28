@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Iordan Iordanov
 //                 Monique Teillaud
@@ -30,18 +21,18 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/determinant.h>
 #include <CGAL/distance_predicates_2.h>
-#include <CGAL/internal/Exact_complex.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Exact_complex.h>
 #include <CGAL/Origin.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/utility.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <utility>
 
-#include <CGAL/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
 namespace CGAL {
 
@@ -196,9 +187,9 @@ public:
 
   Hyperbolic_point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2)
   {
-    if(Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1))
+    if(Circular_arc_2* c1 = std::get_if<Circular_arc_2>(&s1))
     {
-      if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+      if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
         Hyperbolic_point_2 p1 = res.first;
@@ -211,7 +202,7 @@ public:
       }
       else
       {
-        Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+        Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(),
                                                                       ell2->supporting_line());
         Hyperbolic_point_2 p1 = res.first;
@@ -225,8 +216,8 @@ public:
     }
     else
     {
-      Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
-      if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+      Euclidean_segment_2* ell1 = std::get_if<Euclidean_segment_2>(&s1);
+      if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
                                                                       c2->supporting_circle());
@@ -240,7 +231,7 @@ public:
       }
       else
       {
-        Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+        Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
         Hyperbolic_point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
         CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
         return p1;
@@ -288,9 +279,9 @@ public:
     Euclidean_line_2* l;
     Circle_2* c;
 
-    if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+    if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
     {
-      if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+      if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c_pq, *c_qr);
 
@@ -300,14 +291,14 @@ public:
         return inters.second;
       }
 
-      l = boost::get<Euclidean_line_2>(&bis_qr);
+      l = std::get_if<Euclidean_line_2>(&bis_qr);
       c = c_pq;
     }
     else
     {
       // here bis_pq is a line
-      l = boost::get<Euclidean_line_2>(&bis_pq);
-      c = boost::get<Circle_2>(&bis_qr);
+      l = std::get_if<Euclidean_line_2>(&bis_pq);
+      c = std::get_if<Circle_2>(&bis_qr);
     }
 
     std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c, *l);
@@ -357,7 +348,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c = std::get_if<Circle_2>(&bis_pq);
     std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = ci(*c, l_inf);
 
     if(_gt.orientation_2_object()(c->center(), inters.first, inters.second) == POSITIVE)
@@ -374,9 +365,9 @@ public:
                                   const Hyperbolic_point_2& r,
                                   const Hyperbolic_point_2& s) const
   {
-    CGAL_triangulation_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
+    CGAL_precondition((_gt.orientation_2_object()(p, q, r) == ON_POSITIVE_SIDE) &&
                                     (_gt.orientation_2_object()(p, s, q) == ON_POSITIVE_SIDE));
-    CGAL_triangulation_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
+    CGAL_precondition((_gt.side_of_oriented_circle_2_object()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
                                     (_gt.side_of_oriented_circle_2_object()(p, s, q, r) == ON_NEGATIVE_SIDE));
 
     Construct_hyperbolic_circumcenter_2<Traits> chc(_gt);
@@ -397,7 +388,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
     if(_gt.compare_distance_2_object()(po, p, q) == POSITIVE) {
       // then p is inside the supporting circle
@@ -414,7 +405,7 @@ public:
                                   const Hyperbolic_point_2& q,
                                   const Hyperbolic_point_2& r) const
   {
-    CGAL_triangulation_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
+    CGAL_precondition(_gt.orientation_2_object()(p, q, r) == POSITIVE);
 
     Construct_circle_or_line_supporting_bisector<Traits> cclsb(_gt);
     Construct_hyperbolic_circumcenter_2<Traits> chc(_gt);
@@ -439,7 +430,7 @@ public:
     }
 
     Euclidean_circle_or_line_2 bis_pq = cclsb(p, q);
-    Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
+    Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq);
 
     std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = ci(*c_pq, l_inf);
     Hyperbolic_point_2 approx_pinf = inters.first;
@@ -477,10 +468,10 @@ public:
   typedef Hyperbolic_point_2                                    Hyperbolic_Voronoi_point_2;
   typedef typename Kernel::Circle_2                             Circle_2;
   typedef typename Kernel::Line_2                               Euclidean_line_2;
-  typedef boost::variant<Circle_2,Euclidean_line_2>             Euclidean_circle_or_line_2;
+  typedef std::variant<Circle_2,Euclidean_line_2>               Euclidean_circle_or_line_2;
   typedef internal::HDT_2_Circular_arc_2<Self>                  Circular_arc_2;
   typedef typename Kernel::Segment_2                            Euclidean_segment_2; // only used internally here
-  typedef boost::variant<Circular_arc_2, Euclidean_segment_2>   Hyperbolic_segment_2;
+  typedef std::variant<Circular_arc_2, Euclidean_segment_2>   Hyperbolic_segment_2;
 
   typedef typename Kernel::Triangle_2                           Hyperbolic_triangle_2;
 

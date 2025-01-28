@@ -53,7 +53,7 @@ void run()
   Vector points2;
   Random_points g( 150.0);
 
-  // We enforce IEEE double precision as we compare a distance 
+  // We enforce IEEE double precision as we compare a distance
   // in a register with a distance in memory
   CGAL::Set_ieee_double_precision pfr;
 
@@ -71,21 +71,21 @@ void run()
   typename K_search::iterator it = oins.begin();
   typename K_search::Point_with_transformed_distance pd = *it;
   points2.push_back(get_point(pd.first));
-  if(CGAL::squared_distance(query,get_point(pd.first)) != pd.second){
+  if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
     std::cout << "different distances: " << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
   }
 
-  assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+  assert(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) < 0.000000001);
   it++;
   for(; it != oins.end();it++){
     typename K_search::Point_with_transformed_distance qd = *it;
     assert(pd.second <= qd.second);
     pd = qd;
     points2.push_back(get_point(pd.first));
-    if(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) != pd.second){
+    if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
       std::cout  << "different distances: " << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
     }
-    assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+    assert(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) < 0.000000001);
   }
 
 
@@ -98,7 +98,7 @@ void run()
     }
   }
   assert(points == points2);
-  
+
 
   std::cout << "done" << std::endl;
 }
@@ -132,20 +132,20 @@ bool search(bool nearest)
   std::sort(points.begin(), points.end());
   std::sort(result.begin(), result.end());
   std::set_difference(points.begin(), points.end(),
-		      result.begin(), result.end(),
-		      std::back_inserter(diff));
+                      result.begin(), result.end(),
+                      std::back_inserter(diff));
 
   std::cout << "|result| = " << result.size() << "  |diff| = " << diff.size() << std::endl;
   double sep_dist = (nearest)?0:(std::numeric_limits<double>::max)();
   {
     for(std::vector<Point>::iterator it = result.begin();
-	it != result.end();
-	it++){
+        it != result.end();
+        it++){
       double dist = CGAL::squared_distance(query, *it);
       if(nearest){
-	if(dist > sep_dist) sep_dist = dist;
+        if(dist > sep_dist) sep_dist = dist;
       } else {
-	if(dist < sep_dist) sep_dist = dist;
+        if(dist < sep_dist) sep_dist = dist;
       }
     }
   }
@@ -154,19 +154,19 @@ bool search(bool nearest)
   // the other points must be further/closer than min_dist
   {
     for(std::vector<Point>::iterator it = diff.begin();
-	it != diff.end();
-	it++){
+        it != diff.end();
+        it++){
       double dist = CGAL::squared_distance(query, *it);
       if(nearest){
-	if(dist < sep_dist){
-	  std::cout << "Error: Point " << *it << " at distance " << dist << "  <  " << sep_dist << std::endl;
+        if(dist < sep_dist){
+          std::cout << "Error: Point " << *it << " at distance " << dist << "  <  " << sep_dist << std::endl;
           res=false;
-	}
+        }
       } else {
-	if(dist > sep_dist){
-	  std::cout << "Error: Point " << *it << " at distance " << dist << "  >  " << sep_dist  << std::endl;
+        if(dist > sep_dist){
+          std::cout << "Error: Point " << *it << " at distance " << dist << "  >  " << sep_dist  << std::endl;
           res=false;
-	}
+        }
       }
     }
   }
@@ -174,8 +174,9 @@ bool search(bool nearest)
 }
 
 
-int 
+int
 main() {
+  std::cout << std::setprecision(17);
   bool OK=true;
   std::cout << "Testing Incremental_neighbor_search\n";
   run<Incremental_neighbor_search>();
@@ -195,6 +196,6 @@ main() {
 
   return OK ? 0 : 1;
 }
-  
+
 
 

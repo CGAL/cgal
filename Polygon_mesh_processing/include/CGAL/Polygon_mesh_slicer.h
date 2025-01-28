@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ilker O. Yaz and Sebastien Loriot
@@ -26,20 +17,19 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/tuple.h>
 
 #include <vector>
 #include <set>
+#include <type_traits>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
-#include <boost/variant.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <variant>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -51,28 +41,28 @@ namespace CGAL {
 /// a triangulated surface mesh.
 ///
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
-/// \tparam Traits a model of `AABBGeomTraits`
+/// \tparam Traits a model of `AABBGeomTraits_3`
 /// \tparam VertexPointMap a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
 /// \tparam AABBTree must be an instantiation of `CGAL::AABB_tree` able to handle
 ///         the edges of `TriangleMesh`, having its `edge_descriptor` as primitive id.
-///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
+///         The default is `CGAL::AABB_tree<CGAL::AABB_traits_3<
 ///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
 ///         predicates and constructions in case the functor is called with a plane
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 ///         The default is `true`.
 ///
-/// The implemenation of this class depends on the package \ref PkgAABBTree.
+/// The implementation of this class depends on the package \ref PkgAABBTree.
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
 ///        - `Plane_3`
 ///        - `Point_3`
 ///        - `Segment_3`
 ///        - `Oriented_side_3` with `Oriented_side operator()(Plane_3, Point_3)`
-///        - `Do_intersect_3` with `boost::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
+///        - `Do_intersect_3` with `std::optional<variant<Point_3,Segment_3> operator()(Plane_3,Segment_3)`
 ///        - `Do_intersect_3` with `bool operator()(Plane_3, Bbox_3)`
 ///
 /// \todo If we keep the traits for plane orthogonal to a frame axis, `Traits` must also provide:
@@ -86,14 +76,14 @@ template<class TriangleMesh,
   class Traits,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
-                       AABB_traits<Traits,
+                       AABB_traits_3<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
-                                                                typename boost::mpl::if_<
-                                                                  typename boost::is_same<
+                                                                std::conditional_t<
+                                                                  std::is_same_v<
                                                                     VertexPointMap,
-                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
+                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >,
                                                                   Default,
-                                                                  VertexPointMap>::type> > >,
+                                                                  VertexPointMap>>>>,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {
@@ -111,7 +101,7 @@ class Polygon_mesh_slicer
   typedef typename Traits::FT                                                FT;
 
 /// typedefs for internal graph to get connectivity of the polylines
-  typedef boost::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
+  typedef std::variant<vertex_descriptor, edge_descriptor>     AL_vertex_info;
   typedef boost::adjacency_list <
                               boost::vecS,
                               boost::vecS,
@@ -190,9 +180,9 @@ class Polygon_mesh_slicer
       AL_vertex_info v1 = al_graph[nodes_for_orient.first];
       AL_vertex_info v2 = al_graph[nodes_for_orient.second];
 
-      if (const vertex_descriptor* vd1_ptr = boost::get<vertex_descriptor>(&v1) )
+      if (const vertex_descriptor* vd1_ptr = std::get_if<vertex_descriptor>(&v1) )
       {
-        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        if (const vertex_descriptor* vd2_ptr = std::get_if<vertex_descriptor>(&v2) )
         {
           CGAL_assertion( halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).second );
           halfedge_descriptor h_opp = halfedge(*vd1_ptr, *vd2_ptr, m_tmesh).first;
@@ -216,7 +206,7 @@ class Polygon_mesh_slicer
         else
         {
           // e2 is intersected in its interior
-          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          edge_descriptor e2 = std::get<edge_descriptor>(v2);
           halfedge_descriptor h2 = halfedge(e2, m_tmesh);
           if ( target(next(h2, m_tmesh), m_tmesh) != *vd1_ptr )
             h2=opposite(h2, m_tmesh);
@@ -225,9 +215,9 @@ class Polygon_mesh_slicer
       }
       else
       {
-        edge_descriptor e1 = boost::get<edge_descriptor>(v1);
+        edge_descriptor e1 = std::get<edge_descriptor>(v1);
         halfedge_descriptor h1 = halfedge(e1, m_tmesh);
-        if (const vertex_descriptor* vd2_ptr = boost::get<vertex_descriptor>(&v2) )
+        if (const vertex_descriptor* vd2_ptr = std::get_if<vertex_descriptor>(&v2) )
         {
           // e1 is intersected in its interior
           if ( target(next(h1, m_tmesh), m_tmesh) != *vd2_ptr )
@@ -237,7 +227,7 @@ class Polygon_mesh_slicer
         else
         {
           // intersection in the interior of both edges
-          edge_descriptor e2 = boost::get<edge_descriptor>(v2);
+          edge_descriptor e2 = std::get<edge_descriptor>(v2);
           halfedge_descriptor h2 = halfedge(e2, m_tmesh);
           if ( face(h1, m_tmesh) != face(h2,m_tmesh) )
           {
@@ -274,21 +264,20 @@ class Polygon_mesh_slicer
           nodes_for_orient.second=node_id;
 
       AL_vertex_info v = al_graph[node_id];
-      if (const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&v) )
+      if (const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&v) )
       {
         current_poly.push_back( get(m_vpmap, *vd_ptr) );
       }
       else
       {
-        edge_descriptor ed = boost::get<edge_descriptor>(v);
+        edge_descriptor ed = std::get<edge_descriptor>(v);
         Segment_3 s(
           get(m_vpmap, source(ed, m_tmesh)),
           get(m_vpmap,target(ed, m_tmesh))
         );
-        typename cpp11::result_of<typename Traits_::Intersect_3(Plane_3, Segment_3)>::type
-          inter = intersect_3(m_plane, s);
-        CGAL_assertion(inter != boost::none);
-        const Point_3* pt_ptr = boost::get<Point_3>(&(*inter));
+        const auto inter = intersect_3(m_plane, s);
+        CGAL_assertion(inter != std::nullopt);
+        const Point_3* pt_ptr = std::get_if<Point_3>(&(*inter));
         current_poly.push_back( *pt_ptr );
       }
     }
@@ -326,7 +315,7 @@ class Polygon_mesh_slicer
   }
 /// Other private functions
   /// handle edge insertion in the adjacency_list graph
-  /// we add an edge betweem two edge_descriptor if they
+  /// we add an edge between two edge_descriptor if they
   /// share a common facet
   void update_al_graph_connectivity(
     edge_descriptor ed,

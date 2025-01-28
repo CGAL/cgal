@@ -1,21 +1,12 @@
 // Copyright (c) 2001-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion, Andreas Fabri, Sebastien Loriot
 
@@ -27,7 +18,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -40,7 +31,7 @@ class Filtered_predicate_with_state
   C2E c2e;
   C2A c2a;
   O1  o1;
-  mutable boost::optional<EP>  oep;
+  mutable std::optional<EP>  oep;
   AP  ap;
   typedef typename AP::result_type  Ares;
 
@@ -74,21 +65,18 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if(! oep){
-      #if BOOST_VERSION < 105600
-      oep = EP(c2e(o1));
-      #else
       oep.emplace(c2e(o1));
-      #endif
     }
     return (*oep)(c2e(args)...);
 }

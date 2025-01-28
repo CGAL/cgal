@@ -18,22 +18,32 @@ int main()
   points.push_back(Point_3(4,2,56));
   points.push_back(Point_3(744,4154,43));
   points.push_back(Point_3(74,44,1));
-  
+
   std::vector<std::size_t> indices;
   indices.reserve(points.size());
-  
+
   std::copy(boost::counting_iterator<std::size_t>(0),
             boost::counting_iterator<std::size_t>(points.size()),
             std::back_inserter(indices));
-  
+
+  std::cout << "Order using default policy (median)\n";
   CGAL::spatial_sort( indices.begin(),
                       indices.end(),
                       Search_traits_3(CGAL::make_property_map(points)) );
 
-  for (std::vector<std::size_t>::iterator it=indices.begin();it!=indices.end();++it)
-    std::cout << points[*it] << "\n";
+  for (std::size_t i : indices)
+    std::cout << points[i] << "\n";
+
+  std::cout << "Order using middle policy\n";
+  CGAL::spatial_sort( indices.begin(),
+                      indices.end(),
+                      Search_traits_3(CGAL::make_property_map(points)),
+                      CGAL::Hilbert_sort_middle_policy());
+
+  for (std::size_t i : indices)
+    std::cout << points[i] << "\n";
 
   std::cout << "done" << std::endl;
-  
+
   return 0;
 }

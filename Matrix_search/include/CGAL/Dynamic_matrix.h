@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -27,7 +18,7 @@
 
 #include <vector>
 #include <utility>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -65,8 +56,8 @@ public:
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition( c >= 0 && c < number_of_columns());
+    CGAL_precondition( r >= 0 && r < number_of_rows());
+    CGAL_precondition( c >= 0 && c < number_of_columns());
     return (*matrix)( r << row_power, column_indices[c]);
   }
 
@@ -79,18 +70,18 @@ public:
   void
   replace_column( int o, int n)
   {
-    CGAL_optimisation_precondition( o >= 0 && o < number_of_columns());
-    CGAL_optimisation_precondition( n >= 0 && n < number_of_columns());
+    CGAL_precondition( o >= 0 && o < number_of_columns());
+    CGAL_precondition( n >= 0 && n < number_of_columns());
     column_indices[o] = column_indices[n];
   }
 
   void
   shrink_to_quadratic_size()
   {
-    CGAL_optimisation_precondition( number_of_columns() >= number_of_rows());
+    CGAL_precondition( number_of_columns() >= number_of_rows());
     column_indices.erase( column_indices.begin() + number_of_rows(),
                           column_indices.end());
-    CGAL_optimisation_postcondition( number_of_columns() == number_of_rows());
+    CGAL_postcondition( number_of_columns() == number_of_rows());
   }
 
 private:

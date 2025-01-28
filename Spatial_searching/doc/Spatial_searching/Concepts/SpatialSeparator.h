@@ -11,61 +11,63 @@ space is said to be on the negative side of the separator and the
 other part of space is said to be on the positive side of the
 separator.
 
-\cgalHasModel `CGAL::Plane_separator<FT>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Plane_separator<FT>}
+\cgalHasModelsEnd
 
 */
 
 class SpatialSeparator {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Number type. 
-*/ 
-typedef unspecified_type FT; 
+Number type.
+*/
+typedef unspecified_type FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Default constructor. 
-*/ 
-Separator(); 
+Default constructor.
+*/
+Separator();
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Sets the cutting dimension to `d`. 
-*/ 
-void set_cutting_dimension(int d); 
+Sets the cutting dimension to `d`.
+*/
+void set_cutting_dimension(int d);
 
 /*!
-Sets the cutting value to `v`. 
-*/ 
-void set_cutting_value(FT v); 
+Sets the cutting value to `v`.
+*/
+void set_cutting_value(FT v);
 
 /*!
-Returns the number of the cutting dimension. 
-*/ 
-int cutting_dimension(); 
+Returns the number of the cutting dimension.
+*/
+int cutting_dimension();
 
 /*!
-Returns the cutting value. 
-*/ 
-FT cutting_value(); 
+Returns the cutting value.
+*/
+FT cutting_value();
 
 /*!
-Returns true if and only if the point `p` is on the negative side of the separator. 
-*/ 
-template <class Point_d> 
-bool has_on_negative_side(Point_d p); 
+Returns true if and only if the point `p` is on the negative side of the separator.
+*/
+template <class Point_d>
+bool has_on_negative_side(Point_d p);
 
 /// @}
 

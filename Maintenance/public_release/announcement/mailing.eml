@@ -1,52 +1,71 @@
-Subject: CGAL 4.14 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.14
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the recent releases
+of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
 
-This release will be the last one supporting C++98/C++03 compilers,
-and the next release, CGAL version 5.0, will require support for
-C++14.
+## CGAL version 6.0
 
-Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 4.13:
+CGAL version 6.0 was released on September 27, 2024. Following the
+discovery of early issues, version 6.0.1 was subsequently released on
+October 22, 2024.
+
+This version is a major release, with many new features and
+improvements.
+
+General changes
+
+-   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
+-   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
+    Boost.Multiprecision can be used.
+-   Qt6 Demos: All demos are now based on Qt6.
+-   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
+    moved to its own directory in demo/Lab/.
+
+New Packages
+
+-   Kinetic Space Partition: Partition of the space from planar input
+    shapes.
+-   Kinetic Surface Reconstruction: Reconstructs surfaces from point
+    clouds.
+-   Basic Viewer: Interactive visualization for various CGAL packages.
+-   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
+
+Breaking Changes
+
+-   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
+-   Kernel: Replaced boost::variant with std::variant and
+    boost::optional with std::optional in the intersection functions.
+
+Enhancements
+
+-   AABB Tree: Now supports 2D and 3D primitives.
+
+See the announcement of CGAL version 6.0.1 for more details:
+
+  https://www.cgal.org/2024/10/22/cgal601/
 
 
-### 2D Periodic Hyperbolic Triangulations (new package)
 
--   This package allows the computation of Delaunay triangulations of
-    the Bolza surface.  The Bolza surface is the most symmetric
-    hyperbolic surface of genus 2. Its fundamental domain is the
-    regular hyperbolic octagon with angles π/4 centered at the origin
-    of the Poincaré disk. Triangulations of the Bolza surface can be
-    seen as triangulations of the hyperbolic plane that are periodic
-    in the four directions defined by the sides of this regular
-    octagon.
+## Bug-fix releases
 
-### 2D Hyperbolic Triangulations (new package)
+-   CGAL version 5.5.5 has been published. This is the last bug-fix
+    release for CGAL-5.5.
+-   CGAL version 5.6.2 has been published. This is the second bug-fix
+    release for CGAL-5.6.
 
--   This package allows the computation of Delaunay Triangulations of
-    sets of points in the Poincaré disk, which is one of the
-    conformal models for the hyperbolic plane.
+These releases include various bug fixes and enhancements. For more details,
+please visit:
 
-### The Heat Method (new package)
-
--   This package provides an algorithm that solves the single- or
-    multiple-source shortest path problem by returning an
-    approximation of the geodesic distance for all vertices of a
-    triangle mesh to the closest vertex in a given set of source
-    vertices.
-
-### Triangulated Surface Mesh Approximation (new package)
-
--   This package implements the Variational Shape Approximation method
-    to approximate an input surface triangle mesh by a simpler surface
-    triangle mesh.
+  https://www.cgal.org/2024/10/22/cgal555/
+  https://www.cgal.org/2024/10/22/cgal562/
 
 
-See https://www.cgal.org/2019/03/29/cgal414/ for a complete list of
-changes.
+
+The development of CGAL will now focus on the upcoming CGAL-6.1 release,
+planned for late 2025. Bug fixes will continue to be backported to the
+CGAL-5.6.x and CGAL-6.0.x branches.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -81,7 +100,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

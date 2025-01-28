@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
@@ -46,7 +37,7 @@ public:
   typedef typename Polygon_2::Edge_const_iterator       Edge_iterator;
   typedef AABB_segment_2_primitive<Kernel, Edge_iterator, Polygon_with_holes_2>
                                                         Tree_segment_2;
-  typedef AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
+  typedef Minkowski_sum::AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
   typedef AABB_tree_with_join<Tree_traits>              Tree_2;
 
 public:
@@ -95,7 +86,7 @@ public:
       *m_p.holes_begin()->vertices_begin() + Vector_2(ORIGIN, t);
 
     // Use bounded_side_2() instead of on_bounded_side() because the latter
-    // checks vor simplicity every time.
+    // checks for simplicity every time.
     bool in_mp(true);
     if (! m_p.outer_boundary().is_empty())
       in_mp =

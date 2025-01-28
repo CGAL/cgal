@@ -62,7 +62,7 @@ computation has to be re-invoked for a larger number of neighbors,
 thereby performing redundant computations. Therefore, Hjaltason and
 Samet \cgalCite{hs-rsd-95} introduced <I>incremental nearest neighbor
 searching</I> in the sense that having obtained the  `k` nearest
-neighbors, the `k + 1`st neighbor can be obtained without having
+neighbors, the `k + 1`th neighbor can be obtained without having
 to calculate the `k + 1` nearest neighbor from scratch.
 
 Spatial searching typically consists of a preprocessing phase and a
@@ -109,7 +109,7 @@ Orthogonal distance computation technique
 \cgalFigureEnd
 
 Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
-as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its children in the current step.
 Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let
 \f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
 to the parent rectangle and need to check if \f$R_{hi}\f$ could contain
@@ -159,7 +159,7 @@ When using fuzzy items, queries are reported as follows:
 - Points that are within the inner approximation are always reported.
 - Points that are within the outer approximation but not within the inner approximation
 might or might not be reported.
-- Points thare not within the outer approximation are never reported.
+- Points that are not within the outer approximation are never reported.
 
 For exact range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
@@ -282,7 +282,7 @@ scenarios for different splitter types.
 
 \subsection Spatial_searchingExampleforKNeighborSearching Example for K Neighbor Searching
 
-The first example illustrates k neighbor searching with an Euclidean
+The first example illustrates k neighbor searching with a Euclidean
 distance and 2-dimensional points. The generated random
 data points are inserted in a search tree. We then initialize
 the k neighbor search object with the origin as query. Finally, we
@@ -400,36 +400,65 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 This example program has two 2-dimensional data sets: The first one containing
 collinear points with exponential increasing distances and the second
-one with collinear points in the firstdimension and one point with a distance
+one with collinear points in the first dimension and one point with a distance
 exceeding the spread of the other points in the second dimension. These are
 the worst cases for the midpoint/median rules and can also occur in
 higher dimensions.
 
 \cgalExample{Spatial_searching/splitter_worst_cases.cpp}
 
+\subsection Spatial_searchingExampleParallel Example for Parallel Neighbor Search
+
+In order to speed-up the construction of the `kd` tree, the child
+branches of each internal node can be computed in parallel, by calling
+`Kd_tree::build<CGAL::Parallel_tag>()`. On a quad-core processor, the
+parallel construction is experimentally 2 to 3 times faster than the
+sequential version, depending on the point cloud. The parallel version
+requires the executable to be linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
+
+One query on the `kd` tree is purely sequential, but several queries
+can be done in parallel.
+
+The following example shows how to build the `kd` tree in parallel and
+how to perform parallel queries:
+
+\cgalExample{Spatial_searching/parallel_kdtree.cpp}
+
 \section Performance Performance
 
-\subsection OrthogonalPerfomance Performance of the Orthogonal Search
+\subsection OrthogonalPerformance Performance of the Orthogonal Search
 
 We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random).
 We then consider three scenarios as data/queries.
 The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20.
 
-The results were produced with the release 4.6 of \cgal, on an Intel i7 2.7 Ghz
-laptop with 16 GB RAM, compiled with Visual C++ 2012 with the /O2 option.
+The results were produced with the release 5.1 of \cgal, on an Intel i7 2.3 GHz
+laptop with 16 GB RAM, compiled with CLang++ 6 with the O3 option.
 
-The values are the average of ten tests each.
-
+The values are the average of ten tests each. We show timings in seconds for both the building of the tree and the queries.
 
 <center>
-k | bucket size | Surface/Surface  | Surface/Random | Random/Random
---|------------:|-----------------:|---------------:|----------------:
-10|       10    |        0.89      |     11.48      |     2.63
-10|       20    |        0.89      |      9.80      |     2.25
-20|       10    |        1.60      |     13.41      |     4.06
-20|       20    |        1.59      |     11.62      |     3.46
-30|       10    |        2.35      |     15.52      |     5.42
-30|       20    |        2.33      |     13.50      |     4.61
+k | bucket size | Surface Build | Random Build | Surface/Surface  | Surface/Random | Random/Random
+--|------------:|--------------:|-------------:|-----------------:|---------------:|----------------:
+10|     10      |     0.17      |     0.31     |       1.13       |     15.35      |       3.40
+10|     20      |     0.14      |     0.28     |       1.09       |     12.28      |       3.00
+20|     10      |  (see above)  |  (see above) |       1.88       |     18.25      |       5.39
+20|     20      |  (see above)  |  (see above) |       1.81       |     14.99      |       4.51
+30|     10      |  (see above)  |  (see above) |       2.87       |     22.62      |       7.07
+30|     20      |  (see above)  |  (see above) |       2.66       |     18.39      |       5.68
+</center>
+
+The same experiment is done using the parallel version of the tree building algorithm, and performing the queries in parallel too:
+
+<center>
+k | bucket size | Surface Build | Random Build | Surface/Surface  | Surface/Random | Random/Random
+--|------------:|--------------:|-------------:|-----------------:|---------------:|----------------:
+10|     10      |     0.07      |     0.12     |       0.24       |      3.52      |       0.66
+10|     20      |     0.06      |     0.12     |       0.22       |      2.87      |       0.57
+20|     10      |  (see above)  |  (see above) |       0.41       |      4.28      |       1.02
+20|     20      |  (see above)  |  (see above) |       0.38       |      3.43      |       0.88
+30|     10      |  (see above)  |  (see above) |       0.58       |      4.90      |       1.44
+30|     20      |  (see above)  |  (see above) |       0.60       |      4.28      |       1.28
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
@@ -503,12 +532,29 @@ instead of the distance itself. For instance for the Euclidean
 distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
 
+Not storing the points coordinates inside the tree usually generates a
+lot of cache misses, leading to non-optimal performance. This is the case
+for example when indices are stored inside the tree,
+or to a lesser extent when the points coordinates are stored
+in a dynamically allocated array (e.g., `Epick_d` with dynamic
+dimension) &mdash; we says "to a lesser extent" because the points
+are re-created by the kd-tree in a cache-friendly order after its construction,
+so the coordinates are more likely to be stored in a near-optimal order on the
+heap.
+In this case, the `EnablePointsCache` template parameter of the `Kd_tree` class can be
+set to `Tag_true`. The points coordinates will then be cached in an optimal
+way. This will increase memory consumption but provide better search
+performance. See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
+additional requirements when using such a cache.
+
 \section Spatial_searchingImplementationHistory Implementation History
 
-The initial implementation of this package was done by Hans Tangelder and
-Andreas Fabri. It was optimized in speed and memory consumption by Markus
-Overtheil during an internship at GeometryFactory in 2014.
+The initial implementation of this package was done by Hans Tangelder
+and Andreas Fabri. It was optimized in speed and memory consumption by
+Markus Overtheil during an internship at GeometryFactory in 2014. The
+`EnablePointsCache` feature was introduced by Clément Jamin in 2019.
+The parallel `kd` tree build function was introduced by Simon Giraudot
+in 2020.
 
 */
 } /* namespace CGAL */
-

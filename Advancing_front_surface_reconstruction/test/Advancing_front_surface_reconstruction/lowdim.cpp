@@ -20,7 +20,7 @@ operator<<(std::ostream& os, const Facet& f)
 
 }
 
-void fct(const char* fname)
+void fct(const std::string fname)
 {
   std::ifstream in(fname);
   std::vector<Point_3> points;

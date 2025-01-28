@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -27,7 +18,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/property_map.h>
 #include <CGAL/tags.h>
 
@@ -62,9 +53,10 @@ public:
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
  *
- * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`,
- *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
- *
+ * \cgalModelsBareBegin
+ * \cgalModelsBare{`AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`}
+ * \cgalModelsBare{`AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`}
+ * \cgalModelsBareEnd
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.
@@ -79,11 +71,12 @@ public:
  *           it is constructed on the fly to reduce the memory footprint.
  *           The default is `CGAL::Tag_false` (datum is not stored).
  *
- * \sa `AABBPrimitive`
- * \sa `AABB_segment_primitive<Iterator,CacheDatum>`
- * \sa `AABB_triangle_primitive<Iterator,CacheDatum>`
- * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
- * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_segment_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_segment_primitive_3<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_3<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,OneHalfedgeGraphPerTree,CacheDatum>`
+ * \sa `AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,OneFaceGraphPerTree,CacheDatum>`
  */
 template <  class Id,
             class ObjectPropertyMap,
@@ -121,14 +114,14 @@ struct AABB_primitive
   /// @}
 
   /*!
-  Constructs a primitive and initializes the property maps.
+  constructs a primitive and initializes the property maps.
   */
   AABB_primitive(Id id,
                  ObjectPropertyMap o_pmap=ObjectPropertyMap(),
                  PointPropertyMap p_pmap=PointPropertyMap());
 
   /*!
-  Constructs a primitive from an iterator with `Id` as value type
+  constructs a primitive from an iterator with `Id` as value type
   and initializes the property maps.
   */
   template <class Iterator>
@@ -260,4 +253,3 @@ public:
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_PRIMITIVE_H
-

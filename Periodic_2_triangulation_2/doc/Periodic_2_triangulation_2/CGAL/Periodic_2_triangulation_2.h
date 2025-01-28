@@ -11,15 +11,17 @@ The class `Periodic_2_triangulation_2` represents a 2-dimensional
 triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
 \tparam Traits is the geometric traits, it
-is to be instantiated by a model of the concept
+has to be instantiated by a model of the concept
 `Periodic_2TriangulationTraits_2`.
 
-\tparam TDS is the triangulation data structure,
-it has to be instantiated by a model of the concept
-`TriangulationDataStructure_2` with some additional
-functionality in faces.
-By default, the triangulation data structure is instantiated by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Periodic_2_triangulation_vertex_base_2<Gt>,
+  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >
+\endcode
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -53,7 +55,7 @@ optional parameter is given).
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location,
-insertion takes a time \f$ O(1)\f$.
+insertion takes a time \cgalBigO{1}.
 
 Removal of a vertex is more difficult than in the Euclidean space,
 since the star of a vertex may not be disjoint from the star of a
@@ -67,14 +69,9 @@ their counterparts visiting all (non-virtual and virtual) features
 which are themselves derived from the corresponding iterators of the
 triangulation data structure.
 
-\sa `Triangulation_2`
-\sa `Periodic_2TriangulationTraits_2`
-\sa `TriangulationDataStructure_2`
-\sa `TriangulationDataStructure_2::Face`
-\sa `TriangulationDataStructure_2::Vertex`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Periodic_2_triangulation_face_base_2<Traits>`
-
+\sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`
+\sa `CGAL::Periodic_2_triangulation_hierarchy_2<Tr>`
+\sa `CGAL::Triangulation_2<Traits, Tds>`
 */
 template< typename Traits, typename Tds >
 class Periodic_2_triangulation_2 : public Triangulation_cw_ccw_2
@@ -103,7 +100,7 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
+/// The enum `Locate_type` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
 /// `EMPTY` is returned.
@@ -212,7 +209,8 @@ public:
   \name Handles, Iterators and Circulators
 
   The vertices and faces of the triangulations are accessed through
-  `handles`, `iterators` and `circulators`. The handles are \cgalModels of
+  `handles`, `iterators` and `circulators`. The handles are %CGAL
+  models of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are
@@ -513,6 +511,7 @@ public:
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
   \pre `is_triangulation_in_1_sheet()`
+
   \cgalAdvancedEnd
   */
   void convert_to_1_sheeted_covering();
@@ -984,6 +983,7 @@ public:
   `f`. Face `f` is modified,
   two new faces are created. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
   \pre The point in vertex `v` lies inside face `f`.
+
   \cgalAdvancedEnd
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
@@ -992,7 +992,9 @@ public:
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
-  destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
+  destroyed, the third one is modified.
+  \pre Vertex `v` is a vertex with degree three.
+
   \cgalAdvancedEnd
   */
   void remove_degree_3(Vertex_handle v);
@@ -1014,8 +1016,8 @@ public:
   creates a new vertex `v` and use it to star the hole
   whose boundary is described by the sequence of edges
   `[edge_begin, edge_end]`. Returns a handle to the new vertex.
-
   \pre The triangulation is a triangulation of 1 sheet
+
     \cgalAdvancedEnd
   */
   template<class EdgeIt>
@@ -1029,8 +1031,8 @@ public:
   same as above, except that the algorithm
   first recycles faces in the sequence `[face_begin, face_end]`
   and create new ones only when the sequence is exhausted.
-
   \pre The triangulation is a triangulation of 1 sheet
+
   \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>

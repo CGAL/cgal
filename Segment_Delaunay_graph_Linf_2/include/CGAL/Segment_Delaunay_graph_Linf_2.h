@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -43,7 +34,7 @@
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/internal/TDS_2/edge_list.h>
+#include <CGAL/TDS_2/internal/edge_list.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
@@ -52,6 +43,7 @@
 
 #include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
+#include <CGAL/use.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -75,11 +67,11 @@
 namespace CGAL {
 
 template<class Gt,
-	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
-	 class D_S = Triangulation_data_structure_2 <
+         class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
+         class D_S = Triangulation_data_structure_2 <
                 Segment_Delaunay_graph_vertex_base_2<ST>,
                 Segment_Delaunay_graph_face_base_2<Gt> >,
-	 class LTag = Tag_false >
+         class LTag = Tag_false >
 class Segment_Delaunay_graph_Linf_2
   : public Segment_Delaunay_graph_2< Gt, ST, D_S, LTag >
 {
@@ -178,7 +170,7 @@ public:
   // CREATION
   //---------
   Segment_Delaunay_graph_Linf_2(const Geom_traits& gt = Geom_traits(),
-			   const Storage_traits& st = Storage_traits())
+                           const Storage_traits& st = Storage_traits())
     : Base(gt,st)
   {
     setup_insert_on_pointers_linf();
@@ -186,8 +178,8 @@ public:
 
   template< class Input_iterator >
   Segment_Delaunay_graph_Linf_2(Input_iterator first, Input_iterator beyond,
-			   const Geom_traits& gt = Geom_traits(),
-			   const Storage_traits& st = Storage_traits())
+                           const Geom_traits& gt = Geom_traits(),
+                           const Storage_traits& st = Storage_traits())
     : Base(gt, st)
   {
     setup_insert_on_pointers_linf();
@@ -225,17 +217,17 @@ public:
 
   Vertex_triple
   insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			  Vertex_handle v, const Tag_true&);
+                          Vertex_handle v, const Tag_true&);
 
   Vertex_triple
   insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-				Vertex_handle v);
+                                Vertex_handle v);
 
 
   // Linf tiebreaker for finite vertex
   inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
-		const Site_2& supp, const Site_2& p,
+                const Site_2& supp, const Site_2& p,
                 const Point_2& pt ) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return Base::geom_traits().oriented_side_2_object()(
@@ -245,7 +237,7 @@ public:
   // Linf tiebreaker for infinite vertex
   inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2,
-		const Site_2& supp, const Site_2& p,
+                const Site_2& supp, const Site_2& p,
                 const Point_2& pt ) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return Base::geom_traits().oriented_side_2_object()(
@@ -389,8 +381,8 @@ public:
     os << "Convex-hull of sdg:" << std::endl;
     os << "-------------------" << std::endl;
     Vertex_handle v_inf = infinite_vertex();
-    Vertex_circulator	 vc1 = incident_vertices(v_inf);
-    Vertex_circulator	 vc2 = vc1;
+    Vertex_circulator         vc1 = incident_vertices(v_inf);
+    Vertex_circulator         vc2 = vc1;
     CGAL_precondition(is_infinite(v_inf));
     /*if (is_infinite(v_inf)){
       os << "vertex 0 : " << inf_vertex << std::endl;
@@ -433,13 +425,13 @@ public:
       Site_2 q = eit->first->vertex( ccw(eit->second) )->site();
 
       bool is_endpoint_of_seg =
-	( p.is_segment() && q.is_point() &&
-	  is_endpoint_of_segment(q, p) ) ||
-	( p.is_point() && q.is_segment() &&
-	  is_endpoint_of_segment(p, q) );
+        ( p.is_segment() && q.is_point() &&
+          is_endpoint_of_segment(q, p) ) ||
+        ( p.is_point() && q.is_segment() &&
+          is_endpoint_of_segment(p, q) );
 
       if ( !is_endpoint_of_seg ) {
-	draw_dual_edge(*eit, str);
+        draw_dual_edge(*eit, str);
       }
     }
     return str;

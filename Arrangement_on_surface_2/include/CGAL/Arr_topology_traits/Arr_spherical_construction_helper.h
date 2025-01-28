@@ -1,24 +1,16 @@
-// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2014 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
+//                 Eric Berberich <eric.berberich@cgal.org>
 
 #ifndef CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
@@ -110,14 +102,14 @@ protected:
   Halfedge_indices_map* m_he_ind_map_p;
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_spherical_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
     m_he_ind_map_p(nullptr)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_spherical_construction_helper() {}
 
   /// \name Notification functions.
@@ -135,39 +127,40 @@ public:
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle , Subcurve* ) { return; }
 
-  /*! Collect a subcurve index that does not see any status-line from below.
+  /*! collects a subcurve index that does not see any status-line from below.
    */
   void add_subcurve_in_top_face(unsigned int index)
   { m_subcurves_at_nf.push_back(index); }
 
-  /*! Obtain the indices of the halfedges that "see" the north. */
+  /*! obtains the indices of the halfedges that "see" the north. */
   Indices_list& halfedge_indices_list() { return m_subcurves_at_nf; }
 
   /*! A notification invoked before the given event it deallocated. */
   void before_deallocate_event(Event* /* event */) {}
   //@}
 
-  /*! Set the map that maps each halfedge to the list of subcurve indices
+  /*! sets the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
   { m_he_ind_map_p = &table; }
 
-  /*! Determine if we should swap the order of predecessor halfedges when
+  /*! determines if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
   bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the north pole, we have
-    // to flip the order of predecessor halfegdes.
+    // to flip the order of predecessor halfedges.
+    // TODO what about the corner?
     return (event->parameter_space_in_x() == ARR_INTERIOR &&
             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
   }
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   virtual Face_handle top_face() const { return m_spherical_face; }
 
-  /*! Splice the indices list of the given halfedge, inserting the
+  /*! splices the indices list of the given halfedge, inserting the
    * indices of the halfedges that "see" the north pole.
    */
   void splice_indices_list(Halfedge_handle he)
@@ -190,35 +183,36 @@ before_handle_event(Event* event)
   Arr_parameter_space ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
 
+  if (event->is_isolated()) return;
+
+  // In the sweep-line event order the events of poles belong to the left and
+  // right boundary. However, here the vertices of the poles are identified by
+  // the event's trais to belong to the bottom and top boundary.
+
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    // Process bootom contraction boundary:
-    // The event has only one right curve, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() == 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    /* subsumes LEFT-BOTTOM and RIGHT-BOTTOM corner */
+    // Process a non-isolated event on the bottom contracted boundary.
 
     // If a vertex on the south pole does not exists, create one.
     DVertex* dv = m_top_traits->south_pole();
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    // Process top contraction boundary:
-    // The event has only one left curve, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 1) &&
-                   (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    /* subsumes LEFT-TOP and RIGHT-TOP corner */
+    // Process a non-isolated event on the top contracted boundary.
+    // The process is more complicated than for the bottom boundary,
+    // as the touching the top boundary influences the list of
+    // halfedges seen in the reference face
 
     DVertex* dv = m_top_traits->north_pole();
     if (dv) {
       event->set_vertex_handle(Vertex_handle(dv));
+      const X_monotone_curve_2& xc =
+        (*(event->left_curves_begin()))->last_curve();
       DHalfedge* dprev =
         m_top_traits->locate_around_boundary_vertex(m_top_traits->north_pole(),
                                                     xc, ARR_MAX_END,
@@ -237,11 +231,11 @@ before_handle_event(Event* event)
       splice_indices_list(prev->next());
       return;
     }
+    // else
 
-    // We do not have a vertex that corresponds to the north pole.
-    // Create one.
+    // If a vertex on the north pole does not exists, create one.
     Vertex_handle v =
-      m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
 
     // Since this is the first event corresponding to the north pole,
@@ -256,36 +250,28 @@ before_handle_event(Event* event)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    // The event has only right curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() >= 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    // Process a non-isolated event on the left identified boundary.
+    // It might be the end of a vertical curve.
 
-    // If a vertex on the line of discontinuity does not exists. create one.
-    DVertex* dv = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
+    // If a vertex on the line of discontinuity does not exists, create one.
+    DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
-    // The event has only left curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() >= 1) &&
-                   (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
-
-    // If a vertex on the line of discontinuity does not exists. create one.
-    DVertex* dv = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
+    // Process a non-isolated event on the right identified boundary.
+    // Cannot be vertical, only curves approaching the right side are possible.
+    // If a vertex on the line of discontinuity does not exists, create one.
+    DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
+
 }
 
 } // namespace CGAL

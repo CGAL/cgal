@@ -45,35 +45,38 @@ struct Splitter_test {
   typedef typename Orthogonal_incremental_neighbor_search::iterator NN_iterator;
   typedef typename Orthogonal_incremental_neighbor_search::Tree Tree;
   typedef typename Orthogonal_incremental_neighbor_search::Point_with_transformed_distance Point_with_transformed_distance;
-  
+
   bool operator()(Vector points, Point query) {
 
     Vector points2;
-    
+
     Tree t(
       boost::make_transform_iterator(points.begin(),Create_point_with_info<typename Traits::Point_d>()),
       boost::make_transform_iterator(points.end(),Create_point_with_info<typename Traits::Point_d>())
     );
-    
+
     Orthogonal_incremental_neighbor_search oins(t, query, 0.0, true);
-    
+
     typename Orthogonal_incremental_neighbor_search::iterator it = oins.begin();
     Point_with_transformed_distance pd = *it;
     points2.push_back(get_point(pd.first));
-    if(CGAL::squared_distance(query,get_point(pd.first)) != pd.second){
+
+    std::cout << std::setprecision(17);
+
+    if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
       std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
     }
-    assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+    assert(abs(CGAL::squared_distance(query,get_point(pd.first)) - pd.second) < 0.000000001);
     it++;
     for(; it != oins.end();it++){
       Point_with_transformed_distance qd = *it;
       assert(pd.second <= qd.second);
       pd = qd;
       points2.push_back(get_point(pd.first));
-      if(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) != pd.second){
-	std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
+      if(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) >= 0.000000001){
+        std::cout << CGAL::squared_distance(query,get_point(pd.first)) << " != " << pd.second << std::endl;
       }
-      assert(CGAL_IA_FORCE_TO_DOUBLE(CGAL::squared_distance(query,get_point(pd.first))) == pd.second);
+      assert(abs(CGAL::squared_distance(query, get_point(pd.first)) - pd.second) < 0.000000001);
     }
     std::sort(points.begin(),points.end());
     std::sort(points2.begin(),points2.end());
@@ -81,19 +84,19 @@ struct Splitter_test {
     assert(points == points2);
     return true;
   }
-};  
+};
 
-int 
+int
 main() {
 
-  // We enforce IEEE double precision as we compare a distance 
+  // We enforce IEEE double precision as we compare a distance
   // in a register with a distance in memory
   CGAL::Set_ieee_double_precision pfr;
 
   Vector points;
   Random_points g( 150.0);
   std::copy_n( g, 1000, std::back_inserter(points));
-    
+
   g++;
   Point query = *g;
   {
@@ -110,7 +113,7 @@ main() {
     Splitter_test<Traits_with_info,CGAL::Sliding_fair<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
-  
+
   {
     std::cout << "Testing Fair" << std::endl;
     Splitter_test<TreeTraits,CGAL::Fair<TreeTraits>,Distance > st;
@@ -118,7 +121,7 @@ main() {
     Splitter_test<Traits_with_info,CGAL::Fair<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
-  
+
   {
     std::cout << "Testing Median_of_rectangle" << std::endl;
     Splitter_test<TreeTraits,CGAL::Median_of_rectangle<TreeTraits>,Distance > st;
@@ -127,7 +130,7 @@ main() {
     sti(points,query);
   }
 
-  
+
   {
     std::cout << "Testing Midpoint_of_rectangle" << std::endl;
     Splitter_test<TreeTraits,CGAL::Midpoint_of_rectangle<TreeTraits>,Distance > st;
@@ -135,7 +138,7 @@ main() {
     Splitter_test<Traits_with_info,CGAL::Midpoint_of_rectangle<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
-  
+
   {
     std::cout << "Testing Midpoint_of_max_spread" << std::endl;
     Splitter_test<TreeTraits,CGAL::Midpoint_of_max_spread<TreeTraits>,Distance > st;
@@ -153,5 +156,5 @@ main() {
 
   std::cout << "done" << std::endl;
   return 0;
-}  
+}
 

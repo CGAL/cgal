@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::CompareXYZ_3` 
+\cgalRefines{Kernel::CompareXYZ_3}
 
 \sa `SphericalKernel::CompareX_3`
 \sa `SphericalKernel::CompareY_3`
@@ -22,12 +22,12 @@ public:
 /// @{
 
 /*!
-Compares `p` and `q` according to the lexicographic ordering on \f$ x\f$-, \f$ y\f$-, 
-and \f$ z\f$-coordinates. 
-*/ 
-Comparison_result operator() 
-(const SphericalKernel::Circular_arc_point_3 &p, 
-const SphericalKernel::Circular_arc_point_3 &q ); 
+Compares `p` and `q` according to the lexicographic ordering on \f$ x\f$-, \f$ y\f$-,
+and \f$ z\f$-coordinates.
+*/
+Comparison_result operator()
+(const SphericalKernel::Circular_arc_point_3 &p,
+const SphericalKernel::Circular_arc_point_3 &q );
 
 /// @}
 

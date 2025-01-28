@@ -12,7 +12,7 @@ int main(int argc, char * argv[])
             << "BenchmarkName( \"" << argv[1] << "\" )" << std::endl
             << "Classification( \"Arrangement\", \"Polylines\", \"BoundedArcs\", \"Dgn\", \"O\", \"Aug-2007\" )" << std::endl
             << std::endl;
-  
+
   std::ifstream is(argv[1]);
 #if 1
   int c;

@@ -12,19 +12,19 @@ typedef Kernel::Direction_2               Direction_2;
 
 int main(int argc, char ** argv) {
 
+  unsigned int k = argc < 2 ? 6 : atoi(argv[1]);
   if (argc < 2) {
     std::cout << "Usage: " << argv[0] << " <no. of cones> [<direction-x> <direction-y>]" << std::endl;
-    return 1;
+    std::cout << "Using default value " << k << "\n";
   }
 
-  unsigned int k = atoi(argv[1]);
   if (k<2) {
     std::cout << "The number of cones should be larger than 1!" << std::endl;
     return 1;
   }
 
   Direction_2 initial_direction;
-  if (argc == 2)
+  if (argc <= 2)
     initial_direction = Direction_2(1, 0);  // default initial_direction
   else if (argc == 4)
     initial_direction = Direction_2(atof(argv[2]), atof(argv[3]));

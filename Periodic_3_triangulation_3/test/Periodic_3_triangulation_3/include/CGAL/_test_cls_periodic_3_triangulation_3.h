@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Francois Rebufat
@@ -488,10 +479,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   _test_vertex_iterator(PT3_deg);
   _test_vertex_iterator(PT1_deg);
 
-  _test_unique_vertex_iterator(PT3);
-  _test_unique_vertex_iterator(PT1);
-  _test_unique_vertex_iterator(PT3_deg);
-  _test_unique_vertex_iterator(PT1_deg);
+  _test_triangulation_unique_iterator(PT3);
+  _test_triangulation_unique_iterator(PT1);
+  _test_triangulation_unique_iterator(PT3_deg);
+  _test_triangulation_unique_iterator(PT1_deg);
 
   _test_triangulation_iterator(PT3);
   _test_triangulation_iterator(PT1);
@@ -645,7 +636,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   if(test_input_ouput)
   {
     std::cout << "I/O" << std::endl;
-    std::cout << "  ascii" << std::endl;
+    std::cout << "  ASCII" << std::endl;
 
     std::stringstream ss1;
     std::stringstream ss3;
@@ -656,8 +647,8 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     ss1 >> PT1r;
     ss3 >> PT3r;
 
-    assert(CGAL::is_ascii(ss1));
-    assert(CGAL::is_ascii(ss3));
+    assert(CGAL::IO::is_ascii(ss1));
+    assert(CGAL::IO::is_ascii(ss3));
     if (!ex) assert(PT1 == PT1r);
     if (!ex) assert(PT3 == PT3r);
 
@@ -668,15 +659,15 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     if (!ex) {
       std::stringstream ss1b;
       std::stringstream ss3b;
-      CGAL::set_binary_mode(ss1b);
-      CGAL::set_binary_mode(ss3b);
+      CGAL::IO::set_binary_mode(ss1b);
+      CGAL::IO::set_binary_mode(ss3b);
       ss1b << PT1;
       ss3b << PT3;
 
       ss1b >> PT1r;
       ss3b >> PT3r;
-      assert(CGAL::is_binary(ss1b));
-      assert(CGAL::is_binary(ss3b));
+      assert(CGAL::IO::is_binary(ss1b));
+      assert(CGAL::IO::is_binary(ss3b));
 
       assert(PT1 == PT1r);
       assert(PT3 == PT3r);
@@ -688,12 +679,12 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     PT3r.clear();
     std::stringstream ss1p;
     std::stringstream ss3p;
-    CGAL::set_pretty_mode(ss1p);
-    CGAL::set_pretty_mode(ss3p);
+    CGAL::IO::set_pretty_mode(ss1p);
+    CGAL::IO::set_pretty_mode(ss3p);
     ss1p << PT1;
     ss3p << PT3;
 
-    assert(CGAL::is_pretty(ss1p));
-    assert(CGAL::is_pretty(ss3p));
+    assert(CGAL::IO::is_pretty(ss1p));
+    assert(CGAL::IO::is_pretty(ss3p));
   }
 }

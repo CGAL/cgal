@@ -5,26 +5,16 @@
 #include <CGAL/double.h>
 #include <CGAL/test_macros.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer  RT_;
-typedef leda_rational FT_;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Gmpz RT_;
-typedef CGAL::Quotient<RT_> FT_;
-#else
-typedef double RT_;
-typedef double FT_;
-#endif
-#endif
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
+
+typedef CGAL::Exact_integer RT_;
+typedef CGAL::Exact_rational FT_;
+
 
 int main()
 { CGAL_KD_SETDTHREAD(2);
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 { // Homogeneous Kernel
   typedef CGAL::Homogeneous_d<RT_> Kernel;
@@ -42,14 +32,14 @@ int main()
   typedef LA::Vector                 IVector;
   bool DOIO=true;
 
-  { 
+  {
     /* some construction test */
     int IV1[] = {1,0,1};
     int IV2[] = {0,1};
     IVector iv1(IV1,IV1+3), iv2(IV2,IV2+2);
-    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3), 
-          p2(2,iv2.begin(),iv2.end(),1), 
-          p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1); 
+    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3),
+          p2(2,iv2.begin(),iv2.end(),1),
+          p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1);
     CGAL_TEST(p0 == p3 && p1 == p4 && p2 == p5){} // op==
     CGAL_TEST(p0 != p1 && p0 != p2){} // op!=
     CGAL_TEST(p0 == CGAL::ORIGIN){}
@@ -61,26 +51,26 @@ int main()
 
     /* some input and access test */
     CGAL_TEST(p1.hx()==RT(1) && p1.hy()==RT(0) && p1.hw()!=RT(0)){}
-    CGAL_TEST(p1.hx()==p1.homogeneous(0) && 
-              p1.hy()==p1.homogeneous(1) && 
+    CGAL_TEST(p1.hx()==p1.homogeneous(0) &&
+              p1.hy()==p1.homogeneous(1) &&
               p1.hw()==p1.homogeneous(2)){} // hx,hy,hw
     CGAL_TEST(p1.x()==FT(1) && p1.y()==FT(0)){} // x(),y()
     CGAL_TEST(p1.x()==p1[0] && p1.y()==p1[1]){} // x(),y()
     CGAL_TEST(p1.x()==p1.cartesian(0) && p1.y()==p1.cartesian(1)){} // x(),y()
     Point::Homogeneous_const_iterator hcit; int i;
-    for (i=0, hcit = p1.homogeneous_begin(); 
+    for (i=0, hcit = p1.homogeneous_begin();
          hcit != p1.homogeneous_end(); ++i, ++hcit)
       CGAL_TEST(*hcit == iv1[i]){}
 
     Point::Homogeneous_const_iterator hit;
-    Point::Cartesian_const_iterator cit; 
+    Point::Cartesian_const_iterator cit;
 
-    Kernel::Cartesian_const_iterator_d cit_begin = 
+    Kernel::Cartesian_const_iterator_d cit_begin =
       Kernel().construct_cartesian_const_iterator_d_object()(p1);
-    Kernel::Cartesian_const_iterator_d cit_end = 
+    Kernel::Cartesian_const_iterator_d cit_end =
       Kernel().construct_cartesian_const_iterator_d_object()(p1, 1);
 
-    for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
+    for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin();
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit){}
       CGAL_TEST(p1.cartesian(i)==*cit){}
@@ -97,29 +87,29 @@ int main()
     CGAL_TEST(CGAL::project_along_d_axis(
               CGAL::lift_to_paraboloid(p1)) == p1){} // lift and project
     Vector vi(7,8,1);
-    CGAL_TEST(CGAL::midpoint(p1+vi,p1-vi)==p1){} 
-    CGAL_TEST(CGAL::squared_distance(p1,p1+vi)==vi.squared_length()){} 
+    CGAL_TEST(CGAL::midpoint(p1+vi,p1-vi)==p1){}
+    CGAL_TEST(CGAL::squared_distance(p1,p1+vi)==vi.squared_length()){}
 
-    std::vector<Point> A = make_vector(p0,p1,p2); 
+    std::vector<Point> A = make_vector(p0,p1,p2);
     CGAL_TEST(CGAL::orientation(A.begin(),A.end())==CGAL::POSITIVE){}
 
     p3 = Point(1,1,2);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_POSITIVE_SIDE){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_BOUNDED_SIDE){}
     p3 = Point(1,1,1);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_ORIENTED_BOUNDARY){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_BOUNDARY){}
     p3 = Point(2,2,1);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_NEGATIVE_SIDE){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_UNBOUNDED_SIDE){}
 
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_UNBOUNDED_SIDE){}
 
     Point B[2] = { p1, p2 };
@@ -142,7 +132,7 @@ int main()
     CGAL_TEST(CGAL::compare_lexicographically(p1,p1)==CGAL::EQUAL){}
   }
 
-  {  
+  {
     /* some construction test */
     Point p0(3); // the origin
     Vector e1 = Vector(3,Vector::Base_vector(),0);
@@ -151,10 +141,10 @@ int main()
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     // the first unit vector
 
-    Point p1(p0 + e1), 
-          p2(3,iv1.begin(),iv1.end()), 
-          p3(3,iv2.begin(),iv2.end(),1), 
-          p4(3); 
+    Point p1(p0 + e1),
+          p2(3,iv1.begin(),iv1.end()),
+          p3(3,iv2.begin(),iv2.end(),1),
+          p4(3);
     CGAL_TEST(CGAL::compare_lexicographically(p0,p4)==CGAL::EQUAL){}
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER){}
     CGAL_TEST(CGAL::compare_lexicographically(p3,p0)==CGAL::LARGER){}
@@ -168,11 +158,11 @@ int main()
     CGAL_TEST(p1-p0==e1){}
     CGAL_TEST(p1+e1==Point(2,0,0,1)){}
     CGAL_TEST(p1-e1==p0){}
-    
+
     Point p5(3);
     CGAL_TEST((p5+=e1)==p1){}
     CGAL_TEST((p5-=e1)==p0){}
-    
+
     /* orientation, sphere position, simplex position */
     std::vector<Point> A = make_vector(p0,p1,p2,p4);
     CGAL_TEST(CGAL::orientation(A.begin(),A.end())==CGAL::ZERO){}
@@ -206,7 +196,7 @@ int main()
 
     p4 = Point(1,1,1,3);
     CGAL_TEST(CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
-    p4 = Point(1,1,1,2); 
+    p4 = Point(1,1,1,2);
     CGAL_TEST(!CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
     p4 = Point(1,1,1,1);
     CGAL_TEST(!CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
@@ -223,22 +213,22 @@ int main()
     CGAL_TEST(CGAL::affinely_independent(A.begin(),A.end())){}
     CGAL_TEST(CGAL::affine_rank(A.begin(),A.end())==3){}
     A[3] = CGAL::midpoint(CGAL::midpoint(A[0],A[1]),A[2]);
-    CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end())){} 
-    // degenerate_simplex  
+    CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end())){}
+    // degenerate_simplex
     CGAL_TEST(CGAL::affine_rank(A.begin(),A.end())==2){}
-    // full_simplex  
+    // full_simplex
   }
 
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,2,3,1};
     int IV2[] = {3,2,1};
     IVector i1(IV1,IV1+4), i2(IV2,IV2+3);
-    Vector a0(3), 
-           a1(3,i1.begin(),i1.end()), 
-           a2(3,i2.begin(),i2.end(),1), 
-           a3(6,4,2,2), a4(1,0,1), a5(1,1,6), a6(a1); 
+    Vector a0(3),
+           a1(3,i1.begin(),i1.end()),
+           a2(3,i2.begin(),i2.end(),1),
+           a3(6,4,2,2), a4(1,0,1), a5(1,1,6), a6(a1);
 
     CGAL_TEST((a1==a6 && a3==a2)){}
     CGAL_TEST((a0!=a1 && a0!=a4)){}
@@ -255,9 +245,9 @@ int main()
     CGAL_TEST(a3[0]==FT(3)){}
     CGAL_TEST(a3.direction()==Direction(3,2,1)){}
 
-    Vector::Homogeneous_const_iterator hit; 
+    Vector::Homogeneous_const_iterator hit;
     Vector::Cartesian_const_iterator cit; int i;
-    for (i=0,hit=a1.homogeneous_begin(),cit=a1.cartesian_begin(); 
+    for (i=0,hit=a1.homogeneous_begin(),cit=a1.cartesian_begin();
          i<a1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(a1.homogeneous(i)==*hit){}
       CGAL_TEST(a1.cartesian(i)==*cit){}
@@ -273,7 +263,7 @@ int main()
 
     CGAL_TEST(2*a1==Vector(2,4,6,1)){}
     CGAL_TEST(Kernel::make_FT(2,3)*a4==Vector(2,0,3)){}
-    
+
     CGAL_TEST(a3/2==Vector(3,2,1,2)){}
     CGAL_TEST(a3/Kernel::make_FT(2,3)==Vector(9,6,3,2)){}
 
@@ -284,7 +274,7 @@ int main()
     a7/=Kernel::make_FT(3,4);
     a7/=4;
     CGAL_TEST(a1==a7){}
-    
+
     CGAL_TEST(a4*a4==FT(1)){}
     CGAL_TEST(a4.squared_length()==FT(1)){}
     CGAL_TEST(a1+a2==Vector(4,4,4,1)){}
@@ -299,31 +289,31 @@ int main()
 
     /* some linear algebra */
 
-    std::vector<Vector> P12 = make_vector(a1,a2); 
+    std::vector<Vector> P12 = make_vector(a1,a2);
     CGAL_TEST(CGAL::contained_in_linear_hull(P12.begin(),P12.end(),a1+a2)){}
     Vector z_off = a1 + Vector(3,Vector::Base_vector(),2);
     CGAL_TEST(!CGAL::contained_in_linear_hull(P12.begin(),P12.end(),z_off)){}
 
     std::vector<Vector> NLI = make_vector(a1,a2,a1+a2),
-                        LI = make_vector(a1,a2,z_off); 
+                        LI = make_vector(a1,a2,z_off);
     CGAL_TEST(CGAL::linearly_independent(LI.begin(),LI.end())){}
     CGAL_TEST(!CGAL::linearly_independent(NLI.begin(),NLI.end())){}
 
     CGAL_TEST(CGAL::linear_rank(LI.begin(),LI.end())==3){}
     CGAL_TEST(CGAL::linear_rank(NLI.begin(),NLI.end())==2){}
     std::vector<Vector> LB(3);
-    std::vector<Vector>::iterator last = 
+    std::vector<Vector>::iterator last =
       CGAL::linear_base(NLI.begin(),NLI.end(),LB.begin());
     CGAL_TEST(CGAL::linearly_independent(LB.begin(),last)){}
   }
 
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,5,-3,2};
     int IV2[] = {1,1,0};
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
-    Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
+    Direction d0(3), d1(3,iv1.begin(),iv1.end()),
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
               d4 = Direction(3,Direction::Base_direction(),2),
@@ -350,15 +340,15 @@ int main()
     CGAL_TEST(it==d1.deltas_end()){}
   }
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,2,3,4};
     int IV2[] = {-4,-3,-2};
-    IVector vi1(IV1,IV1+4); 
-    IVector vi2(IV2,IV2+3); 
+    IVector vi1(IV1,IV1+4);
+    IVector vi2(IV2,IV2+3);
     // two ivec inits
 
-    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
+    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)),
           p2(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),1)),
           p3(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),2));
     // one three point init
@@ -366,8 +356,8 @@ int main()
     Direction dir(1,1,1);
     Point o(-1,-1,-1,1), org(3);
     // one dir init
-    Hyperplane h0(3,vi1.begin(),vi1.end()); 
-    Hyperplane h1(3,vi2.begin(),vi2.end(),1); 
+    Hyperplane h0(3,vi1.begin(),vi1.end());
+    Hyperplane h1(3,vi2.begin(),vi2.end(),1);
     std::vector<Point> V = make_vector(p1,p2,p3);
     Hyperplane h2(V.begin(),V.end(),o,CGAL::ON_NEGATIVE_SIDE);
     V = make_vector(org,org,org);
@@ -380,7 +370,7 @@ int main()
 
     CGAL_TEST((h5==h0 && h7==h0)){}
     CGAL_TEST((h1!=h0 && h7!=h6)){}
-    CGAL_TEST((h2.dimension()==h5.dimension() && 
+    CGAL_TEST((h2.dimension()==h5.dimension() &&
                h2.dimension()!=h6.dimension())){}
     CGAL_TEST((h5.coefficient(1)==RT(2) && h5[2]==RT(3))){}
     CGAL_TEST((vi1 == h0.coefficient_vector())){}
@@ -397,16 +387,16 @@ int main()
     CGAL_TEST(h3.has_on(org)){}
     CGAL_TEST(!h5.has_on(p1)){}
     CGAL_TEST(h3.has_on_positive_side(o)){}
-    
+
     if (DOIO) CGAL_IO_TEST(h0,h8,CGAL::IO::ASCII); h8=h0;
 
     Hyperplane::Coefficient_const_iterator it; int i;
-    for (i=0,it=h5.coefficients_begin(); 
+    for (i=0,it=h5.coefficients_begin();
          i<=h5.dimension(); ++it,++i) {
       CGAL_TEST(h5.coefficient(i)==*it){}
     }
     CGAL_TEST(it==h5.coefficients_end()){}
-    
+
     // all kind of |HyperplaneHd<integer>| inits
 
     /* compares and other operations */
@@ -425,7 +415,7 @@ int main()
     Point q(1,-1,-1,1);
     Point r(-1,1,-1,1);
     Point s(1,1,1,1);
-    
+
     std::vector< Point > A = make_vector(p,q,r,s);
     Sphere S1(3,A.begin(),A.end()), S2(3), S3(S1), S4 = S1;
 
@@ -454,19 +444,19 @@ int main()
 
     Vector v(1,0,0,1);
     std::vector< Point > B = make_vector(p+v,q+v,r+v,s+v);
-    CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ){} 
+    CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ){}
     CGAL_TEST( CGAL::weak_equality(S1.opposite(),S1) ){}
     if (DOIO) CGAL_IO_TEST(S1,S3,CGAL::IO::ASCII); S3 = S1;
   }
 
   {
-    Point p1(-5,1), p2(5,1); 
+    Point p1(-5,1), p2(5,1);
     Vector v(0,5);
     Segment s0, s1(p1,p2), s2(p1,v),
               s3(Point(-1,-1),Point(5,5)),
               s4(Point(1,1,2),Point(5,5,3)),
               s5(Point(0,0,1),Point(4,4,1)),
-              s6(s1); 
+              s6(s1);
 
     CGAL_TEST(s6==s1&&s2!=s1&&s5!=s2){}
     CGAL_TEST(s5.dimension()==2 && s2.dimension()==s3.dimension()){}
@@ -492,11 +482,11 @@ int main()
     if (DOIO) CGAL_IO_TEST(s1,s6,CGAL::IO::ASCII); s6 = s1;
   }
 
-  { 
+  {
     Point p1(2), p2(5,0);
     Segment s(Point(1,-1),Point(1,5));
-    Direction dir(1,0); 
-    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1); 
+    Direction dir(1,0);
+    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1);
     Point p3(3), p4(1,1,1,1);
     Ray r6(p3,p4);
 
@@ -556,14 +546,14 @@ int main()
   typedef LA::Vector                 IVector;
   bool DOIO=false;
 
-  { 
+  {
     /* some construction test */
     int IV1[] = {1,0,1};
     int IV2[] = {0,1};
     IVector iv1(IV1,IV1+3), iv2(IV2,IV2+2);
-    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3), 
-          p2(2,iv2.begin(),iv2.end(),1), 
-          p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1); 
+    Point p0(2,CGAL::ORIGIN), p1(2,IV1,IV1+3),
+          p2(2,iv2.begin(),iv2.end(),1),
+          p3(2), p4(p1), p5(2,iv2.begin(),iv2.end(),1);
     CGAL_TEST(p0 == p3 && p1 == p4 && p2 == p5){} // op==
     CGAL_TEST(p0 != p1 && p0 != p2){} // op!=
     CGAL_TEST(p0 == CGAL::ORIGIN){}
@@ -575,26 +565,26 @@ int main()
 
     /* some input and access test */
     CGAL_TEST(p1.hx()==RT(1) && p1.hy()==RT(0) && p1.hw()!=RT(0)){}
-    CGAL_TEST(p1.hx()==p1.homogeneous(0) && 
-              p1.hy()==p1.homogeneous(1) && 
+    CGAL_TEST(p1.hx()==p1.homogeneous(0) &&
+              p1.hy()==p1.homogeneous(1) &&
               p1.hw()==p1.homogeneous(2)){} // hx,hy,hw
     CGAL_TEST(p1.x()==FT(1) && p1.y()==FT(0)){} // x(),y()
     CGAL_TEST(p1.x()==p1[0] && p1.y()==p1[1]){} // x(),y()
     CGAL_TEST(p1.x()==p1.cartesian(0) && p1.y()==p1.cartesian(1)){} // x(),y()
     Point::Homogeneous_const_iterator hcit; int i;
-    for (i=0, hcit = p1.homogeneous_begin(); 
+    for (i=0, hcit = p1.homogeneous_begin();
          hcit != p1.homogeneous_end(); ++i, ++hcit)
       CGAL_TEST(*hcit == iv1[i]){}
 
     Point::Homogeneous_const_iterator hit;
-    Point::Cartesian_const_iterator cit; 
+    Point::Cartesian_const_iterator cit;
 
-    Kernel::Cartesian_const_iterator_d cit_begin = 
+    Kernel::Cartesian_const_iterator_d cit_begin =
       Kernel().construct_cartesian_const_iterator_d_object()(p1);
-    Kernel::Cartesian_const_iterator_d cit_end = 
+    Kernel::Cartesian_const_iterator_d cit_end =
       Kernel().construct_cartesian_const_iterator_d_object()(p1, 1);
-  
-    for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
+
+    for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin();
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit){}
       CGAL_TEST(p1.cartesian(i)==*cit){}
@@ -611,29 +601,29 @@ int main()
     CGAL_TEST(CGAL::project_along_d_axis(
               CGAL::lift_to_paraboloid(p1)) == p1){} // lift and project
     Vector vi(7,8,1);
-    CGAL_TEST(CGAL::midpoint(p1+vi,p1-vi)==p1){} 
-    CGAL_TEST(CGAL::squared_distance(p1,p1+vi)==vi.squared_length()){} 
+    CGAL_TEST(CGAL::midpoint(p1+vi,p1-vi)==p1){}
+    CGAL_TEST(CGAL::squared_distance(p1,p1+vi)==vi.squared_length()){}
 
-    std::vector<Point> A = make_vector(p0,p1,p2); 
+    std::vector<Point> A = make_vector(p0,p1,p2);
     CGAL_TEST(CGAL::orientation(A.begin(),A.end())==CGAL::POSITIVE){}
 
     p3 = Point(1,1,2);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_POSITIVE_SIDE){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_BOUNDED_SIDE){}
     p3 = Point(1,1,1);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_ORIENTED_BOUNDARY){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_BOUNDARY){}
     p3 = Point(2,2,1);
-    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_oriented_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_NEGATIVE_SIDE){}
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_UNBOUNDED_SIDE){}
 
-    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) == 
+    CGAL_TEST(CGAL::side_of_bounded_sphere(A.begin(),A.end(),p3) ==
           CGAL::ON_UNBOUNDED_SIDE){}
 
     Point B[2] = { p1, p2 };
@@ -656,7 +646,7 @@ int main()
     CGAL_TEST(CGAL::compare_lexicographically(p1,p1)==CGAL::EQUAL){}
   }
 
-  {  
+  {
     /* some construction test */
     Point p0(3); // the origin
     Vector e1 = Vector(3,Vector::Base_vector(),0);
@@ -665,10 +655,10 @@ int main()
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
     // the first unit vector
 
-    Point p1(p0 + e1), 
-          p2(3,iv1.begin(),iv1.end()), 
-          p3(3,iv2.begin(),iv2.end(),1), 
-          p4(3); 
+    Point p1(p0 + e1),
+          p2(3,iv1.begin(),iv1.end()),
+          p3(3,iv2.begin(),iv2.end(),1),
+          p4(3);
     CGAL_TEST(CGAL::compare_lexicographically(p0,p4)==CGAL::EQUAL){}
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER){}
     CGAL_TEST(CGAL::compare_lexicographically(p3,p0)==CGAL::LARGER){}
@@ -682,11 +672,11 @@ int main()
     CGAL_TEST(p1-p0==e1){}
     CGAL_TEST(p1+e1==Point(2,0,0,1)){}
     CGAL_TEST(p1-e1==p0){}
-    
+
     Point p5(3);
     CGAL_TEST((p5+=e1)==p1){}
     CGAL_TEST((p5-=e1)==p0){}
-    
+
     /* orientation, sphere position, simplex position */
     std::vector<Point> A = make_vector(p0,p1,p2,p4);
     CGAL_TEST(CGAL::orientation(A.begin(),A.end())==CGAL::ZERO){}
@@ -720,7 +710,7 @@ int main()
 
     p4 = Point(1,1,1,3);
     CGAL_TEST(CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
-    p4 = Point(1,1,1,2); 
+    p4 = Point(1,1,1,2);
     CGAL_TEST(!CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
     p4 = Point(1,1,1,1);
     CGAL_TEST(!CGAL::contained_in_simplex(A.begin(),A.end(),p4)){}
@@ -737,22 +727,22 @@ int main()
     CGAL_TEST(CGAL::affinely_independent(A.begin(),A.end())){}
     CGAL_TEST(CGAL::affine_rank(A.begin(),A.end())==3){}
     A[3] = CGAL::midpoint(CGAL::midpoint(A[0],A[1]),A[2]);
-    CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end())){} 
-    // degenerate_simplex  
+    CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end())){}
+    // degenerate_simplex
     CGAL_TEST(CGAL::affine_rank(A.begin(),A.end())==2){}
-    // full_simplex  
+    // full_simplex
   }
 
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,2,3,1};
     int IV2[] = {3,2,1};
     IVector i1(IV1,IV1+4), i2(IV2,IV2+3);
-    Vector a0(3), 
-           a1(3,i1.begin(),i1.end()), 
-           a2(3,i2.begin(),i2.end(),1), 
-           a3(6,4,2,2), a4(1,0,1), a5(1,1,6), a6(a1); 
+    Vector a0(3),
+           a1(3,i1.begin(),i1.end()),
+           a2(3,i2.begin(),i2.end(),1),
+           a3(6,4,2,2), a4(1,0,1), a5(1,1,6), a6(a1);
 
     CGAL_TEST((a1==a6 && a3==a2)){}
     CGAL_TEST((a0!=a1 && a0!=a4)){}
@@ -769,9 +759,9 @@ int main()
     CGAL_TEST(a3[0]==FT(3)){}
     CGAL_TEST(a3.direction()==Direction(3,2,1)){}
 
-    Vector::Homogeneous_const_iterator hit; 
+    Vector::Homogeneous_const_iterator hit;
     Vector::Cartesian_const_iterator cit; int i;
-    for (i=0,hit=a1.homogeneous_begin(),cit=a1.cartesian_begin(); 
+    for (i=0,hit=a1.homogeneous_begin(),cit=a1.cartesian_begin();
          i<a1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(a1.homogeneous(i)==*hit){}
       CGAL_TEST(a1.cartesian(i)==*cit){}
@@ -787,7 +777,7 @@ int main()
 
     CGAL_TEST(2*a1==Vector(2,4,6,1)){}
     CGAL_TEST(Kernel::make_FT(2,3)*a4==Vector(2,0,3)){}
-    
+
     CGAL_TEST(a3/2==Vector(3,2,1,2)){}
     CGAL_TEST(a3/Kernel::make_FT(2,3)==Vector(9,6,3,2)){}
 
@@ -798,7 +788,7 @@ int main()
     a7/=Kernel::make_FT(3,4);
     a7/=4;
     CGAL_TEST(a1==a7){}
-    
+
     CGAL_TEST(a4*a4==FT(1)){}
     CGAL_TEST(a4.squared_length()==FT(1)){}
     CGAL_TEST(a1+a2==Vector(4,4,4,1)){}
@@ -813,31 +803,31 @@ int main()
 
     /* some linear algebra */
 
-    std::vector<Vector> P12 = make_vector(a1,a2); 
+    std::vector<Vector> P12 = make_vector(a1,a2);
     CGAL_TEST(CGAL::contained_in_linear_hull(P12.begin(),P12.end(),a1+a2)){}
     Vector z_off = a1 + Vector(3,Vector::Base_vector(),2);
     CGAL_TEST(!CGAL::contained_in_linear_hull(P12.begin(),P12.end(),z_off)){}
 
     std::vector<Vector> NLI = make_vector(a1,a2,a1+a2),
-                        LI = make_vector(a1,a2,z_off); 
+                        LI = make_vector(a1,a2,z_off);
     CGAL_TEST(CGAL::linearly_independent(LI.begin(),LI.end())){}
     CGAL_TEST(!CGAL::linearly_independent(NLI.begin(),NLI.end())){}
 
     CGAL_TEST(CGAL::linear_rank(LI.begin(),LI.end())==3){}
     CGAL_TEST(CGAL::linear_rank(NLI.begin(),NLI.end())==2){}
     std::vector<Vector> LB(3);
-    std::vector<Vector>::iterator last = 
+    std::vector<Vector>::iterator last =
       CGAL::linear_base(NLI.begin(),NLI.end(),LB.begin());
     CGAL_TEST(CGAL::linearly_independent(LB.begin(),last)){}
   }
 
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,5,-3,2};
     int IV2[] = {1,1,0};
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
-    Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
+    Direction d0(3), d1(3,iv1.begin(),iv1.end()),
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
               d4 = Direction(3,Direction::Base_direction(),2),
@@ -864,15 +854,15 @@ int main()
     CGAL_TEST(it==d1.deltas_end()){}
   }
 
-  { 
+  {
     /* construction and access */
     int IV1[] = {1,2,3,4};
     int IV2[] = {-4,-3,-2};
-    IVector vi1(IV1,IV1+4); 
-    IVector vi2(IV2,IV2+3); 
+    IVector vi1(IV1,IV1+4);
+    IVector vi2(IV2,IV2+3);
     // two ivec inits
 
-    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)), 
+    Point p1(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),0)),
           p2(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),1)),
           p3(CGAL::ORIGIN + Vector(3,Vector::Base_vector(),2));
     // one three point init
@@ -880,8 +870,8 @@ int main()
     Direction dir(1,1,1);
     Point o(-1,-1,-1,1), org(3);
     // one dir init
-    Hyperplane h0(3,vi1.begin(),vi1.end()); 
-    Hyperplane h1(3,vi2.begin(),vi2.end(),1); 
+    Hyperplane h0(3,vi1.begin(),vi1.end());
+    Hyperplane h1(3,vi2.begin(),vi2.end(),1);
     std::vector<Point> V = make_vector(p1,p2,p3);
     Hyperplane h2(V.begin(),V.end(),o,CGAL::ON_NEGATIVE_SIDE);
     V = make_vector(org,org,org);
@@ -894,7 +884,7 @@ int main()
 
     CGAL_TEST((h5==h0 && h7==h0)){}
     CGAL_TEST((h1!=h0 && h7!=h6)){}
-    CGAL_TEST((h2.dimension()==h5.dimension() && 
+    CGAL_TEST((h2.dimension()==h5.dimension() &&
                h2.dimension()!=h6.dimension())){}
     CGAL_TEST((h5.coefficient(1)==RT(2) && h5[2]==RT(3))){}
     CGAL_TEST((vi1 == h0.coefficient_vector())){}
@@ -911,16 +901,16 @@ int main()
     CGAL_TEST(h3.has_on(org)){}
     CGAL_TEST(!h5.has_on(p1)){}
     CGAL_TEST(h3.has_on_positive_side(o)){}
-    
+
     if (DOIO) CGAL_IO_TEST(h0,h8,CGAL::IO::ASCII); h8=h0;
 
     Hyperplane::Coefficient_const_iterator it; int i;
-    for (i=0,it=h5.coefficients_begin(); 
+    for (i=0,it=h5.coefficients_begin();
          i<=h5.dimension(); ++it,++i) {
       CGAL_TEST(h5.coefficient(i)==*it){}
     }
     CGAL_TEST(it==h5.coefficients_end()){}
-    
+
     // all kind of |HyperplaneHd<integer>| inits
 
     /* compares and other operations */
@@ -939,7 +929,7 @@ int main()
     Point q(1,-1,-1,1);
     Point r(-1,1,-1,1);
     Point s(1,1,1,1);
-    
+
     std::vector< Point > A = make_vector(p,q,r,s);
     Sphere S1(3,A.begin(),A.end()), S2(3), S3(S1), S4 = S1;
 
@@ -968,19 +958,19 @@ int main()
 
     Vector v(1,0,0,1);
     std::vector< Point > B = make_vector(p+v,q+v,r+v,s+v);
-    CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ){} 
+    CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ){}
     CGAL_TEST( CGAL::weak_equality(S1.opposite(),S1) ){}
     if (DOIO) CGAL_IO_TEST(S1,S3,CGAL::IO::ASCII); S3 = S1;
   }
 
   {
-    Point p1(-5,1), p2(5,1); 
+    Point p1(-5,1), p2(5,1);
     Vector v(0,5);
     Segment s0, s1(p1,p2), s2(p1,v),
               s3(Point(-1,-1),Point(5,5)),
               s4(Point(1,1,2),Point(5,5,3)),
               s5(Point(0,0,1),Point(4,4,1)),
-              s6(s1); 
+              s6(s1);
 
     CGAL_TEST(s6==s1&&s2!=s1&&s5!=s2){}
     CGAL_TEST(s5.dimension()==2 && s2.dimension()==s3.dimension()){}
@@ -1006,11 +996,11 @@ int main()
     if (DOIO) CGAL_IO_TEST(s1,s6,CGAL::IO::ASCII); s6 = s1;
   }
 
-  { 
+  {
     Point p1(2), p2(5,0);
     Segment s(Point(1,-1),Point(1,5));
-    Direction dir(1,0); 
-    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1); 
+    Direction dir(1,0);
+    Ray r0, r1(p1,p2), r2(p1,dir), r3(s), r4(r1);
     Point p3(3), p4(1,1,1,1);
     Ray r6(p3,p4);
 

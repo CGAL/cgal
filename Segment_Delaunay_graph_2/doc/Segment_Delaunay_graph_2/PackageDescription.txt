@@ -20,7 +20,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\cgal provides the class `CGAL::Segment_Delaunay_graph_2<Gt,DS>` for
+\cgal provides the class `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>` for
 computing the 2D Delaunay graph of segments and points. The two
 template parameters must be models of the
 `SegmentDelaunayGraphTraits_2` and
@@ -44,23 +44,28 @@ the class
 
 - `SegmentDelaunayGraphSite_2`
 - `SegmentDelaunayGraphStorageSite_2`
+- `SegmentDelaunayGraphStorageTraits_2`
 - `SegmentDelaunayGraphDataStructure_2`
 - `SegmentDelaunayGraphVertexBase_2`
+- `SegmentDelaunayGraphFaceBase_2`
 - `SegmentDelaunayGraphTraits_2`
 - `SegmentDelaunayGraphHierarchyVertexBase_2`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
+- `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
 - `CGAL::Segment_Delaunay_graph_site_2<K>`
 - `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>`
-- `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>`
+- `CGAL::Segment_Delaunay_graph_storage_site_with_info_2<St,I,B>`
+- `CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>`
+- `CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,I,C,M>`
+- `CGAL::Segment_Delaunay_graph_vertex_base_2<St,Vb>`
+- `CGAL::Segment_Delaunay_graph_face_base_2<Gt,Fb>`
 - `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 - `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 - `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 - `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-- `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
+- `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 - `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>`
 
 */
-

@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Matthias Baesken
 
@@ -34,12 +25,18 @@
 // The following is needed for LEDA 4.4 due to min/max problems...
 #  define LEDA_NO_MIN_MAX_TEMPL
 
+#ifdef CGAL_CXX20
+#  define STREAM_DUMMY // disable stream_dummy() function that is not used and using features removed from c++20
+// We cannot undef STREAM_DUMMY as LEDA/internal/PREAMBULE.h is not protected
+#endif
 #include <LEDA/system/basic.h>
+
+
 
 #ifdef LEDA_NAMESPACE
 #  define CGAL_LEDA_SCOPE  leda
 #else
-#  define CGAL_LEDA_SCOPE 
+#  define CGAL_LEDA_SCOPE
 #endif
 
 

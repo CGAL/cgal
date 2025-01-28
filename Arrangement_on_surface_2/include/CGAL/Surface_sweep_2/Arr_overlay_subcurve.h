@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -99,54 +90,54 @@ protected:
                         // contains the subcurve.
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_overlay_subcurve() :
     Base(),
     m_above(nullptr)
   { m_top_face.red = nullptr; }
 
-  /*! constructor given a curve. */
+  /*! constructs given a curve. */
   Arr_overlay_subcurve(const X_monotone_curve_2& curve) :
     Base(curve),
     m_above(nullptr)
   { m_top_face.red = nullptr; }
 
-  /*! Get the subcurve lying above above this subcurve in the status line. */
+  /*! obtains the subcurve lying above this subcurve in the status line. */
   Self* subcurve_above() const { return m_above; }
 
-  /*! Set the subcurve above. */
+  /*! sets the subcurve above. */
   void set_subcurve_above(Self* sc) { m_above = sc; }
 
-  /*! Get the color of the associated curve. */
+  /*! obtains the color of the associated curve. */
   Color color() const { return (this->last_curve().color()); }
 
-  /*! Check if two subcurves have the same color. */
+  /*! checks if two subcurves have the same color. */
   bool has_same_color(const Self* sc) const
   { return (this->last_curve().color() == sc->color()); }
 
-  /*! Get the red halfedge that represents the subcurve. */
+  /*! obtains the red halfedge that represents the subcurve. */
   Halfedge_handle_red red_halfedge_handle() const
   { return (this->last_curve().red_halfedge_handle()); }
 
-  /*! Get the blue halfedge that represents the subcurve. */
+  /*! obtains the blue halfedge that represents the subcurve. */
   Halfedge_handle_blue blue_halfedge_handle() const
   { return (this->last_curve().blue_halfedge_handle()); }
 
-  /*! Get the red top face that contains the subcurve. */
+  /*! obtains the red top face that contains the subcurve. */
   const Face_handle_red red_top_face() const
   { return Face_handle_red(m_top_face.red); }
 
-  /*! Get the blue top face that contains the subcurve. */
+  /*! obtains the blue top face that contains the subcurve. */
   const Face_handle_blue blue_top_face() const
   { return Face_handle_blue(m_top_face.blue); }
 
-  /*! Set the red top face. */
+  /*! sets the red top face. */
   void set_red_top_face(Face_handle_red fh) { m_top_face.red = &(*fh); }
 
-  /*! Set the blue top face. */
+  /*! sets the blue top face. */
   void set_blue_top_face(Face_handle_blue fh) { m_top_face.blue = &(*fh); }
 
-  /*! Copy the top face from the given subcurve. */
+  /*! copies the top face from the given subcurve. */
   void set_top_face(const Self* sc)
   {
     CGAL_precondition(sc->m_above == nullptr);

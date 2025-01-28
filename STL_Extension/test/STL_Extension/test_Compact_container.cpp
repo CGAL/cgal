@@ -4,14 +4,13 @@
 #include <cstddef>
 #include <list>
 #include <vector>
+#include <type_traits>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
-
-#include <boost/type_traits/is_base_of.hpp>
 
 #include <CGAL/disable_warnings.h>
 
@@ -64,14 +63,14 @@ class Node_2
 public:
 
   Node_2()
-  : p(NULL), rnd(CGAL::get_default_random().get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
   bool operator< (const Node_2 &n) const { return rnd <  n.rnd; }
 
   void *   for_compact_container() const { return p_cc; }
-  void * & for_compact_container()       { return p_cc; }
+  void for_compact_container(void *p)       { p_cc = p; }
 };
 
 template < class Cont >
@@ -83,6 +82,11 @@ inline bool check_empty(const Cont &c)
 template < class Cont >
 void test(const Cont &)
 {
+  static_assert(std::is_nothrow_move_constructible<Cont>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cont>::value,
+                "move assignment is missing");
+
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
@@ -232,19 +236,19 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);
 
-  // owns() and owns_dereferencable().
+  // owns() and owns_dereferenceable().
   for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
     assert(c9.owns(it));
-    assert(c9.owns_dereferencable(it));
+    assert(c9.owns_dereferenceable(it));
     assert(! c10.owns(it));
-    assert(! c10.owns_dereferencable(it));
+    assert(! c10.owns_dereferenceable(it));
   }
   assert(c9.owns(c9.end()));
-  assert(! c9.owns_dereferencable(c9.end()));
+  assert(! c9.owns_dereferenceable(c9.end()));
 
 
   c9.erase(c9.begin(), c9.end());
@@ -301,10 +305,10 @@ int main()
   typedef Node_1<CGAL::Tag_false> T2;
   typedef CGAL::Compact_container<T2> C2; // without timestamps
 
-  typedef CGAL::Compact_container<T2,
+  typedef CGAL::Compact_container<T1,
                                   CGAL::Default,
                                   CGAL::Default,
-                                  CGAL::Time_stamper<T2> > C4;
+                                  CGAL::Time_stamper<T1> > C4;
                                           //    with timestamps
 
   typedef Node_2 T3;
@@ -318,29 +322,29 @@ int main()
   test_time_stamps<C4>();
 
   // Check the time stamper policies
-  if(! boost::is_base_of<CGAL::Time_stamper<T1>,
-     C1::Time_stamper_impl>::value)
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
+     C1::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C1\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T2>,
-     C2::Time_stamper_impl>::value)
+  if(! std::is_base_of<CGAL::No_time_stamp<T2>,
+     C2::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C2\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T3>,
-     C3::Time_stamper_impl>::value)
+  if(! std::is_base_of<CGAL::No_time_stamp<T3>,
+     C3::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::Time_stamper<T2>,
-     C4::Time_stamper_impl>::value)
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
+     C4::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;
   }
 
   // Check that Compact_container does not require a complete type.
-  CGAL_static_assertion(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
+  static_assert(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
 
   // Test increment policy
   CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Constant_size_policy<1024> > C5;

@@ -4,114 +4,114 @@ namespace CGAL {
 /*!
 \ingroup PkgPolytopeDistanceDRef
 
-The class `Polytope_distance_d_traits_3` is a traits class for the \f$ d\f$-dimensional 
-optimisation algorithms using the three-dimensional \cgal kernel. 
+The class `Polytope_distance_d_traits_3` is a traits class for the \f$ d\f$-dimensional
+optimization algorithms using the three-dimensional \cgal kernel.
 
 
-\tparam K must be a model for `Kernel`. 
+\tparam K must be a model for `Kernel`.
 
-\tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`. 
+\tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`.
 
 
-\cgalModels `PolytopeDistanceDTraits`
+\cgalModels{PolytopeDistanceDTraits}
 
-\sa `CGAL::Polytope_distance_d<Traits>` 
-\sa `CGAL::Polytope_distance_d_traits_2<K,ET,NT>` 
-\sa `CGAL::Polytope_distance_d_traits_d<K,ET,NT>` 
-\sa `PolytopeDistanceDTraits` 
+\sa `CGAL::Polytope_distance_d<Traits>`
+\sa `CGAL::Polytope_distance_d_traits_2<K,ET,NT>`
+\sa `CGAL::Polytope_distance_d_traits_d<K,ET,NT>`
+\sa `PolytopeDistanceDTraits`
 
 */
 template< typename K, typename ET, typename NT >
 class Polytope_distance_d_traits_3 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-typedef to `K::Point_3`. 
-*/ 
-typedef unspecified_type Point_d; 
+typedef to `K::Point_3`.
+*/
+typedef unspecified_type Point_d;
 
 /*!
-typedef to `K::Rep_tag`. 
-*/ 
-typedef unspecified_type Rep_tag; 
+typedef to `K::Rep_tag`.
+*/
+typedef unspecified_type Rep_tag;
 
 /*!
-typedef to `K::RT`. 
-*/ 
-typedef unspecified_type RT; 
+typedef to `K::RT`.
+*/
+typedef unspecified_type RT;
 
 /*!
-typedef to `K::FT`. 
-*/ 
-typedef unspecified_type FT; 
+typedef to `K::FT`.
+*/
+typedef unspecified_type FT;
 
 /*!
-typedef to `K::Access_dimension_3`. 
-*/ 
-typedef unspecified_type Access_dimension_d; 
+typedef to `K::Access_dimension_3`.
+*/
+typedef unspecified_type Access_dimension_d;
 
 /*!
-typedef to `K::Access_coordinates_begin_3`. 
-*/ 
-typedef unspecified_type Access_coordinates_begin_d; 
+typedef to `K::Access_coordinates_begin_3`.
+*/
+typedef unspecified_type Access_coordinates_begin_d;
 
 /*!
-typedef to `K::Construct_point_3`. 
-*/ 
-typedef unspecified_type Construct_point_d; 
+typedef to `K::Construct_point_3`.
+*/
+typedef unspecified_type Construct_point_d;
 
 /*!
-second template parameter (default is `K::RT`). 
-*/ 
-typedef unspecified_type ET; 
+second template parameter (default is `K::RT`).
+*/
+typedef unspecified_type ET;
 
 /*!
-third template parameter (default is `K::RT`). 
-*/ 
-typedef unspecified_type NT; 
+third template parameter (default is `K::RT`).
+*/
+typedef unspecified_type NT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-default constructor. 
-*/ 
-Polytope_distance_d_traits_3( ); 
+default constructor.
+*/
+Polytope_distance_d_traits_3( );
 
 /*!
-copy constructor. 
-*/ 
-Polytope_distance_d_traits_3( 
-const Polytope_distance_d_traits_3<K,ET,NT>&); 
+copy constructor.
+*/
+Polytope_distance_d_traits_3(
+const Polytope_distance_d_traits_3<K,ET,NT>&);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// The following functions just return the corresponding function class object.
 /// @{
 
 /*!
 
-*/ 
-Access_dimension_d 
-access_dimension_d_object() const; 
+*/
+Access_dimension_d
+access_dimension_d_object() const;
 
 /*!
 
-*/ 
-Access_coordinates_begin_d 
-access_coordinates_begin_d_object() const; 
+*/
+Access_coordinates_begin_d
+access_coordinates_begin_d_object() const;
 
 /*!
 
-*/ 
-Construct_point_d 
-construct_point_d_object() const; 
+*/
+Construct_point_d
+construct_point_d_object() const;
 
 /// @}
 

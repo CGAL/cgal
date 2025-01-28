@@ -1,24 +1,15 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 
@@ -27,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/kernel_assertions.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
@@ -67,23 +57,27 @@ public:
   inline bool operator!=(const Bbox_3 &b) const;
 
   inline int dimension() const;
-  double  xmin() const;
-  double  ymin() const;
-  double  zmin() const;
-  double  xmax() const;
-  double  ymax() const;
-  double  zmax() const;
+  double xmin() const;
+  double ymin() const;
+  double zmin() const;
+  double xmax() const;
+  double ymax() const;
+  double zmax() const;
+  double x_span() const;
+  double y_span() const;
+  double z_span() const;
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline double min_coord(int i) const { return (min)(i); }
   inline double max_coord(int i) const { return (max)(i); }
-  
+
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
-  void dilate(int dist);
+  inline void dilate(int dist);
+  inline void scale(double factor);
 };
 
 inline
@@ -115,6 +109,18 @@ inline
 double
 Bbox_3::zmax() const
 { return rep[5]; }
+
+inline double Bbox_3::x_span() const {
+  return xmax() - xmin();
+}
+
+inline double Bbox_3::y_span() const {
+  return ymax() - ymin();
+}
+
+inline double Bbox_3::z_span() const {
+  return zmax() - zmin();
+}
 
 inline
 bool
@@ -195,6 +201,28 @@ Bbox_3::dilate(int dist)
   rep[5] = float_advance(rep[5],dist);
 }
 
+inline
+void
+Bbox_3::scale(double factor)
+{
+  CGAL_precondition(factor > 0);
+
+  if (factor == 1.)
+    return;
+
+  std::array<double, 3> half_width = { (xmax() - xmin()) * 0.5,
+                                       (ymax() - ymin()) * 0.5,
+                                       (zmax() - zmin()) * 0.5 };
+  std::array<double, 3> center = { xmin() + half_width[0],
+                                   ymin() + half_width[1],
+                                   zmin() + half_width[2] };
+  rep[0] = center[0] - factor * half_width[0];
+  rep[1] = center[1] - factor * half_width[1];
+  rep[2] = center[2] - factor * half_width[2];
+  rep[3] = center[0] + factor * half_width[0];
+  rep[4] = center[1] + factor * half_width[1];
+  rep[5] = center[2] + factor * half_width[2];
+}
 
 inline
 bool
@@ -215,11 +243,11 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
-		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
+                  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
         write(os, b.ymin());
@@ -251,11 +279,11 @@ operator>>(std::istream &is, Bbox_3& b)
     double ymax = 0;
     double zmax = 0;
 
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-      is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)
-         >> iformat(xmax) >> iformat(ymax) >> iformat(zmax);
+      is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(zmin)
+         >> IO::iformat(xmax) >> IO::iformat(ymax) >> IO::iformat(zmax);
         break;
     case IO::BINARY :
         read(is, xmin);

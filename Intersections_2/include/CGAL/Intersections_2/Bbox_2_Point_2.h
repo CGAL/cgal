@@ -1,20 +1,11 @@
 // Copyright (c) 2010 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -33,9 +24,11 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-inline bool do_intersect(const Bbox_2 &bbox,
-                         const Point_2<K> &pt,
-                         const K& k)
+inline
+typename K::Boolean
+do_intersect(const Bbox_2 &bbox,
+             const Point_2<K> &pt,
+             const K& k)
 {
   Point_2<K> bl(bbox.xmin(), bbox.ymin()),
              tr(bbox.xmax(), bbox.ymax());
@@ -45,9 +38,11 @@ inline bool do_intersect(const Bbox_2 &bbox,
 }
 
 template <class K>
-inline bool do_intersect(const Point_2<K> &pt,
-                         const Bbox_2& bbox,
-                         const K& k)
+inline
+typename K::Boolean
+do_intersect(const Point_2<K> &pt,
+             const Bbox_2& bbox,
+             const K& k)
 {
   return do_intersect(bbox, pt, k);
 }
@@ -78,15 +73,17 @@ intersection(const CGAL::Bbox_2& b,
 } // namespace Intersections
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_2& a,
-                  const Point_2<K>& b)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_2& a,
+             const Point_2<K>& b)
 {
   return Intersections::internal::do_intersect(a,b,K());
 }
 
 template<typename K>
-bool do_intersect(const Point_2<K>& a,
-                  const CGAL::Bbox_2& b)
+typename K::Boolean
+do_intersect(const Point_2<K>& a,
+             const CGAL::Bbox_2& b)
 {
   return Intersections::internal::do_intersect(b,a,K());
 }

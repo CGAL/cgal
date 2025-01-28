@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mikhail Bogdanov
 
@@ -28,7 +19,7 @@
 namespace CGAL{
 
 namespace Qt {
-  
+
   template <typename K>
   class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K, Hyperbolic_octagon_translation> > : public PainterOstream<K> {
 
@@ -86,12 +77,12 @@ public:
   using Base::operator <<;
 
   PainterOstream& operator << (Hyperbolic_segment_2 s) {
-    if(const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
+    if(const Euclidean_segment_2* seg = std::get_if<Euclidean_segment_2>(&s)) {
     CGAL::Qt::PainterOstream<K>::operator << (*seg);
     return *this;
     }
 
-    Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+    Circular_arc_2* arc = std::get_if<Circular_arc_2>(&s);
 
     if(arc->squared_radius() > 100) {
       Euclidean_segment_2 seg(arc->source(), arc->target());
@@ -110,9 +101,9 @@ public:
   QPainter* qp;
   Converter<K> convert;
 };
-  
+
 } //namespace Qt
-  
+
 } //namespace CGAL
 
 #endif // CGAL_HYPERBOLIC_PAINTER_OSTREAM_H

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
-#include <boost/timer.hpp>
+#include <CGAL/Timer.h>
 
 #include <CGAL/approximated_offset_2.h>
 
@@ -33,9 +33,10 @@ int main(int argc, char* argv[])
 
   // Approximate the offset polygon.
   std::list<Polygon_2> inset_polygons;
-  boost::timer timer;
+  CGAL::Timer timer;
+  timer.start();
   approximated_inset_2(P, 1, 0.00001, std::back_inserter(inset_polygons));
-  double secs = timer.elapsed();
+  double secs = timer.time();
 
   std::list<Polygon_2>::iterator it;
   std::cout << "The inset comprises " << inset_polygons.size()

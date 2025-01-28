@@ -25,7 +25,7 @@ Compares the \f$ \theta\f$-coordinates of `p` and `q` relatively to `sphere`.
 
 \sa \link compare_x_grp `CGAL::compare_x()` \endlink
 \sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
-\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_xyz_grp `CGAL::compare_xyz()` \endlink
 \sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
 \sa \link compare_y_grp `CGAL::compare_y()` \endlink
 \sa \link compare_yx_grp `CGAL::compare_yx()` \endlink
@@ -171,7 +171,7 @@ namespace CGAL {
 
 Returns the point on the sphere that is extremal in the
 \f$ x\f$-direction, and that is the smallest (resp.\ largest) of the two
-\f$ x\f$-extremal points for the lexicographic order if `b` is `true` 
+\f$ x\f$-extremal points for the lexicographic order if `b` is `true`
 (resp.\ `false`).
 */
 template <class SphericalKernel>
@@ -227,7 +227,7 @@ namespace CGAL {
 
 Returns the point on the sphere that is extremal in the
 \f$ y\f$-direction, and that is the smallest (resp.\ largest) of the two
-\f$ y\f$-extremal points for the lexicographic order if `b` is `true` 
+\f$ y\f$-extremal points for the lexicographic order if `b` is `true`
 (resp.\ `false`).
 */
 template <class SphericalKernel>
@@ -283,7 +283,7 @@ namespace CGAL {
 
 Returns the point on the sphere that is extremal in the
 \f$ z\f$-direction, and that is the smallest (resp.\ largest) of the two
-\f$ z\f$-extremal points for the lexicographic order if `b` is `true` 
+\f$ z\f$-extremal points for the lexicographic order if `b` is `true`
 (resp.\ `false`).
 */
 template <class SphericalKernel>

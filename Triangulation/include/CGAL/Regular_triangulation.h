@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -38,7 +29,7 @@ class Regular_triangulation
 : public Triangulation<
     Regular_triangulation_traits_adapter<Traits_>,
     typename Default::Get<
-      TDS_, 
+      TDS_,
       Triangulation_data_structure<
         typename Regular_triangulation_traits_adapter<Traits_>::Dimension,
         Triangulation_vertex<Regular_triangulation_traits_adapter<Traits_> >,
@@ -60,7 +51,7 @@ class Regular_triangulation
 
   typedef typename RTTraits::Orientation_d                 Orientation_d;
   typedef typename RTTraits::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
-  typedef typename RTTraits::In_flat_power_side_of_power_sphere_d          
+  typedef typename RTTraits::In_flat_power_side_of_power_sphere_d
                                                            In_flat_power_side_of_power_sphere_d;
   typedef typename RTTraits::Flat_orientation_d            Flat_orientation_d;
   typedef typename RTTraits::Construct_flat_orientation_d  Construct_flat_orientation_d;
@@ -74,7 +65,7 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Full_cell                Full_cell;
   typedef typename Base::Facet                    Facet;
   typedef typename Base::Face                     Face;
-  
+
   typedef Maximal_dimension_                      Maximal_dimension;
 
   typedef typename Base::Point_const_iterator     Point_const_iterator;
@@ -138,12 +129,12 @@ private:
   // Wrapper
   struct Power_side_of_power_sphere_for_non_maximal_dim_d
   {
-    boost::optional<Flat_orientation_d>* fop;
+    std::optional<Flat_orientation_d>* fop;
     Construct_flat_orientation_d cfo;
     In_flat_power_side_of_power_sphere_d ifpt;
 
     Power_side_of_power_sphere_for_non_maximal_dim_d(
-      boost::optional<Flat_orientation_d>& x,
+      std::optional<Flat_orientation_d>& x,
       Construct_flat_orientation_d const&y,
       In_flat_power_side_of_power_sphere_d const&z)
     : fop(&x), cfo(y), ifpt(z) {}
@@ -153,7 +144,7 @@ private:
     {
       if(!*fop)
         *fop=cfo(a,b);
-      return ifpt(fop->get(),a,b,p);
+      return ifpt(fop->value(),a,b,p);
     }
   };
 
@@ -196,7 +187,7 @@ public:
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-  // Warning: these functions are not correct since they do not restore hidden 
+  // Warning: these functions are not correct since they do not restore hidden
   // vertices
 
   Full_cell_handle remove(Vertex_handle);
@@ -242,7 +233,7 @@ public:
       Facet ft;
       Full_cell_handle c = locate (*p, lt, f, ft, hint);
       Vertex_handle v = insert (*p, lt, f, ft, c);
-      
+
       hint = v == Vertex_handle() ? c : v->full_cell();
     }
     return number_of_vertices() - n;
@@ -478,7 +469,7 @@ private:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
 
-// Warning: this function is not correct since it does not restore hidden 
+// Warning: this function is not correct since it does not restore hidden
 // vertices
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Full_cell_handle
@@ -661,7 +652,7 @@ Regular_triangulation<Traits, TDS>
   // 2. Find corresponding Facet on boundary of dark zone
   // 3. stitch.
 
-  // 1. Build a facet on the boudary of the light zone:
+  // 1. Build a facet on the boundary of the light zone:
   Full_cell_handle light_s = *simps.begin();
   Facet light_ft(light_s, light_s->index(v));
 
@@ -815,10 +806,10 @@ Regular_triangulation<Traits, TDS>
       Vertex_handle v = s->vertex(f.index(0));
       typename RTTraits::Compute_weight_d pw =
         geom_traits().compute_weight_d_object();
-      
+
       if (pw(p) == pw(v->point()))
         return v;
-      // If dim == 0 and the new point has a bigger weight, 
+      // If dim == 0 and the new point has a bigger weight,
       // we just replace the point, and the former point gets hidden
       else if (current_dimension() == 0)
       {
@@ -872,14 +863,14 @@ Regular_triangulation<Traits, TDS>
     CGAL_assertion( ZERO != o );
       if( NEGATIVE == o )
         reorient_full_cells();
-      
+
     // We just inserted the second finite point and the right infinite
     // cell is like : (inf_v, v), but we want it to be (v, inf_v) to be
     // consistent with the rest of the cells
     if (current_dimension() == 1)
     {
       // Is "inf_v_cell" the right infinite cell? Then inf_v_index should be 1
-      if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+      if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
         && inf_v_index == 0)
       {
         inf_v_cell->swap_vertices(current_dimension() - 1, current_dimension());
@@ -889,7 +880,7 @@ Regular_triangulation<Traits, TDS>
         inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
         inf_v_index = inf_v_cell->index(infinite_vertex());
         // Is "inf_v_cell" the right infinite cell? Then inf_v_index should be 1
-        if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+        if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
           && inf_v_index == 0)
         {
           inf_v_cell->swap_vertices(current_dimension() - 1, current_dimension());
@@ -905,7 +896,7 @@ typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
 ::insert_if_in_star(const Weighted_point & p,
                     Vertex_handle star_center,
-                    Locate_type lt, 
+                    Locate_type lt,
                     const Face & f,
                     const Facet &,
                     Full_cell_handle s)
@@ -922,7 +913,7 @@ Regular_triangulation<Traits, TDS>
         geom_traits().compute_weight_d_object();
       if (pw(p) == pw(v->point()))
         return v;
-      // If dim == 0 and the new point has a bigger weight, 
+      // If dim == 0 and the new point has a bigger weight,
       // we replace the point
       else if (current_dimension() == 0)
       {
@@ -983,7 +974,8 @@ Regular_triangulation<Traits, TDS>
   // => we don't insert it
   if (!in_conflict)
   {
-    m_hidden_points.push_back(p);
+    if(only_if_this_vertex_is_in_the_cz == Vertex_handle())
+      m_hidden_points.push_back(p);
     return Vertex_handle();
   }
   else
@@ -1149,7 +1141,7 @@ Regular_triangulation<Traits, TDS>
           ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
         if (!is_infinite(opposite_vh))
         {
-          Power_side_of_power_sphere_d side = 
+          Power_side_of_power_sphere_d side =
             geom_traits().power_side_of_power_sphere_d_object();
           if (side(points_begin(ch),
                    points_end(ch),

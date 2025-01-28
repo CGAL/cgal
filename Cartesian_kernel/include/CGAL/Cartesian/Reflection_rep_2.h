@@ -1,25 +1,16 @@
-// Copyright (c) 2018  
+// Copyright (c) 2018
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Maxime Gimeno
 
@@ -52,13 +43,13 @@ typedef typename CGAL::Line_2<R>                 Line_2;
 
   Reflection_repC2(const Line_2 &l)
   {
-    if(l.a() == 0) 
+    if(l.a() == 0)
       t = -Vector_2(0, l.c()/l.b());
     else
       t = -Vector_2(l.c()/l.a(),0);
-    
+
     Vector_2 l_to_v = l.to_vector();
-    FT scal = l_to_v.x(); //Projection of l_to_v on Ox. = |L|*cos(a) 
+    FT scal = l_to_v.x(); //Projection of l_to_v on Ox. = |L|*cos(a)
     FT det = l_to_v.y();// = |L|*sin(a)
     sinus_ = 2*det*scal/l_to_v.squared_length(); //sin(2a) = 2*sin(a)*cos(a)
     FT sq_cos = scal*scal/l_to_v.squared_length(); //cos(a)*cos(a)
@@ -84,7 +75,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
 
   Direction_2  transform(const Direction_2 &d) const
   {
-    
+
     return transform(d.vector()).direction();
   }
 
@@ -92,7 +83,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   {
     return t.compose(*this);
   }
-  
+
   Aff_transformation_2 compose(const Translation &tr) const
   {
     return Aff_transformation_2(cosinus_, sinus_, t13()+tr.translationvector_.x(),
@@ -119,7 +110,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
           tr.t21*sinus_-tr.t22*cosinus_,
           tr.t21*t13()+tr.t22*t23()+tr.t23);
   }
-  
+
   Aff_transformation_2 compose(const Rotation &r) const
   {
     return Aff_transformation_2(
@@ -132,19 +123,19 @@ typedef typename CGAL::Line_2<R>                 Line_2;
           r.sinus_*t13()
           +r.cosinus_*t23());
   }
-  
+
   Aff_transformation_2 compose(const Reflection &r) const
   {
     return Aff_transformation_2(
-          cosinus_*r.cosinus_+sinus_*r.sinus_, 
-          r.cosinus_*sinus_-r.sinus_*cosinus_, 
+          cosinus_*r.cosinus_+sinus_*r.sinus_,
+          r.cosinus_*sinus_-r.sinus_*cosinus_,
           r.cosinus_*(t13()-r.t.x()) + r.sinus_*(t23()-r.t.y())+r.t.x(),
-          
-          r.sinus_*cosinus_ - r.cosinus_*sinus_, 
-          r.sinus_*sinus_+r.cosinus_*cosinus_, 
+
+          r.sinus_*cosinus_ - r.cosinus_*sinus_,
+          r.sinus_*sinus_+r.cosinus_*cosinus_,
           r.sinus_*(t13()-r.t.x()) -r.cosinus_*(t23()-r.t.y())+r.t.y());
   }
-  
+
   Aff_transformation_2  inverse() const
   {
     return Aff_transformation_2(cartesian(0,0), cartesian(0,1), cartesian(0,2),
@@ -152,6 +143,11 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   }
 
   bool is_even() const
+  {
+    return true;
+  }
+
+ virtual bool is_reflection() const
   {
     return true;
   }
@@ -187,7 +183,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     os << "Aff_transformationC2(" << sinus_ << ", " << cosinus_ <<  "; "<< t <<")";
     return os;
   }
-  
+
   //convevience functions for composition
   FT t13()const
   {

@@ -7,17 +7,17 @@
 \section Developer_manualReferencecounting Reference counting
 
 As of release 2.1, a reference counting scheme is used for
-the kernel objects in the kernels `Cartesian` and 
-`Homogeneous`. 
+the kernel objects in the kernels `Cartesian` and
+`Homogeneous`.
 All copies of an object share a common representation object storing
 the data associated with a kernel object; see \cgalFigureRef{figrefcounted}.
 
-The motivation is to save space by avoiding storing the same data more 
-than once and to save time in the copying procedure. 
-Of course, whether we actually save time and space depends on the size 
+The motivation is to save space by avoiding storing the same data more
+than once and to save time in the copying procedure.
+Of course, whether we actually save time and space depends on the size
 of the data that we would have to copy without sharing representations.
-The drawback is an indirection in accessing the data. Such an indirection is 
-bad in terms of cache efficiency. 
+The drawback is an indirection in accessing the data. Such an indirection is
+bad in terms of cache efficiency.
 Thus there are also non-reference-counting kernels available
 `Simple_cartesian` and `Simple_homogeneous`.
 
@@ -26,14 +26,14 @@ Objects using reference counting (bottom) share common representation; copying c
 \cgalFigureEnd
 
 The reference counting in the kernel objects is not visible to a user
-and does not affect the interface of the objects. 
+and does not affect the interface of the objects.
 The representation object is often called
 the <I>body</I>.
 The object possibly sharing its representation with others
 is called a <I>handle</I>,
 because its data consists of a pointer
-to its representation object only. If the implementation of the member 
-functions is located with the representation object and the functions in the 
+to its representation object only. If the implementation of the member
+functions is located with the representation object and the functions in the
 handle just forward calls to the body, the scheme implements the <I>bridge</I>
 design pattern,
 which is used to separate an interface from its implementation.
@@ -42,27 +42,27 @@ of member functions hidden to the user, especially at runtime.
 
 \section Developer_manualHandleRep Handle & Rep
 
-The two classes `Handle` and 
+The two classes `Handle` and
 `Rep` provide reference counting
-functionality; see \cgalFigureRef{figHandleRep} . By deriving from these classes, 
-the reference counting functionality is inherited. 
-The class `Rep` provides a counter; representation classes 
-derive from this class. 
+functionality; see \cgalFigureRef{figHandleRep} . By deriving from these classes,
+the reference counting functionality is inherited.
+The class `Rep` provides a counter; representation classes
+derive from this class.
 The class `Handle` takes care of all the reference-counting
 related stuff. In particular, it provides appropriate implementations of
 copy constructor, copy assignment, and destructor. These functions
-take care of the counter in the common representation. 
-Classes sharing reference-counted 
+take care of the counter in the common representation.
+Classes sharing reference-counted
 representation objects (of a class derived from `Rep`) do not have to
 worry about the reference counting, with the exception of non-copy-constructors.
 
-There  a new representation object must be created and the pointer to the 
+There  a new representation object must be created and the pointer to the
 representation object must be set.
 
 If `CGAL_USE_LEDA`
 is defined and `CGAL_NO_LEDA_HANDLE` is not
 defined, the types `Handle` and `Rep` are set to the \leda types
-`handle_base` and `handle_rep`, respectively (yes, 
+`handle_base` and `handle_rep`, respectively (yes,
 without a `leda_`-prefix). Use of the \leda class `handle_rep` implies
 that \leda memory management
 is used for the representation types.
@@ -91,12 +91,12 @@ UML class diagram for Handle & Rep scheme.
 In order to make use of the reference counting provided by the
 classes `Handle` and `Rep`, your interface class (the class providing
 the interface of the geometric object) must be derived from `Handle` and
-your representation class (the class containing the data to be shared) must be 
+your representation class (the class containing the data to be shared) must be
 derived from `Rep`:
 
 \code{.cpp}
 class My_rep : public Rep { /*...*/ };
-class My_geo_object : public Handle 
+class My_geo_object : public Handle
 {
   public:
     My_geo_object(const My_geo_object& m);
@@ -106,7 +106,7 @@ class My_geo_object : public Handle
 \endcode
 
 The class `My_geo_object` is responsible for allocating and constructing
-the `My_rep` object "on the heap". 
+the `My_rep` object "on the heap".
 Typically, a constructor call is forwarded to a
 corresponding constructor of `My_rep`. The address of the new `My_rep`  is assigned to `PTR` inherited from `Handle`, e.g.:
 
@@ -116,20 +116,20 @@ My_geo_object::My_geo_object(Arg1 a1, Arg2 a2)
 \endcode
 
 The default constructor of `Handle` is called automatically
-by the compiler and the reference counting is initialized. 
-You always have to define a copy constructor for `My_geo_object` 
+by the compiler and the reference counting is initialized.
+You always have to define a copy constructor for `My_geo_object`
 
 and to call the copy constructor of `Handle` there:
 
 \code{.cpp}
 My_geo_object::My_geo_object(const My_geo_object& m)
- : Handle( m) 
+ : Handle( m)
 {}
 \endcode
 
 That's it!
-There is no need to define a copy assignment operator nor is there a 
-need to define a destructor for the derived class `My_geo_object`!  
+There is no need to define a copy assignment operator nor is there a
+need to define a destructor for the derived class `My_geo_object`!
 Handle & Rep does the rest for you!
 You get this functionality by including `CGAL/Handle.h`
 
@@ -144,21 +144,21 @@ shared with other `My_geo_object` objects.
 
 \section Developer_manualTemplatedhandles Templated handles
 
-Factoring out the common functionality in base classes enables re-use of 
+Factoring out the common functionality in base classes enables reuse of
 the code, but there is also a major drawback. The `Handle` class does not
 know the type of the representation object. It maintains a `Rep*` pointer.
 Therefore, this pointer must be cast to a pointer to the actual type
 in the classes derived from `Handle`. Moreover, since the `Handle`
 calls the destructor for the representation through a `Rep*`, the
 destructor of `Rep` must be virtual. Finally, debugging is difficult,
-again, because the `Handle` class does not know the type of the 
+again, because the `Handle` class does not know the type of the
 representation object.
 Making the actual type of the representation object a template parameter
 of the handle solves these problems. This is implemented in class template
-`Handle_for`. 
+`Handle_for`.
 This class assumes that the reference-counted class provides the
 following member functions
-to manage its internal reference counting: 
+to manage its internal reference counting:
 
 <UL>
 <LI>`add_reference`
@@ -183,19 +183,19 @@ Kernel objects have used such a handle/rep scheme since release 2.2.
 \section Developer_manualUsingtemplatedhandles Using templated handles
 
 In order to make use of the reference counting provided by the
-classes `Handle_for` and `Ref_counted`, your representation class, 
-let's say `My_rep` (the class containing the data to be shared), 
-must provide the interface described above (<I>e.g.</I>, by deriving 
+classes `Handle_for` and `Ref_counted`, your representation class,
+let's say `My_rep` (the class containing the data to be shared),
+must provide the interface described above (<I>e.g.</I>, by deriving
 from `Ref_counted`), and your interface class (the class providing
-the interface of the geometric object) must be derived from 
+the interface of the geometric object) must be derived from
 `Handle_for<My_rep>`. It is assumed that the default constructor of
-`My_rep` sets the counter to 1 (the default constructor of 
+`My_rep` sets the counter to 1 (the default constructor of
 `Ref_counted` does this, of course):
 
 \code{.cpp}
 class My_rep : public Ref_counted { /*...*/ };
 
-class My_geo_object : public Handle_for<My_rep> 
+class My_geo_object : public Handle_for<My_rep>
 {
   public:
     My_geo_object(const My_geo_object& m);
@@ -204,11 +204,11 @@ class My_geo_object : public Handle_for<My_rep>
 };
 \endcode
 
-You should also define a copy constructor for `My_rep` as this may be used 
+You should also define a copy constructor for `My_rep` as this may be used
 in in-place creation in the allocator scheme.
 The constructors of class `My_geo_object` are responsible for constructing
-the `My_rep` object. 
-Typically, a corresponding constructor call of `My_rep` is forwarded 
+the `My_rep` object.
+Typically, a corresponding constructor call of `My_rep` is forwarded
 to `Handle_for`.
 
 \code{.cpp}
@@ -226,27 +226,27 @@ of `Handle_for`.
 In both cases, `Handle_for` takes care of allocating space for
 the new object.
 
-If you define a copy constructor for `My_geo_object` 
+If you define a copy constructor for `My_geo_object`
 you have to call the copy constructor of `Handle_for` there:
 
 \code{.cpp}
 My_geo_object::My_geo_object(const My_geo_object& m)
- : Handle_for<My_rep>( m) 
+ : Handle_for<My_rep>( m)
 {}
 \endcode
 
-That's it! Again, there is no need to define a copy assignment operator 
-nor is there a need to define a destructor for the derived class 
+That's it! Again, there is no need to define a copy assignment operator
+nor is there a need to define a destructor for the derived class
 `My_geo_object`!  `Handle_for` does the rest for you!
 
 `Handle_for` provides you with an option to modify the data. There is
 a `copy_on_write()`
- 
-that should be called right before every modification of the data. 
+
+that should be called right before every modification of the data.
 It ensures that only your data are overwritten:
 
 \code{.cpp}
-void 
+void
 My_geo_object::set_x(double d)
 {
   copy_on_write();
@@ -266,7 +266,7 @@ parameter defined as `CGAL_ALLOCATOR(T)`. But you can also choose your
 own, for example
 
 \code{.cpp}
-class My_geo_object : public Handle_for<My_rep, leda_allocator<My_rep> > 
+class My_geo_object : public Handle_for<My_rep, leda_allocator<My_rep> >
 { /* ... */ };
 \endcode
 

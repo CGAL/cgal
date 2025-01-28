@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -27,7 +18,7 @@
 
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>
@@ -213,7 +204,7 @@ public:
     TDS_data & tds_data() { return tds_data_; } /* Concept */
 
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
-    void* & for_compact_container() { return combinatorics_.for_compact_container(); }
+    void    for_compact_container(void* p){ combinatorics_.for_compact_container(p); }
 
     bool is_valid(bool verbose = false, int = 0) const /* Concept */
     {
@@ -258,7 +249,9 @@ private:
     const Vertex_handle_array & vertices() const {return combinatorics_.vertices_; }
 
     // DATA MEMBERS
-    Combinatorics       combinatorics_;
+    // With the Itanium ABI, [[no_unique_address]] allows tda_data_ to reuse the
+    // padding bytes at the end of combinatorics_ when using the mirror policy.
+    CGAL_NO_UNIQUE_ADDRESS Combinatorics combinatorics_;
     mutable TDS_data    tds_data_;
 };
 
@@ -268,7 +261,7 @@ template < typename TDS, typename SSP >
 std::ostream &
 operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(O) )
+    /*if( IO::is_ascii(O) )
     {
         // os << '\n';
     }
@@ -280,7 +273,7 @@ template < typename TDS, typename SSP >
 std::istream &
 operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(I) )
+    /*if( IO::is_ascii(I) )
     {}
     else {}*/
     return I;

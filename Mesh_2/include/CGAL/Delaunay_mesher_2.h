@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -29,21 +20,23 @@
 #include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
 #include <CGAL/Mesh_2/Refine_edges_visitor.h>
 #include <CGAL/Mesh_2/Refine_faces.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 
 template <typename Tr, typename Crit>
-class Delaunay_mesher_2 
+class Delaunay_mesher_2
 {
 
-  /** \name \c Tr types */
+  /** \name `Tr` types */
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
   typedef typename Tr::Edge Edge;
 
   typedef typename Tr::Point Point;
 
-  /** \name Types needed for private member datas */
+  /** \name Types needed for private member data */
   typedef Mesh_2::Refine_edges_with_clusters<Tr,
     Mesh_2::Is_locally_conforming_Gabriel<Tr> > Edges_level;
 
@@ -62,7 +55,7 @@ public:
   typedef Seeds_iterator Seeds_const_iterator;
 
 private:
-  // --- PRIVATE MEMBER DATAS ---
+  // --- PRIVATE MEMBER DATA ---
   Tr& tr;
   Criteria criteria;
   Null_mesher_level null_level;
@@ -78,7 +71,7 @@ public:
   /** \name CONSTRUCTORS */
   Delaunay_mesher_2(Tr& tr_, const Criteria& criteria_ = Criteria())
     : tr(tr_),
-      criteria(criteria_), 
+      criteria(criteria_),
       null_level(),
       null_visitor(),
       clusters_(tr),
@@ -93,7 +86,7 @@ public:
   Delaunay_mesher_2(Tr& tr_, Edges_level& edges_level_,
                     const Criteria& criteria_ = Criteria())
     : tr(tr_),
-      criteria(criteria_), 
+      criteria(criteria_),
       null_level(),
       null_visitor(),
       clusters_(tr),
@@ -111,7 +104,7 @@ public:
   {
     return seeds.begin();
   }
-  
+
   Seeds_const_iterator seeds_end() const
   {
     return seeds.end();
@@ -125,10 +118,10 @@ private:
 public:
   /** \name MARKING FUNCTIONS */
 
-  /** The value type of \a InputIterator should be \c Point, and represents
+  /** The value type of \a InputIterator should be `Point`, and represents
       seeds. Connected components of seeds are marked with the value of
-      \a mark. Other components are marked with \c !mark. The connected
-      component of infinite faces is always marked with \c false.
+      \a mark. Other components are marked with `!mark`. The connected
+      component of infinite faces is always marked with `false`.
   */
   template <class InputIterator>
   void set_seeds(InputIterator b, InputIterator e,
@@ -159,7 +152,7 @@ public:
 
   /** Procedure that marks facets according to a list of seeds. */
   template <typename Seeds_it>
-  static void mark_facets(Tr& tr, 
+  static void mark_facets(Tr& tr,
                           Seeds_it begin,
                           Seeds_it end,
                           bool mark = false)
@@ -178,7 +171,7 @@ public:
             if(fh!=nullptr)
               propagate_marks(fh, mark);
           }
-	propagate_marks(tr.infinite_face(), false);
+        propagate_marks(tr.infinite_face(), false);
       }
     else
       mark_convex_hull(tr);
@@ -197,7 +190,7 @@ public:
     propagate_marks(tr.infinite_face(), false);
   }
 
-  /** Propagates the mark \c mark recursivly. */
+  /** Propagates the mark `mark` recursively. */
   static void propagate_marks(const Face_handle fh, bool mark)
   {
     // std::queue only works with std::list on VC++6, and not with
@@ -235,12 +228,12 @@ public:
                     bool recalculate_bad_faces = true)
   {
     criteria = criteria_;
-    if (recalculate_bad_faces) faces_level.scan_triangulation();  
+    if (recalculate_bad_faces) faces_level.scan_triangulation();
   }
 
-  const Criteria& get_criteria() const 
+  const Criteria& get_criteria() const
   {
-    return criteria;  
+    return criteria;
   }
 
   template <class Fh_it>
@@ -267,7 +260,7 @@ public:
 
   bool is_refinement_done ()
   {
-    return faces_level.is_algorithm_done();  
+    return faces_level.is_algorithm_done();
   }
 
   bool
@@ -283,7 +276,7 @@ public:
 
   /** \name ACCESS FUNCTIONS */
 
-  const Mesh_2::Clusters<Tr>& clusters() const 
+  const Mesh_2::Clusters<Tr>& clusters() const
   {
     return clusters_;
   }
@@ -302,17 +295,17 @@ public:
     return edges_level.is_algorithm_done();
   }
 
-  Edge next_encroached_edge() 
+  Edge next_encroached_edge()
   {
     return edges_level.get_next_element();
   }
 
-  const Face_handle next_bad_face() 
+  const Face_handle next_bad_face()
   {
     return faces_level.get_next_element();
   }
 
-  const Point next_refinement_point() 
+  const Point next_refinement_point()
   {
     if( !edges_level.is_algorithm_done() )
       return edges_level.refinement_point(next_encroached_edge());
@@ -325,7 +318,7 @@ public:
 
   typedef typename Faces_level::Bad_faces_const_iterator
     Bad_faces_const_iterator;
-  
+
   Encroached_edges_const_iterator encroached_edges_begin() const
   {
     return edges_level.begin();
@@ -340,7 +333,7 @@ public:
   {
     return faces_level.begin();
   }
-  
+
   Bad_faces_const_iterator bad_faces_end() const
   {
     return faces_level.end();
@@ -349,30 +342,71 @@ public:
 
 // --- GLOBAL FUNCTIONS ---
 
+#if !defined(CGAL_NO_DEPRECATED_CODE)
 template <typename Tr, typename Criteria>
+CGAL_DEPRECATED
 void
 refine_Delaunay_mesh_2(Tr& t,
                        const Criteria& criteria = Criteria(), bool domain_specified=false)
 {
-  typedef Delaunay_mesher_2<Tr, Criteria> Mesher;
-
-  Mesher mesher(t, criteria);
+  Delaunay_mesher_2<Tr, Criteria> mesher(t, criteria);
   mesher.init(domain_specified);
   mesher.refine_mesh();
 }
 
-
 template <typename Tr, typename Criteria, typename InputIterator>
+CGAL_DEPRECATED
 void
 refine_Delaunay_mesh_2(Tr& t,
                        InputIterator b, InputIterator e,
                        const Criteria& criteria = Criteria(),
                        bool mark = false)
 {
-  typedef Delaunay_mesher_2<Tr, Criteria> Mesher;
-
-  Mesher mesher(t, criteria);
+  Delaunay_mesher_2<Tr, Criteria> mesher(t, criteria);
   mesher.set_seeds(b, e, mark);
+  mesher.refine_mesh();
+}
+#endif
+
+template<typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void
+refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np)
+{
+  typedef Delaunay_mesh_size_criteria_2<Tr> Default_criteria;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::criteria_t,
+                                                       CGAL_NP_CLASS,
+                                                       Default_criteria>::type Criteria;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+  using parameters::is_default_parameter;
+
+  Delaunay_mesher_2<Tr, Criteria> mesher(
+      t, choose_parameter<Default_criteria>(
+             get_parameter_reference(np, internal_np::criteria)));
+
+  if (!choose_parameter(get_parameter(np, internal_np::domain_is_initialized), false))
+  {
+    if (is_default_parameter<CGAL_NP_CLASS, internal_np::seeds_t>::value) // no seeds provided
+    {
+      mesher.init(false);
+    }
+    else
+    {
+      typedef std::vector<typename Tr::Point_2> Default_seeds;
+      typedef typename internal_np::Lookup_named_param_def<internal_np::seeds_t,
+                                                           CGAL_NP_CLASS,
+                                                           Default_seeds>::reference Seeds;
+      Default_seeds ds;
+      Seeds seeds = choose_parameter(get_parameter_reference(np, internal_np::seeds), ds);
+      mesher.set_seeds(seeds.begin(), seeds.end(),
+                       choose_parameter(get_parameter(np, internal_np::seeds_are_in_domain), false));
+    }
+  }
+  else
+    mesher.init(true);
+
   mesher.refine_mesh();
 }
 

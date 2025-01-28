@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -87,7 +78,7 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
 }
 
 
-template<class TriangleMesh, class VertexPointMap>
+template<class TriangleMesh, class VertexPointMap1, class VertexPointMap2>
 std::tuple<Intersection_type,
              typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
              bool,bool>
@@ -96,23 +87,26 @@ intersection_type(
              typename boost::graph_traits<TriangleMesh>::face_descriptor f_2,
              const TriangleMesh& tm1,
              const TriangleMesh& tm2,
-             const VertexPointMap& vpm1,
-             const VertexPointMap& vpm2)
+             const VertexPointMap1& vpm1,
+             const VertexPointMap2& vpm2)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef std::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename boost::property_traits<VertexPointMap1>::reference Point_ref1;
+  typedef typename boost::property_traits<VertexPointMap2>::reference Point_ref2;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+
+  static_assert(std::is_same<Point_3, typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   halfedge_descriptor h_2=halfedge(f_2,tm2);
 
-  Point_ref a = get(vpm2, target(h_2,tm2) );
-  Point_ref b = get(vpm2, target(next(h_2,tm2),tm2) );
-  Point_ref c = get(vpm2, source(h_2,tm2) );
-  Point_ref p = get(vpm1, source(h_1,tm1) );
-  Point_ref q = get(vpm1, target(h_1,tm1) );
+  Point_ref2 a = get(vpm2, target(h_2,tm2) );
+  Point_ref2 b = get(vpm2, target(next(h_2,tm2),tm2) );
+  Point_ref2 c = get(vpm2, source(h_2,tm2) );
+  Point_ref1 p = get(vpm1, source(h_1,tm1) );
+  Point_ref1 q = get(vpm1, target(h_1,tm1) );
 
   const Orientation abcp = orientation(a,b,c,p);
   const Orientation abcq = orientation(a,b,c,q);

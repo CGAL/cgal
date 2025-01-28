@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -28,10 +19,10 @@
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/NewKernel_d/Lazy_cartesian.h>
 #include <CGAL/NewKernel_d/KernelD_converter.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
-// TODO: add static filters somewhere
+// TODO: In Kernel_23, Epeck predicates first see if they can convert their arguments to Epick types exactly, and in that case use the Epick predicates (including static filters, Mpzf, etc).
 namespace CGAL {
 #define CGAL_KA Cartesian_base_d<Interval_nt_advanced,Dim>
 #define CGAL_KE Cartesian_base_d<internal::Exact_field_selector<double>::Type, Dim>

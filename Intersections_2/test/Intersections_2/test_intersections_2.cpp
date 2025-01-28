@@ -7,7 +7,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/FPU.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/intersection_2.h>
 
 #include <vector>
@@ -19,7 +19,7 @@ const double epsilon = 0.001;
 struct randomint
 {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];
@@ -98,12 +98,28 @@ struct Test
   {
     if (p.size() != q.size())
       return false;
-
+    if (CGAL::Intersections::internal::Is_cw<K,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>()(p))
+      return false;
     for(typename Pol::const_iterator itp = p.begin(), itq = q.begin(); itp != p.end(); ++itp, ++itq)
       if (!approx_equal(*itp, *itq))
         return false;
 
     return true;
+  }
+
+  bool approx_equal(const T& p, const T& q)
+  {
+    if(p.size() != q.size())
+      return false;
+
+    std::vector<P> vec { p[0], p[1], p[2] };
+
+    if (CGAL::Intersections::internal::Is_cw<K,
+        typename CGAL::Algebraic_structure_traits<typename K::FT>::Is_exact>(vec))
+      return false;
+
+    return approx_equal(p[0], q[0]) && approx_equal(p[1], q[1]) && approx_equal(p[2], q[2]);
   }
 
   template <typename O1, typename O2>
@@ -318,6 +334,48 @@ struct Test
     check_intersection<P>  (C(p( 0,  0), 25)                , p( 5, 0));
   }
 
+  void C_S()
+  {
+    std::cout << "Circle - Segment" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), S(p(-3, 22), p( 2, 34)));
+    check_no_do_intersect  (C(p( 4, 16), 18), S(p(5, 7), p(6, 8)));
+
+    check_do_intersect     (C(p( 3, 4), 0), S(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), S(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), S(p(-1, -3), p(-6,  7)));
+
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 1), p(-6,  -8)));
+    check_do_intersect     (C(p(1, 1), 4), S(p(-1, 4), p(-1,  -4)));
+  }
+
+  void C_R()
+  {
+    std::cout << "Circle - Ray" << std::endl;
+
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, -2), p( 2,  -4)));
+    check_no_do_intersect  (C(p( 2, 8), 6), R(p(-3, 22), p( 2, 34)));
+
+    check_do_intersect     (C(p( 3, 4), 0), R(p(-3,  8), p( 6,  2)));
+    check_do_intersect     (C(p( 4, 3), 4), R(p( 6, -7), p( 5, 2)));
+
+    check_do_intersect     (C(p(-3, 1), 7), R(p(-1, -3), p(-6,  7)));
+  }
+
+  void C_T()
+  {
+    std::cout << "Circle - Triangle" << std::endl;
+    check_no_do_intersect  (C(p( 2, 8), 6), T(p( 6,  0), p( 8,  0), p(8, 2)));
+    check_no_do_intersect  (C(p( 0, 0), 9), T(p( 1,  1), p( 1, -1), p(0, 0)));
+
+    check_do_intersect     (C(p( 3, 4), 0), T(p(-3,  8), p( 6, 2), p(4,6)));
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 5, 2), p(2,-3)));
+
+    check_do_intersect     (C(p( 4, 3), 4), T(p( 6, -7), p( 4, 6), p(2,-3)));
+  }
+
   void L_L()
   {
     std::cout << "Line - Line" << std::endl;
@@ -373,6 +431,77 @@ struct Test
     check_intersection     (S(p( 0,   0), p( 10,   0)), S(p(  1,   0), p(  8,   0)), S(P(  1,   0), P(  8,   0)));
     check_intersection     (S(p(68, 106), p(192, 106)), S(p(150, 106), p(255, 106)), S(P(150, 106), P(192, 106)));
     check_intersection     (S(p( 1,  10), p(  1,   2)), S(p(  1,   7), p(  1,   3)), S(P(  1,   3), P(  1,   7)));
+
+    // exact point intersection
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  5,   10), p(  3,   3)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  -5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  -5,   10), p(  3,   3)), p(  3,   3));
+    check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  44,   44), p(  55,   55)), p(  44,   44));
+    check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  55,   55), p(  44,   44)), p(  44,   44));
+    check_intersection     (S(p( 44,   44), p( 0,   0)), S(p(  44,   44), p(  55,   55)), p(  44,   44));
+    check_intersection     (S(p( 44,   44), p( 0,   0)), S(p(  55,   55), p(  44,   44)), p(  44,   44));
+    check_intersection     (S(p( 0,   0), p( -44,   -44)), S(p(  -44,   -44), p(  -55,   -55)), p(  -44,   -44));
+    check_intersection     (S(p( 0,   0), p( -44,   -44)), S(p(  -55,   -55), p(  -44,   -44)), p(  -44,   -44));
+    check_intersection     (S(p( -44,   -44), p( 0,   0)), S(p(  -44,   -44), p(  -55,   -55)), p(  -44,   -44));
+    check_intersection     (S(p( -44,   -44), p( 0,   0)), S(p(  -55,   -55), p(  -44,   -44)), p(  -44,   -44));
+
+    // more segment intersection (containment)
+    check_intersection     (S(p(0,0), p(4,4)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(0,0), p(4,4)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(4,4), p(0,0)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(4,4), p(0,0)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+
+    // more segment intersection (overlap)
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(1,1), p(4,4)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(4,4), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(1,1), p(4,4)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(4,4), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-1,-1), p(-4,-4)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-4,-4), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-1,-1), p(-4,-4)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-4,-4), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    // more segment intersection (one common point)
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    // more segment intersection (two identical points)
+    check_intersection     (S(p( 1,1), p( 2,2)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 1,1), p( 2,2)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 1,1)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 1,1)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( -1,-1), p( -2,-2)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -1,-1), p( -2,-2)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    //check determinism of crossing point
+    P p1a(-122.37323046264295, 37.7435274415764);
+    P p1b(-122.3711959178425,  37.74348027376899);
+    P p2a(-122.37130249711004, 37.74203327688176);
+    P p2b(-122.3722247426892,  37.74401427059434);
+    std::set<double> ds;
+    auto test = [&ds](S s1, S s2)
+    {
+      P i = std::get<P>(*CGAL::intersection(s1,s2));
+      ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
+      assert(ds.size()==2);
+    };
+    test(S(p1a,p1b), S(p2a,p2b));
+    test(S(p1a,p1b), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2a,p2b));
+    test(S(p2a,p2b), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1b,p1a));
+    test(S(p2a,p2b), S(p1b,p1a));
   }
 
   void R_R()
@@ -408,7 +537,7 @@ struct Test
     // point intersection
     check_intersection     (S(p( 0,  -1), p( 10,   0)), R(p(  2,   1), p(  8,  -6)), P(3.42105, -0.657895));
     check_intersection     (S(p( 0,   0), p( 10,   0)), R(p(  1,   6), p(  1,  -3)), P(1, 0));
-    check_intersection     (S(p( 0,   0), p( 10,   0)), R(p(  1,   6), p(  1,  -3)), P(1, 0));
+    check_intersection     (S(p( 0,   0), p( 10,   0)), R(p(  1,   -3), p(  1,  6)), P(1, 0));
     check_intersection     (S(p( 0,   0), p( 10,   0)), R(p(  0,   0), p(-10,   4)), P(0, 0)); // start of ray is exactly on the segment
     check_intersection     (S(p( 0,   0), p( 10,   0)), R(p(  4,   0), p(-10,   4)), P(4, 0)); // start of ray is a segment extremity
 
@@ -478,18 +607,12 @@ struct Test
 
     // polygon intersection
     Pol pol0;
-    pol0.push_back(P(-6, -4));
-    pol0.push_back(P( -5.11111, -0.222222 ));
-    pol0.push_back(P( 0, 10 ));
     pol0.push_back(P( 8, 4 ));
+    pol0.push_back(P( 0, 10 ));
+    pol0.push_back(P( -5.11111, -0.222222 ));
+    pol0.push_back(P(-6, -4));
     check_intersection     (T(p(   0, 10), p(-10, -10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
-
-    Pol pol1;
-    pol1.push_back(P( 8,  4));
-    pol1.push_back(P( 0, 10 ));
-    pol1.push_back(P( -5.11111, -0.222222 ));
-    pol1.push_back(P(-6, -4));
-    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol1, false);
+    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
 
     Pol pol2;
     pol2.push_back(P( 10.2222, 2.33333 ));
@@ -634,7 +757,7 @@ struct Test
 
     // segment intersection
     check_intersection<S>  (L(p( 18,  6), p( 0,   0)), Rec(p( 2,  0), p(6,  3)));
-    check_intersection<S>  (L(p( 18,  6), p( 0,   0)), Rec(p( 2,  0), p(6,  3)));
+    check_intersection<S>  (L(p( 0,  0),  p( 18,  6)), Rec(p( 2,  0), p(6,  3)));
     check_intersection<S>  (L(p( 2,  14), p( 2, -14)), Rec(p( 2,  0), p(6,  3)));
     check_intersection<S>  (L(p( 6,   1), p( 6,   2)), Rec(p( 2,  0), p(6,  3)));
     check_intersection<S>  (L(p(-1,   3), p(-2,   3)), Rec(p( 2,  0), p(6,  3)));
@@ -649,9 +772,9 @@ struct Test
     check_no_intersection  (Rec(p(-2, -6), p( 6, 3)), p(-2, -7));
 
     // point intersection
-    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectange (0d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectange (1d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectange (1d)
+    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectangle (0d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectangle (1d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectangle (1d)
     check_intersection     (Rec(p(-3,  0), p( 4, 2)), p(-3, 2), p(-3, 2)); // on vertex
     check_intersection     (Rec(p( 7,  8), p( 9, 9)), p( 8, 9), p( 8, 9)); // on edge
     check_intersection     (Rec(p(-2,  0), p( 6, 7)), p( 1, 1), p( 1, 1)); // within
@@ -761,6 +884,9 @@ struct Test
     C_Rec();
     C_L();
     C_P();
+    C_S();
+    C_R();
+    C_T();
 
     Rec_Rec();
     Rec_L();
@@ -798,9 +924,9 @@ int main()
 {
   CGAL::Set_ieee_double_precision pfr;
 
-  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
-  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
   Test< CGAL::Exact_predicates_exact_constructions_kernel >().run();
 }

@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
 
@@ -58,8 +49,6 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Height_below : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
   typedef Image<float> Image_float;
   typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 
@@ -68,10 +57,10 @@ class Height_below : public Feature_base
   const Grid& grid;
   Image_float dtm;
   std::vector<float> values;
-  
+
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -90,13 +79,13 @@ public:
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
         {
-          float z_min = std::numeric_limits<float>::max();
+          float z_min = (std::numeric_limits<float>::max)();
 
           typename Grid::iterator end = grid.indices_end(i,j);
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_min = (std::min(z_min, z));
+            z_min = ((std::min)(z_min, z));
           }
 
           dtm(i,j) = z_min;
@@ -111,7 +100,7 @@ public:
         std::size_t J = grid.y(i);
         values[i] = float(get (point_map, *(input.begin() + i)).z() - dtm(I,J));
       }
-      dtm.free();
+      (dtm.free)();
     }
 
   }
@@ -125,7 +114,7 @@ public:
       std::size_t J = grid.y(pt_index);
       return float(get (point_map, *(input.begin() + pt_index)).z() - dtm(I,J));
     }
-    
+
     return values[pt_index];
   }
 

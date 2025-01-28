@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 #ifndef QGLVIEWER_FRAME_H
 #define QGLVIEWER_FRAME_H
 
@@ -114,7 +106,7 @@ class Constraint;
   the Frame. The default constraint() is \c nullptr resulting in no filtering. Use
   setConstraint() to attach a Constraint to a frame.
 
-  Constraints are especially usefull for the ManipulatedFrame instances, in
+  Constraints are especially useful for the ManipulatedFrame instances, in
   order to forbid some mouse motions. See the <a
   href="../examples/constrainedFrame.html">constrainedFrame</a>, <a
   href="../examples/constrainedCamera.html">constrainedCamera</a> and <a
@@ -127,7 +119,7 @@ class Constraint;
   <h3>Derived classes</h3>
 
   The ManipulatedFrame class inherits Frame and implements a mouse motion
-  convertion, so that a Frame (and hence an object) can be manipulated in the
+  conversion, so that a Frame (and hence an object) can be manipulated in the
   scene with the mouse.
 
   \nosubgrouping */
@@ -433,14 +425,6 @@ public:
   }
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  //@}
 
 private:
   // P o s i t i o n   a n d   o r i e n t a t i o n

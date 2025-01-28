@@ -8,7 +8,7 @@ class Construct_hyperbolic_bisector_2
 Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
 at the end
 the following lines are giving the wrong arc (wrong orientation), aren't they?
-      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      CGAL_assertion(assign(pair,inters[1]));
       if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
 	return Circular_arc_2( *c_pq, pair.first, a);
       return Circular_arc_2( *c_pq, a, pair.first);
@@ -17,7 +17,7 @@ understand why
 
 remove variant for supporting circle or line of bisector
 call it only when we know that it is a circle
-it will simplyfy the code of Construct_hyperbolic_bisector_2 at least in some cases
+it will simplify the code of Construct_hyperbolic_bisector_2 at least in some cases
 
 test bisectors dual functions in special cases of euclidean line segments
 

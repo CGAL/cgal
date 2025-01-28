@@ -13,7 +13,7 @@ typedef CGAL::Projection_traits_xy_3<K>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<Gt> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, 
+typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS,
                                                    CGAL::Exact_predicates_tag> Delaunay;
 typedef CGAL::Delaunay_mesh_size_criteria_2<Delaunay> Criteria;
 
@@ -34,7 +34,8 @@ int main()
   dt.insert_constraint(vc, vd);
   dt.insert_constraint(vd, va);
 
-  CGAL::refine_Delaunay_mesh_2(dt, Criteria(0.125, 0.5));
+  Criteria criteria(0.125, 0.5);
+  CGAL::refine_Delaunay_mesh_2(dt, CGAL::parameters::criteria(criteria));
   // dt.insert(begin, end);
   std::cout << dt.number_of_vertices() << std::endl;
   return 0;

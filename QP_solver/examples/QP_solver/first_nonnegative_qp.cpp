@@ -1,5 +1,5 @@
 // example: construct a nonnegative quadratic program from data
-// the QP below is the first nonnegative quadratic program example 
+// the QP below is the first nonnegative quadratic program example
 // in the user manual
 #include <iostream>
 #include <cassert>
@@ -22,10 +22,10 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
   // by default, we have a nonnegative QP with Ax <= b
-  Program qp (CGAL::SMALLER, true, 0, false, 0); 
-  
+  Program qp (CGAL::SMALLER, true, 0, false, 0);
+
   // now set the non-default entries
-  const int X = 0; 
+  const int X = 0;
   const int Y = 1;
   qp.set_a(X, 0,  1); qp.set_a(Y, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
   qp.set_a(X, 1, -1); qp.set_a(Y, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
@@ -36,8 +36,8 @@ int main() {
   // solve the program, using ET as the exact type
   Solution s = CGAL::solve_nonnegative_quadratic_program(qp, ET());
   assert (s.solves_nonnegative_quadratic_program(qp));
- 
+
   // output solution
-  std::cout << s; 
+  std::cout << s;
   return 0;
 }

@@ -3,14 +3,14 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Classification.h>
+#include <CGAL/IO/read_points.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -58,7 +58,7 @@ public:
     else
       return 0.f;
   }
-    
+
 };
 
 //! [Feature]
@@ -66,13 +66,13 @@ public:
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
-  std::ifstream in (filename.c_str());
+  std::string filename (argc > 1 ? argv[1] : CGAL::data_file_path("points_3/b9.ply"));
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
@@ -95,14 +95,14 @@ int main (int argc, char** argv)
   // Feature that identifies points whose x coordinate is between -20
   // and 20 and whose y coordinate is between -15 and 15
   Feature_handle my_feature = features.add<My_feature> (pts, -20., 20., -15., 15.);
-  
+
   //! [Addition]
   ///////////////////////////////////////////////////////////////////
-  
+
   Feature_handle verticality = features.add<Verticality> (pts, eigen);
 
   Classifier classifier (labels, features);
-  
+
   std::cerr << "Setting weights" << std::endl;
   classifier.set_weight(verticality, 0.5);
   classifier.set_weight(my_feature, 0.25);
@@ -115,7 +115,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Classifying" << std::endl;
   std::vector<int> label_indices(pts.size(), -1);
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);

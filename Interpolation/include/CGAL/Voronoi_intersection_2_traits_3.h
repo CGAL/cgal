@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julia Floetotto, Mael Rouxel-Labbé
 
@@ -300,6 +291,24 @@ public:
   typedef typename Rep::Less_distance_to_point_3    Less_distance_to_point_2;
   typedef typename Rep::Compute_squared_distance_3  Compute_squared_distance_2;
 
+  struct Compare_xy_2 {
+    Compare_x_2 cx_2;
+    Compare_y_2 cy_2;
+
+    Compare_xy_2(const Compare_x_2& cx_2, const Compare_y_2& cy_2)
+      : cx_2(cx_2), cy_2(cy_2)
+    {}
+
+    Comparison_result operator()(const Point_2& p, const Point_2& q) const
+    {
+       Comparison_result res = cx_2(p, q);
+       if (res == EQUAL) {
+         return cy_2(p, q);
+       }
+       return res;
+    }
+  };
+
   //instantiations and creation of functors:
   //for the triangulation:
   Orientation_2
@@ -320,6 +329,10 @@ public:
   Compare_y_2
   compare_y_2_object() const
   { return Compare_y_2(normal); }
+
+  Compare_xy_2
+  compare_xy_2_object() const
+  { return Compare_xy_2(compare_x_2_object(), compare_y_2_object()); }
 
   Less_x_2
   less_x_2_object() const

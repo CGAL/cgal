@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -37,15 +28,15 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
 class Segment_2_Iso_rectangle_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Segment_2_Iso_rectangle_2_pair(typename K::Segment_2 const *seg,
                           typename K::Iso_rectangle_2 const *rect) ;
 
@@ -54,8 +45,7 @@ public:
     typename K::Point_2 intersection_point() const;
     typename K::Segment_2 intersection_segment() const;
 protected:
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
+    mutable Intersection_results       _result = UNKNOWN;
     mutable typename K::Point_2            _ref_point;
     mutable typename K::Vector_2           _dir;
     mutable typename K::Point_2            _isomin;
@@ -63,21 +53,6 @@ protected:
     mutable typename K::FT              _min,
                                _max;
 };
-
-template <class K>
-inline bool do_intersect(
-    const typename K::Segment_2 &p1,
-    const typename K::Iso_rectangle_2 &p2,
-    const K&)
-{
-    typedef Segment_2_Iso_rectangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
-}
-
-
-
-
 
 template <class K>
 typename CGAL::Intersection_traits
@@ -105,8 +80,8 @@ inline
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
-	     const typename K::Segment_2 &seg,
-	     const K& k)
+             const typename K::Segment_2 &seg,
+             const K& k)
 {
   return internal::intersection(seg, iso, k);
 }
@@ -117,7 +92,6 @@ Segment_2_Iso_rectangle_2_pair(
         typename K::Segment_2 const *seg,
         typename K::Iso_rectangle_2 const *iso)
 {
-    _known = false;
     _isomin = (iso->min)();
     _isomax = (iso->max)();
     _ref_point = seg->source();
@@ -139,9 +113,8 @@ Segment_2_Iso_rectangle_2_pair<K>::intersection_type() const
 {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
-    _known = true;
 
     typename K::Construct_cartesian_const_iterator_2 construct_cccit;
     typename K::Cartesian_const_iterator_2 ref_point_it = construct_cccit(_ref_point);
@@ -163,7 +136,7 @@ Segment_2_Iso_rectangle_2_pair<K>::intersection_type() const
             FT newmin, newmax;
             if (_dir.homogeneous(i) > RT(0)) {
                 newmin = ( *(isomin_it) - (*ref_point_it)) /
-		  _dir.cartesian(i);
+                  _dir.cartesian(i);
                 newmax = ( *(isomax_it) - (*ref_point_it)) /
                     _dir.cartesian(i);
             } else {
@@ -199,7 +172,7 @@ intersection_segment() const
   typedef typename K::Segment_2 Segment_2;
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     typename K::Point_2 p1(translated_point(_ref_point,  construct_scaled_vector(_dir,_min)));
@@ -214,23 +187,32 @@ intersection_point() const
 {
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return translated_point(_ref_point, construct_scaled_vector(_dir,_min));
 }
 
-
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Segment_2& s,
+             const typename K::Iso_rectangle_2& ir,
+             const K&)
+{
+  typedef Segment_2_Iso_rectangle_2_pair<K> pair_t;
+  pair_t pair(&s, &ir);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
+}
 
 template <class K>
-inline bool do_intersect(
-    const typename K::Iso_rectangle_2 &p1,
-    const typename K::Segment_2 &p2,
-    const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Iso_rectangle_2& ir,
+             const typename K::Segment_2& s,
+             const K& k)
 {
-    typedef Segment_2_Iso_rectangle_2_pair<K> pair_t;
-    pair_t pair(&p2, &p1);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  return do_intersect(s, ir, k);
 }
 
 } // namespace internal
@@ -239,7 +221,7 @@ inline bool do_intersect(
 CGAL_INTERSECTION_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

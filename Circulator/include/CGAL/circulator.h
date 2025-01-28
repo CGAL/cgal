@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
@@ -35,8 +26,6 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
-
-#include <boost/type_traits/is_convertible.hpp>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -83,19 +72,19 @@ namespace internal {
 
 // default to Iterator_tag, special case Circulator tags
 template<typename Tag>
-struct Get_category 
+struct Get_category
 { typedef Iterator_tag type; };
 
 template<>
-struct Get_category<CGAL::Forward_circulator_tag> 
+struct Get_category<CGAL::Forward_circulator_tag>
 { typedef Circulator_tag type; };
 
 template<>
-struct Get_category<CGAL::Bidirectional_circulator_tag> 
+struct Get_category<CGAL::Bidirectional_circulator_tag>
 { typedef Circulator_tag type; };
 
 template<>
-struct Get_category<CGAL::Random_access_circulator_tag> 
+struct Get_category<CGAL::Random_access_circulator_tag>
 { typedef Circulator_tag type; };
 
 } // internal
@@ -202,45 +191,45 @@ template <class C> inline
 void Assert_circulator( const C &) {
     typedef typename Circulator_traits<C>::category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, Circulator_tag>::value));
+    static_assert(std::is_convertible<category, Circulator_tag>::value);
 }
 
 template <class I> inline
 void Assert_iterator( const I &) {
     typedef typename Circulator_traits<I>::category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, Iterator_tag>::value));
+    static_assert(std::is_convertible<category, Iterator_tag>::value);
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
     typedef typename std::iterator_traits<I>::iterator_category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, std::input_iterator_tag>::value));
+    static_assert(std::is_convertible<category, std::input_iterator_tag>::value);
 }
 
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
   typedef typename std::iterator_traits<I>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::output_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::output_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::forward_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::forward_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::bidirectional_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::bidirectional_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_random_access_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::random_access_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::random_access_iterator_tag>::value);
 }
 // The assert at-least-category functions use the following
 // functions to resolve properly. Note the proper order of the
@@ -406,7 +395,7 @@ template <class C> inline
 typename C::size_type
 circulator_size( const C& c) {
   typedef typename std::iterator_traits<C>::iterator_category category;
-  return I_circulator_size( c, 
+  return I_circulator_size( c,
                             category());
 }
 template <class C>
@@ -444,7 +433,7 @@ template <class C> inline
 typename C::difference_type
 circulator_distance( const C& c, const C& d) {
   typedef typename std::iterator_traits<C>::iterator_category category;
-  return I_circulator_distance( c, d, 
+  return I_circulator_distance( c, d,
                                 category());
 }
 template <class C> inline
@@ -709,8 +698,18 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
 };
 template <class Container>
 class Circulator_from_container {
+    static auto begin(Container* c) {
+        using std::begin;
+        return begin(*c);
+    }
+
+    static auto end(Container* c) {
+        using std::end;
+        return end(*c);
+    }
+
     typedef Circulator_from_container<Container>      Self;
-    typedef typename Container::iterator              iterator;
+    using iterator = decltype(begin(std::declval<Container*>()));
     typedef std::iterator_traits<iterator>            iterator_traits;
 public:
     typedef typename iterator_traits::value_type      value_type;
@@ -721,8 +720,8 @@ public:
     typedef typename I_Circulator_from_iterator_traits<
         typename iterator_traits::iterator_category
         >::iterator_category                          iterator_category;
-    
-    typedef typename Container::size_type size_type;
+
+    using size_type = decltype(std::size(std::declval<Container&>()));
 private:
     Container*     ctnr;
     iterator  i;
@@ -739,27 +738,27 @@ public:
     bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
         CGAL_assertion( p == nullptr);
-        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
+        return (ctnr == nullptr) || (begin(ctnr) == end(ctnr));
     }
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return *i;
     }
     pointer  operator->() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return i.operator->();
     }
     Self& operator++() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         ++i;
-        if ( i == ctnr->end())
-            i = ctnr->begin();
+        if ( i == end(ctnr))
+            i = begin(ctnr);
         return *this;
     }
     Self operator++(int) {
@@ -769,9 +768,9 @@ public:
     }
     Self& operator--() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        if ( i == ctnr->begin())
-            i = ctnr->end();
+        CGAL_assertion( i != end(ctnr));
+        if ( i == begin(ctnr))
+            i = end(ctnr);
         --i;
         return *this;
     }
@@ -782,15 +781,15 @@ public:
     }
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        typename Container::difference_type j    = i - ctnr->begin();
+        CGAL_assertion( i != end(ctnr));
+        typename Container::difference_type j    = i - begin(ctnr);
         typename Container::difference_type size = ctnr->size();
         CGAL_assertion( j    >= 0);
         CGAL_assertion( size >= 0);
         j = non_negative_mod( j + n, size);
         CGAL_assertion( j >= 0);
         CGAL_assertion( j < size);
-        i = ctnr->begin() + j;
+        i = begin(ctnr) + j;
         return *this;
     }
     Self operator+( difference_type n) const {
@@ -992,7 +991,7 @@ public:
     Circulator_from_iterator() : m_begin(),
                                  m_end(),
                                  current(),
-				 empty( true)
+                                 empty( true)
   {}
 
     Circulator_from_iterator( const I& bgn, const I& end)

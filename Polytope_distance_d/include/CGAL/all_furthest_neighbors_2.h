@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -25,13 +16,12 @@
 #include <CGAL/license/Polytope_distance_d.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/Dynamic_matrix.h>
 #include <CGAL/monotone_matrix_search.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 template < class Operation, class RandomAccessIC >
@@ -63,8 +53,8 @@ public:
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition(r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition(c >= 0 && c < number_of_columns());
+    CGAL_precondition(r >= 0 && r < number_of_rows());
+    CGAL_precondition(c >= 0 && c < number_of_columns());
     if (c <= r)
       return Value(c - r);
     else if (c >= r + number_of_rows())
@@ -103,8 +93,8 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
  // check preconditions:
   int number_of_points(
                        static_cast<int>(iterator_distance( points_begin, points_end)));
-  CGAL_optimisation_precondition( number_of_points > 0);
-  CGAL_optimisation_expensive_precondition(
+  CGAL_precondition( number_of_points > 0);
+  CGAL_expensive_precondition(
     is_convex_2( points_begin, points_end, t));
 
   // prepare random access container:
@@ -123,9 +113,9 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 
   // output result:
   return transform(v.begin(),
-		   v.end(),
-		   o,
-		   boost::bind(modulus<int>(), _1, number_of_points));
+                   v.end(),
+                   o,
+                   [number_of_points](int i){ return i % number_of_points;} );
 } // all_furthest_neighbors_2( ... )
 
 
@@ -135,7 +125,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                           RandomAccessIC points_end,
                           OutputIterator o,
                           const Traits&
-                          CGAL_optimisation_expensive_precondition_code(t),
+                          CGAL_expensive_precondition_code(t),
                           std::random_access_iterator_tag)
 {
   typedef All_furthest_neighbor_matrix<
@@ -145,8 +135,8 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
   // check preconditions:
   int number_of_points(
                        static_cast<int>(iterator_distance( points_begin, points_end)));
-  CGAL_optimisation_precondition( number_of_points > 0);
-  CGAL_optimisation_expensive_precondition(
+  CGAL_precondition( number_of_points > 0);
+  CGAL_expensive_precondition(
     is_convex_2( points_begin, points_end, t));
 
   // compute maxima:

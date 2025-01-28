@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pierre Alliez and Lingjie Zhu
@@ -42,9 +33,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/subgraph.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -63,7 +54,7 @@
 #include <iostream>
 #endif
 
-#define CGAL_VSA_INVALID_TAG std::numeric_limits<std::size_t>::max()
+#define CGAL_VSA_INVALID_TAG (std::numeric_limits<std::size_t>::max)()
 
 namespace CGAL {
 
@@ -132,6 +123,7 @@ private:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Geom_traits::Vector_3 Vector_3;
+  typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename Geom_traits::Plane_3 Plane_3;
   typedef typename Geom_traits::Construct_vector_3 Construct_vector_3;
   typedef typename Geom_traits::Construct_point_3 Construct_point_3;
@@ -304,20 +296,36 @@ public:
    * @brief initializes the seeds with both maximum number of proxies and minimum error drop stop criteria.
    * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return number of proxies initialized
 
    * \cgalNamedParamsBegin{Seeding Named Parameters}
-   *  \cgalParamBegin{seeding_method} selection of seeding method.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{max_number_of_proxies} maximum number of proxies to approximate the input mesh.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{number_of_relaxations} number of relaxation iterations interleaved within seeding.
-   *  \cgalParamEnd
+   *   \cgalParamNBegin{seeding_method}
+   *     \cgalParamDescription{the selection of seeding method}
+   *     \cgalParamType{`CGAL::Surface_mesh_approximation::Seeding_method`}
+   *     \cgalParamDefault{`CGAL::Surface_mesh_approximation::HIERARCHICAL`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{max_number_of_proxies}
+   *     \cgalParamDescription{the maximum number of proxies used to approximate the input mesh}
+   *     \cgalParamType{`std::size_t`}
+   *     \cgalParamDefault{`num_faces(tm) / 3`, used when `min_error_drop` is also not provided}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{min_error_drop}
+   *     \cgalParamDescription{the minimum error drop of the approximation, expressed as
+   *                           the ratio between two iterations of proxy addition}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`0.1`, used when `max_number_of_proxies` is also not provided}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{number_of_relaxations}
+   *     \cgalParamDescription{the number of relaxation iterations interleaved within seeding}
+   *     \cgalParamType{`std::size_t`}
+   *     \cgalParamDefault{`5`}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -574,9 +582,9 @@ public:
         return num_teleported;
 
       // find the best merge pair
-      boost::optional< std::pair<std::size_t, std::size_t> > best_proxies =
+      std::optional< std::pair<std::size_t, std::size_t> > best_proxies =
         find_best_merge(!no_threshold_test);
-      if (best_proxies==boost::none)
+      if (best_proxies==std::nullopt)
         return num_teleported;
       if (px_worst == best_proxies->first || px_worst == best_proxies->second)
         return num_teleported;
@@ -655,7 +663,7 @@ public:
    * it is returned only if the error change after the merge is lower than the half of the maximum proxy error.
    * @return if the best merge pair is found the optional returned contains the proxy indices, and is empty otherwise.
    */
-  boost::optional< std::pair<std::size_t, std::size_t> >
+  std::optional< std::pair<std::size_t, std::size_t> >
   find_best_merge(const bool use_threshold_test) {
     typedef std::pair<std::size_t, std::size_t> Proxy_pair;
     typedef std::set<Proxy_pair> Pair_set;
@@ -698,7 +706,7 @@ public:
     }
 
     if (merged_set.empty())
-      return boost::none;
+      return std::nullopt;
 
     // test if merge worth it
     if (use_threshold_test) {
@@ -708,7 +716,7 @@ public:
           max_error = m_proxies[i].err;
       }
       if (min_error_change > max_error / FT(2.0))
-        return boost::none;
+        return std::nullopt;
     }
 
     return std::make_pair(px0, px1);
@@ -776,23 +784,54 @@ public:
   /// @{
   /*!
    * @brief extracts the output mesh in the form of an indexed triangle set.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
    *
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, and `false` otherwise.
    *
    * \cgalNamedParamsBegin{Meshing Named Parameters}
-   *   \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
-   *     furthest vertex distance to the chord length, or to the average edge length otherwise.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{optimize_anchor_location}  if set to `true`, optimize the anchor locations.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
-   *   \cgalParamEnd
+   *   \cgalParamNBegin{subdivision_ratio}
+   *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`5.0`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{boundary_subdivision_ratio}
+   *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length for boundary edges}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`subdivision_ratio`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{relative_to_chord}
+   *     \cgalParamDescription{If `true`, the `subdivision_ratio` is the ratio of the furthest vertex distance
+   *                           to the chord length, otherwise is the average edge length}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{with_dihedral_angle}
+   *     \cgalParamDescription{If `true`, the `subdivision_ratio` is weighted by dihedral angle}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{optimize_anchor_location}
+   *     \cgalParamDescription{If `true`, optimize the anchor locations}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`true`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{optimize_boundary_anchor_location}
+   *     \cgalParamDescription{If `true`, optimize the anchor locations of boundary vertices}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`optimize_anchor_location`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{pca_plane}
+   *     \cgalParamDescription{If `true`, use PCA plane fitting, otherwise use the default area averaged plane parameters}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -801,9 +840,11 @@ public:
     using parameters::choose_parameter;
 
     const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
+    const FT boundary_subdivision_ratio = choose_parameter(get_parameter(np, internal_np::boundary_subdivision_ratio), subdivision_ratio);
     const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
+    const bool optimize_boundary_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_boundary_anchor_location), optimize_anchor_location);
     const bool pca_plane = choose_parameter(get_parameter(np, internal_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
@@ -822,14 +863,14 @@ public:
 
     // generate anchors
     find_anchors();
-    find_edges(subdivision_ratio, relative_to_chord, with_dihedral_angle);
+    find_edges(subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
     add_anchors();
 
     // discrete constrained Delaunay triangulation
     pseudo_cdt();
 
     if (optimize_anchor_location)
-      this->optimize_anchor_location();
+      this->optimize_anchor_location(optimize_boundary_anchor_location);
 
     // check manifold-oriented
     return Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(m_tris);
@@ -840,22 +881,38 @@ public:
   /// @{
   /*!
    * @brief outputs approximation results.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    * \cgalNamedParamsBegin{Output Named Parameters}
-   *  \cgalParamBegin{face_proxy_map} a `WritePropertyMap` with
-   * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
-   * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
-   * The proxy-ids are contiguous in range `[0, number_of_proxies() - 1]`.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{proxies} output iterator over proxies.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{anchors} output iterator over anchor points.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{triangles} output iterator over indexed triangles.
-   *  \cgalParamEnd
+   *   \cgalParamNBegin{face_proxy_map}
+   *     \cgalParamDescription{a property map to output the proxy index of each face of the input polygon mesh}
+   *     \cgalParamType{a model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key and `std::size_t` as value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *     \cgalParamExtra{A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations})}
+   *     \cgalParamExtra{The proxy-ids are contiguous in range `[0, number_of_proxies - 1]`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{proxies}
+   *     \cgalParamDescription{an `OutputIterator` to put proxies in}
+   *     \cgalParamType{a class model of `OutputIterator` with
+   *                    `CGAL::Surface_mesh_approximation::L21_metric_vector_proxy_no_area_weighting::Proxy` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{anchors}
+   *     \cgalParamDescription{an `OutputIterator` to put anchor points in}
+   *     \cgalParamType{a class model of `OutputIterator` with `geom_traits::%Point_3` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{triangles}
+   *     \cgalParamDescription{an `OutputIterator` to put indexed triangles in}
+   *     \cgalParamType{a class model of `OutputIterator` with `std::array<std::size_t, 3>` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -1110,7 +1167,9 @@ private:
         target_px = max_nb_proxies;
       else
         target_px *= 2;
-      add_proxies_error_diffusion(target_px - m_proxies.size());
+      // if no proxies could be added, stop
+      if( add_proxies_error_diffusion(target_px - m_proxies.size()) == 0)
+        break;
       const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
@@ -1165,7 +1224,8 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag &) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag & t) {
+    CGAL_USE(t);
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
@@ -1186,7 +1246,8 @@ private:
    * @param t concurrency tag
    */
   template<typename ProxyWrapperIterator>
-  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag &) {
+  void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag & t) {
+    CGAL_USE(t);
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
@@ -1290,7 +1351,7 @@ private:
    * 3. Update the proxy error.
    * 4. Update proxy map.
    * @pre current face proxy map is valid
-   * @param face_descriptor face
+   * @param f face
    * @param px_idx proxy index
    * @return fitted wrapped proxy
    */
@@ -1300,7 +1361,7 @@ private:
     const Proxy px = m_metric->fit_proxy(fvec, *m_ptm);
     const FT err = m_metric->compute_error(f, *m_ptm, px);
 
-    // original proxy map should always be falid
+    // original proxy map should always be valid
     const std::size_t prev_px_idx = get(m_fproxy_map, f);
     CGAL_assertion(prev_px_idx != CGAL_VSA_INVALID_TAG);
     // update the proxy error and proxy map
@@ -1467,12 +1528,14 @@ private:
 
   /*!
    * @brief finds and approximates the chord connecting the anchors.
-   * @param subdivision_ratio boundary chord approximation recursive split creterion
+   * @param boundary_subdivision_ratio the chord subdivision ratio threshold to the chord length or average edge length for boundary edges
+   * @param subdivision_ratio boundary chord approximation recursive split criterion
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true`, add dihedral angle weight to the distance.
    */
   void find_edges(const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
@@ -1504,13 +1567,13 @@ private:
         Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
         m_bcycles.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
-          subdivision_ratio, relative_to_chord, with_dihedral_angle);
+            subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        for(const halfedge_descriptor he : chord)
+        for(const halfedge_descriptor& he : chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1558,7 +1621,7 @@ private:
         FT dist_max(0.0);
         chord_vec = scale_functor(chord_vec,
           FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
           vec = cross_product_functor(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
@@ -1570,7 +1633,7 @@ private:
       }
       else {
         FT dist_max(0.0);
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
             pt_begin, m_vpoint_map[target(he, *m_ptm)]));
           if (dist > dist_max) {
@@ -1588,7 +1651,7 @@ private:
 
   /*!
    * @brief runs the pseudo Constrained Delaunay Triangulation at each proxy region,
-   * and stores the extracted indexed triangles in @a tris.
+   * and stores the extracted indexed triangles in `tris`.
    * @pre all anchors are found, i.e. all boundary cycles have been visited
    * and attached with at least 3 anchors.
    */
@@ -1608,7 +1671,7 @@ private:
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
-    typedef boost::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
+    typedef std::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
     typedef boost::associative_property_map<VertexMap> ToSGVertexMap;
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);
@@ -1746,7 +1809,7 @@ private:
   /*!
    * @brief walks along the region boundary cycle to the first halfedge
    * pointing to a vertex associated with an anchor.
-   * @param[in/out] he_start region boundary halfedge
+   * @param[in,out] he_start region boundary halfedge
    */
   void walk_to_first_anchor(halfedge_descriptor &he_start) {
     const halfedge_descriptor start_mark = he_start;
@@ -1761,7 +1824,7 @@ private:
   /*!
    * @brief walks along the region boundary cycle to the next anchor
    * and records the path as a `Boundary_chord`.
-   * @param[in/out] he_start starting region boundary halfedge
+   * @param[in,out] he_start starting region boundary halfedge
    * pointing to a vertex associated with an anchor
    * @param[out] chord recorded path chord
    */
@@ -1774,7 +1837,7 @@ private:
 
   /*!
    * @brief walks to the next boundary cycle halfedge.
-   * @param[in/out] he_start region boundary halfedge
+   * @param[in,out] he_start region boundary halfedge
    */
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
     const std::size_t px_idx = get(m_fproxy_map, face(he_start, *m_ptm));
@@ -1787,12 +1850,13 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range `[@a chord_begin, @a chord_end).`
+   * @brief subdivides a chord recursively in range `[chord_begin, chord_end)`.
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
-   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
-   * otherwise it's relative to the average edge length (absolute sense).
+   * @param boundary_subdivision_ratio the chord subdivision ratio threshold to the chord length or average edge length for boundary edges
+   * @param relative_to_chord set `true` if the `subdivision_ratio` is relative to the chord length (relative sense),
+   * otherwise it is relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one
    */
@@ -1800,6 +1864,7 @@ private:
     const Boundary_chord_iterator &chord_begin,
     const Boundary_chord_iterator &chord_end,
     const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
@@ -1808,8 +1873,16 @@ private:
     const std::size_t anchor_first = get(m_vanchor_map, source(he_first, *m_ptm));
     const std::size_t anchor_last = get(m_vanchor_map, target(he_last, *m_ptm));
 
+    bool is_boundary = is_border_edge(he_first, *m_ptm);
+
+    if(is_boundary && boundary_subdivision_ratio == 0){
+      for (Boundary_chord_iterator citr = chord_begin; *citr != he_last; ++citr) {
+        attach_anchor(*citr);
+      }
+    }
+
     // do not subdivide trivial non-circular chord
-    if ((anchor_first != anchor_last) && (chord_size < 4))
+    if ((anchor_first != anchor_last) && (chord_size < 2))
       return 1;
 
     bool if_subdivide = false;
@@ -1838,11 +1911,9 @@ private:
       const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
       bool degenerate_chord = false;
       if (chord_len > FT(0.0)) {
-        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+        Segment_3 seg(pt_begin, pt_end);
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-          vec = cross_product_functor(chord_vec, vec);
-          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
           if (dist > dist_max) {
             chord_max = citr;
             dist_max = dist;
@@ -1881,19 +1952,23 @@ private:
         }
         criterion *= norm_sin;
       }
-
-      if (criterion > subdivision_ratio)
-        if_subdivide = true;
+      if (is_boundary) {
+        if (criterion > boundary_subdivision_ratio)
+          if_subdivide = true;
+      }
+      else {
+        if (criterion > subdivision_ratio)
+          if_subdivide = true;
+      }
     }
-
     if (if_subdivide) {
       // subdivide at the most remote vertex
       attach_anchor(*chord_max);
 
       const std::size_t num_left = subdivide_chord(chord_begin, chord_max + 1,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
       const std::size_t num_right = subdivide_chord(chord_max + 1, chord_end,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
       return num_left + num_right;
     }
@@ -1913,7 +1988,7 @@ private:
   /*!
    * @brief checks if a vertex is attached with an anchor.
    * @tparam VertexAnchorIndexMap `ReadablePropertyMap`
-   * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
+   * with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
    * @param vanchor_map vertex anchor index map
    */
@@ -1946,9 +2021,15 @@ private:
    * @brief optimizes the anchor location by averaging the projection points of
    * the anchor vertex to the incident proxy plane.
    */
-  void optimize_anchor_location() {
+  void optimize_anchor_location(bool optimize_boundary_anchor_location) {
     for(Anchor& a : m_anchors) {
       const vertex_descriptor v = a.vtx;
+
+      if(! optimize_boundary_anchor_location && is_border(v,*m_ptm)){
+        a.pos  = m_vpoint_map[v];
+        continue;
+      }
+
       // incident proxy set
       std::set<std::size_t> px_set;
       for(halfedge_descriptor h : halfedges_around_target(v, *m_ptm)) {
@@ -1957,6 +2038,7 @@ private:
       }
 
       // projection
+      // todo: replace averaging by qem/svd ?  Mael?
       FT sum_area(0.0);
       Vector_3 vec = CGAL::NULL_VECTOR;
       const Point_3 vtx_pt = m_vpoint_map[v];

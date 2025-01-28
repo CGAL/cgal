@@ -1,11 +1,11 @@
+#include <CGAL/Side_of_triangle_mesh.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include "point_inside_helpers.h"
 
@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <class K>
-int test_surface_mesh(const char* filename)
+int test_surface_mesh(const std::string filename)
 {
   typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
@@ -37,9 +37,9 @@ int test_surface_mesh(const char* filename)
   random_points<Point>(mesh, nb_query, back_inserter(points));
   inside_test(mesh, points);
 
-  //test compilation of constructor from AABB_tree  
+  //test compilation of constructor from AABB_tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> FGTP;
-  typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
+  typedef CGAL::AABB_traits_3<K, FGTP>  AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(mesh).first, faces(mesh).second, mesh);
@@ -52,7 +52,7 @@ int test_surface_mesh(const char* filename)
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   assert(test_surface_mesh<Epic>(filename) == 0);
   assert(test_surface_mesh<Epec>(filename) == 0);

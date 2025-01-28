@@ -14,7 +14,7 @@ int main()
 #else
 
 #include <fstream>
-#include <boost/timer.hpp>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/offset_polygon_2.h>
@@ -42,9 +42,10 @@ int main(int argc, char* argv[])
 
   // Compute the offset polygon.
   Traits traits;
-  boost::timer timer;
+  CGAL::Timer timer;
+  timer.start();
   Offset_polygon_with_holes_2 offset = CGAL::offset_polygon_2(P, 5, traits);
-  double secs = timer.elapsed();
+  double secs = timer.time();
 
   std::cout << "The offset polygon has " << offset.outer_boundary().size()
             << " vertices, " << offset.number_of_holes() << " holes."

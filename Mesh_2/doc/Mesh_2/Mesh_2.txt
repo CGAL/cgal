@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Conforming_Triangulations_and_Meshes
 \anchor userchapter2DMeshes
 \cgalAutoToc
@@ -12,9 +12,9 @@ conforming triangulations and 2D meshes. Conforming triangulations will be
 described in Section \ref secMesh_2_conforming_triangulation and
 meshes in Section \ref secMesh_2_meshes.
 
-\section secMesh_2_conforming_triangulation Conforming Triangulations 
+\section secMesh_2_conforming_triangulation Conforming Triangulations
 
-\subsection secMesh_2_conforming_definitions Definitions 
+\subsection secMesh_2_conforming_definitions Definitions
 
 A triangulation is a <I>Delaunay triangulation</I> if the circumscribing
 circle of any facet of the triangulation contains no vertex in its
@@ -46,18 +46,18 @@ triangulation by adding vertices, called <I>Steiner vertices</I>, on
 constrained edges until they are decomposed into subconstraints small enough
 to be Delaunay or Gabriel edges.
 
-\subsection secMesh_2_building_conforming Building Conforming Triangulations 
+\subsection secMesh_2_building_conforming Building Conforming Triangulations
 
 Constrained Delaunay triangulations can be refined into
-conforming triangulations by the two following global functions: 
+conforming triangulations by the two following global functions:
 
 \code{.cpp}
-template<class CDT> 
+template<class CDT>
 void make_conforming_Delaunay_2 (CDT& t)
 \endcode
 
 \code{.cpp}
-template<class CDT> 
+template<class CDT>
 void make_conforming_Gabriel_2 (CDT& t)
 \endcode
 
@@ -86,7 +86,7 @@ triangulation and then into a conforming Gabriel triangulation. For
 additional control of the refinement algorithm, this class also provides
 separate functions to insert one Steiner point at a time.
 
-\subsection secMesh_2_example_making_conforming Example: Making a Triangulation Conforming Delaunay and Then Conforming Gabriel 
+\subsection secMesh_2_example_making_conforming Example: Making a Triangulation Conforming Delaunay and Then Conforming Gabriel
 
 This example inserts several segments into a constrained Delaunay
 triangulation, makes it conforming Delaunay, and then conforming
@@ -101,9 +101,9 @@ See \cgalFigureRef{Conformexampleconform}
 From left to right: Initial Delaunay triangulation, the corresponding conforming Delaunay, and the corresponding Gabriel triangulation.
 \cgalFigureEnd
 
-\section secMesh_2_meshes Meshes 
+\section secMesh_2_meshes Meshes
 
-\subsection secMesh_2_meshes_definition Definitions 
+\subsection secMesh_2_meshes_definition Definitions
 
 A mesh is a partition of a given region into simplices whose shapes
 and sizes satisfy several criteria.
@@ -121,10 +121,10 @@ boundary or internals constraints. The segments of the <span class="textsc">Pslg
 cover the boundary of the domain.
 
 The <span class="textsc">Pslg</span> divides the plane into several connected components. By
-default, the domain is the union of the bounded connected components. 
+default, the domain is the union of the bounded connected components.
 
 See \cgalFigureRef{Domain} for an example of a domain
-defined without using seed points, and a possible mesh of it. 
+defined without using seed points, and a possible mesh of it.
 
 \cgalFigureBegin{Domain,domain-domain-mesh.png}
 A domain defined without seed points and the generated mesh.
@@ -137,7 +137,7 @@ seed points mark components to be meshed or they mark components not to be
 meshed (holes).
 
 See
-\cgalFigureRef{Domainseeds} for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes. 
+\cgalFigureRef{Domainseeds} for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes.
 In the corresponding mesh these
 two holes are triangulated but not meshed.
 
@@ -146,7 +146,7 @@ two holes are triangulated but not meshed.
 A domain with two seeds points defining holes and the generated mesh.
 \cgalFigureEnd
 
-\subsection secMesh_2_criteria Shape and Size Criteria 
+\subsection secMesh_2_criteria Shape and Size Criteria
 
 The shape criterion for triangles is a lower bound \f$ B\f$ on the ratio
 between the circumradius and the shortest edge length. Such a bound
@@ -193,38 +193,40 @@ satisfy size and shape criteria except for the small input angles.
 In addition, the algorithm may succeed in producing meshes with a lower
 angle bound greater than \f$ 20.7\f$ degrees, but there is no such guarantee.
 
-\subsection secMesh_2_building_meshes Building Meshes 
+\subsection secMesh_2_building_meshes Building Meshes
 
 Meshes are obtained from
-constrained Delaunay triangulations by calling the global function :
+constrained Delaunay triangulations by calling the global function:
 
 \code{.cpp}
-template<class CDT, class Criteria>
-void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria)
+template<class CDT, class NamedParameters>
+void refine_Delaunay_mesh_2 (CDT &t, NamedParameters np)
 \endcode
 
 The template parameter `CDT` must be instantiated by a constrained
-Delaunay triangulation class. In order to override the domain,
-a version of this function has two more arguments that define a sequence of
-seed points.
+Delaunay triangulation class.
 
 The geometric traits class of `CDT` has to be a
 model of the concept `DelaunayMeshTraits_2`. This concept
 refines the concept `ConformingDelaunayTriangulationTraits_2`
-adding the geometric predicates and constructors. The template parameter
-`Criteria` must be a model of `MeshingCriteria_2`. This concept
-defines criteria that the triangles have to satisfy.
+adding the geometric predicates and constructors.
+
+The second template parameter `NamedParameters` enables
+to pass a sequence of seed points to define a domain.
+It further enables to pass meshing criteria that the triangles have to satisfy.
+The criteria must be a model of `MeshingCriteria_2`.
+
 \cgal provides two models for this concept:
 <UL>
 <LI>`Delaunay_mesh_criteria_2<CDT>`, that defines a shape criterion
-that bounds the minimum angle of triangles, 
+that bounds the minimum angle of triangles,
 <LI>`Delaunay_mesh_size_criteria_2<CDT>`, that adds to the previous
 criterion a bound on the maximum edge length.
 </UL>
 
 If the function `refine_Delaunay_mesh_2()` is called several times on the
-same triangulation with different criteria, the algorithm rebuilds the 
-internal data structure used for meshing at every call. In order to avoid 
+same triangulation with different criteria, the algorithm rebuilds the
+internal data structure used for meshing at every call. In order to avoid
 rebuild the data structure at every call, the advanced user can
 use the class `Delaunay_mesher_2<CDT>`. This class provides also step
 by step functions. Those functions insert one vertex at a time.
@@ -243,8 +245,8 @@ function of the face type (see the concept `DelaunayMeshFaceBase_2`).
 
 \subsection secMesh_2_optimization Optimization of Meshes with Lloyd
 
-The package also provides a global function that runs Lloyd optimization iterations on the 
-mesh generated by Delaunay refinement. The goal of this mesh optimization is to 
+The package also provides a global function that runs Lloyd optimization iterations on the
+mesh generated by Delaunay refinement. The goal of this mesh optimization is to
 improve the angles inside the mesh, and make them as close as possible to 60 degrees.
 
 \code{.cpp}
@@ -253,11 +255,11 @@ template< class CDT >
 Mesh_optimization_return_code lloyd_optimize_mesh_2(CDT& cdt);
 
 \endcode
-Note that this global function has more parameters (see details in reference pages) to tune the optimization process.
+Note that this global function has several named parameters (see details in reference pages) to tune the optimization process.
 
 This optimization process alternates relocating vertices to the center of mass
 of their Voronoi cells, and updating the Delaunay connectivity of the triangulation.
-The center of mass is computed with respect to a sizing function that was designed to 
+The center of mass is computed with respect to a sizing function that was designed to
 preserve the local density of points in the mesh generated by Delaunay refinement.
 
 See Figure \cgalFigureRef{Lloydfigure} for a mesh generated by `refine_Delaunay_mesh_2()` and optimized
@@ -270,12 +272,13 @@ shows the histogram of angles inside these meshes.
 \cgalFigureEnd
 
 \cgalFigureBegin{LloydHistogramfigure,lloyd-histograms.png}
-Histograms of angles inside the mesh after Delaunay refinement, and after 10 and 100 iterations 
+Histograms of angles inside the mesh after Delaunay refinement, and after 10 and 100 iterations
 of Lloyd optimization.
 After Delaunay refinement, angles are in the interval [28.5; 121.9] degrees.
 After 10 iterations of Lloyd optimization, they are in [29.1; 110.8]. 100 iterations take them to [29.3; 109.9].
 \cgalFigureEnd
 
+As of \cgal 5.6, `lloyd_optimize_mesh_2()` uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
 
 \subsection Mesh_2Examples Examples
 
@@ -313,21 +316,29 @@ faces is used to count them.
 
 \cgalExample{Mesh_2/mesh_with_seeds.cpp}
 
+\subsubsection Mesh_2ExampleUsingMarkDomains Example with a Domain Defined by Nesting Level.
+
+When the domain is defined by polygons for the outer boundaries and the boundaries of holes
+the function `mark_domain_in_triangulation()`  can be called instead of passing seedpoints.
+
+\cgalExample{Mesh_2/mesh_marked_domain.cpp}
+
 
 \subsubsection Mesh_2ExampleLloyd Example Using the Lloyd optimizer
 
-This example uses the global function `lloyd_optimize_mesh_2()`. 
+This example uses the global function `lloyd_optimize_mesh_2()`.
 The mesh is generated using the function `refine_Delaunay_mesh_2()` of `CGAL::Delaunay_mesher_2`,
-and is then optimized using `lloyd_optimize_mesh_2()`. The optimization will stop 
+and is then optimized using `lloyd_optimize_mesh_2()`. The optimization will stop
 after 10 (set by `max_iteration_number`) iterations of alternating vertex relocations
-and Delaunay connectivity updates. More termination conditions can be used and are detailed 
+and Delaunay connectivity updates. More termination conditions can be used and are detailed
 in the Reference Manual.
 
 
 \cgalExample{Mesh_2/mesh_optimization.cpp}
 
 
-
-*/ 
+\section secMesh_2_IO Input/Output
+It is possible to export the result of a meshing in VTU, using the function `CGAL::IO::write_VTU()`.
+For more information about this format, see \ref IOStreamVTK.
+*/
 } /* namespace CGAL */
-

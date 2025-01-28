@@ -1,22 +1,25 @@
 // #define USE_SURFACE_MESH
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_slicer.h>
+
 #ifdef USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #else
 #include <CGAL/Polyhedron_3.h>
 #endif
+
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 
-#include <CGAL/Polygon_mesh_slicer.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/use.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
@@ -28,7 +31,7 @@ bool is_ccw(int xi, int yi,
   CGAL::Polygon_2<K> polygon;
   if(polyline.front() == polyline.back())
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
+    for(const typename K::Point_3& p : polyline)
     {
       polygon.push_back(typename K::Point_2(p[xi], p[yi]));
     }
@@ -47,7 +50,7 @@ int test_slicer()
 #endif
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
-  typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
+  typedef CGAL::AABB_traits_3<K, HGSP>    AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
   typedef std::vector<typename K::Point_3> Polyline_type;
   typedef std::vector< Polyline_type > Polylines;
@@ -118,24 +121,24 @@ int test_slicer()
   slicer(typename K::Plane_3(0,1,0,0.5), std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   int closed_id = polylines.front().front()==polylines.front().back() ? 0 : 1;
-  CGAL_USE(closed_id);
-  CGAL_assertion( is_ccw<K>(0, 2 , polylines[closed_id]) );
+
+  assert( is_ccw<K>(0, 2 , polylines[closed_id]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,-1,0,-0.5), std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   closed_id = polylines.front().front()==polylines.front().back() ? 0 : 1;
-  CGAL_assertion( !is_ccw<K>(0, 2, polylines[closed_id]) );
+  assert( !is_ccw<K>(0, 2, polylines[closed_id]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,0,1,1), std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
-  CGAL_assertion( is_ccw<K>(0, 1 , polylines[0]) );
+  assert( is_ccw<K>(0, 1 , polylines[0]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,0,-1,-1), std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
-  CGAL_assertion( !is_ccw<K>(0, 1 , polylines[0]) );
+  assert( !is_ccw<K>(0, 1 , polylines[0]) );
 
   // reverse face orientation (no need to rebuild the tree)
   CGAL::Polygon_mesh_processing::reverse_face_orientations(m);
@@ -143,23 +146,23 @@ int test_slicer()
   slicer(typename K::Plane_3(0,1,0,0.5), std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   closed_id = polylines.front().front()==polylines.front().back() ? 0 : 1;
-  CGAL_assertion( !is_ccw<K>(0, 2 , polylines[closed_id]) );
+  assert( !is_ccw<K>(0, 2 , polylines[closed_id]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,-1,0,-0.5), std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   closed_id = polylines.front().front()==polylines.front().back() ? 0 : 1;
-  CGAL_assertion( is_ccw<K>(0, 2, polylines[closed_id]) );
+  assert( is_ccw<K>(0, 2, polylines[closed_id]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,0,1,1), std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
-  CGAL_assertion( !is_ccw<K>(0, 1 , polylines[0]) );
+  assert( !is_ccw<K>(0, 1 , polylines[0]) );
 
   polylines.clear();
   slicer(typename K::Plane_3(0,0,-1,-1), std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
-  CGAL_assertion( is_ccw<K>(0, 1 , polylines[0]) );
+  assert( is_ccw<K>(0, 1 , polylines[0]) );
 
 
 

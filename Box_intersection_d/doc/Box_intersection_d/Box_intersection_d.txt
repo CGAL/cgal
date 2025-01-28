@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes
 \anchor chapterBoxIntersection
 \cgalAutoToc
@@ -38,7 +38,7 @@ are proximity queries and distance computations among such surfaces,
 see Section \ref secbox_inters_example_proximity for an example
 and \cgalCite{cgal:ze-fsbi-02} for more details.
 
-\section secboxintersdef Definition 
+\section secboxintersdef Definition
 
 A \f$ d\f$-dimensional iso-oriented box is defined as the
 %Cartesian product of \f$ d\f$ intervals. We call the
@@ -95,12 +95,12 @@ as follows:
 #include <CGAL/box_intersection_d.h>
 
 template< class RandomAccessIterator, class Callback >
-void box_intersection_d(RandomAccessIterator begin, 
+void box_intersection_d(RandomAccessIterator begin,
                         RandomAccessIterator end,
                         Callback callback);
 
-template< class RandomAccessIterator1, 
-          class RandomAccessIterator2, 
+template< class RandomAccessIterator1,
+          class RandomAccessIterator2,
           class Callback >
 void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
                         RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
@@ -141,15 +141,15 @@ for the number type used for the interval bounds, for the fixed
 dimension of the box, and for a policy class \cgalCite{cgal:a-mcdgp-01}
 selecting among several solutions for providing the `id`-number.
 
-The function signatures for the bipartite case look as follows. The 
+The function signatures for the bipartite case look as follows. The
 signatures for the complete case with the `box_self_intersection_d()`
 function look the same except for the single iterator range.
 
 \code{.cpp}
 #include CGAL/box_intersection_d.h
 
-template< class RandomAccessIterator1, 
-          class RandomAccessIterator2, 
+template< class RandomAccessIterator1,
+          class RandomAccessIterator2,
           class Callback >
 void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
                         RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
@@ -168,7 +168,7 @@ void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1
                         Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
 \endcode
 
-\section secboxintersectminimal Minimal Example for Intersecting Boxes 
+\section secboxintersectminimal Minimal Example for Intersecting Boxes
 
 The box implementation provided with
 `Box_intersection_d::Box_d<double,2>` has a dedicated
@@ -185,7 +185,7 @@ see the example in the next section. We use the `id`-number in our
 callback function to report the result of the intersection algorithm.
 The result will be that the first `query` box intersects all nine
 `boxes` and the second `query` box intersects the four boxes
-in the upper-right quadrant. See Section \ref secboxintersparams 
+in the upper-right quadrant. See Section \ref secboxintersparams
 for the change of the `topology` parameter and its effect.
 
 \cgalExample{Box_intersection_d/minimal.cpp}
@@ -208,7 +208,7 @@ Next we create a vector for the bounding boxes of the triangles called
 with the \cgal bounding boxes of type `Bbox_3`. In
 addition, each box stores the iterator to the corresponding triangle.
 
-The default policy of this box type uses for the `id`-number the 
+The default policy of this box type uses for the `id`-number the
 address of the value of the iterator, i.e., the address of the
 triangle. This is a good choice that works correctly iff the boxes
 have unique iterators, i.e., there is a one-to-one mapping between
@@ -216,7 +216,7 @@ boxes and approximated geometry, which is the case here. It saves us
 the extra space that was needed for the explicit `id`-number in
 the previous example.
 
-We run the self intersection algorithm with the `report_inters`
+We run the self intersection algorithm with the `report_inters()`
 function as callback. This callback reports the intersecting boxes. It
 uses the `handle` and the global `triangles` vector to
 calculate the triangle numbers. Then it checks the triangles
@@ -253,7 +253,7 @@ std::vector<Box *> ptr;
 for ( std::vector<Box>::iterator i = boxes.begin(); i != boxes.end(); ++i)
 ptr.push_back( &*i);
 
-// Run the self intersection algorithm with all defaults on the 
+// Run the self intersection algorithm with all defaults on the
 // indirect pointers to bounding boxes. Avoids copying the boxes.
 CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
 
@@ -283,13 +283,13 @@ for 10000 boxes, but the picture reversed for 100000 boxes, where the
 version above that copies the boxes becomes 300% faster.
 
 Note that switching to the built-in type `float` is supported by
-the box intersection algorithm, but the interfacing with the \cgal 
+the box intersection algorithm, but the interfacing with the \cgal
 bounding box `Bbox_3` would not be that easy. In particular,
 just converting from the `double` to the `float`
 representation incurs rounding that needs to be controlled properly,
 otherwise the box might shrink and one might miss intersections.
 
-\section secboxintersparams Example Using the Topology and the Cutoff Parameters 
+\section secboxintersparams Example Using the Topology and the Cutoff Parameters
 
 Boxes can be interpreted by the box intersection algorithm as closed
 or as half-open boxes, see also Section \ref secboxintersdef. Closed
@@ -312,7 +312,7 @@ of `boxes`, and two boxes for the `query` sequence, namely the
 box at the center and the box from the upper-right corner of the grid.
 
 We write a more involved callback function object `Report` that
-stores an output iterator and writes the `id`-number of the 
+stores an output iterator and writes the `id`-number of the
 box in the first argument to the output iterator. We also provide a
 small helper function `report()` that simplifies the use of the function
 object.
@@ -330,8 +330,8 @@ thus, for the half-open topology only one intersection remains per
 output of the algorithm will be:
 
 \verbatim
-0 1 2 3 4 4 5 5 6 7 7 8 8 
-4 8 
+0 1 2 3 4 4 5 5 6 7 7 8 8
+4 8
 \endverbatim
 
 For the second box intersection function call we have to specify the
@@ -341,7 +341,7 @@ discussion.
 
 \cgalExample{Box_intersection_d/box_grid.cpp}
 
-\section secboxintersperformance Runtime Performance 
+\section secboxintersperformance Runtime Performance
 
 The implemented algorithm is described in \cgalCite{cgal:ze-fsbi-02} as
 version two. Its performance depends on a `cutoff` parameter.
@@ -350,12 +350,12 @@ parameter the function switches from the streamed segment-tree
 algorithm to the two-way-scan algorithm, see \cgalCite{cgal:ze-fsbi-02}
 for the details.
 
-The streamed segment-tree algorithm needs \f$ O(n \log^d (n) + k)\f$
-worst-case running time and \f$ O(n)\f$ space, where \f$ n\f$ is the number of
+The streamed segment-tree algorithm needs \cgalBigO{n \log^d (n) + k}
+worst-case running time and \cgalBigO{n} space, where \f$ n\f$ is the number of
 boxes in both input sequences, \f$ d\f$ the (constant) dimension of the
 boxes, and \f$ k\f$ the output complexity, i.e., the number of pairwise
-intersections of the boxes. The two-way-scan algorithm needs \f$ O(n \log
-(n) + l)\f$ worst-case running time and \f$ O(n)\f$ space, where \f$ l\f$ is the
+intersections of the boxes. The two-way-scan algorithm needs \cgalBigO{n \log
+(n) + l} worst-case running time and \cgalBigO{n} space, where \f$ l\f$ is the
 number of pairwise overlapping intervals in one dimensions (the
 dimension where the algorithm is used instead of the segment tree).
 Note that \f$ l\f$ is not necessarily related to \f$ k\f$ and using the
@@ -421,7 +421,7 @@ member function returns the dimension.
 
 \cgalExample{Box_intersection_d/custom_box_grid.cpp}
 
-\section secbox_inters_example_proximity Example for Point Proximity Search with a Custom Traits Class 
+\section secbox_inters_example_proximity Example for Point Proximity Search with a Custom Traits Class
 
 Given a set of 3D points, we want to find all pairs of points that are
 less than a certain distance apart. We use the box intersection
@@ -478,6 +478,5 @@ an excellent review for this package. Steve Robbins provided an
 independent and earlier implementation of this algorithm,
 however, we learned too late about this implementation.
 
-*/ 
+*/
 } /* namespace CGAL */
-

@@ -1,3 +1,4 @@
+#define CGAL_NO_MPZF_DIVISION_OPERATOR 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Projection_traits_xy_3.h>
 
@@ -22,6 +23,14 @@ int main()
   Epic::Vector_2 v2(1, 0), w2(0,1);
 
   K k;
+
+  assert( ( k.construct_centroid_2_object()(p3, q3, r3).x() ==
+            CGAL::centroid(p2, q2, r2).x() ) &&
+          ( k.construct_centroid_2_object()(p3, q3, r3).y() ==
+            CGAL::centroid(p2, q2, r2).y() ) );
+
+  assert( k.compute_determinant_2_object()(v3, w3) ==
+          CGAL::determinant(v2, w2) );
 
   assert( k.compute_scalar_product_2_object()(v3, w3) ==
           v2 * w2 );

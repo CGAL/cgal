@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -68,28 +59,28 @@ class Halffacet_base  {
       supporting_plane_(h), mark_(m) {}
 
       ~Halffacet_base() {
-	CGAL_NEF_TRACEN("  destroying Halffacet_base item "<<&*this);
+        CGAL_NEF_TRACEN("  destroying Halffacet_base item "<<&*this);
       }
 
       Halffacet_base(const Halffacet_base<Refs>& f)
-	{ supporting_plane_ = f.supporting_plane_;
-	  mark_ = f.mark_;
-	  twin_ = f.twin_;
-	  CGAL_NEF_TRACEN("VOLUME const");
-	  volume_ = f.volume_;
-	  boundary_entry_objects_ = f.boundary_entry_objects_;
-	}
+        { supporting_plane_ = f.supporting_plane_;
+          mark_ = f.mark_;
+          twin_ = f.twin_;
+          CGAL_NEF_TRACEN("VOLUME const");
+          volume_ = f.volume_;
+          boundary_entry_objects_ = f.boundary_entry_objects_;
+        }
 
       Halffacet_base<Refs>& operator=(const Halffacet_base<Refs>& f)
-	{ if (this == &f) return *this;
-	  supporting_plane_ = f.supporting_plane_;
-	  mark_ = f.mark_;
-	  twin_ = f.twin_;
-	  CGAL_NEF_TRACEN("VOLUME op=");
-	  volume_ = f.volume_;
-	  boundary_entry_objects_ = f.boundary_entry_objects_;
-	  return *this;
-	}
+        { if (this == &f) return *this;
+          supporting_plane_ = f.supporting_plane_;
+          mark_ = f.mark_;
+          twin_ = f.twin_;
+          CGAL_NEF_TRACEN("VOLUME op=");
+          volume_ = f.volume_;
+          boundary_entry_objects_ = f.boundary_entry_objects_;
+          return *this;
+        }
 
       Mark& mark() { return mark_; }
       const Mark& mark() const { return mark_; }
@@ -118,24 +109,24 @@ class Halffacet_base  {
       bool is_twin() const { return (&*twin_ < this); }
 
       bool is_valid( bool verb = false, int level = 0) const {
-      
-	Verbose_ostream verr(verb);
-	verr << "begin CGAL::SNC_items<...>::Halffacet_base::is_valid( verb=true, "
-	  "level = " << level << "):" << std::endl;
 
-	bool valid = (twin_ != nullptr && twin_ != Halffacet_handle());
-	valid = valid && (volume_ != nullptr && volume_ != Volume_handle());
-      
-	valid = valid && (supporting_plane_.a() != 0 || 
-			  supporting_plane_.b() != 0 ||
-			  supporting_plane_.c() != 0);
-      
-	valid = valid && (!boundary_entry_objects_.empty());
+        Verbose_ostream verr(verb);
+        verr << "begin CGAL::SNC_items<...>::Halffacet_base::is_valid( verb=true, "
+          "level = " << level << "):" << std::endl;
 
-	verr << "end of CGAL::SNC_items<...>::Halffacet_base::is_valid(): structure is "
-	     << ( valid ? "valid." : "NOT VALID.") << std::endl;
+        bool valid = (twin_ != nullptr && twin_ != Halffacet_handle());
+        valid = valid && (volume_ != nullptr && volume_ != Volume_handle());
 
-	return valid;
+        valid = valid && (supporting_plane_.a() != 0 ||
+                          supporting_plane_.b() != 0 ||
+                          supporting_plane_.c() != 0);
+
+        valid = valid && (!boundary_entry_objects_.empty());
+
+        verr << "end of CGAL::SNC_items<...>::Halffacet_base::is_valid(): structure is "
+             << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+        return valid;
       }
 
 }; // Halffacet_base

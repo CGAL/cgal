@@ -1,52 +1,34 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
-project (Alpha_shapes_2_Demo)
+cmake_minimum_required(VERSION 3.12...3.29)
+project(Alpha_shapes_2_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
-find_package(CGAL COMPONENTS Qt5)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
+  add_compile_definitions(QT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-include_directories (BEFORE ./include)
+  # The executable itself.
+  qt_add_executable(
+    Alpha_shapes_2 Alpha_shapes_2.cpp Alpha_shapes_2.ui Alpha_shapes_2.qrc)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
-add_definitions(-DQT_NO_KEYWORDS)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-#--------------------------------
-# The "Delaunay" demo: Alpha_shapes_2
-#--------------------------------
-# UI files (Qt Designer files)
-qt5_wrap_ui( DT_UI_FILES Alpha_shapes_2.ui )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shapes_2)
 
-# qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Alpha_shapes_2.qrc )
+  target_link_libraries(Alpha_shapes_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
+                                               Qt6::Widgets)
 
-# The executable itself.
-add_executable  ( Alpha_shapes_2 Alpha_shapes_2.cpp ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Alpha_shapes_2)
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shapes_2 )
-
-target_link_libraries( Alpha_shapes_2 PRIVATE
-  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
-
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Alpha_shapes_2)
-
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Alpha_shapes_2)
-
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Alpha_shapes_2)
 else()
-
-  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
-
+  message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 endif()

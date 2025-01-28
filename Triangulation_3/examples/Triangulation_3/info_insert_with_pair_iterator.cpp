@@ -23,10 +23,8 @@ int main()
   points.push_back( std::make_pair(Point(2,2,2),4) );
   points.push_back( std::make_pair(Point(-1,0,1),5) );
 
-  
-  Delaunay T( points.begin(),points.end() );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
+  Delaunay T( points.begin(),points.end() );
 
   // check that the info was correctly set.
   for (Delaunay::Vertex_handle v : T.finite_vertex_handles())

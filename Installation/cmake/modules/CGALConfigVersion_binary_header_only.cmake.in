@@ -1,0 +1,5 @@
+# 
+# This file points to the CGALConfigVersion.cmake for header-only CGAL.
+#
+
+include("@CGAL_INSTALLATION_PACKAGE_DIR@/lib/cmake/CGAL/CGALConfigVersion.cmake")

@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : test/Triangulation/test_triangulation_2.C
 // revision      : $revision$
@@ -24,10 +24,10 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/_test_cls_regular_triangulation_2.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/_test_cls_regular_triangulation_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel  RGt;
 
@@ -46,7 +46,7 @@ int main()
   typedef Test_rep_homogeneous      RGt2;
   typedef CGAL::Regular_triangulation_2<RGt2>                    RCls2;
   _test_cls_regular_triangulation_2( RCls2() );
-  
+
   std::cout << "done" << std::endl;
   return 0;
 }

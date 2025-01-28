@@ -3,12 +3,10 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` computes the leading coefficient 
-of a `PolynomialTraits_d::Polynomial_d`. 
+This `AdaptableUnaryFunction` computes the leading coefficient
+of a `PolynomialTraits_d::Polynomial_d`.
 
-\cgalRefines `AdaptableUnaryFunction` 
-\cgalRefines `CopyConstructible` 
-\cgalRefines `DefaultConstructible` 
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
@@ -18,30 +16,30 @@ of a `PolynomialTraits_d::Polynomial_d`.
 class PolynomialTraits_d::LeadingCoefficient {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Coefficient_type result_type; 
+*/
+typedef PolynomialTraits_d::Coefficient_type result_type;
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Polynomial_d argument_type; 
+*/
+typedef PolynomialTraits_d::Polynomial_d argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-Computes the leading coefficient of \f$ p\f$ with respect to the 
-outermost variable \f$ x_{d-1}\f$. 
-*/ 
-result_type operator()(argument_type p); 
+Computes the leading coefficient of \f$ p\f$ with respect to the
+outermost variable \f$ x_{d-1}\f$.
+*/
+result_type operator()(argument_type p);
 
 /// @}
 

@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -30,7 +21,7 @@
 #endif
 
 #include <QGraphicsItem>
-#include <QGraphicsPathItem> 
+#include <QGraphicsPathItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -55,7 +46,7 @@ GraphicsViewPolylineInput_non_templated_base(QObject* parent,
 CGAL_INLINE_FUNCTION
 bool
 GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ 
+{
   if( event->modifiers() ){
     return false;
   }
@@ -91,6 +82,7 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
     qpp.addPolygon(polygon);
     path_item = new QGraphicsPathItem(qpp);
     path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+    path_item->setZValue(z);
     scene_->addItem(path_item);
     return true;
   }
@@ -99,7 +91,7 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
 
 
 CGAL_INLINE_FUNCTION
-void 
+void
 GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
 {
   if(polygon.empty()){
@@ -107,11 +99,13 @@ GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
   }
   if(!b && closed_ ){
     b = new QGraphicsLineItem();
+    b->setZValue(z);
     b->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(b);
   }
   if( !e){
-    e = new QGraphicsLineItem();    
+    e = new QGraphicsLineItem();
+    e->setZValue(z);
     e->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(e);
   }
@@ -120,12 +114,12 @@ GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
     b->setLine(bLine);
   }
   QLineF eLine(polygon.back(), p);
-  e->setLine(eLine); 
+  e->setLine(eLine);
 }
 
 
 CGAL_INLINE_FUNCTION
-void 
+void
 GraphicsViewPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   sp = event->scenePos();
@@ -135,7 +129,7 @@ GraphicsViewPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouse
 
 CGAL_INLINE_FUNCTION
 bool
-GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event ) 
+GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event )
 {
   if( event->modifiers() )
     return false;
@@ -174,6 +168,7 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
   QPainterPath qpp;
   qpp.addPolygon(polygon);
   path_item = new QGraphicsPathItem(qpp);
+  path_item->setZValue(z);
   path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
   scene_->addItem(path_item);
   rubberbands(sp);
@@ -183,7 +178,7 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
 
 
 CGAL_INLINE_FUNCTION
-bool 
+bool
 GraphicsViewPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -27,7 +18,8 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <CGAL/Unique_hash_map.h>
+#include <boost/functional/hash.hpp>
+#include <unordered_map>
 #include <map>
 
 #undef CGAL_NEF_DEBUG
@@ -38,23 +30,54 @@ namespace CGAL {
 
 template<typename Decorator>
 class ID_support_handler<SNC_indexed_items, Decorator> {
-  
+
   typedef typename Decorator::SVertex_handle SVertex_handle;
   typedef typename Decorator::SHalfedge_handle SHalfedge_handle;
-  
+
   typedef typename Decorator::SVertex_const_handle SVertex_const_handle;
   typedef typename Decorator::SHalfedge_const_handle SHalfedge_const_handle;
   typedef typename Decorator::SHalfloop_const_handle SHalfloop_const_handle;
   typedef typename Decorator::Halffacet_const_handle Halffacet_const_handle;
-  
-  typedef CGAL::Unique_hash_map<Halffacet_const_handle, int> F2E;
-  CGAL::Unique_hash_map<Halffacet_const_handle, F2E> f2m;
-  std::map<int, int> hash;
+
+  struct Halffacet_pair
+  {
+    Halffacet_const_handle f1;
+    Halffacet_const_handle f2;
+    bool operator==(const Halffacet_pair& r) const
+    { return f1==r.f1 && f2==r.f2; }
+  };
+
+  struct Handle_pair_hash_function {
+    std::size_t operator() (const Halffacet_pair& p) const {
+      std::size_t hash = 0;
+      boost::hash_combine(hash,Handle_hash_function()(p.f1));
+      boost::hash_combine(hash,Handle_hash_function()(p.f2));
+      return hash;
+    }
+  };
+  std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
+  std::unordered_map<int, int> hash;
 
  public:
   ID_support_handler() {}
-  
-  int get_hash(int i) { 
+
+  void reserve(std::size_t n) {
+    hash.reserve(n);
+  }
+
+  /*
+     The method get_hash implements a
+     two-pass union find algorithm
+        __    __           _______
+       /  \  /  \         /  _____\
+      _|__|__|__|_      _/__/__/__|_
+     | |  v  |  v |    | |  |  |  v |
+     | O  O  O  O | => | O  O  O  O |
+     |____|__^____|    |____________|
+          |  | root
+          \_/
+  */
+  int get_hash(int i) {
     int root(i);
     while(hash[root] != root)
       root = hash[root];
@@ -65,43 +88,44 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     }
     return root;
   }
-  
-  void set_hash(int i, int parent) { 
+
+  void set_hash(int i, int parent) {
     CGAL_assertion(parent <= i);
     hash[get_hash(i)] = parent;
   }
 
-  template<typename Handle>
-  void initialize_hash(Handle h) {
-    hash[h->get_index()] = h->get_index();
-  }
   void initialize_hash(int i) {
-	hash[i] = i;
+    hash[i] = i;
   }
 
-  void hash_facet_pair(SVertex_handle sv, 
-		       Halffacet_const_handle f1, 
-		       Halffacet_const_handle f2) {
+  template<typename Handle>
+  void initialize_hash(Handle h) {
+    initialize_hash(h->get_index());
+  }
+
+  void hash_facet_pair(SVertex_handle sv,
+                       Halffacet_const_handle f1,
+                       Halffacet_const_handle f2) {
     CGAL_NEF_TRACEN("hash_facet_pair " << sv->point() << std::endl
-		    << "  " << f1->plane() << &f1 << std::endl
-		    << " "  << f2->plane() << &f2);
-    
-    if(f2m[f1][f2]==0) {
-      sv->set_index();
-      f2m[f1][f2] = sv->get_index();
-      CGAL_NEF_TRACEN("insert " << sv->point() << &*sv 
-		      << ": " << f2m[f1][f2]);
+                    << "  " << f1->plane() << &f1 << std::endl
+                    << " "  << f2->plane() << &f2);
+    int& idx=f2m[{f1,f2}];
+    if(idx==0) {
+      idx = sv->new_index();
+
+      CGAL_NEF_TRACEN("insert " << sv->point() << &*sv
+                      << ": " << idx);
       CGAL_NEF_TRACEN("not defined, yet");
     }
     else {
       CGAL_NEF_TRACEN("access " << sv->point() << &*sv);
-      sv->set_index(f2m[f1][f2]);
+      sv->set_index(idx);
     }
   }
-  
-  void handle_support(SVertex_handle sv, 
-		      SHalfedge_const_handle se1,
-		      SHalfedge_const_handle se2) {
+
+  void handle_support(SVertex_handle sv,
+                      SHalfedge_const_handle se1,
+                      SHalfedge_const_handle se2) {
     CGAL_NEF_TRACEN("handle support ee " << sv->point());
     Halffacet_const_handle f1 = se1->get_index_facet();
     if(f1->is_twin()) f1 = f1->twin();
@@ -109,55 +133,55 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     if(f2->is_twin()) f2 = f2->twin();
     hash_facet_pair(sv, f1,f2);
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SHalfloop_const_handle sl2) {
+                      SHalfloop_const_handle sl1,
+                      SHalfloop_const_handle sl2) {
     Halffacet_const_handle f1 = sl1->get_index_facet();
     if(f1->is_twin()) f1 = f1->twin();
     Halffacet_const_handle f2 = sl2->get_index_facet();
     if(f2->is_twin()) f2 = f2->twin();
     hash_facet_pair(sv, f1,f2);
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SHalfedge_const_handle se2, 
-		      bool inverse_order = false) {
+                      SHalfloop_const_handle sl1,
+                      SHalfedge_const_handle se2,
+                      bool inverse_order = false) {
     CGAL_NEF_TRACEN("handle support el " << sv->point());
     Halffacet_const_handle f1 = sl1->get_index_facet();
     if(f1->is_twin()) f1 = f1->twin();
     Halffacet_const_handle f2 = se2->get_index_facet();
     if(f2->is_twin()) f2 = f2->twin();
     if(inverse_order)
-      hash_facet_pair(sv, f2,f1);	
+      hash_facet_pair(sv, f2,f1);
     else
-      hash_facet_pair(sv, f1,f2);	
+      hash_facet_pair(sv, f1,f2);
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SHalfedge_const_handle se1,
-		      SHalfloop_const_handle sl2) {
+                      SHalfedge_const_handle se1,
+                      SHalfloop_const_handle sl2) {
     handle_support(sv,sl2,se1,true);
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SHalfedge_const_handle,
-		      SVertex_const_handle sv2) {
+                      SHalfedge_const_handle,
+                      SVertex_const_handle sv2) {
     CGAL_NEF_TRACEN("handle support ev " << sv->point());
     sv->set_index(sv2->get_index());
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SHalfedge_const_handle se2) {
+                      SVertex_const_handle sv1,
+                      SHalfedge_const_handle se2) {
     CGAL_NEF_TRACEN("handle support ve " << sv->point());
     handle_support(sv,se2,sv1);
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SVertex_const_handle sv2) {
+                      SVertex_const_handle sv1,
+                      SVertex_const_handle sv2) {
     CGAL_NEF_TRACEN("handle support vv " << sv->point());
     CGAL_NEF_TRACEN("  supported by " << sv1->point());
     CGAL_NEF_TRACEN("  supported by " << sv2->point());
@@ -166,61 +190,61 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     else
       sv->set_index(sv2->get_index());
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv0) {
+                      SVertex_const_handle sv0) {
     CGAL_NEF_TRACEN("handle support v " << sv->point());
     sv->set_index(sv0->get_index());
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SVertex_const_handle sv1,
-		      SHalfloop_const_handle) {
+                      SVertex_const_handle sv1,
+                      SHalfloop_const_handle) {
     CGAL_NEF_TRACEN("handle support vl " << sv->point());
     sv->set_index(sv1->get_index());
   }
-  
+
   void handle_support(SVertex_handle sv,
-		      SHalfloop_const_handle sl1,
-		      SVertex_const_handle sv2) {
+                      SHalfloop_const_handle sl1,
+                      SVertex_const_handle sv2) {
     CGAL_NEF_TRACEN("handle support lv " << sv->point());
     handle_support(sv, sv2, sl1);
   }
-  
+
   void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1) {
+                      SHalfedge_const_handle se1) {
     if(!equal_not_opposite(se->circle(), se1->circle()))
        se1 = se1->twin();
     se->set_index(se1->get_index());
     se->twin()->set_index(se1->twin()->get_index());
     CGAL_NEF_TRACEN("se " << se->source()->point()
-		    << "->" << se->twin()->source()->point() 
-		    << "|" << se->circle());
+                    << "->" << se->twin()->source()->point()
+                    << "|" << se->circle());
     CGAL_NEF_TRACEN("se1 " << se1->get_index());
     CGAL_NEF_TRACEN("se1->twin() " << se1->twin()->get_index());
-    CGAL_NEF_TRACEN("result " << se->get_index() 
-    		<< ", " << se->twin()->get_index());
+    CGAL_NEF_TRACEN("result " << se->get_index()
+                    << ", " << se->twin()->get_index());
   }
-  
+
   void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1) {
+                      SHalfloop_const_handle sl1) {
     if(!equal_not_opposite(se->circle(), sl1->circle()))
        sl1 = sl1->twin();
     CGAL_assertion(se->circle() == sl1->circle());
     se->set_index(sl1->get_index());
     se->twin()->set_index(sl1->twin()->get_index());
     CGAL_NEF_TRACEN("se " << se->source()->point()
-		    << "->" << se->twin()->source()->point() 
-		    << "|" << se->circle());
+                    << "->" << se->twin()->source()->point()
+                    << "|" << se->circle());
     CGAL_NEF_TRACEN("sl1 " << sl1->get_index());
     CGAL_NEF_TRACEN("sl1->twin() " << sl1->twin()->get_index());
-    CGAL_NEF_TRACEN("result " << se->get_index() 
-		    << ", " << se->twin()->get_index());
+    CGAL_NEF_TRACEN("result " << se->get_index()
+                    << ", " << se->twin()->get_index());
   }
-  
+
   void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1,
-		      SHalfedge_const_handle se2) {
+                      SHalfedge_const_handle se1,
+                      SHalfedge_const_handle se2) {
     if(!equal_not_opposite(se->circle(), se1->circle()))
       se1 = se1->twin();
     if(!equal_not_opposite(se->circle(), se2->circle()))
@@ -228,8 +252,8 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     CGAL_assertion(se->circle() == se1->circle());
     CGAL_assertion(se->circle() == se2->circle());
     CGAL_NEF_TRACEN("se " << se->source()->point()
-		    << "->" << se->twin()->source()->point() 
-		    << "|" << se->circle());
+                    << "->" << se->twin()->source()->point()
+                    << "|" << se->circle());
     CGAL_NEF_TRACEN("se1 " << se1->get_index());
     CGAL_NEF_TRACEN("se2 " << se2->get_index());
     CGAL_NEF_TRACEN("se1->twin() " << se1->twin()->get_index());
@@ -255,14 +279,14 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
       set_hash(se1->twin()->get_index(), index2);
     }
 
-    CGAL_NEF_TRACEN("result " << se->get_index() 
-		    << ", " << se->twin()->get_index());
-  }    
-  
+    CGAL_NEF_TRACEN("result " << se->get_index()
+                    << ", " << se->twin()->get_index());
+  }
+
   void handle_support(SHalfedge_handle se,
-		      SHalfedge_const_handle se1,
-		      SHalfloop_const_handle sl2) {
-   
+                      SHalfedge_const_handle se1,
+                      SHalfloop_const_handle sl2) {
+
     if(!equal_not_opposite(se->circle(), se1->circle()))
       se1 = se1->twin();
     if(!equal_not_opposite(se->circle(), sl2->circle()))
@@ -270,8 +294,8 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     CGAL_assertion(se->circle() == se1->circle());
     CGAL_assertion(se->circle() == sl2->circle());
     CGAL_NEF_TRACEN("se " << se->source()->point()
-		    << "->" << se->twin()->source()->point() 
-		    << "|" << se->circle());
+                    << "->" << se->twin()->source()->point()
+                    << "|" << se->circle());
     CGAL_NEF_TRACEN("se1 " << se1->get_index());
     CGAL_NEF_TRACEN("sl2 " << sl2->get_index());
     CGAL_NEF_TRACEN("se1->twin() " << se1->twin()->get_index());
@@ -299,19 +323,19 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
       set_hash(se1->twin()->get_index(), index2);
     }
 
-    CGAL_NEF_TRACEN("result " << se->get_index() 
-		    << ", " << se->twin()->get_index());
+    CGAL_NEF_TRACEN("result " << se->get_index()
+                    << ", " << se->twin()->get_index());
   }
-  
+
   void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1,
-		      SHalfedge_const_handle se2) {
+                      SHalfloop_const_handle sl1,
+                      SHalfedge_const_handle se2) {
     handle_support(se,se2,sl1);
-  }    
-  
+  }
+
   void handle_support(SHalfedge_handle se,
-		      SHalfloop_const_handle sl1,
-		      SHalfloop_const_handle sl2) {
+                      SHalfloop_const_handle sl1,
+                      SHalfloop_const_handle sl2) {
     if(!equal_not_opposite(se->circle(), sl1->circle()))
       sl1 = sl1->twin();
     if(!equal_not_opposite(se->circle(), sl2->circle()))
@@ -319,8 +343,8 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     CGAL_assertion(se->circle() == sl1->circle());
     CGAL_assertion(se->circle() == sl2->circle());
     CGAL_NEF_TRACEN("se " << se->source()->point()
-		    << "->" << se->twin()->source()->point() 
-		    << "|" << se->circle());
+                    << "->" << se->twin()->source()->point()
+                    << "|" << se->circle());
     CGAL_NEF_TRACEN("sl1 " << sl1->get_index());
     CGAL_NEF_TRACEN("sl2 " << sl2->get_index());
     CGAL_NEF_TRACEN("sl1->twin() " << sl1->twin()->get_index());
@@ -346,8 +370,8 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
       set_hash(sl1->twin()->get_index(), index2);
     }
 
-    CGAL_NEF_TRACEN("result " << se->get_index() 
-		    << ", " << se->twin()->get_index());
+    CGAL_NEF_TRACEN("result " << se->get_index()
+                    << ", " << se->twin()->get_index());
   }
 
 };

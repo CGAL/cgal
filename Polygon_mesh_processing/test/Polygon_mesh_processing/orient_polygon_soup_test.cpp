@@ -1,142 +1,205 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
+
+#include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/algorithm.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Cartesian_converter.h>
 
-#include <fstream>
 #include <algorithm>
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
-typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
 
-template <typename K>
-std::istream& read_soup(
-  std::istream& stream,
-    std::vector<typename K::Point_3>& points,
-  std::vector< std::vector<std::size_t> >& polygons)
+typedef Epeck::Point_3 Exact_point;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+template <typename Polygons>
+void shuffle_soup(Polygons& polygons)
 {
-  typedef typename K::Point_3 Point_3;
-  CGAL::File_scanner_OFF scanner(stream);
-  points.resize(scanner.size_of_vertices());
-  polygons.resize(scanner.size_of_facets());
-  for (std::size_t i = 0; i < scanner.size_of_vertices(); ++i)
-  {
-    double x, y, z, w;
-    scanner.scan_vertex( x, y, z, w);
-    points[i] = Point_3(x, y, z, w);
-    scanner.skip_to_next_vertex( i);
-  }
-  if(!stream) { return stream; }
-
-  for (std::size_t i = 0; i < scanner.size_of_facets(); ++i)
-  {
-    std::size_t no;
-    scanner.scan_facet( no, i);
-    polygons[i].resize(no);
-
-    for(std::size_t j = 0; j < no; ++j) {
-      std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
-      if(id < scanner.size_of_vertices())
-      {
-        polygons[i][j] = id;
-      }
-      else { return stream; }
-    }
-  }
-  return stream;
-}
-
-void shuffle_off(const char* fname_in, const char* fname_out)
-{
-  std::ifstream input(fname_in);
-  if ( !input ){
-    std::cerr << "Error: can not read input file.\n";
-    exit(1);
-  }
-
-  std::string OFF;
-  int v, f, e;
-  input >> OFF >> v >> f >> e;
-
-  std::ofstream output(fname_out);
-  output << "OFF\n" << v << " " << f << " 0\n\n";
-  for(int i=0; i<v; ++i)
-  {
-    std::string line;
-    while(line.empty())
-      std::getline(input, line);
-    output << line << "\n";
-  }
-
-  for (int i=0; i<f;++i)
-  {
-    int n;
-    input >> n;
-    std::vector<int> indices(n);
-    for (int k=0;k<n;++k)
-      input >> indices[k];
-
-    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
-
-    output << n;
-    for (int k=0;k<n;++k)
-      output << " " << indices[k];
-    output << "\n";
-  }
+  // reverse orientation randomly
+  for(std::size_t i=0; i<polygons.size(); ++i)
+    if(std::rand() % 2 == 0)
+      std::swap(polygons[i][0], polygons[i][1]);
 }
 
 template <typename K>
-int test_orient(const bool save_oriented) {
+bool test_orient(const bool save_oriented)
+{
+  std::cout << "test_orient() with K = " << typeid(K).name() << std::endl;
+
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 
   std::vector<Point_3> points;
-  std::vector< std::vector<std::size_t> > polygons;
-
-  shuffle_off("data/elephant.off", "elephant-shuffled.off");
-  std::ifstream input("elephant-shuffled.off");
-  if ( !input || !read_soup<K>(input, points, polygons)){
-    std::cerr << "Error: can not shuffled file.\n";
-    return 1;
+  std::vector<std::vector<std::size_t> > polygons;
+  if(!CGAL::IO::read_polygon_soup(CGAL::data_file_path("meshes/elephant.off"), points, polygons))
+  {
+    std::cerr << "Error " << __LINE__ << ": failed to read polygon soup.\n";
+    return false;
   }
 
-  bool oriented
-    = CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
-  std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
-  assert(oriented);
+  shuffle_soup(polygons);
+  std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
 
-  if(oriented) {
+  bool oriented = PMP::orient_polygon_soup(points, polygons);
+  std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+  if(!oriented || !PMP::is_polygon_soup_a_polygon_mesh(polygons))
+    return false;
+
+  if(oriented)
+  {
     Surface_mesh mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
-      points, polygons, mesh);
+    PMP::polygon_soup_to_polygon_mesh(points, polygons, mesh);
+    if(!is_valid_polygon_mesh(mesh))
+      return false;
 
     Polyhedron poly;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
-      points, polygons, poly);
+    PMP::polygon_soup_to_polygon_mesh(points, polygons, poly);
 
-    if (save_oriented)
-    {
-      std::ofstream out("elephant-oriented.off");
-      out << poly;
-      out.close();
-    }
+    if(save_oriented)
+      CGAL::IO::write_polygon_mesh("elephant-oriented.stl", poly, CGAL::parameters::use_binary_mode(false));
+
+    if(!is_valid_polygon_mesh(poly))
+      return false;
   }
-  return 0;
+
+  return true;
+}
+
+template <class K, class Tag>
+bool test_pipeline()
+{
+  std::cout << "test_pipeline() with K = " << typeid(K).name() << std::endl;
+
+  typedef typename K::Point_3 Point_3;
+  typedef CGAL::Cartesian_converter<K, Epeck> K2E;
+
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+
+  std::vector<Point_3> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  if(!CGAL::IO::read_polygon_soup(CGAL::data_file_path("meshes/elephant.off"), points, polygons))
+  {
+    std::cerr << "Error " << __LINE__ << ": failed to read polygon soup.\n";
+    return false;
+  }
+
+  std::map<Point_3, Exact_point> k2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point>> cpm(k2e);
+  for(const auto& p : points)
+    put(cpm, p, K2E()(p));
+
+  shuffle_soup(polygons);
+  std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
+
+  Polyhedron ref1;
+  if(!CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/elephant.off"), ref1))
+  {
+    std::cerr << "Error " << __LINE__ << ": failed to read reference mesh.\n";
+    return false;
+  }
+
+  typedef CGAL::dynamic_vertex_property_t<Exact_point>                      Point_property;
+  typedef typename boost::property_map<Polyhedron, Point_property>::type    Custom_VPM;
+  Custom_VPM cvpm = get(Point_property(), ref1);
+  for(auto v : vertices(ref1))
+    put(cvpm, v, K2E()(get(CGAL::vertex_point, ref1, v)));
+
+  if(PMP::is_outward_oriented(ref1, CGAL::parameters::vertex_point_map(cvpm)))
+    PMP::reverse_face_orientations(ref1);
+
+  PMP::orient_triangle_soup_with_reference_triangle_mesh<Tag>(ref1, points, polygons,
+                                                              CGAL::parameters::vertex_point_map(cvpm),
+                                                              CGAL::parameters::point_map(cpm));
+
+  PMP::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
+
+  Polyhedron poly;
+  PMP::polygon_soup_to_polygon_mesh(points, polygons, poly);
+
+  typedef typename boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<std::size_t> >::type Fccmap;
+  Fccmap fim = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
+  std::size_t id =0;
+  for(auto f : faces(poly))
+    put(fim, f, id++);
+
+  PMP::merge_reversible_connected_components(poly, CGAL::parameters::face_index_map(fim));
+
+  Fccmap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
+  if(PMP::connected_components(poly, fccmap, CGAL::parameters::face_index_map(fim)) != 1)
+    return false;
+
+  if(PMP::is_outward_oriented(poly))
+    return false;
+
+  PMP::reverse_face_orientations(ref1);
+
+  std::vector<Point_3> ref_points;
+  std::vector<std::vector<std::size_t> > ref_polygons;
+  PMP::polygon_mesh_to_polygon_soup(ref1, ref_points, ref_polygons);
+
+  std::map<Point_3, Exact_point> ref_k2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point> > ref_cpm(ref_k2e);
+  for(const auto& p : ref_points)
+    put(ref_cpm, p, K2E()(p));
+
+  shuffle_soup(polygons);
+  std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
+
+  PMP::orient_triangle_soup_with_reference_triangle_soup(ref_points, ref_polygons, points, polygons,
+                                                         CGAL::parameters::point_map(ref_cpm),
+                                                         CGAL::parameters::point_map(cpm));
+  if(!PMP::is_polygon_soup_a_polygon_mesh(polygons))
+  {
+    std::cerr << "Error: Orient_TS_with_ref_TS failed" << std::endl;
+    return false;
+  }
+
+  CGAL::clear(poly);
+  PMP::polygon_soup_to_polygon_mesh(points, polygons, poly);
+  if(!is_valid_polygon_mesh(poly) || !PMP::is_outward_oriented(poly))
+  {
+    std::cerr << "Error: result is not invalid or not outward oriented" << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
 int main()
 {
-  assert(test_orient<Epic>(false) == 0);
-  assert(test_orient<Epec>(false) == 0);
+  bool res = test_orient<Epick>(false /*save_oriented*/);
+  assert(res);
+  res = test_orient<Epeck>(false /*save_oriented*/);
+  assert(res);
+
+  res = test_pipeline<Epick, CGAL::Sequential_tag>();
+  assert(res);
+  res = test_pipeline<Epeck, CGAL::Sequential_tag>();
+  assert(res);
+
+#if defined(CGAL_LINKED_WITH_TBB)
+  res = test_pipeline<Epick, CGAL::Parallel_tag>();
+  assert(res);
+
+  res = test_pipeline<Epeck, CGAL::Parallel_tag>();
+  assert(res);
+#endif
+
   return 0;
 }

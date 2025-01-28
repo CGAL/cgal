@@ -10,7 +10,7 @@ typedef CGAL::Polyhedron_3<Kernel>                       Polyhedron;
 int main(int argc, char* argv[])
 {
   Polyhedron P;
-  std::ifstream in1((argc>1)?argv[1]:"data/cross.off");
+  std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/cross_quad.off"));
   in1 >> P;
   CGAL::draw(P);
 

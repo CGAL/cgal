@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Oren Nechushtan   <theoren@math.tau.ac.il>
 //            Michal Balas      <balasmic@post.tau.ac.il>
@@ -26,12 +17,12 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
- * Defintion of the Td_active_fictitious_vertex<Td_traits> class.
+ * Definition of the Td_active_fictitious_vertex<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
-#include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
+#include <variant>
+#include <memory>
 
 #ifdef CGAL_TD_DEBUG
 #define CGAL_TD_INLINE
@@ -52,7 +43,7 @@ namespace CGAL {
  * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
- * Each trapezoid has at most four neighbouring trapezoids.
+ * Each trapezoid has at most four neighboring trapezoids.
  * X_trapezoid structure can represent a real trapezoid, a Td-edge or an
  * edge-end (end point).
  */
@@ -103,14 +94,8 @@ public:
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#elif defined(__GNUC__)
-
-#if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)))
-  friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#else
+#elif (__GNUC__ > 0)
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#endif
-
 #else
   friend class In_face_iterator;
 #endif

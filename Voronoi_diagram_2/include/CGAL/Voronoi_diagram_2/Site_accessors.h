@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -24,12 +15,11 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 
-
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
 namespace CGAL {
-
-namespace VoronoiDiagram_2 { namespace Internal {
+namespace VoronoiDiagram_2 {
+namespace Internal {
 
 //=========================================================================
 //=========================================================================
@@ -80,10 +70,9 @@ struct Point_accessor
 };
 
 //=========================================================================
-//=========================================================================
 
-} } //namespace VoronoiDiagram_2::Internal
-
-} //namespace CGAL
+} // namespace Internal
+} // namespace VoronoiDiagram_2
+} // namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_SITE_ACCESSORS_H

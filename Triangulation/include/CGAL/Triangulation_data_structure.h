@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -32,9 +23,9 @@
 #include <CGAL/Triangulation_face.h>
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Triangulation_ds_full_cell.h>
-#include <CGAL/internal/Combination_enumerator.h>
-#include <CGAL/internal/Triangulation/utilities.h>
-#include <CGAL/internal/Triangulation/Triangulation_ds_iterators.h>
+#include <CGAL/Triangulation/internal/Combination_enumerator.h>
+#include <CGAL/Triangulation/internal/utilities.h>
+#include <CGAL/Triangulation/internal/Triangulation_ds_iterators.h>
 
 #include <algorithm>
 #include <vector>
@@ -170,12 +161,12 @@ private:
 
 public:
     Triangulation_data_structure( int dim=0)  /* Concept */
-        : dmax_(get_maximal_dimension<Dimen>::value(dim)), dcur_(-2), 
+        : dmax_(get_maximal_dimension<Dimen>::value(dim)), dcur_(-2),
           vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "maximal dimension must be positive.");
     }
-  
+
     ~Triangulation_data_structure()
     {
         clean_dynamic_memory();
@@ -837,8 +828,8 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         delete_vertex(v);
         delete_full_cell(s);
         inf1->set_vertex(1, Vertex_handle());
-        inf1->set_vertex(1, Vertex_handle());
-        inf2->set_neighbor(1, Full_cell_handle());
+        inf2->set_vertex(1, Vertex_handle());
+        inf1->set_neighbor(1, Full_cell_handle());
         inf2->set_neighbor(1, Full_cell_handle());
         associate_vertex_with_full_cell(inf1, 0, star);
         associate_vertex_with_full_cell(inf2, 0, v2);
@@ -951,10 +942,10 @@ Triangulation_data_structure<Dim, Vb, Fcb>
   {
     IITH_task task = task_queue.front();
     task_queue.pop();
-    
+
     Full_cell_handle old_s = full_cell(task.boundary_facet);
     const int facet_index = index_of_covertex(task.boundary_facet);
-    
+
     Full_cell_handle outside_neighbor = neighbor(old_s, facet_index);
     // Here, "new_s" might actually be a new cell, but it might also be "old_s"
     // if it has not been treated already in the meantime
@@ -978,7 +969,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 
       // add the new full_cell to the list of new full_cells
       *new_full_cells++ = new_s;
-  
+
       // check all of |Facet f|'s neighbors
       for (i = 0 ; i <= cur_dim ; ++i)
       {
@@ -1013,7 +1004,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             index,                        // index_of_inside_cell_in_outside_cell
             new_s,                        // future_neighbor
             i,                            // new_cell_index_in_future_neighbor
-            index_of_second_covertex(rot) // index_of_future_neighbor_in_new_cell 
+            index_of_second_covertex(rot) // index_of_future_neighbor_in_new_cell
           ));
         }
       }
@@ -1023,9 +1014,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     if (task.future_neighbor != Full_cell_handle())
     {
       // now the new neighboring full_cell exists, we link both
-      set_neighbors(new_s, 
-                    task.index_of_future_neighbor_in_new_cell, 
-                    task.future_neighbor, 
+      set_neighbors(new_s,
+                    task.index_of_future_neighbor_in_new_cell,
+                    task.future_neighbor,
                     task.new_cell_index_in_future_neighbor);
     }
   }
@@ -1238,7 +1229,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
         if( ! v->is_valid(verbose) )
             return false;
     }
-    
+
     // FUTURE: for each vertex v, gather incident full_cells. then, check that
     // any full_cell containing v is among those gathered full_cells...
 
@@ -1351,7 +1342,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     std::size_t m; // number of full_cells
     int index;
     const int cd = current_dimension();
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> m;
     else
         read(is, m, io_Read_write());
@@ -1368,11 +1359,12 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
         full_cells.push_back(s);
         for( int j = 0; j <= cd; ++j )
         {
-            if( is_ascii(is) )
+            if( IO::is_ascii(is) )
                 is >> index;
             else
                 read(is, index);
             s->set_vertex(j, vertices[index]);
+            s->vertex(j)->set_full_cell(s);
         }
         // read other non-combinatorial information for the full_cells
         is >> (*s);
@@ -1381,7 +1373,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 
     // read the neighbors of each full_cell
     i = 0;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         while( i < m )
     {
         for( int j = 0; j <= cd; ++j )
@@ -1432,7 +1424,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 
     std::size_t m = number_of_full_cells();
 
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << std::endl << m;
     else
         write(os, m, io_Read_write());
@@ -1443,11 +1435,11 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
     {
         index_of_full_cell[it] = i++;
-        if( is_ascii(os) )
+        if( IO::is_ascii(os) )
             os << std::endl;
         for( int j = 0; j <= cur_dim; ++j )
         {
-            if( is_ascii(os) )
+            if( IO::is_ascii(os) )
                 os << ' ' << index_of_vertex[it->vertex(j)];
             else
                 write(os, index_of_vertex[it->vertex(j)]);
@@ -1459,7 +1451,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     CGAL_assertion( (std::size_t) i == m );
 
     // write the neighbors of each full_cell
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
         {
             os << std::endl;
@@ -1498,7 +1490,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
     // read current dimension and number of vertices
     std::size_t n;
     int cd;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> cd >> n;
     else
     {
@@ -1548,7 +1540,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
 
     // outputs dimension and number of vertices
     std::size_t n = tr.number_of_vertices();
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << tr.current_dimension() << std::endl << n;
     else
     {
@@ -1565,7 +1557,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
         os << *it; // write the vertex
-        if (is_ascii(os))
+        if (IO::is_ascii(os))
             os << std::endl;
         index_of_vertex[it] = i;
     }

@@ -16,24 +16,24 @@ int main(int, char**) {
     Polyhedron P1;
     Polyhedron P2;
     Polyhedron P3;
-   
-    std::ifstream f1("data/icosahedron.off");
+
+    std::ifstream f1(CGAL::data_file_path("meshes/icosahedron.off"));
     f1 >> P1;
-    std::ifstream f2("data/icosahedron.off");
+    std::ifstream f2(CGAL::data_file_path("meshes/icosahedron.off"));
     f2 >> P2;
     Nef_polyhedron N1(P1);
     Nef_polyhedron N2(P2);
 
     Aff_transformation_3 aff(CGAL::TRANSLATION, Vector_3(1,1,0,1));
     N2.transform(aff);
-   
+
     std::cout << N1.number_of_volumes() << std::endl;
     std::cout << N2.number_of_volumes() << std::endl;
-   
+
     N1+=N2;  // model-dependent crash here
-   
-    std::cout << N1.number_of_volumes() << std::endl;   
+
+    std::cout << N1.number_of_volumes() << std::endl;
     N1.closure().convert_to_polyhedron(P3);
-   
+
     return 0;
 }

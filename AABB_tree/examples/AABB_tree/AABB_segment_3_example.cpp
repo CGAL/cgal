@@ -5,8 +5,8 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_segment_primitive_3.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 
@@ -17,8 +17,8 @@ typedef K::Segment_3 Segment;
 typedef K::Triangle_3 Triangle;
 
 typedef std::list<Segment>::iterator Iterator;
-typedef CGAL::AABB_segment_primitive<K, Iterator> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_segment_primitive_3<K, Iterator> Primitive;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 int main()
@@ -33,10 +33,9 @@ int main()
     segments.push_back(Segment(a,c));
     segments.push_back(Segment(c,d));
 
-    // constructs the AABB tree and the internal search tree for 
+    // constructs the AABB tree and the internal search tree for
     // efficient distance computations.
     Tree tree(segments.begin(),segments.end());
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a plane query
     Plane plane_query(a,b,d);
@@ -48,7 +47,7 @@ int main()
     std::cout << tree.number_of_intersected_primitives(triangle_query)
         << " intersections(s) with triangle" << std::endl;
 
-    // computes the closest point from a point query 
+    // computes the closest point from a point query
     Point point_query(2.0, 2.0, 2.0);
     Point closest = tree.closest_point(point_query);
 

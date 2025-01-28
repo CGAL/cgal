@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_FACET_TOPOLOGY_H
@@ -31,15 +22,37 @@
 
 namespace CGAL {
 
-enum Mesh_facet_topology {
-  FACET_VERTICES_ON_SURFACE = 1,
-  FACET_VERTICES_ON_SAME_SURFACE_PATCH = 2,
-  FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK = 3,
+/*!
+\ingroup PkgMesh3Enum
+
+The enum `Mesh_facet_topology` is designed to tell which constraints have to
+be checked on each surface facet during the mesh refinement process.
+
+\sa `CGAL::Mesh_criteria_3<Tr>`,
+\sa `CGAL::Mesh_facet_criteria_3<Tr>`.
+*/
+enum Mesh_facet_topology
+{
+  FACET_VERTICES_ON_SURFACE = 1,//!< Each vertex of the facet has
+                                //!< to be on the surface, on a curve, or on a corner.
+  FACET_VERTICES_ON_SAME_SURFACE_PATCH = 2, //!< The three vertices of a facet belonging
+                                            //!< to a surface patch `s` have to be on
+                                            //!< the same surface patch `s`, on a curve or on a corner.
+  /*!
+    The three vertices of a facet belonging to a surface patch `s`
+    have to be on the same surface patch `s`, or on a curve
+    incident to the surface patch `s` or on a corner incident to the
+    surface patch `s`.
+  */
+  FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK = 3
+#ifndef DOXYGEN_RUNNING
+  ,
   MANIFOLD_WITH_BOUNDARY = 8,
   NO_BOUNDARY = 16,
   MANIFOLD = 24
+#endif
 };
-  
+
 } // end namespace CGAL
 
 #endif // CGAL_MESH_FACET_TOPOLOGY_H

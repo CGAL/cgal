@@ -1,25 +1,16 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -33,12 +24,12 @@
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
-#include <CGAL/result_of.h>
 #include <CGAL/tuple.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/config.hpp>
 
 #include <vector>
@@ -47,28 +38,34 @@
 
 namespace CGAL {
 
-template<typename I>
+template<typename I, typename Reference_type = const I&>
 class Prevent_deref
   : public boost::iterator_adaptor<
-  Prevent_deref<I>
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
+  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
+  , boost::use_default // category
+  , Reference_type // ref
   >
 {
 public:
-  typedef boost::iterator_adaptor<
-  Prevent_deref<I>
+  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
+  using Base = boost::iterator_adaptor<
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
-  > Base;
-  typedef typename Base::reference reference;
+  , Value_type // value
+  , boost::use_default // category
+  , Reference_type // ref
+  >;
   typedef typename std::pair<I, I> range;
 
-  Prevent_deref() : Base() {}
+  Prevent_deref() = default;
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+  Reference_type dereference() const {
+    return this->base_reference();
+  }
 };
 
 template<typename I>
@@ -181,11 +178,11 @@ class Oneset_iterator
                                   void, void, void, void >
 {
   T* t;
-  
+
 public:
   // types
   typedef Oneset_iterator<T> Self;
-  
+
 public:
   Oneset_iterator(T& t) : t(&t) {}
 
@@ -211,65 +208,65 @@ public:
 template < typename T >
 class Const_oneset_iterator {
 public:
-  
+
   // types
   typedef  std::random_access_iterator_tag    iterator_category;
   typedef  std::ptrdiff_t                     difference_type;
   typedef  T                                  value_type;
   typedef  value_type*                        pointer;
   typedef  value_type&                        reference;
-  
+
   typedef  Const_oneset_iterator<T>           Self;
   typedef  difference_type                    Diff;
   typedef  value_type                         Val;
   typedef  pointer                            Ptr;
   typedef  reference                          Ref;
-  
+
   // construction
   Const_oneset_iterator( const T& t = T(), Diff n = 0)
     : value( t), index( n)
   { }
-  
+
   // access
   Ref               operator *  ( )       { return  value; }
   const value_type& operator *  ( ) const { return  value; }
   Ptr               operator -> ( )       { return &value; }
   const value_type* operator -> ( ) const { return &value; }
-  
+
   // equality operator
   bool       operator == ( const Self& x) const { return ( index==x.index); }
   bool       operator != ( const Self& x) const { return ( index!=x.index); }
-  
+
   // forward operations
   // ------------------
   Self&      operator ++ (    ) {                   ++index; return *this; }
   Self       operator ++ ( int) { Self tmp = *this; ++index; return tmp;   }
-  
+
   // bidirectional operations
   // ------------------------
   Self&      operator -- (    ) {                   --index; return *this; }
   Self       operator -- ( int) { Self tmp = *this; --index; return tmp;   }
-  
+
   // random access operations
   // ------------------------
   // access
   Ref               operator [] ( Diff )       { return value;}
   const value_type& operator [] ( Diff ) const { return value;}
-  
+
   // less operator
   bool       operator <  ( const Self& x) const { return ( index < x.index);}
-  
+
   // arithmetic operations
   Self&      operator += ( Diff n) { index += n; return *this; }
   Self&      operator -= ( Diff n) { index -= n; return *this; }
-  
+
   Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
   Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
-  
+
   Diff       operator -  ( const Self& x) const { return index - x.index; }
-  
+
 private:
-  
+
   // data members
   Val   value;
   Diff  index;
@@ -452,12 +449,12 @@ public:
 };
 
 // Microsoft 1300 cannot handle the default template parameters. Hence, ...
-template < class I, int N, class Ref, class Ptr, 
-	   class Val, class Dist, class Ctg >
+template < class I, int N, class Ref, class Ptr,
+           class Val, class Dist, class Ctg >
 inline
 N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>
 operator+(typename N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>::difference_type n,
-	  N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
+          N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
 
 template < class I, int N>
@@ -614,11 +611,11 @@ public:
     --(*this);
     return tmp;
   }
-  
+
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
-  Iterator base() const { return c_; }
+  const Iterator& base() const { return c_; }
 
   Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
@@ -669,7 +666,8 @@ class Join_input_iterator_1
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
-  typedef std::decay_t<typename cpp11::result_of<Op(arg_type)>::type> value_type;
+  typedef std::decay_t<decltype(std::declval<Op>()(std::declval<arg_type>()))>
+                                                                value_type;
   typedef typename std::iterator_traits<I1>::difference_type    difference_type;
   typedef value_type const*                                     pointer;
   typedef value_type const&                                     reference;
@@ -687,9 +685,9 @@ public:
     : i1(it.i1), op(it.op) {}
   Join_input_iterator_1(I1 i,const Op& o=Op())
     : i1(i), op(o) {}
-  
+
   I1 current_iterator1() const { return i1; }
-  
+
   bool operator==(const Self& i) const {
     return i1 == i.i1;
   }
@@ -704,12 +702,12 @@ public:
     op = it.op;
     return *this;
   }
-  
-  const value_type& operator*() const { 
+
+  const value_type& operator*() const {
     val = op(*i1);
     return val;
   }
-  
+
   Self& operator++(   ) {
     ++i1;
     return *this;
@@ -720,12 +718,12 @@ public:
     return *this;
   }
   Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
-  
+
   const value_type& operator[](difference_type i) const {
     val = op(i1[i]);
     return val;
   }
-  
+
   Self& operator+=(difference_type n) {
     i1 += n;
     return *this;
@@ -755,7 +753,8 @@ class Join_input_iterator_2
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category        iterator_category;
-  typedef typename cpp11::result_of<Op(arg_type_1, arg_type_2)>::type value_type;
+  typedef decltype(std::declval<Op>()(std::declval<arg_type_1>(), std::declval<arg_type_2>()))
+                                                                      value_type;
   typedef typename std::iterator_traits<I1>::difference_type          difference_type;
   typedef value_type*                                                 pointer;
   typedef value_type&                                                 reference;
@@ -767,17 +766,17 @@ protected:
   mutable value_type val;  // Note: mutable is needed because we want to
                            // return a reference in operator*() and
                            // operator[](int) below.
-  
+
 public:
   Join_input_iterator_2() {}
   Join_input_iterator_2(const Join_input_iterator_2& it)
     : i1(it.i1), i2(it.i2), op(it.op) {}
   Join_input_iterator_2(I1 i1,I2 i2,const Op& op=Op())
     : i1(i1), i2(i2), op(op) {}
-  
+
   I1 current_iterator1() const { return i1; }
   I2 current_iterator2() const { return i2; }
-  
+
   bool operator==(const Self& i) const {
     return i1 == i.i1 && i2 == i.i2;
   }
@@ -785,7 +784,7 @@ public:
   bool operator< (const Self& i) const {
     return i1 < i.i1 && i2 < i.i2;
   }
-  
+
   Join_input_iterator_2& operator=(const Join_input_iterator_2& it)
   {
     i1 = it.i1;
@@ -794,11 +793,11 @@ public:
     return *this;
   }
 
-  const value_type& operator*() const { 
+  const value_type& operator*() const {
     val = op(*i1,*i2);
     return val;
   }
-  
+
   Self& operator++(   ) {
     ++i1;
     ++i2;
@@ -811,12 +810,12 @@ public:
     return *this;
   }
   Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
-  
+
   const value_type& operator[](difference_type i) const {
     val = op(i1[i],i2[i]);
     return val;
   }
-  
+
   Self& operator+=(difference_type n) {
     i1 += n;
     i2 += n;
@@ -849,12 +848,12 @@ class Join_input_iterator_3
 
 public:
   typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
-  typedef typename cpp11::result_of<Op(arg_type_1, arg_type_2, arg_type_3)>::type
+  typedef decltype(std::declval<Op>()(std::declval<arg_type_1>(), std::declval<arg_type_2>(), std::declval<arg_type_3>()))
                                                                 value_type;
   typedef typename std::iterator_traits<I1>::difference_type    difference_type;
   typedef value_type*                                           pointer;
   typedef value_type&                                           reference;
-  
+
 protected:
   I1 i1;
   I2 i2;
@@ -863,18 +862,18 @@ protected:
   mutable value_type val;  // Note: mutable is needed because we want to
                            // return a reference in operator*() and
                            // operator[](int) below.
-  
+
 public:
   Join_input_iterator_3() {}
   Join_input_iterator_3(const Join_input_iterator_3& it)
     : i1(it.i1), i2(it.i2), i3(it.i3), op(it.op) {}
   Join_input_iterator_3(I1 i1,I2 i2,I3 i3,const Op& op=Op())
     : i1(i1), i2(i2), i3(i3), op(op) {}
-  
+
   I1 current_iterator1() const { return i1; }
   I2 current_iterator2() const { return i2; }
   I2 current_iterator3() const { return i3; }
-  
+
   bool operator==(const Self& i) const {
     return i1 == i.i1 && i2 == i.i2 && i3 == i.i3;
   }
@@ -882,7 +881,7 @@ public:
   bool operator< (const Self& i) const {
     return i1 < i.i1 && i2 < i.i2 && i3 < i.i3;
   }
-  
+
   Join_input_iterator_3& operator=(const Join_input_iterator_3& it)
   {
     i1 = it.i1;
@@ -892,11 +891,11 @@ public:
     return *this;
   }
 
-  const value_type& operator*() const { 
+  const value_type& operator*() const {
     val = op(*i1,*i2,*i3);
     return val;
   }
-  
+
   Self& operator++(   ) {
     ++i1;
     ++i2;
@@ -911,12 +910,12 @@ public:
     return *this;
   }
   Self  operator--(int) { Self tmp = *this; --(*this); return tmp; }
-  
+
   const value_type& operator[](difference_type i) const {
     val = op(i1[i],i2[i],i3[i]);
     return val;
   }
-  
+
   Self& operator+=(difference_type n) {
     i1 += n;
     i2 += n;
@@ -1229,17 +1228,17 @@ template<typename _Iterator, typename Predicate>
     public:
       typedef _Iterator          iterator_type;
 
-      explicit Filter_output_iterator(_Iterator& __x, const Predicate& pred) 
-	: iterator(__x), predicate(pred) 
+      explicit Filter_output_iterator(_Iterator& __x, const Predicate& pred)
+        : iterator(__x), predicate(pred)
       {}
 
       template <typename T>
       Filter_output_iterator&
       operator=(const T& t)
       {
-	if(! predicate(t))
-	  *iterator = t;
-	return *this;
+        if(! predicate(t))
+          *iterator = t;
+        return *this;
       }
 
       Filter_output_iterator&
@@ -1248,9 +1247,9 @@ template<typename _Iterator, typename Predicate>
 
       Filter_output_iterator&
       operator++()
-      { 
+      {
         ++iterator;
-        return *this; 
+        return *this;
       }
 
       Filter_output_iterator
@@ -1258,7 +1257,7 @@ template<typename _Iterator, typename Predicate>
       {
         Filter_output_iterator res(*this);
         ++iterator;
-        return res; 
+        return res;
       }
     };
 
@@ -1270,10 +1269,10 @@ filter_output_iterator(I e, const P& p)
 namespace internal {
 
 template<typename OutputIterator>
-struct Output_visitor : boost::static_visitor<OutputIterator&> {
+struct Output_visitor {
   Output_visitor(OutputIterator* it) : out(it) {}
   OutputIterator* out;
-  
+
   template<typename T>
   OutputIterator& operator()(const T& t) {
     *(*out)++ = t;
@@ -1291,6 +1290,8 @@ template < typename D, typename V = std::tuple<>, typename O = std::tuple<> >
 struct Derivator
 {
   typedef Derivator<D, V, O> Self;
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
   template <class Tuple>
   void tuple_dispatch(const Tuple&)
@@ -1304,10 +1305,12 @@ struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
   typedef Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
   typedef Derivator<D, std::tuple<V...>, std::tuple<O...> > Base;
 
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
 
   using Base::operator=;
-  
+
   D& operator=(const V1& v)
   {
     * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
@@ -1317,7 +1320,7 @@ struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
   template <class Tuple>
   void tuple_dispatch(const Tuple& t)
   {
-    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = 
+    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ =
         std::get< D::size - sizeof...(V) - 1 >(t);
     static_cast<Base&>(*this).tuple_dispatch(t);
   }
@@ -1344,7 +1347,7 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
  : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
  , public std::tuple<O...>
 {
-  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
+  static_assert(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);
@@ -1375,7 +1378,7 @@ public:
 
   Dispatch_output_iterator(O... o) : std::tuple<O...>(o...) {}
 
-    
+
   Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
 
   Self& operator=(const Self& s)
@@ -1383,26 +1386,18 @@ public:
     static_cast<Iterator_tuple&>(*this) = static_cast<const Iterator_tuple&>(s);
     return *this;
   }
-  
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
     internal::Output_visitor<Self> visitor(this);
-    #if BOOST_VERSION==105800
-    t.apply_visitor(visitor);
-    #else
-    boost::apply_visitor(visitor, t);
-    #endif
+    std::visit(visitor, t);
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    #if BOOST_VERSION==105800
-    if(t) t->apply_visitor(visitor);
-    #else
-    if(t)  boost::apply_visitor(visitor, *t);
-    #endif
+    if(t)  std::visit(visitor, *t);
     return *this;
   }
 
@@ -1411,18 +1406,18 @@ public:
   Self& operator*() { return *this; }
 
   const Iterator_tuple& get_iterator_tuple() const { return *this; }
-  
+
   Self& operator=(const std::tuple<V...>& t)
   {
     tuple_dispatch(t);
     return *this;
   }
-  
+
   operator std::tuple<O&...>()
   {
     return tuple_internal::to_tuple(*this, std::index_sequence_for<O...>{});
   }
-  
+
   operator std::tuple<const O&...>()const
   {
     return tuple_internal::to_tuple(*this, std::index_sequence_for<O...>{});
@@ -1456,7 +1451,7 @@ class Dispatch_or_drop_output_iterator < std::tuple<V...>, std::tuple<O...> >
 public:
 
   Dispatch_or_drop_output_iterator(O... o) : Base(o...) {}
-  
+
   Dispatch_or_drop_output_iterator(const Dispatch_or_drop_output_iterator&)=default;
   Dispatch_or_drop_output_iterator& operator=(const Dispatch_or_drop_output_iterator&)=default;
 
@@ -1469,6 +1464,19 @@ public:
   template <class T>
   Self& operator=(const T&) { return *this; }
 
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    std::visit(visitor, t);
+    return *this;
+  }
+
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t)  std::visit(visitor, *t);
+    return *this;
+  }
 };
 
 
@@ -1479,6 +1487,15 @@ dispatch_or_drop_output(O... o)
 {
   return Dispatch_or_drop_output_iterator<std::tuple<V...>, std::tuple<O...> >(o...);
 }
+
+
+// Trick to select iterator or const_iterator depending on the range constness
+template <typename RangeRef>
+struct Range_iterator_type;
+template <typename RangeRef>
+struct Range_iterator_type<RangeRef&>       { typedef typename RangeRef::iterator       type; };
+template <typename RangeRef>
+struct Range_iterator_type<const RangeRef&> { typedef typename RangeRef::const_iterator type; };
 
 } //namespace CGAL
 

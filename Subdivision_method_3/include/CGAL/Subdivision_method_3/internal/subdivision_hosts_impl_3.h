@@ -1,26 +1,14 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_HOSTS_IMPL_3_H
 #define CGAL_SUBDIVISION_HOSTS_IMPL_3_H
@@ -33,8 +21,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 
-#include <boost/unordered_map.hpp>
-
+#include <unordered_map>
 #include <iterator>
 #include <list>
 #include <vector>
@@ -92,8 +79,9 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   Point* face_point_buffer = edge_point_buffer + num_e;
 
   int i=0;
-  boost::unordered_map<vertex_descriptor,int> v_index;
+  std::unordered_map<vertex_descriptor,int> v_index;
   for(vertex_descriptor vh : p_vertices){
+    vertex_point_buffer[i] = get(vpm, vh);
     v_index[vh]= i++;
   }
 
@@ -212,7 +200,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   Point* edge_point_buffer = vertex_point_buffer + num_v;
 
   int i=0;
-  boost::unordered_map<vertex_descriptor,int> v_index;
+  std::unordered_map<vertex_descriptor,int> v_index;
   for(vertex_descriptor vh : p_vertices){
     v_index[vh]= i++;
   }

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -37,12 +28,12 @@ namespace CGAL {
 const int PARTITION_VMAP_UNSHARED_EDGE = -1;
 
 template<class Traits_>
-class Vertex_info 
+class Vertex_info
 {
 public:
 
   typedef Traits_                                       Traits;
-  typedef typename Traits::Polygon_2                    Polygon_2 ; 
+  typedef typename Traits::Polygon_2                    Polygon_2 ;
   typedef typename Traits::Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
   typedef typename Traits::Less_xy_2                    Less_xy_2;
 
@@ -57,7 +48,7 @@ public:
 
   friend bool operator == ( Vertex_info const& a, Vertex_info const& b )
   {
-    return a.poly_ptr() == b.poly_ptr() && a.vertex_it() == b.vertex_it() ;   
+    return a.poly_ptr() == b.poly_ptr() && a.vertex_it() == b.vertex_it() ;
   }
 
   friend bool operator != ( Vertex_info const& a, Vertex_info const& b ) { return !(a==b); }
@@ -82,11 +73,11 @@ public:
   {
     return traits.less_xy_2_object()(*a.vertex_it(), *b.vertex_it());
   }
-  
+
 private:
   const Traits_& traits;
 };
-  
+
 template <class Traits_>
 class Edge_info
 {
@@ -140,10 +131,10 @@ public:
    {
       bool e1_less = less_xy((*e1.endpoint().vertex_it()), *vertex_it);
       bool e2_less = less_xy((*e2.endpoint().vertex_it()), *vertex_it);
-      bool e1_to_e2_left_turn = left_turn((*e1.endpoint().vertex_it()), *vertex_it, 
+      bool e1_to_e2_left_turn = left_turn((*e1.endpoint().vertex_it()), *vertex_it,
                                 (*e2.endpoint().vertex_it()));
 
-      // if both edges are on the same side of the vertical line through 
+      // if both edges are on the same side of the vertical line through
       // _vertex then e1 comes before e2 (in CW order from the vertical line)
       // if one  makes a left turn going from e1 to e2
       if (e1_less == e2_less)
@@ -153,7 +144,7 @@ public:
    }
 
 private:
-   Vertex_const_iterator vertex_it;  
+   Vertex_const_iterator vertex_it;
    Left_turn_2     left_turn;
    Less_xy_2       less_xy;
 };
@@ -164,7 +155,7 @@ private:
 namespace Partition_2 {
 
 template <class Traits_>
-class Edge_list 
+class Edge_list
 {
 public:
 
@@ -172,7 +163,7 @@ public:
   typedef Edge_list<Traits>                             Self;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::Orientation_2                Orientation_pred;
-  typedef typename Traits::Polygon_2                    Polygon_2 ; 
+  typedef typename Traits::Polygon_2                    Polygon_2 ;
   typedef typename Traits::Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
 
   typedef CGAL::Vertex_info<Traits> Vertex_info;
@@ -203,8 +194,8 @@ public:
   Edge_list(const Traits& traits)
     : traits(traits)
   {}
-  
-  
+
+
   template<class Compare> void sort ( Compare c ) { m_list.sort(c); }
 
   void insert_next(Vertex_info endpoint_ref, int num)
@@ -212,7 +203,7 @@ public:
 
     Self_iterator e_it;
 
-    for (e_it = m_list.begin();  e_it != m_list.end() && e_it->endpoint() != endpoint_ref ; e_it++) 
+    for (e_it = m_list.begin();  e_it != m_list.end() && e_it->endpoint() != endpoint_ref ; e_it++)
     {
     }
 
@@ -231,7 +222,7 @@ public:
 
     Self_iterator e_it;
 
-    for (e_it = m_list.begin(); e_it != m_list.end() &&  e_it->endpoint() != endpoint_ref ; e_it++) 
+    for (e_it = m_list.begin(); e_it != m_list.end() &&  e_it->endpoint() != endpoint_ref ; e_it++)
     {
     }
 
@@ -246,7 +237,7 @@ public:
   }
 
   // PRE: polygons must be simple
-  bool edges_overlap(Vertex_const_iterator vertex_it) 
+  bool edges_overlap(Vertex_const_iterator vertex_it)
   {
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
@@ -258,7 +249,7 @@ public:
 
     // Don't want to sort the edges for vertices of degree 2 because they
     // are already in CCW order (since the partition polygons were in CCW
-    // order), and this is what you need when you construct the union 
+    // order), and this is what you need when you construct the union
     // polygon.
     if (m_list.size() > 2)
     {
@@ -275,9 +266,9 @@ public:
 
     for (e_it = m_list.begin(); e_it != m_list.end(); e_it++)
     {
-       if ((*e_it).poly_num1() == PARTITION_VMAP_UNSHARED_EDGE) 
+       if ((*e_it).poly_num1() == PARTITION_VMAP_UNSHARED_EDGE)
           num_unshared++;
-       if ((*e_it).poly_num2() == PARTITION_VMAP_UNSHARED_EDGE) 
+       if ((*e_it).poly_num2() == PARTITION_VMAP_UNSHARED_EDGE)
           num_unshared++;
 
        if ((*prev_e_it).poly_num1() != (*e_it).poly_num1() &&
@@ -312,7 +303,7 @@ public:
     {
       if ((*e_circ).endpoint() == v_info)
       {
-        e_circ--; // go to the previous endpoint 
+        e_circ--; // go to the previous endpoint
         return *e_circ;
       }
     }
@@ -327,31 +318,31 @@ private :
 
 
 template <class Traits>
-std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges) 
+std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges)
 {
    typename Edge_list<Traits>::const_iterator  e_it;
 
    for (e_it = edges.begin(); e_it != edges.end(); e_it++)
    {
     os << "edge with endpoint (" << (*(*e_it).endpoint().vertex_it())
-             << ") from poly #" << (*e_it).poly_num1() 
-             << " and poly #" << (*e_it).poly_num2() 
+             << ") from poly #" << (*e_it).poly_num1()
+             << " and poly #" << (*e_it).poly_num2()
              << std::endl;
    }
    return os;
 }
 
-} // namesapce Partition_2
+} // namespace Partition_2
 
 template <class Traits_>
-class Partition_vertex_map  
+class Partition_vertex_map
 {
 public:
 
    typedef Traits_                         Traits;
    typedef CGAL::Vertex_info<Traits>       Vertex_info;
    typedef CGAL::Edge_info<Traits>         Edge_info;
-   typedef Partition_2::Edge_list<Traits>  Edge_list;  
+   typedef Partition_2::Edge_list<Traits>  Edge_list;
 
    typedef Partition_vertex_map<Traits> Self;
 
@@ -373,7 +364,7 @@ public:
      : traits(traits)
      , m_map(traits)
    {  _build(first_poly, last_poly); }
-  
+
    Self_const_iterator begin() const { return m_map.begin() ; }
    Self_iterator       begin()       { return m_map.begin() ; }
    Self_const_iterator end  () const { return m_map.end  () ; }
@@ -384,7 +375,7 @@ public:
       Self_iterator v_info;
       for (v_info = m_map.begin(); v_info != m_map.end(); v_info++)
       {
-         if ((*v_info).second.edges_overlap((*v_info).first.vertex_it())) 
+         if ((*v_info).second.edges_overlap((*v_info).first.vertex_it()))
             return true;
       }
       return false;
@@ -393,11 +384,11 @@ public:
    template <class OutputIterator>
    OutputIterator union_vertices(OutputIterator result)
    {
-       if (m_map.empty()) 
+       if (m_map.empty())
          return result;
-   
+
        Self_iterator m_it = m_map.begin();
-   
+
        // find a vertex with degree 2 (there must be at least one)
        while (m_it != m_map.end() && (*m_it).second.size() != 2)
           m_it++;
@@ -423,11 +414,11 @@ public:
        *result = *next_v_info.vertex_it();
        result++;
 
-       // find the map iterator corresponding to the next vertex 
+       // find the map iterator corresponding to the next vertex
        prev_v_info  = (*m_it).first;
        Vertex_info v_info = next_v_info;
        m_it = m_map.find(v_info);
-       
+
        while (v_info != first_v_info && m_it != m_map.end())
        {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
@@ -437,13 +428,13 @@ public:
 #endif
     // Don't want to sort the edges for vertices of degree 2 because they
     // are already in CCW order (since the partition polygons were in CCW
-    // order), and this is what you need to begin the construction 
+    // order), and this is what you need to begin the construction
     // of the union polygon.
           if ((*m_it).second.size() > 2)
           {
             (*m_it).second.sort(
                                 CW_indirect_edge_info_compare<Traits>((*m_it).first.vertex_it(),traits));
-       	  }
+                 }
 
           // find the previous vertex in this vertex's list
           next_v_info=(*m_it).second.next_ccw_edge_info(prev_v_info).endpoint();
@@ -480,15 +471,15 @@ private :
 
       typedef std::pair<Self_iterator, bool>          Location_pair;
       typedef std::pair<Vertex_info, Edge_list>   P_Vertex;
-   
+
       Location_pair v_loc_pair;
       Location_pair begin_v_loc_pair;
       Location_pair prev_v_loc_pair;
-   
+
       Vertex_const_iterator vtx_begin;
       Vertex_const_iterator vtx_end;
       Vertex_const_iterator v_it;
-   
+
       int poly_num = 0;
       for (; poly_first != poly_last; poly_first++, poly_num++)
       {
@@ -498,7 +489,7 @@ private :
         vtx_begin = (*poly_first).vertices_begin();
         vtx_end   = (*poly_first).vertices_end();
         begin_v_loc_pair = m_map.insert(P_Vertex( Vertex_info(vtx_begin,poly_ptr), Edge_list(traits)));
-  
+
         prev_v_loc_pair = begin_v_loc_pair;
         v_it = vtx_begin;
 
@@ -513,9 +504,9 @@ private :
 
            prev_v_loc_pair = v_loc_pair;
         }
-        insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first, 
+        insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first,
                          poly_num);
-        insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first, 
+        insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first,
                          poly_num);
       }
    }

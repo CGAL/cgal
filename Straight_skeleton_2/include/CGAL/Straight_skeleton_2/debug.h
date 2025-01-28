@@ -1,20 +1,11 @@
 // Copyright (c) 2007 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 
 #ifndef CGAL_STRAIGHT_SKELETON_DEBUG_H
@@ -22,40 +13,25 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/config.h>
 
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_BigFloat.h>
 #endif
+#include <CGAL/MP_Float.h>
 
-#if    defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) \
-    || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING)
-#
-#  define CGAL_STSKEL_TRACE_ON
-#
-#  include<string>
-#  include<iostream>
-#  include<sstream>
-#  include<iomanip>
-#  define CGAL_STSKEL_TRACE(m) \
-     { \
-       std::ostringstream ss ; \
-       ss << m ; \
-       std::string s = ss.str(); \
-       Straight_skeleton_external_trace(s); \
-     }
+#include <optional>
 
-#include <boost/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <optional>
 
 template<class T>
-inline std::string o2str( boost::optional<T> const& o )
+inline std::string o2str( std::optional<T> const& o )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( o )
        ss << *o ;
   else ss << "·NONE·" ;
@@ -63,28 +39,27 @@ inline std::string o2str( boost::optional<T> const& o )
 }
 
 template<class T>
-inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
+inline std::string ptr2str( std::shared_ptr<T> const& ptr )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( ptr )
-       ss << *ptr ;
-  else ss << "·nullptr·" ;
+    ss << *ptr ;
+  else
+    ss << "·nullptr·" ;
   return ss.str();
 }
 
 template<class N>
 inline std::string n2str( N const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
-  
-  ss << CGAL_NTS to_double(n) ;
-  
+  std::ostringstream ss ;
+  ss << std::setprecision(17);
+  ss << n;
   return ss.str();
 }
 
-
 #if 0 //CGAL_USE_CORE
-
 inline CORE::BigFloat to_big_float( CGAL::MP_Float const& n )
 {
   return n.to_rational<CORE::BigFloat>() ;
@@ -105,32 +80,35 @@ inline CORE::BigFloat to_big_float( NT const& n )
   return CORE::BigFloat( CGAL_NTS to_double(n) ) ;
 }
 
-
 inline std::string n2str( CGAL::MP_Float const& n )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   ss << to_big_float(n) ;
   return ss.str();
 }
 
 inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   ss << to_big_float(n) ;
   return ss.str();
 }
 #else
 inline std::string n2str( CGAL::MP_Float const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19) ;
-  ss << CGAL_NTS to_double(n) ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
+  ss << n ;
   return ss.str();
 }
 
 inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
-  ss << CGAL_NTS to_double(n) ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17)  ;
+  ss << n ;
   return ss.str();
 }
 #endif
@@ -138,21 +116,21 @@ inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 template<class XY>
 inline std::string xy2str( XY const& xy )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
   ss << "(" << n2str(xy.x()) << "," << n2str(xy.y()) << ")" ;
   return ss.str();
 }
 template<class D>
 inline std::string dir2str( D const& d )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
   ss << "(" << n2str(d.dx()) << "," << n2str(d.dy()) << ")" ;
   return ss.str();
 }
 template<class P>
 inline std::string p2str( P const& p )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
   ss << "(" << n2str(p.x()) << "," << n2str(p.y()) << ")" ;
   return ss.str();
 }
@@ -164,7 +142,8 @@ inline std::string op2str( OP const& op )
 template<class V>
 inline std::string v2str( V const& v )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17)  ;
   ss << "V" << v.id() << " " << p2str(v.point()) << " [" << v.time() << "]" ;
   return ss.str();
 }
@@ -178,8 +157,8 @@ inline std::string vh2str( VH const& vh )
 template<class P>
 inline std::string s2str( P const& s, P const& t )
 {
-  std::ostringstream ss ; 
-  ss << "{" << p2str(s) << "-" << p2str(t) << "}" ;
+  std::ostringstream ss ;
+  ss << "{" << p2str(s) << " " << p2str(t) << "}" ;
   return ss.str();
 }
 
@@ -189,14 +168,15 @@ inline std::string s2str( S const& seg ) { return s2str(seg.source(),seg.target(
 template<class E>
 inline std::string e2str( E const& e )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
   if ( e.is_bisector() )
   {
     ss << "B" << e.id()
-       << "[E" << e.defining_contour_edge()->id() 
+       << "[E" << e.defining_contour_edge()->id()
        << ",E" << e.opposite()->defining_contour_edge()->id() << "]"
-       << " (/" << ( e.slope() == CGAL::ZERO ? "·" : ( e.slope() == CGAL::NEGATIVE ? "-" : "+" ) )
-       << " " << e.opposite()->vertex()->time() << "->" << e.vertex()->time() << ")" ; 
+       << " (S " << ( e.slope() == CGAL::ZERO ? "0" : ( e.slope() == CGAL::NEGATIVE ? "-" : "+" ) )
+       << "; T " << e.opposite()->vertex()->time() << " -> " << e.vertex()->time() << ")" ;
   }
   else
   {
@@ -216,27 +196,30 @@ inline std::string eh2str( EH const& eh )
 template<class BH>
 inline std::string newb2str( char const* name, BH const& b )
 {
-  std::ostringstream ss ; 
-  
-  ss << "New Bisector " 
-     << name 
+  std::ostringstream ss ;
+
+  ss << "New Bisector "
+     << name
      << " is B" << b->id()
-     << " [E" << b->defining_contour_edge()->id() 
+     << " [E" << b->defining_contour_edge()->id()
      << ",E" << b->opposite()->defining_contour_edge()->id()
-     << "] {B" << b->prev()->id() 
-     << "->N"  << b->prev()->vertex()->id() 
-     << "->B" << b->id() 
-     << "->N" << b->vertex()->id() 
+     << "] {N" << b->prev()->prev()->vertex()->id()
+     << "->B" << b->prev()->id()
+     << "->N"  << b->prev()->vertex()->id()
+     << "->B" << b->id()
+     << "->N" << b->vertex()->id()
      << "->B" << b->next()->id()
+     << "->N" << b->next()->vertex()->id()
      << "}" ;
-     
+
   return ss.str();
 }
 
 template<class VH, class Triedge>
 inline std::string newn2str( char const* name, VH const& v, Triedge const& aTriedge )
 {
-  std::ostringstream ss ; 
+  std::ostringstream ss ;
+  ss << std::setprecision(17) ;
 
   ss << "New Node " << name <<" is N" << v->id() << " at " << v->point()
      << " [E" << aTriedge.e0()->id()
@@ -244,9 +227,31 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
      << ",E" << aTriedge.e2()->id()
      << "] incident halfedge: B" << v->halfedge()->id()
      << "  primary bisector: B" << v->primary_bisector()->id() ;
-     
+
   return ss.str();
 }
+
+#if    defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) \
+    || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
+    || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
+    || defined(CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE)
+#
+#  define CGAL_STSKEL_TRACE_ON
+bool sEnableTrace = true ;
+#  define CGAL_STSKEL_ENABLE_TRACE sEnableTrace = true ;
+#  define CGAL_STSKEL_DISABLE_TRACE sEnableTrace = false ;
+#  include<string>
+#  include<iostream>
+#  include<sstream>
+#  include<iomanip>
+#  define CGAL_STSKEL_TRACE(m) \
+     if ( sEnableTrace ) \
+     { \
+       std::ostringstream ss ; \
+       ss << std::setprecision(17) << m ; \
+       std::string s = ss.str(); \
+       Straight_skeleton_external_trace(s); \
+     }
 
 #endif
 
@@ -255,7 +260,7 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #  define CGAL_STSKEL_BUILDER_TRACE(l,m) if ( l <= CGAL_STRAIGHT_SKELETON_ENABLE_TRACE ) CGAL_STSKEL_TRACE(m)
 #  define CGAL_STSKEL_BUILDER_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_STRAIGHT_SKELETON_ENABLE_TRACE ) CGAL_STSKEL_TRACE(m)
 #else
-#  define CGAL_STSKEL_DEBUG_CODE(code) 
+#  define CGAL_STSKEL_DEBUG_CODE(code)
 #  define CGAL_STSKEL_BUILDER_TRACE(l,m)
 #  define CGAL_STSKEL_BUILDER_TRACE_IF(c,l,m)
 #endif
@@ -269,7 +274,7 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-bool sEnableTraitsTrace = false ;
+bool sEnableTraitsTrace = true;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
@@ -277,6 +282,7 @@ bool sEnableTraitsTrace = false ;
      if ( sEnableTraitsTrace ) \
      { \
        std::ostringstream ss ; \
+       ss << std::setprecision(17) ; \
        ss << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_traits_external_trace(s); \
@@ -289,11 +295,11 @@ bool sEnableTraitsTrace = false ;
 #endif
 
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE
+#ifdef CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
 #  define CGAL_STSKEL_VALIDITY_TRACE(m) CGAL_STSKEL_TRACE(m)
 #  define CGAL_STSKEL_VALIDITY_TRACE_IF(cond,m) if ( cond ) CGAL_STSKEL_VALIDITY_TRACE(m)
 #else
-#  define CGAL_STSKEL_VALIDITY_TRACE(m) 
+#  define CGAL_STSKEL_VALIDITY_TRACE(m)
 #  define CGAL_STSKEL_VALIDITY_TRACE_IF(cond,m)
 #endif
 
@@ -351,9 +357,7 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 
 #endif
 
-#undef CGAL_STSKEL_ENABLE_TRACE
-
 #endif // CGAL_STRAIGHT_SKELETON_DEBUG_H //
 // EOF //
 
- 
+

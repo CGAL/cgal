@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -25,7 +16,8 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
-#include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/Distance_3/Point_3_Triangle_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/enum.h>
@@ -40,17 +32,36 @@ template <typename Point>
 struct Get_point
 {
   const double vx, vy, vz;
+  const double tx, ty, tz;
+  const std::size_t xdim, ydim, zdim;
   Get_point(const CGAL::Image_3* image)
     : vx(image->vx())
     , vy(image->vy())
     , vz(image->vz())
+    , tx(image->tx())
+    , ty(image->ty())
+    , tz(image->tz())
+    , xdim(image->xdim())
+    , ydim(image->ydim())
+    , zdim(image->zdim())
   {}
 
   Point operator()(const std::size_t i,
                    const std::size_t j,
                    const std::size_t k) const
   {
-    return Point(double(i) * vx, double(j) * vy, double(k) * vz);
+    double x = double(i) * vx + tx;
+    double y = double(j) * vy + ty;
+    double z = double(k) * vz + tz;
+
+    if (i == 0)              x += 1. / 6. * vx;
+    else if (i == xdim - 1)  x -= 1. / 6. * vx;
+    if (j == 0)              y += 1. / 6. * vy;
+    else if (j == ydim - 1)  y -= 1. / 6. * vy;
+    if (k == 0)              z += 1. / 6. * vz;
+    else if (k == zdim - 1)  z -= 1. / 6. * vz;
+
+    return Point(x, y, z);
   }
 };
 template<class C3T3, class MeshDomain, class MeshCriteria>
@@ -73,72 +84,93 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
             << " initial points on 1D-features" << std::endl;
 }
 
-
 template<class C3T3, class MeshDomain, class MeshCriteria,
-         typename Image_word_type>
+         typename Image_word_type,
+         typename TransformOperator = CGAL::Identity<Image_word_type> >
 void initialize_triangulation_from_labeled_image(C3T3& c3t3,
-                                                 const MeshDomain&   domain,
-                                                 const CGAL::Image_3& image,
-                                                 const MeshCriteria& criteria,
-                                                 Image_word_type,
-                                                 bool protect_features = false
-                                                 )
+      const MeshDomain&   domain,
+      const CGAL::Image_3& image,
+      const MeshCriteria& criteria,
+      Image_word_type,
+      bool protect_features = false,
+      TransformOperator transform = CGAL::Identity<Image_word_type>())
 {
   typedef typename C3T3::Triangulation       Tr;
-  typedef typename Tr::Geom_traits           Gt;
-  typedef typename Gt::FT                    FT;
+  typedef typename Tr::Geom_traits           GT;
+  typedef typename GT::FT                    FT;
   typedef typename Tr::Weighted_point        Weighted_point;
   typedef typename Tr::Bare_point            Bare_point;
   typedef typename Tr::Segment               Segment_3;
   typedef typename Tr::Vertex_handle         Vertex_handle;
   typedef typename Tr::Cell_handle           Cell_handle;
 
-  typedef typename Gt::Vector_3              Vector_3;
+  typedef typename GT::Vector_3              Vector_3;
 
   typedef MeshDomain                         Mesh_domain;
 
   Tr& tr = c3t3.triangulation();
 
-  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+  typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     tr.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp =
+  typename GT::Construct_weighted_point_3 cwp =
     tr.geom_traits().construct_weighted_point_3_object();
 
   if(protect_features) {
     init_tr_from_labeled_image_call_init_features
       (c3t3, domain, criteria,
-       CGAL::Mesh_3::internal::Has_features<Mesh_domain>());
+       CGAL::internal::Has_features<Mesh_domain>());
   }
 
   const double max_v = (std::max)((std::max)(image.vx(),
                                              image.vy()),
                                   image.vz());
 
-  typedef std::vector<std::pair<Bare_point, std::size_t> > Seeds;
+  struct Seed {
+    std::size_t i, j, k;
+    std::size_t radius;
+  };
+  using Seeds = std::vector<Seed>;
+  using Subdomain = typename Mesh_domain::Subdomain;
+
   Seeds seeds;
   Get_point<Bare_point> get_point(&image);
   std::cout << "Searching for connected components..." << std::endl;
-  CGAL::Identity<Image_word_type> no_transformation;
   search_for_connected_components_in_labeled_image(image,
                                                    std::back_inserter(seeds),
                                                    CGAL::Emptyset_iterator(),
-                                                   no_transformation,
-                                                   get_point,
+                                                   transform,
                                                    Image_word_type());
   std::cout << "  " << seeds.size() << " components were found." << std::endl;
   std::cout << "Construct initial points..." << std::endl;
-  for(typename Seeds::const_iterator it = seeds.begin(), end = seeds.end();
-      it != end; ++it)
+  for(const Seed seed : seeds)
   {
-    const double radius = double(it->second + 1)* max_v;
+    const Bare_point seed_point = get_point(seed.i, seed.j, seed.k);
+    Cell_handle seed_cell = tr.locate(cwp(seed_point));
+
+    const Subdomain seed_label
+      = domain.is_in_domain_object()(seed_point);
+    const Subdomain seed_cell_label
+      = (   tr.dimension() < 3
+         || seed_cell == Cell_handle()
+         || tr.is_infinite(seed_cell))
+        ? Subdomain()  //seed_point is OUTSIDE_AFFINE_HULL
+        : domain.is_in_domain_object()(
+            seed_cell->weighted_circumcenter(tr.geom_traits()));
+
+    if ( seed_label != std::nullopt
+      && seed_cell_label != std::nullopt
+      && *seed_label == *seed_cell_label)
+        continue; //this means the connected component has already been initialized
+
+    const double radius = double(seed.radius + 1)* max_v;
     CGAL::Random_points_on_sphere_3<Bare_point> points_on_sphere_3(radius);
     typename Mesh_domain::Construct_intersection construct_intersection =
       domain.construct_intersection_object();
 
     std::vector<Vector_3> directions;
-    if(it->second < 2) {
+    if(seed.radius < 2) {
       // shoot in six directions
       directions.push_back(Vector_3(-radius, 0, 0));
       directions.push_back(Vector_3(+radius, 0, 0));
@@ -156,9 +188,10 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 
     for(const Vector_3& v : directions)
     {
-      const Bare_point test = it->first + v;
+      const Bare_point test = seed_point + v;
+
       const typename Mesh_domain::Intersection intersect =
-        construct_intersection(Segment_3(it->first, test));
+        construct_intersection(Segment_3(seed_point, test));
       if (std::get<2>(intersect) != 0)
       {
         const Bare_point& bpi = std::get<0>(intersect);

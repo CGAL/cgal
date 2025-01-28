@@ -1,25 +1,16 @@
-// Copyright (c) 2000, 2016  
+// Copyright (c) 2000, 2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion, Oliver Devillers, Mariette Yvinec
 
@@ -70,8 +61,10 @@ compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
 {
   typedef typename Compare<FT>::result_type Cmp;
   Cmp c = CGAL_NTS compare(px, qx);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   if (c != EQUAL) return c;
   c = CGAL_NTS compare(py, qy);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   if (c != EQUAL) return c;
   return CGAL_NTS compare(pz, qz);
 }
@@ -80,22 +73,22 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Equal_to<FT>::result_type
 strict_dominanceC3(const FT &px, const FT &py, const FT &pz,
-		   const FT &qx, const FT &qy, const FT &qz)
+                   const FT &qx, const FT &qy, const FT &qz)
 {
   return CGAL_AND_3( CGAL_NTS compare(px, qx) == LARGER ,
-	             CGAL_NTS compare(py, qy) == LARGER ,
-	             CGAL_NTS compare(pz, qz) == LARGER );
+                     CGAL_NTS compare(py, qy) == LARGER ,
+                     CGAL_NTS compare(pz, qz) == LARGER );
 }
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Equal_to<FT>::result_type
 dominanceC3(const FT &px, const FT &py, const FT &pz,
-	    const FT &qx, const FT &qy, const FT &qz)
+            const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL_AND_3( CGAL_NTS compare(px, qx) != SMALLER , 
-	             CGAL_NTS compare(py, qy) != SMALLER ,
-	             CGAL_NTS compare(pz, qz) != SMALLER );
+  return CGAL_AND_3( CGAL_NTS compare(px, qx) != SMALLER ,
+                     CGAL_NTS compare(py, qy) != SMALLER ,
+                     CGAL_NTS compare(pz, qz) != SMALLER );
 }
 
 template < class FT >
@@ -109,12 +102,14 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
   FT dqx = qx-rx;
   FT dpy = py-ry;
   FT dqy = qy-ry;
-  if (sign_of_determinant(dpx, dqx, dpy, dqy) != ZERO)
+
+  auto is_zero = sign_of_determinant(dpx, dqx, dpy, dqy) == ZERO;
+  if (certainly_not(is_zero))
       return false;
   FT dpz = pz-rz;
   FT dqz = qz-rz;
-  return CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
-                   sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
+      return is_zero & CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
+                                 sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
 }
 
 template < class FT >
@@ -159,8 +154,8 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &rx, const FT &ry, const FT &rz)
 {
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-qx)+
-	                                (py-qy)*(ry-qy)+
-				        (pz-qz)*(rz-qz)));
+                                        (py-qy)*(ry-qy)+
+                                        (pz-qz)*(rz-qz)));
 }
 
 template < class FT >
@@ -172,8 +167,8 @@ angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &sx, const FT &sy, const FT &sz)
 {
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-sx)+
-	                                (py-qy)*(ry-sy)+
-				        (pz-qz)*(rz-sz)));
+                                        (py-qy)*(ry-sy)+
+                                        (pz-qz)*(rz-sz)));
 }
 
 template < class FT >
@@ -297,12 +292,12 @@ typename Equal_to<FT>::result_type
 equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
                   const FT &dx2, const FT &dy2, const FT &dz2)
 {
-  return sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO
-      && sign_of_determinant(dx1, dz1, dx2, dz2) == ZERO
-      && sign_of_determinant(dy1, dz1, dy2, dz2) == ZERO
-      && CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
-      && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
-      && CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2);
+  return CGAL_AND_6(sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO,
+                    sign_of_determinant(dx1, dz1, dx2, dz2) == ZERO,
+                    sign_of_determinant(dy1, dz1, dy2, dz2) == ZERO,
+                    CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2),
+                    CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2),
+                    CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2) );
 }
 
 template < class FT >
@@ -314,7 +309,7 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
     typedef typename Sgn<FT>::result_type  Sg;
 
     if (!equal_directionC3(ha, hb, hc, pa, pb, pc))
-	return false; // Not parallel.
+        return false; // Not parallel.
 
     Sg s1a = CGAL_NTS sign(ha);
     if (s1a != ZERO)
@@ -322,10 +317,10 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
                          sign_of_determinant(pa, pd, ha, hd) == ZERO );
     Sg s1b = CGAL_NTS sign(hb);
     if (s1b != ZERO)
-        return s1b == CGAL_NTS sign(pb)
-            && sign_of_determinant(pb, pd, hb, hd) == ZERO;
-    return CGAL_NTS sign(pc) == CGAL_NTS sign(hc)
-        && sign_of_determinant(pc, pd, hc, hd) == ZERO;
+        return CGAL_AND(s1b == CGAL_NTS sign(pb),
+                        sign_of_determinant(pb, pd, hb, hd) == ZERO );
+    return CGAL_AND( CGAL_NTS sign(pc) == CGAL_NTS sign(hc),
+                     sign_of_determinant(pc, pd, hc, hd) == ZERO );
 }
 
 template <class FT >
@@ -398,8 +393,8 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
 {
   // Returns whether T lies inside or outside the sphere which diameter is PQ.
   return enum_cast<Bounded_side>( CGAL_NTS sign((tx-px)*(qx-tx)
-	                                      + (ty-py)*(qy-ty)
-	                                      + (tz-pz)*(qz-tz)) );
+                                              + (ty-py)*(qy-ty)
+                                              + (tz-pz)*(qz-tz)) );
 }
 
 template < class FT >
@@ -414,7 +409,7 @@ cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 }
 
 // Because of the way the filtered predicates generator script works,
-// cmp_dist_to_pointC3() must be defined _before_ ths following one.
+// cmp_dist_to_pointC3() must be defined _before_ the following one.
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Bounded_side, FT>::type
@@ -444,11 +439,11 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT tsz = tz-sz;
 
   FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
-	   - qs2 * determinant(psy,psz,rsy,rsz);
+           - qs2 * determinant(psy,psz,rsy,rsz);
   FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
-	   - qs2 * determinant(psx,psz,rsx,rsz);
+           - qs2 * determinant(psx,psz,rsx,rsz);
   FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
-	   - qs2 * determinant(psx,psy,rsx,rsy);
+           - qs2 * determinant(psx,psy,rsx,rsy);
 
   FT den2  = 2 * determinant(psx,psy,psz,
                                    qsx,qsy,qsz,
@@ -457,8 +452,8 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   // The following could be simplified a bit.
   return enum_cast<Bounded_side>(
                       cmp_dist_to_pointC3<FT>(num_x,    - num_y,  num_z,
-	                                      psx*den2, psy*den2, psz*den2,
-	                                      tsx*den2, tsy*den2, tsz*den2) );
+                                              psx*den2, psy*den2, psz*den2,
+                                              tsx*den2, tsy*den2, tsz*den2) );
 }
 
 template < class FT >
@@ -525,8 +520,8 @@ cmp_signed_dist_to_planeC3(
      const FT &qx, const FT &qy, const FT &qz)
 {
   return sign_of_determinant<FT>( pqx-ppx, pqy-ppy, pqz-ppz,
-	                             prx-ppx, pry-ppy, prz-ppz,
-	                             px-qx,   py-qy,   pz-qz);
+                                     prx-ppx, pry-ppy, prz-ppz,
+                                     px-qx,   py-qy,   pz-qz);
 }
 
 template < class FT >
@@ -540,7 +535,7 @@ has_larger_signed_dist_to_planeC3(
      const FT &qx, const FT &qy, const FT &qz)
 {
     return cmp_signed_dist_to_planeC3(ppx, ppy, ppz, pqx, pqy, pqz,
-	    prx, pry, prz, px, py, pz, qx, qy, qz) == LARGER;
+            prx, pry, prz, px, py, pz, qx, qy, qz) == LARGER;
 }
 
 template < class FT >
@@ -554,7 +549,7 @@ has_smaller_signed_dist_to_planeC3(
      const FT &qx, const FT &qy, const FT &qz)
 {
     return cmp_signed_dist_to_planeC3(ppx, ppy, ppz, pqx, pqy, pqz,
-	    prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
+            prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
 }
 
 // return minus the sign of the 5x5 determinant [P,Q,R,S,T]
@@ -761,7 +756,7 @@ power_side_of_bounded_power_sphereC3(
 }
 
 // return the sign of the power test of weighted point (rx,ry,rz,rw)
- // with respect to the smallest sphere orthogoanal to
+ // with respect to the smallest sphere orthogonal to
 // p,q
 template< class FT >
 typename Same_uncertainty_nt<Bounded_side, FT>::type
@@ -771,20 +766,19 @@ power_side_of_bounded_power_sphereC3(
  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
 {
   FT FT2(2);
-  FT FT4(4);
   FT dpx = px - qx;
   FT dpy = py - qy;
   FT dpz = pz - qz;
   FT dpw = pw - qw;
   FT dp2 = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + CGAL_NTS square(dpz);
-  FT drx = rx - (px + qx)/FT2;
-  FT dry = ry - (py + qy)/FT2;
-  FT drz = rz - (pz + qz)/FT2;
-  FT drw = rw - (pw + qw)/FT2;
+  FT drx = FT2 * rx - (px + qx);
+  FT dry = FT2 * ry - (py + qy);
+  FT drz = FT2 * rz - (pz + qz);
+  FT drw = FT2 * rw - (pw + qw);
   FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz);
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
   return enum_cast<Bounded_side>(
-    - CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw ));
+    - CGAL_NTS sign (dr2*dp2 - dp2*dp2 + FT2*dpr*dpw - FT2*drw*dp2 ));
 }
 
 } // namespace CGAL

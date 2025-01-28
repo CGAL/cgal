@@ -1,0 +1,17 @@
+#!/bin/bash
+
+: ${GITHUB_HUB:=$(which hub)}
+
+label=${1:-"Under Testing"}
+
+if ! [ -x "${GITHUB_HUB}" ]; then
+   echo 'Needs Github hub: https://github.com/github/hub and Github gh: https://github.com/cli/cli' >&2
+   exit 1
+fi
+
+for pr in `gh pr list --label "$label" | awk '{print $1}'`; do
+    if ! hub merge https://github.com/CGAL/cgal/pull/$pr; then
+        echo $pr;
+        exit 1
+    fi
+done

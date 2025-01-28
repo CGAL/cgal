@@ -7,7 +7,7 @@
 /// \defgroup PkgSTLExtensionUtilities Utilities
 /// \ingroup PkgSTLExtensionRef
 
-/// \defgroup PkgSTLExtensionAssertions Assertions and Failure Behaviour
+/// \defgroup PkgSTLExtensionAssertions Assertions and Failure Behavior
 /// \ingroup PkgSTLExtensionRef
 
 /*!
@@ -16,7 +16,7 @@
 \cgalPkgPicture{plusplus.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
-\cgalPkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not in the \stl standard, as well as functions to change the failure behaviour of assertions.}
+\cgalPkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not in the \stl standard, as well as functions to change the failure behavior of assertions.}
 \cgalPkgManuals{Chapter_STL_Extensions_for_CGAL,PkgSTLExtensionRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -41,13 +41,8 @@
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
 \cgalCRPSection{Generic Algorithms}
-- `std::copy_n`
-- `CGAL::copy_n`
 - `CGAL::min_max_element`
-- `std::next`
-- `std::prev`
-- `CGAL::predecessor`
-- `CGAL::successor`
+- `CGAL::cpp98::random_shuffle`
 
 \cgalCRPSection{Iterators and Iterator/Circulator Adaptors}
 - `CGAL::Dispatch_output_iterator<V,O>`
@@ -109,6 +104,9 @@
 - `CGAL::Tag_false`
 - `CGAL::Null_tag`
 - `CGAL::Null_functor`
+- `CGAL::Sequential_tag`
+- `CGAL::Parallel_tag`
+- `CGAL::Parallel_if_available_tag`
 - `CGAL::Uncertain<T>`
 - `CGAL::Default`
 - `CGAL::Fast`
@@ -117,6 +115,8 @@
 - `CGAL::Fast_location`
 - `CGAL::Compact_location`
 - `CGAL::value_type_traits<T>`
+- `CGAL::parameters::Default_named_parameters`
+- `CGAL::parameters::default_values()`
 
 */
 

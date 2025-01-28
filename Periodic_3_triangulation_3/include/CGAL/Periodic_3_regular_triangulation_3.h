@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
@@ -26,7 +17,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 // Needed by remove to fill the hole.
-#include <CGAL/internal/Periodic_3_regular_triangulation_remove_traits_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_regular_triangulation_remove_traits_3.h>
 
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
@@ -36,13 +27,12 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <cstdlib>
@@ -186,11 +176,11 @@ private:
   };
 
   /// This threshold is chosen such that if all orthosphere radii are shorter
-  /// than this treshold, then we can be sure that there are no self-edges anymore.
+  /// than this threshold, then we can be sure that there are no self-edges anymore.
   FT orthosphere_radius_threshold;
 
   /// This container stores all the cells whose orthosphere radius is larger
-  /// than the treshold `orthosphere_radius_threshold`.
+  /// than the threshold `orthosphere_radius_threshold`.
   boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager
@@ -229,13 +219,20 @@ public:
   };
 
 public:
+  FT compute_cover_threshold() const
+  {
+    FT min_span = (std::min)({ domain().xmax() - domain().xmin(),
+                               domain().ymax() - domain().ymin(),
+                               domain().zmax() - domain().zmin() });
+    return FT(0.015625) * CGAL::square(min_span);
+  }
+
   /** @name Creation */
   Periodic_3_regular_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
                                      const Geometric_traits& gt = Geometric_traits())
     : Tr_Base(domain, gt)
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
-                                                * (domain.xmax() - domain.xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
   }
 
   template < typename InputIterator >
@@ -245,8 +242,7 @@ public:
                                      bool is_large_point_set = false)
     : Tr_Base(domain, gt)
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
-                                                * (domain.xmax() - domain.xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
 
     insert(first, last, is_large_point_set);
   }
@@ -259,8 +255,8 @@ public:
     if(!is_1_cover())
       insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 
-    CGAL_triangulation_expensive_postcondition(*this == tr);
-    CGAL_triangulation_expensive_postcondition(is_valid());
+    CGAL_expensive_postcondition(*this == tr);
+    CGAL_expensive_postcondition(is_valid());
   }
 
   Periodic_3_regular_triangulation_3 operator=(Periodic_3_regular_triangulation_3 tr)
@@ -278,7 +274,7 @@ public:
 
   void create_initial_triangulation()
   {
-    CGAL_triangulation_assertion( cells_with_too_big_orthoball.empty() );
+    CGAL_assertion( cells_with_too_big_orthoball.empty() );
 
     for(Cell_iterator iter = cells_begin(), end_iter = cells_end(); iter != end_iter; ++iter)
       cells_with_too_big_orthoball.insert(iter);
@@ -392,8 +388,7 @@ public:
 
   virtual void update_cover_data_after_setting_domain ()
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain().xmax() - domain().xmin())
-                                                * (domain().xmax() - domain().xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
   }
 
   // the function below is used in `convert_to_1_sheeted_covering()` of P3T3
@@ -421,8 +416,8 @@ public:
     Conflict_tester tester(point, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);
-    CGAL_triangulation_precondition(point.weight() >= 0);
-    CGAL_triangulation_precondition_msg
+    CGAL_precondition(point.weight() >= 0);
+    CGAL_precondition_msg
     (
       point.weight() < orthosphere_radius_threshold ,
      "point.weight() < 1/64 * domain_size * domain_size"
@@ -437,8 +432,8 @@ public:
     Conflict_tester tester(point, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);
-    CGAL_triangulation_precondition(point.weight() >= 0);
-    CGAL_triangulation_precondition_msg
+    CGAL_precondition(point.weight() >= 0);
+    CGAL_precondition_msg
     (
       point.weight() < orthosphere_radius_threshold,
       "point.weight() < 1/64 * domain_size * domain_size"
@@ -453,7 +448,7 @@ public:
     if(first == last)
       return 0;
 
-    CGAL_triangulation_precondition_code
+    CGAL_precondition_code
     (
       bool precondition_is_satisfied = true;
       for(InputIterator pc_first = first, pc_last = last; pc_first != pc_last; ++pc_first)
@@ -466,7 +461,7 @@ public:
       }
     )
 
-    CGAL_triangulation_precondition_msg
+    CGAL_precondition_msg
     (
       precondition_is_satisfied,
       "0 <= point.weight() < 1/64 * domain_size * domain_size"
@@ -506,13 +501,13 @@ public:
 
     // Spatial sorting can only be applied to bare points, so we need an adaptor
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+    typedef decltype(std::declval<const Construct_point_3>()(std::declval<const Weighted_point&>())) Ret;
+    typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
     spatial_sort(pbegin, points.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
     Cell_handle hint;
@@ -549,7 +544,7 @@ public:
     typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Conflict_tester ct(this);
@@ -564,7 +559,7 @@ public:
       insert(*hi);
     }
 
-    CGAL_triangulation_expensive_postcondition(is_valid());
+    CGAL_expensive_postcondition(is_valid());
   }
 
   // Undocumented function that tries to remove 'v' but only does so if removal
@@ -572,7 +567,7 @@ public:
   // \pre the triangulation is 1-sheeted
   bool remove_if_no_cover_change(Vertex_handle v)
   {
-    CGAL_triangulation_precondition(this->is_1_cover());
+    CGAL_precondition(this->is_1_cover());
 
     // Since we are in a 1-sheet configuration, we can call directly periodic_remove()
     // and don't need the conflict tester. The rest is copied from above.
@@ -581,7 +576,7 @@ public:
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
 
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Cover_manager cover_manager(*this);
@@ -600,8 +595,8 @@ public:
       insert(*hi);
     }
 
-    CGAL_triangulation_expensive_postcondition(is_valid());
-    CGAL_triangulation_postcondition(this->is_1_cover());
+    CGAL_expensive_postcondition(is_valid());
+    CGAL_postcondition(this->is_1_cover());
     return true; // successfully removed the vertex
   }
 
@@ -618,6 +613,8 @@ public:
     return geom_traits().compare_power_distance_3_object()(p, q, r, o1, o2, o3) == SMALLER;
   }
 
+  // @fixme the overloads with offset might run into an issue if the intermediate construction
+  // does not preserve the orientation... See Robust_periodic_weighted_circumcenter_traits_3.h
   Bare_point construct_weighted_circumcenter(const Weighted_point &p, const Weighted_point &q,
                                              const Weighted_point &r) const
   {
@@ -657,7 +654,7 @@ public:
   Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p,
                                                     const Weighted_point &q) const
   {
-    CGAL_triangulation_precondition(this->equal(p, q));
+    CGAL_precondition(this->equal(p, q));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
   }
   Oriented_side power_side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
@@ -709,7 +706,7 @@ public:
     const Offset& o3 = this->get_offset(c,3);
     const Offset& oq = offset;
 
-    CGAL_triangulation_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
+    CGAL_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
 
     Oriented_side os = ON_NEGATIVE_SIDE;
     os = power_side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
@@ -730,7 +727,7 @@ public:
     // of the determinant has non null coefficient.
     for(int i=4; i>1; --i) {
       if(points[i] == &pts[4]) {
-        CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
+        CGAL_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
             == POSITIVE);
         // since p0 p1 p2 p3 are non coplanar and positively oriented
         return ON_UNBOUNDED_SIDE;
@@ -754,7 +751,7 @@ public:
       }
     }
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return ON_UNBOUNDED_SIDE;
   }
 
@@ -811,12 +808,12 @@ public:
     CGAL_precondition(CGAL::abs(move.z()) < domain().zmax() - domain().zmin() );
 
     // 'new_position' must be canonical
-    CGAL_triangulation_precondition(new_position.x() < domain().xmax());
-    CGAL_triangulation_precondition(new_position.y() < domain().ymax());
-    CGAL_triangulation_precondition(new_position.z() < domain().zmax());
-    CGAL_triangulation_precondition(new_position.x() >= domain().xmin());
-    CGAL_triangulation_precondition(new_position.y() >= domain().ymin());
-    CGAL_triangulation_precondition(new_position.z() >= domain().zmin());
+    CGAL_precondition(new_position.x() < domain().xmax());
+    CGAL_precondition(new_position.y() < domain().ymax());
+    CGAL_precondition(new_position.z() < domain().zmax());
+    CGAL_precondition(new_position.x() >= domain().xmin());
+    CGAL_precondition(new_position.y() >= domain().ymin());
+    CGAL_precondition(new_position.z() >= domain().zmin());
 
     if(new_position == v->point())
       return;
@@ -911,7 +908,7 @@ public:
       std::cout << "four offsets: " << std::endl;
 #endif
 
-      boost::array<int, 4> offsets;
+      std::array<int, 4> offsets;
       for(int i=0; i<4; ++i)
       {
 #ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
@@ -934,7 +931,7 @@ public:
 
         CGAL_assertion(this->int_to_off(offsets[i])[0] == 0 || this->int_to_off(offsets[i])[0] == 1);
         CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
-        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[2] == 0 || this->int_to_off(offsets[i])[2] == 1);
       }
 
       c->set_offsets(offsets[0], offsets[1], offsets[2], offsets[3]);
@@ -945,9 +942,9 @@ public:
     std::cout << "moved v to " << v->point() << std::endl;
 #endif
 
-    CGAL_triangulation_precondition(!(v->point().x() < domain().xmin()) && v->point().x() < domain().xmax());
-    CGAL_triangulation_precondition(!(v->point().y() < domain().ymin()) && v->point().y() < domain().ymax());
-    CGAL_triangulation_precondition(!(v->point().z() < domain().zmin()) && v->point().z() < domain().zmax());
+    CGAL_precondition(!(v->point().x() < domain().xmin()) && v->point().x() < domain().xmax());
+    CGAL_precondition(!(v->point().y() < domain().ymin()) && v->point().y() < domain().ymax());
+    CGAL_precondition(!(v->point().z() < domain().zmin()) && v->point().z() < domain().zmax());
   }
 
   Weighted_point point(const Periodic_weighted_point& pp) const
@@ -972,17 +969,17 @@ public:
   // end of geometric functions
 
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
-#include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_regular_triangulation_dummy_288.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
-    CGAL_triangulation_precondition(p.x() < domain().xmax());
-    CGAL_triangulation_precondition(p.y() < domain().ymax());
-    CGAL_triangulation_precondition(p.z() < domain().zmax());
-    CGAL_triangulation_precondition(p.x() >= domain().xmin());
-    CGAL_triangulation_precondition(p.y() >= domain().ymin());
-    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+    CGAL_precondition(p.x() < domain().xmax());
+    CGAL_precondition(p.y() < domain().ymax());
+    CGAL_precondition(p.z() < domain().zmax());
+    CGAL_precondition(p.x() >= domain().xmin());
+    CGAL_precondition(p.y() >= domain().ymin());
+    CGAL_precondition(p.z() >= domain().zmin());
 
     if(number_of_vertices() == 0)
       return Vertex_handle();
@@ -1076,7 +1073,7 @@ public:
 
   bool is_Gabriel(Cell_handle c, int i) const
   {
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(number_of_vertices() != 0);
     typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_power_sphere =
       geom_traits().power_side_of_bounded_power_sphere_3_object();
@@ -1111,7 +1108,7 @@ public:
 
   bool is_Gabriel(Cell_handle c, int i, int j) const
   {
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(number_of_vertices() != 0);
     typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_power_sphere =
       geom_traits().power_side_of_bounded_power_sphere_3_object();
@@ -1195,12 +1192,12 @@ public:
   // offsets to find the minimum
   Offset get_min_dist_offset_general(const Bare_point& p, const Vertex_handle vh) const
   {
-    CGAL_triangulation_precondition(p.x() < domain().xmax());
-    CGAL_triangulation_precondition(p.y() < domain().ymax());
-    CGAL_triangulation_precondition(p.z() < domain().zmax());
-    CGAL_triangulation_precondition(p.x() >= domain().xmin());
-    CGAL_triangulation_precondition(p.y() >= domain().ymin());
-    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+    CGAL_precondition(p.x() < domain().xmax());
+    CGAL_precondition(p.y() < domain().ymax());
+    CGAL_precondition(p.z() < domain().zmax());
+    CGAL_precondition(p.x() >= domain().xmin());
+    CGAL_precondition(p.y() >= domain().ymin());
+    CGAL_precondition(p.z() >= domain().zmin());
 
     Offset min_off = Offset(0,0,0);
 
@@ -1224,7 +1221,7 @@ public:
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c,
                                        const Bare_point& p, const Offset & o) const
   {
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(number_of_vertices() != 0);
     Vertex_handle nearest = c->vertex(0);
     for(int i=1; i<4; i++)
     {
@@ -1393,7 +1390,7 @@ public:
                  OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit) const
   {
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(number_of_vertices() != 0);
 
     std::vector<Facet> facets;
     facets.reserve(64);
@@ -1680,12 +1677,12 @@ public:
 
 //  inline void hide(Weighted_point&, Cell_handle ) const  // useless?
 //  {
-//    CGAL_triangulation_assertion(false);
+//    CGAL_assertion(false);
 //  }
 //
 //  inline void do_hide(const Weighted_point&, Cell_handle ) const // useless?
 //  {
-//    CGAL_triangulation_assertion(false);
+//    CGAL_assertion(false);
 //  }
 
 //  template < class Tester >
@@ -1755,16 +1752,14 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS>& tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
   typedef typename P3RT3::Tr_Base                      Tr_Base;
-  typedef typename GT::FT                              FT;
 
   is >> static_cast<Tr_Base&>(tr);
 
-  tr.orthosphere_radius_threshold = FT(0.015625) * (tr.domain().xmax() - tr.domain().xmin())
-                                                 * (tr.domain().xmax() - tr.domain().xmin());
+  tr.orthosphere_radius_threshold = tr.compute_cover_threshold();
 
   tr.insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 
-  CGAL_triangulation_expensive_assertion( tr.is_valid() );
+  CGAL_expensive_assertion( tr.is_valid() );
   return is;
 }
 

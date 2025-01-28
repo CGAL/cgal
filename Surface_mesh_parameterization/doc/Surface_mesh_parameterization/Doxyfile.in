@@ -2,8 +2,10 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Planar Parameterization of Triangulated Surface Meshes"
 EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
+
 HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/nefertiti.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/ARAP_new.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/orbifold_new.jpg \
@@ -11,5 +13,6 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/nefertiti.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/LSCM_new.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/conformal_new.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/authalic_new.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/iterative_authalic.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/floater_new.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/hand_base.jpg \

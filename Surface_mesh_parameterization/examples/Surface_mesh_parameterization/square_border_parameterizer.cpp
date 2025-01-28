@@ -10,9 +10,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/array.hpp>
-#include <boost/unordered_set.hpp>
-
+#include <unordered_set>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -28,7 +26,7 @@ typedef boost::graph_traits<PolyMesh>::face_descriptor           face_descriptor
 
 typedef boost::graph_traits<PolyMesh>::vertex_iterator           vertex_iterator;
 
-typedef boost::array<vertex_descriptor, 4>                       Vd_array;
+typedef std::array<vertex_descriptor, 4>                       Vd_array;
 
 typedef CGAL::Unique_hash_map<vertex_descriptor, Point_2>        UV_uhm;
 typedef boost::associative_property_map<UV_uhm>                  UV_pmap;
@@ -65,7 +63,7 @@ bool read_vertices(const PolyMesh& mesh,
   std::size_t counter = 0;
   std::istringstream point_line(line);
   std::size_t s;
-  boost::unordered_set<std::size_t> indices;
+  std::unordered_set<std::size_t> indices;
   while(point_line >> s) {
     if(s >= vds.size())
     {
@@ -98,7 +96,7 @@ bool read_vertices(const PolyMesh& mesh,
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/nefertiti.off"));
   if(!in){
     std::cerr << "Error: problem loading the input data" << std::endl;
     return 1;

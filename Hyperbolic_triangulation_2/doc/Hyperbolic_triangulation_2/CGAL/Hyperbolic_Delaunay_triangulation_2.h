@@ -3,24 +3,26 @@
 
 
 namespace CGAL {
- 
+
 /*!
 \ingroup PkgHyperbolicTriangulation2MainClasses
 
 The class `Hyperbolic_Delaunay_triangulation_2` is the main class of the 2D Hyperbolic Delaunay Triangulations package.
-It is designed to represent Delaunay triangulations of sets of points in the hyperbolic plane. 
+It is designed to represent Delaunay triangulations of sets of points in the hyperbolic plane.
 The hyperbolic plane is represented in the Poincaré disk model.
 
-\tparam Gt  must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
-\tparam Tds must be a model of `TriangulationDataStructure_2`. By default, this parameter is instantiated with 
-`Triangulation_data_structure_2< Triangulation_vertex_base_2<Gt>, Hyperbolic_triangulation_face_base_2<Gt> >`
+\tparam Gt is the geometric traits class and must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
+\tparam Tds is the triangulation graph data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `TriangulationVertexBase_2` and `HyperbolicTriangulationFaceBase_2`, respectively.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Triangulation_vertex_base_2<Gt>,
+  CGAL::Hyperbolic_triangulation_face_base_2<Gt> >
+\endcode
 
-\sa `HyperbolicDelaunayTriangulationTraits_2`
-\sa `TriangulationDataStructure_2`
 \sa `Delaunay_triangulation_2`
-
 */
-
 template < class Gt, class Tds >
 class Hyperbolic_Delaunay_triangulation_2: private Delaunay_triangulation_2<Gt,Tds> {
 
@@ -31,7 +33,7 @@ public:
     typedef Gt                                          Geom_traits;
     typedef Tds                                         Triangulation_data_structure;
   /// @}
-  
+
 
   /// \name
   /// @{
@@ -53,15 +55,15 @@ public:
   /// @}
 
 
-  /// \name 
+  /// \name
   /// The following types are defined for use in the construction of the Voronoi diagram:
   /// @{
     typedef typename Geom_traits::Hyperbolic_Voronoi_point_2       Hyperbolic_Voronoi_point;
     typedef typename Geom_traits::Hyperbolic_segment_2             Hyperbolic_segment;
   /// @}
 
-    
-  /// \name 
+
+  /// \name
   /// The following iterator and circulator types are defined to give access over hyperbolic faces and edges:
   /// @{
     typedef Triangulation_data_structure::Face_iterator     All_faces_iterator;
@@ -70,18 +72,18 @@ public:
     typedef Triangulation_data_structure::Vertex_circulator Vertex_circulator;
   /// @}
 
-  /// \name
-  /// The enumeration `Locate_type` is defined to specify which case occurs when locating a 
+  /// \name Enums
+  /// The enumeration `Locate_type` is defined to specify which case occurs when locating a
   /// point in the triangulation.
   /// @{
-    enum Locate_type { 
-      VERTEX = 0, 
-      EDGE, 
-      FACE, 
-      OUTSIDE_CONVEX_HULL, 
-      OUTSIDE_AFFINE_HULL 
+    enum Locate_type {
+      VERTEX = 0,
+      EDGE,
+      FACE,
+      OUTSIDE_CONVEX_HULL,
+      OUTSIDE_AFFINE_HULL
     };
-  /// @}  
+  /// @}
 
   /// \name Creation
   /// @{
@@ -89,7 +91,7 @@ public:
       %Default constructor
     */
     Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits());
-    
+
     /*!
       Copy constructor
     */
@@ -110,12 +112,12 @@ public:
       The triangulation `tr` is duplicated, and modifying the copy after the duplication does not modify the original.
     */
     Hyperbolic_Delaunay_triangulation_2& operator=(Hyperbolic_Delaunay_triangulation_2 tr);
-    
+
     /*!
       The triangulation is swapped with `tr`.
     */
     void swap(Hyperbolic_Delaunay_triangulation_2& tr);
-    
+
     /*!
       Deletes all vertices and faces of the triangulation.
     */
@@ -125,14 +127,14 @@ public:
       Equality operator.
       \todo implement!
     */
-    bool operator==(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t1, 
+    bool operator==(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t1,
                     const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t2);
-    
+
     /*!
       Inequality operator.
       \todo implement!
     */
-    bool operator!=(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t1, 
+    bool operator!=(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t1,
                     const Hyperbolic_Delaunay_triangulation_2<Gt,Tds>& t2);
   /// @}
 
@@ -147,7 +149,7 @@ public:
     /*!
       Returns a const reference to the triangulation data structure.
     */
-    const Triangulation_data_structure& tds() const; 
+    const Triangulation_data_structure& tds() const;
 
     /*!
       Returns a reference to the triangulation data structure.
@@ -155,8 +157,8 @@ public:
     Triangulation_data_structure& tds();
 
     /*!
-      Checks the combinatorial validity of the triangulation, the validity of 
-      its geometric embedding, and also that all edges and faces are Delaunay 
+      Checks the combinatorial validity of the triangulation, the validity of
+      its geometric embedding, and also that all edges and faces are Delaunay
       hyperbolic.
     */
     bool  is_valid ();
@@ -170,12 +172,12 @@ public:
       Returns the number of vertices.
     */
     size_type             number_of_vertices()          const;
-    
+
     /*!
       Returns the number of hyperbolic edges.
     */
     size_type             number_of_hyperbolic_edges()  const;
-    
+
     /*!
       Returns the number of hyperbolic faces.
     */
@@ -206,27 +208,18 @@ public:
   /// @{
     /*!
       Inserts the point `p` in the triangulation.
-      If the point `p` coincides with a existing vertex, then the vertex is returned 
+      If the point `p` coincides with an existing vertex, then the vertex is returned
       and the triangulation is not modified. The optional parameter `start` is used
       to initialize the location of `p`.
     */
     Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
-    
-    /*!
-      Inserts the point p at the location given by `(lt,loc,li)`. 
-      The handle to the new vertex is returned.
-
-      \sa locate()
-    */
-    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li);
-      
 
     /*!
       Inserts the points in the range [first,last) into the triangulation.
-      Returns the number of inserted points. Note that this function is not 
-      guaranteed to insert the points following the order of `InputIterator`, 
+      Returns the number of inserted points. Note that this function is not
+      guaranteed to insert the points following the order of `InputIterator`,
       as `spatial_sort()` is used to improve efficiency.
-      
+
       \tparam InputIterator  must be an input iterator with the value type
       \link Hyperbolic_Delaunay_triangulation_2::Point `Point`\endlink.
     */
@@ -243,7 +236,7 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      Removes the vertices in the iterator range `[first, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
     */
     template <class VertexRemoveIterator>
@@ -257,13 +250,13 @@ public:
       Locates the point `query` in the triangulation.
 
       If the point `query` lies inside the hyperbolic convex hull of the points of the triangulation,
-      then the hyperbolic face that contains the query in its interior is returned. 
+      then the hyperbolic face that contains the query in its interior is returned.
 
       If `query` lies on a vertex or on an edge, then one of the faces having `query` on its boundary is returned.
       \todo verify case when `query` lies on dangling edge!
-    
+
       If `query` lies outside of the convex hull of the points of the triangulation, then a default-constructed
-      `Face_handle()` is returned. 
+      `Face_handle()` is returned.
 
       The optional argument `hint` is used as a starting place for the search.
     */
@@ -271,16 +264,16 @@ public:
 
 
     /*!
-      Same as above. 
+      Same as above.
 
-      The variable `lt` contains information about the element in which `query` has been located. See 
-      the enumeration \link Hyperbolic_Delaunay_triangulation_2::Locate_type `Locate_type`\endlink 
+      The variable `lt` contains information about the element in which `query` has been located. See
+      the enumeration \link Hyperbolic_Delaunay_triangulation_2::Locate_type `Locate_type`\endlink
       for details.
 
-      If `lt` is \link Hyperbolic_Delaunay_triangulation_2::VERTEX `Locate_type::VERTEX`\endlink, 
-      then the variable `li` contains the index of the vertex in the returned face. If `lt` is 
-      \link Hyperbolic_Delaunay_triangulation_2::EDGE `Locate_type::EDGE`\endlink, then `li` 
-      is the index of the edge in the returned face. 
+      If `lt` is \link Hyperbolic_Delaunay_triangulation_2::VERTEX `Locate_type::VERTEX`\endlink,
+      then the variable `li` contains the index of the vertex in the returned face. If `lt` is
+      \link Hyperbolic_Delaunay_triangulation_2::EDGE `Locate_type::EDGE`\endlink, then `li`
+      is the index of the edge in the returned face.
     */
     Face_handle locate(const Point& query, Locate_type& lt, int &li, Face_handle hint = Face_handle()) const;
   /// @}
@@ -292,36 +285,36 @@ public:
     /*!
       Computes the conflict zone induced by `p`.
 
-      If the optional parameter `start` is given, then it must be a face in conflict with `p`. 
+      If the optional parameter `start` is given, then it must be a face in conflict with `p`.
       Returns an iterator on the faces of the triangulation in conflict with `p`.
     */
     template<class OutputItFaces>
-    OutputItFaces find_conflicts(const Point& p, 
-                                OutputItFaces fit, 
+    OutputItFaces find_conflicts(const Point& p,
+                                OutputItFaces fit,
                                 Face_handle start = Face_handle()) const;
   ///@}
-  
+
 
   /// \name Vertex, Face and Edge iterators and circulators
   /// @{
-    
+
     All_vertices_iterator   all_vertices_begin()  const;
     All_vertices_iterator   all_vertices_end()    const;
 
     All_edges_iterator      all_edges_begin() const;
     All_edges_iterator      all_edges_end()   const;
-    
+
     All_faces_iterator      all_faces_begin() const;
-    All_faces_iterator      all_faces_end()   const;  
+    All_faces_iterator      all_faces_end()   const;
 
     Vertex_circulator       adjacent_vertices(Vertex_handle v) const;
   /// @}
 
 
-  
-  /// \name Voronoi Diagram 
+
+  /// \name Voronoi Diagram
   /// Users should use a kernel with exact constructions in order to guarantee
-  /// the computation of the Voronoi diagram (as opposed to computing the triangulation only, 
+  /// the computation of the Voronoi diagram (as opposed to computing the triangulation only,
   /// which requires only exact predicates).
   /// @{
     /*!
@@ -343,6 +336,6 @@ public:
   /// @}
 
 };
-  
+
 } //namespace CGAL
 

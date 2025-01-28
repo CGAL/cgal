@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb
@@ -37,7 +28,7 @@
 
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 
 namespace CGAL {
 
@@ -68,14 +59,17 @@ public:
   typedef typename Geom_traits::FT                            FT;
   typedef typename Base::Bare_point                           Bare_point;
   typedef typename Base::Weighted_point                       Weighted_point;
+  typedef typename Base::Triangle                             Triangle;
 
   typedef typename Base::Vertex_handle                        Vertex_handle;
+  typedef typename Base::Facet                                Facet;
   typedef typename Base::Cell_handle                          Cell_handle;
 
   typedef typename Geom_traits::Vector_3                      Vector;
 
   using Base::geom_traits;
   using Base::point;
+  using Base::triangle;
 
   static std::string io_signature() { return Get_io_signature<Base>()(); }
 
@@ -83,12 +77,17 @@ public:
   // because of Periodic_3_mesh_3: they are functions for which both triangulations
   // have fundamentally different implementations (usually, Periodic_3_mesh_3
   // does not know the offset of a point and must brute-force check for all
-  // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
+  // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
-  Bare_point get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
+  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
   {
     return q;
+  }
+
+  Triangle get_incident_triangle(const Facet& f, const Vertex_handle) const
+  {
+    return triangle(f);
   }
 
   void set_point(const Vertex_handle v,
@@ -125,70 +124,93 @@ public:
   }
 };
 
-// Struct Mesh_triangulation_3
-//
-template<class MD,
-         class K_ = Default,
-         class Concurrency_tag = Sequential_tag,
-         class Vertex_base_ = Default,
-         class Cell_base_   = Default>
-struct Mesh_triangulation_3;
 
-// Sequential version (default)
-template<class MD, class K_, class Concurrency_tag,
-         class Vertex_base_, class Cell_base_>
+/*!
+\ingroup PkgMesh3MeshClasses
+
+The class `Mesh_triangulation_3` is a class template which provides the triangulation
+type to be used for the 3D triangulation embedding the mesh.
+
+\tparam MD must be a model of `MeshDomain_3`.
+
+\tparam GT must be a model of `MeshTriangulationTraits_3` or `Default`
+and defaults to `Kernel_traits<MD>::%Kernel`.
+
+\tparam ConcurrencyTag enables sequential versus parallel meshing and optimization algorithms.
+                       Possible values are `Sequential_tag` (the default), `Parallel_tag`,
+                       and `Parallel_if_available_tag`.
+
+\tparam VertexBase must be a model of `MeshVertexBase_3` or `Default`
+and defaults to `Mesh_vertex_base_3<GT, MD>`.
+
+\tparam CellBase must be a model of `MeshCellBase_3` or `Default`
+and defaults to `Compact_mesh_cell_base_3<GT, MD>`.
+
+\warning To improve the robustness of the meshing process, the input traits `GT`
+         is wrapped with the traits class `Robust_weighted_circumcenter_filtered_traits_3`.
+         The class `Robust_weighted_circumcenter_filtered_traits_3<GT>` upgrades the functors
+         models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
+         and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
+         provided by `GT` to use exact computations when the geometric configuration
+         is close to degenerate (e.g. almost coplanar points). <br><br>
+         Users should therefore be aware that the traits class of the triangulation
+         will have type `Robust_weighted_circumcenter_filtered_traits_3<GT>`.
+
+\sa `make_mesh_3()`
+\sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+
+*/
+template<class MD,
+         class GT = Default,
+         class ConcurrencyTag = Sequential_tag,
+         class VertexBase = Default,
+         class CellBase = Default>
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
+  using K = typename Default::Lazy_get<GT, Kernel_traits<MD> >::type;
 
-  typedef typename details::Mesh_geom_traits_generator<K>::type    Geom_traits;
+  using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 
-  typedef typename Default::Get<
-    Vertex_base_,
-    Mesh_vertex_base_3<Geom_traits, MD> >::type                    Vertex_base;
-  typedef typename Default::Get<
-    Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type              Cell_base;
-
-  typedef Triangulation_data_structure_3<Vertex_base,Cell_base>    Tds;
-  typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds> Triangulation;
-
-public:
-  typedef Triangulation type;
-  typedef type Type;
-};  // end struct Mesh_triangulation_3
-
-#ifdef CGAL_LINKED_WITH_TBB
-// Parallel version (specialization)
-//
-template<class MD, class K_,
-         class Vertex_base_, class Cell_base_>
-struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_>
-{
-private:
-  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
-
-  typedef typename details::Mesh_geom_traits_generator<K>::type       Geom_traits;
-
-  typedef typename Default::Get<
-    Vertex_base_,
-    Mesh_vertex_base_3<Geom_traits, MD> >::type                       Vertex_base;
-  typedef typename Default::Get<
-    Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type                 Cell_base;
-
-  typedef Triangulation_data_structure_3<
-    Vertex_base, Cell_base, Parallel_tag>                             Tds;
-  typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>    Triangulation;
+  using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
+  using Vertex_base = typename Default::Get<
+    VertexBase,
+    Mesh_vertex_generator_3<Geom_traits,
+                            Indices_tuple,
+                            typename MD::Index> >::type;
+  using Cell_base = typename Default::Get<
+    CellBase,
+    Compact_mesh_cell_generator_3<Geom_traits,
+                                  typename MD::Subdomain_index,
+                                  typename MD::Surface_patch_index,
+                                  typename MD::Index> >::type;
+  using Concurrency_tag =
+      typename Default::Get<ConcurrencyTag, Sequential_tag>::type;
+  struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
+                                                     Concurrency_tag> {};
+  using Triangulation =
+      Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
 
 public:
-  typedef Triangulation type;
-  typedef type Type;
-};  // end struct Mesh_triangulation_3
-#endif // CGAL_LINKED_WITH_TBB
+#ifndef DOXYGEN_RUNNING
+  using type = Triangulation;
+  using Type = type;
+#else
+  /// \name Types
+  /// @{
 
-}  // end namespace CGAL
+  /*!
+  The triangulation type to be used for the 3D triangulation embedding the mesh.
+  This type is a wrapper around the type `CGAL::Regular_triangulation_3`, whose vertex
+  and cell base classes are respectively `VertexBase` and `CellBase`.
+  */
+  typedef unspecified_type type;
+
+  /// @}
+#endif // DOXYGEN_RUNNING
+};
+
+} // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

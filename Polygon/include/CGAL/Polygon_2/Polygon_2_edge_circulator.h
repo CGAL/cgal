@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
@@ -29,7 +20,7 @@
 #include <iterator>
 #include <CGAL/circulator.h>
 #include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 #ifndef DOXYGEN_RUNNING //to avoid conflicts
@@ -66,7 +57,7 @@ class Polygon_2_const_edge_circulator {
       : first_vertex(f) {}
 
   bool operator==( std::nullptr_t CGAL_assertion_code(p) ) const {
-      CGAL_polygon_assertion( p == 0);
+      CGAL_assertion( p == 0);
       return (first_vertex == 0);
     }
 
@@ -93,14 +84,14 @@ class Polygon_2_const_edge_circulator {
     {
       Vertex_const_circulator second_vertex = first_vertex;
       ++second_vertex;
-      typename Traits::Construct_segment_2 construct_segment_2 = 
+      typename Traits::Construct_segment_2 construct_segment_2 =
             Traits().construct_segment_2_object();
-      const_cast<Polygon_2_const_edge_circulator*>(this)->segment = 
+      const_cast<Polygon_2_const_edge_circulator*>(this)->segment =
           construct_segment_2(*first_vertex, *second_vertex);
       return segment;
     }
 
-    const Segment_2* operator->() const 
+    const Segment_2* operator->() const
     {
       return &(**this);
     }

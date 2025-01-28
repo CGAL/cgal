@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -26,8 +17,8 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 
@@ -35,7 +26,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <sstream>
@@ -60,8 +51,8 @@ public:
   typedef typename Kernel::Point_3    Point_3;
 
   typedef typename std::list<Triangle>::iterator        Tr_iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Tr_iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive>               AABB_tr_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Tr_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive>             AABB_tr_traits;
   typedef CGAL::AABB_tree<AABB_tr_traits>               AABB_tree;
 
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;
@@ -75,7 +66,7 @@ public:
 
 private:
   const Tree* m_ptree;
-  boost::shared_ptr<Tree> m_own_ptree;
+  std::shared_ptr<Tree> m_own_ptree;
 
   const MeshDomain& m_domain;
   Parameters m_params;
@@ -140,7 +131,6 @@ public:
 
     m_own_ptree.reset(new Tree(triangles.begin(), triangles.end()));
     m_own_ptree->build();
-    m_own_ptree->accelerate_distance_queries();
   }
 
 private:

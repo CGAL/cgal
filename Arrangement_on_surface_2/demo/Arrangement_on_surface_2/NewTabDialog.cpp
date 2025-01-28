@@ -2,46 +2,53 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "NewTabDialog.h"
 #include "ArrangementDemoWindow.h"
+#include "ArrangementTypesUtils.h"
 #include "ui_NewTabDialog.h"
 #include <QButtonGroup>
 
-NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
-  QDialog( parent, f ),
+
+NewTabDialog::NewTabDialog( QWidget* parent ) :
+  QDialog( parent ),
   ui( new Ui::NewTabDialog ),
   buttonGroup( new QButtonGroup )
 {
-  this->ui->setupUi( this );
-    
-  this->buttonGroup->addButton( this->ui->segmentRadioButton,
-                                ArrangementDemoWindow::SEGMENT_TRAITS );
-  this->buttonGroup->addButton( this->ui->polylineRadioButton,
-                                ArrangementDemoWindow::POLYLINE_TRAITS );
-  this->buttonGroup->addButton( this->ui->conicRadioButton,
-                                ArrangementDemoWindow::CONIC_TRAITS );
-  this->buttonGroup->addButton( this->ui->linearRadioButton,
-                                ArrangementDemoWindow::LINEAR_TRAITS );
-  this->buttonGroup->addButton( this->ui->circularArcRadioButton,
-                                ArrangementDemoWindow::CIRCULAR_ARC_TRAITS );
-  // this->buttonGroup->addButton( this->ui->algebraicRadioButton,
-  //                               ArrangementDemoWindow::ALGEBRAIC_TRAITS );
+  using TraitsType = demo_types::TraitsType;
+
+  this->ui->setupUi(this);
+
+  this->buttonGroup->addButton(
+    this->ui->segmentRadioButton, static_cast<int>(TraitsType::SEGMENT_TRAITS));
+  this->buttonGroup->addButton(
+    this->ui->polylineRadioButton,
+    static_cast<int>(TraitsType::POLYLINE_TRAITS));
+  this->buttonGroup->addButton(
+    this->ui->linearRadioButton, static_cast<int>(TraitsType::LINEAR_TRAITS));
+#ifdef CGAL_USE_CORE
+  this->buttonGroup->addButton(
+    this->ui->conicRadioButton, static_cast<int>(TraitsType::CONIC_TRAITS));
+  this->buttonGroup->addButton(
+    this->ui->algebraicRadioButton,
+    static_cast<int>(TraitsType::ALGEBRAIC_TRAITS));
+  this->buttonGroup->addButton(
+    this->ui->bezierRadioButton, static_cast<int>(TraitsType::BEZIER_TRAITS));
+  this->buttonGroup->addButton(
+    this->ui->rationalFunctionRadioButton,
+    static_cast<int>(TraitsType::RATIONAL_FUNCTION_TRAITS));
+#else
+  this->ui->conicRadioButton->hide();
+  this->ui->algebraicRadioButton->hide();
+  this->ui->bezierRadioButton->hide();
+  this->ui->rationalFunctionRadioButton->hide();
+#endif
 }
 
 int NewTabDialog::checkedId( ) const

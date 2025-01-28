@@ -1,21 +1,12 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //
@@ -215,7 +206,7 @@ polynomial_power_to_bernstein_approx(
     std::vector<Integer> f(n+1);
     polynomial_affine_transform_approx_log_denom(
             first, beyond, f.begin(),
-            upper_num - lower_num, lower_num, log_denom,
+            Integer(upper_num - lower_num), lower_num, log_denom,
             p+q,
             approx, log, logl
     );
@@ -236,7 +227,7 @@ polynomial_power_to_bernstein_approx(
 
 // min/max number of variations in epsilon-sign
 template <class InputIterator, class UnaryFunction>
-void var_eps( 
+void var_eps(
         InputIterator first, InputIterator beyond,
         int& min_var, int& max_var,
         const UnaryFunction& sign_eps
@@ -402,7 +393,7 @@ de_casteljau_generic(
         while (rit2 != right_end) {
             ++rit1; ++rit2;
             combine.into_first(*rit1, *rit2);
-        } 
+        }
         right_end = rit1;
     }
 
@@ -507,7 +498,7 @@ namespace internal {
   typedef internal::Abs_le_pow2<Ceil_log2_abs_Integer> Abs_le_pow2;     \
   typedef internal::Sign_eps_log2<Integer, Abs_le_pow2, Sign>           \
   Sign_eps_log2                                                         \
-  
+
 // end #define
 
 // typedefs for Bitstream_descartes_rndl_tree{,_rep}
@@ -534,13 +525,16 @@ public:
     friend class internal::Bitstream_descartes_rndl_tree<TRAITS>;
     friend class internal::Bitstream_descartes_rndl_tree_rep<TRAITS>;
 
+    Bitstream_descartes_rndl_node(const Self&) = default;
+    Self& operator= (const Self&) = delete;
+
 private:
     // "node data" (set individually in subdivision)
     Integer lower_num_, upper_num_; // TODO use lower_num_, width_num_ instead
     long log_bdry_den_;
     Integer_vector coeff_; // wrt [lower_, upper_], approximate
     int min_var_, max_var_;
-    // "state data" (copied en bloc by .copy_state_from())
+    // "state data" (copied en block by .copy_state_from())
     long subdiv_tries_, subdiv_fails_;
     long recdepth_;
     long log_sep_, delta_log_sep_, log_eps_, log_C_eps_;
@@ -566,8 +560,6 @@ private:
         log_eps_       = n.log_eps_;
         log_C_eps_     = n.log_C_eps_;
     }
-  
-    Self& operator= (const Self&)=delete;
 }; // struct Bitstream_descartes_rndl_node
 
 
@@ -733,7 +725,7 @@ public:
     Node_iterator chld_first, chld_beyond;
     while (it != T.end()) {
         if (T.max_var(it) == 1) {
-            cout << "found [" << T.lower(it) << ", " << T.upper(it) << "]\n"; 
+            cout << "found [" << T.lower(it) << ", " << T.upper(it) << "]\n";
             ++it;
         } else {
             T.subdivide(it, chld_first, chld_beyond);
@@ -745,7 +737,7 @@ public:
     <b>Supplying a traits class</b>
 
     This class is actually a class template.
-    To use it, you need to instanciate it with a traits class
+    To use it, you need to instantiate it with a traits class
     that defines the following three types and the various
     functors on them listed below.
      - \c Coefficient: The type of coefficients supplied
@@ -758,7 +750,7 @@ public:
      - \c Bound:  \c lower() and \c upper() return
        interval boundaries in this type.  Must be \c Assignable.
        The canonical choice is \c NiX::Exact_float_number<Integer>.
-       If you never instanciate \c lower() and \c upper()
+       If you never instantiate \c lower() and \c upper()
        (maybe use \c boundaries() instead), you might be lucky
        and get away with typedef'ing this to \c void.
 
@@ -781,7 +773,7 @@ public:
      - \c Lower_bound_log2_abs: A \c UnaryFunction with signature
        <tt>long l = Lower_bound_log2_abs()(Coefficient x)</tt>.
        The result \c l must be a lower bound to log<sub>2</sub>(|<i>x</i>|).
-       If \c Coefficient posesses \c NiX::NT_traits::Floor_log2_abs,
+       If \c Coefficient possesses \c NiX::NT_traits::Floor_log2_abs,
        you can simply use that.
      - \c lower_bound_log2_abs_object(): A \c const member function
        taking no arguments and returning a function object
@@ -873,7 +865,7 @@ public:
     by trying randomly and checking.  This randomization means
     the same polynomial and same initial interval may give rise
     to different intervals each time this class is used.
-    As indicated in the paper, we favour subdivision ratios
+    As indicated in the paper, we favor subdivision ratios
     with a small denominator. Hence we first try denominator
     2 (subdivision at midpoint), then denominator 16, and
     only then the "proper" denominator prescribed by theory.
@@ -948,7 +940,7 @@ public:
             this->ptr()->node_list_.erase(n);
         }
     }
-        
+
 
     /*! \brief construct from initial interval and coefficients
      *
@@ -973,10 +965,10 @@ public:
     {
         CGAL_precondition(lower_num < upper_num);
         init_tree();
-        
+
     }
 
-    /*! 
+    /*!
      * This is needed for compatibility with other tree implementations
      * The initial interval is
      *  [-1, 1] / 2^(\c -log_bdry_den ).
@@ -989,7 +981,7 @@ public:
             const BitstreamDescartesRndlTreeTraits& traits
                                         = BitstreamDescartesRndlTreeTraits()
     )
-        : Base(Rep(Integer(-1), Integer(1), -log_bdry_den, 
+        : Base(Rep(Integer(-1), Integer(1), -log_bdry_den,
                    first, beyond, tag, traits))
     {
         init_tree();
@@ -1088,18 +1080,18 @@ public:
         this->ptr()->node_list_.erase(n);
     }
 
-    /*! \brief Replace traits class
+    /*! \brief replaces traits class
      */
     void set_traits(TRAITS& traits) {
 
-      this->ptr()->approximator_ 
+      this->ptr()->approximator_
         = traits.approximator_object();
-      this->ptr()->lower_bound_log2_abs_ 
+      this->ptr()->lower_bound_log2_abs_
         = traits.lower_bound_log2_abs_object();
 
     }
 
-    /*! \brief Returns a copy of this with its own representation
+    /*! \brief returns a copy of this with its own representation
      */
     Self make_unique() const {
       Self tmp = *this;
@@ -1276,7 +1268,7 @@ Bitstream_descartes_rndl_tree<BitstreamDescartesRndlTreeTraits>
         int children = 1;
         if (r_min_var > 0) {
             // create new node for right child
-            Node_iterator r = 
+            Node_iterator r =
                 this->ptr()->node_list_.insert(beyond, Node(degree(),
                             this->ptr()->splitpoint_num_,        // lower
                             n->upper_num_ << delta_log_bdry_den, // upper

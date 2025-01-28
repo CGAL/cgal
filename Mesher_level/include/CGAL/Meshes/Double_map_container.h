@@ -1,21 +1,12 @@
 // Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -36,13 +27,13 @@ namespace CGAL {
   namespace Meshes {
 
     template <typename Elt, class Quality>
-    class Double_map_container 
+    class Double_map_container
     {
     public:
       typedef Elt Element;
 
     protected:
-      // --- protected datas ---
+      // --- protected data ---
       Double_map<Element, Quality> m;
 
     public:
@@ -51,12 +42,25 @@ namespace CGAL {
         return m.empty();
       }
 
+#if CGAL_MESHES_DEBUG_DOUBLE_MAP
+      template <typename Element_type>
+      std::ostream& debug_element(std::ostream& os, const Element_type& e) {
+        return os << (void*)(e.operator->());
+      }
+
+      template <typename Cell_handle>
+      std::ostream& debug_element(std::ostream& os, const std::pair<Cell_handle, int>& e) {
+        return os << "Facet{" << (void*)(e.first.operator->()) << ", " << e.second << "}";
+      }
+#endif
+
       Element get_next_element_impl()
       {
         CGAL_assertion(!m.empty());
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "get_next_element_impl(" << &*(m.front()->second)
-		  << ")\n";
+        std::cerr << "get_next_element_impl(";
+        debug_element(std::cerr, m.front()->second);
+        std::cerr << ")\n";
 #endif
         return m.front()->second;
 
@@ -65,7 +69,9 @@ namespace CGAL {
       void add_bad_element(const Element& e, const Quality& q)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "add_bad_element(" << &*e << ")\n";
+        std::cerr << "add_bad_element(";
+        debug_element(std::cerr, e);
+        std::cerr << ")\n";
 #endif
         m.insert(e, q);
       }
@@ -78,7 +84,9 @@ namespace CGAL {
       void remove_element(const Element& e)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "remove_element(" << &*e << ")\n";
+        std::cerr << "remove_element(";
+        debug_element(std::cerr, e);
+        std::cerr << ")\n";
 #endif
         m.erase(e);
       }
@@ -86,10 +94,10 @@ namespace CGAL {
       typename Double_map<Element, Quality>::size_type
       size() const
       {
-	return m.size();
+        return m.size();
       }
     }; // end Double_map_container
-    
+
   } // end namespace Meshes
 } // end namespace CGAL
 

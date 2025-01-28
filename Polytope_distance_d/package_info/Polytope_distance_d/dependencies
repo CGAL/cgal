@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_hull_2
@@ -10,6 +11,7 @@ Distance_3
 Filtered_kernel
 HalfedgeDS
 Hash_map
+Homogeneous_kernel
 Installation
 Intersections_2
 Intersections_3
@@ -23,7 +25,6 @@ Number_types
 Optimisation_basic
 Polygon
 Polyhedron
-Polyhedron_IO
 Polytope_distance_d
 Profiling_tools
 Property_map
@@ -32,4 +33,3 @@ Random_numbers
 STL_Extension
 Stream_support
 TDS_2
-Triangulation_2

@@ -4,33 +4,22 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: CoreAux.h
  * Synopsis:
- *      Auxilliary functions
+ *      Auxiliary functions
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_COREAUX_H_
@@ -40,7 +29,7 @@
 #include <fstream>
 #include "CGAL/CORE/Impl.h"
 
-namespace CORE { 
+namespace CORE {
 
 #ifndef LONG_BIT // such as in Linux
   #define LONG_BIT (sizeof(long) * 8)
@@ -50,13 +39,13 @@ namespace CORE {
 // NOTES:
 // (1) CORE_EPS is used in our Floating Point Filter (Filter.h)
 // (2) 2^{-53} is called "unit roundoff" and
-// 	is the roundoff error for numbers in the range [1,2).
-//  	"Machine epsilon" is 2*CORE_EPS = 2^{-52}.  It is the
-//  	smallest gap between two normal machine numbers  --Chee 8/2003
+//         is the roundoff error for numbers in the range [1,2).
+//          "Machine epsilon" is 2*CORE_EPS = 2^{-52}.  It is the
+//          smallest gap between two normal machine numbers  --Chee 8/2003
 //
 // const double eps = (ldexp(1.0, -53)); // fails to link on SunPro
 #define CORE_EPS ((1.0/(1<<30))/(1<<23))
-// 
+//
 #define CORE_MACHINE_EPS ((1.0/(1<<30))/(1<<22))
 
 /// relEps is relative error for IEEE standard double, 1+2^{-52}.
@@ -167,17 +156,11 @@ CGAL_CORE_EXPORT double IntMantissa(double d);
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 CGAL_CORE_EXPORT int IntExponent(double d);
 
-/// Writes out an error or warning message in the local file CORE_DIAGFILE
-/** If last argument (err) is TRUE, then this is considered an error 
- *  (not just warning).  In this case, the message is also printed in
- *  std::cerr, using std::perror(). 
- *  */
-CGAL_CORE_EXPORT void core_error(std::string msg, std::string file, int lineno, bool err);
 
 /// This is for debugging messages
 inline void core_debug(std::string msg){
   std::cout << __FILE__ << "::" << __LINE__ << ": " << msg
-	    << std::endl;
+            << std::endl;
 }
 
 

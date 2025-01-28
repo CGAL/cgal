@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -24,6 +15,11 @@
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_POLYHEDRON_BUILDER_H
 
 #include <CGAL/license/Surface_mesher.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -80,7 +76,7 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
     const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
     builder.begin_surface(tr.number_of_vertices(),
-			  number_of_facets);
+                          number_of_facets);
     {
       // Finite vertices coordinates.
       Finite_facets_iterator fit = tr.finite_facets_begin();
@@ -122,17 +118,17 @@ public:
       // - find the facet with max z
       typename std::set<Facet>::const_iterator top_facet = oriented_set.begin();
       for(typename std::set<Facet>::const_iterator fit = oriented_set.begin();
-	  fit != oriented_set.end();
-	  ++fit)
+          fit != oriented_set.end();
+          ++fit)
       {
-	double top_z = 
-	  (top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 0))->point().z()
-	 + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 1))->point().z()
-	 + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 2))->point().z())/3.;
-	double z = 
-	  (fit->first->vertex(tr.vertex_triple_index(fit->second, 0))->point().z()
-	 + fit->first->vertex(tr.vertex_triple_index(fit->second, 1))->point().z()
-	 + fit->first->vertex(tr.vertex_triple_index(fit->second, 2))->point().z())/3.;
+        double top_z =
+          (top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 0))->point().z()
+         + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 1))->point().z()
+         + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 2))->point().z())/3.;
+        double z =
+          (fit->first->vertex(tr.vertex_triple_index(fit->second, 0))->point().z()
+         + fit->first->vertex(tr.vertex_triple_index(fit->second, 1))->point().z()
+         + fit->first->vertex(tr.vertex_triple_index(fit->second, 2))->point().z())/3.;
         if (top_z < z)
           top_facet = fit;
       }
@@ -147,47 +143,47 @@ public:
       //used to set indices of vertices
       std::map<Vertex_handle, int> V;
       int inum = 0;
-      
+
       for(typename std::set<Facet>::const_iterator fit =
-	    oriented_set.begin();
-	  fit != oriented_set.end();
-	  ++fit)
+            oriented_set.begin();
+          fit != oriented_set.end();
+          ++fit)
       {
-	int indices[3];
-	int index = 0;
-	for (int i=0; i<3; i++)
-	  indices[index++] = get_vertex_index(
+        int indices[3];
+        int index = 0;
+        for (int i=0; i<3; i++)
+          indices[index++] = get_vertex_index(
             builder, fit->first->vertex(tr.vertex_triple_index(fit->second, i)), V, inum
           );
-	builder.begin_facet();
-	  builder.add_vertex_to_facet(indices[0]);
-	  builder.add_vertex_to_facet(regular_orientation ? indices[1] : indices[2]);
-	  builder.add_vertex_to_facet(regular_orientation ? indices[2] : indices[1]);
-	builder.end_facet();
-	CGAL_assertion_code(++nb_facets);
+        builder.begin_facet();
+          builder.add_vertex_to_facet(indices[0]);
+          builder.add_vertex_to_facet(regular_orientation ? indices[1] : indices[2]);
+          builder.add_vertex_to_facet(regular_orientation ? indices[2] : indices[1]);
+        builder.end_facet();
+        CGAL_assertion_code(++nb_facets);
       }
       CGAL_assertion(nb_facets == number_of_facets);
-      // 	for( Finite_facets_iterator fit = tr.finite_facets_begin();
-      // 	     fit != tr.finite_facets_end(); ++fit)
-      // 	  if ((*fit).first->is_facet_on_surface((*fit).second)==true)
-      // 	  {
-      // 	    int indices[3];
-      // 	    int index = 0;
-      // 	    for (int i=0; i<3; i++)
-      // 	      std::cerr << ( indices[index++] = V[(*fit).first->vertex(tr.vertex_triple_index(fit->second, i))] ) << ", ";
-      // 	    std::cerr << "\n";
-      // 	    if( builder.test_facet(indices+0, indices+3) )
-      // 	      builder.add_facet(indices+0, indices+3);
-      // 	    else
-      // 	    {
-      // 	      builder.begin_facet();
-      // 	      builder.add_vertex_to_facet(indices[2]);
-      // 	      builder.add_vertex_to_facet(indices[1]);
-      // 	      builder.add_vertex_to_facet(indices[0]);
-      // 	      builder.end_facet();
-      // 	    }
-      // 	    CGAL_assertion_code(++nb_facets);
-      // 	  }
+      //         for( Finite_facets_iterator fit = tr.finite_facets_begin();
+      //              fit != tr.finite_facets_end(); ++fit)
+      //           if ((*fit).first->is_facet_on_surface((*fit).second)==true)
+      //           {
+      //             int indices[3];
+      //             int index = 0;
+      //             for (int i=0; i<3; i++)
+      //               std::cerr << ( indices[index++] = V[(*fit).first->vertex(tr.vertex_triple_index(fit->second, i))] ) << ", ";
+      //             std::cerr << "\n";
+      //             if( builder.test_facet(indices+0, indices+3) )
+      //               builder.add_facet(indices+0, indices+3);
+      //             else
+      //             {
+      //               builder.begin_facet();
+      //               builder.add_vertex_to_facet(indices[2]);
+      //               builder.add_vertex_to_facet(indices[1]);
+      //               builder.add_vertex_to_facet(indices[0]);
+      //               builder.end_facet();
+      //             }
+      //             CGAL_assertion_code(++nb_facets);
+      //           }
     }
     builder.end_surface();
   } // end operator()

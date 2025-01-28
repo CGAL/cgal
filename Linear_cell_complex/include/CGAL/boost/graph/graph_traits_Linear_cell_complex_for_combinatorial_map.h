@@ -1,20 +1,11 @@
 // Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -38,6 +29,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/iterator.h>
+#include <CGAL/assertions.h>
 
 #define CGAL_LCC_TEMPLATE_ARGS template<unsigned int d_, unsigned int ambient_dim, \
                                         class Traits_,                \
@@ -63,22 +55,22 @@ namespace internal
 {
 
 /// A struct to define edge based on halfedge.
-template <typename Dart_handle>
-struct EdgeHandle : Dart_handle
+template <typename Dart_descriptor>
+struct EdgeHandle : Dart_descriptor
 {
-  EdgeHandle() : Dart_handle(nullptr){}
-  explicit EdgeHandle(Dart_handle h): Dart_handle(h)
+  EdgeHandle() : Dart_descriptor(nullptr){}
+  explicit EdgeHandle(Dart_descriptor h): Dart_descriptor(h)
   {}
 
-  Dart_handle first_halfedge() const
+  Dart_descriptor first_halfedge() const
   { return *this; }
 
-  Dart_handle second_halfedge() const
+  Dart_descriptor second_halfedge() const
   {
-    assert(*this!=nullptr);
+    CGAL_assertion(*this!=nullptr);
     return (*this)->get_f(2);
   }
-  
+
   bool operator==(const EdgeHandle& h) const
   {
     return first_halfedge()==h.first_halfedge() ||
@@ -114,30 +106,30 @@ struct EdgeHandle : Dart_handle
 
 // make edge_descriptor hashable by default in Unique_hash_map
 namespace handle{
-  template<typename Dart_handle>
-  struct Hash_functor< EdgeHandle<Dart_handle> >
+  template<typename Dart_descriptor>
+  struct Hash_functor< EdgeHandle<Dart_descriptor> >
   {
     std::size_t
-    operator()(const EdgeHandle<Dart_handle>& edge)
+    operator()(const EdgeHandle<Dart_descriptor>& edge)
     { return hash_value(edge); }
   };
 } //end of namespace handle
 
 template <class CMap, typename Dart_Iterator>
-class CMap_dart_handle_edge_iterator 
+class CMap_dart_descriptor_edge_iterator
 {
 public:
-  CMap_dart_handle_edge_iterator(){}
+  CMap_dart_descriptor_edge_iterator(){}
 
-  typedef Dart_Iterator Iterator;    
+  typedef Dart_Iterator Iterator;
 
-  typedef typename CMap::Dart_handle Dart_handle;
+  typedef typename CMap::Dart_descriptor Dart_descriptor;
 
-  typedef CMap_dart_handle_edge_iterator<CMap, Dart_Iterator> Self; 
+  typedef CMap_dart_descriptor_edge_iterator<CMap, Dart_Iterator> Self;
 
   typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
   typedef typename std::iterator_traits<Iterator>::difference_type   difference_type;
-  typedef EdgeHandle<Dart_handle>                                    value_type;
+  typedef EdgeHandle<Dart_descriptor>                                    value_type;
   typedef value_type                                                 reference;
   typedef value_type                                                 pointer;
 
@@ -153,7 +145,7 @@ public:
 
   Self& operator++()
   {
-    typedef typename Dart_handle::CC CC;
+    typedef typename Dart_descriptor::CC CC;
     ++nt;
     // We need to test if we are at the end of the compact container.
     // (case where we were previously on the last element)
@@ -169,7 +161,7 @@ public:
     return tmp;
   }
 
-  CMap_dart_handle_edge_iterator(const Iterator& iter) :
+  CMap_dart_descriptor_edge_iterator(const Iterator& iter) :
     nt(iter)
   {}
 
@@ -183,36 +175,39 @@ template <class CMap>
 struct CMap_Base_graph_traits
 {
 
-public :  
+public :
   struct CMap_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                          public virtual boost::vertex_list_graph_tag,
-                                         public virtual boost::edge_list_graph_tag
+                                         public virtual boost::edge_list_graph_tag,
+                                         public virtual boost::adjacency_graph_tag
   {};
 
   // Expose types required by the boost::Graph concept.
-  typedef typename CMap::template Attribute_handle<0>::type vertex_descriptor;
-  typedef internal::EdgeHandle<typename CMap::Dart_handle>  edge_descriptor;
-  typedef typename CMap::template Attribute_handle<2>::type face_descriptor;
-  typedef typename CMap::Dart_handle                        halfedge_descriptor;
+  typedef typename CMap::template Attribute_descriptor<0>::type vertex_descriptor;
+  typedef internal::EdgeHandle<typename CMap::Dart_descriptor>  edge_descriptor;
+  typedef typename CMap::template Attribute_descriptor<2>::type face_descriptor;
+  typedef typename CMap::Dart_descriptor                        halfedge_descriptor;
 
   typedef boost::directed_tag directed_category;
-  typedef boost::allow_parallel_edge_tag edge_parallel_category; 
+  typedef boost::allow_parallel_edge_tag edge_parallel_category;
   typedef CMap_graph_traversal_category traversal_category;
 
   typedef Prevent_deref<typename CMap::template Attribute_range<0>::type::iterator> vertex_iterator;
   typedef Prevent_deref<typename CMap::template Attribute_range<2>::type::iterator> face_iterator;
   typedef Prevent_deref<typename CMap::Dart_range::iterator> halfedge_iterator;
-  
-  typedef internal::CMap_dart_handle_edge_iterator<CMap, typename CMap::Dart_range::iterator> edge_iterator;
-  
+
+  typedef internal::CMap_dart_descriptor_edge_iterator<CMap, typename CMap::Dart_range::iterator> edge_iterator;
+
   typedef typename CMap::size_type degree_size_type;
   typedef typename CMap::size_type halfedges_size_type;
   typedef typename CMap::size_type vertices_size_type;
   typedef typename CMap::size_type edges_size_type;
   typedef typename CMap::size_type faces_size_type;
-  
+
   typedef CGAL::In_edge_iterator<CMap>  in_edge_iterator;
   typedef CGAL::Out_edge_iterator<CMap> out_edge_iterator;
+
+  typedef CGAL::Vertex_around_target_iterator<CMap> adjacency_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex()   { return nullptr; }
@@ -231,7 +226,7 @@ namespace boost
   {
     typedef typename CGAL_LCC_TYPE::Point vertex_property_type;
   };
-  
+
   CGAL_LCC_TEMPLATE_ARGS
   struct graph_traits<CGAL_LCC_TYPE const>
     : public CGAL::CMap_Base_graph_traits<typename CGAL_LCC_TYPE >
@@ -241,13 +236,13 @@ namespace boost
 
 }// namespace boost
 
-namespace CGAL 
+namespace CGAL
 {
 
-//  
+//
 // 1) boost::Graph
 //
-  
+
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE >::vertices_size_type
 num_vertices(const CGAL_LCC_TYPE& lcc)
@@ -257,7 +252,7 @@ CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::edges_size_type
 num_edges(const CGAL_LCC_TYPE& lcc)
 { return lcc.number_of_darts()/2; }
-  
+
 // We suppose there are no loops.
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE >::degree_size_type
@@ -301,13 +296,13 @@ degree(typename boost::graph_traits<CGAL_LCC_TYPE >::face_descriptor f,
 }
 
 CGAL_LCC_TEMPLATE_ARGS
-typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor 
+typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor
 source(typename boost::graph_traits<CGAL_LCC_TYPE >::halfedge_descriptor h,
        const CGAL_LCC_TYPE& lcc)
 { return const_cast<CGAL_LCC_TYPE&>(lcc).template attribute<0>(h); }
 
 CGAL_LCC_TEMPLATE_ARGS
-typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor 
+typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor
 target(typename boost::graph_traits<CGAL_LCC_TYPE >::halfedge_descriptor h,
        const CGAL_LCC_TYPE& lcc)
 {
@@ -316,13 +311,13 @@ target(typename boost::graph_traits<CGAL_LCC_TYPE >::halfedge_descriptor h,
 }
 
 CGAL_LCC_TEMPLATE_ARGS
-typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor 
+typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor
 source(typename boost::graph_traits<CGAL_LCC_TYPE >::edge_descriptor e,
        const CGAL_LCC_TYPE& lcc)
 { return source(e.first_halfedge(), lcc); }
 
 CGAL_LCC_TEMPLATE_ARGS
-typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor 
+typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor
 target(typename boost::graph_traits<CGAL_LCC_TYPE >::edge_descriptor e,
        const CGAL_LCC_TYPE& lcc)
 { return target(e.first_halfedge(), lcc); }
@@ -346,18 +341,18 @@ halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor u,
     { return std::make_pair(it, true); }
   }
 
-  return std::make_pair(lcc.null_handle, false);
+  return std::make_pair(lcc.null_descriptor, false);
 }
 
 CGAL_LCC_TEMPLATE_ARGS
 std::pair<typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor, bool>
-edge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor u, 
-     typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v, 
+edge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor u,
+     typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
      const CGAL_LCC_TYPE& lcc)
 {
   std::pair<typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor,
             bool> res=halfedge(u,v,lcc);
-  return std::make_pair(internal::EdgeHandle<typename CGAL_LCC_TYPE::Dart_handle>(res.first),
+  return std::make_pair(internal::EdgeHandle<typename CGAL_LCC_TYPE::Dart_descriptor>(res.first),
                         res.second);
 }
 
@@ -399,6 +394,14 @@ out_edges(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
   return make_range(Iter(halfedge(v, lcc), lcc), Iter(halfedge(v, lcc), lcc, 1));
 }
 
+CGAL_LCC_TEMPLATE_ARGS
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE>::adjacency_iterator>
+adjacent_vertices(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
+                  const CGAL_LCC_TYPE& lcc)
+{
+  return CGAL::vertices_around_target(v,lcc);
+}
+
 //
 // 2) HalfedgeGraph
 //
@@ -415,7 +418,7 @@ typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor e,
          const CGAL_LCC_TYPE&)
 { return e.first_halfedge(); }
-  
+
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor v,
@@ -464,7 +467,7 @@ num_halfedges(const CGAL_LCC_TYPE& lcc)
 
 //
 // 4) MutableHalfedgeGraph
-// 
+//
 
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::vertex_descriptor
@@ -498,14 +501,14 @@ CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor
 add_edge(CGAL_LCC_TYPE& lcc)
 {
-  typename CGAL_LCC_TYPE::Dart_handle actu = lcc.create_dart();
+  typename CGAL_LCC_TYPE::Dart_descriptor actu = lcc.create_dart();
   lcc.template link_beta<2>(actu, lcc.create_dart());
   return typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor(actu);
 }
-  
+
 CGAL_LCC_TEMPLATE_ARGS
 void
-remove_edge(typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor e, 
+remove_edge(typename boost::graph_traits<CGAL_LCC_TYPE>::edge_descriptor e,
             CGAL_LCC_TYPE& lcc)
 {
   assert ( !lcc.template is_free<2>(e.first_halfedge()) );
@@ -538,9 +541,9 @@ face(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor h,
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f,
-         const CGAL_LCC_TYPE&) 
+         const CGAL_LCC_TYPE&)
 { return f->dart(); }
-  
+
 CGAL_LCC_TEMPLATE_ARGS
 CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE>::face_iterator>
 faces(const CGAL_LCC_TYPE& lcc)
@@ -555,7 +558,7 @@ CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE>::faces_size_type
 num_faces(const CGAL_LCC_TYPE& lcc)
 { return lcc.template attributes<2>().size(); }
-  
+
 CGAL_LCC_TEMPLATE_ARGS
 void reserve(CGAL_LCC_TYPE& g,
              typename boost::graph_traits<CGAL_LCC_TYPE>::vertices_size_type nv,
@@ -576,7 +579,7 @@ bool is_valid(const CGAL_LCC_TYPE& lcc, bool verbose=false)
 }
 
 //
-// 6) MutableFaceGraph 
+// 6) MutableFaceGraph
 //
 
 CGAL_LCC_TEMPLATE_ARGS
@@ -601,7 +604,7 @@ void remove_face(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f,
 { lcc.template erase_attribute<2>(f); }
 
 CGAL_LCC_TEMPLATE_ARGS
-void set_face(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor h,              
+void set_face(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor h,
               typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f,
               CGAL_LCC_TYPE& lcc)
 { lcc.template restricted_set_dart_attribute<2>(h, f); }
@@ -613,6 +616,31 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f
 { f->set_dart(h); }
 
 } // namespace CGAL
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+template <class Dart_descriptor>
+struct hash<CGAL::internal::EdgeHandle<Dart_descriptor>>
+{
+  std::size_t operator()(const CGAL::internal::EdgeHandle<Dart_descriptor>& edge) const
+  {
+    return hash_value(edge);
+  }
+};
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // std namespace
 
 #undef CGAL_LCC_TEMPLATE_ARGS
 #undef CGAL_LCC_TYPE

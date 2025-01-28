@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
@@ -35,8 +26,8 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 
 namespace CGAL {
 
@@ -73,10 +64,10 @@ public:
     Approximate_number_type m_vec[2]; // Approximate point x and y-coordinates.
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     NN_Point_2() { m_vec[0] = m_vec[1] = 0; }
 
-    /*! Constructor from a point. */
+    /*! constructs from a point. */
     NN_Point_2(const Point_2& p) :
       m_point(p)
     {
@@ -86,7 +77,7 @@ public:
       m_vec[1] = m_traits.approximate_2_object()(p, 1);
     }
 
-    /*! Constructor from a point and an its location in the arrangement. */
+    /*! constructs from a point and an its location in the arrangement. */
     NN_Point_2(const Point_2& p, const PL_result_type obj) :
       m_point(p),
       m_object(obj)
@@ -103,17 +94,17 @@ public:
     /* Get the object representing the location in the arrangement. */
     const PL_result_type& object() const { return (m_object); }
 
-    /*! Get an iterator for the approximate coordinates. */
+    /*! obtains an iterator for the approximate coordinates. */
     const Approximate_number_type* begin() const { return (m_vec); }
 
-    /*! Get a past-the-end iterator for the approximate coordinates. */
+    /*! obtains a past-the-end iterator for the approximate coordinates. */
     const Approximate_number_type* end() const { return (m_vec + 2); }
 
     /*! Equality operators. */
     bool operator== (const NN_Point_2& nnp) const
     { return (m_vec[0] == nnp.m_vec[0] && m_vec[1] == nnp.m_vec[1]); }
 
-    bool operator!= (const NN_Point_2& nnp) const 
+    bool operator!= (const NN_Point_2& nnp) const
     { return (m_vec[0] != nnp.m_vec[0] || m_vec[1] != nnp.m_vec[1]); }
   };
 
@@ -124,12 +115,12 @@ public:
   struct Construct_coord_iterator
   {
     typedef const Approximate_number_type*      result_type;
-    
-    /*! Get an iterator for the approximate coordinates. */
+
+    /*! obtains an iterator for the approximate coordinates. */
     const Approximate_number_type* operator()(const NN_Point_2& nnp) const
     { return (nnp.begin()); }
 
-    /*! Get a past-the-end iterator for the approximate coordinates. */
+    /*! obtains a past-the-end iterator for the approximate coordinates. */
     const Approximate_number_type* operator()(const NN_Point_2& nnp, int) const
     { return (nnp.end()); }
   };
@@ -146,30 +137,29 @@ protected:
   Tree* m_tree;        // The search tree.
   bool  m_is_empty;    // Is the search tree empty.
 
-public: 
+public:
   bool is_empty() const { return m_is_empty; }
-  
+
 private:
   typedef Arr_landmarks_nearest_neighbor<Arrangement_2>     Self;
 
-  /*! Copy constructor - not supported. */
+  /*! Copy constructor not supported. */
   Arr_landmarks_nearest_neighbor(const Self&);
 
-  /*! Assignment operator - not supported. */
+  /*! Assignment operator not supported. */
   Self& operator=(const Self&);
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_landmarks_nearest_neighbor () :
     m_tree(nullptr),
     m_is_empty(true)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   ~Arr_landmarks_nearest_neighbor() { clear(); }
 
-  /*!
-   * Allocate the search tree and initialize it with landmark points.
+  /*! allocates the search tree and initialize it with landmark points.
    * \param begin An iterator for the first landmark point.
    * \param end A past-the-end iterator for the landmark points.
    * \pre The search tree is not initialized.
@@ -190,8 +180,8 @@ public:
     }
   }
 
-  /*! Clear the search tree. */
-  void clear() 
+  /*! clears the search tree. */
+  void clear()
   {
     if (m_tree != nullptr)
       delete m_tree;
@@ -199,8 +189,7 @@ public:
     m_is_empty = true;
   }
 
-  /*!
-   * Find the nearest landmark point to the query point.
+  /*! finds the nearest landmark point to the query point.
    * \param q The query point.
    * \param obj Output: The location of the nearest landmark point in the
    *                    arrangement (a vertex, halfedge, or face handle).
@@ -219,11 +208,11 @@ public:
 
     // For some reason search.begin()->first fails
     const NN_Point_2&  nearest_p = (*(search.begin())).first;
-    obj = nearest_p.object();   
+    obj = nearest_p.object();
     return nearest_p.point();
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

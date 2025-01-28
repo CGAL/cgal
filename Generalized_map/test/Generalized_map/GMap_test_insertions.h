@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -31,7 +22,7 @@ bool check_number_of_cells_3(GMAP& gmap, unsigned int nbv, unsigned int nbe,
 template<typename GMAP>
 bool test_vertex_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.create_dart();
@@ -154,11 +145,11 @@ bool test_vertex_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_edge_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 4, 5, 2, 1, 1) )
     return false;
   gmap.clear();
@@ -167,7 +158,7 @@ bool test_edge_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_polygon(4);
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<3>(d1, d2);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 4, 5, 2, 2, 1) )
     return false;
   gmap.clear();
@@ -176,15 +167,8 @@ bool test_edge_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_polygon(4);
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<2>(d1, d2);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 6, 8, 3, 1, 1) )
-    return false;
-  gmap.clear();
-
-  trace_test_begin();
-  d1 = gmap.create_dart();
-  gmap.insert_dangling_cell_1_in_cell_2(d1);
-  if ( !check_number_of_cells_3(gmap, 2, 2, 1, 1, 1) )
     return false;
   gmap.clear();
 
@@ -237,8 +221,8 @@ bool test_edge_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_face_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
-  std::vector<typename GMAP::Dart_handle> v;
+  typename GMAP::Dart_descriptor d1, d2, d3;
+  std::vector<typename GMAP::Dart_descriptor> v;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
@@ -306,42 +290,42 @@ bool test_face_insertion(GMAP& gmap)
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 1>(gmap2, d1)!=3)
   {
     std::cout<<"Error: 1-degree is wrong: "<<CGAL::degree<GMAP, 1>(gmap2, d1)<<" instead of 3."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 2>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 2-degree is wrong: "<<CGAL::degree<GMAP, 2>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 1>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 1-codegree is wrong: "<<CGAL::codegree<GMAP, 1>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 2>(gmap2, d1)!=4)
   {
     std::cout<<"Error: 2-codegree is wrong: "<<CGAL::codegree<GMAP, 2>(gmap2, d1)<<" instead of 4."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 3>(gmap2, d1)!=6)
   {
     std::cout<<"Error: 3-codegree is wrong: "<<CGAL::codegree<GMAP, 3>(gmap2, d1)<<" instead of 6."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   gmap.clear(); v.clear();
 
   return true;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -24,6 +15,11 @@
 #define CGAL_SURFACE_MESHER_COMBINING_ORACLE_H
 
 #include <CGAL/license/Surface_mesher.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Combining_oracle.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -60,10 +56,10 @@ namespace CGAL {
 
     typedef typename Oracle_a::Intersection_point Intersection_point;
 
-    CGAL_static_assertion((::boost::is_same<
+    static_assert(::std::is_same<
                          Intersection_point,
-                         typename Oracle_b::Intersection_point>::value));
-                        
+                         typename Oracle_b::Intersection_point>::value);
+
 
     typedef ::CGAL::Multi_surface_3<typename Oracle_a::Surface_3,
       typename Oracle_b::Surface_3> Surface_3;
@@ -77,7 +73,7 @@ namespace CGAL {
     {
     }
 
-    class Intersect_3 
+    class Intersect_3
     {
       Oracle_a& oracle_a;
       Oracle_b& oracle_b;
@@ -86,7 +82,7 @@ namespace CGAL {
         : oracle_a(oracle_a), oracle_b(oracle_b)
       {
       }
-      
+
       Object operator()(const Surface_3& surface, Segment_3 s) const
       {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), s);
@@ -99,14 +95,14 @@ namespace CGAL {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), r);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), r);
-        return obj;  
+        return obj;
       }
-      
+
       Object operator()(const Surface_3& surface, const Line_3& l) const {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), l);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), l);
-        return obj;  
+        return obj;
       }
     }; // end nested class Intersect_3
 
@@ -122,11 +118,11 @@ namespace CGAL {
 
       // Random points
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& surface, 
-                                       OutputIteratorPoints out, 
+      OutputIteratorPoints operator() (const Surface_3& surface,
+                                       OutputIteratorPoints out,
                                        int n = 20) // WARNING: why 20?
       {
-        OutputIteratorPoints out2 = 
+        OutputIteratorPoints out2 =
           oracle_a.construct_initial_points_object()(surface.surface_a(),
                                                      out,
                                                      n);
@@ -135,7 +131,7 @@ namespace CGAL {
                                                           n);
       }
     }; // end nested class Construct_initial_points
-     
+
     Intersect_3 intersect_3_object() const
     {
       return Intersect_3(oracle_a, oracle_b);
@@ -148,7 +144,7 @@ namespace CGAL {
 
     bool is_in_volume(const Surface_3& surface, const Point_3& p) const
     {
-      return( oracle_a.is_in_volume(surface.surface_a(), p) || 
+      return( oracle_a.is_in_volume(surface.surface_a(), p) ||
               oracle_b.is_in_volume(surface.surface_b(), p) );
     }
   };  // end Combining_oracle

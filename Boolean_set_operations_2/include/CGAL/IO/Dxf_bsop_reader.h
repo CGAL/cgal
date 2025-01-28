@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -34,6 +25,7 @@
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -82,7 +74,7 @@ public:
    * \param simplify Should we simplify the polygons (in case the file
    *                 contains polygons that are not simple).
    * \return A pair of past-the-end iterators for both ranges.
-   */ 
+   */
   template <class PolygonOutputIterator,
             class PolygonWithHolesOutputIterator>
   std::pair<PolygonOutputIterator, PolygonWithHolesOutputIterator>
@@ -103,32 +95,22 @@ public:
     // Convert the circles, such that each circle becomes a simple polygon
     // with two edges (the upper and the lower half-circles).
     Traits_2                             traits;
-    typename Traits_2::Make_x_monotone_2 make_x_monotone = 
+    typename Traits_2::Make_x_monotone_2 make_x_monotone =
                                              traits.make_x_monotone_2_object();
     typename Dxf_circles_list::iterator  circ_it;
-    CGAL::Object                         obj_vec[3];
-    CGAL::Object                        *obj_begin = (obj_vec + 0);
-    CGAL::Object                        *obj_end;
-    X_monotone_curve_2                   cv1, cv2;
 
     for (circ_it = circles.begin(); circ_it != circles.end(); ++circ_it)
     {
       // Break the circle into two x-monotone circular arcs.
       const Dxf_circle_2&  dxf_circ = *circ_it;
       Curve_2              circ (dxf_circ.first, dxf_circ.second);
-
-      obj_end = make_x_monotone (circ, obj_begin);
-      CGAL_assertion(obj_end - obj_begin == 2);
-
-      CGAL::assign(cv1, obj_vec[0]);
-      CGAL::assign(cv2, obj_vec[1]);
-
-      // Generate the corresponding polygon.
       Circ_polygon_2       pgn;
-      pgn.push_back (cv1);
-      pgn.push_back (cv2);
-      *pgns = pgn;
-      ++pgns;
+
+      make_x_monotone (circ,
+        CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(pgn)));
+      CGAL_assertion(pgn.size() == 2);
+
+      *pgns++ = pgn;
     }
 
     circles.clear();
@@ -140,8 +122,6 @@ public:
     typename Dxf_polygon_2::iterator      curr, next;
     Point_2                               ps, pt;
     Circle_2                              supp_circ;
-    std::size_t                           n_subarcs;
-    std::size_t                           i;
 
     for (pgn_it = polygons.begin(); pgn_it != polygons.end(); ++pgn_it)
     {
@@ -162,7 +142,7 @@ public:
           pt = pgn_it->begin()->first;
 
         // Check whether a "bulge" is defined between the two vertices.
-        if (curr->second) 
+        if (curr->second)
         {
           // A non-zero bulge: ps and pt are connected by a circular arc.
           // We compute the center and the squared radius of its supporting
@@ -174,8 +154,8 @@ public:
           const FT x_coord = ((ps.x() + pt.x())/2) + common*(ps.y() - pt.y());
           const FT y_coord = ((ps.y() + pt.y())/2) + common*(pt.x() - ps.x());
           const FT sqr_bulge = CGAL::square(bulge);
-          const FT sqr_rad = CGAL::squared_distance(ps, pt) * 
-                             (1/sqr_bulge + 2 + sqr_bulge) / 16; 
+          const FT sqr_rad = CGAL::squared_distance(ps, pt) *
+                             (1/sqr_bulge + 2 + sqr_bulge) / 16;
 
           // Construct the arc: A positive bulge means the arc is
           // counterclockwise oriented and a negative bulge means that the arc
@@ -187,21 +167,14 @@ public:
             supp_circ = Circle_2 (Point_2 (x_coord, y_coord), sqr_rad,
                                   CGAL::CLOCKWISE);
 
-          Curve_2 circ_arc (supp_circ, 
+          Curve_2 circ_arc (supp_circ,
                             Arc_point_2 (ps.x(), ps.y()),
                             Arc_point_2 (pt.x(), pt.y()));
 
           // Break the arc into x-monotone subarcs (there can be at most
           // three subarcs) and add them to the polygon.
-          obj_end = make_x_monotone (circ_arc, obj_begin);
-          n_subarcs = (obj_end - obj_begin);
-          CGAL_assertion (n_subarcs <= 3);
-
-          for (i = 0; i < n_subarcs; i++)
-          {
-            if (CGAL::assign (cv1, obj_vec[i]))
-              pgn.push_back (cv1);
-          }
+          make_x_monotone (circ_arc,
+            CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(pgn)));
         }
         else
         {

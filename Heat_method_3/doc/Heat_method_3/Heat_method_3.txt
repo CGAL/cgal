@@ -22,7 +22,7 @@ as a gradient red/green corresponding to close/far from the source vertices.
 The heat method is highly efficient, since the algorithm
 boils down to two standard sparse linear algebra problems.  It is especially
 useful in situations where one wishes to perform repeated distance queries
-on a fixed domain, since precomputation done for the first query can be re-used.
+on a fixed domain, since precomputation done for the first query can be reused.
 
 As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from
@@ -33,7 +33,7 @@ generally improves the quality of the solution.  The cost of this preprocessing
 step roughly doubles the overall preprocessing cost.
 
 \cgalFigureBegin{landscape_meshes, landscape.jpg}
-  Isolines placed on a mesh without and with iDT remeshing. 
+  Isolines placed on a mesh without and with iDT remeshing.
 \cgalFigureEnd
 
 In the next section we give some examples. Section \ref sec_HM_definitions presents
@@ -41,7 +41,7 @@ the mathematical theory of the Heat method. The last section is about the \ref s
 
 Note that this package depends on the third party \ref thirdpartyEigen library (3.3 or greater), or another
 model of the concept `SparseLinearAlgebraWithFactorTraits_d`.
-This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
+This implementation is based on \cgalCite{cgal:cww-ghnac-13} , \cgalCite{cgal:fsbs-acidt-06} , and \cgalCite{cgal:sc-lntm-20}
 
 This package is related to the package \ref PkgSurfaceMeshShortestPath. Both deal with geodesic distances.
 The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.
@@ -223,8 +223,8 @@ The algorithm is as follows:
 
 The time complexity of the algorithm is determined primarily by the
 choice of linear solver.  In the current implementation, Cholesky
-prefactorization is roughly \f$ O(N^{1.5})\f$ and computation of distances is
-roughly \f$ O(N)\f$, where \f$ N\f$ is the number of vertices in the triangulation.
+prefactorization is roughly \cgalBigO{N^{1.5}} and computation of distances is
+roughly \cgalBigO{N}, where \f$ N\f$ is the number of vertices in the triangulation.
 The algorithm uses two \f$ N \times N\f$ matrices, both with the same pattern of
 non-zeros (in average 7 non-zeros
 per row/column).  The cost of computation is independent of the size
@@ -237,11 +237,11 @@ We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with V
 <center>
 Number of triangles  | Initialization iDT (sec) | Distance computation iDT (sec) | Initialization Direct (sec) | Distance computation Direct (sec)
 --------------------:| ----------- :            | ---------------- :             | ------------------:         | --------------:
-30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01                 
-200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11                 
-500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55                 
-1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1                  
- 
+30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01
+200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11
+500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55
+1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1
+
 </center>
 
 

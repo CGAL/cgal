@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
@@ -25,9 +16,6 @@
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/Polyhedron_3_fwd.h>
-#include <CGAL/basic.h>
-#include <algorithm>
-#include <cstddef>
 
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -40,7 +28,10 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Polyhedron_traits_3.h>
+#include <CGAL/iterator.h>
 
+#include <algorithm>
+#include <cstddef>
 
 namespace CGAL {
 
@@ -119,7 +110,8 @@ public:
 
     // the degree of the vertex, i.e., edges emanating from this vertex
     std::size_t vertex_degree() const {
-        return this->halfedge()->vertex_degree();
+        return this->halfedge()!=Halfedge_const_handle()
+               ? this->halfedge()->vertex_degree() : 0;
     }
     size_type degree() const { return vertex_degree(); } //backwards compatible
 
@@ -533,12 +525,18 @@ public:
     typedef typename HDS::Halfedge_iterator       Halfedge_iterator;
     typedef typename HDS::Face_iterator           Face_iterator;
 
+    typedef Iterator_range< Prevent_deref<Vertex_iterator> >   Vertex_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_iterator> > Halfedge_handles;
+
     typedef typename HDS::Vertex_const_handle     Vertex_const_handle;
     typedef typename HDS::Halfedge_const_handle   Halfedge_const_handle;
     typedef typename HDS::Face_const_handle       Face_const_handle;
     typedef typename HDS::Vertex_const_iterator   Vertex_const_iterator;
     typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator;
     typedef typename HDS::Face_const_iterator     Face_const_iterator;
+
+    typedef Iterator_range< Prevent_deref<Vertex_const_iterator> >   Vertex_const_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_const_iterator> > Halfedge_const_handles;
 
     // Auxiliary iterators for convenience
     typedef Project_point<Vertex>                 Proj_point;
@@ -547,11 +545,17 @@ public:
     typedef Iterator_project<Vertex_const_iterator, Proj_point,
         const Point_3&, const Point_3*>           Point_const_iterator;
 
+    typedef Iterator_range< Point_iterator > Points;
+    typedef Iterator_range< Point_const_iterator > Const_points;
+
     typedef Project_plane<Face>                   Proj_plane;
     typedef Iterator_project<Face_iterator, Proj_plane>
                                                   Plane_iterator;
     typedef Iterator_project<Face_const_iterator, Proj_plane,
         const Plane_3&, const Plane_3*>           Plane_const_iterator;
+
+    typedef Iterator_range< Plane_iterator > Planes;
+    typedef Iterator_range< Plane_const_iterator > Const_planes;
 
   typedef typename HDS::Edge_iterator Edge_iterator;
     typedef typename HDS::Edge_const_iterator Edge_const_iterator;
@@ -561,13 +565,19 @@ public:
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                   Edge_const_iterator;
   */
-  
+
+    typedef Iterator_range< Edge_iterator > Edges;
+    typedef Iterator_range< Edge_const_iterator > Const_edges;
+
     // All face related types get a related facet type name.
     typedef Face                                  Facet;
     typedef Face_handle                           Facet_handle;
     typedef Face_iterator                         Facet_iterator;
     typedef Face_const_handle                     Facet_const_handle;
     typedef Face_const_iterator                   Facet_const_iterator;
+
+    typedef Iterator_range< Prevent_deref<Facet_iterator> >       Facet_handles;
+    typedef Iterator_range< Prevent_deref<Facet_const_iterator> > Facet_const_handles;
 
     // Supported options by HDS.
     typedef typename VBase::Supports_vertex_halfedge
@@ -827,15 +837,31 @@ public:
 
     Vertex_iterator vertices_end() { return hds_.vertices_end();}
 
+    Vertex_handles vertex_handles() {
+        return make_prevent_deref_range(vertices_begin(), vertices_end());
+    }
+
     Halfedge_iterator halfedges_begin() { return hds_.halfedges_begin();}
         // iterator over all halfedges
 
     Halfedge_iterator halfedges_end() { return hds_.halfedges_end();}
 
+    Halfedge_handles halfedge_handles() {
+        return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+    }
+
     Facet_iterator facets_begin() { return hds_.faces_begin();}
         // iterator over all facets
 
     Facet_iterator facets_end() { return hds_.faces_end();}
+
+    // added for convenience
+    Facet_iterator faces_begin() { return hds_.faces_begin();}
+    Facet_iterator faces_end() { return hds_.faces_end();}
+
+    Facet_handles facet_handles() {
+        return make_prevent_deref_range(facets_begin(), facets_end());
+    }
 
     // The constant iterators and circulators.
 
@@ -846,27 +872,60 @@ public:
         return hds_.vertices_end();
     }
 
+    Vertex_const_handles vertex_handles() const {
+        return make_prevent_deref_range(vertices_begin(), vertices_end());
+    }
+
     Halfedge_const_iterator halfedges_begin() const {
       return hds_.halfedges_begin();
     }
     Halfedge_const_iterator halfedges_end() const {
         return hds_.halfedges_end();
     }
+
+    Halfedge_const_handles halfedge_handles() const {
+        return make_prevent_deref_range(halfedges_begin(), halfedges_end());
+    }
+
     Facet_const_iterator facets_begin() const { return hds_.faces_begin();}
     Facet_const_iterator facets_end()   const { return hds_.faces_end();}
 
-    // Auxiliary iterators for convinience
+    // added for convenience
+    Facet_const_iterator faces_begin() const { return hds_.faces_begin();}
+    Facet_const_iterator faces_end()   const { return hds_.faces_end();}
+
+    Facet_const_handles facet_handles() const {
+        return make_prevent_deref_range(facets_begin(), facets_end());
+    }
+
+    // Auxiliary iterators for convenience
     Point_iterator       points_begin()       { return vertices_begin();}
     Point_iterator       points_end()         { return vertices_end();}
+
+    Points points() {
+        return Points(points_begin(), points_end());
+    }
 
     Point_const_iterator points_begin() const { return vertices_begin();}
     Point_const_iterator points_end()   const { return vertices_end();}
 
+    Const_points points() const {
+        return Const_points(points_begin(), points_end());
+    }
+
     Plane_iterator       planes_begin()       { return facets_begin();}
     Plane_iterator       planes_end()         { return facets_end();}
 
+    Planes planes() {
+        return Planes(planes_begin(), planes_end());
+    }
+
     Plane_const_iterator planes_begin() const { return facets_begin();}
     Plane_const_iterator planes_end()   const { return facets_end();}
+
+    Const_planes planes() const {
+        return Const_planes(planes_begin(), planes_end());
+    }
 
     Edge_iterator        edges_begin()        { return halfedges_begin();}
         // iterator over all edges. The iterator refers to halfedges, but
@@ -875,8 +934,16 @@ public:
     Edge_iterator        edges_end()          { return halfedges_end();}
         // end of the range over all edges.
 
+    Edges edges() {
+        return Edges(edges_begin(), edges_end());
+    }
+
     Edge_const_iterator  edges_begin()  const { return halfedges_begin();}
     Edge_const_iterator  edges_end()    const { return halfedges_end();}
+
+    Const_edges edges() const {
+        return Const_edges(edges_begin(), edges_end());
+    }
 
     Traits&       traits()       { return m_traits; }
     const Traits& traits() const { return m_traits; }
@@ -1243,7 +1310,7 @@ public:
         // Three copies of the vertices and two new triangles will be
         // created. h,i,j will be incident to the first new triangle. The
         // returnvalue will be an halfedge iterator denoting the new
-        // halfegdes of the second new triangle which was h beforehand.
+        // halfedges of the second new triangle which was h beforehand.
         // Precondition: h,i,j are distinct, consecutive vertices of the
         // polyhedron and form a cycle: i.e. `h->vertex() == i->opposite()
         // ->vertex()', ..., `j->vertex() == h->opposite()->vertex()'. The
@@ -1389,10 +1456,10 @@ public:
 
     /// Erases the small connected components and the isolated vertices.
     ///
-    /// @commentheading Preconditions:
-    /// supports vertices, halfedges, and removal operation.
     ///
-    /// @commentheading Template Parameters:
+    /// \pre supports vertices, halfedges, and removal operation.
+    ///
+    /// *Parameters*
     /// @param nb_components_to_keep the number of large connected components to keep.
     ///
     /// @return the number of connected components erased (ignoring isolated vertices).
@@ -1406,7 +1473,7 @@ public:
         // removes all vertices, halfedges, and facets.
 
     void erase_all() { clear(); }
-        // equivalent to `clear()'. Depricated.
+        // equivalent to `clear()'. Deprecated.
 
 // Special Operations on Polyhedral Surfaces
 
@@ -1524,7 +1591,7 @@ public:
                      << std::endl;
                 break;
             }
-            // Distinct facets on each side of an halfegde.
+            // Distinct facets on each side of an halfedge.
             valid = valid && ( ! check_tag( Supports_halfedge_face()) ||
                                D.get_face(i) != D.get_face(i->opposite()));
             if ( ! valid) {

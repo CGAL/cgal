@@ -2,6 +2,7 @@ Algebraic_foundations
 Arrangement_on_surface_2
 Circulator
 Distance_2
+Distance_3
 Filtered_kernel
 HalfedgeDS
 Hash_map
@@ -12,7 +13,6 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
-Polygon
 Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
@@ -23,4 +23,3 @@ Surface_sweep_2
 TDS_2
 Triangulation_2
 Visibility_2
-Distance_3

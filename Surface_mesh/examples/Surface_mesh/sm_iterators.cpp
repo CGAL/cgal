@@ -30,7 +30,7 @@ int main()
 
   /* face_descriptor f = */ m.add_face(u,v,w,x);
 
-  { 
+  {
     std::cout << "all vertices " << std::endl;
 
     // The vertex iterator type is a nested type of the Vertex_range
@@ -38,29 +38,30 @@ int main()
 
     Mesh::Vertex_range r = m.vertices();
     // The iterators can be accessed through the C++ range API
-    vb = r.begin(); 
+    vb = r.begin();
     ve = r.end();
     // or the boost Range API
-    vb = boost::begin(r);
-    ve = boost::end(r);
+    vb = std::begin(r);
+    ve = std::end(r);
 
     // or with boost::tie, as the CGAL range derives from std::pair
     for(boost::tie(vb, ve) = m.vertices(); vb != ve; ++vb){
-            std::cout << *vb << std::endl;
+            // Print vertex index and vertex coordinates
+            std::cout << *vb << " " << m.point(*vb) << std::endl;
     }
-    
+
     // Instead of the classical for loop one can use
     // the boost macro for a range
     for(vertex_descriptor vd : m.vertices()){
       std::cout << vd << std::endl;
     }
 
-    // or the C++11 for loop. Note that there is a ':' and not a ',' as in BOOST_FOREACH 
+    // or the C++11 for loop. Note that there is a ':' and not a ',' as in BOOST_FOREACH
     for(vertex_descriptor vd : m.vertices()){
       std::cout << vd << std::endl;
     }
-    
+
   }
-  
+
   return 0;
 }

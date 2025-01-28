@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
@@ -35,7 +26,7 @@
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-  
+
 /// The Point_with_normal_3 class represents a 3D point with:
 /// - a position,
 /// - a normal (oriented).
@@ -129,7 +120,7 @@ private:
 /// Property map that accesses the normal vector from a Point_with_normal_3 object
 ///
 /// @heading Is Model for the Concepts:
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
@@ -137,6 +128,8 @@ private:
 template <class Gt>
 struct Normal_of_point_with_normal_map
 {
+  typedef Normal_of_point_with_normal_map<Gt> Self;
+
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
   typedef typename Gt::Vector_3 Vector; /// normal
 
@@ -146,13 +139,12 @@ struct Normal_of_point_with_normal_map
   typedef boost::lvalue_property_map_tag category;
 
   /// Access a property map element
-  value_type& operator[](key_type& pwn) const { return pwn.normal(); }
+  value_type& operator[](key_type& k) const { return k.normal(); }
 
-  typedef Normal_of_point_with_normal_map<Gt> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&,const key_type& k) {return k.normal();}
-  friend void put(const Self&,key_type& k, const value_type& v) {k.normal()=v;}
+  friend reference get(const Self&, const key_type& k) { return k.normal(); }
+  friend void put(const Self&, key_type& k, const value_type& v) { k.normal() = v; }
   /// @};}
 };
 

@@ -2,23 +2,14 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
-//                 Ron Wein     <wein@post.tau.ac.il>
+// Author(s) : Idit Haran   <haranidi@post.tau.ac.il>
+//             Ron Wein     <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_LANDMARKS_POINT_LOCATION_H
 #define CGAL_ARR_LANDMARKS_POINT_LOCATION_H
@@ -36,6 +27,7 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
+#include <CGAL/Arr_tags.h>
 
 #include <set>
 
@@ -44,51 +36,61 @@ namespace CGAL {
 /*! \class Arr_landmarks_point_location
  * A class that answers point-location queries on an arrangement using the
  * landmarks algorithm, namely by locating the (approximately) nearest
- * landmark point to the qury point and walking from it toward the query
+ * landmark point to the query point and walking from it toward the query
  * point.
  * This class-template has two parameters:
  * Arrangement corresponds to an arrangement-on-surface instantiation.
  * Generator is a class that generates the set of landmarks.
  */
 
-template <class Arrangement_,
-          class Generator_ = Arr_landmarks_vertices_generator<Arrangement_> >
-class Arr_landmarks_point_location
-{
+template <typename Arrangement_,
+          typename Generator_ = Arr_landmarks_vertices_generator<Arrangement_>>
+class Arr_landmarks_point_location {
 public:
-  typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef Generator_                                    Generator;
+  using Arrangement_2 = Arrangement_;
+  using Generator = Generator_;
+  using Geometry_traits_2 = typename Arrangement_2::Geometry_traits_2;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
 
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator
-                                                        Halfedge_const_iterator;
-  typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-    Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Outer_ccb_const_iterator
-    Outer_ccb_const_iterator;
-  typedef typename Arrangement_2::Inner_ccb_const_iterator
-    Inner_ccb_const_iterator;
-  typedef typename Arrangement_2::Isolated_vertex_const_iterator
-    Isolated_vertex_const_iterator;
+  using Vertex_const_iterator = typename Arrangement_2::Vertex_const_iterator;
+  using Halfedge_const_iterator =
+    typename Arrangement_2::Halfedge_const_iterator;
 
-  typedef typename Arrangement_2::Point_2               Point_2;
-  typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
+  using Halfedge_around_vertex_const_circulator =
+    typename Arrangement_2::Halfedge_around_vertex_const_circulator;
+  using Ccb_halfedge_const_circulator =
+    typename Arrangement_2::Ccb_halfedge_const_circulator;
+  using Outer_ccb_const_iterator =
+    typename Arrangement_2::Outer_ccb_const_iterator;
+  using Inner_ccb_const_iterator =
+    typename Arrangement_2::Inner_ccb_const_iterator;
+  using Isolated_vertex_const_iterator =
+    typename Arrangement_2::Isolated_vertex_const_iterator;
 
-  typedef Arr_point_location_result<Arrangement_2>      Result;
-  typedef typename Result::Type                         Result_type;
+  using Point_2 = typename Arrangement_2::Point_2;
+  using X_monotone_curve_2 = typename Arrangement_2::X_monotone_curve_2;
+
+  using Result = Arr_point_location_result<Arrangement_2>;
+  using Result_type = typename Result::Type;
 
   // Support cpp11::result_of
-  typedef Result_type                                   result_type;
+  using result_type = Result_type;
+
+private:
+  using Gt2 = Geometry_traits_2;
+  using Left_side_category =
+    typename internal::Arr_complete_left_side_category<Gt2>::Category;
+  using Right_side_category =
+    typename internal::Arr_complete_right_side_category<Gt2>::Category;
+  using Left_or_right_sides_category =
+    typename Arr_two_sides_category<Left_side_category,
+                                    Right_side_category>::result;
 
 protected:
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
+  using Traits_adaptor_2 = Arr_traits_basic_adaptor_2<Geometry_traits_2>;
 
   /*! \struct Less_halfedge_handle
    * Used to sort handles.
@@ -101,10 +103,10 @@ protected:
   typedef std::set<Halfedge_const_handle, Less_halfedge_handle> Halfedge_set;
 
   // Data members:
-  const Arrangement_2*    p_arr;     // The associated arrangement.
+  const Arrangement_2* p_arr;        // The associated arrangement.
   const Traits_adaptor_2* m_traits;  // Its associated traits object.
-  Generator*              lm_gen;    // The associated landmark generator.
-  bool                    own_gen;   // Indicates whether the generator
+  Generator* lm_gen;                 // The associated landmark generator.
+  bool own_gen;                      // Indicates whether the generator
                                      // has been locally allocated.
 
   template<typename T>
@@ -112,7 +114,7 @@ protected:
   inline Result_type default_result() const { return Result::default_result(); }
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_landmarks_point_location() :
     p_arr(nullptr),
     m_traits(nullptr),
@@ -120,34 +122,32 @@ public:
     own_gen(false)
   {}
 
-  /*! Constructor given an arrangement only. */
+  /*! constructs given an arrangement only. */
   Arr_landmarks_point_location(const Arrangement_2& arr) :
     p_arr(&arr),
     m_traits(static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits())),
     lm_gen(new Generator(arr)),         // allocate the landmarks generator.
     own_gen(true)
-  { }
+  {}
 
-  /*! Constructor given an arrangement, and landmarks generator. */
+  /*! constructs given an arrangement, and landmarks generator. */
   Arr_landmarks_point_location(const Arrangement_2& arr, Generator* gen) :
     p_arr(&arr),
     m_traits(static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits())),
     lm_gen(gen),
     own_gen(false)
-  { }
+  {}
 
-  /*! Destructor. */
-  ~Arr_landmarks_point_location()
-  {
+  /*! destructs. */
+  ~Arr_landmarks_point_location() {
     if (own_gen) {
       delete lm_gen;
       lm_gen = nullptr;
     }
   }
 
- /*! Attach an arrangement object (and a generator, if supplied). */
-  void attach(const Arrangement_2& arr, Generator* gen = nullptr)
-  {
+ /*! attaches an arrangement object (and a generator, if supplied). */
+  void attach(const Arrangement_2& arr, Generator* gen = nullptr) {
     // Keep a pointer to the associated arrangement.
     p_arr = &arr;
     m_traits = static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
@@ -172,9 +172,8 @@ public:
     }
   }
 
-  /*! Detach the instance from the arrangement object. */
-  void detach()
-  {
+  /*! detaches the instance from the arrangement object. */
+  void detach() {
     p_arr = nullptr;
     m_traits = nullptr;
 
@@ -183,8 +182,7 @@ public:
       lm_gen->detach();
   }
 
-  /*!
-   * Locate the arrangement feature containing the given point.
+  /*! locates the arrangement feature containing the given point.
    * \param p The query point.
    * \return An object representing the arrangement feature containing the
    *         query point. This object is either a Face_const_handle or a
@@ -193,7 +191,7 @@ public:
   result_type locate(const Point_2& p) const;
 
 protected:
-  /*! Walk from the given vertex to the query point.
+  /*! walks from the given vertex to the query point.
    * \param vh The given vertex handle.
    * \param p The query point.
    * \param crossed_edges In/Out: The set of edges crossed so far.
@@ -205,7 +203,7 @@ protected:
                                 const Point_2& p,
                                 Halfedge_set& crossed_edges) const;
 
-  /*! Locate an edge around a given vertex that is the predecessor of the
+  /*! locates an edge around a given vertex that is the predecessor of the
    * curve connecting the vertex to the query point in a clockwise order.
    * \param vh The vertex.
    * \param p The query point.
@@ -216,7 +214,7 @@ protected:
                                        const Point_2& p,
                                        bool& new_vertex) const;
 
-  /*! Walk from a point on a given halfedge to the query point.
+  /*! walks from a point on a given halfedge to the query point.
    * \param eh The given halfedge handle.
    * \param np The point that the walk starts from.
    * \param p The query point.
@@ -229,7 +227,7 @@ protected:
                               const Point_2& np,
                               const Point_2& p,
                               Halfedge_set& crossed_edges) const;
-  /*! In case the arrangement's curve contained in the segment
+  /*! handles the arrangement curve contained in the segment
    * from the nearest landmark to the query point
    * \param he The given halfedge handle.
    * \param p_is_left Is the query point the left endpoint of seg.
@@ -245,7 +243,7 @@ protected:
                                         const Point_2& p,
                                         Halfedge_set& crossed_edges) const;
 
-  /*! Walk from a point in a face to the query point.
+  /*! walks from a point in a face to the query point.
    * \param fh A halfedge handle that points to the face.
    * \param np The point that the walk starts from.
    * \param p The query point.
@@ -259,7 +257,7 @@ protected:
                               const Point_2& p,
                               Halfedge_set& crossed_edges) const;
 
-  /*! Find a halfedge on the given CCB that intersects the given x-monotone
+  /*! finds a halfedge on the given CCB that intersects the given x-monotone
    * curve, connecting the current landmark to the query point.
    * \param circ The CCB circulator.
    * \param seg The segment connecting the landmark and the query point.
@@ -271,7 +269,7 @@ protected:
    * \param new_vertex Output: if found a closer vertex to the query point.
    * \param cv_is_contained_in_seg Output: Whether cv is contained inside seg.
    * \return A handle to the halfedge (if no intersecting edge is found, the
-   *         function returns an ivalid halfedge handle).
+   *         function returns an invalid halfedge handle).
    */
   Halfedge_const_handle
   _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
@@ -284,7 +282,7 @@ protected:
                          bool& cv_is_contained_in_seg,
                          Vertex_const_handle& new_vertex) const;
 
-  /*! Return the halfedge that contains the query point.
+  /*! returns the halfedge that contains the query point.
    * \param he The halfedge handle.
    * \param crossed_edges In/Out: The set of edges crossed so far.
    * \param p The query point.
@@ -296,7 +294,7 @@ protected:
                         const Point_2& p,
                         bool& is_target) const;
 
-  /*! Check whether the given curve intersects a simple segment, which connects
+  /*! checks whether the given curve intersects a simple segment, which connects
    * the current landmark to the query point, an odd number of times.
    * \param cv The curve.
    * \param seg The segment connecting the landmark and the query point.
@@ -312,9 +310,62 @@ protected:
                                 bool& p_on_curve,
                                 bool& cv_and_seg_overlap,
                                 bool& cv_is_contained_in_seg) const;
+
+  //!
+  template <typename T>
+  std::pair<X_monotone_curve_2, Comparison_result>
+  construct_segment(const Point_2& p, const Point_2& q, T const& traits,
+                    ...) const {
+    X_monotone_curve_2 seg = traits.construct_x_monotone_curve_2_object()(p, q);
+    Comparison_result res = traits.compare_xy_2_object()(p, q);
+    return std::make_pair(seg, res);
+  }
+
+  //*!
+  template <typename T, typename = typename T::Compare_endpoints_xy_2>
+  std::pair<X_monotone_curve_2, Comparison_result>
+  construct_segment(const Point_2& p, const Point_2& q, T const& traits,
+                    int) const {
+    X_monotone_curve_2 seg = traits.construct_x_monotone_curve_2_object()(p, q);
+    Comparison_result res = traits.compare_endpoints_xy_2_object()(seg);
+    return std::make_pair(seg, res);
+  }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_all_sides_oblivious_tag) const
+  { return (m_traits->compare_x_2_object()(p, q) == EQUAL); }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_has_identified_side_tag) const {
+    auto is_on_y_identification = m_traits->is_on_y_identification_2_object();
+    if (is_on_y_identification(p)) {
+      return is_on_y_identification(q);
+    }
+    if (is_on_y_identification(q)) return false;
+    return (m_traits->compare_x_2_object()(p, q) == EQUAL);
+  }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_boundary_cond_tag) const {
+    auto param_space_in_x = m_traits->parameter_space_in_x_2_object();
+    switch (param_space_in_x(p)) {
+     case ARR_LEFT_BOUNDARY: return (param_space_in_x(q) == ARR_LEFT_BOUNDARY);
+     case ARR_RIGHT_BOUNDARY: return (param_space_in_x(q) == ARR_LEFT_BOUNDARY);
+     case ARR_INTERIOR: return (m_traits->compare_x_2_object()(p, q) == EQUAL);
+     default: CGAL_error();
+    }
+    CGAL_error();
+    return false;
+  }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_landmarks_pl_impl.h>

@@ -7,7 +7,7 @@ template <class Refs, class Point>
 struct My_vertex
     : public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>
 {
-    CGAL::Color color;
+    CGAL::IO::Color color;
     My_vertex() {} // repeat the required constructors
     My_vertex( const Point& p)
         : CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p) {}
@@ -29,6 +29,6 @@ typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 int main() {
     Polyhedron P;
     Halfedge_handle h = P.make_tetrahedron();
-    h->vertex()->color = CGAL::red();
+    h->vertex()->color = CGAL::IO::red();
     return 0;
 }

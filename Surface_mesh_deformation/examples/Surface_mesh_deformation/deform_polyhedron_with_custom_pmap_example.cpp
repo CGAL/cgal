@@ -26,7 +26,7 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_id_pmap, Hedge_id_pmap
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/plane.off");
+  std::ifstream input(CGAL::data_file_path("meshes/plane.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr<< "Cannot open  data/plane.off";

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -24,6 +15,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Types_generators.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
@@ -36,28 +31,28 @@ namespace CGAL {
         typedef typename Base::Complex_2_in_triangulation_3 C2T3;
         typedef typename C2T3::Triangulation Triangulation;
       public:
-	typedef Triangulation Type;
-	typedef Type type;
+        typedef Triangulation Type;
+        typedef Type type;
       }; // end Triangulation_generator<Base>
 
       template <typename Base>
       class Facet_generator {
         typedef typename Triangulation_generator<Base>::type Tr;
       public:
-	typedef typename Tr::Facet Type;
-	typedef Type type;
+        typedef typename Tr::Facet Type;
+        typedef Type type;
       }; // end Facet_generator<Base>
 
       template <typename Base>
       class Edge_generator {
         typedef typename Triangulation_generator<Base>::type Tr;
       public:
-	typedef typename Tr::Edge Type;
-	typedef Type type;
+        typedef typename Tr::Edge Type;
+        typedef Type type;
       }; // end Edge_generator<Base>
 
       template <typename Base, typename Self, typename Element,
-		typename PreviousLevel = Null_mesher_level>
+                typename PreviousLevel = Null_mesher_level>
       class Mesher_level_generator {
         typedef typename Base::Complex_2_in_triangulation_3 C2T3;
         typedef typename C2T3::Triangulation Triangulation;

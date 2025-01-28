@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -57,8 +48,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template<>
       struct Selector<float> {
-	typedef float Result;
-	typedef Tag_false Is_exact;
+        typedef float Result;
+        typedef Tag_false Is_exact;
       };
 
     template<>
@@ -176,7 +167,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     public: // modification:
       void reset();
       bool pivot(std::vector<const typename Traits::Sphere *>& l,
-  	       int& e,const int d);
+                 int& e,const int d);
 
     private: // modification:
       bool push(const Sphere& ball);
@@ -190,7 +181,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     private: // traits class:
       Traits& t;
 
-    private: // for internal consisteny checks:
+    private: // for internal consistency checks:
       #ifdef CGAL_MINIBALL_DEBUG
       // The following variable is true if and only if no ball has been
       // pushed so far, or is_spanning() has been called at least once and

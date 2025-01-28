@@ -1,12 +1,24 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Cell_attribute.h>
 
+#include "Face_graph_wrapper_test.h"
 #include "Combinatorial_map_2_test.h"
 #include "Combinatorial_map_3_test.h"
 #include <cstdlib>
 
+struct Min_items: public CGAL::Generic_map_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Map_2_dart_items
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -22,6 +34,10 @@ struct Map_2_dart_items
 
 struct Map_2_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -38,6 +54,10 @@ struct Map_2_dart_max_items_3
 
 struct Map_3_dart_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -52,6 +72,10 @@ struct Map_3_dart_items_3
 
 struct Map_3_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -68,7 +92,7 @@ struct Map_3_dart_max_items_3
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))  
+  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
   {}
   int mnb;
   std::string s;
@@ -78,9 +102,12 @@ struct MonInfo
   { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
 };
 
-class Another_map_3_dart_items_3
+struct Another_map_3_dart_items_3
 {
-public:
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -95,6 +122,10 @@ public:
 
 struct Map_dart_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   template < class Refs >
   struct Dart_wrapper
   {
@@ -109,6 +140,10 @@ struct Map_dart_items_4
 
 struct Map_dart_max_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+
   template < class Refs >
   struct Dart_wrapper
   {
@@ -123,13 +158,13 @@ struct Map_dart_max_items_4
   };
 };
 
-typedef CGAL::Combinatorial_map<2, CGAL::Generic_map_min_items > Map1;
+typedef CGAL::Combinatorial_map<2, Min_items> Map1;
 
-typedef CGAL::Combinatorial_map<2, Map_2_dart_items > Map2;
+typedef CGAL::Combinatorial_map<2, Map_2_dart_items> Map2;
 
 typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
 
-typedef CGAL::Combinatorial_map<3, CGAL::Generic_map_min_items > Map4;
+typedef CGAL::Combinatorial_map<3, Min_items> Map4;
 
 typedef CGAL::Combinatorial_map<3, Map_3_dart_items_3> Map5;
 
@@ -141,61 +176,15 @@ typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
 
-bool test_get_new_mark()
-{
-  cout << "***************************** TEST GET_NEW_MARK:"
-       << endl;
-
-  Map1 map;
-
-  Map1::size_type marks[Map1::NB_MARKS];
-  for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
-  {
-    try
-    {
-      marks[i] = map.get_new_mark();
-    }
-    catch (Map1::Exception_no_more_available_mark)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      return false;
-    }
-  }
-
-  cout << "Creation of NB_MARK marks: OK" << endl;
-
-  bool res = false;
-  Map1::size_type mark=0;
-  try
-  {
-    mark = map.get_new_mark();
-  }
-  catch (Map1::Exception_no_more_available_mark)
-  {
-    std::cout<<"The creation of an additional mark throw an exception: OK"<<std::endl;
-    res = true;
-  }
-
-  if ( !res )
-  {
-      std::cerr<<"PB we can reserve NB_MARK+1 !! mark, exit."<<std::endl;
-      map.free_mark(mark); // This is never supposed to occur.
-      return false;
-  }
-  
-  for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
-  {
-    map.free_mark(marks[i]);
-  }
-
-  cout << "***************************** TEST GET_NEW_MARK DONE" << endl;
-
-  return true;
-}
-
 int main()
 {
-  if ( !test_get_new_mark() )
+  if (!test_face_graph_wrapper())
+  {
+    std::cout<<"ERROR during test_face_graph_wrapper."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if ( !test_get_new_mark<Map1>() )
   {
     std::cout<<"ERROR during test_get_new_mark."<<std::endl;
     return EXIT_FAILURE;

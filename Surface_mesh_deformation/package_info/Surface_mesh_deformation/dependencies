@@ -11,11 +11,10 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
-Polygon_mesh_processing
 Profiling_tools
 Property_map
-Random_numbers
 STL_Extension
 Solver_interface
 Stream_support
 Surface_mesh_deformation
+Weights

@@ -1,31 +1,23 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H
 #define CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H 1
 
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/assertions.h>
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -39,65 +31,41 @@ namespace CGAL {
    * CGAL data structures.
    */
 
-  /** Import an embedded plane graph read into a flux into a
-   *  linear cell complex.
-   * @param alcc the linear cell complex where the graph will be imported.
-   * @param ais the istream where read the graph.
-   * @return A dart created during the convertion.
+
+  /**
+   * Imports a plane-embedded graph from a list of points and edges represented as pairs of vertex indices
    */
   template< class LCC >
-  typename LCC::Dart_handle import_from_plane_graph(LCC& alcc,
-                                                    std::istream& ais)
+  typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,
+                                                   const std::vector<typename LCC::Point>& vertices,
+                                                   const std::vector<size_t>& edge_indices)
   {
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
-
-    typedef typename LCC::Dart_handle Dart_handle;
+    typedef typename LCC::Traits::Construct_direction_2 Construct_direction_2;
+    typedef typename LCC::Traits::Construct_vector Construct_vector;
+    typedef typename LCC::Dart_descriptor Dart_descriptor;
     typedef typename LCC::Traits::Direction_2 Direction;
-    typedef typename std::list<Dart_handle>::iterator List_iterator;
-    typedef typename std::map<Direction, Dart_handle>::iterator LCC_iterator;
+    typedef typename std::map<Direction, Dart_descriptor>::iterator LCC_iterator;
+    typedef typename std::list<Dart_descriptor>::iterator List_iterator;
+    typedef typename LCC::Point Point;
 
-    // Arrays of vertices
-    std::vector< typename LCC::Vertex_attribute_handle > initVertices;
-    std::vector< std::list<Dart_handle> > testVertices;
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==2 );
+    CGAL_assertion(edge_indices.size() % 2 == 0);
 
-    std::string txt;
-    typename LCC::FT x, y;
-    Dart_handle d1=alcc.null_handle;
-    unsigned int v1, v2;
+    std::vector< typename LCC::Vertex_attribute_descriptor > initVertices;
+    initVertices.reserve(vertices.size());
+    std::transform(vertices.begin(),
+                   vertices.end(),
+                   std::back_inserter(initVertices),
+                   [&](const Point& point) {
+      return alcc.create_vertex_attribute(point);
+    });
 
-    unsigned int nbSommets = 0;
-    unsigned int nbAretes = 0;
+    std::vector< std::list<Dart_descriptor> > testVertices{vertices.size(), std::list<Dart_descriptor>()};
 
-    ais >> nbSommets >> nbAretes;
-    while (nbSommets > 0)
-    {
-      if (!ais.good())
-      {
-        std::cout << "Problem: file does not contain enough vertices."
-                  << std::endl;
-        return alcc.null_handle;
-      }
-
-      ais >> iformat(x) >> iformat(y);
-      initVertices.push_back(alcc.create_vertex_attribute
-                             (typename LCC::Point(x, y)));
-      testVertices.push_back(std::list<Dart_handle>());
-      --nbSommets;
-    }
-
-    while (nbAretes>0)
-    {
-      if (!ais.good())
-      {
-        std::cout << "Problem: file does not contain enough edges."
-                  << std::endl;
-        return alcc.null_handle;
-      }
-
-      // We read an egde (given by the number of its two vertices).
-      ais >> v1 >> v2;
-      --nbAretes;
-
+    Dart_descriptor d1 = alcc.null_descriptor;
+    for (std::size_t i = 0; (i + 1) < edge_indices.size(); i += 2) {
+      const auto& v1 = edge_indices[i];
+      const auto& v2 = edge_indices[i + 1];
       CGAL_assertion(v1 < initVertices.size());
       CGAL_assertion(v2 < initVertices.size());
 
@@ -108,13 +76,12 @@ namespace CGAL {
     }
 
     // LCC associating directions and darts.
-    std::map<Direction, Dart_handle> tabDart;
+    std::map<Direction, Dart_descriptor> tabDart;
     List_iterator it;
     LCC_iterator  it2;
 
-    Dart_handle first = alcc.null_handle;
-    Dart_handle prec = alcc.null_handle;
-    typename LCC::Point sommet1, sommet2;
+    Dart_descriptor first = alcc.null_descriptor;
+    Dart_descriptor prec = alcc.null_descriptor;
 
     for (unsigned int i=0; i<initVertices.size(); ++i)
     {
@@ -124,22 +91,22 @@ namespace CGAL {
         // 1. We insert all the darts and sort them depending on the direction
         tabDart.clear();
 
-        sommet1 = alcc.point(*it);
-        sommet2 = alcc.point(alcc.other_extremity(*it));
+        Point vertex1 = alcc.point(*it);
+        Point vertex2 = alcc.point(alcc.other_extremity(*it));
 
-        tabDart.insert(std::pair<Direction, Dart_handle>
-                       (typename LCC::Traits::Construct_direction_2()
-                        (typename LCC::Traits::Construct_vector()
-                         (sommet1,sommet2)), *it));
+        tabDart.insert(std::pair<Direction, Dart_descriptor>
+                       (Construct_direction_2()
+                        (Construct_vector()
+                        (vertex1,vertex2)), *it));
 
         ++it;
         while (it!=testVertices[i].end())
         {
-          sommet2 = alcc.point(alcc.other_extremity(*it));
-          tabDart.insert(std::pair<Direction, Dart_handle>
-                         (typename LCC::Traits::Construct_direction_2()
-                          (typename LCC::Traits::Construct_vector()
-                           (sommet1,sommet2)), *it));
+          vertex2 = alcc.point(alcc.other_extremity(*it));
+          tabDart.insert(std::pair<Direction, Dart_descriptor>
+                         (Construct_direction_2()
+                          (Construct_vector()
+                           (vertex1,vertex2)), *it));
           ++it;
         }
 
@@ -163,12 +130,70 @@ namespace CGAL {
     return first;
   }
 
+  /**
+   * Imports a plane-embedded graph from a file into a LinearCellComplex.
+   *
+   * @param alcc the linear cell complex where the graph will be imported.
+   * @param ais the istream where read the graph.
+   * @return A dart created during the conversion.
+   */
+  template< class LCC >
+  typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,
+                                                    std::istream& ais)
+  {
+    using FT = typename LCC::FT;
+    using Point = typename LCC::Point;
+
+    std::vector<Point> vertices;
+    unsigned int numVertices = 0;
+    unsigned int numEdges = 0;
+    ais >> numVertices >> numEdges;
+    while (numVertices > 0)
+    {
+      if (!ais.good())
+      {
+        std::cout << "Problem: file does not contain enough vertices."
+                  << std::endl;
+        return alcc.null_descriptor;
+      }
+
+      FT x, y;
+      ais >> IO::iformat(x) >> IO::iformat(y);
+      vertices.push_back(Point{x, y});
+      --numVertices;
+    }
+
+   std::vector<size_t> edge_indices;
+    while (numEdges>0)
+    {
+      if (!ais.good())
+      {
+        std::cout << "Problem: file does not contain enough edges."
+                  << std::endl;
+        return alcc.null_descriptor;
+      }
+
+      // We read an edge (given by the number of its two vertices).
+      unsigned int v1, v2;
+      ais >> v1 >> v2;
+      --numEdges;
+
+      CGAL_assertion(v1 < vertices.size());
+      CGAL_assertion(v2 < vertices.size());
+
+      edge_indices.push_back(v1);
+      edge_indices.push_back(v2);
+    }
+
+    return import_from_plane_graph(alcc, vertices, edge_indices);
+  }
+
   template < class LCC >
-  typename LCC::Dart_handle
+  typename LCC::Dart_descriptor
   import_from_plane_graph(LCC& alcc, const char* filename)
   {
     std::ifstream input(filename);
-    if (!input.is_open()) return alcc.null_handle;
+    if (!input.is_open()) return alcc.null_descriptor;
     return import_from_plane_graph(alcc, input);
   }
 
@@ -181,9 +206,7 @@ namespace CGAL {
     m_file_header = scanner;  // Remember file header after return.
 
     Linear_cell_complex_incremental_builder_3<LCC> B(alcc);
-    B.begin_surface(scanner.size_of_vertices(),
-                    scanner.size_of_facets(),
-                    scanner.size_of_halfedges());
+    B.begin_surface();
 
     typedef typename LCC::Point Point;
 
@@ -208,7 +231,7 @@ namespace CGAL {
     for (i=0; i<scanner.size_of_facets(); i++)
     {
       B.begin_facet();
-      std::size_t no;
+      std::size_t no=0;
       scanner.scan_facet(no, i);
       /* TODO manage errors
          if( ! in || B.error() || no < 3) {
@@ -216,7 +239,7 @@ namespace CGAL {
          std::cerr << " " << std::endl;
          std::cerr << "Polyhedron_scan_OFF<Traits>::" << std::endl;
          std::cerr << "operator()(): input error: facet " << i
-         << " has less than 3 vertices." << std::endl;
+         << " has fewer than 3 vertices." << std::endl;
          }
          B.rollback();
          in.clear( std::ios::badbit);
@@ -224,9 +247,12 @@ namespace CGAL {
          } */
       for (std::size_t j=0; j<no; j++)
       {
-        std::size_t index;
-        scanner.scan_facet_vertex_index(index, i);
-        B.add_vertex_to_facet(index);
+        std::size_t index=0;
+        scanner.scan_facet_vertex_index(index, j+1, i);
+        if(! in){
+          return false;
+        }
+        B.add_vertex_to_facet(static_cast<typename LCC::size_type>(index));
       }
       B.end_facet();
       scanner.skip_to_next_facet(i);
@@ -279,8 +305,8 @@ namespace CGAL {
     }
 
     File_header_OFF header(false);
-    header.set_binary(is_binary(out));
-    header.set_no_comments(!is_pretty(out));
+    header.set_binary(IO::is_binary(out));
+    header.set_no_comments(!IO::is_pretty(out));
     File_writer_OFF writer( header);
     writer.header().set_polyhedral_surface(true);
     writer.header().set_halfedges(alcc.number_of_darts());
@@ -289,22 +315,24 @@ namespace CGAL {
     writer.write_header(out,
                         alcc.number_of_vertex_attributes(),
                         alcc.number_of_halfedges(),
-                        alcc.template one_dart_per_cell<2>().size() );
+                        alcc.template one_dart_per_cell<2>().size());
 
-    typedef typename LCC::Vertex_attribute_range::iterator VCI;
+    typedef typename LCC::Vertex_attribute_range::const_iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
+
+    // TODO FOR index we do not need the Unique_hash_map.
+    size_t i=0;
+    CGAL::Unique_hash_map< typename LCC::Vertex_attribute_const_descriptor,
+        size_t, typename LCC::Hash_function > index;
     for (vit=alcc.vertex_attributes().begin(); vit!=vend; ++vit)
     {
       writer.write_vertex(::CGAL::to_double(vit->point().x()),
                           ::CGAL::to_double(vit->point().y()),
                           ::CGAL::to_double(vit->point().z()));
+      index[vit]=i++; // TODO for index
     }
 
-    typedef Inverse_index< VCI > Index;
-    Index index( alcc.vertex_attributes().begin(),
-                 alcc.vertex_attributes().end());
     writer.write_facet_header();
-
     typename LCC::size_type m = alcc.get_new_mark();
 
     for (typename LCC::Dart_range::iterator itall = alcc.darts().begin(),
@@ -313,11 +341,11 @@ namespace CGAL {
       if (!alcc.is_marked(itall, m))
       {
         std::size_t n = 0;
-        typename LCC::Dart_handle cur=itall;
+        typename LCC::Dart_descriptor cur=itall;
         do
         {
           ++n;
-          assert(alcc.is_next_exist(cur));
+          CGAL_assertion(alcc.is_next_exist(cur));
           cur=alcc.next(cur);
         }
         while(cur!=itall);
@@ -328,11 +356,10 @@ namespace CGAL {
         // Second we write the indices of vertices.
         do
         {
-          // TODO case with index
-          writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(cur))]);
+          writer.write_facet_vertex_index(index[alcc.vertex_attribute(cur)]); // TODO for index
           alcc.mark(cur, m);
           alcc.mark(alcc.other_orientation(cur), m); // for GMap only, for CMap
-          assert(alcc.is_next_exist(cur));           // marks the same dart twice
+          CGAL_assertion(alcc.is_next_exist(cur));           // marks the same dart twice
           cur=alcc.next(cur);
         }
         while(cur!=itall);
@@ -351,7 +378,7 @@ namespace CGAL {
     std::ofstream output(filename);
     if (!output.is_open())
     { return false; }
-    
+
     return write_off(alcc, output);
   }
 

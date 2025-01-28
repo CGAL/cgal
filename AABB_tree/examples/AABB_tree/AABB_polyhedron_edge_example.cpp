@@ -4,7 +4,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 
@@ -14,7 +14,7 @@ typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 int main()
@@ -26,12 +26,11 @@ int main()
     Polyhedron polyhedron;
     polyhedron.make_tetrahedron(p, q, r, s);
 
-    // constructs the AABB tree and the internal search tree for 
+    // constructs the AABB tree and the internal search tree for
     // efficient distance queries.
     Tree tree( CGAL::edges(polyhedron).first,
                CGAL::edges(polyhedron).second,
                polyhedron);
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a triangle query
     Triangle triangle_query(p,q,r);

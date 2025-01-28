@@ -4,7 +4,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Periodic_Triangulations
 \anchor chapterP2Triangulation2
 
@@ -23,7 +23,7 @@ do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. The occurring
 simplices of dimension up to two are called <I>vertex</I>, <I>edge</I>
 and <I>face</I>, respectively.
 
-\section P2Triangulation2secspace The Flat Torus 
+\section P2Triangulation2secspace The Flat Torus
 
 The 2D Periodic Triangulation package computes triangulations in the
 space \f$ \mathbb T_c^2\f$, which is defined as follows: Let \f$ c\in\mathbb
@@ -50,7 +50,7 @@ There are simplices containing points inside the original domain but
 also points outside it. The points outside the original domain are
 periodic copies of points inside the original domain. So, to
 specify a simplex we need points together with some additional
-information that determines the respective periodic copy of each point. 
+information that determines the respective periodic copy of each point.
 The set of representatives of an element of \f$ \mathbb T_c^2\f$ is a square
 point grid. We address each representative by a two-dimensional
 integer vector \f$ (o_x,o_y)\f$, called <I>offset</I>. It
@@ -65,7 +65,7 @@ Offsets in a face.
 \cgalFigureEnd
 
 
-\section P2Triangulation2secintro Representation 
+\section P2Triangulation2secintro Representation
 
 A triangulation is a collection of vertices and faces that are linked
 together through incidence and adjacency relations. Each face gives
@@ -101,7 +101,7 @@ space, which is a <I>9-sheeted covering space</I> of \f$ \mathbb T_c^2\f$
 (see \cgalFigureRef{P2Triangulation2figcovering}).
 
 \cgalFigureBegin{P2Triangulation2figcovering, one_cover.png, one_and_nine_cover.png}
-The same periodic triangulation in 1-sheeted covering space and 9-sheeted covering space. 
+The same periodic triangulation in 1-sheeted covering space and 9-sheeted covering space.
 \cgalFigureEnd
 
 The machinery that manages the copies is largely hidden from the
@@ -120,7 +120,7 @@ covering the `Vertex_handle`s and `Face_handle`s referencing
 deleted items becomes invalid.
 
 In the data structure each vertex stores the input point it
-corresponds to. If we are computing in 9-sheeted covering 
+corresponds to. If we are computing in 9-sheeted covering
 space, each vertex stores the representative <I>inside</I> the
 original domain it corresponds to. So, the 9 vertices corresponding
 to the same element of \f$ \mathbb T_c^2\f$ all store the same
@@ -134,7 +134,7 @@ A periodic triangulation is said to be `locally valid` iff
 data structure, is `locally valid`
 (see Chapter \ref Chapter_2D_Triangulation_Data_Structure)
 
-<B>(c)</B> Any cell has its vertices ordered according to positive
+<B>(c)</B> Any face has its vertices ordered according to positive
 orientation. See \cgalFigureRef{P2Triangulation2figorient}.
 
 \section P2T2_Delaunay Delaunay Triangulation
@@ -167,7 +167,7 @@ data structure at each operation. The locate queries are also
 overwritten to take advantage of the data structure for a fast
 processing.
 
-\section P2Triangulation2secdesign Software Design 
+\section P2Triangulation2secdesign Software Design
 
 We have chosen the prefix ``Periodic_2'' to emphasize that the
 triangulation is periodic in all two directions of space. There are
@@ -190,7 +190,7 @@ They are built as layers on top of a triangulation data structure,
 which stores their combinatorial structure. This separation between
 the geometry and the combinatorics is reflected in the software design
 by the fact that the triangulation classes take two template
-parameters: 
+parameters:
 - the <B>geometric traits</B> class, which provides the type of points
   to use as well as the elementary operations on them (predicates and
   constructions). Furthermore it contains the offset type. The concept
@@ -198,8 +198,7 @@ parameters:
   P2Triangulation2secTraits. The concepts that should be refined are
   `Periodic_2TriangulationTraits_2` (for `Periodic_2_triangulation_2`)
   and `Periodic_2DelaunayTriangulationTraits_2` (for
-  `Periodic_2_Delaunay_triangulation_2`) in the reference manual and
-.
+  `Periodic_2_Delaunay_triangulation_2`).
 - the <B>triangulation data structure</B> class, which stores the
   combinatorial structure, described in Section \ref
   P2Triangulation2sectds and in more detail in Chapter \ref
@@ -208,7 +207,7 @@ parameters:
   `Periodic_2TriangulationFaceBase_2` and
   `Periodic_2TriangulationVertexBase_2` as template parameters.
 
-\subsection P2Triangulation2secTraits The Geometric Traits Parameter 
+\subsection P2Triangulation2secTraits The Geometric Traits Parameter
 
 The first template parameter of the periodic triangulation class
 `Periodic_2_triangulation_2<Traits, Tds>` is the geometric traits
@@ -251,28 +250,29 @@ segments, triangles, and tetrahedra are used.
 The second parameter `Periodic_2Offset_2` defaults to
 `Periodic_2_offset_2`.
 
-\subsection P2Triangulation2sectds The Triangulation Data Structure Parameter 
+\subsection P2Triangulation2sectds The Triangulation Data Structure Parameter
 
 The second template parameter of the main classes
 `Periodic_2_triangulation_2` and
 `Periodic_2_Delaunay_triangulation_2` is a
-triangulation data structure class. This class can be seen as a container for
+triangulation data structure class. This class must be a model of the concept
+`TriangulationDataStructure_2`, which describes requirements for the class to be a container for
 the faces and vertices maintaining incidence and adjacency relations (see
-Chapter \ref Chapter_2D_Triangulation_Data_Structure). A model of this triangulation data structure is
-`Triangulation_data_structure_2`, and it is described by the
-`TriangulationDataStructure_2` concept. This model is itself
+Chapter \ref Chapter_2D_Triangulation_Data_Structure). In addition, the concepts
+`TriangulationDataStructure_2::Vertex` and `TriangulationDataStructure_2::Face` are extended
+to support periodicity: the vertex and face must be models of
+`Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
+A model of such concept is `CGAL::Triangulation_data_structure_2`. It is
 parameterized by a vertex base class and a face base class, which gives the
-possibility to customize the vertices and cells used by the triangulation data
+possibility to customize the vertices and faces used by the triangulation data
 structure, and hence by the geometric triangulation using it.
-To represent periodic triangulations the cell base and vertex base
-classes need to meet the concepts
-`Periodic_2TriangulationFaceBase_2` and
-`Periodic_2TriangulationVertexBase_2`.
+Basic models of the vertex and face concepts are provided: `CGAL::Periodic_2_triangulation_vertex_base_2`
+and `CGAL::Periodic_2_triangulation_face_base_2`.
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by
 the user unless he wants to use a different triangulation data
-structure or a different vertex or cell base class.
+structure or a different vertex or face base class.
 
 \subsection P2T2FlexDesign Flexibility of the Design
 
@@ -284,7 +284,7 @@ way. Also the classes `Triangulation_vertex_base_with_info_2` and
 `Triangulation_face_base_with_info_2` can be reused directly, see
 also Example \ref P2T2ExampleColor.
 
-\section P2Triangulation2secexamples Examples 
+\section P2Triangulation2secexamples Examples
 
 \subsection P2T2ExampleBasic Basic example
 
@@ -301,14 +301,14 @@ the triangulation data structure.
 The following two examples show how the user can plug his own vertex
 base in a triangulation. Changing the face base is similar.
 
-\subsubsection P2T2ExampleColor Adding a color 
+\subsubsection P2T2ExampleColor Adding a color
 
 If the user does not need to add a type in a vertex that depends on
 the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
 `Face_handle`), he can use the
 `Triangulation_vertex_base_with_info_2` class to add his own
 information easily in the vertices. The example below shows how to
-add a `CGAL::Color` this way.
+add a `CGAL::IO::Color` this way.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_colored_vertices.cpp}
 
@@ -394,18 +394,38 @@ in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 \image html p2dt2_performance.png
 \image latex p2dt2_performance.png
 
+\section P2T2_Draw_Periodic_Triangulation Draw a 2D Periodic Triangulation
+
+A 2D periodic triangulation can be visualized by calling the \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink function as shown in the following example. This function opens a new window showing the given Periodic Triangulation. Elements of the periodic triangulation can be viewed in four different modes:
+
+\cgalExample{Periodic_2_triangulation_2/draw_periodic_2_triangulation_2.cpp}
+
+- <B>STORED</B> Display all geometric primitives as they are stored in Triangulation_data_structure_2;
+- <B>UNIQUE</B> Display only one representative of each geometric primitive even if the triangulation is computed in multiply sheeted covering space;
+- <B>STORED_COVER_DOMAIN</B> Same as STORED but also display  all primitives whose intersection with the original domain of the current covering space is non-empty;
+- <B>UNIQUE_COVER_DOMAIN</B> Same as UNIQUE but also display all primitives whose intersection with the original domain of the current covering space is non-empty.
+
+The domain can also be visualized by a key press. To see how to visualize the Periodic Triangulation in various modes, press key H when the viewer window is active and go to Keyboard tab. See \cgalFigureRef{P2Triangulation2figdraw1} and \cgalFigureRef{P2Triangulation2figdraw2}.
+
+\cgalFigureBegin{P2Triangulation2figdraw1, unique.png, unique-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Unique(left) and Unique Cover Domain(right). The window allows to navigate through the 2D scene.
+\cgalFigureEnd
+\cgalFigureBegin{P2Triangulation2figdraw2, stored.png, stored-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Stored(left) and Stored Cover Domain(right).
+\cgalFigureEnd
+
 \section P2T2_Design Design and Implementation History
 
 The periodic 2D-triangulation is based on the 2D triangulation package
 developed by Mariette Yvinec and inspired by the periodic 3D-triangulation package
 developed by Manuel Caroli and Monique Teillaud. The periodic
-3D-triangulation package is described in Manuel's PhD thesis 
+3D-triangulation package is described in Manuel's PhD thesis
 \cgalCite{cgal:c-tpsos-10} Triangulating Point Sets in Orbit Spaces and \cgalCite{cgal:ct-c3pt-09}.
 
 In 2009, Nico Kruithof started implementation of the
 `Periodic_2_triangulation_2` package.
 
-*/ 
+*/
 } /* namespace CGAL */
 
 \\\\\\\\\\\\

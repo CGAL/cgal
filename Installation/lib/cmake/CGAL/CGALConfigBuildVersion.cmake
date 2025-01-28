@@ -1,0 +1,1 @@
+set(CGAL_BUILD_VERSION 0)

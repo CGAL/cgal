@@ -1,95 +1,55 @@
 //! \file examples/Arrangement_on_surface_2/bgl_primal_adapter.cpp
 // Adapting an arrangement to a BGL graph.
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
+#include <vector>
+
+#include <CGAL/config.h>
+
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/property_map/vector_property_map.hpp>
+
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_index_map.h>
-
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
-
 #include <CGAL/property_map.h>
 
-typedef CGAL::Cartesian<CGAL::Exact_rational>           Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
-typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::X_monotone_curve_2                    Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
-typedef CGAL::Arr_vertex_index_map<Arrangement_2>       Arr_vertex_index_map;
+#include "arr_exact_construction_segments.h"
+#include "Edge_length.h"
 
-// A functor used to compute the length of an edge.
-class Edge_length_func
-{
-public:
+using Vertex_index_map = CGAL::Arr_vertex_index_map<Arrangement>;
+using My_edge_length = Edge_length<Arrangement>;
 
-  // Boost property type definitions:
-  typedef boost::readable_property_map_tag        category;
-  typedef double                                  value_type;
-  typedef value_type                              reference;
-  typedef Arrangement_2::Halfedge_handle          key_type;
-
-  double operator()(Arrangement_2::Halfedge_handle e) const
-  {
-    const double     x1 = CGAL::to_double (e->source()->point().x());
-    const double     y1 = CGAL::to_double (e->source()->point().y());
-    const double     x2 = CGAL::to_double (e->target()->point().x());
-    const double     y2 = CGAL::to_double (e->target()->point().y());
-    const double     diff_x = x2 - x1;
-    const double     diff_y = y2 - y1;
-
-    return std::sqrt(diff_x*diff_x + diff_y*diff_y);
-  }
-};
-
-double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
-{
-  return edge_length(e);
-}
-
-
-
-int main()
-{
-  Arrangement_2   arr;
-
+int main() {
   // Construct an arrangement of seven intersecting line segments.
-  // We keep a handle for the vertex v_0 that corresponds to the point (1,1).
-  Arrangement_2::Halfedge_handle  e =
-    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1),
-                                                   Point_2 (7, 1)));
-  Arrangement_2::Vertex_handle    v0 = e->source();
-  insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
-  insert (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
-  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
-  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
-  insert (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
+  // We keep a handle for the vertex v0 that corresponds to the point (1,1).
+  Point p1(1, 1), p2(1, 4), p3(2, 2), p4(3, 7), p5(4, 4), p6(7, 1), p7(9, 3);
+  Arrangement arr;
+  Segment s(p1, p6);
+  Arrangement::Halfedge_handle e = insert_non_intersecting_curve(arr, s);
+  Arrangement::Vertex_handle v0 = e->source();
+  insert(arr, Segment(p1, p4));  insert(arr, Segment(p2, p6));
+  insert(arr, Segment(p3, p7));  insert(arr, Segment(p3, p5));
+  insert(arr, Segment(p6, p7));  insert(arr, Segment(p4, p7));
 
   // Create a mapping of the arrangement vertices to indices.
-  Arr_vertex_index_map index_map(arr);
+  Vertex_index_map index_map(arr);
+
+  // Create a property map based on std::vector to keep the result distances.
+  boost::vector_property_map<Number_type, Vertex_index_map>
+    dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
 
   // Perform Dijkstra's algorithm from the vertex v0.
-  Edge_length_func edge_length;
+  My_edge_length edge_length;
+  boost::dijkstra_shortest_paths(arr, v0, boost::vertex_index_map(index_map).
+                                 weight_map(edge_length).distance_map(dist_map).
+                                 distance_zero(Number_type(0)).
+                                 distance_inf(Number_type(1000)));
 
-  boost::vector_property_map<double, Arr_vertex_index_map> dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
-
-
-
-  boost::dijkstra_shortest_paths(arr, v0,
-                                 boost::vertex_index_map(index_map).
-                                 weight_map(edge_length).
-                                 distance_map(dist_map));
-
-  // Print the results:
-  Arrangement_2::Vertex_iterator      vit;
-
-  std::cout << "The distances of the arrangement vertices from ("
-            << v0->point() << ") :" << std::endl;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  // Print the distance of each vertex from v0.
+  std::cout << "The graph distances of the arrangement vertices from ("
+            << v0->point() << ") :\n";
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
     std::cout << "(" << vit->point() << ") at distance "
-              << dist_map[vit] << std::endl;
+              << CGAL::to_double(dist_map[vit]) << std::endl;
 
   return 0;
 }

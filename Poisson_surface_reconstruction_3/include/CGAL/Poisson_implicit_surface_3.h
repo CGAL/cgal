@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU
 
@@ -36,7 +27,7 @@ namespace CGAL {
     typename GT,
     typename Function_
     >
-  class Poisson_implicit_surface_3 
+  class Poisson_implicit_surface_3
   {
   public:
     typedef GT Geom_traits;
@@ -53,19 +44,19 @@ namespace CGAL {
       Self> Surface_mesher_traits_3;
 
     Poisson_implicit_surface_3(Function f,
-		       const Sphere_3 bounding_sphere,
-		       const FT error_bound = FT(1e-3),
-		       Geom_traits gt = Geom_traits())
+                       const Sphere_3 bounding_sphere,
+                       const FT error_bound = FT(1e-3),
+                       Geom_traits gt = Geom_traits())
       : func(f),
-	sphere(bounding_sphere),
-	gt(gt)
+        sphere(bounding_sphere),
+        gt(gt)
     {
       squared_error = error_bound * error_bound;
-      squared_error = squared_error * 
+      squared_error = squared_error *
         gt.compute_squared_radius_3_object()(bounding_sphere);
     }
 
-    FT operator()(Point p) const
+    FT operator()(const Point& p) const
     {
       return func(p);
     }
@@ -111,25 +102,16 @@ namespace CGAL {
   template <typename GT, typename Function>
   Poisson_implicit_surface_3<GT, Function>
   make_implicit_surface_3(GT, Function f,
-			  typename GT::Sphere_3 sphere,
-			  typename GT::FT error_bound)
+                          typename GT::Sphere_3 sphere,
+                          typename GT::FT error_bound)
   {
     typedef Poisson_implicit_surface_3<GT, Function> surface;
     return surface(f, sphere, error_bound);
   }
 
-//   template <typename GT, typename Function>
-//   struct Surface_mesh_traits_generator_3<Poisson_implicit_surface_3<GT, Function> >
-//   {
-//     typedef Poisson_implicit_surface_3<GT, Function> Surface_type;
-//     typedef typename Surface_mesher::Poisson_implicit_surface_oracle_3<GT,
-// 							     Surface_type> Type;
-//     typedef Type type; // Boost meta-programming compatibility
-//   };
-
   // non documented class
   template <typename FT, typename Point>
-  class Poisson_implicit_function_wrapper : public CGAL::cpp98::unary_function<Point, FT> 
+  class Poisson_implicit_function_wrapper : public CGAL::cpp98::unary_function<Point, FT>
   {
     typedef FT (*Poisson_implicit_function)(FT, FT, FT);
 
@@ -138,7 +120,7 @@ namespace CGAL {
   public:
     Poisson_implicit_function_wrapper(Poisson_implicit_function f) : function(f) {}
 
-    FT operator()(Point p) const
+    FT operator()(const Point& p) const
     {
       return function(p.x(), p.y(), p.z());
     }

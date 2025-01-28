@@ -1,20 +1,11 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Philipp Moeller
 
@@ -28,9 +19,6 @@
 
 #include <boost/operators.hpp>
 #include <boost/concept_check.hpp>
-
-#include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -55,23 +43,20 @@ public:
 
   typedef typename I__traits::iterator_category iterator_category;
 
-  typedef typename 
-  boost::mpl::if_c<  Prevent_deref
-                   , C
-                   , typename C::value_type
-                  >::type             value_type;
+  typedef std::conditional_t<  Prevent_deref
+                             , C
+                             , typename C::value_type>
+                                                         value_type;
 
   typedef typename C::difference_type difference_type;
-  typedef typename 
-  boost::mpl::if_c<  Prevent_deref
-                   , C&
-                   , typename C::reference
-                  >::type             reference;
-  typedef typename 
-  boost::mpl::if_c<  Prevent_deref
-                   , C*
-                   , typename C::reference
-                  >::type             pointer;
+  typedef std::conditional_t<  Prevent_deref
+                             , C&
+                             , typename C::reference
+                            >             reference;
+  typedef std::conditional_t<  Prevent_deref
+                             , C*
+                             , typename C::reference
+                            >             pointer;
 
   OM_iterator_from_circulator(){}
 
@@ -89,7 +74,7 @@ public:
     CGAL_assertion( m_anchor == i.m_anchor);  // same anchor?
     return (done() && i.done()) || (((!done()) && (!i.done())) && ( current == i.current));
   }
-  
+
   bool operator!=( const Self& i) const {
     return !(*this == i);
   }
@@ -101,12 +86,12 @@ public:
 // templates as a work-around.
 private:
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<Prevent_deref_, reference>
   indirection() const {
     return const_cast<Self*>(this)->current;
   }
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<!Prevent_deref_, reference>
   indirection() const {
     return *current;
   }
@@ -114,15 +99,15 @@ public:
   reference operator*() const {
     return indirection<Prevent_deref>();
   }
-  
+
 private:
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<!Prevent_deref_, pointer>
   structure_dereference() {
     return &(*current);
   }
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<Prevent_deref_, pointer>
   structure_dereference() {
     return &current;
   }

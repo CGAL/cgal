@@ -1,32 +1,25 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_SPHERE_3_H
 #define CGAL__TEST_CLS_SPHERE_3_H
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -39,7 +32,7 @@ _test_cls_sphere_3(const R& )
  typename R::Sphere_3  ic;
  CGAL::Sphere_3<R> c0;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_floating_point<FT>::value;
  RT n0 =  0;
  RT n1 = 16;
  RT n2 = -4;
@@ -95,11 +88,11 @@ _test_cls_sphere_3(const R& )
  assert( cc != c8 );
  assert( cc == c7 );
 
- assert( c5.center() == p3 );
+ assert( c5.center() == p3 || nonexact);
  assert( cc.center() == p3 );
  assert( c5.squared_radius() == FT( n9 ) );
  assert( c4.squared_radius() == cc.squared_radius() );
- assert( c4 == c5 );
+ assert( c4 == c5 || nonexact);
  assert( c4 == c7 );
  assert( c4 != c8 );
  assert( cn == cp.opposite() );
@@ -121,7 +114,7 @@ _test_cls_sphere_3(const R& )
  std::cout << '.';
 
  assert( c4.center() == p3 );
- assert( c5.center() == p3 );
+ assert( c5.center() == p3 || nonexact);
  assert( c4.squared_radius() == FT( n9 ) );
  assert( c5.squared_radius() == FT( n9 ) );
  assert( c8.squared_radius() == FT( n9 ) );

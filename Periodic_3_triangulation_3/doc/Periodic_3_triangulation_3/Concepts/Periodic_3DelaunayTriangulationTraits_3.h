@@ -13,10 +13,11 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines `Periodic_3TriangulationTraits_3`
-\cgalRefines `DelaunayTriangulationTraits_3`
+\cgalRefines{Periodic_3TriangulationTraits_3,DelaunayTriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_Delaunay_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_Delaunay_triangulation_traits_3}
+\cgalHasModelsEnd
 
 In addition to the requirements described by the concepts
 `Periodic_3TriangulationTraits_3` and `DelaunayTriangulationTraits_3`,

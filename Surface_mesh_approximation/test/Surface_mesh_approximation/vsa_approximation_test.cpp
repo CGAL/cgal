@@ -20,7 +20,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -35,7 +35,7 @@ int main()
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 

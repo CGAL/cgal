@@ -11,9 +11,9 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/generators.h>
 #include <map>
 #include <boost/unordered_map.hpp>
-#include <CGAL/boost/graph/helpers.h>
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -41,7 +41,8 @@ fct(const P& )
 {
   std::map<Descriptor,int> M;
   Descriptor d;
-  M.find(d);
+  typename std::map<Descriptor,int>::const_iterator it = M.find(d);
+  CGAL_USE(it);
 
   boost::unordered_map<Descriptor, int> U;
   U[d] = 12;
@@ -56,7 +57,9 @@ void fct2()
   { // For dart handle
   std::map<dh, int> M;
   dh e;
-  M.find(e);
+  typename std::map<dh, int>::const_iterator it = M.find(e);
+  CGAL_USE(it);
+
   boost::unordered_map<dh, int> U;
   U[e] = 12;
   }
@@ -64,7 +67,9 @@ void fct2()
   { // For vertex attribute handle
   std::map<vh, int> M;
   vh e;
-  M.find(e);
+  typename std::map<vh, int>::const_iterator it = M.find(e);
+  CGAL_USE(it);
+
   boost::unordered_map<vh, int> U;
   U[e] = 12;
   }
@@ -124,7 +129,7 @@ int main()
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::vertex_descriptor>(A);
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::edge_descriptor>(A);
 
-  Kernel::Point_3 p3;
+  Kernel::Point_3 p3(CGAL::ORIGIN);
   Polyhedron P;
   CGAL::make_triangle(p3,p3,p3,P);
   fct4(P);
@@ -145,9 +150,8 @@ int main()
 
 #ifdef CGAL_LINKED_WITH_TBB
   Triangulation_3 T3;
-fct3(T3);
+  fct3(T3);
 #endif
+
   return 0;
 }
-
-

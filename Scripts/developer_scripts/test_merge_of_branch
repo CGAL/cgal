@@ -14,7 +14,7 @@ fi
 git=git
 if hub --version 2> /dev/null > /dev/null; then
     case "$(hub --version)" in
-	*hub\ version*) git=hub;;
+        *hub\ version*) git=hub;;
     esac
 fi
 
@@ -48,7 +48,7 @@ detect_wrong_permissions || exit 1
 echo '.. Testing licenses...'
 detect_packages_licenses || exit 1
 if ! ${git} diff --exit-code > /dev/null; then
-    echo '=> There are modifications in licenses:'
+    echo '=> There are modifications in licenses (check if all modified/added headers files contain a valid SPDX tag compatible with the one in package_info/PKG/license and that no license text is present):'
     ${git} status --porcelain
     exit 1
 fi
@@ -63,11 +63,11 @@ if [ -d build ] && \
     cmake_output=$(cmake build 2>&1)
     cmake_exit_code=$?
     if [ "$cmake_exit_code" -ne 0 ]; then
-	echo 'CMake error:'
-	printf '%s\n' "${cmake_output}"
-	exit 1
+        echo 'CMake error:'
+        printf '%s\n' "${cmake_output}"
+        exit 1
     else
-	echo OK
+        echo OK
     fi
 else
     echo '.. Skip the CMake test (please configure a build/ CMake binary directory,'
@@ -92,12 +92,39 @@ for i in `ls -d ^build*/examples/*/ ^build*/test/*/ ^build*/demo/^(icons|resourc
   fi
 done
 
+#check all tests/examples are tested
+echo '.. Checking if all .cpp files in examples/test are compiled...'
+CML_ERRORS=""
+for CML in `grep -L "GLOB cppfiles" */test/*/CMakeLists.txt */examples/*/CMakeLists.txt`; do
+  DIR=`dirname $CML`
+
+  if [ "Arrangement_on_surface_2/test/Arrangement_on_surface_2" = $DIR ]; then
+    continue
+  fi
+  if [ "Installation/test/Installation" = $DIR ]; then
+    continue
+  fi
+
+  for i in `ls ${DIR}/*.cpp`; do
+    f=`basename $i .cpp`
+    if ! grep -q $f ${CML}; then
+      CML_ERRORS=`echo "${CML_ERRORS}\n$i is not tested!"`
+    fi
+  done
+done
+
+
+if [ -n "${CML_ERRORS}" ]; then
+  echo -n "Some tests/examples are not tested:"
+  echo ${CML_ERRORS}
+  exit 1
+fi
 
 # check project in cmake scripts is correct
 echo '.. Checking if all CMakeLists.txt project names are correct...'
-project_name_tests=$(for i in ^build*/test/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Tests\s*\)" -L $i;  done)
-project_name_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Examples\s*\)" -L $i;  done)
-project_name_demo=$(for i in ^build*/demo/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Demo\s*\)" -L $i;  done)
+project_name_tests=$(for i in ^build*/test/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); grep -E "${pkg}_Tests\s*\)" -L $i;  done)
+project_name_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); grep -E "${pkg}_Examples\s*\)" -L $i;  done)
+project_name_demo=$(for i in ^build*/demo/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); grep -E "${pkg}_Demo\s*\)" -L $i;  done)
 
 if [ -n "${project_name_tests}" ]; then
   echo "CMakeLists with incorrect project name"
@@ -114,6 +141,30 @@ fi
 if [ -n "${project_name_demo}" ]; then
   echo "CMakeLists with incorrect project name"
   echo ${project_name_demo}
+  exit 1
+fi
+
+# check minimal version is the first instruction in cmake scripts
+echo '.. Checking if all CMakeLists.txt starts with cmake_minimum_required...'
+cmr_tests=$(for i in ^build*/test/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^\s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+cmr_demo=$(for i in ^build*/demo/*/CMakeLists.txt;     do pkg=$(echo $i | awk -F "/" '{print $3}'); res=$(egrep -v "^s*#" $i  | grep -v "^\s*$" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo $pkg; fi; done)
+
+if [ -n "${cmr_tests}" ]; then
+  echo "CMakeLists in test with issues:"
+  echo ${cmr_tests}
+  exit 1
+fi
+
+if [ -n "${cmr_examples}" ]; then
+  echo "CMakeLists in examples with issues:"
+  echo ${cmr_examples}
+  exit 1
+fi
+
+if [ -n "${cmr_demo}" ]; then
+  echo "CMakeLists in demo with issues:"
+  echo ${cmr_demo}
   exit 1
 fi
 
@@ -146,7 +197,7 @@ fi
 
 #check GPL header files without license include directive
 echo '.. Checking include directives in GPL header files...'
-file_without_license_include=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r egrep -l "SPDX-License-Identifier.*[ (]GPL" | xargs -r grep -L "#include <CGAL/license"; fi; done)
+file_without_license_include=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f -name '*.h' | xargs -r grep -E -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r grep -E -l "SPDX-License-Identifier.*[ (]GPL" | xargs -r grep -L "#include <CGAL/license"; fi; done)
 if [ -n "${file_without_license_include}" ]; then
     echo "The following files do not have an include directive of the package license header:"
     echo ${file_without_license_include}
@@ -155,10 +206,28 @@ fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\0", $2; }' | xargs -0 file -N | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS|FIG|assembler source|Perl script|from flex")
+txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\n", $2; }' | xargs file -N | grep "text" | grep -E -v "UTF-8|ASCII|CSV|XML|EPS|FIG|JSON|pixmap|magic|assembler source|Perl script|from flex")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
+  exit 1
+fi
+
+#check no file contains tab characters
+echo '.. Checking if tab character is used...'
+file_with_tabs=$(git ls-files --stage | grep -E '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\t')
+if [ -n "${file_with_tabs}" ]; then
+  echo "The following files have tabs:"
+  echo ${file_with_tabs}
+  exit 1
+fi
+
+#check no file contains trailing whitespaces characters
+echo '.. Look for trailing whitespaces...'
+files_with_trailingws=$(git ls-files --stage | grep -E '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\s+$')
+if [ -n "${files_with_trailingws}" ]; then
+  echo "The following files have trailing whitespaces:"
+  echo ${files_with_trailingws}
   exit 1
 fi
 
@@ -170,6 +239,27 @@ if [ -n "${not_existing_headers}" ]; then
   echo ${not_existing_headers}
   exit 1
 fi
+
+#check documented function named parameters exists
+echo '.. Checking documented function named parameters'
+nps=$(git ls-files --stage | grep -E '\.h' | awk '{print $4}' | xargs grep -E "cgalParamNBegin\{.+\}" | perl -lne 'print for /cgalParamNBegin{(.+)}/' | sort -u )
+git_dir=`pwd`
+tmp_dir=`mktemp -d`
+cd $tmp_dir
+echo $tmp_dir
+echo "#include <CGAL/Named_function_parameters.h>\nstruct A{};\nint main(){\nA a;\n" > main.cpp
+for i in `echo $nps`; do
+  echo "  CGAL::parameters::${i}(a).${i}(a);" >> main.cpp
+done
+echo "}" >> main.cpp
+if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/STL_Extension/include -I$git_dir/Stream_support/include -I$git_dir/Installation/include main.cpp; then
+  echo "ERROR: At least one documented named parameter does not exist"
+  cd -
+  rm -r $tmp_dir
+  exit 1;
+fi
+cd -
+rm -r $tmp_dir
 
 current_rev=$(${git} rev-parse HEAD)
 trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT

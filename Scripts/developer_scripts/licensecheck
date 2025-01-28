@@ -6,20 +6,7 @@
 #   Copyright (C) 2007, 2008 Adam D. Barratt
 #   Copyright (C) 2012 Francesco Poli
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program. If not, see <https://www.gnu.org/licenses/>.
-#
-# SPDX-License-Identifier: LGPL-2.0+
+# SPDX-License-Identifier: GPL-2.0-or-later
 #
 
 =head1 NAME
@@ -102,7 +89,7 @@ The two configuration files F</etc/devscripts.conf> and
 F<~/.devscripts> are sourced by a shell in that order to set
 configuration variables.  Command line options can be used to override
 configuration file settings.  Environment variable settings are
-ignored for this purpose.  The currently recognised variables are:
+ignored for this purpose.  The currently recognized variables are:
 
 =over 4
 
@@ -457,6 +444,10 @@ sub parselicense {
 	$license = "GENERATED FILE";
     }
 
+    if ($licensetext =~ /This file incorporates work covered by the following copyright and permission notice/i) {
+  $license = "DERIVED WORK";
+    }
+
     if ($licensetext =~ /((is free software.? )?you can redistribute (it|them) and\/or modify (it|them)|is licensed) under the terms of (version [^ ]+ of )?the (GNU (Library |Lesser )General Public License|LGPL)/i) {
 	$license = "LGPL$gplver$extrainfo $license";
     }
@@ -586,6 +577,40 @@ sub parselicense {
 
     if ($licensetext =~ /(License WTFPL|Under (the|a) WTFPL)/i) {
         $license = "WTFPL $license";
+    }
+
+    # Since SPDX tags are sufficient, make sure no license notice was present
+    if (length($license)!=0 && $license ne "GENERATED FILE" && !($license =~ "DERIVED WORK"))
+    {
+      $license = $license." READ FROM LICENSE NOTICE THAT SHOULD NOT BE PRESENT";
+    }
+    else
+    {
+      $license="";
+
+      if ($licensetext =~ /SPDX-License-Identifier GPL-3.0-or-later/i) {
+        $license = "GPL (v3 or later)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier LGPL-3.0-or-later/i) {
+        $license = "LGPL (v3 or later)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier LGPL-3.0-only/i) {
+        $license = "LGPL (v3)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier BSL-1.0/i) {
+        $license = "BSL 1.0";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
+        $license = "MIT/X11 (BSD like)";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier \( GPL-3.0-or-later OR LicenseRef-Commercial \) AND MIT/i) {
+        $license = "GPL (v3 or later) AND MIT/X11 (BSD like)";
+      }
     }
 
     $license = "UNKNOWN" if (!length($license));

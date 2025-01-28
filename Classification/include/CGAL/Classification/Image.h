@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -23,8 +14,9 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <boost/shared_ptr.hpp>
 #include <map>
+#include <memory>
+#include <CGAL/assertions.h>
 
 #define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 100000000
 
@@ -32,32 +24,35 @@ namespace CGAL {
 namespace Classification {
 
   /// \cond SKIP_IN_MANUAL
-  
+
 template <typename Type>
 class Image
 {
-  typedef std::vector<Type> Vector;
-  typedef std::map<std::size_t, Type> Map;
-  
+  using Vector = std::vector<Type>;
+  using Map = std::map<std::size_t, Type>;
+
   std::size_t m_width;
   std::size_t m_height;
   std::size_t m_depth;
-  
-  boost::shared_ptr<Vector> m_raw;
-  boost::shared_ptr<Map> m_sparse;
+
+  std::shared_ptr<Vector> m_raw;
+  std::shared_ptr<Map> m_sparse;
   Type m_default;
 
-  // Forbid using copy constructor
-  Image (const Image&)
-  {
-  }
-  
-public:
 
-  Image () : m_width(0), m_height(0), m_depth(0), m_raw (nullptr)
+public:
+  // Forbid using copy constructor
+  // Make it public for a strange VC++ std17 boost-1_82 error
+  // https://github.com/boostorg/core/issues/148
+  Image(const Image&)
+  {
+      CGAL_assertion(false);
+  }
+
+  Image () : m_width(0), m_height(0), m_depth(0)
   {
   }
-  
+
   Image (std::size_t width, std::size_t height, std::size_t depth = 1)
     : m_width (width)
     , m_height (height)
@@ -66,20 +61,20 @@ public:
     if (m_width * m_height * m_depth > 0)
     {
       if (m_width * m_height * m_depth < CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT)
-        m_raw = boost::shared_ptr<Vector> (new Vector(m_width * m_height * m_depth));
+        m_raw = std::make_shared<Vector> (m_width * m_height * m_depth);
       else
-        m_sparse = boost::shared_ptr<Map> (new Map());
+        m_sparse = std::make_shared<Map> ();
     }
   }
-  
+
   ~Image ()
   {
   }
 
-  void free()
+  void free BOOST_PREVENT_MACRO_SUBSTITUTION ()
   {
-    m_raw = boost::shared_ptr<Vector>();
-    m_sparse = boost::shared_ptr<Map>();
+    m_raw.reset();
+    m_sparse.reset();
   }
 
   Image& operator= (const Image& other)
@@ -91,7 +86,7 @@ public:
     m_depth = other.depth();
     return *this;
   }
-  
+
   std::size_t width() const { return m_width; }
   std::size_t height() const { return m_height; }
   std::size_t depth() const { return m_depth; }
@@ -103,7 +98,7 @@ public:
 
   Type& operator() (const std::size_t& x, const std::size_t& y, const std::size_t& z = 0)
   {
-    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    if (!m_raw) // sparse case
     {
       typename Map::iterator inserted = m_sparse->insert
         (std::make_pair (coord(x,y,z), Type())).first;
@@ -114,7 +109,7 @@ public:
   }
   const Type& operator() (const std::size_t& x, const std::size_t& y, const std::size_t& z = 0) const
   {
-    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    if (!m_raw) // sparse case
     {
       typename Map::iterator found = m_sparse->find (coord(x,y,z));
       if (found != m_sparse->end())
@@ -124,7 +119,7 @@ public:
 
     return (*m_raw)[coord(x,y,z)];
   }
-  
+
 
 };
 

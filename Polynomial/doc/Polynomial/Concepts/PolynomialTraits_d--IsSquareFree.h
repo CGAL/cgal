@@ -3,16 +3,14 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` computes whether the given 
-a polynomial of type `PolynomialTraits_d::Polynomial_d` 
-is square free. 
+This `AdaptableUnaryFunction` computes whether the given
+a polynomial of type `PolynomialTraits_d::Polynomial_d`
+is square free.
 
-Note that this statement does cover constant factors, 
-i.e., whether the multivariate content contains a square. 
+Note that this statement does cover constant factors,
+i.e., whether the multivariate content contains a square.
 
-\cgalRefines `AdaptableUnaryFunction` 
-\cgalRefines `CopyConstructible` 
-\cgalRefines `DefaultConstructible` 
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
@@ -25,28 +23,28 @@ i.e., whether the multivariate content contains a square.
 class PolynomialTraits_d::IsSquareFree {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef bool result_type; 
+*/
+typedef bool result_type;
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Polynomial_d argument_type; 
+*/
+typedef PolynomialTraits_d::Polynomial_d argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns whether the \f$ p\f$ is square free. 
-*/ 
-result_type operator()(argument_type p); 
+Returns whether the \f$ p\f$ is square free.
+*/
+result_type operator()(argument_type p);
 
 /// @}
 

@@ -1,13 +1,51 @@
-/// \defgroup PkgStreamSupportRef IO Streams Reference
+/// \defgroup PkgStreamSupportRef I/O Streams Reference
 /// \defgroup IOstreamOperators Stream Operators
 /// \ingroup PkgStreamSupportRef
+/// \defgroup IOstreamFunctions I/O Functions
+/// \ingroup PkgStreamSupportRef
+
+/// \defgroup PkgStreamSupportIoFuncsSTL STL I/O Functions
+/// I/O Functions for the \ref IOStreamSTL
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsPLY PLY I/O Functions
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsOBJ OBJ I/O Functions
+/// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsOFF OFF I/O Functions
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsVTK VTK I/O Functions
+/// I/O Functions for the \ref IOStreamVTK
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsGOCAD GOCAD I/O Functions
+/// I/O Functions for the \ref IOStreamGocad
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncsWKT WKT I/O Functions
+/// I/O Functions for the \ref IOStreamWKT
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportIoFuncs3MF 3MF I/O Functions
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup IOstreamFunctions
+
+/// \defgroup PkgStreamSupportEnumRef I/O Enums
+/// \ingroup PkgStreamSupportRef
+
 /*!
 \addtogroup PkgStreamSupportRef
-\cgalPkgDescriptionBegin{IO Streams,PkgStreamSupport}
+\cgalPkgDescriptionBegin{I/O Streams,PkgStreamSupport}
 \cgalPkgPicture{io.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner}
-\cgalPkgDesc{All classes in the \cgal kernel provide input and output operators for IO streams.   The basic task of such an operator is to produce a representation of an object that can be written as a sequence of characters on devices as a console, a file, or a pipe. In \cgal we distinguish between  a raw ascii, a raw binary and a pretty printing format.}
+\cgalPkgDesc{All classes in the \cgal kernel provide input and output operators for I/O streams. The basic task of such an operator is to produce a representation of an object that can be written as a sequence of characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw \ascii, a raw binary and a pretty printing format.}
 \cgalPkgManuals{Chapter_IO_Streams,PkgStreamSupportRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -18,52 +56,48 @@
 \cgalPkgDescriptionEnd
 
 All classes in the \cgal kernel provide input and output operators for
-IO streams.
+I/O streams.
 \cgal provides three different printing mode, defined in the enum
-`IO::Mode`, as well as different functions to set and get
+\link PkgStreamSupportEnumRef `IO::Mode` \endlink, as well as different functions to set and get
 the printing mode.
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{Enum}
-- `CGAL::IO::Mode`
-
-\cgalCRPSection{Functions}
-- `CGAL::get_mode()`
-- `CGAL::is_ascii()`
-- `CGAL::is_binary()`
-- `CGAL::is_pretty()`
-- `CGAL::set_mode()`
-- `CGAL::set_ascii_mode()`
-- `CGAL::set_binary_mode()`
-- `CGAL::set_pretty_mode()`
-- \link IOstreamOperators `CGAL::operator>>()` \endlink
-- \link IOstreamOperators `CGAL::operator<<()` \endlink
-- `CGAL::iformat()`
-- `CGAL::oformat()`
-
-\cgalCRPSection{WKT I/O Functions}
-- `CGAL::read_point_WKT()`
-- `GCAL::read_multi_point_WKT()`
-- `GCAL::read_linestring_WKT()`
-- `GCAL::read_multi_linestring_WKT()`
-- `GCAL::read_polygon_WKT()`
-- `GCAL::read_multi_polygon_WKT()`
-- `GCAL::read_WKT()`
-- `CGAL::write_point_WKT()`
-- `CGAL::write_polygon_WKT()`
-- `CGAL::write_linestring_WKT()`
-- `CGAL::write_multi_point_WKT()`
-- `CGAL::write_multi_polygon_WKT()`
-- `CGAL::write_multi_linestring_WKT()`
+- \link PkgStreamSupportEnumRef `CGAL::IO::Mode` \endlink
 
 \cgalCRPSection{Classes}
-- `CGAL::Color`
+- `CGAL::IO::Color`
 - `CGAL::Istream_iterator<T,Stream>`
 - `CGAL::Ostream_iterator<T,Stream>`
 - `CGAL::Verbose_ostream`
 - `CGAL::Input_rep<T,F>`
 - `CGAL::Output_rep<T,F>`
 
-*/
+\cgalCRPSection{Functions}
+- `CGAL::IO::get_mode()`
+- `CGAL::IO::is_ascii()`
+- `CGAL::IO::is_binary()`
+- `CGAL::IO::is_pretty()`
+- `CGAL::IO::set_mode()`
+- `CGAL::IO::set_ascii_mode()`
+- `CGAL::IO::set_binary_mode()`
+- `CGAL::IO::set_pretty_mode()`
+- \link IOstreamOperators `CGAL::operator>>()` \endlink
+- \link IOstreamOperators `CGAL::operator<<()` \endlink
+- `CGAL::IO::iformat()`
+- `CGAL::IO::oformat()`
 
+\cgalCRPSection{I/O Functions}
+- `CGAL::IO::read_polygon_soup()`
+- `CGAL::IO::write_polygon_soup()`
+- \link PkgStreamSupportIoFuncsSTL I/O for STL files \endlink
+- \link PkgStreamSupportIoFuncsPLY I/O for PLY files \endlink
+- \link PkgStreamSupportIoFuncsOBJ I/O for OBJ files \endlink
+- \link PkgStreamSupportIoFuncsOFF I/O for OFF files \endlink
+- \link PkgStreamSupportIoFuncsGOCAD I/O for GOCAD files \endlink
+- \link PkgStreamSupportIoFuncsVTK I/O for VTK files \endlink
+- \link PkgStreamSupportIoFuncs3MF I/O for 3MF files \endlink
+- \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
+
+*/

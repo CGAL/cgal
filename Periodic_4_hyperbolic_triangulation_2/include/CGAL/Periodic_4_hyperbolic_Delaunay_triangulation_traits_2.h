@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     :   Iordan Iordanov
 //                   Monique Teillaud
@@ -33,7 +24,7 @@
 #include <CGAL/Cartesian.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <utility>
 
@@ -59,23 +50,7 @@ class Hyperbolic_traits_with_translations_2_adaptor
 public:
   typedef typename Predicate::result_type                 result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Predicate::operator();
-#else
-  result_type operator()(const Point& p0, const Point& p1) const
-  {
-	  return Predicate()(p0, p1);
-  }
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
-  {
-    return Predicate()(p0,p1,p2);
-  }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return Predicate()(p0,p1,p2,p3);
-  }
-#endif
 
   Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
@@ -135,16 +110,9 @@ private:
 
 public:
   typedef Point                                           result_type;
- 
-#ifndef CGAL_CFG_MATCHING_BUG_6
+
   using Construct_point_base::operator();
-#else
-  Point operator()(const NT& x, const NT& y) const
-  {
-    return Construct_point_base()(x,y);
-  }
-#endif
-  
+
   Periodic_4_construct_hyperbolic_point_2() { }
 
   Point operator()(const Point& pt, const Hyperbolic_translation& tr) const
@@ -403,9 +371,9 @@ class Compute_approximate_hyperbolic_diameter
     Hyperbolic_point_2 operator()(const Hyperbolic_segment_2& s1,
                                   const Hyperbolic_segment_2& s2)
     {
-      if(Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1))
+      if(Circular_arc_2* c1 = std::get_if<Circular_arc_2>(&s1))
       {
-        if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+        if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
                                                                              c2->circle());
@@ -419,7 +387,7 @@ class Compute_approximate_hyperbolic_diameter
         }
         else
         {
-          Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+          Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
                                                                              ell2->supporting_line());
           Hyperbolic_point_2 p1 = res.first;
@@ -433,8 +401,8 @@ class Compute_approximate_hyperbolic_diameter
       }
       else
       {
-        Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
-        if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+        Euclidean_segment_2* ell1 = std::get_if<Euclidean_segment_2>(&s1);
+        if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
                                                                              c2->circle());
@@ -448,7 +416,7 @@ class Compute_approximate_hyperbolic_diameter
         }
         else
         {
-          Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+          Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
           Hyperbolic_point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
           CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1);
           return p1;
@@ -497,9 +465,9 @@ class Compute_approximate_hyperbolic_diameter
       Euclidean_line_2* l;
       Circle_2* c;
 
-      if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+      if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
       {
-        if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+        if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c_pq, *c_qr);
 
@@ -509,14 +477,14 @@ class Compute_approximate_hyperbolic_diameter
           return inters.second;
         }
         // here bis_qr is a line
-        l = boost::get<Euclidean_line_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_qr);
         c = c_pq;
       }
       else
       {
         // here bis_pq is a line
-        l = boost::get<Euclidean_line_2>(&bis_pq);
-        c = boost::get<Circle_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_pq);
+        c = std::get_if<Circle_2>(&bis_qr);
       }
 
       std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c, *l);
@@ -627,7 +595,7 @@ class Side_of_original_octagon
   };
 
 
-} // end namespace internal 
+} // end namespace internal
 
 
 template <typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt,

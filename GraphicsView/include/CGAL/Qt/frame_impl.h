@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -29,7 +21,6 @@
 
 #include <CGAL/Qt/frame.h>
 #include <CGAL/Qt/constraint.h>
-#include <CGAL/Qt/domUtils.h>
 #include <math.h>
 
 namespace CGAL{
@@ -726,7 +717,7 @@ bool Frame::settingAsReferenceFrameWillCreateALoop(const Frame *const frame) {
 /*! Returns the Frame coordinates of a point \p src defined in the world
  coordinate system (converts from world to Frame).
 
- inverseCoordinatesOf() performs the inverse convertion. transformOf() converts
+ inverseCoordinatesOf() performs the inverse conversion. transformOf() converts
  3D vectors instead of 3D coordinates.
 
  See the <a href="../examples/frameTransform.html">frameTransform example</a>
@@ -742,7 +733,7 @@ Vec Frame::coordinatesOf(const Vec &src) const {
 /*! Returns the world coordinates of the point whose position in the Frame
   coordinate system is \p src (converts from Frame to world).
 
-  coordinatesOf() performs the inverse convertion. Use inverseTransformOf() to
+  coordinatesOf() performs the inverse conversion. Use inverseTransformOf() to
   transform 3D vectors instead of 3D coordinates. */
 CGAL_INLINE_FUNCTION
 Vec Frame::inverseCoordinatesOf(const Vec &src) const {
@@ -758,7 +749,7 @@ Vec Frame::inverseCoordinatesOf(const Vec &src) const {
 /*! Returns the Frame coordinates of a point \p src defined in the
   referenceFrame() coordinate system (converts from referenceFrame() to Frame).
 
-  localInverseCoordinatesOf() performs the inverse convertion. See also
+  localInverseCoordinatesOf() performs the inverse conversion. See also
   localTransformOf(). */
 CGAL_INLINE_FUNCTION
 Vec Frame::localCoordinatesOf(const Vec &src) const {
@@ -768,7 +759,7 @@ Vec Frame::localCoordinatesOf(const Vec &src) const {
 /*! Returns the referenceFrame() coordinates of a point \p src defined in the
  Frame coordinate system (converts from Frame to referenceFrame()).
 
- localCoordinatesOf() performs the inverse convertion. See also
+ localCoordinatesOf() performs the inverse conversion. See also
  localInverseTransformOf(). */
 CGAL_INLINE_FUNCTION
 Vec Frame::localInverseCoordinatesOf(const Vec &src) const {
@@ -1007,68 +998,6 @@ void Frame::getTransformOfFrom(const qreal src[3], qreal res[3],
     res[i] = r[i];
 }
 
-////////////////////////////      STATE      //////////////////////////////
-
-/*! Returns an XML \c QDomElement that represents the Frame.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- The resulting QDomElement looks like:
- \code
- <name>
-   <position x=".." y=".." z=".." />
-   <orientation q0=".." q1=".." q2=".." q3=".." />
- </name>
- \endcode
-
- Use initFromDOMElement() to restore the Frame state from the resulting \c
- QDomElement.
-
-
- See Vec::domElement() for a complete example. See also
-
- Quaternion::domElement(), Camera::domElement()...
-
- \attention The constraint() and referenceFrame() are not saved in the
- QDomElement. */
-CGAL_INLINE_FUNCTION
-QDomElement Frame::domElement(const QString &name,
-                              QDomDocument &document) const {
-  // TODO: use translation and rotation instead when referenceFrame is coded...
-  QDomElement e = document.createElement(name);
-  e.appendChild(position().domElement("position", document));
-  e.appendChild(orientation().domElement("orientation", document));
-  return e;
-}
-
-/*! Restores the Frame state from a \c QDomElement created by domElement().
-
- See domElement() for the \c QDomElement syntax. See the
- Vec::initFromDOMElement() and Quaternion::initFromDOMElement() documentations
- for details on default values if an argument is missing.
-
- \attention The constraint() and referenceFrame() are not restored by this
- method and are left unchanged. */
-CGAL_INLINE_FUNCTION
-void Frame::initFromDOMElement(const QDomElement &element) {
-  // TODO: use translation and rotation instead when referenceFrame is coded...
-
-  // Reset default values. Attention: destroys constraint.
-  // *this = Frame();
-  // This instead ? Better : what is not set is not changed.
-  // setPositionAndOrientation(Vec(), Quaternion());
-
-  QDomElement child = element.firstChild().toElement();
-  while (!child.isNull()) {
-    if (child.tagName() == "position")
-      setPosition(Vec(child));
-    if (child.tagName() == "orientation")
-      setOrientation(Quaternion(child).normalized());
-
-    child = child.nextSibling().toElement();
-  }
-}
 
 /////////////////////////////////   ALIGN   /////////////////////////////////
 

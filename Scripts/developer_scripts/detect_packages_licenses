@@ -5,14 +5,15 @@
 # */package_info/*/license.txt
 
 setopt extendedglob
-
-for p in ^*build*(/); do 
-  if [ -d $p/include ]; then 
+OLD_LOCALE=$(locale | grep COLLATE | cut -d= -f2)
+export LC_COLLATE="en_US.UTF-8"
+for p in ^*build*(/); do
+  if [ -d $p/include ]; then
       licFile=$p/package_info/$p/license.txt
       l=`licensecheck -r $p/include $p/src | awk -F': ' '{print $2}' | grep -v BSL | sed -e 's/ *GENERATED FILE//' | sort -u`
       if [ "x`echo $l | wc -l`" = "x1" ]; then
           echo $l > "$licFile"
-      elif [ -z "`echo $l | grep -Ev '^L?GPL \(v3 or later\) *$'`" ]; then 
+      elif [ -z "`echo $l | grep -Ev '^L?GPL \(v3 or later\) *$'`" ]; then
           echo 'GPL (v3 or later)' > "$licFile"
       else
 #          echo "MULTIPLE!" > "$licFile";
@@ -20,3 +21,4 @@ for p in ^*build*(/); do
       fi
   fi
 done
+export LC_COLLATE=$OLD_LOCALE

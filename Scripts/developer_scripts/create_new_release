@@ -4,14 +4,6 @@
 #
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
-# TODO :
-# - Cleanup the public/internal separation:
-#   - have CGAL_VERSION_NR be not affected by the internal version
-#   - have CGAL_REVISION be the revision (replacing the internal number)
-# - The public release case should pass the info to create_internal_release.
-#   [new] : create_internal_release should not know about internal/public mode.
-# - Merge [some parts] into ./create_internal_release ?
-
 DO_PUBLIC=""             # Also build the public versions
 DO_IT=""                 # Real mode (copy to HTTP server), versus local testing
 DO_NOT_TAG=""            # If set, do not call tag
@@ -21,8 +13,8 @@ NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
-DESTINATION="/tmp"
-IS_MASTER="y"
+DESTINATION="$PWD"
+INTEGRATION=""
 
 SOURCES_DIR_HAS_BEEN_SET=
 
@@ -45,10 +37,10 @@ usage() {
     printerr '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     printerr '                     but the LATEST file is not updated.'
     printerr '  --verbose        : print log to standard output, instead of the log file'
-    printerr '  --beta <n>       : followed by a number. When used with --public, will modify 
+    printerr '  --beta <n>       : followed by a number. When used with --public, will modify
     the release number and the release version name to include beta<n>'
     printerr '  --dest           : followed by the path to where the release should be created. Default is /tmp.'
-    printerr '  --is_master      : replace the Ic in the name by I.'
+    printerr '  --integration    : replace the I in the name by Ic.'
     printerr '  <packages dir>   : the directory containing the packages [default is trunk]'
 }
 
@@ -99,26 +91,26 @@ while [ $1 ]; do
             continue
         ;;
         --dest)
-            shift 
+            shift
             DESTINATION=$1
             shift;continue
         ;;
-        --is_master)
-            IS_MASTER="y"
+        --integration)
+            INTEGRATION="y"
             shift;continue
         ;;
         -*)
             printerr "Unrecognized option : $1"
             exit
         ;;
-        *) 
+        *)
             if [ -z "$SOURCES_DIR_HAS_BEEN_SET" ]; then
                 SOURCES_DIR="$1"
                 SOURCES_DIR_HAS_BEEN_SET=y
                 shift; continue
-            elif [ -n "$IS_MASTER" ]; then
+            elif [ -z "$INTEGRATION" ]; then
                 # Compatibility with the old syntax with candidates
-                IS_MASTER=""
+                INTEGRATION="y"
                 shift; continue
             else
                 printerr "Unrecognized option : $1"
@@ -136,7 +128,7 @@ HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
 
-PATH=$PATH:/usr/local/bin:/usr/bin/gnu
+PATH=$PATH:/usr/local/bin:/usr/sbin
 
 # Working dir
 TMPDIR="`pwd`"
@@ -159,7 +151,7 @@ if [ -z "$VERBOSE" ]; then
   exec 3>&1 >> ${LOGFILE}
 fi
 
-# Verbose: displays all executed commands 
+# Verbose: displays all executed commands
 #PS4='[${LINENO}]+ '
 #set -x
 
@@ -180,12 +172,16 @@ else
 fi
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
-MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
-MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
-BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+if [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+    MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+    MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+    BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+else
+    eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+fi
 
 # Do not show the bugfix number if it is 0.
-if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
+if [ x"$BUGFIX_NUMBER" != "x0" ]; then
     BUGFIX_STRING=".$BUGFIX_NUMBER"
 else
     BUGFIX_STRING=""
@@ -202,7 +198,7 @@ if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1
 fi
 
-if [ -z "${IS_MASTER}" ]; then
+if [ -n "${INTEGRATION}" ]; then
     INTERNAL_STRING="-Ic-${INTERNAL_NUMBER}"
 else
     INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
@@ -297,50 +293,31 @@ if [ -n "$DO_PUBLIC" ]; then
         public_release_version="${public_release_version}-beta${BETA}"
     fi
     if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
-	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+        public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
         public_release_version=${public_release_name#CGAL-}
     else
-	public_release_name="CGAL-${public_release_version}"
+        public_release_name="CGAL-${public_release_version}"
+    fi
+    if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+        eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
     fi
 
-    cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
-    pushd "${DESTINATION}/${public_release_name}"
-
-    # Modify the version numbers in <CGAL/version.h>
-    sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
-
-    # Patch the date and CGAL version in man(1) pages
-    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
-
-    echo -n $public_release_version > VERSION 2>&1
-    cd ..
-
-    rm -f "${public_release_name}".tar*
-    tar -cf "${public_release_name}.tar" "${public_release_name}"
+    cmake -DGIT_REPO=${SOURCES_DIR} -DGENERATE_TARBALLS="ON" -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${public_release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    tar -xf ${public_release_name}.tar.xz
     mkdir "${HTML_DIR}/${release_name}-public"
-    xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
-    gzip "${public_release_name}.tar"
-    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
-    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
+    rm -rf ./${public_release_name}
+    tar -xf ${public_release_name}-examples.tar.xz
+    zip -q -r ${public_release_name}-examples.zip ${public_release_name}
+    rm -rf ./${public_release_name}
+    tar xf ${public_release_name}-library.tar.xz
+    zip -q -r ${public_release_name}-library.zip ${public_release_name}
+    mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
+    mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
+    if command -v sestatus >/dev/null 2>&1; then
+        sestatus && restorecon -R "${HTML_DIR}/${release_name}-public"
+    fi
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
-    popd
-fi
-
-if [ -n "$DO_PUBLIC" ]; then
-  if docker version > /dev/null; then
-    # Build the Windows installer
-    docker pull cgal/cgal-nsis-dockerfile
-    docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \
-                  -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
-                  cgal/cgal-nsis-dockerfile
-    container_id=`docker ps -q -l`
-    docker start -a ${container_id}
-    docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
-    docker rm ${container_id}
-  else
-    echo "Cannot use Docker, the Windows installer will not be created" >&2
-  fi
 fi

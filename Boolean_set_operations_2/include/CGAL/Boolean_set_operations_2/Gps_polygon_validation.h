@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -483,10 +474,9 @@ is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
   return is_crossover_outer_boundary(pgn, traits, pl);
 }
 
-// previously known as Simple
 template <typename Traits_2>
-bool is_relatively_simple_polygon_with_holes
-(const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
+bool is_relatively_simple_polygon
+(const typename Traits_2::Polygon_2& pgn, const Traits_2& traits)
 {
   typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
   typedef std::pair<Curve_const_iterator,Curve_const_iterator>
@@ -496,11 +486,10 @@ bool is_relatively_simple_polygon_with_holes
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep;
-  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
 
   Construct_curves_2 construct_curves_func = traits.construct_curves_2_object();
   // Construct a container of all outer boundary curves.
-  Cci_pair itr_pair = construct_curves_func (pgn.outer_boundary());
+  Cci_pair itr_pair = construct_curves_func (pgn);
   std::list<X_monotone_curve_2>  outer_curves;
   std::copy(itr_pair.first, itr_pair.second, std::back_inserter(outer_curves));
   // Create visitor and sweep to verify outer boundary is relatively simple
@@ -511,31 +500,51 @@ bool is_relatively_simple_polygon_with_holes
     switch (relative_visitor.error_code()) {
      case Visitor::ERROR_NONE: break;
      case Visitor::ERROR_EDGE_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self intersects at edges.");
+      CGAL_warning_msg(false, "Polygon self intersects at edges.");
       break;
 
      case Visitor::ERROR_EDGE_VERTEX_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self (weakly) intersects.");
+      CGAL_warning_msg(false, "Polygon self (weakly) intersects.");
       break;
 
      case Visitor::ERROR_EDGE_OVERLAP:
-      CGAL_warning_msg(false, "The outer boundary self overlaps.");
+      CGAL_warning_msg(false, "Polygon self overlaps.");
       break;
 
      case Visitor::ERROR_VERTEX_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self intersects at vertices.");
+      CGAL_warning_msg(false, "Polygon self intersects at vertices.");
       break;
     }
     return false;
   }
 
+  return true;
+}
+
+// previously known as Simple
+template <typename Traits_2>
+bool is_relatively_simple_polygon_with_holes
+(const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
+{
+  bool outer_is_relatively_simple = is_relatively_simple_polygon(pgn.outer_boundary(), traits);
+  if (!outer_is_relatively_simple)
+  {
+    CGAL_warning_msg(false, "Outer boundary is not relatively simple.");
+    return false;
+  }
+
   // Verify every hole is simple
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
   typename Polygon_with_holes_2::Hole_const_iterator  hoit;
   std::list<X_monotone_curve_2>  hole_curves;
   for (hoit = pgn.holes_begin(); hoit != pgn.holes_end(); ++hoit) {
-    bool simple_hole = is_simple_polygon(*hoit, traits);
-    if (!simple_hole)
+    bool relatively_simple_hole = is_relatively_simple_polygon(*hoit, traits);
+    if (!relatively_simple_hole)
+    {
+      CGAL_warning_msg(false, "A hole is not relatively simple.");
       return false;
+    }
   }
   return true;
 }
@@ -622,7 +631,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef std::pair<Curve_const_iterator, Curve_const_iterator>
                                                         Cci_pair;
   typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
-  typedef typename Traits_2::Construct_general_polygon_with_holes_2
+  typedef typename Traits_2::Construct_polygon_with_holes_2
     Construct_polygon_with_holes_2;
 
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
@@ -635,7 +644,7 @@ bool are_holes_and_boundary_pairwise_disjoint
    *
    * Use sweep to find intersections on the interior of curves (not on vertices)
    * and overlapping edges which are not allowed (note that 0/1 dimension
-   * intersections are not detectes by do_intersect() which only returns the
+   * intersections are not detects by do_intersect() which only returns the
    * 2D intersection polygon if exists)
    * Note that using this sweep alone allows for a hole and an edge to share
    * a vertex and intersect (like illegal input pgn_w_overlap_hole.dat in
@@ -677,19 +686,19 @@ bool are_holes_and_boundary_pairwise_disjoint
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
     /* gps.join() and gps.insert()requires that the polyon insrted is valid,
-     * and therfore hole orientation must be reversed
+     * and therefore the hole orientation must be reversed
      */
     bool intersect = gps.do_intersect(hole);
     if (intersect) return false;
     else {
-      /* to use gps.insert(hole) it is required that the set coponents and the
+      /* to use gps.insert(hole) it is required that the set components and the
        * new holes  do not intersect.
        * because the sweep detects shared edges and the do_intersect query
        * detects 2D intersections we can safely use the insert(pwh) function
        * whose performance is better than the join(pgn)
        */
       Polygon_with_holes_2 empty_pwh = construct_pwh_functor(hole);
-      // traits.Construct_general_polygon_with_holes_2 (hole);
+      // traits.Construct_polygon_with_holes_2 (hole);
       // Polygon_with_holes_2 empty_pwh(hole);
       gps.insert(empty_pwh);
       num_of_holes++;
@@ -751,7 +760,7 @@ bool are_holes_and_boundary_pairwise_disjoint
  * 2 - The PWH is relatively simple polygon (holes are simple...)
  * 3 - Has it's boundary oriented counterclockwise and the holes oriented
  *     clockwise
- * 4 - All the segments (boundry and holes) do not cross or intersect in their
+ * 4 - All the segments (boundary and holes) do not cross or intersect in their
  *     relative interior
  * 5 - The holes are on the interior of the boundary polygon if the boundary
  *     is not empty

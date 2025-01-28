@@ -1,8 +1,10 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/property_map.h>
 
@@ -19,7 +21,7 @@ typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Mesh>
-void read_mesh(const char* filename, Mesh& mesh)
+void read_mesh(const std::string filename, Mesh& mesh)
 {
   std::ifstream input(filename);
 
@@ -31,59 +33,89 @@ void read_mesh(const char* filename, Mesh& mesh)
 }
 
 template <typename Mesh>
-void test_smoothing(const char* filename)
+void test_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10));
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10));
 }
 
 template <typename Mesh>
-void test_angle_smoothing(const char* filename)
+void test_angle_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
-                                          .use_area_smoothing(false));
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
+                                                       .use_area_smoothing(false));
 }
 
 template <typename Mesh>
-void test_area_smoothing(const char* filename)
+void test_area_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
-                                          .use_angle_smoothing(false));
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
+                                                       .use_angle_smoothing(false));
 }
 
 template <typename Mesh>
-void test_angle_smoothing_without_projection(const char* filename)
+void test_angle_smoothing_without_projection(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
-                                          .use_area_smoothing(false));
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
+                                                       .use_area_smoothing(false));
 }
 
 template <typename Mesh>
-void test_area_smoothing_without_projection(const char* filename)
+void test_area_smoothing_without_projection(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
-                                          .use_angle_smoothing(false));
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
+                                                       .use_angle_smoothing(false));
+}
+
+template<typename Mesh>
+void test_tangential_relaxation(const std::string filename)
+{
+  Mesh mesh;
+  read_mesh(filename, mesh);
+  PMP::tangential_relaxation(
+    vertices(mesh),
+    mesh,
+    CGAL::parameters::number_of_iterations(4)
+                     .relax_constraints(false));
+  PMP::tangential_relaxation(vertices(mesh), mesh);
+  PMP::tangential_relaxation(mesh);
+
+  // test allow_move_functor
+  typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Point> >::type vpm =
+    get(CGAL::dynamic_vertex_property_t<Point>(), mesh);
+  for (auto v : vertices(mesh))
+    put(vpm, v, get(CGAL::vertex_point, mesh, v));
+  auto no_move = [](typename boost::graph_traits<Mesh>::vertex_descriptor, Point, Point)
+  {
+    return false;
+  };
+  PMP::tangential_relaxation(vertices(mesh), mesh, CGAL::parameters::allow_move_functor(no_move)
+                                                        .vertex_point_map(vpm));
+  for (auto v : vertices(mesh))
+  {
+    assert(get(vpm, v) == get(CGAL::vertex_point, mesh, v));
+  }
 }
 
 template <typename Mesh>
-void test_constrained_vertices(const char* filename)
+void test_constrained_vertices(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -104,7 +136,7 @@ void test_constrained_vertices(const char* filename)
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
 
   for(vertex_descriptor v : vertices(mesh))
   {
@@ -115,8 +147,8 @@ void test_constrained_vertices(const char* filename)
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const char* filename_elephant = "data/elephant.off";
-  const char* filename_mannequin = "data/mannequin-devil.off";
+  const std::string filename_elephant = CGAL::data_file_path("meshes/elephant.off");
+  const std::string filename_mannequin = CGAL::data_file_path("meshes/mannequin-devil.off");
 
   std::cout << "Test files: " << filename_elephant << " " << filename_mannequin << std::endl;
 
@@ -127,6 +159,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_angle_smoothing_without_projection<SurfaceMesh>(filename_elephant);
   test_area_smoothing_without_projection<SurfaceMesh>(filename_mannequin);
   test_constrained_vertices<SurfaceMesh>(filename_elephant);
+  test_tangential_relaxation<SurfaceMesh>(filename_elephant);
 
   // test with Polyhedron
   test_smoothing<Polyhedron>(filename_elephant);
@@ -135,6 +168,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_angle_smoothing_without_projection<Polyhedron>(filename_elephant);
   test_area_smoothing_without_projection<Polyhedron>(filename_mannequin);
   test_constrained_vertices<Polyhedron>(filename_mannequin);
+  test_tangential_relaxation<Polyhedron>(filename_elephant);
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;

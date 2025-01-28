@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -23,13 +14,13 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Combinatorial_map_save_load.h>
@@ -60,15 +51,18 @@ class Volume_info
   friend void CGAL::write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
                                                            const Volume_info& arg);
 public:
-  Volume_info() : m_color(CGAL::Color(myrandom.get_int(0,256),
+  Volume_info() : m_color(CGAL::IO::Color(myrandom.get_int(0,256),
                                       myrandom.get_int(0,256),
                                       myrandom.get_int(0,256))),
     m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
   {}
 
-  CGAL::Color& color()
+  friend bool operator==(const Volume_info& v1, const Volume_info& v2)
+  { return v1.m_color==v2.m_color && v1.m_status==v2.m_status; }
+
+  CGAL::IO::Color& color()
   { return m_color; }
-  const CGAL::Color& color() const
+  const CGAL::IO::Color& color() const
   { return m_color; }
 
   std::string color_name() const
@@ -106,9 +100,12 @@ public:
   { set_filled(!is_filled()); }
 
 private:
-  CGAL::Color m_color;
+  CGAL::IO::Color m_color;
   char        m_status;
 };
+
+typedef CGAL::Linear_cell_complex_traits
+<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
 namespace CGAL
 {
@@ -129,13 +126,13 @@ inline void read_cmap_attribute_node<Volume_info>
     char r = v.second.get<int>("color-r");
     char g = v.second.get<int>("color-g");
     char b = v.second.get<int>("color-b");
-    val.m_color = CGAL::Color(r,g,b);
+    val.m_color = CGAL::IO::Color(r,g,b);
   }
   catch(const std::exception &  )
   {}
 }
 
-// Definition of function allowing to save custon information.
+// Definition of function allowing to save custom information.
 template<>
 inline void write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
                                                    const Volume_info& arg)
@@ -149,9 +146,13 @@ inline void write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree &
 
 }
 
-class Myitems
+struct Myitems
 {
 public:
+#ifdef CMAP_WITH_INDEX
+  using Use_index=CGAL::Tag_true;
+#endif // CMAP_WITH_INDEX
+
   template < class Refs >
   struct Dart_wrapper
   {
@@ -159,16 +160,14 @@ public:
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
 
     typedef std::tuple<Vertex_attrib,void,void,
-                               Volume_attrib> Attributes;
+                       Volume_attrib> Attributes;
   };
 };
 
-typedef CGAL::Linear_cell_complex_traits
-<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
-
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
-typedef LCC::Dart_handle      Dart_handle;
-typedef LCC::Vertex_attribute Vertex;
+typedef LCC::Dart_descriptor       Dart_descriptor;
+typedef LCC::Dart_const_descriptor Dart_const_descriptor;
+typedef LCC::Vertex_attribute      Vertex;
 
 typedef LCC::Point    Point_3;
 typedef LCC::Vector   Vector_3;
@@ -177,7 +176,7 @@ typedef CGAL::Timer Timer;
 
 struct Vertex_info
 {
-  Dart_handle dh;
+  Dart_descriptor dh;
   Vector_3 v;
 };
 
@@ -187,15 +186,14 @@ struct Face_info {
   bool is_process;
 };
 
-typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
 
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
-// typedef CGAL::No_intersection_tag                                     Itag;
- typedef CGAL::Exact_predicates_tag Itag;
+typedef CGAL::Exact_predicates_tag                                    Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
                                                    Itag>              CDT;
 

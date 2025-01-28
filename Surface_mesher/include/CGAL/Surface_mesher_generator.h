@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 
@@ -24,6 +15,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher_generator.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
@@ -39,10 +34,6 @@
 #include <CGAL/Surface_mesher/Types_generators.h>
 
 namespace CGAL {
-
-  struct Non_manifold_tag {};
-  struct Manifold_tag {};
-  struct Manifold_with_boundary_tag {};
 
 //   struct Dynamic_manifold_tag {
 //     enum Tag { Manifold = 0, Non_manifold = 1, Manifold_with_boundary = 2 };
@@ -144,17 +135,17 @@ namespace CGAL {
       SurfaceMeshTraits_3,
       Criteria,
       Tag>::Mesher_base Mesher_base;
-  
+
     typedef Surface_mesher::Surface_mesher<
       Mesher_base,
       typename Surface_mesher::details::Facet_generator<Mesher_base>::type,
       Null_mesher_level,
       verbosity> Mesher;
-  
+
     typedef Mesher type;
     typedef Mesher Type;
   }; // end struct Surface_mesher_generator
-  
+
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_GENERATOR_H

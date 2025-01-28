@@ -1,21 +1,12 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -27,7 +18,7 @@
 
 // includes
 #  include <CGAL/Homogeneous/ConicHPA2.h>
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -106,7 +97,7 @@ class Min_ellipse_2_adapterH2 {
     orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename DA_::RT  RT;
-    
+
         RT  phx;
         RT  phy;
         RT  phw;
@@ -116,11 +107,11 @@ class Min_ellipse_2_adapterH2 {
         RT  rhx;
         RT  rhy;
         RT  rhw;
-    
+
         dao.get( p, phx, phy, phw);
         dao.get( q, qhx, qhy, qhw);
         dao.get( r, rhx, rhy, rhw);
-    
+
         return( static_cast< CGAL::Orientation>(
                  CGAL_NTS sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
                               - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
@@ -252,7 +243,7 @@ class _Min_ellipse_2_adapterH2__Ellipse {
                 int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
-            CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+            CGAL_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
         // keeps g++ happy
         return( CGAL::Bounded_side( 0));
@@ -315,7 +306,7 @@ class _Min_ellipse_2_adapterH2__Ellipse {
                     || (    ( conic1 == e.conic2)
                          && ( conic2 == e.conic1)));
           default:
-            CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+            CGAL_assertion(    ( n_boundary_points >= 0)
                                          && ( n_boundary_points <= 5)); }
         // keeps g++ happy
         return( false);
@@ -346,7 +337,7 @@ operator << ( std::ostream& os,
     const char*  sep  = empty;
     const char*  tail = empty;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
       case CGAL::IO::PRETTY:
         head = pretty_head;
         sep  = pretty_sep;
@@ -358,8 +349,8 @@ operator << ( std::ostream& os,
       case CGAL::IO::BINARY:
         break;
       default:
-        CGAL_optimisation_assertion_msg( false,
-                                        "CGAL::get_mode( os) invalid!");
+        CGAL_assertion_msg( false,
+                                        "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     os << head << e.n_boundary_points;
@@ -391,11 +382,11 @@ std::istream&
 operator >> ( std::istream& is,
               CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e)
 {
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         std::cerr << std::endl;
-	std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:
@@ -422,7 +413,7 @@ operator >> ( std::istream& is,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::mode invalid!");
         break; }
 

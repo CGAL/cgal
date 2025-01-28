@@ -35,7 +35,7 @@ CORE::BigRat lexical_cast<CORE::BigRat>(std::string & str)
   return result;
 }
 
-/*! A reader of conic curves and arcs of conic curves */ 
+/*! A reader of conic curves and arcs of conic curves */
 template <class Traits>
 class Conic_reader {
 public:
@@ -45,21 +45,21 @@ public:
 
   typedef typename Traits::Rat_kernel                   Rat_kernel;
   typedef typename Rat_kernel::FT                       Rational;
-  
+
   typedef typename Rat_kernel::Point_2                  Rat_point_2;
   typedef typename Rat_kernel::Segment_2                Rat_segment_2;
   typedef typename Rat_kernel::Line_2                   Rat_line_2;
   typedef typename Rat_kernel::Circle_2                 Rat_circle_2;
-  
+
   /*! A parser of bff files that contains conic curves or arcs of conic
    * curves
    */
-  template <typename OutputIterator>  
+  template <typename OutputIterator>
   class Conic_parser_visitor :
     public Point_parser_visitor<Rat_kernel, Rat_point_2, Rational> {
   private:
     typedef Point_parser_visitor<Rat_kernel, Rat_point_2, Rational> Base;
-    
+
     /*! The iterator of the output container */
     OutputIterator & m_output_iterator;
 
@@ -69,7 +69,7 @@ public:
     /*! Is a conivs arc currently being processed? */
     bool m_processing_arc;
 
-    /*! A place holder to store the undelying conic of a conic arc */
+    /*! A place holder to store the underlying conic of a conic arc */
     Curve_2 m_conic;
 
     /*! Last orientation */
@@ -83,10 +83,10 @@ public:
       m_processing_arc(false),
       m_orient(CGAL::COUNTERCLOCKWISE)
     {}
-    
-    /*! Accept only unbounded lines for Arrangements */ 
+
+    /*! Accept only unbounded lines for Arrangements */
     virtual void accept_classification(std::string problem,
-                                       std::string geom, 
+                                       std::string geom,
                                        std::string clas,
                                        std::string family,
                                        std::string instance,
@@ -105,7 +105,7 @@ public:
       CORE::BigInt integer = lexical_cast<CORE::BigInt>(s);
       m_bigints.push_back(integer);
     }
-    
+
     virtual void accept_orientation( std::string s)
     {
       m_orient =
@@ -125,7 +125,7 @@ public:
       begin_full();
       m_processing_arc = true;
     }
-    
+
     /*! Start a line segment */
     virtual void begin_line_segment_2() { begin_arc(); }
 
@@ -183,7 +183,7 @@ public:
                         m_orient, ps ,pt);
       ++m_output_iterator = conic_arc;
     }
-    
+
     /*! Start a circle arc */
     virtual void begin_circle_arc_2() { begin_arc(); }
 
@@ -237,7 +237,7 @@ public:
 
     /*! End an ellipse arc */
     virtual void end_iso_ellipse_arc_2() { end_arc(); }
-    
+
     /*! Accept a conic curve */
     virtual void accept_conic_2(std::string r_str, std::string s_str,
                                 std::string t_str, std::string u_str,
@@ -263,7 +263,7 @@ public:
   /*! Read the conic curves or arcs of conic curves  from the input file
    * \param filename the name of the input file
    * \param curves_out the iterator of the container of the read curves
-   * \param bbox the counding box of the read curves
+   * \param bbox the bounding box of the read curves
    */
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,
@@ -278,10 +278,10 @@ public:
     {
       // Construct a circular arc. The line should have the format:
       //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
-      // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the 
+      // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the
       // arc.
       CORE::BigInt    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
-      
+
       str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4 >> x5 >> y5;
       Rat_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
       cv = Curve_2 (p1, p2, p3, p4, p5);

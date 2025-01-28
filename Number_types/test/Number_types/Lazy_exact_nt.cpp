@@ -91,7 +91,7 @@ void delaunay()
   for (int i=0; i<100; i++)
     D.insert(Delaunay::Point(my_NT(my_rand()),
                              my_NT(my_rand()),
-			     my_NT(my_rand())));
+                             my_NT(my_rand())));
 }
 
 // Tests the precision of to_double()
@@ -113,7 +113,7 @@ void test_to_double()
   std::cout << "Approximated interval for 1 : " << tmp.approx() << std::endl;
 
   // Now we square it repeatedly (the interval is going to grow), and we check
-  // that to_double() stays reasonnably close to 1.
+  // that to_double() stays reasonably close to 1.
   for (int i = 0; i < 20; ++i) {
     tmp = CGAL_NTS square(tmp);
     double d = CGAL_NTS to_double(tmp);

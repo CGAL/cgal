@@ -1,12 +1,12 @@
                           input files for test_agg_op (test aggregate operations on many polygons)
                           ------------------------------------------------------------------------
 
-strcutre of file:
-----------------
+structure of file:
+-----------------
 
 # polygons (range of Polygon_2)
 N # number of polygons
-POLYGON 
+POLYGON
    |
    |
 POLYGON
@@ -24,8 +24,8 @@ POLYGON_WITH_HOLES
 N # number of polygon with holes
 POLYGON_WITH_HOLES # (Polygon_with_holes_2)
     |
-    |                        
-    | 
+    |
+    |
 POLYGON_WITH_HOLES # (Polygon_with_holes_2)
 
 # aggregate union on Polygon_with_holes_2 range

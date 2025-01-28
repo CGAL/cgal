@@ -1,9 +1,10 @@
 // #define CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 // #define CGAL_COREFINEMENT_DEBUG
+#define  CGAL_USE_DERIVED_SURFACE_MESH
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <vector>
@@ -13,9 +14,17 @@
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
+#include <CGAL/Testsuite/DerivedSurfaceMesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef Kernel::Point_3 Point_3;
+
+
+#ifdef CGAL_USE_DERIVED_SURFACE_MESH
+typedef CGAL::Testsuite::DerivedSurfaceMesh<Point_3> Surface_mesh;
+#else
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
+#endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace CFR = PMP::Corefinement;
@@ -31,6 +40,50 @@ struct Result_checking
   Result_checking() : check(false) {}
 };
 
+
+template <class TriangleMesh>
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor VD;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor FD;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor HD;
+
+  void after_face_copy(FD,const TriangleMesh&, FD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[2]+=1;
+  }
+  void after_vertex_copy(VD, const TriangleMesh&, VD, TriangleMesh&  tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[0]+=1;
+  }
+  void after_edge_copy (HD, const TriangleMesh&, HD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[1]+=1;
+  }
+  void intersection_edge_copy(HD, const TriangleMesh&, HD, const TriangleMesh&, HD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[1]+=1;
+  }
+
+  My_visitor()
+    : counters(new std::map<const TriangleMesh*, std::array<std::size_t,3>>())
+    , default_value({0,0,0})
+  {}
+
+  std::shared_ptr<std::map<const TriangleMesh*, std::array<std::size_t,3>> > counters;
+  const std::array<std::size_t, 3> default_value;
+};
+
+#define CHECK_VISITOR(MESH) \
+  if (&MESH!=&tm1 && &MESH!=&tm2)\
+  {\
+    assert(vertices(MESH).size()==(*uv.counters)[&MESH][0]);\
+    assert(edges(MESH).size()==(*uv.counters)[&MESH][1]);\
+    assert(faces(MESH).size()==(*uv.counters)[&MESH][2]);\
+  }
+
+
 void run_boolean_operations(
   Surface_mesh& tm1,
   Surface_mesh& tm2,
@@ -44,10 +97,10 @@ void run_boolean_operations(
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
-  typedef boost::optional<Surface_mesh*> OSM;
+  typedef std::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
-  
+
   output[CFR::UNION]=OSM( &union_ );
   output[CFR::INTERSECTION]=OSM( &inter );
   output[CFR::TM1_MINUS_TM2]=OSM( &tm1_minus_tm2 );
@@ -56,7 +109,14 @@ void run_boolean_operations(
   std::cout << "  Vertices before " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
 
-  std::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output);
+  My_visitor<Surface_mesh> uv;
+  std::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output, CGAL::parameters::visitor(uv));
+
+  // check simple creation tracking in the visitor for out-of-place operations
+  CHECK_VISITOR(union_)
+  CHECK_VISITOR(inter)
+  CHECK_VISITOR(tm1_minus_tm2)
+  CHECK_VISITOR(tm2_minus_tm1)
 
   std::cout << "  Vertices after " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
@@ -64,12 +124,11 @@ void run_boolean_operations(
   if ( res[CFR::UNION] ){
    std::cout << "  Union is a valid operation\n";
    assert(union_.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_union_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << union_;
-   #endif
+   CGAL::IO::write_polygon_mesh(fname.str(), union_, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  Union is invalid\n";
@@ -77,12 +136,11 @@ void run_boolean_operations(
   if ( res[CFR::INTERSECTION] ){
    std::cout << "  Intersection is a valid operation\n";
    assert(inter.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_inter_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << inter;
-   #endif
+   CGAL::IO::write_polygon_mesh(fname.str(), inter, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  Intersection is invalid\n";
@@ -90,12 +148,11 @@ void run_boolean_operations(
   if ( res[CFR::TM1_MINUS_TM2] ){
    std::cout << "  tm1-tm2 is a valid operation\n";
    assert(tm1_minus_tm2.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_minus_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << tm1_minus_tm2;
-   #endif
+   CGAL::IO::write_polygon_mesh(fname.str(), tm1_minus_tm2, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  tm1-tm2 is invalid\n";
@@ -103,12 +160,11 @@ void run_boolean_operations(
   if ( res[CFR::TM2_MINUS_TM1] ){
    std::cout << "  tm2-tm1 is a valid operation\n";
    assert(tm2_minus_tm1.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm2_minus_tm1.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << tm2_minus_tm1;
-   #endif
+   CGAL::IO::write_polygon_mesh(fname.str(), tm2_minus_tm1, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  tm2-tm1 is invalid\n";
@@ -225,22 +281,43 @@ int main(int argc,char** argv)
     return 1;
   }
 
-  Result_checking rc;
-
-  if (argc==8)
+  if (argc>8 && (argc-1)%7==0)
   {
-    rc.check=true;
-    rc.union_res = atoi(argv[4])!=0;
-    rc.inter_res = atoi(argv[5])!=0;
-    rc.P_minus_Q_res = atoi(argv[6])!=0;
-    rc.Q_minus_P_res = atoi(argv[7])!=0;
+    // cmd mode
+    for (int i=0;i<argc-1;i+=7)
+    {
+      std::cout << "Running test #" << (i/7)+1 << "\n";
+      Result_checking rc;
+      rc.check=true;
+      rc.union_res = atoi(argv[i+4])!=0;
+      rc.inter_res = atoi(argv[i+5])!=0;
+      rc.P_minus_Q_res = atoi(argv[i+6])!=0;
+      rc.Q_minus_P_res = atoi(argv[i+7])!=0;
+          int scenario = -1;
+      if (std::string(argv[i+3])!=std::string("ALL"))
+        scenario = atoi(argv[i+3]);
+      run<Surface_mesh>(argv[i+1], argv[i+2], scenario, rc);
+    }
   }
+  else
+  {
+    Result_checking rc;
 
-  int scenario = -1;
-  if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
-    scenario = atoi(argv[4]);
+    if (argc==8)
+    {
+      rc.check=true;
+      rc.union_res = atoi(argv[4])!=0;
+      rc.inter_res = atoi(argv[5])!=0;
+      rc.P_minus_Q_res = atoi(argv[6])!=0;
+      rc.Q_minus_P_res = atoi(argv[7])!=0;
+    }
 
-  run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+    int scenario = -1;
+    if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
+      scenario = atoi(argv[3]);
+
+    run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+  }
 
   return 0;
 }

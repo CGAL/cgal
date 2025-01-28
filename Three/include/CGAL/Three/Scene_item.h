@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -73,25 +64,25 @@ public:
    */
   enum OpenGL_program_IDs
   {
-    ROGRAM_WITH_LIGHT = 0,      //! Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
-    PROGRAM_WITHOUT_LIGHT,       //! Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
-    PROGRAM_NO_SELECTION,        //! Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
-    PROGRAM_WITH_TEXTURE,        //! Used to render a textured polyhedron. Affected by light.
-    PROGRAM_PLANE_TWO_FACES,     //! Used to render a two-faced plane. The two faces have a different color. Not affected by light.
-    PROGRAM_WITH_TEXTURED_EDGES, //! Used to render the edges of a textured polyhedron. Not affected by light.
-    PROGRAM_INSTANCED,           //! Used to display instanced rendered spheres.Affected by light.
-    PROGRAM_INSTANCED_WIRE,      //! Used to display instanced rendered wired spheres. Not affected by light.
-    PROGRAM_C3T3,                //! Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
-    PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
-    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
-    PROGRAM_SPHERES,             //! Used to render one or several spheres.
-    PROGRAM_DARK_SPHERES,        //! Used to render one or several spheres without light (for picking for example).
-    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
-    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
-    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
-    PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
-    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
-    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
+    ROGRAM_WITH_LIGHT = 0,       //!< Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
+    PROGRAM_WITHOUT_LIGHT,       //!< Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
+    PROGRAM_NO_SELECTION,        //!< Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
+    PROGRAM_WITH_TEXTURE,        //!< Used to render a textured polyhedron. Affected by light.
+    PROGRAM_PLANE_TWO_FACES,     //!< Used to render a two-faced plane. The two faces have a different color. Not affected by light.
+    PROGRAM_WITH_TEXTURED_EDGES, //!< Used to render the edges of a textured polyhedron. Not affected by light.
+    PROGRAM_INSTANCED,           //!< Used to display instanced rendered spheres.Affected by light.
+    PROGRAM_INSTANCED_WIRE,      //!< Used to display instanced rendered wired spheres. Not affected by light.
+    PROGRAM_C3T3,                //!< Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
+    PROGRAM_C3T3_EDGES,          //!< Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
+    PROGRAM_CUTPLANE_SPHERES,    //!< Used to render the spheres of an item with a cut plane.
+    PROGRAM_SPHERES,             //!< Used to render one or several spheres.
+    PROGRAM_DARK_SPHERES,        //!< Used to render one or several spheres without light (for picking for example).
+    PROGRAM_FLAT,                //!< Used to render flat shading without pre computing normals
+    PROGRAM_OLD_FLAT,            //!< Used to render flat shading without pre computing normals without geometry shader
+    PROGRAM_SOLID_WIREFRAME,     //!< Used to render edges with width superior to 1.
+    PROGRAM_NO_INTERPOLATION,    //!< Used to render faces without interpolating their color.
+    PROGRAM_HEAT_INTENSITY,      //!< Used to render special item in Heat_method_plugin
+    NB_OF_PROGRAMS               //!< Holds the number of different programs in this enum.
   };
   typedef CGAL::Bbox_3 Bbox;
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
@@ -105,7 +96,7 @@ public:
   //! This is where the vectors of VBOs and VAOs are initialized.
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! \brief Sets the number of isolated vertices.
+  //! \brief sets the number of isolated vertices.
   //!
   //! This number will be displayed in a warning box at loading.
   //! @see getNbIsolatedvertices
@@ -114,12 +105,12 @@ public:
   //! @see setNbIsolatedvertices
   std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
-  //! \brief Duplicates the item.
+  //! \brief duplicates the item.
   //!
   //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
 
-  //! \brief Indicates if `m` is supported
+  //! \brief indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
@@ -172,7 +163,7 @@ public:
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
-  //! \brief Determines if the item is finite or not.
+  //! \brief determines if the item is finite or not.
   //!
   //! For example, a plane is not finite.
   //! If false, the BBox is not computed.
@@ -196,11 +187,11 @@ public:
   //! If the diagonal's length has never been computed, computes it and
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
-  virtual double diagonalBbox() const {
-   if(!is_diag_bbox_computed)
-       compute_diag_bbox();
-   is_diag_bbox_computed = true;
-   return _diag_bbox;
+  virtual double bboxDiagonal() const {
+    if(!is_bbox_diag_computed)
+      compute_diag_bbox();
+    is_bbox_diag_computed = true;
+    return _diag_bbox;
   }
 
   // Function about manipulation
@@ -212,7 +203,7 @@ public:
   //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
-  virtual ManipulatedFrame* manipulatedFrame() { return 0; }
+  virtual ManipulatedFrame* manipulatedFrame() { return nullptr; }
 
   // Getters for the four basic properties
   //!Getter for the item's color.
@@ -249,7 +240,7 @@ public:
   //!
   int getId()const;
 
-  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes,
   //! for example.
   void resetMenu();
   //!Handles key press events.
@@ -290,7 +281,7 @@ public:
   virtual Header_data header()const;
   //!Returns true if the item has statistics.
   virtual bool has_stats()const{return false;}
-  //!Returns a QString containing the requested value for the the table in the statistics dialog
+  //!Returns a QString containing the requested value for the table in the statistics dialog
   /*! \verbatim
    * Example :
    *  ____________________________
@@ -310,13 +301,13 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
   //!
-  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //! \brief removeViewer removes the Vaos of `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
@@ -340,12 +331,12 @@ public Q_SLOTS:
   //!This function is called by `Scene::changeGroup` and should not be
   //!called manually.
   virtual void moveToGroup(Scene_group_item* group);
-  void setRenderingMode(int m) { setRenderingMode((RenderingMode)m);}
+  void setRenderingMode(int m) { setRenderingMode(static_cast<RenderingMode>(m));}
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
-  virtual void setRenderingMode(RenderingMode m) { 
+  virtual void setRenderingMode(RenderingMode m) {
     if (supportsRenderingMode(m))
-      rendering_mode = m; 
+      rendering_mode = m;
     Q_EMIT redraw();
   }
   //!Sets the RenderingMode to Points.
@@ -381,19 +372,19 @@ public Q_SLOTS:
   void setGouraudPlusEdgesMode(){
     setRenderingMode(GouraudPlusEdges);
   }
-  
+
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
+  //!This might be needed as items are not always deleted right away by Qt and this behavior may cause simply a
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
   //!Returns the alpha value for the item.
     //! Must be called within a valid openGl context.
     virtual float alpha() const;
-  
-    //! Sets the value of the aplha Slider for this item.
+
+    //! Sets the value of the alpha Slider for this item.
     //!
-    //! Must be overriden;
+    //! Must be overridden;
     //! \param alpha must be between 0 and 255
     virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.
@@ -422,7 +413,7 @@ protected:
   mutable Bbox _bbox;
   mutable double _diag_bbox;
   mutable bool is_bbox_computed;
-  mutable bool is_diag_bbox_computed;
+  mutable bool is_bbox_diag_computed;
   virtual void compute_bbox()const{}
   virtual void compute_diag_bbox()const;
   // The four basic properties
@@ -452,6 +443,8 @@ protected:
   RenderingMode rendering_mode;
   //!The default context menu.
   QMenu* defaultContextMenu;
+  //!Specifies if the context menu should be rebuild on the next call.
+  bool context_menu_outdated = false;
   /*! Contains the previous RenderingMode.
    * This is used to determine if invalidateOpenGLBuffers should be called or not
    * in certain cases.
@@ -491,11 +484,11 @@ protected:
   void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = nullptr) const;
 public:
   //! \brief defaultSaveName returns the name to be used as default
   //! when saving this item.
-  //! 
+  //!
   //! Default is `name()`.
   //! \return A new name for the default value in the "save as" dialog.
   virtual QString defaultSaveName() const { return name(); }

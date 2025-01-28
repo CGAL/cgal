@@ -2,7 +2,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
@@ -13,7 +13,7 @@ typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, CGAL::Default, CGAL::Tag_false> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 
@@ -36,8 +36,6 @@ int main()
     // constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     Tree tree(faces(polyhedron1).first, faces(polyhedron1).second, polyhedron1);
-
-    tree.accelerate_distance_queries();
 
     tree.insert(faces(polyhedron2).first, faces(polyhedron2).second, polyhedron2);
 

@@ -1,12 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 template <class TriangleMesh, class VertexPointMap, class EdgeIsConstrainedMap>
 std::size_t
@@ -87,9 +87,9 @@ count_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm
 void test_corefine(Triangle_mesh tm1, Triangle_mesh tm2)
 {
   Constrained_edge_map ecm1 =
-    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm2 =
-    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
 
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
@@ -108,11 +108,11 @@ void test_union_no_copy(
   const char* outname, bool skip_test_1, bool skip_test_2)
 {
   Constrained_edge_map ecm1 =
-    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm2 =
-    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm_out =
-    tm_out.property_map<Triangle_mesh::Edge_index,bool>(outname).first;
+    tm_out.property_map<Triangle_mesh::Edge_index,bool>(outname).value();
 
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
@@ -151,24 +151,23 @@ void test_bool_op_no_copy(
   bool reverse)
 {
   Constrained_edge_map ecm1 =
-    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm2 =
-    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm_out_union = reverse
-    ? tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).first
-    : tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).first;
+    ? tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).value()
+    : tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).value();
   Constrained_edge_map ecm_out_inter = reverse
-    ? tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).first
-    : tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).first;
+    ? tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).value()
+    : tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).value();
 
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
-  typedef boost::optional<Triangle_mesh*> OTM;
-  Triangle_mesh *ptr = NULL;
+  typedef std::optional<Triangle_mesh*> OTM;
   const std::array<OTM,4> output =
-    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), boost::make_optional(false,ptr), boost::make_optional(false,ptr))
-            : CGAL::make_array(OTM(&tm1), OTM(&tm2), boost::make_optional(false,ptr), boost::make_optional(false,ptr));
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>())
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>());
   PMP::corefine_and_compute_boolean_operations(tm1,
                                                tm2,
                                                output,
@@ -176,8 +175,8 @@ void test_bool_op_no_copy(
                                                params::edge_is_constrained_map(ecm2),
                                                std::make_tuple(params::edge_is_constrained_map(ecm_out_union),
                                                                        params::edge_is_constrained_map(ecm_out_inter),
-                                                                       params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
-                                                                       params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));
+                                                                       params::default_values(),
+                                                                       params::default_values()));
 
   // dump_constrained_edges(*(*output[0]), ecm_out_union, "out_cst_union.cgal");
   // dump_constrained_edges(*(*output[1]), ecm_out_inter, "out_cst_inter.cgal");

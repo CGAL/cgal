@@ -1,25 +1,19 @@
 // Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 #define CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 #ifndef DOXYGEN_RUNNING
 
@@ -45,7 +39,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::face_patch_id_t<void> >
 
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor face_descriptor;
 
-  typedef CGAL::Static_property_map<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor,std::pair<int,int> > type;
+  typedef CGAL::Constant_property_map<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor,std::pair<int,int> > type;
   typedef type const_type;
 };
 
@@ -88,7 +82,7 @@ namespace CGAL {
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::face_patch_id_t<I> >
  >::type
 inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
@@ -100,19 +94,19 @@ inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::face_patch_id_t<I> >
  >::type
 inline get(CGAL::face_patch_id_t<I>, const Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template property_map<face_descriptor,I>("f:patch_id").first;
+  return smesh. template property_map<face_descriptor,I>("f:patch_id").value();
 }
 
 
 #define CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(Tag) \
   typename boost::lazy_disable_if<                      \
-     boost::is_const<P>,                                \
+     std::is_const<P>,                                \
      Get_pmap_of_surface_mesh<P, Tag >                  \
    >::type
 
@@ -120,7 +114,7 @@ template <typename P>
 CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_patch_id_t<void>)
 inline get(CGAL::face_patch_id_t<void>, const Surface_mesh<P> &)
 {
-  typedef CGAL::Static_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
+  typedef CGAL::Constant_property_map<typename boost::graph_traits<Surface_mesh<P> >::face_descriptor,std::pair<int,int> > Pmap;
 
   return Pmap(std::make_pair(0,1));
 }
@@ -140,7 +134,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
 inline get(CGAL::edge_is_feature_t, const Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
-  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").first;
+  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").value();
 }
 
 
@@ -157,12 +151,12 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_feature_degree_t)
 inline get(CGAL::vertex_feature_degree_t, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template property_map<vertex_descriptor,int>("v:nfe").first;
+  return smesh. template property_map<vertex_descriptor,int>("v:nfe").value();
 }
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::vertex_incident_patches_t<I> >
  >::type
   inline get(CGAL::vertex_incident_patches_t<I>, Surface_mesh<P> & smesh)
@@ -173,13 +167,13 @@ typename boost::lazy_disable_if<
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::vertex_incident_patches_t<I> >
  >::type
   inline get(CGAL::vertex_incident_patches_t<I>, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template property_map<vertex_descriptor,std::set<I> >("v:ip").first;
+  return smesh. template property_map<vertex_descriptor,std::set<I> >("v:ip").value();
 }
 
 } // namespace CGAL

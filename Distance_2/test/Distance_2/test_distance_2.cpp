@@ -1,12 +1,12 @@
-// 2D distance tests.
-
 #ifdef NDEBUG
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -16,7 +16,7 @@ const double epsilon = 0.001;
 
 struct randomint {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];
@@ -61,19 +61,19 @@ struct Test {
   template < typename Type >
   bool approx_equal_nt(const Type &t1, const Type &t2)
   {
-	if (t1 == t2)
-		return true;
-	if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
-		return true;
-	std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
-	return false;
+        if (t1 == t2)
+                return true;
+        if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
+                return true;
+        std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
+        return false;
   }
 
   template < typename O1, typename O2 >
   void check_squared_distance(const O1& o1, const O2& o2, const FT& result)
   {
-	assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
-	assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
   }
 
 
@@ -167,7 +167,7 @@ struct Test {
     check_squared_distance (R(p( 4,    0), p(-3,  -1)), R(p(  1,  1), p(  2, 11)), 2);
   }
 
-  void R_S()
+  void S_R()
   {
     std::cout << "Ray - Segment\n";
     check_squared_distance (R(p(2, 0), p( 0, 2)), S(p( 1, 1), p( 4, 0)), 0);
@@ -216,7 +216,7 @@ struct Test {
     check_squared_distance (p( 1,  1), L(p(  4,  0), p(  -3,  -1)), 2);
   }
 
-  void L_S()
+  void S_L()
   {
     std::cout << "Line - Segment\n";
     check_squared_distance (L(p( 0,  0), p( 1,  0)), S(p(  2,  2), p(  3,  3)), 4);
@@ -268,29 +268,38 @@ struct Test {
 
   void run()
   {
-    std::cout << "2D Distance tests\n";
+    std::cout << "-- Kernel: " << typeid(K).name() << std::endl;
+
     P_P();
     P_S();
-    S_S();
     P_R();
-    R_R();
-    R_S();
-    R_L();
     P_L();
-    L_S();
-    L_L();
     P_T();
-    L_T();
-    R_T();
+
+    S_S();
     S_T();
+    S_R();
+    S_L();
+
+    R_R();
+    R_L();
+    R_T();
+
+    L_L();
+    L_T();
+
     T_T();
   }
-
 };
 
 int main()
 {
-	Test< CGAL::Simple_cartesian<double>   >().run();
-	Test< CGAL::Simple_homogeneous<double> >().run();
-	// TODO : test more kernels.
+  std::cout << "2D Distance tests\n";
+
+  Test<CGAL::Simple_cartesian<double> >().run();
+  Test<CGAL::Simple_homogeneous<double> >().run();
+
+  Test<CGAL::Homogeneous<CGAL::Epeck_ft> >().run();
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run();
+  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run();
 }

@@ -5,15 +5,15 @@ namespace CGAL {
 \ingroup PkgTriangulationsTriangulationClasses
 
 This class implements triangulations of point sets in dimension \f$ d \f$.
-The triangulation covers the convex hull of the input points 
+The triangulation covers the convex hull of the input points
 (the embedded vertices of the triangulation).
 
 To store this triangulation in a triangulation data structure, we turn the set
 of its faces into a topological sphere by adding a
-fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
-simplices incident to boundary faces of the convex hull. 
-Each infinite \f$ i\f$-simplex is 
-incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the 
+fictitious vertex, called the <i>infinite vertex</i>, as well as infinite
+simplices incident to boundary faces of the convex hull.
+Each infinite \f$ i\f$-simplex is
+incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the
 convex hull boundary.
 
 
@@ -22,7 +22,7 @@ and predicates needed by triangulations. `TriangulationTraits_` must be a model 
 concept `TriangulationTraits`.
 
 \tparam TriangulationDataStructure_ must be a model of the concept
-`TriangulationDataStructure`. This model is used to store 
+`TriangulationDataStructure`. This model is used to store
 the faces of the triangulation. The parameter `TriangulationDataStructure_` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
 follows:
@@ -62,8 +62,8 @@ Type for the model of the `TriangulationTraits_` concept.
 typedef TriangulationTraits_ Geom_traits;
 
 /*!
-A point in Euclidean space. Note that in the context of a 
-`Regular_triangulation` class (which derives from this class), 
+A point in Euclidean space. Note that in the context of a
+`Regular_triangulation` class (which derives from this class),
 `TriangulationTraits_::Point_d` is a weighted point.
 */
 typedef TriangulationTraits_::Point_d Point;
@@ -71,7 +71,7 @@ typedef TriangulationTraits_::Point_d Point;
 /*!
 This indicates whether the maximal dimension is static
 (i.e.\ if the type of `Maximal_dimension` is `CGAL::Dimension_tag<int dim>`)
-or dynamic (i.e.\ if the type of `Maximal_dimension` is 
+or dynamic (i.e.\ if the type of `Maximal_dimension` is
 `CGAL::Dynamic_dimension_tag`).
 In the latter case, the `dim` parameter passed to the constructor
 of the class is used.
@@ -110,7 +110,7 @@ typedef TriangulationDataStructure_::Face Face;
 /// \name Handles and Iterators
 /// The vertices and full cells of triangulations are accessed through
 /// handles and iterators. A handle is a model of the
-/// `Handle` concept, and supports the two dereference operators: 
+/// `Handle` concept, and supports the two dereference operators:
 /// `operator*` and `operator->`. Iterators are bidirectional and
 /// non-mutable. They are convertible to the
 /// corresponding handles, thus the user can pass them directly as
@@ -146,12 +146,12 @@ Vertex_const_iterator;
 
 /*!
 iterator over finite vertices
-*/ 
+*/
 typedef unspecified_type Finite_vertex_iterator;
 
 /*!
 const iterator over finite vertices
-*/ 
+*/
 typedef unspecified_type Finite_vertex_const_iterator;
 
 /*!
@@ -213,7 +213,7 @@ type (a signed integral type)
 typedef TriangulationDataStructure_::difference_type difference_type;
 
 /*!
-\enum Locate_type 
+\enum Locate_type
 \brief Used by `Triangulation` to specify which case occurs when locating a point in the triangulation.
 */
 enum Locate_type { ON_VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
@@ -473,7 +473,7 @@ triangulation, then `loc_type` is set to
 `OUTSIDE_AFFINE_HULL`, and <I>locate</I> returns
 `Full_cell_handle()`.
 If the `query` point lies inside the affine hull
-of the points, the function finds the \f$ k\f$-face that 
+of the points, the function finds the \f$ k\f$-face that
 contains `query` in its relative
 interior (if the \f$ k\f$-face is finite, it is
 unique) and the result is returned as follows:
@@ -515,7 +515,7 @@ locate(const Point & query, Locate_type & loc_type,
 
 /*!
 Contracts the `Face f` to a single vertex at
-position `p`. Returns a handle to that vertex. 
+position `p`. Returns a handle to that vertex.
 
 \pre The boundary of the union of full cells incident to `f` must be a triangulation of a
 sphere of dimension `tr`.`current_dimension()`).
@@ -556,9 +556,8 @@ Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
 
-<DL> <DT><B>`ON_VERTEX`</B><DD> The point of the
-p`Vertex` described by `f` is set to `p`. 
-<DT><B>`IN_FACE`</B><DD> The point `p` is inserted in the `Face f`. 
+<DL> <DT><B>`ON_VERTEX`</B><DD> The triangulation remains unchanged.
+<DT><B>`IN_FACE`</B><DD> The point `p` is inserted in the `Face f`.
 <DT><B>`IN_FACET`</B><DD> The point `p` is inserted in the `Facet ft`.
 <DT><B>Anything else</B><DD> The point `p` is inserted in the triangulation according to the value
 of `loc_type`, using the full cell `c`.
@@ -569,7 +568,7 @@ This method is used internally by the other `insert()` methods.
 Vertex_handle insert(const Point &p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
 
 /*!
-Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
+Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex
 at position `p` and fills the hole by connecting
 each face of the boundary to `p`.
 A `Vertex_handle` to the new `Vertex` is

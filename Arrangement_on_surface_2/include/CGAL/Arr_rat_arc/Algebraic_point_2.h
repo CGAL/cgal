@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -54,12 +45,12 @@ public:
   typedef AlgebraicKernelD_1                        Algebraic_kernel_d_1;
   typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>
                                                     Base;
- 
+
   typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
                                                     Rational_function;
   typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel_d_1>
                                                     Rational_function_pair;
-  
+
   typedef typename Base::Algebraic_real_1           Algebraic_real_1;
   typedef typename Algebraic_kernel_d_1::Bound      Bound;
   typedef typename Base::Integer                    Integer ;
@@ -70,13 +61,13 @@ public:
 
   typedef typename Get_arithmetic_kernel<Algebraic_real_1>::Arithmetic_kernel
                                                     AK;
-  typedef typename AK::Bigfloat_interval            BFI; 
+  typedef typename AK::Bigfloat_interval            BFI;
   typedef Bigfloat_interval_traits<BFI>             BFI_traits;
   typedef CGAL::Polynomial<BFI>                     BFI_polynomial;
   typedef CGAL::Polynomial_traits_d<BFI_polynomial> BFI_polynomial_traits;
 
-  
-  typedef typename Base::FT_rat_1                   FT_rat_1; 
+
+  typedef typename Base::FT_rat_1                   FT_rat_1;
   typedef typename Base::Polynomial_traits_1        Polynomial_traits_1;
 
   typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>
@@ -95,9 +86,9 @@ public:
     {
       _rational_function = other._rational_function;
       _x_coordinate = other._x_coordinate;
-    } 
+    }
   }
-  
+
   //assignment oparator
   Algebraic_point_2_rep& operator=(const Algebraic_point_2_rep& other)
   {
@@ -122,17 +113,17 @@ public:
     return rat_func_pair.compare_f_g_at(_x_coordinate);
   }
 
-  Algebraic_real_1& x() 
+  Algebraic_real_1& x()
   {
     return _x_coordinate;
   }
 
-  const Algebraic_real_1& x() const 
+  const Algebraic_real_1& x() const
   {
     return _x_coordinate;
   }
 
-  const Rational_function& rational_function() const 
+  const Rational_function& rational_function() const
   {
     return _rational_function;
   }
@@ -147,7 +138,7 @@ public:
     //converting the defining polynomial of x and the rational function to
     //bivariate polynomials
     Polynomial_2 f(_algebraic_kernel.compute_polynomial_1_object()(_x_coordinate));
-   
+
     Polynomial_2 y(CGAL::shift(Polynomial_2(1),1));
     Polynomial_2 g(_rational_function.numer() - y * _rational_function.denom());
 
@@ -155,7 +146,7 @@ public:
     g=CGAL::swap(g, 0, 1);  //swap x and y in the polynomial g
     //compute the resultant in x (polynomial in y)
     Polynomial_1 r(CGAL::resultant(f,g));
-  
+
     //solve for all roots of resultant
     std::list<Algebraic_real_1> roots;
     _algebraic_kernel.solve_1_object()(r, false, std::back_inserter(roots));
@@ -169,7 +160,7 @@ public:
         y_bounds(this->approximate_absolute_y(error_bound,initial_precision));
       while (CGAL::compare(roots.front(),y_bounds.first) == SMALLER)
         roots.pop_front();
-  
+
       while (CGAL::compare(y_bounds.second,roots.back()) == SMALLER)
         roots.pop_back();
 
@@ -196,29 +187,29 @@ public:
     return approximate_absolute_y(a,precision);
   }
   std::pair<Bound,Bound> approximate_relative_x( int r) const
-  {    
+  {
     return _algebraic_kernel.approximate_relative_1_object()(_x_coordinate,r);
   }
   std::pair<Bound,Bound> approximate_relative_y( int r) const
   {
     // return zero if y is zero (the code below would not terminate)
-    // moreover approx relative is actually not well defined 
+    // moreover approx relative is actually not well defined
     if(_rational_function.sign_at(_x_coordinate)==CGAL::ZERO)
       return std::make_pair(Bound(0),Bound(0));
-    
+
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
-    
+
     typedef typename BFI_traits::Bound    BF;
 
     long precision = 16;
     set_precision(precision);
     BF eps = CGAL::ipower(BF(1)/2,r);
-    
-    while (true){      
+
+    while (true){
       set_precision(precision);
       BFI x_bfi(convert_to_bfi(_x_coordinate));
-      
+
       BFI_polynomial
         numer_bfi(convert_to_bfi_extended(_rational_function.numer()));
       BFI_polynomial
@@ -226,18 +217,19 @@ public:
 
       BFI y_numer_bfi(evaluate(numer_bfi,x_bfi));
       BFI y_denom_bfi(evaluate(denom_bfi,x_bfi));
-      
+
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-       
-        if (CGAL::compare( 
+
+        if (CGAL::compare(
                 CGAL::width(y_bfi),
                 CGAL::lower(CGAL::abs(y_bfi)) * eps)
-            == SMALLER)
+            == SMALLER){
           return std::make_pair(
               Bound(CGAL::lower(y_bfi)),
               Bound(CGAL::upper(y_bfi)));
+        }
       }
       else precision*=2;
     }
@@ -246,7 +238,7 @@ public:
   std::ostream& print (std::ostream& os) const
   {
     std::pair<double,double> double_p;
-    switch(::CGAL::get_mode(os))
+    switch(::CGAL::IO::get_mode(os))
     {
      case ::CGAL::IO::PRETTY:
       double_p = this->to_double();
@@ -256,11 +248,11 @@ public:
       os << double_p.second;
       os << ")";
       break;
-          
+
      case ::CGAL::IO::BINARY:
       std::cerr << "BINARY format not yet implemented" << std::endl;
       break;
-          
+
      default:
       // ASCII
       os <<"x = " << _x_coordinate<<" ";
@@ -270,7 +262,7 @@ public:
       Base::print_polynomial(os, _rational_function.denom(), 'x');
       os << ")";
     }
-     
+
     return os;
  }
 private:
@@ -278,9 +270,9 @@ private:
   {
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
-    
+
     typedef typename BFI_traits::Bound             BF;
-    
+
     BF eps = CGAL::ipower(BF(1)/2,a);
     while (true)
     {
@@ -292,15 +284,16 @@ private:
 
       BFI y_numer_bfi(evaluate(numer_bfi,x_bfi));
       BFI y_denom_bfi(evaluate(denom_bfi,x_bfi));
-      
+
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-        if (CGAL::width(y_bfi) < eps )
+        if (CGAL::width(y_bfi) < eps ){
           return std::make_pair(
               Bound(CGAL::lower(y_bfi)),
               Bound(CGAL::upper(y_bfi)));
-       
+        }
+
       }
       else precision*=2;
     }
@@ -311,10 +304,10 @@ private:
   CGAL::Coercion_traits<NTX,
                         typename Get_arithmetic_kernel<NTX>::
                           Arithmetic_kernel::Bigfloat_interval>::Type
-  convert_to_bfi_extended(const NTX& x) 
+  convert_to_bfi_extended(const NTX& x)
   {
     typedef typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel AK;
-    typedef typename AK::Bigfloat_interval BFI; 
+    typedef typename AK::Bigfloat_interval BFI;
     typedef CGAL::Coercion_traits<NTX, BFI> CT;
     return typename CT::Cast()(x);
   }
@@ -342,7 +335,7 @@ template <typename Algebraic_kernel_ >
 class Algebraic_point_2 :
     public Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
 {
- 
+
 public:
   typedef Algebraic_kernel_                               Algebraic_kernel_d_1;
   typedef Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
@@ -354,7 +347,7 @@ public:
   typedef typename Rep::Rational_function                 Rational_function;
   typedef typename Rep::Bound                             Bound;
   typedef typename Rep::Cache                             Cache;
-  typedef typename Rep::Polynomial_1                      Polynomial_1; 
+  typedef typename Rep::Polynomial_1                      Polynomial_1;
 
 private:
   static Self& get_default_instance()
@@ -364,14 +357,14 @@ private:
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, numer,0);
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, denom, 1);
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Rational_function, rational_function, numer, denom, &kernel);
-    
+
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(Algebraic_real_1, x_coordinate,kernel.construct_algebraic_real_1_object()(Rational(0)));
-    
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Self, default_instance, rational_function, x_coordinate); 
-    
+
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Self, default_instance, rational_function, x_coordinate);
+
     return default_instance;
 
-    /*static Self x = Self(Rational(0),Rational(0),_cache); 
+    /*static Self x = Self(Rational(0),Rational(0),_cache);
     return x; */
   }
 
@@ -379,7 +372,7 @@ public:
   explicit Algebraic_point_2(const Rational_function& rational_function,
                              const Algebraic_real_1& x_coordinate) :
     Base(rational_function,x_coordinate) {}
-  
+
   Algebraic_point_2() :
     Base(static_cast<const Base &> (get_default_instance())) {}
 
@@ -393,7 +386,7 @@ public:
 
   const Polynomial_1& numerator() const { return this->ptr()->numerator(); }
   const Polynomial_1& denominator() const { return this->ptr()->denominator(); }
-  
+
   Algebraic_real_1& x()
   {
     if (this->is_shared())
@@ -401,12 +394,12 @@ public:
     return this->ptr()->x();
   }
 
-  const Algebraic_real_1& x() const 
+  const Algebraic_real_1& x() const
   {
     return this->ptr()->x();
   }
 
-  const Rational_function& rational_function() const 
+  const Rational_function& rational_function() const
   {
     return this->ptr()->rational_function();
   }
@@ -432,7 +425,7 @@ public:
   }
 
   std::pair<Bound,Bound> approximate_relative_x( int r) const
-  {    
+  {
     return this->ptr()->approximate_relative_x(r);
   }
 
@@ -456,6 +449,6 @@ std::ostream& operator<<(std::ostream& os,
 }
 
 }   //namespace Arr_rational_arc
-}   //namespace CGAL {   
+}   //namespace CGAL {
 
 #endif //CGAL_ALBERAIC_POINT_D_1_H

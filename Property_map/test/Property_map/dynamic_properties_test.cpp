@@ -2,6 +2,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/generators.h>
 
 #if defined(CGAL_USE_OPENMESH)
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -71,22 +72,22 @@ test()
     assert(get(vim, *(faces(m).first)) == 7812);
   }
 }
-  
+
 int main()
 {
-  
+
   typedef CGAL::Surface_mesh<Point_3> SM;
   test<SM>();
 
   typedef CGAL::Polyhedron_3<K> P;
   test<P>();
 
-  
+
 #if defined(CGAL_USE_OPENMESH)
   typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OM;
   test<OM>();
 #endif
-  
+
   return 0;
 }
 

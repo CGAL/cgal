@@ -1,21 +1,12 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -32,11 +23,11 @@ namespace CGAL {
 
 namespace internal {
 
-template < class CurvePairAnalysis_2, class Rep_ > 
+template < class CurvePairAnalysis_2, class Rep_ >
 class Status_line_CPA_1;
 
 template <class CurvePairAnalysis_2, class Rep>
-std::ostream& operator<< (std::ostream&, 
+std::ostream& operator<< (std::ostream&,
     const Status_line_CPA_1<CurvePairAnalysis_2, Rep>&);
 
 template < class CurvePairAnalysis_2 >
@@ -50,7 +41,7 @@ class Status_line_CPA_1_rep {
 
     // type of x-coordinate
     typedef typename Curve_pair_analysis_2::Algebraic_real_1
-                Algebraic_real_1; 
+                Algebraic_real_1;
 
     // type of a curve point
     typedef typename Curve_pair_analysis_2::Algebraic_real_2
@@ -71,7 +62,7 @@ class Status_line_CPA_1_rep {
     // constructors
 public:
     // default constructor ()
-    Status_line_CPA_1_rep()  
+    Status_line_CPA_1_rep()
     {   }
 
     // constructs an empty status line object
@@ -81,17 +72,17 @@ public:
 
     // stores this status line interval or event index of a curve pair
     size_type _m_index;
-    
+
     // represents x-coordinate of event of rational value over interval
     // computed only by demand
-    mutable boost::optional<Algebraic_real_1> _m_x;
+    mutable std::optional<Algebraic_real_1> _m_x;
 
     // for each event point stores a pair of arcnos of the 1st and 2nd curve
     // or -1 if respective curve is not involved
     mutable Arc_container _m_arcs;
 
     // inverse mapping from arcnos of the 1st and 2nd curve to respective
-    // y-position 
+    // y-position
     mutable Int_container _m_arcno_to_pos[2];
 
     // stores multiplicities of intersection points (-1 if there is no 2-curve
@@ -111,19 +102,19 @@ public:
     friend class Status_line_CPA_1<Curve_pair_analysis_2, Self>;
 };
 
-//! \brief The class provides information about the intersections of a pair of 
-//! curves with a (intended) vertical line (ignoring vertical lines of the 
-//! curves themselves). 
-//! 
+//! \brief The class provides information about the intersections of a pair of
+//! curves with a (intended) vertical line (ignoring vertical lines of the
+//! curves themselves).
+//!
 //! Each intersection of a curve with the vertical line defined by some given x
-//! induces an event. An event can be asked for its coordinates 
-//! (\c Algebraic_real_2) and the involved curve(s). Note that the involvement 
-//! also holds for curve ends approaching the vertical asymptote. 
+//! induces an event. An event can be asked for its coordinates
+//! (\c Algebraic_real_2) and the involved curve(s). Note that the involvement
+//! also holds for curve ends approaching the vertical asymptote.
 //! Curve_pair_vertical_line_1 at x = +/-oo are not allowed.
-template <class CurvePairAnalysis_2, 
+template <class CurvePairAnalysis_2,
       class Rep_ = internal::Status_line_CPA_1_rep<CurvePairAnalysis_2> >
-class Status_line_CPA_1 : 
-    public ::CGAL::Handle_with_policy< Rep_ > 
+class Status_line_CPA_1 :
+    public ::CGAL::Handle_with_policy< Rep_ >
 {
 public:
     //!@{
@@ -131,7 +122,7 @@ public:
 
     //! this instance's first template parameter
     typedef CurvePairAnalysis_2 Curve_pair_analysis_2;
-    
+
     //! this instance's second template parameter
     typedef Rep_ Rep;
 
@@ -139,7 +130,7 @@ public:
     typedef Status_line_CPA_1<Curve_pair_analysis_2, Rep> Self;
 
     //! type of x-coordinate
-    typedef typename Curve_pair_analysis_2::Algebraic_real_1 Algebraic_real_1; 
+    typedef typename Curve_pair_analysis_2::Algebraic_real_1 Algebraic_real_1;
 
     //! type of a curve point
     typedef typename Curve_pair_analysis_2::Algebraic_real_2 Algebraic_real_2;
@@ -158,7 +149,7 @@ public:
 
      //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-    
+
     //!@}
 public:
     //!\name constructors
@@ -167,19 +158,19 @@ public:
     /*!\brief
      * Default constructor
      */
-    Status_line_CPA_1() : 
-        Base(Rep()) {   
+    Status_line_CPA_1() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
 #ifdef DOXYGEN_RUNNING
-    Status_line_CPA_1(const Self& p) : 
-            Base(static_cast<const Base&>(p)) {  
+    Status_line_CPA_1(const Self& p) :
+            Base(static_cast<const Base&>(p)) {
     }
 #endif
-  
+
     /*!\brief
      * constructs undefined status line
      */
@@ -215,19 +206,19 @@ public:
         _set_interval_arcs(arcs);
     }
 
-protected:            
+protected:
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
-    Status_line_CPA_1(Rep rep) : 
-        Base(rep) {  
+    Status_line_CPA_1(Rep rep) :
+        Base(rep) {
     }
-    
+
     //!@}
 public:
     //!\name access functions
     //!@{
-    
+
     /*! \brief
      * returns the x-coordinate of the vertical line (always a finite value).
      */
@@ -239,7 +230,7 @@ public:
                 this->ptr()->_m_cpa._internal_curve_pair().event_x(index()) :
                 Algebraic_real_1(this->ptr()->_m_cpa._internal_curve_pair().
                                bound_value_in_interval(index())));
-#else   
+#else
                 this->ptr()->_m_cpa.event_x(index()) :
                 Algebraic_real_1(this->ptr()->_m_cpa.
                     bound_value_in_interval(index())));
@@ -247,13 +238,13 @@ public:
         }
         return *(this->ptr()->_m_x);
     }
-    
+
     //! returns this vertical line's index (event or interval index)
     size_type index() const {
         CGAL_precondition(this->ptr()->_m_index>=0);
         return this->ptr()->_m_index;
     }
-        
+
     /*! \brief
      *  returns number of distinct and finite intersections of a pair
      *  of curves  with a (intended) vertical line ignoring a real vertical
@@ -265,14 +256,14 @@ public:
 
 
     /*! \brief
-     *  returns the y-position of the k-th event of 
+     *  returns the y-position of the k-th event of
      *  the curve in the sequence of events.
      *
      * Note that each event is formed by the 1st, 2nd, or both curves
      *
      * \pre 0 <= k < "number of arcs defined for curve c at x()"
      */
-    size_type event_of_curve(size_type k, 
+    size_type event_of_curve(size_type k,
                              const typename Curve_pair_analysis_2
                                  ::Curve_analysis_2& c) const {
         CGAL_assertion(c.id()==this->ptr()->_m_cpa.curve_analysis(false).id()||
@@ -293,7 +284,7 @@ public:
      * \pre 0 <= k < "number of arcs defined for curve[c] at x()"
      */
     size_type event_of_curve(size_type k, bool c) const {
-    
+
         CGAL_precondition_msg(0 <= k &&
             k < static_cast<size_type>(this->ptr()->_m_arcno_to_pos[c].size()),
                 "Invalid arc number of the c-th curve specified");
@@ -313,7 +304,7 @@ public:
         CGAL_precondition(is_intersection());
         CGAL_precondition(this->ptr()->_m_arcs[j].first != -1 &&
                           this->ptr()->_m_arcs[j].second != -1);
-        
+
         return this->ptr()->_m_mults[j];
     }
 
@@ -336,11 +327,11 @@ public:
      * by which arc numbers of the curve \c ca, or -1, if the
      * corresponding curve is not involved.
      */
-    Arc_pair curves_at_event(size_type j, 
+    Arc_pair curves_at_event(size_type j,
                              const typename Curve_pair_analysis_2
                                  ::Curve_analysis_2& c1,
                              const typename Curve_pair_analysis_2
-                                 ::Curve_analysis_2& CGAL_precondition_code(c2)) const 
+                                 ::Curve_analysis_2& CGAL_assertion_code(c2)) const
     {
 
         CGAL_precondition(0 <= j && j < number_of_events());
@@ -386,32 +377,32 @@ public:
      * sets arcs at event (use at your own risk!)
      */
     void _set_event_arcs(const Arc_container& arcs) const {
-    
+
         size_type k = 0, arcf = 0, arcg = 0;
         this->ptr()->_m_arcs.resize(arcs.size());
         this->ptr()->_m_mults.resize(arcs.size());
         this->ptr()->_m_event = true;
-        
+
         for(typename Arc_container::const_iterator ait = arcs.begin();
                 ait != arcs.end(); ait++, k++) {
-                
+
             if(ait->first == 0) { // 1st curve
                 this->ptr()->_m_arcs[k].first = arcf++;
                 this->ptr()->_m_arcs[k].second = -1;
                 this->ptr()->_m_arcno_to_pos[0].push_back(k);
-                
+
             } else if(ait->first == 1) { // 2nd curve
                 this->ptr()->_m_arcs[k].first = -1;
                 this->ptr()->_m_arcs[k].second = arcg++;
                 this->ptr()->_m_arcno_to_pos[1].push_back(k);
-                
+
             } else if(ait->first == 2) { // intersection
                 this->ptr()->_m_arcs[k].first = arcf++;
                 this->ptr()->_m_arcs[k].second = arcg++;
                 this->ptr()->_m_arcno_to_pos[0].push_back(k);
                 this->ptr()->_m_arcno_to_pos[1].push_back(k);
                 this->ptr()->_m_intersection = true;
-                
+
             } else
                 CGAL_error_msg("Bogus curve index..");
             this->ptr()->_m_mults[k] = ait->second;
@@ -434,12 +425,12 @@ public:
                 this->ptr()->_m_arcs[k].first = arcf++;
                 this->ptr()->_m_arcs[k].second = -1;
                 this->ptr()->_m_arcno_to_pos[0].push_back(k);
-                
+
             } else if(*ait == 1) { // 2nd curve
                 this->ptr()->_m_arcs[k].first = -1;
                 this->ptr()->_m_arcs[k].second = arcg++;
                 this->ptr()->_m_arcno_to_pos[1].push_back(k);
-                
+
             } else
                 CGAL_error_msg("Bogus curve index..");
         }
@@ -451,25 +442,25 @@ public:
     //!@{
 
     void write(std::ostream& os) const {
-    
+
         os << "status_line [CPA@" << this->ptr()->_m_cpa.id();
-        
+
         os << "; x = " << (index()==-1 ? 999.999 : CGAL::to_double(x())) << "; #events: " << number_of_events() << "; ";
-        
+
         typename Arc_container::const_iterator ait =
                 this->ptr()->_m_arcs.begin();
-        if(is_event()) 
+        if(is_event())
             os << "arcs at event: {";
         else
             os << "arcs of interval: {";
-        
+
         for(; ait != this->ptr()->_m_arcs.end(); ait++) {
             if(ait != this->ptr()->_m_arcs.begin())
                 os << ", ";
             os << "(" << ait->first << "; " << ait->second << ")";
         }
         os << "}, arcno2pos: (";
-        
+
         CGAL::output_range(os, this->ptr()->_m_arcno_to_pos[0].begin(),
                 this->ptr()->_m_arcno_to_pos[0].end(), ",");
         os << "), (";
@@ -484,7 +475,7 @@ public:
 template <class CurvePairAnalysis_2, class Rep>
 std::ostream& operator<< (std::ostream& os,
         const internal::Status_line_CPA_1<CurvePairAnalysis_2, Rep>& sline) {
-        
+
     sline.write(os);
     return os;
 }

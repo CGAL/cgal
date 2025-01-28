@@ -1,0 +1,47 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-1,-1)(7,6)
+  \arraxes(0,0)(-1,-1)(7,6)
+  \arrMainVertex(0,0){1}
+  \arrMainVertex(0,2){2}
+  \arrMainVertex(1,0){3}
+  \arrEmptyVertex(1,2){4}
+  \arrMainVertex(1,5){5}
+  \arrEmptyVertex(2,2){6}
+  \arrEmptyVertex(2,4){7}
+  \pnode(3,3){8}
+  \arrEmptyVertex(4,2){9}
+  \arrEmptyVertex(4,4){10}
+  \arrMainVertex(5,0){11}
+  \arrEmptyVertex(5,2){12}
+  \arrMainVertex(5,5){13}
+  \arrMainVertex(6,0){14}
+  \arrMainVertex(6,2){15}
+  %
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{1}{4}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{4}{7}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{7}{8}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{8}{10}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{10}{12}\Aput[1pt]{$A$}
+  \ncline[linestyle=dashed,dash=1pt 1pt,linecolor=blue]{12}{14}
+  %
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{2}{4}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{4}{6}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{6}{9}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{9}{12}
+  \ncline[linestyle=dashed,dash=1.5pt 1.5pt,linecolor=orange]{12}{15}\Aput[1pt]{$D$}
+  %
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{3}{6}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{6}{9}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=olivegreen]{9}{11}\Aput[1pt]{$c$}
+  %
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=purple]{5}{7}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=purple]{7}{8}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=purple]{8}{10}
+  \ncline[linestyle=dashed,dash=2.5pt 2pt,linecolor=purple]{10}{13}\Aput[1pt]{$B$}
+  \endpspicture
+}
+\end{document}

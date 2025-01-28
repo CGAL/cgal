@@ -1,0 +1,75 @@
+# HyperSurface 0.1 ASCII
+
+Parameters {
+    Materials {
+        Exterior {
+            Color 0.7 0.8 0.8,
+            Id 0
+        }
+        Bubbles {
+            Color 0.7 0.8 0.8,
+            Id 1
+        }
+        Rocks {
+            Color 0.89604 0.915785 0.105821,
+            Id 3
+        }
+        Cement {
+            Color 0.123507 0.926314 0.926314,
+            Id 4
+        }
+ }
+    LocalCoordinateSystem {
+        Default {
+            XAxis 1 0 0,
+            YAxis 0 1 0,
+            ZAxis 0 0 1,
+            Origin 0 0 0
+        }
+    }
+    Units {
+        Coordinates "mm"
+    }
+    BoundaryIds {
+        Name "BoundaryConditions"
+    }
+    GridBox -1 200 -1 200 -1 200,
+    GridSize 202 202 202
+}
+Vertices 4
+	0.0 0.0 0.0
+	0.0 1.0 0.0
+	1.0 0.0 0.0
+	0.0 0.0 1.0
+
+NBranchingPoints 0
+NVerticesOnCurves 0
+BoundaryCurves 0
+Patches 3
+{
+InnerRegion Cement
+OuterRegion Bubbles
+BoundaryID 0
+BranchingPoints 0
+    
+Triangles 1
+1 2 3
+}
+{
+InnerRegion Cement
+OuterRegion Rocks
+BoundaryID 0
+BranchingPoints 0
+    
+Triangles 1
+ 1 3 4
+}
+{
+InnerRegion Cement
+OuterRegion Bubbles
+BoundaryID 0
+BranchingPoints 0
+    
+Triangles 1
+ 1 2 4
+}

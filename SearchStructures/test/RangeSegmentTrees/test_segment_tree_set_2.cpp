@@ -26,23 +26,23 @@ int main()
 
   int ignore = 0;
   std::list<Iso_rectangle_2> rectangles;
-  std::ifstream ifs("./data.rect");
+  std::ifstream ifs("data.rect");
   std::copy(std::istream_iterator<Iso_rectangle_2>(ifs),
-	    std::istream_iterator<Iso_rectangle_2>(),
-	    std::back_inserter(rectangles));
+            std::istream_iterator<Iso_rectangle_2>(),
+            std::back_inserter(rectangles));
 
   std::list<Interval> intervals;
   for(std::list<Iso_rectangle_2>::iterator it = rectangles.begin();
       it != rectangles.end();
-	++it){
+        ++it){
     if( CGAL::x_equal(it->vertex(0),it->vertex(2)) ||
-	CGAL::y_equal(it->vertex(0),it->vertex(2))){
+        CGAL::y_equal(it->vertex(0),it->vertex(2))){
       ignore++;
     } else {
       intervals.push_back(Interval(it->vertex(0),it->vertex(2)));
     }
   }
-	std::cout << intervals.size() << std::endl;
+        std::cout << intervals.size() << std::endl;
 
   if(ignore > 0){
     std::cerr << "ignored " << ignore << " 1D rectangle" << std::endl;
@@ -64,15 +64,15 @@ int main()
 
   t.stop();
   std::cerr << "Window query time t = " << t.time() << std::endl;
-  
+
   // output of the querey elements on stdout
-  
+
   std::cout << "\n window_query " << Iso_rectangle_2(a.first, a.second) << std::endl;
   for(std::list<Interval>::iterator j = output.begin();
       j != output.end();
       ++j)
   {
-    std::cout << Iso_rectangle_2(j->first, j->second) << std::endl; 
+    std::cout << Iso_rectangle_2(j->first, j->second) << std::endl;
   }
 
   std::cout << "\n enclosing_query " << Iso_rectangle_2(a.first, a.second) << std::endl;
@@ -82,21 +82,21 @@ int main()
   segment_tree_2.enclosing_query(a,std::back_inserter(N));
   t.stop();
   std::cerr << "Enclosing query time t = " << t.time() << std::endl;
-  
+
   for(std::list<Interval>::iterator eit = N.begin();
       eit != N.end();
       ++eit)
   {
-    std::cout << Iso_rectangle_2(eit->first, eit->second) << std::endl; 
+    std::cout << Iso_rectangle_2(eit->first, eit->second) << std::endl;
   }
 
-  
+
   if(segment_tree_2.segment_tree_2->is_valid())
     std::cout << "Tree is valid\n";
   else
     std::cout << "Tree is not valid\n";
-  
-  
+
+
   std::cout << "done" << std::endl;
   return 0;
 }

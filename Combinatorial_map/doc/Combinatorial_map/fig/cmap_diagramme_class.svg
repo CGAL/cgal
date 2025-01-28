@@ -1,128 +1,80 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: fig2dev Version 3.2.6 -->
-<!-- CreationDate: Mon Nov 21 08:43:35 2016 -->
-<!-- Magnification: 1.050 -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8 -->
+<!-- CreationDate: 2022-05-05 19:05:07 -->
+<!-- Magnification: 1.05 -->
 <svg	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
-	width="7.9in" height="3.2in"
-	viewBox="3766 5250 9444 3785">
-<g style="stroke-width:.025in; fill:none">
+	width="567pt" height="228pt"
+	viewBox="3588 5001 8996 3606">
+<g fill="none">
 <!-- Line -->
-<polyline points="9204,8432
-11675,8432
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" 8767,8032 11121,8032"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="9204,8862
-11675,8862
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
-<!-- Line: box -->
-<rect x="9204" y="8003" width="2471" height="1020" rx="0" 
-style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" 8767,8442 11121,8442"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="4317,5639
-8774,5639
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<rect x="8767" y="7623" width="2354" height="972"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="4317,6284
-8774,6284
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
-<!-- Line: box -->
-<rect x="4317" y="5262" width="4457" height="1235" rx="0" 
-style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" 4112,5372 8358,5372"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="3779,8003
-7914,8003
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" 4112,5986 8358,5986"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="3779,8701
-7914,8701
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
-<!-- Line: box -->
-<rect x="3779" y="7573" width="4135" height="1396" rx="0" 
-style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<rect x="4112" y="5013" width="4246" height="1177"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="9312,8003
-9312,6122
-8559,6122
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:62 62;"/>
+<polyline points=" 3600,7623 7539,7623"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="8345,8594
-9204,8594
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" 3600,8288 7539,8288"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="7913,8591
-8157,8486
-8359,8582
-8145,8696
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-fill:#000000;
-"/>
+<rect x="3600" y="7214" width="3939" height="1330"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="7370,7407
-7370,6485
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:62 62;"/>
+<polyline points=" 8870,7623 8870,5832 8153,5832"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="60 60"/>
+<!-- Line -->
+<polyline points=" 7949,8186 8767,8186"
+	stroke="#000000" stroke-width="15px"/>
+<!-- Line -->
+<polyline points=" 7538,8183 7770,8083 7962,8175 7759,8283" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
+<!-- Line -->
+<polyline points=" 7020,7056 7020,6177"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="60 60"/>
 <!-- Text -->
-<text xml:space="preserve" x="9312" y="8754" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="177" text-anchor="start">- Info info</text>
+<text xml:space="preserve" x="8870" y="8339" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="168" text-anchor="start">- Info info</text>
 <!-- Text -->
-<text xml:space="preserve" x="9365" y="8379" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="227" text-anchor="start">Cell_attribute</text>
+<text xml:space="preserve" x="8921" y="7981" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="216" text-anchor="start">Cell_attribute</text>
 <!-- Text -->
-<text xml:space="preserve" x="4370" y="6176" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="177" text-anchor="start">+ Types Dart_wrapper&#60;Map&#62;::Attributes</text>
+<text xml:space="preserve" x="4163" y="5883" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="168" text-anchor="start">+ Types Dart_wrapper&lt;Map&gt;::Attributes</text>
 <!-- Text -->
-<text xml:space="preserve" x="4370" y="5907" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="177" text-anchor="start">+ Type Dart_wrapper&#60;Map&#62;::Dart_info</text>
+<text xml:space="preserve" x="4163" y="5627" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="168" text-anchor="start">+ Type Dart_wrapper&lt;Map&gt;::Dart_info</text>
 <!-- Text -->
-<text xml:space="preserve" x="4907" y="5531" fill="#000000"  font-family="Times" font-style="italic" font-weight="bold" font-size="227" text-anchor="start">GenericMapItems</text>
+<text xml:space="preserve" x="4674" y="5269" fill="#000000" font-family="Times" font-style="italic" font-weight="bold" font-size="216" text-anchor="start">GenericMapItems</text>
 <!-- Text -->
-<text xml:space="preserve" x="4101" y="7896" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="227" text-anchor="start">Combinatorial_map</text>
+<text xml:space="preserve" x="3907" y="7521" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="216" text-anchor="start">Combinatorial_map</text>
 <!-- Text -->
-<text xml:space="preserve" x="3886" y="8271" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="177" text-anchor="start">+ typedef Items::Dart_info Dart_info</text>
+<text xml:space="preserve" x="3702" y="7879" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="168" text-anchor="start">+ typedef Items::Dart_info Dart_info</text>
 <!-- Text -->
-<text xml:space="preserve" x="3886" y="8540" fill="#000000"  font-family="Times" font-style="normal" font-weight="bold" font-size="177" text-anchor="start">+ typedef Items::Attributes Attributes</text>
+<text xml:space="preserve" x="3702" y="8135" fill="#000000" font-family="Times" font-style="normal" font-weight="bold" font-size="168" text-anchor="start">+ typedef Items::Attributes Attributes</text>
 <!-- Text -->
-<text xml:space="preserve" x="7969" y="8862" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="177" text-anchor="start">0..*</text>
+<text xml:space="preserve" x="7591" y="8442" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="168" text-anchor="start">0..*</text>
 <!-- Text -->
-<text xml:space="preserve" x="9069" y="8541" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="177" text-anchor="start">1</text>
-<!-- Line: box -->
-<rect x="10332" y="7787" width="2630" height="322" rx="0" 
-style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:41 41;fill:#ffffff;
-"/>
-<!-- Line: box -->
-<rect x="6948" y="7358" width="1235" height="322" rx="0" 
-style="stroke:#000000;stroke-width:8;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:41 41;fill:#ffffff;
-"/>
+<text xml:space="preserve" x="8639" y="8136" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="168" text-anchor="start">1</text>
+<!-- Line -->
+<rect x="9842" y="7418" width="2506" height="307" fill="#ffffff"
+	stroke="#000000" stroke-width="8px" stroke-dasharray="40 40"/>
+<!-- Line -->
+<rect x="6618" y="7009" width="1177" height="307" fill="#ffffff"
+	stroke="#000000" stroke-width="8px" stroke-dasharray="40 40"/>
 <!-- Text -->
-<text xml:space="preserve" x="10386" y="8003" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="139" text-anchor="start">Map,Info_,Tag,OnMerge,OnSplit</text>
+<text xml:space="preserve" x="9893" y="7623" fill="#000000" font-family="Times" font-style="italic" font-weight="normal" font-size="132" text-anchor="start">Map,Info_,Tag,OnMerge,OnSplit</text>
 <!-- Text -->
-<text xml:space="preserve" x="7002" y="7573" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="139" text-anchor="start">d, Items, Alloc</text>
+<text xml:space="preserve" x="6670" y="7214" fill="#000000" font-family="Times" font-style="italic" font-weight="normal" font-size="132" text-anchor="start">d, Items, Alloc</text>
 </g>
 </svg>

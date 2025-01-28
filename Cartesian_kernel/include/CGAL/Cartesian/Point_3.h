@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri and Herve Bronnimann
 
@@ -33,6 +24,7 @@ namespace CGAL {
 template < class R_ >
 class PointC3
 {
+  typedef PointC3<R_>                       Self;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
@@ -50,11 +42,26 @@ public:
   PointC3(const Origin &)
     : base(NULL_VECTOR) {}
 
-  PointC3(const FT &x, const FT &y, const FT &z)
-    : base(x, y, z) {}
 
-  PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
-    : base(x, y, z, w) {}
+  template <class T1, class T2, class T3>
+  PointC3(T1 &&x, T2 &&y, T3 &&z)
+    : base(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z))
+  {}
+
+  template <class T1, class T2, class T3, class T4>
+  PointC3(T1 &&x, T2 &&y, T3 &&z, T4 &&w)
+    : base(std::forward<T1>(x), std::forward<T2>(y),
+           std::forward<T3>(z), std::forward<T4>(w))
+  {}
+
+  friend void swap(Self& a, Self& b)
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
+    noexcept(std::is_nothrow_swappable_v<Vector_3>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
 
   const FT & x() const
   {
@@ -90,12 +97,12 @@ public:
   const FT & operator[](int i) const;
   const FT & homogeneous(int i) const;
 
-  Cartesian_const_iterator cartesian_begin() const 
+  Cartesian_const_iterator cartesian_begin() const
   {
-    return base.cartesian_begin(); 
+    return base.cartesian_begin();
   }
 
-  Cartesian_const_iterator cartesian_end() const 
+  Cartesian_const_iterator cartesian_end() const
   {
     return base.cartesian_end();
   }

@@ -4,26 +4,24 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org)
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// SPDX-License-Identifier: LGPL-2.1
+// SPDX-License-Identifier: LGPL-2.1-only
 //
 // Author(s)     : Mael Rouxel-Labbé
 
+#include <cassert>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_kth_root.h>
+#endif
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/Has_conversion.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
@@ -40,34 +38,39 @@ int main()
   typedef CGAL::Simple_homogeneous<NT_exact>                      SH;
   typedef CGAL::Filtered_kernel<SH>                               FSH;
 
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
   typedef CGAL::Exact_predicates_exact_constructions_kernel_with_kth_root EPECK;
+  CGAL_USE_TYPE(EPECK);
+#endif
 
   CGAL_USE_TYPE(ASC);
   CGAL_USE_TYPE(FSC);
   CGAL_USE_TYPE(SH);
   CGAL_USE_TYPE(FSH);
-  CGAL_USE_TYPE(EPECK);
 
-  CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<SC, SC, SC::Object_2, SC::Object_2>::value));
 
-  CGAL_assertion(!(CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_3>::value));
-  CGAL_assertion(!(CGAL::Has_conversion<SC, SC, SC::Iso_cuboid_3, SC::Circle_2>::value));
+  assert((CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_2>::value));
+  assert((CGAL::Has_conversion<SC, SC, SC::Object_2, SC::Object_2>::value));
 
-  CGAL_assertion((CGAL::Has_conversion<SC, FSC, SC::Vector_2, FSC::Vector_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<FSC, SC, FSC::Vector_3, SC::Vector_3>::value));
-  CGAL_assertion((CGAL::Has_conversion<SH, FSH, SH::Vector_3, FSH::Vector_3>::value));
+  assert(!(CGAL::Has_conversion<SC, SC, SC::Point_2, SC::Point_3>::value));
+  assert(!(CGAL::Has_conversion<SC, SC, SC::Iso_cuboid_3, SC::Circle_2>::value));
 
-  CGAL_assertion((CGAL::Has_conversion<SC, ASC, SC::Sphere_3, ASC::Sphere_3>::value));
-  CGAL_assertion((CGAL::Has_conversion<SC, EPECK, SC::Triangle_2, EPECK::Triangle_2>::value));
-  CGAL_assertion((CGAL::Has_conversion<EPECK, SC, EPECK::Circle_3, SC::Circle_3>::value));
+  assert((CGAL::Has_conversion<SC, FSC, SC::Vector_2, FSC::Vector_2>::value));
+  assert((CGAL::Has_conversion<FSC, SC, FSC::Vector_3, SC::Vector_3>::value));
+  assert((CGAL::Has_conversion<SH, FSH, SH::Vector_3, FSH::Vector_3>::value));
 
-  CGAL_assertion(!(CGAL::Has_conversion<SC, EPECK, SC::Weighted_point_2, EPECK::Weighted_point_3>::value));
-  CGAL_assertion(!(CGAL::Has_conversion<SC, ASC, SC::Point_2, ASC::Weighted_point_2>::value));
+  assert((CGAL::Has_conversion<SC, ASC, SC::Sphere_3, ASC::Sphere_3>::value));
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+  assert((CGAL::Has_conversion<SC, EPECK, SC::Triangle_2, EPECK::Triangle_2>::value));
+  assert((CGAL::Has_conversion<EPECK, SC, EPECK::Circle_3, SC::Circle_3>::value));
+
+  assert(!(CGAL::Has_conversion<SC, EPECK, SC::Weighted_point_2, EPECK::Weighted_point_3>::value));
+#endif
+  assert(!(CGAL::Has_conversion<SC, ASC, SC::Point_2, ASC::Weighted_point_2>::value));
 
   // below will produce static assert failures
-//  CGAL_assertion((CGAL::Has_conversion<SC, SH, SC::Point_2, SH::Point_2>::value));
-//  CGAL_assertion((CGAL::Has_conversion<FSH, EPECK, FSH::Point_3, EPECK::Point_2>::value));
+//  assert((CGAL::Has_conversion<SC, SH, SC::Point_2, SH::Point_2>::value));
+//  assert((CGAL::Has_conversion<FSH, EPECK, FSH::Point_3, EPECK::Point_2>::value));
 
 
 }

@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
@@ -7,11 +6,12 @@
 A model of this concept stores the left-hand matrix (denoted \f$ A \f$) and provides an additional factorization
 method to solve the system for different right-hand vectors.
 
-\cgalRefines `SparseLinearAlgebraTraits_d`
+\cgalRefines{SparseLinearAlgebraTraits_d}
 
-\cgalHasModel `CGAL::Eigen_solver_traits<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_solver_traits<T>}
+\cgalHasModelsEnd
 */
-
 class SparseLinearAlgebraWithFactorTraits_d {
 public:
 
@@ -48,4 +48,3 @@ bool linear_solver(const Matrix& B, Vector& X);
 /// @}
 
 }; /* end SparseLinearAlgebraWithFactorTraits_d */
-

@@ -7,7 +7,7 @@
 \cgalPkgPicture{Logo-ConeSpanners.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Weisheng Si, Quincy Tse and Frédérik Paradis}
+\cgalPkgAuthors{Weisheng Si, Quincy Tse, and Frédérik Paradis}
 \cgalPkgDesc{This package provides functors for constructing two kinds of cone-based spanners:
 Yao graph and Theta graph, given a set of vertices on the plane and the directions of cone boundaries.
 Both exact and inexact constructions are supported.

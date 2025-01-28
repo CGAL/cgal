@@ -4,23 +4,12 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: extLong.h
- * Synopsis: 
- * 		An extended class for long
+ * Synopsis:
+ *                 An extended class for long
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>,
@@ -28,12 +17,12 @@
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_EXTLONG_H_
@@ -42,7 +31,10 @@
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/CoreAux.h>
 
-namespace CORE { 
+#include <limits>
+#include <type_traits>
+
+namespace CORE {
 
 #ifndef LONG_MAX
 #error "haven't define LONG_MAX"
@@ -88,6 +80,9 @@ public:
   extLong(long);
   /// constructor for \c unsigned long
   extLong(unsigned long);
+  /// constructor for \c std::size_t
+  template<typename T, typename = std::enable_if_t<std::is_same_v<T,std::size_t> && !std::is_same_v<unsigned long, std::size_t>>>
+  extLong(T s);
   //@}
 
   /// \name Arithmetic and assignment operators
@@ -113,7 +108,7 @@ public:
     std::stringstream st;
     st << (*this);
     return st.str();
-  }    
+  }
   long toLong() const;
   //@}
 
@@ -160,8 +155,7 @@ const extLong EXTLONG_EIGHT(8);
 //  private comparison function
 inline int extLong::cmp(const extLong& x) const {
   if (isNaN() || x.isNaN()) {
-    core_error("Two extLong NaN's cannot be compared!",
-               __FILE__, __LINE__, false);
+    CGAL_CORE_warning_msg(false, "Two extLong NaN's cannot be compared!");
   }
   return (val == x.val) ? 0 : ((val > x.val) ? 1 : -1);
 }
@@ -192,6 +186,17 @@ inline extLong::extLong(long l) : val(l), flag(0) {
 
 inline extLong::extLong(unsigned long u) {
   if (u >= U_EXTLONG_MAX) {
+    val  = EXTLONG_MAX;
+    flag = 1;
+  } else {
+    val = static_cast<long>(u);
+    flag = 0;
+  }
+}
+
+template <typename T, typename>
+inline extLong::extLong(T u) {
+  if (u >= (std::numeric_limits<std::size_t>::max)()) {
     val  = EXTLONG_MAX;
     flag = 1;
   } else {

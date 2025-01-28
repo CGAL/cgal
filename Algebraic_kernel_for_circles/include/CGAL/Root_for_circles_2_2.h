@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_ROOT_FOR_CIRCLES_2_2_H
@@ -31,10 +22,10 @@
 
 
 #include <iostream>
+#include <type_traits>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Handle_for.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -48,46 +39,46 @@ class Root_for_circles_2_2 {
   private:
     Handle_for<Root_of_2> x_;
     Handle_for<Root_of_2> y_;
-    
+
   public:
   Root_for_circles_2_2(){}
-  
+
   Root_for_circles_2_2(const Root_of_2& r1, const Root_of_2& r2)
     : x_(r1), y_(r2)
   {
     // When it is an interval this assertion dont compile
-    //CGAL_assertion((r1.is_rational() || r2.is_rational()) || 
+    //CGAL_assertion((r1.is_rational() || r2.is_rational()) ||
     //               (r1.gamma() == r2.gamma()));
   }
 
-  const Root_of_2& x() const 
+  const Root_of_2& x() const
   { return get_pointee_or_identity(x_); }
-    
-  const Root_of_2& y() const 
+
+  const Root_of_2& y() const
   { return get_pointee_or_identity(y_); }
 
   CGAL::Bbox_2 bbox() const
   {
-    CGAL::Interval_nt<> 
+    CGAL::Interval_nt<>
      ix=to_interval(x()),
      iy=to_interval(y());
     return CGAL::Bbox_2(ix.inf(),iy.inf(),
-	                ix.sup(),iy.sup());
+                        ix.sup(),iy.sup());
     /*
       const Root_of_2 &ox = x();
       const Root_of_2 &oy = y();
 
       if(ox.is_rational() || oy.is_rational()) {
-        CGAL::Interval_nt<> 
+        CGAL::Interval_nt<>
           ix=to_interval(ox),
           iy=to_interval(oy);
         return CGAL::Bbox_2(ix.inf(),iy.inf(),
-	                ix.sup(),iy.sup());
+                        ix.sup(),iy.sup());
       }
 
       // delta must be the same
       // WE HAVE TO TEST THE EXECUTION TIME
-      // IT STILL NOT POSSIBLE BECAUSE OF THE 
+      // IT STILL NOT POSSIBLE BECAUSE OF THE
       // PROBLEM ON THE ARRANGEMENT
       // (it is very likely to make it better with this changing)
       const CGAL::Interval_nt<true> alpha1 = to_interval(ox.alpha());
@@ -99,23 +90,23 @@ class Root_for_circles_2_2 {
       const CGAL::Interval_nt<true> ix = alpha1 + beta1 * sqrtg;
       const CGAL::Interval_nt<true> iy = alpha2 + beta2 * sqrtg;
       return CGAL::Bbox_2(ix.inf(),iy.inf(),
-	                ix.sup(),iy.sup());
+                        ix.sup(),iy.sup());
     */
   }
 
   template < typename RT >
   friend bool operator == ( const Root_for_circles_2_2<RT>& r1,
-   	                    const Root_for_circles_2_2<RT>& r2 );
+                               const Root_for_circles_2_2<RT>& r2 );
 
 };
-  
+
 template < typename RT >
-bool 
+bool
 operator == ( const Root_for_circles_2_2<RT>& r1,
-	      const Root_for_circles_2_2<RT>& r2 )
+              const Root_for_circles_2_2<RT>& r2 )
 { if (CGAL::identical(r1.x_, r2.x_) && CGAL::identical(r1.y_, r2.y_))
-	  return true;
-  return (r1.x() == r2.x()) && (r1.y() == r2.y()); 
+          return true;
+  return (r1.x() == r2.x()) && (r1.y() == r2.y());
 }
 
 template < typename RT >
@@ -129,7 +120,7 @@ operator>>(std::istream & is, Root_for_circles_2_2<RT> &r)
 {
   typedef typename Root_of_traits< RT >::RootOf_2         Root_of_2;
   Root_of_2 x,y;
-  
+
   is >> x >> y;
   if(is)
     r = Root_for_circles_2_2<RT>(x,y);

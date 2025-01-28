@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_NO_INTERSECTION_INSERTION_SS_VISITOR_H
 #define CGAL_ARR_NO_INTERSECTION_INSERTION_SS_VISITOR_H
@@ -32,7 +23,7 @@
  * This class can be further split into two, where one derives from the other,
  * such that the derived class handles the case of inserting non-intersecting
  * curves into a non-empty arrangement, and the base class handles the case of
- * inserting non-intersecting curves into a empty arrangement.
+ * inserting non-intersecting curves into an empty arrangement.
  */
 
 #include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>
@@ -185,12 +176,18 @@ public:
   virtual bool is_split_event(Subcurve* /*sc*/, Event* /*event*/)
   { return false; }
 
-  /*!
-   * Split an edge (does nothing here, as there are no intersections).
+  /*! Split an edge (does nothing here, as there are no intersections).
    */
   virtual Halfedge_handle split_edge(Halfedge_handle /*he*/,
                                      Subcurve* /*sc*/,
                                      const Point_2& /*pt*/)
+  { return Halfedge_handle(); }
+
+  /*! Split an edge (does nothing here, as there are no intersections).
+   */
+  virtual Halfedge_handle split_edge(Halfedge_handle /*he*/,
+                                     Subcurve* /*sc*/,
+                                     Vertex_handle /*v*/)
   { return Halfedge_handle(); }
   //@}
 
@@ -228,7 +225,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -253,12 +250,10 @@ before_handle_event(Event* event)
   event->init_subcurve_in_arrangement_flags(event->number_of_right_curves());
   if (! event->has_right_curves()) {
     // Update the event with the highest left halfedge.
-    Event_subcurve_reverse_iterator left_it;
-    Halfedge_handle he;
-    for (left_it = event->left_curves_rbegin();
-         left_it != event->left_curves_rend(); ++left_it)
+    for (auto it = event->left_curves_rbegin(); it != event->left_curves_rend();
+         ++it)
     {
-      he = (*left_it)->last_curve().halfedge_handle();
+      Halfedge_handle he = (*it)->last_curve().halfedge_handle();
       if (he != invalid_he) {
         event->set_halfedge_handle(he->twin());
         return;
@@ -268,14 +263,12 @@ before_handle_event(Event* event)
 
   if (! event->has_left_curves()) {
     // Indicates if there's halfedge to the right of the event.
-    Event_subcurve_reverse_iterator right_it;
-    Halfedge_handle he;
     int i = 0;
-    for (right_it = event->right_curves_rbegin();
-         right_it != event->right_curves_rend(); ++right_it, ++i)
+    for (auto it = event->right_curves_rbegin();
+         it != event->right_curves_rend(); ++it, ++i)
     {
       // Update the event with the highest right halfedge.
-      he = (*right_it)->last_curve().halfedge_handle();
+      Halfedge_handle he = (*it)->last_curve().halfedge_handle();
       if (he != invalid_he) {
         event->set_subcurve_in_arrangement(i, true);
         if (event->halfedge_handle() == invalid_he)
@@ -286,35 +279,34 @@ before_handle_event(Event* event)
   }
 
   // The event has left and right curves.
-  Event_subcurve_reverse_iterator iter;
-  Halfedge_handle he;
   bool exist_right_halfedge = false;
   int i = 0;
-  for (iter = event->right_curves_rbegin();
-       iter != event->right_curves_rend(); ++iter, ++i)
+  for (auto it = event->right_curves_rbegin(); it != event->right_curves_rend();
+       ++it, ++i)
   {
-    he = (*iter)->last_curve().halfedge_handle();
-    if (he != invalid_he) {
-      exist_right_halfedge = true;
-      event->set_subcurve_in_arrangement(i, true);
-      if (!is_split_event(*iter, event)) {
-        // halfedge will not be split.
-        event->set_halfedge_handle(he);
-      }
-      else {
-        he = split_edge((*iter)->last_curve().halfedge_handle(), (*iter),
-                        event->point());
+    auto he = (*it)->last_curve().halfedge_handle();
+    if (he == invalid_he) continue;
 
-        // 'he' has the same source as the split halfedge.
-        event->set_halfedge_handle(he);
-        X_monotone_curve_2& last_curve =
-          const_cast<X_monotone_curve_2&>((*iter)->last_curve());
-        last_curve.set_halfedge_handle(he);
+    exist_right_halfedge = true;
+    event->set_subcurve_in_arrangement(i, true);
+    if (! is_split_event(*it, event)) {
+      // halfedge will not be split.
+      event->set_halfedge_handle(he);
+    }
+    else {
+      Vertex_handle invalid_v;
+      he = (event->vertex_handle() != invalid_v) ?
+        this->split_edge(he, *it, event->vertex_handle()) :
+        this->split_edge(he, *it, event->point());
 
-        //there cannot be another existing halfedge that need to be split
-        // because they are disjoint
-        return;
-      }
+      // 'he' has the same source as the split halfedge.
+      event->set_halfedge_handle(he);
+      auto& last_curve = const_cast<X_monotone_curve_2&>((*it)->last_curve());
+      last_curve.set_halfedge_handle(he);
+
+      // there cannot be another existing halfedge that need to be split
+      // because they are disjoint
+      return;
     }
   }
 
@@ -322,10 +314,10 @@ before_handle_event(Event* event)
 
   // if we have reached here, there are no halfedges to the right of
   // the event, but still can be on the left of the event
-  for (iter = event->left_curves_rbegin();
-       iter != event->left_curves_rend(); ++iter)
+  for (auto it = event->left_curves_rbegin();
+       it != event->left_curves_rend(); ++it)
   {
-    he = (*iter)->last_curve().halfedge_handle();
+    auto he = (*it)->last_curve().halfedge_handle();
     if (he != invalid_he) {
       event->set_halfedge_handle(he->twin());
       return;
@@ -341,14 +333,11 @@ bool Arr_no_intersection_insertion_ss_visitor<Hlpr, Vis>::
 add_subcurve_(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   const Halfedge_handle invalid_he;
-  if (cv.halfedge_handle() == invalid_he) {
-    // The curve will be inserted into the arrangement:
-    Base::add_subcurve(cv, sc);
-    return true;
-  }
-  return false;
+  if (cv.halfedge_handle() != invalid_he) return false;
+  // Insert the curve into the arrangement
+  Base::add_subcurve(cv, sc);
+  return true;
 }
-
 
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
@@ -398,8 +387,7 @@ Arr_no_intersection_insertion_ss_visitor<Hlpr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                         Subcurve* sc)
 {
-  Vertex_handle curr_v =
-    this->current_event()->point().vertex_handle();
+  Vertex_handle curr_v = this->current_event()->point().vertex_handle();
   if (curr_v != Vertex_handle())
     return (this->m_arr->insert_at_vertices(cv.base(), he, curr_v));
   return (_insert_from_left_vertex(cv, he, sc));

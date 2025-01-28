@@ -5,7 +5,7 @@
 // A face type with a color member variable.
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-    CGAL::Color color;
+    CGAL::IO::Color color;
 };
 
 // An items type using my face.
@@ -23,6 +23,6 @@ typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 int main() {
     Polyhedron P;
     Halfedge_handle h = P.make_tetrahedron();
-    h->facet()->color = CGAL::red();
+    h->facet()->color = CGAL::IO::red();
     return 0;
 }

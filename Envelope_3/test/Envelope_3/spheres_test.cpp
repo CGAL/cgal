@@ -5,7 +5,7 @@
 
 int main ()
 {
-  bool UNTESTED_TRAITS_AS_CORE_IS_NOT_ISTALLED;
+  bool UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
             << "WARNING: Core is not installed, "
             << "skipping the test ..."
@@ -105,7 +105,7 @@ bool test_one_file(std::ifstream& inp)
   timer.start();
   bool test = lu_alg_test.compare_diagrams(test_result, result);
   timer.stop();
-  
+
   return (test);
 }
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
     }
     inp.close();
   }
-  
+
   return success;
 }
 

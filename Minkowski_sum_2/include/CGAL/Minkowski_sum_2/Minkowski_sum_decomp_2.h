@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
@@ -84,11 +75,11 @@ private:
   // Data members:
   const Decomposition_strategy1* m_decomposition_strategy1;
   const Decomposition_strategy2* m_decomposition_strategy2;
-  bool m_own_strategy1;   // inidicates whether the stategy should be freed up.
-  bool m_own_strategy2;   // inidicates whether the stategy should be freed up.
+  bool m_own_strategy1;   // indicates whether the strategy should be freed up.
+  bool m_own_strategy2;   // indicates whether the strategy should be freed up.
 
   const Traits_2* m_traits;
-  bool m_own_traits;      // inidicates whether the kernel should be freed up.
+  bool m_own_traits;      // indicates whether the kernel should be freed up.
 
   Compare_angle_2         f_compare_angle;
   Translate_point_2       f_add;
@@ -99,6 +90,12 @@ private:
   Compare_xy_2            f_compare_xy;
 
 public:
+  // The pointers and the corresponding flags that indicate ownerships should
+  // be replaced with smart pointers. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   //! Default constructor.
   Minkowski_sum_by_decomposition_2() :
     m_decomposition_strategy1(nullptr),
@@ -108,6 +105,36 @@ public:
     m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  //! Copy constructor.
+  Minkowski_sum_by_decomposition_2
+  (const Minkowski_sum_by_decomposition_2& other) :
+    m_decomposition_strategy1((other.m_own_strategy1) ?
+                              new Decomposition_strategy1 :
+                              other.m_decomposition_strategy1),
+    m_decomposition_strategy2((other.m_own_strategy2) ?
+                              new Decomposition_strategy2 :
+                              other.m_decomposition_strategy2),
+    m_own_strategy1(other.m_own_strategy1),
+    m_own_strategy2(other.m_own_strategy2),
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  //! Copy assignment.
+  Minkowski_sum_by_decomposition_2&
+  operator=(const Minkowski_sum_by_decomposition_2& other) {
+    m_decomposition_strategy1 = (other.m_own_strategy1) ?
+      new Decomposition_strategy1 : other.m_decomposition_strategy1;
+    m_decomposition_strategy2 = (other.m_own_strategy2) ?
+      new Decomposition_strategy2 : other.m_decomposition_strategy2;
+    m_own_strategy1 = other.m_own_strategy1;
+    m_own_strategy2 = other.m_own_strategy2;
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   //! Constructor.
   Minkowski_sum_by_decomposition_2(const Decomposition_strategy1& strategy1,
@@ -321,7 +348,7 @@ public:
   }
 
 private:
-  /*! Merge mergable edges
+  /*! Merge mergeable edges
    * \param arr (in) The underlying arrangement.
    */
   void simplify(Arrangement_2& arr) const

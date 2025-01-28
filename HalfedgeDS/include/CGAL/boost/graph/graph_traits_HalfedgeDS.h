@@ -1,19 +1,10 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -24,12 +15,11 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -164,7 +154,8 @@ struct HDS_graph_traits
 private:
   struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                         public virtual boost::vertex_list_graph_tag,
-                                        public virtual boost::edge_list_graph_tag
+                                        public virtual boost::edge_list_graph_tag,
+                                        public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -187,6 +178,8 @@ public:
   typedef Out_edge_iterator<HDS> out_edge_iterator;
 
   typedef In_edge_iterator<HDS> in_edge_iterator;
+
+  typedef Vertex_around_target_iterator<HDS> adjacency_iterator;
 
   typedef boost::undirected_tag             directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;
@@ -211,7 +204,7 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH

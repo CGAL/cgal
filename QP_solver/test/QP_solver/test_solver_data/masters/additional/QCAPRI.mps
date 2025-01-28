@@ -1,6 +1,6 @@
 * Number-type: floating-point
-* Description: QCAPRI http://www.doc.ic.ac.uk/~im/
-* Generated-by: http://www.doc.ic.ac.uk/%7Eim/QPDATA2.ZIP
+* Description: QCAPRI https://www.doc.ic.ac.uk/~im/
+* Generated-by: https://www.doc.ic.ac.uk/%7Eim/QPDATA2.ZIP
 * Derivatives: none
 NAME          CAPRI
 ROWS

@@ -1,19 +1,10 @@
 // Copyright (c) 2012  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Gael Guennebaud
 
@@ -38,7 +29,7 @@
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 namespace internal {
@@ -72,19 +63,19 @@ struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
 } //internal
 
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
 
-\cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
+\cgalModels{SparseLinearAlgebraWithFactorTraits_d,NormalEquationSparseLinearAlgebraTraits_d}
 
-\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
+\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-conjugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org/index.php?title=Main_Page
+\sa https://eigen.tuxfamily.org/index.php?title=Main_Page
 
 \cgalHeading{Instantiation Example}
 
@@ -188,7 +179,7 @@ public:
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
-  
+
   /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
   /// provided in `factor()`.
   /// \return `true` if the solver is successful and `false` otherwise.
@@ -235,11 +226,11 @@ public:
 
 protected:
   const typename Matrix::EigenType* m_mat;
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 // Specialization of the solver for BiCGSTAB as for surface parameterization,
-// the intializer should be a vector of one's (this was the case in 3.1-alpha
+// the initializer should be a vector of one's (this was the case in 3.1-alpha
 // but not in the official 3.1).
 template<>
 class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
@@ -251,7 +242,12 @@ class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType
 public:
   typedef EigenSolverT                                                  Solver;
   typedef Scalar                                                        NT;
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                                              Matrix;
+#else
   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type             Matrix;
+#endif
+
   typedef Eigen_vector<Scalar>                                          Vector;
 
   // Public operations
@@ -284,7 +280,7 @@ public:
   }
 
 protected:
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 } // namespace CGAL

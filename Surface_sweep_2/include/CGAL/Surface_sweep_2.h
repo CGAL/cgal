@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
@@ -33,10 +24,8 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
-#include <CGAL/Surface_sweep_2/Curve_pair.h>
-#include <boost/unordered_set.hpp>
+#include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>
 
 namespace CGAL {
@@ -73,8 +62,8 @@ namespace Surface_sweep_2 {
  *               are calculated.
  * End
  *
- * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were
+ * Conventions through out the code:
+ * In order to make the code as readable as possible, some conventions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves
@@ -99,6 +88,7 @@ public:
   typedef typename Base::Traits_adaptor_2               Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits_adaptor_2::Multiplicity       Multiplicity;
 
   typedef typename Base::Event_queue_iterator           Event_queue_iterator;
   typedef typename Event::Subcurve_iterator             Event_subcurve_iterator;
@@ -110,37 +100,40 @@ public:
 
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
-  typedef CGAL::Surface_sweep_2::Curve_pair<Subcurve>   Curve_pair;
-  typedef boost::hash<Curve_pair>                       Curve_pair_hasher;
-  typedef CGAL::Surface_sweep_2::Equal_curve_pair<Subcurve>
-                                                        Equal_curve_pair;
-  typedef boost::unordered_set<Curve_pair, Curve_pair_hasher, Equal_curve_pair>
-                                                      Curve_pair_set;
-
-  typedef std::vector<Object>                           Object_vector;
-  typedef random_access_input_iterator<Object_vector>   vector_inserter;
-
+  typedef std::pair<Point_2, Multiplicity>              Intersection_point;
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+  typedef std::vector<Intersection_result>              Intersection_vector;
+  typedef Random_access_output_iterator<Intersection_vector>
+                                                        vector_inserter;
   typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
 protected:
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
+
+  // Parameter spaces that are either oblivious or open cannot have points
+  // on the boundary, and in particular intersection points. In other words,
+  // intersection points of an oblivious or open parameter space is interior
+  // by definition.
+  typedef typename Base::Sides_category
+    Sides_category;
+
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
-                                     // creaed by an overlap.
+                                     // created by an overlap.
 
-  Curve_pair_set m_curves_pair_set;  // A lookup table of pairs of Subcurves
-                                     // that have been intersected.
-
-  std::vector<Object> m_x_objects;   // Auxiliary vector for storing the
+  Intersection_vector m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2 sub_cv1;        // Auxiliary varibales
-  X_monotone_curve_2 sub_cv2;        // (for splitting curves).
+  X_monotone_curve_2 m_sub_cv1;      // Auxiliary variables
+  X_monotone_curve_2 m_sub_cv2;      // (for splitting curves).
 
 public:
   /*! Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Surface_sweep_2(Visitor* visitor) : Base(visitor), m_curves_pair_set(0) {}
+  Surface_sweep_2(Visitor* visitor) : Base(visitor) {}
 
   /*!
    * Construct.
@@ -148,11 +141,10 @@ public:
    * \param visitor A pointer to a sweep-line visitor object.
    */
   Surface_sweep_2(const Geometry_traits_2* traits, Visitor* visitor) :
-    Base(traits, visitor),
-    m_curves_pair_set(0)
+    Base(traits, visitor)
   {}
 
-  /*! Destrcut. */
+  /*! Destruct. */
   virtual ~Surface_sweep_2() {}
 
 protected:
@@ -166,6 +158,12 @@ protected:
 
   /*! Handle the subcurves to the left of the current event point. */
   virtual void _handle_left_curves();
+
+  /*! Handle the overlap on the right curves of the current event point. */
+  void _handle_overlaps_in_right_curves();
+
+  /*! clip the last curve of a subcurve if it is not in the status line and with a left end not being the current event*/
+  void _clip_non_active_curve_at_current_event(Subcurve*);
 
   /*! Handle the subcurves to the right of the current event point. */
   virtual void _handle_right_curves();
@@ -181,17 +179,14 @@ protected:
    */
   void _add_curve(Event* e, Subcurve* sc, Attribute type);
 
-  /*! Fix overlapping subcurves before handling the current event. */
-  void _fix_overlap_subcurves();
-
   /*! create an overlap subcurve from overlap_cv between c1 and c2.
    * \param overlap_cv the overlapping curve.
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
-   * \param all_leaves_diff not empty in case c1 and c2 have common ancesters.
+   * \param all_leaves_diff not empty in case c1 and c2 have common ancestors.
    *                        It contains the set of curves  not contained in first_parent
    *                        that are in the other subcurve
-   * \param first_parent only used when c1 and c2 have common ancesters.
+   * \param first_parent only used when c1 and c2 have common ancestors.
    *                     It is either c1 or c2 (the one having the more leaves)
    *
    */
@@ -222,18 +217,13 @@ protected:
   /*! Create an intersection-point event between two curves.
    * \param xp The intersection point.
    * \param mult Its multiplicity.
-   * \param curve1 The first curve.
-   * \param curve2 The second curve.
+   * \param c1 The first curve.
+   * \param c2 The second curve.
    */
   void _create_intersection_point(const Point_2& xp,
-                                  unsigned int mult,
+                                  Multiplicity mult,
                                   Subcurve*& c1,
                                   Subcurve*& c2);
-
-  /*! Fix a subcurve that represents an overlap.
-   * \param sc The subcurve.
-   */
-  void _fix_finished_overlap_subcurve(Subcurve* sc);
 };
 
 } // namespace Surface_sweep_2

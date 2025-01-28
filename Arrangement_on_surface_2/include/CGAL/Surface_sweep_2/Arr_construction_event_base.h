@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -49,10 +40,10 @@ namespace Ss2 = Surface_sweep_2;
  * information is stored, in order to expedite the insertion of curves into the
  * arrangement.
  *
- * The additional infomation contains the following:
+ * The additional information contains the following:
  * - among the left curves of the event, we keep the highest halfedge that
  *   was inserted into the arrangement at any given time and when there are no
- *   left curves, we keep the highest halfedge that was inseted to the right.
+ *   left curves, we keep the highest halfedge that was inserted to the right.
  *
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Allocator_ a type of an element that is used to acquire/release
@@ -110,17 +101,17 @@ protected:
                                               // event.
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_construction_event_base():
     m_halfedge(),
     m_vertex(),
     m_right_curves_counter(0)
   {}
 
-  /*! Destructor */
+  /*! destructs */
   ~Arr_construction_event_base() {}
 
-  /*! Add a curve to the right of the event. */
+  /*! adds a curve to the right of the event. */
   std::pair<bool, Subcurve_iterator>
   add_curve_to_right(Subcurve* curve, const Gt2* tr)
   {
@@ -132,7 +123,7 @@ public:
     return res;
   }
 
-  /*! Add a curve pair to the right of the event. */
+  /*! adds a curve pair to the right of the event. */
   std::pair<bool, Subcurve_iterator>
   add_curve_pair_to_right(Subcurve* sc1, Subcurve* sc2)
   {
@@ -141,9 +132,9 @@ public:
     return (Base::add_curve_pair_to_right(sc1, sc2));
   }
 
-  /*! using the additional data that we store at the event, we compute
+  /*! using the additional data that we store at the event, computes
    *  how much we have to jump (he = he->next()->twin()) from the halfedge
-   *  that is stored in the event, to the halefge that is previous to 'curve'
+   *  that is stored in the event, to the halfedge that is previous to 'curve'
    *  that is about to be inserted into the arrangement.
    */
   int compute_halfedge_jump_count(Subcurve* curve)
@@ -182,8 +173,8 @@ public:
     return (i);
   }
 
-  /*! Return true iff 'curve' is the toppest curve among the halfedges
-   *  to the right fo the event that were already were inserted to the
+  /*! returns true iff 'curve' is the toppest curve among the halfedges
+   *  to the right of the event that were already were inserted to the
    * arrangement.
    */
   bool is_curve_largest(Subcurve *curve)
@@ -200,38 +191,38 @@ public:
     return true;
   }
 
-  /*! Resize the bit-vector indicating whether the incident curves are already
+  /*! resizes the bit-vector indicating whether the incident curves are already
    * in the arrangement, and set all flags to false.
    */
   void init_subcurve_in_arrangement_flags(size_t n)
   { m_isCurveInArr.resize(n, false); }
 
-  /*! Check if the i'th subcurve is in the arrangement. */
+  /*! checks if the i'th subcurve is in the arrangement. */
   bool is_subcurve_in_arrangement(unsigned int i) const
   { return (m_isCurveInArr[i]); }
 
-  /*! Set the flag indicating whether the i'th subcurve is in the arrangement.
+  /*! sets the flag indicating whether the i'th subcurve is in the arrangement.
    */
   void set_subcurve_in_arrangement(unsigned int i, bool flag)
   { m_isCurveInArr[i] = flag; }
 
-  /*! Set the halfedge handle. */
+  /*! sets the halfedge handle. */
   void set_halfedge_handle(Halfedge_handle h) { m_halfedge = h; }
 
-  /*! Get the halfedge handle. */
+  /*! obtains the halfedge handle. */
   Halfedge_handle halfedge_handle() const { return m_halfedge; }
 
-  /*! Set the vertex handle. */
+  /*! sets the vertex handle. */
   void set_vertex_handle(Vertex_handle v) { m_vertex = v; }
 
-  /*! Get the vertex handle. */
+  /*! obtains the vertex handle. */
   Vertex_handle vertex_handle() const { return m_vertex; }
 
-  /*! Decrement the count of curves to the right that we have't done yet with
+  /*! decrements the count of curves to the right that we have't done yet with
    *  (haven't been inserted to the arrangement). */
   unsigned int dec_right_curves_counter() { return (--m_right_curves_counter); }
 
-  /*! Get the number of subcurves to the right of the event that we have't
+  /*! obtains the number of subcurves to the right of the event that we have't
    * done yet with (haven't been inserted to the arrangement).
    */
   unsigned int right_curves_counter() const { return (m_right_curves_counter); }

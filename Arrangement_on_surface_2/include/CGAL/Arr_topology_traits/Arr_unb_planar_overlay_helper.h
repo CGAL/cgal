@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -90,7 +81,7 @@ protected:
   Vertex_handle_blue v_blue_tl;         // Blue top-left fictitious vertex.
 
 public:
-  /*! Constructor, given the input red and blue arrangements. */
+  /*! constructs, given the input red and blue arrangements. */
   Arr_unb_planar_overlay_helper(const Ar2* red_arr, const Ab2* blue_arr) :
     m_red_top_traits(red_arr->topology_traits()),
     m_blue_top_traits(blue_arr->topology_traits())
@@ -108,15 +99,15 @@ public:
   void before_handle_event(Event* e);
   //@}
 
-  /*! Get the current red top face. */
+  /*! obtains the current red top face. */
   Face_handle_red red_top_face() const { return (m_red_th->face()); }
 
-  /*! Get the current blue top face. */
+  /*! obtains the current blue top face. */
   Face_handle_blue blue_top_face() const { return (m_blue_th->face()); }
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -135,7 +126,7 @@ before_sweep()
   // vertices in both red and blue arrangements. If there are no vertices
   // at x = -oo, we take the halfedge incident to the top-left vertex that
   // lies on the top edge of the fictitious face.
-  Vertex_handle_red   v_red_bl =
+  Vertex_handle_red v_red_bl =
     Vertex_handle_red(m_red_top_traits->bottom_left_vertex());
 
   m_red_th = v_red_bl->incident_halfedges();
@@ -145,7 +136,7 @@ before_sweep()
 
   if (m_red_th->source() == v_red_tl) m_red_th = m_red_th->prev();
 
-  Vertex_handle_blue  v_blue_bl =
+  Vertex_handle_blue v_blue_bl =
     Vertex_handle_blue(m_blue_top_traits->bottom_left_vertex());
 
   m_blue_th = v_blue_bl->incident_halfedges();
@@ -174,7 +165,8 @@ before_handle_event(Event* e)
       (e->parameter_space_in_x() == ARR_INTERIOR &&
        e->parameter_space_in_y() == ARR_TOP_BOUNDARY))
   {
-    switch (e->curve().color()) {
+    Arr_curve_end ce;
+    switch (e->boundary_touching_curve(ce).color()) {
     case (Gt2::RED) :
       // Update the red top fictitious halfedge.
       m_red_th = m_red_th->twin()->next()->twin();

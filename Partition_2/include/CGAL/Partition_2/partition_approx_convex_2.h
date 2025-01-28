@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -26,7 +17,7 @@
 
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 #endif
@@ -38,7 +29,7 @@ _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_is_valid_2.h>
-#include <CGAL/Partition_2/partition_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Circulator/Safe_circulator_from_iterator.h>
 #include <utility>
 #include <iterator>
@@ -46,9 +37,9 @@ _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 namespace CGAL {
 
 template< class Point_2, class Traits >
-bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s, 
+bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s,
                                                  const Point_2& source,
-                                                 const Point_2& after_s, 
+                                                 const Point_2& after_s,
                                                  const Point_2& target,
                                                  const Traits& traits )
 {
@@ -73,11 +64,11 @@ bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s,
 
 // e_circ is a circulator for the edges incident to the point referred to by
 // v_ref, which is a circualtor around the vertices of the original polygon
-template <class Edge_circulator, class Circulator, class Triangulation, 
+template <class Edge_circulator, class Circulator, class Triangulation,
           class Traits>
-bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ, 
+bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
                                               Circulator v_ref,
-                                              const Triangulation& triangles, 
+                                              const Triangulation& triangles,
                                               const Traits& traits)
 {
    typedef typename Triangulation::Segment        Segment_2;
@@ -97,13 +88,13 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
    while (prev_e != e_circ && (triangles.is_infinite(*prev_e) ||
            !(*prev_e).first->is_constrained((*prev_e).second)))
       prev_e--;
- 
+
    Segment_2  next_edge = triangles.segment((*next_e).first,(*next_e).second);
    Segment_2  prev_edge = triangles.segment((*prev_e).first,(*prev_e).second);
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-   std::cout << "next_edge: " << *next_edge.source() << " " 
+   std::cout << "next_edge: " << *next_edge.source() << " "
              << *next_edge.target() <<std::endl;
-   std::cout << "prev_edge: " << *prev_edge.source() << " " 
+   std::cout << "prev_edge: " << *prev_edge.source() << " "
              << *prev_edge.target() <<std::endl;
 #endif
    // find which endpoint is shared by the two edges
@@ -113,8 +104,8 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
      (prev_edge.source() == v_ref) ? prev_edge.target() : prev_edge.source();
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-   std::cout << "partition_appx_cvx_cuts_nonconvex_angle: next_ccw_pt " 
-             << *next_ccw_pt_ref << " v_ref " << *v_ref << " prev_ccw_pt_ref " 
+   std::cout << "partition_appx_cvx_cuts_nonconvex_angle: next_ccw_pt "
+             << *next_ccw_pt_ref << " v_ref " << *v_ref << " prev_ccw_pt_ref "
              << *prev_ccw_pt_ref << std::endl;
 #endif
 
@@ -122,15 +113,15 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
    typedef typename Traits::Point_2     Point_2;
    Left_turn_2 left_turn = traits.left_turn_2_object();
    Turn_reverser<Point_2, Left_turn_2>  right_turn(left_turn);
-   return right_turn(*next_ccw_pt_ref, *v_ref, *prev_ccw_pt_ref); 
+   return right_turn(*next_ccw_pt_ref, *v_ref, *prev_ccw_pt_ref);
 }
 
 
 template<class InputIterator, class Traits, class OutputIterator>
-OutputIterator partition_approx_convex_2(InputIterator first, 
+OutputIterator partition_approx_convex_2(InputIterator first,
                                          InputIterator beyond,
                                          OutputIterator result,
-                                         const Traits& traits) 
+                                         const Traits& traits)
 {
    if (first == beyond) return result;
 
@@ -147,7 +138,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
    P_Polygon_2 polygon(first, beyond,traits);
 
-   CGAL_partition_precondition(
+   CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
    Circulator first_c(polygon.begin(), polygon.end(), polygon.begin());
@@ -156,8 +147,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
    Gt gt_traits(traits);
    Constrained_tri_2 triangles(gt_traits);
-   
-   do 
+
+   do
    {
        next = c; next++;
        triangles.insert(c, next);
@@ -171,31 +162,31 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    Tri_vertex_iterator v_it;
 
 
-   for (v_it = triangles.vertices_begin(); v_it != triangles.vertices_end(); 
+   for (v_it = triangles.vertices_begin(); v_it != triangles.vertices_end();
         v_it++)
    {
        first_e = triangles.incident_edges(Vertex_handle(v_it));
        // find the constrained edge attached to this vertex that is first
-       // when going CW from the first edge returned above.  
-       while (triangles.is_infinite(*first_e) ||  
-              !(*first_e).first->is_constrained((*first_e).second)) 
+       // when going CW from the first edge returned above.
+       while (triangles.is_infinite(*first_e) ||
+              !(*first_e).first->is_constrained((*first_e).second))
        {
           first_e--;
        }
        e_circ = first_e;
-       do 
+       do
        {
           if ((*e_circ).first->is_constrained((*e_circ).second))
           {
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
              Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
-             std::cout << "edge " <<  *edge.source() << " " << *edge.target() 
+             std::cout << "edge " <<  *edge.source() << " " << *edge.target()
                        << " is constrained " << std::endl;
 #endif
-          }  
-          else 
+          }
+          else
           {
-             if (!triangles.is_infinite(*e_circ)) 
+             if (!triangles.is_infinite(*e_circ))
              {
                 Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
                 Circulator source = edge.source();
@@ -203,31 +194,31 @@ OutputIterator partition_approx_convex_2(InputIterator first,
                 Circulator before_s = edge.source(); before_s--;
                 Circulator after_s = edge.source(); after_s++;
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-                std::cout << "considering " << *source << " " << *target 
+                std::cout << "considering " << *source << " " << *target
                           << "...";
 #endif
-                if (partition_appx_cvx_is_edge_through_interior(*before_s, 
-                                *source, *after_s, *target, traits)) 
+                if (partition_appx_cvx_is_edge_through_interior(*before_s,
+                                *source, *after_s, *target, traits))
                 {
-                   if (partition_appx_cvx_cuts_nonconvex_angle(e_circ, 
-                                 (*v_it).point(), triangles, traits)) 
+                   if (partition_appx_cvx_cuts_nonconvex_angle(e_circ,
+                                 (*v_it).point(), triangles, traits))
                    {
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                       std::cout << "inserting" << std::endl;
 #endif
                       polygon.insert_diagonal(source.unsafe_circulator()
-		                             ,target.unsafe_circulator()
-					     );
+                                             ,target.unsafe_circulator()
+                                             );
                       triangles.insert(source, target);
                    }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-                   else 
+                   else
                       std::cout << "doesn't cut reflex angle" << std::endl;
 #endif
                 }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
-                else 
-                   std::cout << "not an edge through the interior" 
+                else
+                   std::cout << "not an edge through the interior"
                              << std::endl;
 #endif
              }
@@ -239,7 +230,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    }
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                  Polygon_2;
@@ -247,13 +238,13 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 #endif // no postconditions
 
    polygon.partition(res, 0);
-   CGAL_partition_postcondition(
+   CGAL_postcondition(
        convex_partition_is_valid_2(polygon.begin(), polygon.end(),
-                                   res.output_so_far_begin(), 
+                                   res.output_so_far_begin(),
                                    res.output_so_far_end(), traits));
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();
@@ -262,18 +253,18 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator partition_approx_convex_2(InputIterator first, 
+OutputIterator partition_approx_convex_2(InputIterator first,
                                          InputIterator beyond,
                                          OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel K;
-   return partition_approx_convex_2(first, beyond, result,  
+   return partition_approx_convex_2(first, beyond, result,
                                     Partition_traits_2<K>());
 }
 
 }
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_PARTITION_APPROX_CONVEX_H

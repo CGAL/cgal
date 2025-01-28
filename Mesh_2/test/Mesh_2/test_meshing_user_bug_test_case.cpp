@@ -21,7 +21,7 @@
 //   Expr: zone.locate_type != Tr::FACE || zone.fh == f || zone.fh == n
 //   File: /home/lrineau/wc/Mesh_2/test/Mesh_2/../../include/CGAL/Mesh_2/Refine_edges.h
 //   Line: 430
-//   Explanation: Your data set contains at least a vertex that is very close to 
+//   Explanation: Your data set contains at least a vertex that is very close to
 //     a constrained edge! Mesh_2 cannot mesh that sort of data set.
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -57,7 +57,8 @@ int main()
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Meshing the triangulation..." << std::endl;
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 1.0));
+  Criteria criteria(0.125, 0.5);
+  CGAL::refine_Delaunay_mesh_2(cdt, CGAL::parameters::criteria(criteria));
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 }

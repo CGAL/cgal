@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian_converter.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 template <class T>
-bool is_intersection_empty(const boost::optional<T>& t)
+bool is_intersection_empty(const std::optional<T>& t)
 {
   return bool(t);
 }
@@ -17,8 +17,7 @@ template <class K1, class K2, class T1, class T2>
 void test_2d(const T1& t1, const T2& t2)
 {
   CGAL::Cartesian_converter<K1,K2> convert;
-  typename CGAL::cpp11::result_of<typename K1::Intersect_2(T1, T2)>::type res1 =
-    CGAL::intersection(t1, t2);
+  const auto res1 = CGAL::intersection(t1, t2);
   assert( is_intersection_empty( convert(res1) ) == is_intersection_empty(res1) );
 }
 
@@ -26,8 +25,7 @@ template <class K1, class K2, class T1, class T2>
 void test_3d(const T1& t1, const T2& t2)
 {
   CGAL::Cartesian_converter<K1,K2> convert;
-  typename CGAL::cpp11::result_of<typename K1::Intersect_3(T1, T2)>::type res1 =
-    CGAL::intersection(t1, t2);
+  const auto res1 = CGAL::intersection(t1, t2);
   assert( is_intersection_empty( convert(res1) ) == is_intersection_empty(res1) );
 }
 
@@ -110,9 +108,8 @@ void test_linear_intersections()
   test_3d<K1,K2>(segment_3, triangle_3);
   test_3d<K1,K2>(sphere_3, sphere_3);
   test_3d<K1,K2>(triangle_3, triangle_3);
-  
+
   CGAL::Cartesian_converter<K1,K2> convert;
-  typename CGAL::cpp11::result_of<typename K1::Intersect_3(Plane_3, Plane_3, Plane_3)>::type res1 =
-    CGAL::intersection(plane_3, plane_3, plane_3);
+  const auto res1 = CGAL::intersection(plane_3, plane_3, plane_3);
   assert( is_intersection_empty( convert(res1) ) == is_intersection_empty(res1) );
 }

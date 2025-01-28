@@ -6,10 +6,8 @@
 
 #include <CGAL/property_map.h>
 
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
-#endif
 
 using namespace std;
 
@@ -86,8 +84,8 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 // 2. the exact number of rings to be used
 // 3. nothing is specified
 void gather_fitting_points(Vertex* v,
-			   std::vector<DPoint> &in_points,
-			   Vertex_PM_type& vpm)
+                           std::vector<DPoint> &in_points,
+                           Vertex_PM_type& vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
   std::vector<Vertex*> gathered;
@@ -135,7 +133,7 @@ int main()
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<string>(&if_name_string)->default_value("data/ellipe0.003.off"),
+      ("input-file,f", po::value<string>(&if_name_string)->default_value(CGAL::data_file_path("meshes/ellipe0.003.off")),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(2),
        "degree of the jet, 1 <= degre-jet <= 4")
@@ -159,7 +157,7 @@ int main()
     }
 #else
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    if_name_string = "data/ellipe0.003.off";
+    if_name_string = CGAL::data_file_path("meshes/ellipe0.003.off");
     d_fitting = 2;
     d_monge = 2;
     nb_rings = 0;
@@ -200,7 +198,7 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
     verbose_fname  = w_if_name + ".verb.txt";
     out_verbose.open(verbose_fname.c_str(), std::ios::out);
     assert(out_verbose.good());
-    CGAL::set_pretty_mode(out_verbose);
+    CGAL::IO::set_pretty_mode(out_verbose);
   }
   unsigned int nb_vertices_considered = 0;//count vertices for verbose
 
@@ -210,8 +208,8 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
   std::ifstream stream(if_name.c_str());
   stream >> P;
   std::cout << "loadMesh...  "<< "Polysurf with " << P.size_of_vertices()
-	    << " vertices and " << P.size_of_facets()
-	    << " facets. " << std::endl;
+            << " vertices and " << P.size_of_facets()
+            << " facets. " << std::endl;
 
   if(verbose)
     out_verbose << "Polysurf with " << P.size_of_vertices()
@@ -264,12 +262,12 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
     //skip if the nb of points is to small
     if ( in_points.size() < min_nb_points )
       {std::cerr << "not enough pts for fitting this vertex" << in_points.size() << std::endl;
-	continue;}
+        continue;}
 
     // perform the fitting
     My_Monge_via_jet_fitting monge_fit;
     monge_form = monge_fit(in_points.begin(), in_points.end(),
-			   d_fitting, d_monge);
+                           d_fitting, d_monge);
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
     monge_form.comply_wrt_given_normal(normal_mesh);
@@ -288,9 +286,9 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
       for (;itbp!=itep;itbp++) out_verbose << *itbp << std::endl ;
 
       out_verbose << "--- vertex " <<  ++nb_vertices_considered
-                  <<	" : " << v->point() << std::endl
+                  <<        " : " << v->point() << std::endl
                   << "number of points used : " << in_points.size() << std::endl
-	;// << monge_form;
+        ;// << monge_form;
     }
   } //all vertices processed
 
@@ -299,6 +297,6 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
   out_4ogl.close();
   if(verbose) {
     out_verbose.close();
-  }  
+  }
   return 0;
 }

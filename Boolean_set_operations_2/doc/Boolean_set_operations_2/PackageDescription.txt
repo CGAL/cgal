@@ -7,6 +7,12 @@
 namespace ArrDirectionalTraits {}
 
 /*!
+\cgalInclude{CGAL/draw_polygon_set_2.h}
+*/
+/// \defgroup PkgDrawPolygonSet2 Draw a 2D Polygon Set
+/// \ingroup PkgBooleanSetOperations2Ref
+
+/*!
 \addtogroup PkgBooleanSetOperations2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2}
@@ -61,5 +67,10 @@ containment predicates.
 - \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
 - \link boolean_oriented_side `CGAL::oriented_side()` \endlink
 - \link boolean_connect_holes `CGAL::connect_holes()` \endlink
+
+\cgalCRPSection{Draw a Polygon_set_2}
+- \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- `GraphicsSceneOptionsPolygonSet2`
+- `CGAL::Graphics_scene_options_polygon_set_2`
 
 */

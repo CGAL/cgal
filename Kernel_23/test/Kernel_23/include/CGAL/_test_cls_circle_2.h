@@ -1,21 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     : Stefan Schirra
@@ -26,8 +20,6 @@
 
 #include <CGAL/Bbox_2.h>
 #include <cassert>
-
-#include <boost/type_traits/is_same.hpp>
 
 template <class K>
 void _test_construct_radical_line(const K &k) {
@@ -85,7 +77,7 @@ _test_cls_circle_2(const R& )
  typename R::Circle_2  ic;
  CGAL::Circle_2<R> c0;
 
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_floating_point<FT>::value;
 
  RT n0 =  0;
  RT n1 = 16;

@@ -1,6 +1,6 @@
 #include <CGAL/Exact_algebraic.h>
-#include <CGAL/internal/Exact_complex.h>
-#include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Exact_complex.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_2/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <iostream>
 #include <vector>
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Simon Giraudot
@@ -40,8 +31,8 @@ namespace Shape_detection {
   class Point_to_shape_index_map
   {
     typedef CGAL::Shape_detection::Shape_base<Traits> Shape;
-    boost::shared_ptr<std::vector<int> > m_indices;
-    
+    std::shared_ptr<std::vector<int> > m_indices;
+
   public:
     typedef std::size_t key_type; ///< %Index of the point in the random access point range.
     typedef int value_type; ///< %Index of the shape (-1 if the point is not assigned to any shape).
@@ -59,7 +50,7 @@ namespace Shape_detection {
 
       \tparam ShapeRange must be an `Iterator_range` with a bidirectional
       constant iterator type with value type
-      `boost::shared_ptr<CGAL::Shape_detection::Shape_base<Traits> >`.
+      `std::shared_ptr<CGAL::Shape_detection::Shape_base<Traits> >`.
      */
     template <typename PointRange, typename ShapeRange>
     Point_to_shape_index_map (const PointRange& points,
@@ -94,12 +85,12 @@ namespace Shape_detection {
   {
   public:
     typedef CGAL::Shape_detection::Plane<Traits> Plane_shape;
-    typedef boost::shared_ptr<Plane_shape> key_type;
+    typedef std::shared_ptr<Plane_shape> key_type;
     typedef typename Traits::Plane_3 value_type;
     typedef value_type reference;
     typedef boost::read_write_property_map_tag category;
 
-    inline friend reference get (const Plane_map&, const key_type& k)
+    inline friend value_type get (const Plane_map&, const key_type& k)
     {
       return value_type(*k);
     }

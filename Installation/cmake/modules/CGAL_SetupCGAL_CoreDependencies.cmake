@@ -2,7 +2,7 @@
 # CGAL_SetupCGAL_CoreDependencies
 # -------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_Core` library:
+# The module searches for the dependencies of the `CGAL_Core` library:
 #   - the `GMP/MPFR` couple,
 #
 # and defines the variable :variable:`CGAL_Core_FOUND` and the function
@@ -18,9 +18,6 @@ endif()
 set(CGAL_SetupCGAL_CoreDependencies_included TRUE)
 
 #.rst:
-# Used Modules
-# ^^^^^^^^^^^^
-#   - :module:`CGAL_SetupGMP`
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -29,13 +26,10 @@ set(CGAL_SetupCGAL_CoreDependencies_included TRUE)
 #
 #    Set to `TRUE` if the dependencies of `CGAL_Core` were found.
 
-if(NOT CGAL_DISABLE_GMP)
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupGMP.cmake)
-  if(GMP_FOUND)
-    set(CGAL_Core_FOUND TRUE)
-    set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
-  endif()
-endif()
+
+# always found as it requires the minimal version of boost required by CGAL
+set(CGAL_Core_FOUND TRUE)
+set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
 
 #.rst:
 #
@@ -46,45 +40,18 @@ endif()
 #
 #   Link the target with the dependencies of `CGAL_Core`::
 #
-#     CGAL_setup_CGAL_Core_dependencies( target [INTERFACE] )
+#     CGAL_setup_CGAL_Core_dependencies( target)
 #
-#   If the option ``INTERFACE`` is passed, the dependencies are
+#   The dependencies are
 #   added using :command:`target_link_libraries` with the ``INTERFACE``
-#   keyword, or ``PUBLIC`` otherwise.
+#   keyword.
 #
-
-# See the release notes of CGAL-4.10: CGAL_Core now requires
-# Boost.Thread, with GNU G++ < 9.1.
-if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1)
-  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
-  find_package( Boost 1.48 REQUIRED COMPONENTS thread system )
-endif()
 
 function(CGAL_setup_CGAL_Core_dependencies target)
-  if(ARGV1 STREQUAL INTERFACE)
-    set(keyword INTERFACE)
-  else()
-    set(keyword PUBLIC)
+  find_package( Boost 1.72 REQUIRED )
+  if (NOT CGAL_DISABLE_GMP AND GMP_FOUND)
+    use_CGAL_GMP_support(CGAL_Core INTERFACE)
   endif()
-
-  use_CGAL_GMP_support(CGAL_Core ${keyword})
-  target_compile_definitions(${target} ${keyword} CGAL_USE_CORE=1)
-  target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
-
-  # See the release notes of CGAL-4.10: CGAL_Core now requires
-  # Boost.Thread, with GNU G++.
-  if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1)
-    if(TARGET Boost::thread)
-      target_link_libraries( CGAL_Core ${keyword} Boost::thread)
-    else()
-      # Note that `find_package( Boost...)` must be called in the
-      # function `CGAL_setup_CGAL_Core_dependencies()` because the
-      # calling `CMakeLists.txt` may also call `find_package(Boost)`
-      # between the inclusion of this module, and the call to this
-      # function. That resets `Boost_LIBRARIES`.
-      find_package( Boost 1.48 REQUIRED thread system )
-      target_link_libraries( CGAL_Core ${keyword} ${Boost_LIBRARIES})
-    endif()
-  endif()
-
+  target_compile_definitions(${target} INTERFACE CGAL_USE_CORE=1)
+  target_link_libraries( CGAL_Core INTERFACE CGAL::CGAL )
 endfunction()

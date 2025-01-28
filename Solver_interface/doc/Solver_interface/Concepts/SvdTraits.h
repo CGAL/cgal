@@ -2,10 +2,12 @@
   \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the linear algebra types and algorithms needed 
+  The concept `SvdTraits` describes the linear algebra types and algorithms needed
   to solve in the least square sense a linear system with a singular value decomposition
 
-  \cgalHasModel `CGAL::Eigen_svd`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_svd}
+\cgalHasModelsEnd
 */
 class SvdTraits
 {
@@ -28,10 +30,10 @@ public:
     The matrix type,  model of the concept `SvdTraits::Matrix`.
   */
   typedef unspecified_type Matrix;
-  
-  /// @} 
 
-  /// \name Operations 
+  /// @}
+
+  /// \name Operations
   /// The concept `SvdTraits` has a linear solver using a
   /// singular value decomposition algorithm.
   /// @{
@@ -51,7 +53,9 @@ public:
 \cgalConcept
 Concept of vector type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_vector<T>}
+\cgalHasModelsEnd
 */
 class SvdTraits::Vector
 {
@@ -86,7 +90,11 @@ public:
 \cgalConcept
 Concept of matrix type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_matrix<T>`
+\cgalRefines{DefaultConstructible,Assignable}
+
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_matrix<T>}
+\cgalHasModelsEnd
 */
 class SvdTraits::Matrix
 {
@@ -98,12 +106,12 @@ public:
 
   /*!
     Return the number of rows of the matrix.
-   */
+  */
   size_t number_of_rows();
 
   /*!
     Return the number of columns of the matrix.
-   */
+  */
   size_t number_of_columns();
 
   /*!
@@ -117,4 +125,3 @@ public:
   */
   void set(size_t i, size_t j, const FT value);
 };
-

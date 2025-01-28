@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -33,6 +24,7 @@
 #include <CGAL/memory.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/N_step_adaptor_derived.h>
+#include <CGAL/iterator.h>
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -56,7 +48,7 @@ public:
     typedef Alloc                                      Allocator;
     typedef Alloc                                      allocator_type;
 
-    typedef typename Items::template Vertex_wrapper<Self,Traits>   
+    typedef typename Items::template Vertex_wrapper<Self,Traits>
                                                        Vertex_wrapper;
     typedef typename Items::template Halfedge_wrapper<Self,Traits>
                                                        Halfedge_wrapper;
@@ -88,7 +80,7 @@ public:
                                                        Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                        Edge_const_iterator;
-  
+
     typedef internal::vector<Face, Face_allocator>     Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
@@ -146,7 +138,7 @@ public:
 };
 
 
-template < class Traits_, class HalfedgeDSItems, 
+template < class Traits_, class HalfedgeDSItems,
            class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_vector
     : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
@@ -170,6 +162,9 @@ public:
     typedef typename Types::Vertex_I                   Vertex_I;
     typedef typename Types::Vertex_CI                  Vertex_CI;
 
+    typedef Iterator_range< Prevent_deref<Vertex_iterator> >       Vertex_handles;
+    typedef Iterator_range< Prevent_deref<Vertex_const_iterator> > Vertex_const_handles;
+
     typedef typename Types::Halfedge_vector            Halfedge_vector;
     typedef typename Types::Halfedge_handle            Halfedge_handle;
     typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
@@ -178,6 +173,9 @@ public:
     typedef typename Types::Halfedge_I                 Halfedge_I;
     typedef typename Types::Halfedge_CI                Halfedge_CI;
 
+    typedef Iterator_range< Prevent_deref<Halfedge_iterator> >       Halfedge_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_const_iterator> > Halfedge_const_handles;
+
     typedef typename Types::Face_vector                Face_vector;
     typedef typename Types::Face_handle                Face_handle;
     typedef typename Types::Face_const_handle          Face_const_handle;
@@ -185,6 +183,9 @@ public:
     typedef typename Types::Face_const_iterator        Face_const_iterator;
     typedef typename Types::Face_I                     Face_I;
     typedef typename Types::Face_CI                    Face_CI;
+
+    typedef Iterator_range< Prevent_deref<Face_iterator> >       Face_handles;
+    typedef Iterator_range< Prevent_deref<Face_const_iterator> > Face_const_handles;
 
     typedef typename Types::size_type                  size_type;
     typedef typename Types::difference_type            difference_type;
@@ -380,19 +381,25 @@ public:
 
     Vertex_iterator   vertices_begin()   { return vertices.begin();}
     Vertex_iterator   vertices_end()     { return vertices.end();}
+    Vertex_handles    vertex_handles()   { return make_prevent_deref_range(vertices_begin(), vertices_end());}
     Halfedge_iterator halfedges_begin()  { return halfedges.begin();}
     Halfedge_iterator halfedges_end()    { return halfedges.end();}
+    Halfedge_handles  halfedge_handles() { return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
     Face_iterator     faces_begin()      { return faces.begin();}
     Face_iterator     faces_end()        { return faces.end();}
+    Face_handles      face_handles()     { return make_prevent_deref_range(faces_begin(), faces_end());}
 
     // The constant iterators and circulators.
 
-    Vertex_const_iterator   vertices_begin()  const{ return vertices.begin();}
-    Vertex_const_iterator   vertices_end()    const{ return vertices.end();}
-    Halfedge_const_iterator halfedges_begin() const{ return halfedges.begin();}
-    Halfedge_const_iterator halfedges_end()   const{ return halfedges.end();}
-    Face_const_iterator     faces_begin()     const{ return faces.begin();}
-    Face_const_iterator     faces_end()       const{ return faces.end();}
+    Vertex_const_iterator   vertices_begin()   const{ return vertices.begin();}
+    Vertex_const_iterator   vertices_end()     const{ return vertices.end();}
+    Vertex_const_handles    vertex_handles()   const{ return make_prevent_deref_range(vertices_begin(), vertices_end());}
+    Halfedge_const_iterator halfedges_begin()  const{ return halfedges.begin();}
+    Halfedge_const_iterator halfedges_end()    const{ return halfedges.end();}
+    Halfedge_const_handles  halfedge_handles() const{ return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
+    Face_const_iterator     faces_begin()      const{ return faces.begin();}
+    Face_const_iterator     faces_end()        const{ return faces.end();}
+    Face_const_handles      face_handles()     const{ return make_prevent_deref_range(faces_begin(), faces_end());}
 
 // Insertion
 //
@@ -540,7 +547,7 @@ public:
         -- --rr;
         Hiterator rrhv = hvector.end();
         -- --rrhv;
-        // The comments proove the invariant of the partitioning step.
+        // The comments prove the invariant of the partitioning step.
         // Note that + 1 or - 1 denotes plus one edge or minus one edge,
         // so they mean actually + 2 and - 2.
                               // Pivot is in *ll
@@ -548,7 +555,7 @@ public:
                               // Elements in [begin..ll) <  pivot (non border)
         while (ll < rr) {
                               // Pivot is in *ll, ll <= rr.
-            while ( rr > ll && (rr->is_border() 
+            while ( rr > ll && (rr->is_border()
                               || rr->opposite()->is_border())) {
                 if ( ! rr->opposite()->is_border()) {
                     CGAL_assertion( rr + 1 == get_h_iter(rr->opposite()));
@@ -597,7 +604,7 @@ public:
 
             // This guard is needed here because, rr==ll==begin, might be true
             // at this point, causing the decrement to result in undefined
-            // behaviour.
+            // behavior.
             // [Fernando Cacciola]
             if ( ll < rr )
             {
@@ -610,7 +617,7 @@ public:
         CGAL_assertion( llhv >= rrhv);
                               // rr + 1 >= ll >= rr
                               // Elements in [rr+1..end) >= pivot
-                              // Elemente in [begin..ll) <  pivot
+                              // Elements in [begin..ll) <  pivot
                               // Pivot is in a[ll]
         if ( ll == rr) {
             // Check for the possibly missed swap.

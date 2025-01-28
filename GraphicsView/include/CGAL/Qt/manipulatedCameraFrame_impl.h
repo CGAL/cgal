@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -29,7 +21,6 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/qglviewer.h>
 
 #include <QMouseEvent>
@@ -125,69 +116,6 @@ void ManipulatedCameraFrame::updateSceneUpVector() {
   sceneUpVector_ = inverseTransformOf(Vec(0.0, 1.0, 0.0));
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//          S t a t e   s a v i n g   a n d   r e s t o r i n g               //
-////////////////////////////////////////////////////////////////////////////////
-
-/*! Returns an XML \c QDomElement that represents the ManipulatedCameraFrame.
-
- Adds to the ManipulatedFrame::domElement() the ManipulatedCameraFrame specific
- informations in a \c ManipulatedCameraParameters child QDomElement.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- Use initFromDOMElement() to restore the ManipulatedCameraFrame state from the
- resulting \c QDomElement.
-
- See Vec::domElement() for a complete example. See also
- Quaternion::domElement(), Frame::domElement(), Camera::domElement()... */
-CGAL_INLINE_FUNCTION
-QDomElement ManipulatedCameraFrame::domElement(const QString &name,
-                                               QDomDocument &document) const {
-  QDomElement e = ManipulatedFrame::domElement(name, document);
-  QDomElement mcp = document.createElement("ManipulatedCameraParameters");
-  mcp.setAttribute("flySpeed", QString::number(flySpeed()));
-  DomUtils::setBoolAttribute(mcp, "rotatesAroundUpVector",
-                             rotatesAroundUpVector());
-  DomUtils::setBoolAttribute(mcp, "zoomsOnPivotPoint", zoomsOnPivotPoint());
-  mcp.appendChild(sceneUpVector().domElement("sceneUpVector", document));
-  e.appendChild(mcp);
-  return e;
-}
-
-/*! Restores the ManipulatedCameraFrame state from a \c QDomElement created by
-domElement().
-
-First calls ManipulatedFrame::initFromDOMElement() and then initializes
-ManipulatedCameraFrame specific parameters. */
-CGAL_INLINE_FUNCTION
-void ManipulatedCameraFrame::initFromDOMElement(const QDomElement &element) {
-  // No need to initialize, since default sceneUpVector and flySpeed are not
-  // meaningful. It's better to keep current ones. And it would destroy
-  // constraint() and referenceFrame(). *this = ManipulatedCameraFrame();
-  ManipulatedFrame::initFromDOMElement(element);
-
-  QDomElement child = element.firstChild().toElement();
-  while (!child.isNull()) {
-    if (child.tagName() == "ManipulatedCameraParameters") {
-      setFlySpeed(DomUtils::qrealFromDom(child, "flySpeed", flySpeed()));
-      setRotatesAroundUpVector(
-          DomUtils::boolFromDom(child, "rotatesAroundUpVector", false));
-      setZoomsOnPivotPoint(
-          DomUtils::boolFromDom(child, "zoomsOnPivotPoint", false));
-
-      QDomElement schild = child.firstChild().toElement();
-      while (!schild.isNull()) {
-        if (schild.tagName() == "sceneUpVector")
-          setSceneUpVector(Vec(schild));
-
-        schild = schild.nextSibling().toElement();
-      }
-    }
-    child = child.nextSibling().toElement();
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                 M o u s e    h a n d l i n g                               //
@@ -265,7 +193,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case MOVE_FORWARD: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     //#CONNECTION# wheelEvent MOVE_FORWARD case
     // actual translation is made in flyUpdate().
@@ -274,7 +202,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case MOVE_BACKWARD: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     // actual translation is made in flyUpdate().
     // translate(inverseTransformOf(Vec(0.0, 0.0, flySpeed())));
@@ -282,10 +210,10 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case DRIVE: {
-    Quaternion rot = turnQuaternion(event->x(), camera);
+    Quaternion rot = turnQuaternion(event->position().x(), camera);
     rotate(rot);
     // actual translation is made in flyUpdate().
-    driveSpeed_ = 0.01 * (event->y() - pressPos_.y());
+    driveSpeed_ = 0.01 * (event->position().y() - pressPos_.y());
     break;
   }
 
@@ -295,7 +223,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case LOOK_AROUND: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     break;
   }
@@ -305,9 +233,9 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     if (rotatesAroundUpVector_) {
       // Multiply by 2.0 to get on average about the same speed as with the
       // deformed ball
-      qreal dx = 2.0 * rotationSensitivity() * (prevPos_.x() - event->x()) /
+      qreal dx = 2.0 * rotationSensitivity() * (prevPos_.x() - event->position().x()) /
                  camera->screenWidth();
-      qreal dy = 2.0 * rotationSensitivity() * (prevPos_.y() - event->y()) /
+      qreal dy = 2.0 * rotationSensitivity() * (prevPos_.y() - event->position().y()) /
                  camera->screenHeight();
       if (constrainedRotationIsReversed_)
         dx = -dx;
@@ -315,7 +243,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
       rot = Quaternion(verticalAxis, dx) * Quaternion(Vec(1.0, 0.0, 0.0), dy);
     } else {
       Vec trans = camera->projectedCoordinatesOf(pivotPoint());
-      rot = deformedBallQuaternion(event->x(), event->y(), trans[0], trans[1],
+      rot = deformedBallQuaternion(event->position().x(), event->position().y(), trans[0], trans[1],
                                    camera);
     }
     //#CONNECTION# These two methods should go together (spinning detection and
@@ -329,7 +257,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   case SCREEN_ROTATE: {
     Vec trans = camera->projectedCoordinatesOf(pivotPoint());
 
-    const qreal angle = atan2(event->y() - trans[1], event->x() - trans[0]) -
+    const qreal angle = atan2(event->position().y() - trans[1], event->position().x() - trans[0]) -
                         atan2(prevPos_.y() - trans[1], prevPos_.x() - trans[0]);
 
     Quaternion rot(Vec(0.0, 0.0, 1.0), angle);
@@ -344,7 +272,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
 
   case ROLL: {
     const qreal angle =
-        CGAL_PI * (event->x() - prevPos_.x()) / camera->screenWidth();
+      CGAL_PI * (event->position().x() - prevPos_.x()) / camera->screenWidth();
     Quaternion rot(Vec(0.0, 0.0, 1.0), angle);
     rotate(rot);
     setSpinningQuaternion(rot);
@@ -356,9 +284,9 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     Vec trans;
     int dir = mouseOriginalDirection(event);
     if (dir == 1)
-      trans.setValue(prevPos_.x() - event->x(), 0.0, 0.0);
+      trans.setValue(prevPos_.x() - event->position().x(), 0.0, 0.0);
     else if (dir == -1)
-      trans.setValue(0.0, event->y() - prevPos_.y(), 0.0);
+      trans.setValue(0.0, event->position().y() - prevPos_.y(), 0.0);
 
     switch (camera->type()) {
     case Camera::PERSPECTIVE:
@@ -379,8 +307,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     break;
   }
 
-  case ZOOM_ON_REGION:
-  case NO_MOUSE_ACTION:
+  default:
     break;
   }
 
@@ -429,9 +356,26 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
   case MOVE_BACKWARD:
     //#CONNECTION# mouseMoveEvent() MOVE_FORWARD case
     translate(
-        inverseTransformOf(Vec(0.0, 0.0, 0.2 * flySpeed() * event->delta())));
+        inverseTransformOf(Vec(0.0, 0.0, 0.2 * flySpeed() * event->angleDelta().y())));
     Q_EMIT manipulated();
     break;
+  case ZOOM_FOV:
+  {
+    qreal delta = - wheelDelta(event);//- sign to keep the same behavior as for the ZOOM action.
+    qreal new_fov = delta/100 + camera->fieldOfView();
+    if(new_fov > CGAL_PI/180.0)
+    {
+      new_fov = delta + camera->fieldOfView();
+    }
+    if(new_fov > CGAL_PI/4.0)
+      new_fov = CGAL_PI/4.0;
+    if( new_fov >= 0.0)
+    {
+      camera->setFieldOfView(new_fov);
+    }
+    Q_EMIT manipulated();
+    break;
+  }
   default:
     break;
   }
@@ -455,7 +399,10 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
   // isManipulated() returns false. But then fastDraw would not be used with
   // wheel. Detecting the last wheel event and forcing a final draw() is done
   // using the timer_.
-  action_ = NO_MOUSE_ACTION;
+  if(action_ != ZOOM_FOV)
+    action_ = NO_MOUSE_ACTION;
+  //else done after postDraw().
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

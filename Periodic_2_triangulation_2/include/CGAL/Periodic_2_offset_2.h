@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -25,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
 
 namespace CGAL
@@ -36,7 +27,7 @@ class Periodic_2_offset_2
 {
   //  template <class K2>
   //  friend std::ostream & operator<<(std::ostream &os,
-  //				   const Periodic_2_offset_2 &off);
+  //                                   const Periodic_2_offset_2 &off);
 
 public:
   /// Default constructor.
@@ -80,14 +71,14 @@ public:
   int &operator[](int i)
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Return the i-th entry of o.
   int operator[](int i) const
   {
     if (i == 0) return _offx;
-    CGAL_triangulation_assertion(i == 1);
+    CGAL_assertion(i == 1);
     return _offy;
   }
   /// Add o' to o using vector addition.
@@ -155,7 +146,7 @@ inline typename K::Point_2 operator+(const typename K::Point_2 &p, const Periodi
 inline std::ostream
 &operator<<(std::ostream &os, const Periodic_2_offset_2 &off)
 {
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << off.x() << " " << off.y();
   else
     {
@@ -170,7 +161,7 @@ inline std::istream
 &operator>>(std::istream &is, Periodic_2_offset_2 &off)
 {
   int x = 0, y = 0;
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
     is >> x >> y;
   else
     {

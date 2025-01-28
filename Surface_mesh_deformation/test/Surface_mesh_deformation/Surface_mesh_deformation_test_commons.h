@@ -1,6 +1,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -10,7 +10,7 @@
 #include <CGAL/Timer.h>
 
 template<class Polyhedron>
-void read_to_polyhedron(const char* file_name, Polyhedron& mesh)
+void read_to_polyhedron(const std::string file_name, Polyhedron& mesh)
 {
   std::ifstream input(file_name);
 

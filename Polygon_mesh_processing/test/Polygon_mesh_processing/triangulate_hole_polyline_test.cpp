@@ -1,16 +1,16 @@
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <cassert>
 #include <vector>
 #include <fstream>
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel  Epec;
@@ -20,9 +20,9 @@ template<class HDS, class K>
 class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
   typedef typename K::Point_3 Point_3;
 public:
-  Polyhedron_builder(std::vector<boost::tuple<int, int, int> >* triangles, 
-    std::vector<Point_3>* polyline) 
-    : triangles(triangles), polyline(polyline) 
+  Polyhedron_builder(std::vector<std::tuple<int, int, int> >* triangles,
+    std::vector<Point_3>* polyline)
+    : triangles(triangles), polyline(polyline)
   { }
 
   void operator()(HDS& hds) {
@@ -34,12 +34,12 @@ public:
         B.add_vertex(*it);
     }
 
-    for(typename std::vector<boost::tuple<int, int, int> >::iterator it = triangles->begin();
+    for(typename std::vector<std::tuple<int, int, int> >::iterator it = triangles->begin();
       it != triangles->end(); ++it) {
         B.begin_facet();
-        B.add_vertex_to_facet(it->get<0>());
-        B.add_vertex_to_facet(it->get<1>());
-        B.add_vertex_to_facet(it->get<2>());
+        B.add_vertex_to_facet(std::get<0>(*it));
+        B.add_vertex_to_facet(std::get<1>(*it));
+        B.add_vertex_to_facet(std::get<2>(*it));
         B.end_facet();
     }
 
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  std::vector<boost::tuple<int, int, int> >* triangles;
+  std::vector<std::tuple<int, int, int> >* triangles;
   std::vector<Point_3>* polyline;
 };
 
@@ -74,7 +74,7 @@ void read_polyline_one_line(const char* file_name, std::vector<Point_3>& points)
 
 // last point should be repeated
 void read_polyline_with_extra_points(
-  const char* file_name, 
+  const char* file_name,
   std::vector<Point_3>& points,
   std::vector<Point_3>& extras)
 {
@@ -92,36 +92,36 @@ void read_polyline_with_extra_points(
   }
 }
 
-void check_triangles(std::vector<Point_3>& points, std::vector<boost::tuple<int, int, int> >& tris) {
+void check_triangles(std::vector<Point_3>& points, std::vector<std::tuple<int, int, int> >& tris) {
   if(points.size() - 3 != tris.size()) {
     std::cerr << "  Error: there should be n-2 triangles in generated patch." << std::endl;
     assert(false);
   }
 
   const int max_index = static_cast<int>(points.size())-1;
-  for(std::vector<boost::tuple<int, int, int> >::iterator it = tris.begin(); it != tris.end(); ++it) {
-    if(it->get<0>() == it->get<1>() ||
-      it->get<0>() == it->get<2>() ||
-      it->get<1>() == it->get<2>() ) 
+  for(std::vector<std::tuple<int, int, int> >::iterator it = tris.begin(); it != tris.end(); ++it) {
+    if(std::get<0>(*it) == std::get<1>(*it) ||
+      std::get<0>(*it) == std::get<2>(*it) ||
+      std::get<1>(*it) == std::get<2>(*it) )
     {
       std::cerr << "Error: indices of triangles should be all different." << std::endl;
-      assert(false); 
-    }  
+      assert(false);
+    }
 
-    if(it->get<0>() >= max_index ||
-      it->get<1>() >= max_index ||
-      it->get<2>() >= max_index ) 
+    if(std::get<0>(*it) >= max_index ||
+      std::get<1>(*it) >= max_index ||
+      std::get<2>(*it) >= max_index )
     {
       std::cerr << "  Error: max possible index check failed." << std::endl;
       assert(false);
-    } 
+    }
   }
 }
 
 void check_constructed_polyhedron(const char* file_name,
-  std::vector<boost::tuple<int, int, int> >* triangles, 
+  std::vector<std::tuple<int, int, int> >* triangles,
   std::vector<Point_3>* polyline,
-  const bool save_poly) 
+  const bool save_poly)
 {
   Polyhedron poly;
   Polyhedron_builder<typename Polyhedron::HalfedgeDS,K> patch_builder(triangles, polyline);
@@ -147,10 +147,11 @@ void test_1(const char* file_name, bool use_DT, bool save_output) {
   std::vector<Point_3> points; // this will contain n and +1 repeated point
   read_polyline_one_line(file_name, points);
 
-  std::vector<boost::tuple<int, int, int> > tris;
+  std::vector<std::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points, save_output);
@@ -165,10 +166,11 @@ void test_2(const char* file_name, bool use_DT, bool save_output) {
   std::vector<Point_3> extras;
   read_polyline_with_extra_points(file_name, points, extras);
 
-  std::vector<boost::tuple<int, int, int> > tris;
+  std::vector<std::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, extras, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points, save_output);
@@ -182,10 +184,11 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
   std::vector<Point_3> points; // this will contain n and +1 repeated point
   read_polyline_one_line(file_name, points);
 
-  std::vector<boost::tuple<int, int, int> > tris;
+  std::vector<std::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;

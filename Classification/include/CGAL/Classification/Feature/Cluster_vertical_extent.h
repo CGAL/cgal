@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -45,11 +36,11 @@ namespace Feature {
 class Cluster_vertical_extent : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
-  
+
 public:
 
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of
@@ -61,15 +52,15 @@ public:
   Cluster_vertical_extent (const ClusterRange& clusters)
   {
     typedef typename ClusterRange::const_iterator::value_type::Item Item;
-    
+
     this->set_name ("cluster_vertical_extent");
 
     m_values.reserve (clusters.size());
     for (std::size_t i = 0; i < clusters.size(); ++ i)
     {
-      float min_z = std::numeric_limits<float>::max();
-      float max_z = -std::numeric_limits<float>::min();
-        
+      float min_z = (std::numeric_limits<float>::max)();
+      float max_z = -(std::numeric_limits<float>::min)();
+
       for (std::size_t j = 0; j < clusters[i].size(); ++ j)
       {
         const Item& item = clusters[i][j];
@@ -84,7 +75,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t cluster_index) { return m_values[cluster_index]; }
   /// \endcond
-    
+
 };
 
 } // namespace Feature

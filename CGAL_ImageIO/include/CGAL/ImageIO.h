@@ -1,21 +1,13 @@
 // Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
-// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
-// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
-// The files in this directory are part of the ImageIO Library.
-// You can redistribute them and/or  modify them under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
 #ifndef IMAGEIO_H
@@ -28,11 +20,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <boost/cstdint.hpp> // for uint32_t, etc.
+#include <cstdint> // for uint32_t, etc.
 
 #ifdef CGAL_USE_ZLIB
 #include <zlib.h>
-/* see http://www.gzip.org/zlib/
+/* see https://zlib.net/
    for details and documentation
 */
 #endif
@@ -101,7 +93,7 @@ typedef enum {
 typedef enum {
   /** data are binary */
   DM_BINARY,
-  /** data are ascii */
+  /** data are \ascii */
   DM_ASCII
 } DATA_MODE;
 
@@ -170,15 +162,15 @@ struct point_image;
 typedef int (*TEST_IMAGE_FORMAT)(char *,const char *);
 /** defines the type of function called to read an image or an image header
     from a file corresponding to a given format. The first parameter is the
-    file name whereas the second parameter is an _image structure. Note that 
-    the file has been already opened (the file descriptor fd is valid). 
-    The output value is >0  if  the whole image has been read, it is 0 if 
+    file name whereas the second parameter is an _image structure. Note that
+    the file has been already opened (the file descriptor fd is valid).
+    The output value is >0  if  the whole image has been read, it is 0 if
     only the header has been read and it is  <0 otherwise */
 typedef int (*READ_IMAGE_HEADER)(const char *, struct point_image *);
 /** defines the type of function called to write an image to a file
-    corresponding to a given format.  
+    corresponding to a given format.
     The first parameter is the full file name whereas the second parameter
-    is an _image structure. 
+    is an _image structure.
     Note that the file has to be opened and closed in the function.
     The output value is >=0 if the whole image has been written
     correctly and it is <0 otherwise */
@@ -198,11 +190,11 @@ typedef struct imformat {
       format */
   WRITE_IMAGE writeImage;
 
-  /* the file extension of format (including a dot ".": if several 
-     extensions may be used, they should be separed with a 
+  /* the file extension of format (including a dot ".": if several
+     extensions may be used, they should be separated with a
      comma ".inr,.inr.gz" */
   char fileExtension[IMAGE_FORMAT_NAME_LENGTH];
-  
+
   /** the usual name given to a format : for instance "inrimage", "gif" */
   char realName[IMAGE_FORMAT_NAME_LENGTH];
   /* pointer towards the next image format*/
@@ -348,11 +340,11 @@ CGAL_IMAGEIO_EXPORT _image *_createImage(std::size_t x, std::size_t y, std::size
     PPM,
     BMP,
     GIS (CEA, IRISA, ENST 3D image format).
-    
+
     See also:
-    http://www.dcs.ed.ac.uk/home/mxr/gfx/2d-hi.html and
-    http://www.gzip.org/zlib/
-    
+    https://www.martinreddy.net/gfx/2d-hi.html and
+    https://zlib.net/
+
 
    @param name image file name or nullptr for stdin */
 CGAL_IMAGEIO_EXPORT _image* _readImage(const char *name);
@@ -394,7 +386,7 @@ CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
 /** Writes given image in file 'name'.<br>
     If name ends with '.gz', file is gzipped.<br>
     If name is nullptr, image is sent to stdout.
-    @param im image descriptor 
+    @param im image descriptor
     @param name file name to store image or nullptr */
 CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
 
@@ -402,14 +394,14 @@ CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
     File descriptor is let at the beginning of next slice and closed<br>
     when end of file is encountered.<br>
     If data buffer is nullptr, it is allocated for one slice only.<br>
-    This funtion is dedicated to read huge inrimages.
+    This function is dedicated to read huge inrimages.
     @param im image descriptor */
 CGAL_IMAGEIO_EXPORT void _getNextSlice(_image *im);
 
 
 /** adds a format in the list of image format. Test if all mandatory
-    fields have been filled 
-    @param format : an image format 
+    fields have been filled
+    @param format : an image format
     @return -1 if it failed (missing information) and 0 if it succeeded */
 CGAL_IMAGEIO_EXPORT int addImageFormat( PTRIMAGE_FORMAT format);
 
@@ -445,12 +437,12 @@ CGAL_IMAGEIO_EXPORT int _readNonInterlacedFileData(_image *im);
 
 
 /** given an initialized file descriptor and a file name, open file
-   from stdout (if name == nullptr), a gziped pipe (if file is gziped)
+   from stdout (if name == nullptr), a gzipped pipe (if file is gzipped)
    or a standard file otherwise.
    @param im initialized image descriptor
    @param name image file name */
 CGAL_IMAGEIO_EXPORT void _openWriteImage(_image* im, const char *name) ;
-   
+
 /** open an image file from stdin (if name == nullptr), from a pipe
    (piped with gzip if image was compressed) or from a standard file
    @param im initialized image descriptor
@@ -468,7 +460,7 @@ CGAL_IMAGEIO_EXPORT void _get_image_bounding_box(_image* im,
                                                  double* x_max, double* y_max, double* z_max);
 
 /** returns the endianness of the hardware architecture */
-CGAL_IMAGEIO_EXPORT ENDIANNESS  _getEndianness(); 
+CGAL_IMAGEIO_EXPORT ENDIANNESS  _getEndianness();
 /** initializes the list of  supported image formats */
 CGAL_IMAGEIO_EXPORT void initSupportedFileFormat();
 /** prints supported image formats */
@@ -549,7 +541,7 @@ namespace IMAGEIO {
 
 //
 // The following definition are for the evaluate function.
-// 
+//
 template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
 struct Word_type_generator
 {
@@ -570,38 +562,50 @@ struct Word_type_generator<WK_FLOAT, sign, 8>
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 1>
 {
-//   typedef boost::int8_t type;
+//   typedef std::int8_t type;
   typedef char type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>
 {
-  typedef boost::uint8_t type;
+  typedef std::uint8_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 2>
 {
-  typedef boost::int16_t type;
+  typedef std::int16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>
 {
-  typedef boost::uint16_t type;
+  typedef std::uint16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 4>
 {
-  typedef boost::int32_t type;
+  typedef std::int32_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>
 {
-  typedef boost::uint32_t type;
+  typedef std::uint32_t type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_SIGNED, 8>
+{
+  typedef std::int64_t type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 8>
+{
+  typedef std::uint64_t type;
 };
 
 template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
@@ -710,7 +714,7 @@ static_evaluate(const _image* image,
 CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const std::size_t j,const std::size_t k);
 
 
-/** convert the data of the image to float 
+/** convert the data of the image to float
 */
 CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 

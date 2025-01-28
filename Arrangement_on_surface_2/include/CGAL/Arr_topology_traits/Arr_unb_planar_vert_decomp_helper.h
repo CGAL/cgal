@@ -2,23 +2,13 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 Efi Fogel  <efif@post.tau.ac.il>
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
@@ -52,12 +42,16 @@ private:
   typedef Geometry_traits_2                             Gt2;
 
 public:
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+
+  typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
+                         Face_const_handle>             Cell_type;
+  typedef std::optional<Cell_type>                    Vert_type;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
 
   // Data members:
   const Topology_traits* m_top_traits;  // The topology-traits class.
@@ -66,7 +60,7 @@ protected:
                                         // halfedge.
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_unb_planar_vert_decomp_helper(const Arrangement_2* arr) :
@@ -85,15 +79,15 @@ public:
   void after_handle_event(Event* event);
   //@}
 
-  /*! Get the current top object. */
-  CGAL::Object top_object() const { return CGAL::make_object(m_top_fict); }
+  /*! obtains the current top object. */
+  Vert_type top_object() const { return Vert_type(m_top_fict); }
 
-  /*! Get the current bottom object. */
-  CGAL::Object bottom_object() const { return CGAL::make_object(m_bottom_fict); }
+  /*! obtains the current bottom object. */
+  Vert_type bottom_object() const { return Vert_type(m_bottom_fict); }
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

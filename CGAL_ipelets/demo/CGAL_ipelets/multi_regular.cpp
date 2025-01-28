@@ -1,26 +1,17 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Regular_triangulation_2.h>
 
 #include "include/CGAL_ipelets/k_delaunay.h"
@@ -28,7 +19,7 @@
 
 namespace CGAL_multi_regular{
 
-  
+
 typedef  CGAL::Exact_predicates_inexact_constructions_kernel           Kernel;
 typedef CGAL::Regular_triangulation_2<Kernel>                          Regular;
 typedef Regular::Finite_edges_iterator                                 itEdge;
@@ -43,10 +34,10 @@ const std::string hlpmsg[] = {
   "Generate k-th regular triangulation and k-th dual Power diagram. Note : k must be smaller than the number of input circles."
 };
 
-class MregularIpelet 
+class MregularIpelet
   : public CGAL::Ipelet_base<Kernel,11> {
 public:
-  MregularIpelet() 
+  MregularIpelet()
     : CGAL::Ipelet_base<Kernel,11>("k-order Regular",sublabel,hlpmsg){}
   void protected_run(int);
 };
@@ -61,26 +52,26 @@ void MregularIpelet::protected_run(int fn)
 {
   Regular rt;
   std::vector<Weighted_point_2> input_wpt;
-  
+
   if (fn==10) {
     show_help(false);
     return;
   }
-  
+
   Iso_rectangle_2 bbox=
-    read_active_objects( 
+    read_active_objects(
       CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
         wpoint_grabber(std::back_inserter(input_wpt)),
         wpoint_grabber(std::back_inserter(input_wpt))
       )
-    );  
-  
+    );
+
   if (!input_wpt.size()) {
     print_error_message("No circle selected");
     return;
   }
-  
-    
+
+
   int order = 0;
   if(fn==0 || fn==5) order = 1;
   if(fn==1 || fn==6) order = 2;
@@ -90,9 +81,9 @@ void MregularIpelet::protected_run(int fn)
 
     int ret_val;
     boost::tie(ret_val,order)=request_value_from_user<int>("Enter order");
-    if (ret_val < 0){    
+    if (ret_val < 0){
       print_error_message("Incorrect value");
-      return;  
+      return;
     }
     if(order<1 || order>=(int) input_wpt.size()){
       print_error_message("Not a good order");
@@ -104,8 +95,8 @@ void MregularIpelet::protected_run(int fn)
     draw_in_ipe(rt);
   else{//Draw kth Power diagram
     double incr_len=75;
-    bbox=Iso_rectangle_2(bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
-                         bbox.max()+Kernel::Vector_2(incr_len,incr_len));
+    bbox=Iso_rectangle_2((bbox.min)()+Kernel::Vector_2(-incr_len,-incr_len),
+                         (bbox.max)()+Kernel::Vector_2(incr_len,incr_len));
     draw_dual_in_ipe(rt,bbox);        //draw Voronoi Diagram
   }
 }

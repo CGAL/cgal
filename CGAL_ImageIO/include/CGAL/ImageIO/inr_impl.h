@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -54,7 +44,7 @@ typedef struct {
 class Set_numeric_locale {
   const char * old_locale;
 public:
-  Set_numeric_locale(const char* locale) 
+  Set_numeric_locale(const char* locale)
     : old_locale(std::setlocale(LC_NUMERIC, locale))
   {
   }
@@ -65,11 +55,11 @@ public:
 };
 
 static void addStringElement(stringListHead *strhead,
-			     const char *str);
+                             const char *str);
 /* add a string element at the tail of given list */
 
 static void concatStringElement(const stringListHead *strhead,
-				const char *str);
+                                const char *str);
 /* concat given string at the last element of given list */
 
 
@@ -87,41 +77,41 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     switch(im->wordKind) {
 
     case WK_FLOAT:
-      sprintf(type, "float");
+      snprintf(type, 30, "float");
       scale[0] = '\0';
       break;
 
     case WK_FIXED:
       switch(im->sign) {
       case SGN_SIGNED:
-	sprintf(type, "signed fixed");
-	break;
+        snprintf(type, 30, "signed fixed");
+        break;
       case SGN_UNSIGNED:
-	sprintf(type, "unsigned fixed");
-	break;
+        snprintf(type, 30, "unsigned fixed");
+        break;
       default:
-	return -1;
+        return -1;
       }
-      sprintf(scale, "SCALE=2**0\n");
+      snprintf(scale, 20, "SCALE=2**0\n");
       break;
-      
+
     default:
       return -1;
     }
-    
+
     switch(end) {
     case END_LITTLE:
-      sprintf(endianness, "decm");
+      snprintf(endianness, 5, "decm");
       break;
     case END_BIG:
-      sprintf(endianness, "sun");
+      snprintf(endianness, 5, "sun");
       break;
     default:
       /* fix architecture endianness */
       if( _getEndianness() == END_LITTLE)
-	sprintf(endianness, "decm");
+        snprintf(endianness, 5, "decm");
       else
-	sprintf(endianness, "sun");
+        snprintf(endianness, 5, "sun");
       break;
     }
 
@@ -138,52 +128,52 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     oss << "VY=" << im->vy << "\n";
     oss << "VZ=" << im->vz << "\n";
 
-    if ( im->cx != 0 ) 
+    if ( im->cx != 0 )
       oss << "XO="<< im->cx << "\n";
-    if ( im->cy != 0 ) 
+    if ( im->cy != 0 )
       oss << "YO="<< im->cy << "\n";
-    if ( im->cz != 0 ) 
+    if ( im->cz != 0 )
       oss << "ZO="<< im->cz << "\n";
-    if ( im->tx != 0.0 ) 
+    if ( im->tx != 0.0 )
       oss << "TX="<< im->tx << "\n";
-    if ( im->ty != 0.0 ) 
+    if ( im->ty != 0.0 )
       oss << "TY="<< im->ty << "\n";
-    if ( im->tz != 0.0 ) 
+    if ( im->tz != 0.0 )
       oss << "TZ="<< im->tz << "\n";
-    if ( im->rx != 0.0 ) 
+    if ( im->rx != 0.0 )
       oss << "RX="<< im->rx <<"\n";
-    if ( im->ry != 0.0 ) 
+    if ( im->ry != 0.0 )
       oss << "RY="<< im->ry << "\n";
-    if ( im->rz != 0.0 ) 
+    if ( im->rz != 0.0 )
       oss << "RZ=" << im->rz <<"\n";
 
     pos = oss.str().length();
-    
+
     if(ImageIO_write(im, oss.str().data(), oss.str().length()) == 0)
       return -1;
-    
-    
+
+
     /* write user strings */
     if ( im->user != nullptr ) {
       for(i = 0; i < im->nuser; i++) {
-	if ( im->user[i] == nullptr ) continue;
-	pos += strlen(im->user[i]) + 2;
-	if(ImageIO_write(im, "#", 1) == 0) return -1;
-	if(ImageIO_write(im, im->user[i], strlen(im->user[i])) == 0) return -1;
-	if(ImageIO_write(im, "\n", 1) == 0) return -1;
+        if ( im->user[i] == nullptr ) continue;
+        pos += strlen(im->user[i]) + 2;
+        if(ImageIO_write(im, "#", 1) == 0) return -1;
+        if(ImageIO_write(im, im->user[i], strlen(im->user[i])) == 0) return -1;
+        if(ImageIO_write(im, "\n", 1) == 0) return -1;
       }
     }
     /* write end of header */
     pos = pos % 256;
     if(pos > 252) {
       for(i = pos; i < 256; i++)
-	if(ImageIO_write(im, "\n", 1) != 1) return -1;
+        if(ImageIO_write(im, "\n", 1) != 1) return -1;
       pos = 0;
     }
     buf[0] = '\0';
     for(i = pos; i < 252; i++) strcat(buf, "\n");
     strcat(buf, "##}\n");
-    
+
     if(ImageIO_write(im, buf, strlen(buf)) == 0) return -1;
     else return 1;
   }
@@ -198,7 +188,7 @@ CGAL_INLINE_FUNCTION
 bool _writeInrimageData(const _image *im) {
   std::size_t size, nbv, nwrt, i, v;
   unsigned char **vp;
-  
+
   if(im->openMode != OM_CLOSE) {
 
     /* scalar or interlaced vectors */
@@ -214,13 +204,13 @@ bool _writeInrimageData(const _image *im) {
       size = im->xdim * im->ydim * im->zdim * im->wdim;
       vp = (unsigned char **) ImageIO_alloc(im->vdim * sizeof(unsigned char *));
       for(v = 0; v < im->vdim; v++)
-	vp[v] = (unsigned char *) im->data + v * size;
+        vp[v] = (unsigned char *) im->data + v * size;
       for(i = 0; i < nbv; i++)
-	for(v = 0; v < im->vdim; v++) {
-	  if(ImageIO_write(im, (const void *) vp[v], im->wdim) != im->wdim)
-	    return false;
-	  vp[v] += im->wdim;
-	}
+        for(v = 0; v < im->vdim; v++) {
+          if(ImageIO_write(im, (const void *) vp[v], im->wdim) != im->wdim)
+            return false;
+          vp[v] += im->wdim;
+        }
       ImageIO_free(vp);
       return true;
     }
@@ -268,8 +258,8 @@ int readInrimageHeader(const char *,_image *im) {
       else if(!strncmp(str, "VDIM=", 5)) {
         std::istringstream iss(str+5);
         if(!(iss >> im->vdim)) return -1;
-	if(im->vdim == 1) im->vectMode = VM_SCALAR;
-	else im->vectMode = VM_INTERLACED;
+        if(im->vdim == 1) im->vectMode = VM_SCALAR;
+        else im->vectMode = VM_INTERLACED;
       }
       else if(!strncmp(str, "VX=", 3)) {
         std::istringstream iss(str+3);
@@ -284,24 +274,24 @@ int readInrimageHeader(const char *,_image *im) {
         if(!(iss >> im->vz)) return -1;
       }
       else if(!strncmp(str, "TYPE=", 5)) {
-	if(!strncmp(str+5, "float", 5)) im->wordKind = WK_FLOAT;
-	else {
-	  if(!strncmp(str+5, "signed fixed", 12)) {
-	    im->wordKind = WK_FIXED;
-	    im->sign = SGN_SIGNED;
-	  }
-	  else if(!strncmp(str+5, "unsigned fixed", 14)) {
-	    im->wordKind = WK_FIXED;
-	    im->sign = SGN_UNSIGNED;
-	  }
-	  else return -1;
-	}
+        if(!strncmp(str+5, "float", 5)) im->wordKind = WK_FLOAT;
+        else {
+          if(!strncmp(str+5, "signed fixed", 12)) {
+            im->wordKind = WK_FIXED;
+            im->sign = SGN_SIGNED;
+          }
+          else if(!strncmp(str+5, "unsigned fixed", 14)) {
+            im->wordKind = WK_FIXED;
+            im->sign = SGN_UNSIGNED;
+          }
+          else return -1;
+        }
       }
       /* before "sscanf(str+8, "%i %n", &im->wdim, &n) != 1"
-	 was used. 
-	 However the man said 
+         was used.
+         However the man said
          ...
-	 n      Nothing is expected; instead, the number of charac­
+         n      Nothing is expected; instead, the number of charac­
               ters consumed thus far from  the  input  is  stored
               through  the  next pointer, which must be a pointer
               to int.  This is not a conversion, although it  can
@@ -312,36 +302,36 @@ int readInrimageHeader(const char *,_image *im) {
               contradict  this.  Probably  it is wise not to make
               any assumptions on the effect of %n conversions  on
               the return value.
-	 ...
-	 Thus I change it. It was yielding a RETURN_FAILURE with 
-	 insight (GM).
+         ...
+         Thus I change it. It was yielding a RETURN_FAILURE with
+         insight (GM).
       */
       else if(!strncmp(str, "PIXSIZE=", 8)) {
         std::istringstream iss(str+8);
         if(!(iss >> im->wdim)) return -1;
-	if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
-	   im->wdim != 64) return -1;
-	
-	if ( im->wdim <= 9 ) {
-	  if(strncmp(str+8+1, " bits", 5)) return -1;
-	}
-	else if ( im->wdim <= 99 ) {
-	  if(strncmp(str+8+2, " bits", 5)) return -1;
-	}
-	else {
-	  return -1;
-	}
+        if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
+           im->wdim != 64) return -1;
 
-	im->wdim >>= 3;
+        if ( im->wdim <= 9 ) {
+          if(strncmp(str+8+1, " bits", 5)) return -1;
+        }
+        else if ( im->wdim <= 99 ) {
+          if(strncmp(str+8+2, " bits", 5)) return -1;
+        }
+        else {
+          return -1;
+        }
+
+        im->wdim >>= 3;
       }
       else if(!strncmp(str, "SCALE=", 6)) ;
       else if(!strncmp(str, "CPU=", 4)) {
-	if(!strncmp(str+4, "decm", 4)) im->endianness = END_LITTLE;
-	else if(!strncmp(str+4, "alpha", 5)) im->endianness = END_LITTLE;
-	else if(!strncmp(str+4, "pc", 2)) im->endianness = END_LITTLE;
-	else if(!strncmp(str+4, "sun", 3)) im->endianness = END_BIG;
-	else if(!strncmp(str+4, "sgi", 3)) im->endianness = END_BIG;
-	else return -1;
+        if(!strncmp(str+4, "decm", 4)) im->endianness = END_LITTLE;
+        else if(!strncmp(str+4, "alpha", 5)) im->endianness = END_LITTLE;
+        else if(!strncmp(str+4, "pc", 2)) im->endianness = END_LITTLE;
+        else if(!strncmp(str+4, "sun", 3)) im->endianness = END_BIG;
+        else if(!strncmp(str+4, "sgi", 3)) im->endianness = END_BIG;
+        else return -1;
       }
 
       else if(!strncmp(str, "XO=", 3)) {
@@ -390,34 +380,34 @@ int readInrimageHeader(const char *,_image *im) {
     while(str[0] == '#' && strncmp(str, "##}", 3)) {
       addStringElement(&strl, str + 1);
       while(strlen(str) == 256) {
-	if(!fgetns(str, 257, im)) return -1;
-	concatStringElement(&strl, str);
+        if(!fgetns(str, 257, im)) return -1;
+        concatStringElement(&strl, str);
       }
       nusr++;
-      if(!fgetns(str, 257, im)) return -1;      
+      if(!fgetns(str, 257, im)) return -1;
     }
-    
+
     /* go to end of header */
     while(strncmp(str, "##}", 3)) {
       if(!fgetns(str, 257, im)) return -1;
     }
-    
+
 
     /* check header validity */
     if(im->xdim > 0 && im->ydim > 0 && im->zdim > 0 && im->vdim > 0 &&
        im->vx > 0.0 && im->vy > 0.0 && im->vz > 0.0 &&
        (im->wordKind == WK_FLOAT || (im->wordKind == WK_FIXED &&
-				     im->sign != SGN_UNKNOWN)) &&
+                                     im->sign != SGN_UNKNOWN)) &&
        im->endianness != END_UNKNOWN) {
       if(nusr > 0) {
-	im->nuser = nusr;
-	im->user = (char **) ImageIO_alloc(im->nuser * sizeof(char *));
-	oel = nullptr;
-	for(el = strl.begin, n = 0; el != nullptr; el = oel, n++) {
-	  im->user[n] = el->string;
-	  oel = el->next;
-	  ImageIO_free(el);
-	}
+        im->nuser = nusr;
+        im->user = (char **) ImageIO_alloc(im->nuser * sizeof(char *));
+        oel = nullptr;
+        for(el = strl.begin, n = 0; el != nullptr; el = oel, n++) {
+          im->user[n] = el->string;
+          oel = el->next;
+          ImageIO_free(el);
+        }
       }
       return 0;
     }
@@ -449,12 +439,12 @@ static void addStringElement(stringListHead *strhead, const char *str) {
 
 /* concat given string at the last element of given list */
 static void concatStringElement(const stringListHead *strhead,
-				const char *str) {
+                                const char *str) {
   stringListElement *el;
 
   el = strhead->end;
   el->string = (char *) realloc(el->string,
-				strlen(el->string) + strlen(str) + 1);
+                                strlen(el->string) + strlen(str) + 1);
   strcat(el->string, str);
 }
 
@@ -462,7 +452,7 @@ CGAL_INLINE_FUNCTION
 int testInrimageHeader(char *magic,const char *) {
   if (!strcmp(magic, INR_MAGIC))
     return 0;
-  else 
+  else
     return -1;
 }
 CGAL_INLINE_FUNCTION
@@ -479,16 +469,16 @@ int writeInrimage(char *name,_image *im) {
   res = _writeInrimageHeader(im, END_UNKNOWN);
   if (res < 0) {
     fprintf(stderr, "writeInrimage: error: unable to write header of \'%s\'\n",
-	    name);
+            name);
     ImageIO_close( im );
     im->fd = nullptr;
     im->openMode = OM_CLOSE;
     return( res );
   }
-  
+
   if (!_writeInrimageData(im)) {
     fprintf(stderr, "writeInrimage: error: unable to write data of \'%s\'\n",
-	    name);
+            name);
     ImageIO_close( im );
     im->fd = nullptr;
     im->openMode = OM_CLOSE;
@@ -499,7 +489,7 @@ int writeInrimage(char *name,_image *im) {
   im->fd = nullptr;
   im->openMode = OM_CLOSE;
 
-  return ( res );  
+  return ( res );
 }
 
 CGAL_INLINE_FUNCTION

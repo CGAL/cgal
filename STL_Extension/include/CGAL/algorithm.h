@@ -1,24 +1,15 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -31,6 +22,7 @@
 #include <CGAL/config.h>
 #include <CGAL/utils.h>
 #include <CGAL/enum.h>
+#include <CGAL/IO/io.h>
 #include <algorithm>
 #include <iosfwd>
 #include <iostream>
@@ -120,19 +112,15 @@ are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class ForwardIterator>
-inline
-CGAL_DEPRECATED
-ForwardIterator
-successor( ForwardIterator it )
+CGAL_DEPRECATED inline
+ForwardIterator successor( ForwardIterator it )
 {
   return ++it;
 }
 
 template <class BidirectionalIterator>
-inline
-CGAL_DEPRECATED
-BidirectionalIterator
-predecessor( BidirectionalIterator it )
+CGAL_DEPRECATED inline
+BidirectionalIterator predecessor( BidirectionalIterator it )
 {
   return --it;
 }
@@ -275,7 +263,7 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     The iterator range \c [first,beyond) is written
     to \c os (obeying CGAL I/O modes). Each element is bracketed by
     \c pre and \c post (default: empty string). Adjacent values are
-    spearated by \c sep (default: ", ", i.e. comma space).
+    separated by \c sep (default: ", ", i.e. comma space).
     The stream \c os is returned in its new state after output.
 
     Example:
@@ -286,15 +274,15 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     produces \c (1):(2):(3)
  */
 template <class InputIterator>
-std::ostream& 
+std::ostream&
 output_range(std::ostream& os,
              InputIterator first, InputIterator beyond,
-             const char* sep = ", ", const char* pre = "", const char* post = "") 
+             const char* sep = ", ", const char* pre = "", const char* post = "")
 {
     InputIterator it = first;
     if (it != beyond) {
-        os << pre << oformat(*it) << post;
-        while (++it != beyond) os << sep << pre << oformat(*it) << post;
+        os << pre << CGAL::IO::oformat(*it) << post;
+        while (++it != beyond) os << sep << pre << CGAL::IO::oformat(*it) << post;
     }
     return os;
 }
@@ -375,12 +363,12 @@ void nth_element(RandomAccessIterator left,
   if(left == right) return; // exit if there is only one element
   while(true) {
     RandomAccessIterator pivot_it = left + ((right - left) / 2);
-    RandomAccessIterator new_pivot_it = 
-      internal::algorithm::partition(left, right, pivot_it, comp);    
+    RandomAccessIterator new_pivot_it =
+      internal::algorithm::partition(left, right, pivot_it, comp);
     if(new_pivot_it == nth) return;
-    if(nth < new_pivot_it) 
+    if(nth < new_pivot_it)
       right = new_pivot_it - 1;
-    else 
+    else
       left = new_pivot_it + 1;
   } // end while(true)
 }

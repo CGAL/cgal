@@ -1,15 +1,7 @@
 #include <CGAL/config.h>
-#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
-#include <iostream>
-int main()
-{
-  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
-}
-
-#else
 
 #include <CGAL/Epick_d.h>
+#include <CGAL/Epeck_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
@@ -18,6 +10,7 @@ int main()
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -26,7 +19,7 @@ void test(const int d, const string & type, const int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;
@@ -41,7 +34,7 @@ void test(const int d, const string & type, const int N)
     //CGAL::Random rng;
     //Random_points_iterator rand_it(d, 2.0, rng);
     //std::copy_n(rand_it, N, back_inserter(points));
-    
+
     srand(10);
     for( int i = 0; i < N; ++i )
     {
@@ -66,7 +59,7 @@ void test(const int d, const string & type, const int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << dt.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << dt.current_dimension();
-    CGAL_assertion( dt.number_of_full_cells() == nbis+nbfs);
+    assert( dt.number_of_full_cells() == nbis+nbfs);
 
     cerr << "\nTraversing finite vertices... ";
     size_t nbfv(0);
@@ -112,18 +105,26 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
-    typedef CGAL::Delaunay_triangulation<FK> Triangulation;
-    test<Triangulation>(D, "static", N);
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > KI;
+    typedef CGAL::Delaunay_triangulation<KI> Triangulation;
+    test<Triangulation>(D, "inexact static", N);
 
-    typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
-    typedef CGAL::Delaunay_triangulation<FK_dyn> Triangulation_dyn;
-    test<Triangulation_dyn>(D, "dynamic", N);
+    typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> KI_dyn;
+    typedef CGAL::Delaunay_triangulation<KI_dyn> Triangulation_dyn;
+    test<Triangulation_dyn>(D, "inexact dynamic", N);
+
+    typedef CGAL::Epeck_d<CGAL::Dimension_tag<D> > KE;
+    typedef CGAL::Delaunay_triangulation<KE> TriangulationE;
+    test<TriangulationE>(D, "exact static", N);
+
+    typedef CGAL::Epeck_d<CGAL::Dynamic_dimension_tag> KE_dyn;
+    typedef CGAL::Delaunay_triangulation<KE_dyn> TriangulationE_dyn;
+    test<TriangulationE_dyn>(D, "exact dynamic", N);
 }
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 10;
     if( argc > 1 )
         N = atoi(argv[1]);
@@ -136,5 +137,3 @@ int main(int argc, char **argv)
     cerr << endl;
     return 0;
 }
-
-#endif

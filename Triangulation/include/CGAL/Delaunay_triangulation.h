@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -30,6 +21,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
+#include <boost/container/small_vector.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
@@ -138,12 +130,12 @@ private:
     // Wrapper
     struct Side_of_oriented_subsphere_d
     {
-      boost::optional<Flat_orientation_d>* fop;
+      std::optional<Flat_orientation_d>* fop;
       Construct_flat_orientation_d cfo;
       In_flat_side_of_oriented_sphere_d ifsoos;
 
       Side_of_oriented_subsphere_d(
-        boost::optional<Flat_orientation_d>& x,
+        std::optional<Flat_orientation_d>& x,
         Construct_flat_orientation_d const&y,
         In_flat_side_of_oriented_sphere_d const&z)
       : fop(&x), cfo(y), ifsoos(z) {}
@@ -153,7 +145,7 @@ private:
       {
         if(!*fop)
           *fop=cfo(a,b);
-        return ifsoos(fop->get(),a,b,p);
+        return ifsoos(fop->value(),a,b,p);
       }
     };
 public:
@@ -424,7 +416,7 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_triangulation dark_side(
       maximal_dimension(),
       flat_orientation_ ?
-      std::pair<int, const Flat_orientation_d *>(current_dimension(), flat_orientation_.get_ptr())
+      std::pair<int, const Flat_orientation_d *>(current_dimension(), &flat_orientation_.value())
       : std::pair<int, const Flat_orientation_d *>((std::numeric_limits<int>::max)(), (Flat_orientation_d*) nullptr) );
 
     Dark_s_handle dark_s;
@@ -531,7 +523,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // 2. Find corresponding Facet on boundary of dark zone
     // 3. stitch.
 
-    // 1. Build a facet on the boudary of the light zone:
+    // 1. Build a facet on the boundary of the light zone:
     Full_cell_handle light_s = *simps.begin();
     Facet light_ft(light_s, light_s->index(v));
 
@@ -681,7 +673,6 @@ Delaunay_triangulation<DCTraits, TDS>
         case Base::ON_VERTEX:
         {
             Vertex_handle v = s->vertex(f.index(0));
-            v->set_point(p);
             return v;
             break;
         }
@@ -738,9 +729,9 @@ Delaunay_triangulation<DCTraits, TDS>
         // consistent with the rest of the cells
         if (current_dimension() == 1)
         {
-            // Is "inf_v_cell" the right infinite cell? 
+            // Is "inf_v_cell" the right infinite cell?
             // Then inf_v_index should be 1
-            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                 && inf_v_index == 0)
             {
                 inf_v_cell->swap_vertices(
@@ -751,9 +742,9 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
                 inf_v_index = inf_v_cell->index(infinite_vertex());
-                // Is "inf_v_cell" the right infinite cell? 
+                // Is "inf_v_cell" the right infinite cell?
                 // Then inf_v_index should be 1
-                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                     && inf_v_index == 0)
                 {
                     inf_v_cell->swap_vertices(
@@ -770,7 +761,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
 Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.
-\pre The point `p` must be in conflict with the full cell `c`.
+\pre The point `p` must be in conflict with the full cell `s`.
 */
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
@@ -801,7 +792,7 @@ Delaunay_triangulation<DCTraits, TDS>
 {
     CGAL_precondition_msg( ! is_infinite(s), "full cell must be finite");
     CGAL_expensive_precondition( POSITIVE == orientation(s) );
-    typedef std::vector<const Point *> Points;
+    typedef boost::container::small_vector<const Point *, 8> Points;
     Points points(current_dimension() + 2);
     int i(0);
     for( ; i <= current_dimension(); ++i )

@@ -26,16 +26,12 @@ int main()
   Segment_2 seg(Point_2(0,0), Point_2(1,1));
   Line_2 lin(1,-1,0);
 
-  // with C++11 support
-  // auto result = intersection(seg, lin);
-  // without C++11
-  CGAL::cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type
-    result = intersection(seg, lin);
-  if (result) { 
-    boost::apply_visitor(Intersection_visitor(), *result); 
+  const auto result = intersection(seg, lin);
+  if (result) {
+    std::visit(Intersection_visitor(), *result);
   } else {
     // no intersection
   }
-  
+
   return 0;
 }

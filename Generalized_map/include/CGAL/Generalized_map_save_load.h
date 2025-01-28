@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -30,7 +21,7 @@
 #include <CGAL/Combinatorial_map_save_load.h>
 
 #include <algorithm>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <cstdlib>
 #include <iostream>
@@ -79,12 +70,12 @@ namespace CGAL {
   template < class GMap >
   boost::property_tree::ptree gmap_save_darts
   (const GMap& amap,
-   std::map<typename GMap::Dart_const_handle, 
+   std::unordered_map<typename GMap::Dart_const_descriptor,
               typename GMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
-    
-    // First we numbered each dart by using the std::map.
+
+    // First we numbered each dart by using the unordered_map.
     typename GMap::Dart_range::const_iterator it(amap.darts().begin());
     for(typename GMap::size_type num=1; num<=amap.number_of_darts();
         ++num, ++it)
@@ -117,7 +108,7 @@ namespace CGAL {
       // function)
       write_cmap_dart_node(ndart, it);
     }
-    
+
     return pt;
   }
 
@@ -128,7 +119,7 @@ namespace CGAL {
     ptree tree;
 
     // map dart => number
-    std::map<typename GMap::Dart_const_handle, typename GMap::size_type> myDarts;
+    std::unordered_map<typename GMap::Dart_const_descriptor, typename GMap::size_type> myDarts;
 
     // Save darts
     ptree pt_darts=gmap_save_darts(amap, myDarts);
@@ -150,11 +141,11 @@ namespace CGAL {
     std::ofstream output(filename);
     if (!output) return false;
     return save_generalized_map(amap, output);
-  }  
+  }
 
   template < class GMap >
   bool gmap_load_darts(boost::property_tree::ptree &pt, GMap& amap,
-                       std::vector<typename GMap::Dart_handle>& myDarts)
+                       std::vector<typename GMap::Dart_descriptor>& myDarts)
   {
     // use a boost::property_tree
     using boost::property_tree::ptree;
@@ -181,7 +172,7 @@ namespace CGAL {
           {
             index = v2.second.get("<xmlattr>.i", 0);
             nextDartInt = boost::lexical_cast< int >(v2.second.data())-1;
-            
+
             if ( index<=amap.dimension )
             {
               amap.basic_link_alpha(myDarts[currentDartInt],
@@ -205,12 +196,12 @@ namespace CGAL {
     using boost::property_tree::ptree;
     ptree pt;
     read_xml(input, pt);
-    std::vector<typename GMap::Dart_handle> myDarts;
+    std::vector<typename GMap::Dart_descriptor> myDarts;
     gmap_load_darts(pt,amap,myDarts);
     cmap_load_attributes(pt,amap,myDarts);
     return true;
   }
-  
+
   template < class GMap >
   bool load_generalized_map(const char* filename, GMap& amap)
   {

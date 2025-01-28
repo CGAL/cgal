@@ -25,34 +25,34 @@ protected:
   typedef std::map<Vertex_const_handle, int> Vertex2int_map;
   Vertex2int_map ring_index_map;
 
-  //vertex indices are initialised to -1
+  //vertex indices are initialized to -1
   void reset_ring_indices(std::vector <Vertex_const_handle> &vces);
 
   //i >= 1; from a start vertex on the current i-1 ring, push non-visited neighbors
   //of start in the nextRing and set indices to i. Also add these vertices in all.
-  void push_neighbours_of(const Vertex_const_handle start, const int ith,
-			  std::vector < Vertex_const_handle > &nextRing,
-			  std::vector < Vertex_const_handle > &all);
+  void push_neighbors_of(const Vertex_const_handle start, const int ith,
+                         std::vector < Vertex_const_handle > &nextRing,
+                         std::vector < Vertex_const_handle > &all);
 
   //i >= 1, from a currentRing i-1, collect all neighbors, set indices
   //to i and store them in nextRing and all.
   void collect_ith_ring(const int ith,
-			std::vector < Vertex_const_handle > &currentRing,
-			std::vector < Vertex_const_handle > &nextRing,
-			std::vector < Vertex_const_handle > &all);
+                        std::vector < Vertex_const_handle > &currentRing,
+                        std::vector < Vertex_const_handle > &nextRing,
+                        std::vector < Vertex_const_handle > &all);
 
  public:
   T_PolyhedralSurf_rings(const TPoly& P);
 
-  //collect i>=1 rings : all neighbours up to the ith ring,
+  //collect i>=1 rings : all neighbors up to the ith ring,
   void collect_i_rings(const Vertex_const_handle v,
-		       const int ring_i,
-		       std::vector < Vertex_const_handle >& all);
+                       const int ring_i,
+                       std::vector < Vertex_const_handle >& all);
 
   //collect enough rings (at least 1), to get at least min_nb of neighbors
   void collect_enough_rings(const Vertex_const_handle v,
-			    const unsigned int min_nb,
-			    std::vector < Vertex_const_handle >& all);
+                            const unsigned int min_nb,
+                            std::vector < Vertex_const_handle >& all);
 };
 
 ////IMPLEMENTATION/////////////////////////////////////////////////////////////////////
@@ -70,9 +70,9 @@ T_PolyhedralSurf_rings(const TPoly& P)
 
 template < class TPoly >
 void T_PolyhedralSurf_rings <TPoly>::
-push_neighbours_of(const Vertex_const_handle start, const int ith,
-		   std::vector < Vertex_const_handle > &nextRing,
-		   std::vector < Vertex_const_handle > &all)
+push_neighbors_of(const Vertex_const_handle start, const int ith,
+                   std::vector < Vertex_const_handle > &nextRing,
+                   std::vector < Vertex_const_handle > &all)
 {
   Vertex_const_handle v;
   Halfedge_around_vertex_const_circulator
@@ -92,13 +92,13 @@ push_neighbours_of(const Vertex_const_handle start, const int ith,
 template <class TPoly>
 void T_PolyhedralSurf_rings <TPoly>::
 collect_ith_ring(const int ith, std::vector < Vertex_const_handle > &currentRing,
-		 std::vector < Vertex_const_handle > &nextRing,
-		 std::vector < Vertex_const_handle > &all)
+                 std::vector < Vertex_const_handle > &nextRing,
+                 std::vector < Vertex_const_handle > &all)
 {
   typename std::vector < Vertex_const_handle >::const_iterator
     itb = currentRing.begin(), ite = currentRing.end();
 
-  CGAL_For_all(itb, ite) push_neighbours_of(*itb, ith, nextRing, all);
+  CGAL_For_all(itb, ite) push_neighbors_of(*itb, ith, nextRing, all);
 }
 
 template <class TPoly>
@@ -113,8 +113,8 @@ reset_ring_indices(std::vector < Vertex_const_handle >&vces)
 template <class TPoly>
   void T_PolyhedralSurf_rings <TPoly>::
 collect_i_rings(const Vertex_const_handle v,
-		const int ring_i,
-		std::vector < Vertex_const_handle >& all)
+                const int ring_i,
+                std::vector < Vertex_const_handle >& all)
 {
   std::vector<Vertex_const_handle> current_ring, next_ring;
   std::vector<Vertex_const_handle> *p_current_ring, *p_next_ring;
@@ -140,8 +140,8 @@ collect_i_rings(const Vertex_const_handle v,
 template <class TPoly>
   void T_PolyhedralSurf_rings <TPoly>::
 collect_enough_rings(const Vertex_const_handle v,
-		     const unsigned int min_nb,
-		     std::vector < Vertex_const_handle >& all)
+                     const unsigned int min_nb,
+                     std::vector < Vertex_const_handle >& all)
 {
   std::vector<Vertex_const_handle> current_ring, next_ring;
   std::vector<Vertex_const_handle> *p_current_ring, *p_next_ring;

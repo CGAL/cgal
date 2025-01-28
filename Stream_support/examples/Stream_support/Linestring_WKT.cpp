@@ -1,20 +1,11 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/IO/WKT.h>
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <iostream>
 #include <fstream>
-
-#include <CGAL/IO/WKT.h>
-#include <boost/foreach.hpp> //must be included before WKT for some reason
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <vector>
 
-//typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-
 
 int main(int argc, char* argv[])
 {
@@ -24,28 +15,22 @@ int main(int argc, char* argv[])
   LineString ls;
   {
     std::ifstream is((argc>1)?argv[1]:"data/linestring.wkt");
-    CGAL::read_linestring_WKT(is, ls);
+    CGAL::IO::read_linestring_WKT(is, ls);
     is.close();
   }
-  BOOST_FOREACH(Point p, ls)
+  for(Point p : ls)
       std::cout<<p<<std::endl;
   ls.clear();
   MultiLineString mls;
   {
     std::ifstream is((argc>2)?argv[2]:"data/multilinestring.wkt");
-    CGAL::read_multi_linestring_WKT(is, mls);
+    CGAL::IO::read_multi_linestring_WKT(is, mls);
     is.close();
   }
-  BOOST_FOREACH(LineString l, mls)
+  for(LineString l : mls)
   {
-    BOOST_FOREACH(const Point& p, l)
+    for(const Point& p : l)
         std::cout<<p<<std::endl;
   }
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

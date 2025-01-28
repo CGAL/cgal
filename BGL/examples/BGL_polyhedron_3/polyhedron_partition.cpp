@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
   typedef CGAL::Simple_cartesian<double>                            K;
 
-  std::ifstream in((argc>1) ? argv[1] : "data/eight.off");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("meshes/eight.off"));
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
   if(!in)

@@ -7,8 +7,8 @@
 \author Stefan Schirra
 
 <CENTER>
-\image html cgal_small.png 
-\image latex cgal_small.png 
+\image html cgal_small.png
+\image latex cgal_small.png
 </CENTER>
 <CENTER><span class="textsc">Computational Geometry Algorithms Library</span></CENTER>
 
@@ -25,24 +25,24 @@ numerical methods...
 Work on \cgal has been supported in the past by <span class="textsc">esprit iv</span>
 projects 21957 (CGAL) and 28155 (GALIA).
 
-\section secdesign_goals Primary design goals 
+\section secdesign_goals Primary design goals
 
 The primary design goals of \cgal are described in \cgalCite{fgkss-dccga-00}
 
 \subsection Developer_manualCorrectness Correctness
 
 A library component is correct if it behaves according to its
-specification. 
-Basically, correctness is therefore a matter of 
+specification.
+Basically, correctness is therefore a matter of
 verification that documentation and implementation coincide.
-In a modularized program the correctness of a module is determined 
-by its own correctness and the correctness of all the modules it depends on.  
-Clearly, in order to get correct results, correct algorithms and data 
+In a modularized program the correctness of a module is determined
+by its own correctness and the correctness of all the modules it depends on.
+Clearly, in order to get correct results, correct algorithms and data
 structures must be used.
 
 Exactness should not be confused with correctness in the sense of
-reliability. There is nothing wrong with algorithms computing approximate 
-solutions instead of exact solutions, as long as their 
+reliability. There is nothing wrong with algorithms computing approximate
+solutions instead of exact solutions, as long as their
 behavior is clearly documented and they do behave as specified.
 Also, an algorithm handling only non-degenerate cases can be
 correct with respect to its specification, although in \cgal we would
@@ -52,13 +52,13 @@ like to provide algorithms handling degeneracies.
 
 A design goal particularly relevant for the implementation of
 geometric algorithms is robustness.  Many implementations of geometric
-algorithms lack robustness because of precision problems; see 
-Chapter  \ref devman_robustness  for a discussion of robustness issues within 
+algorithms lack robustness because of precision problems; see
+Chapter  \ref devman_robustness  for a discussion of robustness issues within
 \cgal.
 
 \subsection Developer_manualFlexibility Flexibility
 
-The different needs of the potential application areas demand 
+The different needs of the potential application areas demand
 flexibility in the library. Four sub-issues of flexibility can be identified.
 
 <B>Modularity.</B>
@@ -71,7 +71,7 @@ those modules that are actually of interest.
 <B>Adaptability.</B>
 
 \cgal might be used in an already established environment with
-geometric classes and algorithms in which case the modules will 
+geometric classes and algorithms in which case the modules will
 most probably need adaptation before they can be used.
 
 <B>Extensibility.</B>
@@ -83,35 +83,35 @@ integrate new classes and algorithms into \cgal.
 <B>Openness.</B>
 
 \cgal should be open to coexist with other libraries, or better, to
-work together with other libraries and programs. The \cpp 
+work together with other libraries and programs. The \cpp
 Standard \cgalCite{cgal:ansi-is14882-98}
 
 defines with the \cpp Standard Library a common
-foundation for all \cpp platforms. 
+foundation for all \cpp platforms.
 So it is easy and natural to gain openness by following this standard.
 There are important libraries outside the standard, and \cgal should be easily adaptable to them as well.
 
 \subsection Developer_manualEaseofUse Ease of Use
 
 Many different qualities can contribute to the ease of use of a
-library. Which qualities are most important differs according to 
+library. Which qualities are most important differs according to
 the experience of the user.
 The above-mentioned correctness and robustness issues are among
 these qualities. Of general importance is the length of time required
-before the library becomes useful. Another issue is the number of 
+before the library becomes useful. Another issue is the number of
 new concepts and
 exceptions to general rules that must be learned and remembered.
 
 Ease of use tends to conflict with flexibility, but in many
 situations a solution can be found.
-The flexibility of \cgal should not distract a novice who takes the 
+The flexibility of \cgal should not distract a novice who takes the
 first steps with \cgal.
 
 <B>Uniformity.</B>
 
 A uniform look and feel of the design in \cgal will help in learning
 and memorizing. A concept once learned should be applicable in all
-places where one would wish to apply it. 
+places where one would wish to apply it.
 A function name once learned for a specific
 class should not be named differently for another class.
 
@@ -131,14 +131,14 @@ maps library.
 <B>Complete and Minimal Interfaces.</B>
 
 A goal with similar implications as uniformity is a design
-with complete and minimal interfaces, see for example Item 18 
+with complete and minimal interfaces, see for example Item 18
 in Ref. \cgalCite{cgal:m-ec-97}.
-An object or module should be complete in its 
+An object or module should be complete in its
 functionality, but should
 not provide additional decorating functionality. Even if a certain
-function might look like it contributes to the ease of use for a certain 
-class, in a more global picture it might hinder the understanding of 
-similarities and differences among classes, and make it harder to learn 
+function might look like it contributes to the ease of use for a certain
+class, in a more global picture it might hinder the understanding of
+similarities and differences among classes, and make it harder to learn
 and memorize.
 
 <B>Rich and Complete Functionality.</B>
@@ -154,11 +154,11 @@ Completeness is also related to robustness.
 We aim for general-purpose
 solutions that are, for example, not restricted by assumptions on
 general positions. Algorithms in \cgal should be able to handle
-special cases and degeneracies. 
+special cases and degeneracies.
 
 In those cases where handling of degeneracies turns out to be
 inefficient, special variants that are more efficient but less general
-should be provided in the library in addition to the general 
+should be provided in the library in addition to the general
 algorithms handling all degeneracies. Of course, it needs to be
 clearly documented which degeneracies are handled and which are not.
 
@@ -169,18 +169,18 @@ complexity are known. Also, the theoretic interest in efficiency for
 realistic inputs, as opposed to worst-case situations, is
 growing \cgalCite{v-ffrim-97}.
 For practical purposes, insight into the constant factors hidden in the
-\f$ O\f$-notation is necessary, especially if there are several competing
+\cgalBigO{~}-notation is necessary, especially if there are several competing
 algorithms.
 
-Therefore, different implementations should be supplied if there is 
-not one best solution, as, for example, when there is a tradeoff between 
-time and space or a more efficient implementation when there are no or few 
-degeneracies. 
+Therefore, different implementations should be supplied if there is
+not one best solution, as, for example, when there is a tradeoff between
+time and space or a more efficient implementation when there are no or few
+degeneracies.
 
-\section secoverall_design The overall design 
+\section secoverall_design The overall design
 
-The design goals, especially flexibility and efficient robust 
-computation, have led us to opt for the generic programming paradigm using 
+The design goals, especially flexibility and efficient robust
+computation, have led us to opt for the generic programming paradigm using
 templates in \cpp.\cgalFootnote{In appropriate places, however, \cgal does  and should make use of object-oriented solutions and design patterns, as well.}
 In the overall design of \cgal three major layers can be identified, the
 layer of algorithms and data structures, the kernel layer and the
@@ -191,29 +191,29 @@ arithmetic and algebra layer.
 The generic design of \cgal.
 \cgalFigureEnd
 
-Algorithms and data structures in \cgal are parameterized by the 
-types of objects and operations they use. They work with any concrete 
+Algorithms and data structures in \cgal are parameterized by the
+types of objects and operations they use. They work with any concrete
 template arguments that fulfill certain syntactical as well as semantic
 requirements. In order to avoid long parameter lists,
 the parameter types are collected into a single class, called the
 traits class in \cgal
 (Chapter  \ref devman_traits_classes ).
-A <I>concept</I> is an abstraction of a type 
+A <I>concept</I> is an abstraction of a type
 defined by a set of requirements.
-Any concrete type is called a <I>model</I> for a 
+Any concrete type is called a <I>model</I> for a
 concept if it fulfills
 the set of requirements corresponding to the concept. Using this terminology,
-we can say a \cgal algorithm or data structure comes with a traits 
+we can say a \cgal algorithm or data structure comes with a traits
 concept and can be used with any concrete traits model for this concept.
 Further contributions to \cgal should continue the current high
 level of genericity.
 
 \cgal defines the concept of a geometry kernel.
 Ideally, any
-model for this concept can be used with any \cgal algorithm. This holds, 
+model for this concept can be used with any \cgal algorithm. This holds,
 of course, only if the requirements of an algorithm or data structure on its
 traits class are subsumed by the kernel concepts, <I>i.e.</I>, if an
-algorithm or data structure has no special requirements 
+algorithm or data structure has no special requirements
 not covered in the definition of the kernel concept. Currently, \cgal offers a concept for a fundamental geometry kernel, that defines
 various geometric objects such as points, line segments, lines,
 circles, and operations on them, as well as two additional concepts,
@@ -225,9 +225,9 @@ functionalities for circles, circular arcs living on a 3D sphere
 
 \cgal currently provides several models for the \cgal 2D and 3D kernel
 concept, and one model for the 2D circular and the 3D spherical kernel
-concepts.. Those are again parameterized and differ in their 
+concepts.. Those are again parameterized and differ in their
 representation of the geometric objects and the exchangeability of
-the types involved. 
+the types involved.
 In the first four cases the kernels are parameterized by a number type, which
 is used to store coordinates and which determines the basic arithmetic
 of the kernel primitives.
@@ -253,7 +253,7 @@ higher level layers of the library (such as the circular and spherical
 kernels). These concepts are accompanied by at least one model per
 concept.
 
-There are further complementary layers in \cgal. The most basic layer is 
+There are further complementary layers in \cgal. The most basic layer is
 the configuration layer.
 This layer takes care of setting configuration flags according to the outcome
 of tests run during installation.  The <I>support library</I> layer

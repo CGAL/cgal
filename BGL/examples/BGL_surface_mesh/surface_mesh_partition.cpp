@@ -1,26 +1,28 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double>                           K;
 typedef CGAL::Surface_mesh<K::Point_3>                           SM;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
-  if(!in) {
-    std::cerr << "Error: could not read input file" << std::endl;
-    return EXIT_FAILURE;
-  }
-
   SM sm;
-  CGAL::read_off(in, sm);
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   // The vertex <--> partition_id property map
   typedef SM::Property_map<SM::Vertex_index, std::size_t>          Vertex_id_map;
@@ -38,14 +40,12 @@ int main(int argc, char** argv)
   // Extract the part n°0 of the partition into a new, independent mesh
   typedef CGAL::Face_filtered_graph<SM>                            Filtered_graph;
   Filtered_graph filtered_sm(sm, 0 /*id of th part*/, face_pid_map);
-    CGAL_assertion(filtered_sm.is_selection_valid());
+  assert(filtered_sm.is_selection_valid());
   SM part_sm;
   CGAL::copy_face_graph(filtered_sm, part_sm);
 
   // Output the mesh extracted from subpart n°0
-  std::ofstream out("sm_part_0.off");
-  out.precision(17);
-  CGAL::write_off(out, part_sm);
+  CGAL::IO::write_polygon_mesh("sm_part_0.off", part_sm, CGAL::parameters::stream_precision(17));
 
   // Output all the vertices that are in the part n°0
   std::ofstream outxyz("out.xyz");

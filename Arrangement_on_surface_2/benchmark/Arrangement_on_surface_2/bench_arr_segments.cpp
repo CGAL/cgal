@@ -2,17 +2,17 @@
 // of line segments it reads from a file.
 //
 // Usage: seg_arr <-a | -n | -w> <input file>
-// Where: -a  --  Use aggragated insertion (sweep-line);
+// Where: -a  --  Use aggregated insertion (sweep-line);
 //        -n  --  Use incremental insertion with naive point-location;
 //        -w  --  Use incremental insertion with walk point-location.
 //
- 
+
 //#define USE_FILTERED_KERNEL
 //#define USE_LAZY_KERNEL
 //#define USE_APPROX_KERNEL
 
 #ifdef USE_FILTERED_KERNEL
-  
+
   #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
   typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
@@ -69,16 +69,16 @@ int main (int argc, char **argv)
   {
     std::cerr << "Usage: " << argv[0] << " <file name> <method> [format]"
               << std::endl
-	      << "method is either:" << std::endl
-	      << "    -a for aggragated insertion;" << std::endl
-	      << "    -n for incremental insertion with naive point-location;"
-	      << std::endl
-	      << "    -s for incremental insertion with simple point-location;"
-	      << std::endl
-	      << "    -w for incremental insertion with walk point-location."
+              << "method is either:" << std::endl
+              << "    -a for aggregated insertion;" << std::endl
+              << "    -n for incremental insertion with naive point-location;"
+              << std::endl
+              << "    -s for incremental insertion with simple point-location;"
+              << std::endl
+              << "    -w for incremental insertion with walk point-location."
               << std::endl
               << "Specify -q as the format for reading rationals."
-	      << std::endl;
+              << std::endl;
 
     return (1);
   }
@@ -110,7 +110,7 @@ int main (int argc, char **argv)
   // Check whether we should integers or rationals.
   bool              read_rationals = false;
 
-  if (argc > 3 && 
+  if (argc > 3 &&
       (strcmp (argv[3], "-Q") == 0 || strcmp (argv[3], "-q") == 0))
   {
     read_rationals = true;
@@ -172,13 +172,13 @@ int main (int argc, char **argv)
       Naive_pl                       pl (arr);
       Segments_list::const_iterator  iter;
 
-      std::cout << "Performing incremental insertion (with naive PL) of " 
-		<< n << " segments." << std::endl;
+      std::cout << "Performing incremental insertion (with naive PL) of "
+                << n << " segments." << std::endl;
 
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert (arr, *iter, pl);
+        insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -188,13 +188,13 @@ int main (int argc, char **argv)
       Simple_pl                      pl (arr);
       Segments_list::const_iterator  iter;
 
-      std::cout << "Performing incremental insertion (with simple PL) of " 
-		<< n << " segments." << std::endl;
+      std::cout << "Performing incremental insertion (with simple PL) of "
+                << n << " segments." << std::endl;
 
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert (arr, *iter, pl);
+        insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -204,13 +204,13 @@ int main (int argc, char **argv)
       Walk_pl                        pl (arr);
       Segments_list::const_iterator  iter;
 
-      std::cout << "Performing incremental insertion (with walk PL) of " 
-		<< n << " segments." << std::endl;
+      std::cout << "Performing incremental insertion (with walk PL) of "
+                << n << " segments." << std::endl;
 
       timer.start();
       for (iter = segments.begin(); iter != segments.end(); ++iter)
       {
-	insert (arr, *iter, pl);
+        insert (arr, *iter, pl);
       }
       timer.stop();
     }
@@ -218,8 +218,8 @@ int main (int argc, char **argv)
   else
   {
     // Perform aggregated insertion.
-    std::cout << "Performing aggregated insertion of " 
-	      << n << " segments." << std::endl;
+    std::cout << "Performing aggregated insertion of "
+              << n << " segments." << std::endl;
 
     timer.start();
     insert (arr, segments.begin(), segments.end());
@@ -228,15 +228,15 @@ int main (int argc, char **argv)
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl << std::endl;
+            << ",  E = " << arr.number_of_edges()
+            << ",  F = " << arr.number_of_faces() << std::endl << std::endl;
 
-  std::cout << "Construction took " << timer.time() 
-	    << " seconds." << std::endl;
+  std::cout << "Construction took " << timer.time()
+            << " seconds." << std::endl;
 
   // Check the validity of the arrangement:
   std::cout << "Checking validity ... " << std::flush;
   std::cout << (arr.is_valid() ? "OK." : "INVALID !!!") << std::endl;
-  
+
   return 0;
 }

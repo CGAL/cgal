@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -31,11 +22,11 @@
  * Auxiliary functions for the usage of the various sweep-line visitors.
  */
 
-#include <CGAL/basic.h>
-#include <CGAL/Object.h>
-#include <CGAL/assertions.h>
 #include <vector>
 #include <algorithm>
+
+#include <CGAL/basic.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Arr_enums.h>
 
 namespace CGAL {
@@ -58,40 +49,30 @@ void make_x_monotone(CurveInputIter begin, CurveInputIter end,
                      PointOutIter iso_points,
                      const Traits* tr)
 {
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+
   // Split the input curves into x-monotone objects.
   std::size_t num_of_curves = std::distance(begin, end);
-  std::vector<Object> object_vec;
-  CurveInputIter iter;
-
+  std::vector<Make_x_monotone_result> object_vec;
   object_vec.reserve(num_of_curves);
-  for (iter = begin; iter != end; ++iter) {
+  for (auto iter = begin; iter != end; ++iter) {
     tr->make_x_monotone_2_object()(*iter, std::back_inserter(object_vec));
   }
 
   // Transform each object to either a point or an x-monotone curve.
-  typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Traits::Point_2               Point_2;
-
-  const X_monotone_curve_2* xcv;
-  const Point_2* pt;
-  unsigned int i;
-
-  for (i = 0 ; i < object_vec.size() ; ++i) {
-    xcv = object_cast<X_monotone_curve_2> (&(object_vec[i]));
-
+  for (const auto& obj : object_vec) {
+    const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&obj);
     if (xcv != nullptr) {
       // The object is an x-monotone curve.
-      *x_curves = *xcv;
-      ++x_curves;
+      *x_curves++ = *xcv;
+      continue;
     }
-    else {
-      // The object is an isolated point.
-      pt = object_cast<Point_2> (&(object_vec[i]));
-      CGAL_assertion (pt != nullptr);
-
-      *iso_points = *pt;
-      ++iso_points;
-    }
+    // The object is an isolated point.
+    const Point_2* pt = std::get_if<Point_2>(&obj);
+    CGAL_assertion(pt != nullptr);
+    *iso_points++ = *pt;
   }
 }
 

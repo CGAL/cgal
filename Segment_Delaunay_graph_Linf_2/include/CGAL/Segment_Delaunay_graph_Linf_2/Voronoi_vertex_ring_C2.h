@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -151,7 +142,7 @@ private:
   const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
-		       sr.is_point() );
+                       sr.is_point() );
 
     CGAL_SDG_DEBUG(std::cout << "debug vring entering compute_ppp"
         << std::endl;);
@@ -306,7 +297,7 @@ private:
     Comparison_result cmpxrmin = CGAL::compare(r.x(), x_min);
     Comparison_result cmpxrmax = CGAL::compare(r.x(), x_max);
     if (cmpxrmin == SMALLER) {
-	// here r.x() < x_min <= x_max
+        // here r.x() < x_min <= x_max
         if (! is_set_x_min) {
           x_min = r.x();
         }
@@ -466,7 +457,7 @@ private:
     }
 
     Comparison_result cmpsides =
-	CGAL::compare(x_max - x_min, y_max - y_min);
+        CGAL::compare(x_max - x_min, y_max - y_min);
 
     // if bounding box is non-square and points are not
     // on corners of it, then grow it to become square
@@ -482,15 +473,15 @@ private:
           break;
         }
         // grow only if any point is inside vertical sides
-	if (((CGAL::compare(p.x(), x_min) == EQUAL)   &&
-	     (CGAL::compare(p.y(), y_max) == SMALLER) &&
-	     (CGAL::compare(p.y(), y_min) == LARGER)     ) ||
-	    ((CGAL::compare(q.x(), x_min) == EQUAL)   &&
-	     (CGAL::compare(q.y(), y_max) == SMALLER) &&
-	     (CGAL::compare(q.y(), y_min) == LARGER)     ) ||
-	    ((CGAL::compare(r.x(), x_min) == EQUAL)   &&
-	     (CGAL::compare(r.y(), y_max) == SMALLER) &&
-	     (CGAL::compare(r.y(), y_min) == LARGER)     )   )
+        if (((CGAL::compare(p.x(), x_min) == EQUAL)   &&
+             (CGAL::compare(p.y(), y_max) == SMALLER) &&
+             (CGAL::compare(p.y(), y_min) == LARGER)     ) ||
+            ((CGAL::compare(q.x(), x_min) == EQUAL)   &&
+             (CGAL::compare(q.y(), y_max) == SMALLER) &&
+             (CGAL::compare(q.y(), y_min) == LARGER)     ) ||
+            ((CGAL::compare(r.x(), x_min) == EQUAL)   &&
+             (CGAL::compare(r.y(), y_max) == SMALLER) &&
+             (CGAL::compare(r.y(), y_min) == LARGER)     )   )
         { // grow rectangle to the right
           CGAL_SDG_DEBUG(std::cout << "debug vring grow right" << std::endl;);
           x_max = x_min + y_max - y_min;
@@ -510,15 +501,15 @@ private:
           break;
         }
         // grow only if any point is inside horizontal sides
-	if (((CGAL::compare(p.y(), y_min) == EQUAL)   &&
-	     (CGAL::compare(p.x(), x_max) == SMALLER) &&
-	     (CGAL::compare(p.x(), x_min) == LARGER)     ) ||
-	    ((CGAL::compare(q.y(), y_min) == EQUAL)   &&
-	     (CGAL::compare(q.x(), x_max) == SMALLER) &&
-	     (CGAL::compare(q.x(), x_min) == LARGER)     ) ||
-	    ((CGAL::compare(r.y(), y_min) == EQUAL)   &&
-	     (CGAL::compare(r.x(), x_max) == SMALLER) &&
-	     (CGAL::compare(r.x(), x_min) == LARGER)     )   )
+        if (((CGAL::compare(p.y(), y_min) == EQUAL)   &&
+             (CGAL::compare(p.x(), x_max) == SMALLER) &&
+             (CGAL::compare(p.x(), x_min) == LARGER)     ) ||
+            ((CGAL::compare(q.y(), y_min) == EQUAL)   &&
+             (CGAL::compare(q.x(), x_max) == SMALLER) &&
+             (CGAL::compare(q.x(), x_min) == LARGER)     ) ||
+            ((CGAL::compare(r.y(), y_min) == EQUAL)   &&
+             (CGAL::compare(r.x(), x_max) == SMALLER) &&
+             (CGAL::compare(r.x(), x_min) == LARGER)     )   )
         { // grow rectangle upwards
           CGAL_SDG_DEBUG(std::cout
               << "debug vring grow upwards" << std::endl;);
@@ -547,7 +538,7 @@ private:
   const
   {
     CGAL_precondition( p.is_point() && q.is_segment() &&
-		       r.is_segment() );
+                       r.is_segment() );
 
     CGAL_SDG_DEBUG(std::cout << "debug: compute_pss entering p=" << p
        << " q=" << q << " r=" << r << std::endl;);
@@ -1383,7 +1374,7 @@ private:
   const
   {
     CGAL_precondition( p.is_point() && q.is_point() &&
-		       r.is_segment() );
+                       r.is_segment() );
 
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring compute_pps entering p=" << p
@@ -1405,7 +1396,7 @@ private:
   const
   {
     CGAL_precondition( p.is_point() && q.is_point() &&
-		       r.is_segment() );
+                       r.is_segment() );
 
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring compute_pps_bisectors entering p=" << p
@@ -1523,7 +1514,7 @@ private:
   const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() &&
-		       r.is_segment() );
+                       r.is_segment() );
     const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
     const bool is_psrc_r = is_endpoint_of(p.source_site(), r);
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
@@ -1743,14 +1734,14 @@ private:
   //--------------------------------------------------------------------------
 
   Sign check_easy_degeneracies(const Site_2& t, PPS_Type,
-			       bool& use_result) const
+                               bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
 
     use_result = false;
     if (  ( p_.is_point() && same_points(p_, t) ) ||
-	  ( q_.is_point() && same_points(q_, t) ) ||
-	  ( r_.is_point() && same_points(r_, t) )  ) {
+          ( q_.is_point() && same_points(q_, t) ) ||
+          ( r_.is_point() && same_points(r_, t) )  ) {
       use_result = true;
       return ZERO;
     }
@@ -1778,7 +1769,7 @@ private:
 
   inline
   Sign check_easy_degeneracies(const Site_2& t, PSS_Type,
-			       bool& use_result) const
+                               bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -1787,7 +1778,7 @@ private:
 
   inline
   Sign check_easy_degeneracies(const Site_2& t, SSS_Type,
-			       bool& use_result) const
+                               bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
     use_result = false;
@@ -2590,36 +2581,36 @@ private:
 
     if ( v_type == PPP || v_type == PPS ) {
       if (  p_.is_point() && q_.is_point() &&
-	    is_endpoint_of(p_, t) && is_endpoint_of(q_, t)  ) {
-	return NEGATIVE;
+            is_endpoint_of(p_, t) && is_endpoint_of(q_, t)  ) {
+        return NEGATIVE;
       }
 
       if (  p_.is_point() && r_.is_point() &&
-	    is_endpoint_of(p_, t) && is_endpoint_of(r_, t)  ){
-	return NEGATIVE;
+            is_endpoint_of(p_, t) && is_endpoint_of(r_, t)  ){
+        return NEGATIVE;
       }
 
       if (  q_.is_point() && r_.is_point() &&
-	    is_endpoint_of(q_, t) && is_endpoint_of(r_, t)  ){
-	return NEGATIVE;
+            is_endpoint_of(q_, t) && is_endpoint_of(r_, t)  ){
+        return NEGATIVE;
       }
     }
 
     if ( v_type == PSS ) {
       if ( p_.is_segment() &&
-	   same_segments(p_.supporting_site(),
-			 t.supporting_site()) ) {
-	return POSITIVE;
+           same_segments(p_.supporting_site(),
+                         t.supporting_site()) ) {
+        return POSITIVE;
       }
       if ( q_.is_segment() &&
-	   same_segments(q_.supporting_site(),
-			 t.supporting_site()) ) {
-	return POSITIVE;
+           same_segments(q_.supporting_site(),
+                         t.supporting_site()) ) {
+        return POSITIVE;
       }
       if ( r_.is_segment() &&
-	   same_segments(r_.supporting_site(),
-			 t.supporting_site()) ) {
-	return POSITIVE;
+           same_segments(r_.supporting_site(),
+                         t.supporting_site()) ) {
+        return POSITIVE;
       }
     }
 
@@ -3012,7 +3003,7 @@ private:
 
     if ( sl == ZERO ) {
       if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
-	return ZERO;
+        return ZERO;
       }
       return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
@@ -3329,47 +3320,47 @@ private:
       // case 1: the new segment is not adjacent to the center of the
       //         degenerate Voronoi circle
       if (  !same_points( p_ref(), t.source_site() ) &&
-	    !same_points( p_ref(), t.target_site() )  ) {
-	return POSITIVE;
+            !same_points( p_ref(), t.target_site() )  ) {
+        return POSITIVE;
       }
 
       CGAL_assertion( v_type == PSS );
 
       if ( p_.is_segment() &&
-	   same_segments(p_.supporting_site(),
-			 t.supporting_site()) ) {
-	return ZERO;
+           same_segments(p_.supporting_site(),
+                         t.supporting_site()) ) {
+        return ZERO;
       }
 
       if ( q_.is_segment() &&
-	   same_segments(q_.supporting_site(),
-			 t.supporting_site()) ) {
-	return ZERO;
+           same_segments(q_.supporting_site(),
+                         t.supporting_site()) ) {
+        return ZERO;
       }
 
       if ( r_.is_segment() &&
-	   same_segments(r_.supporting_site(),
-			 t.supporting_site()) ) {
-	return ZERO;
+           same_segments(r_.supporting_site(),
+                         t.supporting_site()) ) {
+        return ZERO;
       }
 
       Site_2 pr;
       Site_2 sp, sq;
       if ( p_.is_point() ) {
-	CGAL_assertion( q_.is_segment() && r_.is_segment() );
-	pr = p_;
-	sp = q_;
-	sq = r_;
+        CGAL_assertion( q_.is_segment() && r_.is_segment() );
+        pr = p_;
+        sp = q_;
+        sq = r_;
       } else if ( q_.is_point() ) {
-	CGAL_assertion( r_.is_segment() && p_.is_segment() );
-	pr = q_;
-	sp = r_;
-	sq = p_;
+        CGAL_assertion( r_.is_segment() && p_.is_segment() );
+        pr = q_;
+        sp = r_;
+        sq = p_;
       } else {
-	CGAL_assertion( p_.is_segment() && q_.is_segment() );
-	pr = r_;
-	sp = p_;
-	sq = q_;
+        CGAL_assertion( p_.is_segment() && q_.is_segment() );
+        pr = r_;
+        sp = p_;
+        sq = q_;
       }
 
       Point_2 pq = sq.source(), pp = sp.source(), pt = t.source();
@@ -3381,8 +3372,8 @@ private:
       Point_2 pr_ = pr.point();
 
       if ( CGAL::orientation(pr_, pp, pt) == LEFT_TURN &&
-	   CGAL::orientation(pr_, pq, pt) == RIGHT_TURN ) {
-	return NEGATIVE;
+           CGAL::orientation(pr_, pq, pt) == RIGHT_TURN ) {
+        return NEGATIVE;
       }
       return ZERO;
     } // if ( is_degenerate_Voronoi_circle() )
@@ -3539,21 +3530,21 @@ public:
     switch (v_type) {
     case PPP:    case PPS:    case PSS:
       {
-	Point_2 pref = p_ref().point();
-	//FT absdx = CGAL::abs(x() - pref.x());
-	//FT absdy = CGAL::abs(y() - pref.y());
+        Point_2 pref = p_ref().point();
+        //FT absdx = CGAL::abs(x() - pref.x());
+        //FT absdy = CGAL::abs(y() - pref.y());
         return (CGAL::max)( CGAL::abs(x() - pref.x()),
-		            CGAL::abs(y() - pref.y()) );
+                            CGAL::abs(y() - pref.y()) );
       }
       break;
     case SSS:
       {
-	Line_2 l = compute_supporting_line(p_.supporting_site());
-	Homogeneous_point_2 q = compute_linf_projection_hom(l, point());
+        Line_2 l = compute_supporting_line(p_.supporting_site());
+        Homogeneous_point_2 q = compute_linf_projection_hom(l, point());
 
-	FT dx = CGAL::abs(x() - q.x());
-	FT dy = CGAL::abs(y() - q.y());
-	return (CGAL::max)(dx, dy);
+        FT dx = CGAL::abs(x() - q.x());
+        FT dy = CGAL::abs(y() - q.y());
+        return (CGAL::max)(dx, dy);
       }
       break;
     default:
@@ -3589,8 +3580,8 @@ public:
 
 public:
   Voronoi_vertex_ring_C2(const Site_2& p,
-			 const Site_2& q,
-			 const Site_2& r)
+                         const Site_2& q,
+                         const Site_2& r)
     : p_(p), q_(q), r_(r), is_v_computed(false)
   {
     CGAL_SDG_DEBUG(std::cout << "Voronoi_vertex_ring_C2()" << std::endl;);
@@ -3946,7 +3937,7 @@ private:
 
   vertex_t v_type;
 
-  // index that indicates the refence point for the case PPS
+  // index that indicates the reference point for the case PPS
   short pps_idx;
 
   // philaris: different types are not needed any more

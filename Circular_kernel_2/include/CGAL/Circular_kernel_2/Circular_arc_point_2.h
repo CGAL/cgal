@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
@@ -31,10 +22,10 @@
 
 
 #include <iostream>
+#include <type_traits>
 #include <CGAL/Handle.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -45,14 +36,14 @@ namespace internal {
     typedef typename CK::FT                      FT;
     typedef typename CK::Root_of_2               Root_of_2;
     typedef typename CK::Point_2                 Point_2;
-    
+
   public: // fixme ?
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     typedef typename CK::template Handle<Root_for_circles_2_2>::type  Base;
-    
-    Circular_arc_point_2_base() 
+
+    Circular_arc_point_2_base()
     {}
-    
+
     Circular_arc_point_2_base(const Root_for_circles_2_2 & np)
       :  _p(np)
     {}
@@ -61,23 +52,23 @@ namespace internal {
       :  _p(p.x(),p.y()/*,1,1,-p.x()-p.y()*/)
     {}
 
-    const Root_of_2 & x() const 
+    const Root_of_2 & x() const
     { return get_pointee_or_identity(_p).x(); }
-    
-    const Root_of_2 & y() const 
+
+    const Root_of_2 & y() const
     { return get_pointee_or_identity(_p).y(); }
-    
+
     CGAL::Bbox_2 bbox() const
     {
       return get_pointee_or_identity(_p).bbox();
     }
 
-    const Root_for_circles_2_2 & coordinates() const 
+    const Root_for_circles_2_2 & coordinates() const
     { return get_pointee_or_identity(_p); }
 
     bool equal_ref(const Circular_arc_point_2_base &p) const
     {
-      return CGAL::identical(_p, p._p);      
+      return CGAL::identical(_p, p._p);
     }
 
   private:
@@ -89,7 +80,7 @@ namespace internal {
   print(std::ostream & os, const Circular_arc_point_2_base<CK> &p)
   {
     return os << "CirclArcEndPoint_2(" << std::endl
-	      << p.x() << ", " << p.y() << ')';
+              << p.x() << ", " << p.y() << ')';
   }
 
 template < typename BK, typename Base_CK >
@@ -120,7 +111,7 @@ public:
     : P_point(p), bb(nullptr)
   {}
 
-  Filtered_bbox_circular_arc_point_2_base(const Self &c) 
+  Filtered_bbox_circular_arc_point_2_base(const Self &c)
     : P_point(c), bb(c.bb ? new Bbox_2(*(c.bb)) : nullptr)
   {}
 
@@ -130,32 +121,32 @@ public:
     {
       this->P_point::operator=(c);
 
-      if (bb != nullptr){ 
+      if (bb != nullptr){
         delete bb;
       }
       bb = c.bb ? new Bbox_2(*(c.bb)) : nullptr;
     }
     return *this;
   }
-	
+
   ~Filtered_bbox_circular_arc_point_2_base() {
     if(bb) {
-      delete bb; 
+      delete bb;
       bb = 0;
     }
   }
 
   ////Bbox related accessors////
-  
+
   bool has_no_bbox() const
   { return (bb==nullptr);}
 
   Bbox_2  bbox() const
-  { 
+  {
     if(this->has_no_bbox())
       bb= new Bbox_2(P_point::bbox());
-              
-    return *bb;     
+
+    return *bb;
   }
 
 private:

@@ -19,4 +19,4 @@ methods. Algorithmic details and experimental results are given in [Halp].
 
 [Halp] D. Halperin and E. Packer, "Iterated Snap Rounding",
   Computational Geometry: Theory and Applications, 23, 2, 2002, 209-225.
-  
+

@@ -11,7 +11,7 @@
  *    by the elements in the two pairs above, respectively.
  * 5. Initialize the data field of each halfedge with the number of curves
  *    that induced that halfedge if the halfedge is directed left-to-right
- *    and twice the the number of curves that induced that halfedge if the
+ *    and twice the number of curves that induced that halfedge if the
  *    halfedge is directed right-to-left. We initialize the data field of
  *    each face with the total sum of the data of the halfedges on the
  *    boundary of the face. We initialize the data field of each isolated
@@ -34,8 +34,8 @@
 
 #include <CGAL/config.h>
 
-#if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||	\
-     (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||	\
+#if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||        \
+     (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||        \
      (TEST_GEOM_TRAITS == RATIONAL_ARC_GEOM_TRAITS)) && !defined(CGAL_USE_CORE)
 
 int main()
@@ -55,7 +55,7 @@ int main()
 {
   // bool UNTESTED_TRAITS_AS_LEDA_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: LEDA is not installed, "
+            << "NOTE: LEDA is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -70,7 +70,7 @@ int main()
 
   // bool UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: GMP and/or MPFI are not installed, "
+            << "NOTE: GMP and/or MPFI are not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -84,7 +84,7 @@ int main()
 {
   //  bool UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: CORE is not installed, "
+            << "NOTE: CORE is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -99,7 +99,7 @@ int main()
 // Define Geom_traits to be the curve-data-traits of the base geom traits.
 typedef CGAL::Arr_curve_data_traits_2<Base_geom_traits,
                                       unsigned int,
-                                      std::plus<unsigned int> >  
+                                      std::plus<unsigned int> >
                                                         Geom_traits;
 typedef Geom_traits::Point_2                            Point_2;
 typedef Geom_traits::Curve_2                            Curve_2;
@@ -129,8 +129,8 @@ bool test(const char* filename, int verbose_level)
 int main(int argc, char* argv[])
 {
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 #endif
 
   if (argc < 2) {
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
       i += 2;
     }
   }
-  
+
   int success = 0;
   for (; i < argc; ++i) {
     const char* filename = argv[i];
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
       success = -1;
     }
   }
-    
+
   return success;
 }
 

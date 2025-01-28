@@ -3,8 +3,8 @@
 \example Classification/example_feature.cpp
 \example Classification/example_generation_and_training.cpp
 \example Classification/example_ethz_random_forest.cpp
+\example Classification/example_deprecated_conversion.cpp
 \example Classification/example_opencv_random_forest.cpp
-\example Classification/example_tensorflow_neural_network.cpp
 \example Classification/example_mesh_classification.cpp
 \example Classification/example_cluster_classification.cpp
 */

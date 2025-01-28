@@ -1,12 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
 
-#include <boost/foreach.hpp>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 #include <fstream>
@@ -21,13 +20,13 @@ typedef CGAL::Polyhedron_3<K>                                     Polyhedron;
 typedef std::vector<std::vector<std::size_t> >                    Vertices_to_merge_container;
 
 template <typename PolygonMesh>
-void read_mesh(const char* fname,
+void read_mesh(const std::string fname,
                PolygonMesh& mesh)
 {
   std::ifstream input(fname);
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 }
@@ -174,7 +173,7 @@ void test_blobby()
   std::cout << "  test: data/blobby.off" << std::endl;
 
   PolygonMesh mesh;
-  read_mesh("data/blobby.off", mesh);
+  read_mesh(CGAL::data_file_path("meshes/blobby.off"), mesh);
 
   // non-manifold vertices
   Vertices_to_merge_container all_merges;
@@ -211,7 +210,7 @@ void test_nm_cubes()
 }
 
 template <typename PolygonMesh>
-void test_pinched_triangles(const char* filename,
+void test_pinched_triangles(const std::string filename,
                             const std::size_t expected_nb)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Quincy Tse, Weisheng Si
@@ -29,7 +20,7 @@
 
 #include <CGAL/license/Cone_spanners_2.h>
 
-
+#include <array>
 #include <stdexcept>
 
 namespace CGAL {
@@ -143,14 +134,13 @@ public:
     _Leaf (const key_compare& less, const value_compare& vless, tree_type *const t,
            _leaf_type *const prev = nullptr,
            _leaf_type *const next = nullptr)
-        : _node_type (less, vless, t), prev (prev), next (next) {
-        std::memset (values, 0, 2*sizeof(value_type*));
-    }
+      : _node_type (less, vless, t), values({nullptr,nullptr}), prev (prev), next (next)
+    {}
 
     /* Destructor.
      * Frees memory used for storing key-value pair, thus invalidating any
-     * exisitng pointers to any keys and/or values in the tree. During and
-     * after destruction, neighbour nodes are not guarenteed to be consistent.
+     * existing pointers to any keys and/or values in the tree. During and
+     * after destruction, neighbor nodes are not guaranteed to be consistent.
      * Specifically, the linked list along the leaves of the B+ tree is
      * invalidated. */
     virtual ~_Leaf() {
@@ -251,7 +241,7 @@ protected:
 
 private:
     /* Key-value pairs */
-    value_type* values[2];
+  std::array<value_type*,2> values;
 
     /* Linked list structure of the B+ tree */
     _leaf_type* prev;
@@ -277,11 +267,8 @@ public:
     typedef typename _node_type::tree_type      tree_type;
 
     _Internal (const Comp& less, const VComp& vless, tree_type *const t)
-        : _node_type(less, vless, t) {
-        std::memset (keys, 0, 2*sizeof(key_type*));
-        std::memset (children, 0, 3*sizeof(_node_type*));
-        std::memset (vMin, 0, 3*sizeof(mapped_type*));
-    }
+      : _node_type(less, vless, t), keys({nullptr, nullptr}), children({nullptr, nullptr, nullptr}), vMin({nullptr, nullptr, nullptr})
+    {}
 
     virtual ~_Internal() {
         keys[0] = nullptr;
@@ -501,9 +488,9 @@ protected:
     }
 
 private:
-    const key_type* keys[2];
-    _node_type* children[3];
-    const mapped_type* vMin[3];
+  std::array<const key_type*, 2> keys;
+  std::array< _node_type*, 3> children;
+  std::array<const mapped_type*, 3> vMin;
 };
 
 template <typename Key, typename T, typename Comp, typename VComp >

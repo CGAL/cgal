@@ -1,30 +1,20 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-#include <iostream>
-#include <fstream>
-
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/IO/WKT.h>
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <boost/foreach.hpp>
-
+#include <iostream>
+#include <fstream>
 #include <vector>
 
-//typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+
 int main(int argc, char* argv[])
 {
   typedef CGAL::Point_2<Kernel> Point;
   typedef std::vector<Point> MultiPoint;
-  
+
   typedef std::vector<Point> LineString;
   typedef std::vector<LineString> MultiLineString;
-  
+
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
   typedef std::vector<Polygon> MultiPolygon;
 
@@ -33,22 +23,16 @@ int main(int argc, char* argv[])
     MultiPoint points;
     MultiLineString polylines;
     MultiPolygon polygons;
-    CGAL::read_WKT(is, points,polylines,polygons);
-    
-    BOOST_FOREACH(Point p, points)
+    CGAL::IO::read_WKT(is, points,polylines,polygons);
+
+    for(Point p : points)
       std::cout<<p<<std::endl;
-    BOOST_FOREACH(LineString ls, polylines)
-        BOOST_FOREACH(Point p, ls)
+    for(LineString ls : polylines)
+        for(Point p : ls)
           std::cout<<p<<std::endl;
-    BOOST_FOREACH(Polygon p, polygons)
+    for(Polygon p : polygons)
       std::cout<<p<<std::endl;
-    
+
   }
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

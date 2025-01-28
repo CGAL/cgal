@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Francois Rebufat
 //                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -35,6 +26,11 @@ template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
 {
+  static_assert(std::is_nothrow_move_constructible<Tds>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Tds>::value,
+                "move assignment is missing");
+
   typedef typename Tds::Vertex_range      Vertex_range;
   typedef typename Tds::Cell_range        Cell_range;
 
@@ -73,15 +69,15 @@ _test_cls_tds_3( const Tds &)
   // AF _test_cell_tds_3(Tds());
 
   std::cout << "   Testing TDS " << std::endl;
-  
+
   // Test constructors
   std::cout << "    constructors" << std::endl;
   Tds tds1;
   Tds tds2;
 
   // Test I/O for dimension -2
-  // the other dimensions are not tested here 
-  // (they are implicitely tested in triangulation)
+  // the other dimensions are not tested here
+  // (they are implicitly tested in triangulation)
   Tds tdsfromfile;
   std::cout << "    I/O" << std::endl;
   {
@@ -127,6 +123,34 @@ _test_cls_tds_3( const Tds &)
   std::cout << "ok" << std::endl;
   assert(tds6.is_valid());
 
+  // Test move-constructors and move-assignments
+  {
+    Tds tds7 = tds5;
+    Tds tds8{std::move(tds7)};
+    Tds tds9 = tds5;
+    Tds tds10;
+    tds10 = std::move(tds9);
+    Tds tds11 = Tds(tds5);  // construct from a temporary
+    Tds tds12 = std::move(tds11);
+
+    assert(tds7.is_valid());
+    assert(tds8.is_valid());
+    assert(tds9.is_valid());
+    assert(tds10.is_valid());
+    assert(tds11.is_valid());
+    assert(tds12.is_valid());
+    assert(tds7.dimension()==-2);
+    assert(tds8.dimension()==2);
+    assert(tds9.dimension()==-2);
+    assert(tds10.dimension()==2);
+    assert(tds11.dimension()==-2);
+    assert(tds12.dimension()==2);
+    tds11.~Tds();
+    // check tds12 is still valid after the destruction of tds11
+    assert(tds12.is_valid());
+    assert(tds12.dimension()==2);
+  }
+
   std::cout << "  Insert are tested in test_triangulation_3  " << std::endl;
 
   std::cout << "  Iterator and circulator are tested in test_triangulation_3  " << std::endl;
@@ -169,8 +193,13 @@ _test_cls_tds_3( const Tds &)
   // since 2-3 flips do not affect the validity of existing cells.
   std::vector<Cell_handle> Cell_v;
   for (cit = tds6.cells_begin(); cit != tds6.cells_end(); ++cit)
+<<<<<<< HEAD
       Cell_v.push_back(*cit);
   
+=======
+      Cell_v.push_back(cit);
+
+>>>>>>> cgal/master
   for (typename std::vector<Cell_handle>::const_iterator ccit = Cell_v.begin();
        ccit != Cell_v.end(); ++ccit) {
     for ( i=0; i<4; i++ ) {
@@ -182,30 +211,30 @@ _test_cls_tds_3( const Tds &)
       tds6.incident_vertices( tds6.vertex(*ccit,i),
                               std::inserter(set_of_vertices_old,
                                             set_of_vertices_old.begin() ) );
-      if ( set_of_vertices_old.find(tds6.mirror_vertex(*ccit, i)) 
-	   == set_of_vertices_old.end() ) {
-	nbflips++;
-	tds6.flip_flippable( *ccit, i );
-	assert(tds6.is_valid());
-// 	if ( tds6.flip( cit, i ) ) {
-// 	  tds6.is_valid(true);
-// 	  nbflips++;
-// 	}
+      if ( set_of_vertices_old.find(tds6.mirror_vertex(*ccit, i))
+           == set_of_vertices_old.end() ) {
+        nbflips++;
+        tds6.flip_flippable( *ccit, i );
+        assert(tds6.is_valid());
+//         if ( tds6.flip( cit, i ) ) {
+//           tds6.is_valid(true);
+//           nbflips++;
+//         }
       }
-      // correct name 
+      // correct name
       std::set< Vertex_handle > set_of_vertices;
       tds6.adjacent_vertices( tds6.vertex(*ccit,i),
                               std::inserter(set_of_vertices,
                                             set_of_vertices.begin() ) );
-      if ( set_of_vertices.find(tds6.mirror_vertex(*ccit, i)) 
-	   == set_of_vertices.end() ) {
-	nbflips++;
-	tds6.flip_flippable( *ccit, i );
-	assert(tds6.is_valid());
-// 	if ( tds6.flip( cit, i ) ) {
-// 	  tds6.is_valid(true);
-// 	  nbflips++;
-// 	}
+      if ( set_of_vertices.find(tds6.mirror_vertex(*ccit, i))
+           == set_of_vertices.end() ) {
+        nbflips++;
+        tds6.flip_flippable( *ccit, i );
+        assert(tds6.is_valid());
+//         if ( tds6.flip( cit, i ) ) {
+//           tds6.is_valid(true);
+//           nbflips++;
+//         }
       }
     }
   }
@@ -220,6 +249,7 @@ _test_cls_tds_3( const Tds &)
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
       tds6.incident_vertices
+<<<<<<< HEAD
 	( tds6.vertex(*ccit,i), std::back_inserter(vector_of_vertices_old));
       // correct name 
       tds6.adjacent_vertices
@@ -227,6 +257,15 @@ _test_cls_tds_3( const Tds &)
 
       tds6.incident_edges
 	( tds6.vertex(*ccit,i), std::back_inserter(vector_of_edges));
+=======
+        ( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices_old));
+      // correct name
+      tds6.adjacent_vertices
+        ( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices));
+
+      tds6.incident_edges
+        ( (*ccit)->vertex(i), std::back_inserter(vector_of_edges));
+>>>>>>> cgal/master
 
       assert(vector_of_edges.size() == vector_of_vertices_old.size());
       assert(vector_of_edges.size() == vector_of_vertices.size());
@@ -238,7 +277,7 @@ _test_cls_tds_3( const Tds &)
   assert(tds6.number_of_vertices()==8);
 //  std::cout << tds6.number_of_cells()<< " cells" << std::endl;
 
-  nbflips=0; 
+  nbflips=0;
   bool flipped;
   int j;
   cit = tds6.cells_begin();
@@ -251,6 +290,7 @@ _test_cls_tds_3( const Tds &)
     next_cell = ++cit; --cit;
     while ( (! flipped) && (i<4) ) {
       if ( (i!=j) ) {
+<<<<<<< HEAD
 	// The Intel compiler has a bug and needs the explicit handle.
 	Cell_handle ch = *cit;
 	flipped = tds6.flip( ch, i, j ) ;
@@ -258,6 +298,15 @@ _test_cls_tds_3( const Tds &)
 	  nbflips++;
 	  assert(tds6.is_valid());
 	}
+=======
+        // The Intel compiler has a bug and needs the explicit handle.
+        Cell_handle ch = cit;
+        flipped = tds6.flip( ch, i, j ) ;
+        if (flipped) {
+          nbflips++;
+          assert(tds6.is_valid());
+        }
+>>>>>>> cgal/master
       }
       if ( j==3 ) { i++; j=0; }
       else j++;
@@ -290,24 +339,35 @@ _test_cls_tds_3( const Tds &)
   assert(tds7.dimension() == 1);
   assert(tds7.is_valid());
   Vertex_handle v7_4 = tds7.insert_increase_dimension(v7_3);
+<<<<<<< HEAD
   Cell_handle fb = tds7.cell(v7_4);	
   i7 = tds7.index(fb, v7_4);
+=======
+  Cell_handle fb = v7_4->cell();
+  i7 = fb->index(v7_4);
+>>>>>>> cgal/master
   tds7.decrease_dimension(fb, i7);
   assert(tds7.dimension() == 1);
   assert(tds7.is_valid());
-  Vertex_handle v7_5 = tds7.insert_increase_dimension(v7_4);	
+  Vertex_handle v7_5 = tds7.insert_increase_dimension(v7_4);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
-  Vertex_handle v7_6 = tds7.insert_increase_dimension(v7_5);	
+  Vertex_handle v7_6 = tds7.insert_increase_dimension(v7_5);
   assert(tds7.dimension() == 3);
   assert(tds7.is_valid());
+<<<<<<< HEAD
   Cell_handle fc = tds7.cell(v7_6);	
   i7 = tds7.index(fc, v7_6);
+=======
+  Cell_handle fc = v7_6->cell();
+  i7 = fc->index(v7_6);
+>>>>>>> cgal/master
   tds7.decrease_dimension(fc, i7);
   assert(tds7.dimension() == 2);
-  assert(tds7.is_valid());		
-  Vertex_handle v7_7 = tds7.insert_increase_dimension(v7_6);	
+  assert(tds7.is_valid());
+  Vertex_handle v7_7 = tds7.insert_increase_dimension(v7_6);
   assert(tds7.dimension() == 3);
+<<<<<<< HEAD
   assert(tds7.is_valid());		
   Cell_handle fd = tds7.cell(v7_7);	
   i7 = tds7.index(fd, v7_7);
@@ -316,18 +376,34 @@ _test_cls_tds_3( const Tds &)
   assert(tds7.is_valid());
   Cell_handle fe = tds7.cell(v7_7);
   i7 = tds7.index(fe, v7_7);	
+=======
+  assert(tds7.is_valid());
+  Cell_handle fd = v7_7->cell();
+  i7 = fd->index(v7_7);
+  tds7.decrease_dimension(fd, i7);
+  assert(tds7.dimension() == 2);
+  assert(tds7.is_valid());
+  Cell_handle fe = v7_7->cell();
+  i7 = fe->index(v7_7);
+>>>>>>> cgal/master
   tds7.insert_in_facet(fe, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
-  Vertex_handle v7_8 = tds7.insert_increase_dimension(v7_7);	
+  Vertex_handle v7_8 = tds7.insert_increase_dimension(v7_7);
   assert(tds7.dimension() == 3);
+<<<<<<< HEAD
   assert(tds7.is_valid());		
   Cell_handle ff = tds7.cell(v7_8);	
   i7 = tds7.index(ff, v7_8);
+=======
+  assert(tds7.is_valid());
+  Cell_handle ff = v7_8->cell();
+  i7 = ff->index(v7_8);
+>>>>>>> cgal/master
   tds7.decrease_dimension(ff, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
-		
+
 //   tds1.clear();
 //   tds2.clear();
 //   tds3.clear();

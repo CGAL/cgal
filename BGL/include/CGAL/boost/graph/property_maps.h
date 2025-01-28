@@ -1,20 +1,11 @@
 // Copyright (c) 2012 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastien Loriot
 
@@ -24,9 +15,6 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 namespace CGAL{
 
@@ -34,7 +22,7 @@ namespace CGAL{
 template < class TriangleMesh,
            class VertexPointMap = typename boost::property_map<TriangleMesh,vertex_point_t>::type >
 struct Triangle_from_face_descriptor_map{
-  typename boost::remove_const<TriangleMesh>::type* m_tm;
+  typename std::remove_const_t<TriangleMesh>* m_tm;
   VertexPointMap m_vpm;
 
   Triangle_from_face_descriptor_map()
@@ -42,13 +30,13 @@ struct Triangle_from_face_descriptor_map{
   {}
 
   Triangle_from_face_descriptor_map(TriangleMesh const* tm)
-    : m_tm( const_cast<typename boost::remove_const<TriangleMesh>::type*>(tm) )
+    : m_tm( const_cast<std::remove_const_t<TriangleMesh>*>(tm) )
     , m_vpm( get(vertex_point, *m_tm) )
   {}
 
   Triangle_from_face_descriptor_map(TriangleMesh const* tm,
                                     VertexPointMap vpm )
-    : m_tm(const_cast<typename boost::remove_const<TriangleMesh>::type*>(tm))
+    : m_tm(const_cast<std::remove_const_t<TriangleMesh>*>(tm))
     , m_vpm(vpm)
   {}
 
@@ -62,11 +50,11 @@ struct Triangle_from_face_descriptor_map{
 
   //get function for property map
   inline friend
-  reference
+  value_type
   get(const Triangle_from_face_descriptor_map<TriangleMesh,VertexPointMap>& pmap,
       key_type f)
   {
-    typename boost::remove_const<TriangleMesh>::type & tm = *(pmap.m_tm);
+    std::remove_const_t<TriangleMesh>& tm = *(pmap.m_tm);
     CGAL_precondition(halfedge(f,tm) == next(next(next(halfedge(f,tm),tm),tm),tm));
 
     return value_type( get(pmap.m_vpm, target(halfedge(f,tm),tm)),
@@ -75,11 +63,11 @@ struct Triangle_from_face_descriptor_map{
   }
 
   inline friend
-  reference
+  value_type
   get(const Triangle_from_face_descriptor_map<TriangleMesh,VertexPointMap>& pmap,
       const std::pair<key_type, const TriangleMesh*>& f)
   {
-    typename boost::remove_const<TriangleMesh>::type & tm = *(pmap.m_tm);
+    std::remove_const_t<TriangleMesh> & tm = *(pmap.m_tm);
     CGAL_precondition(halfedge(f.first,tm) == next(next(next(halfedge(f.first,tm),tm),tm),tm));
 
     return value_type( get(pmap.m_vpm, target(halfedge(f.first,tm),tm)),
@@ -97,13 +85,13 @@ struct Segment_from_edge_descriptor_map{
   {}
 
   Segment_from_edge_descriptor_map(PolygonMesh const * pm)
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(pm) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(pm) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
   Segment_from_edge_descriptor_map(PolygonMesh const * pm,
                                    VertexPointMap vpm )
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(pm) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(pm) )
     , m_vpm(vpm)
   {}
 
@@ -115,12 +103,12 @@ struct Segment_from_edge_descriptor_map{
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
   //data
-  typename boost::remove_const<PolygonMesh>::type* m_pm;
+  std::remove_const_t<PolygonMesh>* m_pm;
   VertexPointMap m_vpm;
 
   //get function for property map
   inline friend
-  reference
+  value_type
   get(const Segment_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       key_type h)
   {
@@ -129,7 +117,7 @@ struct Segment_from_edge_descriptor_map{
   }
 
   inline friend
-  reference
+  value_type
   get(const Segment_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       const std::pair<key_type, const PolygonMesh*>& h)
   {
@@ -147,23 +135,23 @@ struct One_point_from_face_descriptor_map{
   {}
 
   One_point_from_face_descriptor_map(PolygonMesh const * g)
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(g) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
   One_point_from_face_descriptor_map(PolygonMesh const * g, VertexPointMap vpm )
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(g) )
     , m_vpm(vpm)
   {}
 
-  typename boost::remove_const<PolygonMesh>::type* m_pm;
+  std::remove_const_t<PolygonMesh>* m_pm;
   VertexPointMap m_vpm;
 
   //classical typedefs
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
   typedef typename boost::property_traits< VertexPointMap >::value_type value_type;
   typedef typename boost::property_traits< VertexPointMap >::reference reference;
-  typedef boost::lvalue_property_map_tag category;
+  typedef boost::readable_property_map_tag category;
 
   //get function for property map
   inline friend
@@ -191,12 +179,12 @@ struct Source_point_from_edge_descriptor_map{
   {}
 
   Source_point_from_edge_descriptor_map(PolygonMesh const * g)
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(g) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
   Source_point_from_edge_descriptor_map(PolygonMesh const * g, VertexPointMap vpm )
-    : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
+    : m_pm( const_cast<std::remove_const_t<PolygonMesh>*>(g) )
     , m_vpm(vpm)
   {}
 
@@ -205,8 +193,9 @@ struct Source_point_from_edge_descriptor_map{
   typedef typename boost::property_traits< VertexPointMap >::reference reference;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor key_type;
   typedef boost::readable_property_map_tag category;
+
   //data
-  typename boost::remove_const<PolygonMesh>::type* m_pm;
+  std::remove_const_t<PolygonMesh>* m_pm;
   VertexPointMap m_vpm;
 
   //get function for property map

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -29,10 +20,9 @@
 
 /*! \file
  *
- * Defintion of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
+ * Definition of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
  */
 
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 
 #include <list>
@@ -93,7 +83,7 @@ protected:
   const Gt2* m_base_traits;
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_basic_insertion_traits_2(const Gt2& tr) :
     m_base_traits(&tr)
   {}
@@ -113,7 +103,6 @@ public:
                                         // of two other curves.
 
   public:
-
     Ex_x_monotone_curve_2():
       m_base_xcv(),
       m_he_handle(),
@@ -225,7 +214,7 @@ public:
     Base_equal_2 m_base_equal;
     Halfedge_handle invalid_he;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -266,7 +255,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_min_vertex_2 function object */
+  /*! obtains a Construct_min_vertex_2 function object */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   {
     return (Construct_min_vertex_2
@@ -281,7 +270,7 @@ public:
     Base_equal_2 m_base_equal;
     Halfedge_handle invalid_he;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -323,7 +312,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_max_vertex_2 function object */
+  /*! obtains a Construct_max_vertex_2 function object */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   {
     return (Construct_max_vertex_2
@@ -336,7 +325,7 @@ public:
   protected:
     Base_compare_xy_2 m_base_cmp_xy;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -357,7 +346,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_xy_2 function object */
+  /*! obtains a Compare_xy_2 function object */
   Compare_xy_2 compare_xy_2_object() const
   { return (Compare_xy_2(m_base_traits->compare_xy_2_object())); }
 
@@ -368,7 +357,7 @@ public:
   protected:
     Base_compare_y_at_x_2 m_base_cmp_y_at_x;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -386,7 +375,7 @@ public:
     { return (m_base_cmp_y_at_x(p.base(), xcv.base())); }
   };
 
-  /*! Obtain a Compare_y_at_x_2 function object */
+  /*! obtains a Compare_y_at_x_2 function object */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return (Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object())); }
 
@@ -397,7 +386,7 @@ public:
   protected:
     Base_compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -416,11 +405,11 @@ public:
     { return (m_base_cmp_y_at_x_right(xcv1.base(), xcv2.base(), p.base())); }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 function object */
+  /*! obtains a Compare_y_at_x_right_2 function object */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
     return (Compare_y_at_x_right_2
-	    (m_base_traits->compare_y_at_x_right_2_object()));
+            (m_base_traits->compare_y_at_x_right_2_object()));
   }
 
   /*! A functor that checks whether two points and two x-monotone curves are
@@ -430,7 +419,7 @@ public:
   protected:
     Base_equal_2 m_base_eq;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -451,7 +440,7 @@ public:
     { return (m_base_eq(p1.base(), p2.base())); }
   };
 
-  /*! Obtain a Equal_2 function object */
+  /*! obtains an `Equal_2` function object */
   Equal_2 equal_2_object() const
   { return (Equal_2(m_base_traits->equal_2_object())); }
 
@@ -460,7 +449,7 @@ public:
   protected:
     Base_compare_x_2 m_base_cmp_x;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -475,7 +464,7 @@ public:
     { return (m_base_cmp_x(p1.base(), p2.base())); }
   };
 
-  /*! Obtain a Compare_x_2 function object */
+  /*! obtains a Compare_x_2 function object */
   Compare_x_2 compare_x_2_object() const
   { return (Compare_x_2(m_base_traits->compare_x_2_object())); }
 
@@ -484,7 +473,7 @@ public:
   protected:
     Base_is_vertical_2 m_base_is_vert;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -499,7 +488,7 @@ public:
     { return (m_base_is_vert(xcv.base())); }
   };
 
-  /*! Obtain a Is_vertical_2 function object */
+  /*! obtains a Is_vertical_2 function object */
   Is_vertical_2 is_vertical_2_object() const
   { return (Is_vertical_2(m_base_traits->is_vertical_2_object())); }
 
@@ -513,7 +502,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param tr The base traits class. It must be passed, to handle non
      *           stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -537,7 +526,7 @@ public:
     { return m_base->parameter_space_in_x_2_object()(xcv.base()); }
   };
 
-  /*! Obtain a Parameter_space_in_x_2 function object */
+  /*! obtains a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(m_base_traits); }
 
@@ -549,7 +538,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param tr The base traits class. It must be passed, to handle non
      *           stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -569,7 +558,7 @@ public:
     { return m_base->is_on_x_identification_2_object()(xcv.base()); }
   };
 
-  /*! Obtain a Is_on_x_identification_2 function object */
+  /*! obtains a Is_on_x_identification_2 function object */
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(m_base_traits); }
 
@@ -581,7 +570,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle non
      *             stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -601,7 +590,7 @@ public:
     { return m_base->compare_y_on_boundary_2_object()(p1.base(), p2.base()); }
   };
 
-  /*! Obtain a Compare_y_on_boundary_2 object
+  /*! obtains a Compare_y_on_boundary_2 object
    */
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(m_base_traits); }
@@ -614,7 +603,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle non
      *             stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -637,10 +626,9 @@ public:
       return m_base->compare_y_near_boundary_2_object()(xcv1.base(),
                                                         xcv2.base(), ce);
     }
-
   };
 
-  /*! Obtain a Compare_y_near_boundary_2 object
+  /*! obtains a Compare_y_near_boundary_2 object
    */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(m_base_traits); }
@@ -655,7 +643,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param tr The base traits class. It must be passed, to handle non
      *           stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -677,10 +665,9 @@ public:
 
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
     { return m_base->parameter_space_in_y_2_object()(xcv.base()); }
-
   };
 
-  /*! Obtain a Parameter_space_in_y_2 function object */
+  /*! obtains a Parameter_space_in_y_2 function object */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(m_base_traits); }
 
@@ -692,7 +679,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param tr The base traits class. It must be passed, to handle non
      *           stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -712,107 +699,19 @@ public:
     { return m_base->is_on_y_identification_2_object()(xcv.base()); }
   };
 
-  /*! Obtain a Is_on_y_identification_2 function object */
+  /*! obtains a Is_on_y_identification_2 function object */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(m_base_traits); }
 
-  /*! A functor that compares the x-limits of curve ends on the
+  /*! A functor that compares the x-coordinates of curve ends and points on the
    * boundary of the parameter space.
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_on_boundary_2 {
   protected:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle non
-     *             stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_at_limit_2(const Gt2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
-
-  public:
-    /*! Use tag dispatching to avoid compilation errors in case the functor
-     * is not defined
-     */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
-    { return m_base->compare_x_at_limit_2_object()(p.base(), xcv.base(), ce); }
-
-    /*! Use tag dispatching to avoid compilation errors in case the functor
-     * is not defined
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
-    {
-      return m_base->compare_x_at_limit_2_object()(xcv1.base(), ce1,
-                                                   xcv2.base(), ce2);
-    }
-  };
-
-  /*! Obtain a Compare_x_at_limit_2 object
-   */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(m_base_traits); }
-
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_limit_2 {
-  protected:
-    //! The base traits.
-    const Gt2* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle non
-     *             stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_limit_2(const Gt2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
-
-  public:
-    /*! Use tag dispatching to avoid compilation errors in case the functor
-     * is not defined
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
-    {
-      return m_base->compare_x_near_limit_2_object()(xcv1.base(), xcv2.base(),
-                                                     ce);
-    }
-
-  };
-
-  /*! Obtain a Compare_x_near_limit_2 object
-   */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(m_base_traits); }
-
-  /*! A functor that compares the x-coordinates of two points on vertical
-   * boundaries.
-   */
-  class Compare_x_on_boundary_2
-  {
-  protected:
-    //! The base traits.
-    const Gt2* m_base;
-
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle non
      *             stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -825,23 +724,23 @@ public:
     friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
-    /*! Use tag dispatching to avoid compilation errors in case the functor
+    /*! uses tag dispatching to avoid compilation errors in case the functor
      * is not defined
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { return m_base->compare_x_on_boundary_2_object()(p1.base(), p2.base()); }
 
-    /*! Use tag dispatching to avoid compilation errors in case the functor
+    /*! uses tag dispatching to avoid compilation errors in case the functor
      * is not defined
      */
-    Comparison_result operator()(const Point_2 & pt,
+    Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
     {
-      return m_base->compare_x_on_boundary_2_object()(pt.base(), xcv.base(), ce);
+      return m_base->compare_x_on_boundary_2_object()(p.base(), xcv.base(), ce);
     }
 
-    /*! Use tag dispatching to avoid compilation errors in case the functor
+    /*! uses tag dispatching to avoid compilation errors in case the functor
      * is not defined
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -854,7 +753,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_on_boundary_2 object
+  /*! obtains a Compare_x_on_boundary_2 object
    */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(m_base_traits); }
@@ -867,7 +766,7 @@ public:
     //! The base traits.
     const Gt2* m_base;
 
-    /*! Constructor.
+    /*! constructs.
      * \param base The base traits class. It must be passed, to handle non
      *             stateless traits objects, (which stores data).
      * The constructor is declared private to allow only the functor
@@ -880,7 +779,7 @@ public:
     friend class Arr_basic_insertion_traits_2<GeometryTraits_2, Arrangement_>;
 
   public:
-    /*! Use tag dispatching to avoid compilation errors in case the functor
+    /*! uses tag dispatching to avoid compilation errors in case the functor
      * is not defined
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -892,12 +791,12 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 object
+  /*! obtains a Compare_x_near_boundary_2 object
    */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(m_base_traits); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

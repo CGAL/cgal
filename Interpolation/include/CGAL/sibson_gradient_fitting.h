@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Julia Floetotto
@@ -31,15 +22,12 @@
 #include <CGAL/Origin.h>
 #include <functional>
 
-#include <boost/any.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <any>
 #include <boost/utility/result_of.hpp>
 
 #include <iterator>
 #include <utility>
 #include <vector>
-
 #include <type_traits>
 #include <functional>
 
@@ -238,11 +226,11 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'DT::Point' or 'DT::Vertex_handle'
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Dt::Point)>,
+                                 std::function<std::any(typename Dt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Point                                         VF_arg_type;
@@ -264,11 +252,11 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              OutputFunctor fct,
                              ValueFunctor value_function,
                              const Traits& traits,
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Dt::Vertex_handle)>,
+                                 std::function<std::any(typename Dt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Dt::Vertex_handle                                 VF_arg_type;
@@ -308,11 +296,11 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              const Traits& traits,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'Rt::Point' (weighted point) or 'Rt::Vertex_handle'
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Rt::Point)>,
+                                 std::function<std::any(typename Rt::Point)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Point                                         VF_arg_type;
@@ -334,11 +322,11 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              OutputFunctor fct,
                              ValueFunctor value_function,
                              const Traits& traits,
-                             typename boost::enable_if_c<
+                             std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Rt::Vertex_handle)>,
+                                 std::function<std::any(typename Rt::Vertex_handle)>,
                                  ValueFunctor
-                             >::value>::type* = nullptr)
+                             >::value>* = nullptr)
 {
   typedef typename Traits::FT                                        FT;
   typedef typename Rt::Vertex_handle                                 VF_arg_type;

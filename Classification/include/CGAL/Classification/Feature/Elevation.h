@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
 
@@ -59,11 +50,9 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Elevation : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
-  typedef Image<float> Image_float;
-  typedef Image<compressed_float> Image_cfloat;
-  typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_float = Image<float>;
+  using Image_cfloat = Image<compressed_float>;
+  using Grid = Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const PointRange& input;
   PointMap point_map;
@@ -72,10 +61,10 @@ class Elevation : public Feature_base
   std::vector<compressed_float> values;
   float z_max;
   float z_min;
-  
+
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -97,8 +86,8 @@ public:
     Image_float dem(grid.width(),grid.height());
 
     z_max = 0.f;
-    z_min = std::numeric_limits<float>::max();
-    
+    z_min = (std::numeric_limits<float>::max)();
+
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
@@ -109,8 +98,8 @@ public:
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_min = (std::min(z_min, z));
-            z_max = (std::max(z_max, z));
+            z_min = ((std::min)(z_min, z));
+            z_max = ((std::max)(z_max, z));
             mean += z;
             ++ nb;
           }
@@ -121,9 +110,9 @@ public:
         }
 
     std::size_t square = (std::size_t)(0.5 * radius_dtm / grid.resolution()) + 1;
-    
+
     Image_float dtm_x(grid.width(),grid.height());
-    
+
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
@@ -141,13 +130,13 @@ public:
           std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
           dtm_x(i,j) = z[z.size() / 10];
         }
-    dem.free();
+    (dem.free)();
 
     if (grid.width() * grid.height() > input.size())
       values.resize (input.size(), compressed_float(0));
     else
       dtm = Image_cfloat(grid.width(),grid.height());
-    
+
     for (std::size_t i = 0; i < grid.width(); ++ i)
       for (std::size_t j = 0; j < grid.height(); ++ j)
         if (grid.has_points(i,j))
@@ -173,7 +162,7 @@ public:
               values[*it] = v;
           }
         }
-    dtm_x.free();
+    (dtm_x.free)();
 
   }
 
@@ -189,7 +178,7 @@ public:
     }
     else
       d = decompress_float (values[pt_index], z_min, z_max);
-    
+
     return ((float)(get(point_map, *(input.begin()+pt_index)).z()-d));
   }
 

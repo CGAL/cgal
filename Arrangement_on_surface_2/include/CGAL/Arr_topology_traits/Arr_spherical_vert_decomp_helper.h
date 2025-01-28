@@ -2,22 +2,13 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_SPHERICAL_VERT_DECOMP_HELPER_H
@@ -53,8 +44,13 @@ private:
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+
+  typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
+                         Face_const_handle>             Cell_type;
+  typedef std::optional<Cell_type>                    Vert_type;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -68,7 +64,7 @@ protected:
   Face_const_handle m_south_face;             // Current south face.
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_spherical_vert_decomp_helper(const Arrangement_2* arr) :
@@ -88,23 +84,23 @@ public:
   void after_handle_event(Event * event);
   //@}
 
-  /*! Get the current top object. */
-  CGAL::Object top_object () const
+  /*! obtains the current top object. */
+  Vert_type top_object () const
   {
     return (m_valid_north_pole) ?
-      CGAL::make_object (m_north_pole) : CGAL::make_object (m_north_face);
+      Vert_type(m_north_pole) : Vert_type(m_north_face);
   }
 
-  /*! Get the current bottom object. */
-  CGAL::Object bottom_object () const
+  /*! obtains the current bottom object. */
+  Vert_type bottom_object () const
   {
     return (m_valid_south_pole) ?
-      CGAL::make_object(m_south_pole) : CGAL::make_object(m_south_face);
+      Vert_type(m_south_pole) : Vert_type(m_south_face);
   }
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -113,14 +109,14 @@ public:
   template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
   void Arr_spherical_vert_decomp_helper<Tr, Arr, Evnt, Sbcv>::before_sweep()
 {
-  // Get the north pole and the face that intially contains it.
+  // Get the north pole and the face that initially contains it.
   m_valid_north_pole = (m_top_traits->north_pole() != nullptr);
   if (m_valid_north_pole)
     m_north_pole = Vertex_const_handle (m_top_traits->north_pole());
 
   m_north_face = Face_const_handle (m_top_traits->spherical_face());
 
-  // Get the south pole and the face that intially contains it.
+  // Get the south pole and the face that initially contains it.
   m_valid_south_pole = (m_top_traits->south_pole() != nullptr);
   if (m_valid_south_pole)
     m_south_pole = Vertex_const_handle (m_top_traits->south_pole());

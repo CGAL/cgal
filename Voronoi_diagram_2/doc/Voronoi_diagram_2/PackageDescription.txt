@@ -2,7 +2,7 @@
 /// \defgroup PkgVoronoiDiagram2Concepts Concepts
 /// \ingroup PkgVoronoiDiagram2Ref
 
-/// \defgroup PkgVoronoiDiagram2Points Voronoi Diagram of Points 
+/// \defgroup PkgVoronoiDiagram2Points Voronoi Diagram of Points
 /// \ingroup PkgVoronoiDiagram2Ref
 
 
@@ -10,6 +10,12 @@
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /// \defgroup PkgVoronoiDiagram2Disks Voronoi Diagram of Disks
+/// \ingroup PkgVoronoiDiagram2Ref
+
+/*!
+\cgalInclude{CGAL/draw_voronoi_diagram_2.h}
+*/
+/// \defgroup PkgDrawVoronoiDiagram2 Draw a 2D Voronoi Diagram
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
@@ -48,7 +54,7 @@ The three template parameters must be models of the
 The first concept is related to the Delaunay graphs that are to be
 adapted, whereas the second one is responsible for
 manipulating/accessing in a unified way the geometry of a specific
-Voronoi diagram as well as for performing nearest site queries. 
+Voronoi diagram as well as for performing nearest site queries.
 The third template parameter corresponds to the chosen adaptation
 policy and provides the necessary types and functors needed for
 performing this adaptation.
@@ -81,5 +87,10 @@ performing this adaptation.
 - `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
 - `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
 
+\cgalCRPSection{Draw Voronoi Diagram}
+
+- \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink
+- `GraphicsSceneOptionsVoronoiDiagram2`
+- `CGAL::Graphics_scene_options_voronoi_2`
 
 */

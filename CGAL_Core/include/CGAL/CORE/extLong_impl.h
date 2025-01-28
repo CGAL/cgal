@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: extLong.cpp
  * Synopsis:
@@ -26,18 +15,18 @@
  *      Level i representation of a number n is just i iterations
  *      of log_2 applied to n.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -48,7 +37,7 @@
 
 #include <CGAL/CORE/extLong.h>
 
-namespace CORE { 
+namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const extLong& extLong::getNaNLong() {
@@ -88,7 +77,7 @@ extLong& extLong::operator+= (const extLong& y) {
   if (flag == 2 || y.flag == 2 || (flag * y.flag < 0)) {
 #ifdef CORE_DEBUG
     if (flag * y.flag < 0) //want a message at the first creation of NaN
-      core_error("extLong NaN Error in addition.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in addition.");
 #endif
 
     *this = CORE_NaNLong;
@@ -107,7 +96,7 @@ extLong& extLong::operator-= (const extLong& y) {
   if (flag == 2 || y.flag == 2 || (flag * y.flag > 0)) {
 #ifdef CORE_DEBUG
     if (flag * y.flag > 0) //want a message at the first creation of NaN
-      core_error("extLong NaN Error in subtraction.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in subtraction.");
 #endif
 
     *this = CORE_NaNLong;
@@ -136,13 +125,13 @@ extLong& extLong::operator*= (const extLong& y) {
     if (std::fabs(d - p) <= std::fabs(d) * relEps) {
       val = p;
       flag = 0;
-    } else if (d > EXTLONG_MAX) {
+    } else if (d > static_cast<double>(EXTLONG_MAX)) {
       *this = CORE_posInfty;
-    } else if (d < EXTLONG_MIN) {
+    } else if (d < static_cast<double>(EXTLONG_MIN)) {
       *this = CORE_negInfty;
     } else {
 #ifdef CORE_DEBUG
-      core_error("extLong NaN Error in multiplication.",__FILE__,__LINE__,false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in multiplication.");
 #endif
       *this = CORE_NaNLong;
     }
@@ -155,9 +144,9 @@ extLong& extLong::operator/= (const extLong& y) {
   if (flag==2 || y.flag==2 || ((flag != 0) && (y.flag != 0)) || (y.val == 0)) {
 #ifdef CORE_DEBUG
     if (y.val == 0)
-      core_error("extLong NaN Error, Divide by Zero.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error, Divide by Zero.");
     else if ((flag !=0) && (y.flag !=0))
-      core_error("extLong NaN Error, +/-Inf/Inf.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error, +/-Inf/Inf.");
 #endif
 
     *this = CORE_NaNLong;
@@ -188,11 +177,10 @@ extLong extLong::operator- () const {
 
 // sign
 //    You should check "flag" before calling this, otherwise
-//    you cannot interprete the returned value!
+//    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
-  if (flag == 2)
-    core_error("NaN Sign can not be determined!", __FILE__, __LINE__, false);
+  CGAL_CORE_warning_msg(flag != 2, "NaN Sign can not be determined!");
   return ((val == 0) ? 0 : ((val > 0) ? 1 : -1));
 }
 

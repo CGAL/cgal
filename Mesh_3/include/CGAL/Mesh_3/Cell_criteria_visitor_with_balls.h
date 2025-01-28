@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -46,7 +37,7 @@ public:
   typedef Abstract_criterion<Tr, Self> Criterion;
   typedef Mesh_3::Cell_radius_criterion<Tr, Self> Cell_radius_criterion;
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
-        
+
   typedef typename Base::Quality Cell_quality;
   typedef typename Base::Is_bad  Is_cell_bad;
   typedef typename Base::Handle  Handle;
@@ -54,13 +45,13 @@ public:
 
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
-  typedef typename Tr::Geom_traits     Gt;
-  typedef typename Gt::FT              FT;
+  typedef typename Tr::Geom_traits     GT;
+  typedef typename GT::FT              FT;
 
   int nb_weighted_points;
   std::vector<Weighted_point> points;
   double radius_ortho_shpere;
-        
+
   typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
   typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -68,9 +59,9 @@ public:
   Cell_criteria_visitor_with_balls(const Tr& tr, const Cell_handle& ch)
     : Base(tr, ch)
   {
-    typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+    typename GT::Compare_weighted_squared_radius_3 compare_sq_radius =
       tr.geom_traits().compare_weighted_squared_radius_3_object();
-    typename Gt::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
+    typename GT::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
       tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
     const Weighted_point& p = tr.point(ch, 0);
@@ -113,7 +104,7 @@ public:
       Base::do_visit(criterion);
     else
       Base::do_visit(criterion);
-                                
+
   }
 
   void visit(const Cell_radius_edge_criterion& criterion)
@@ -132,7 +123,7 @@ public:
 
 };  // end class Cell_criterion_visitor
 
-} // end namespace Mesh_3 
+} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H

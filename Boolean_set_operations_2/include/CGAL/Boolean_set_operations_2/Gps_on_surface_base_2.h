@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
@@ -155,7 +146,7 @@ protected:
 
 public:
 
-  // default costructor
+  // default constructor
   Gps_on_surface_base_2() : m_traits(new Traits_2()),
                             m_traits_adaptor(*m_traits),
                             m_traits_owner(true),
@@ -178,7 +169,7 @@ public:
     m_arr(new Aos_2(*(ps.m_arr)))
   {}
 
-  // Asignment operator
+  // Assignment operator
   Gps_on_surface_base_2& operator=(const Self& ps)
   {
     if (this == &ps)
@@ -465,13 +456,13 @@ public:
   bool is_empty() const
   {
     // We have to check that all the faces of an empty arrangement are not
-    // conained in the polygon set (there can be several faces in an empty
-    // arrangement, dependant on the topology traits.
+    // contained in the polygon set (there can be several faces in an empty
+    // arrangement, dependent on the topology traits.
     // The point is that if the arrangement is "empty" (meaning that no curve
     // or point were inserted and that it is in its original state) then
     // all the faces (created by the topology traits) should have the same
     // result for contained() --- from Boolean operations point of view there
-    // can not be an empty arrangement which has serveral faces with different
+    // can not be an empty arrangement which has several faces with different
     // attributes.
     return (m_arr->is_empty() && !m_arr->faces_begin()->contained());
   }
@@ -651,6 +642,7 @@ public:
     unsigned int i = 1;
     for (InputIterator itr = begin; itr != end; ++itr, ++i)
     {
+      ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }
@@ -675,6 +667,7 @@ public:
     unsigned int i = 1;
     for (InputIterator itr = begin; itr!=end; ++itr, ++i)
     {
+      ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }
@@ -1198,7 +1191,7 @@ protected:
       (*it)->_inner_ccbs().clear();
     }
 
-    // accessor for  low-level arrangement fonctionalities
+    // accessor for  low-level arrangement functionalities
     CGAL::Arr_accessor<Aos_2> accessor(*arr);
     // the face field of outer and inner ccb are used in the loop to access the old face an halfedge
     // used to contribute to. These two vectors are used to delay the association to the new face to
@@ -1476,7 +1469,7 @@ protected:
   bool _is_plane(const Polygon_with_holes_2& pgn) const
   {
     //typedef typename  Traits_2::Is_unbounded  Is_unbounded;
-    bool unbounded = m_traits->construct_is_unbounded_object()(pgn);
+    bool unbounded = m_traits->is_unbounded_object()(pgn);
     std::pair<GP_Holes_const_iterator,
       GP_Holes_const_iterator> pair =
       m_traits->construct_holes_object()(pgn);

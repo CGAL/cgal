@@ -21,7 +21,7 @@ int main()
   p.push_back(Point(2,2));
   p.push_back(Point(0,4));
 
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   std::cout << "created the polygon p:" << std::endl;
   std::cout << p << std::endl;
   std::cout << std::endl;

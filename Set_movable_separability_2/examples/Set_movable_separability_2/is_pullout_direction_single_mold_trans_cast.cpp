@@ -4,13 +4,24 @@
 #include <CGAL/Set_movable_separability_2/Single_mold_translational_casting/is_pullout_direction.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::Vector_2                              	  Vector_2;
-typedef Kernel::Point_2                              	  Point_2;
+typedef Kernel::Vector_2                                        Vector_2;
+typedef Kernel::Point_2                                        Point_2;
 typedef Kernel::Direction_2                               Direction_2;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
 
 namespace SMS = CGAL::Set_movable_separability_2;
 namespace casting = SMS::Single_mold_translational_casting;
+
+template <typename Kernel>
+inline std::pair<typename Kernel::Direction_2, typename Kernel::Direction_2>
+get_segment_outer_circle(const typename Kernel::Segment_2 seg,
+                         const CGAL::Orientation orientation)
+{
+  typename Kernel::Direction_2 forward( seg);
+  typename Kernel::Direction_2 backward(-forward);
+  return (orientation == CGAL::CLOCKWISE) ?
+    std::make_pair(backward, forward) : std::make_pair(forward, backward);
+}
 
 // The main program:
 int main(int  argc, char* argv[])
@@ -33,14 +44,13 @@ int main(int  argc, char* argv[])
          ++index)
   {
     auto orientation = polygon.orientation();
-    auto segment_outer_circle =
-      SMS::internal::get_segment_outer_circle<Kernel>(*e_it, orientation);
+    auto segment_outer_circle = get_segment_outer_circle<Kernel>(*e_it, orientation);
     auto d = segment_outer_circle.first;
     d = d.perpendicular(CGAL::CLOCKWISE);
     auto res = casting::is_pullout_direction(polygon, e_it, d);
     std::cout << "The polygon is " << (res ? "" : "not ")
               << "castable using edge "
-              << index << " in vartical translation (" << d << ")" << std::endl;
+              << index << " in vertical translation (" << d << ")" << std::endl;
 
   }
 

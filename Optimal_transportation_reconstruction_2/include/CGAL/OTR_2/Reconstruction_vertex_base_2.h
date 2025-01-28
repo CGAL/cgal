@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -46,7 +37,7 @@ class Reconstruction_vertex_base_2 : public Vb
 public:
   typedef Vb Base;
   typedef typename Traits_::FT        FT;
-  typedef OTR_2::Sample<Traits_>       Sample_;
+  typedef OTR_2::Sample<Traits_>      Sample_;
   typedef typename Traits_::Point_2   Point;
   typedef typename Base::Face_handle  Face_handle;
 
@@ -59,7 +50,7 @@ public:
 private:
   int       m_id;
   bool      m_pinned;
-  Sample_*  m_sample;
+  int       m_sample;
   Point     m_relocated;
   FT        m_relevance;
 
@@ -69,7 +60,7 @@ public:
   : Base(),
     m_id(-1),
     m_pinned(false),
-    m_sample(nullptr),
+    m_sample(-1),
     m_relevance(0)
 {
 }
@@ -78,7 +69,7 @@ public:
   : Base(p),
     m_id(-1),
     m_pinned(false),
-    m_sample(nullptr),
+    m_sample(-1),
     m_relevance(0)
   {
   }
@@ -87,7 +78,7 @@ public:
   : Base(f),
     m_id(-1),
     m_pinned(false),
-    m_sample(nullptr),
+    m_sample(-1),
     m_relevance(0)
   {
   }
@@ -96,7 +87,7 @@ public:
   : Base(p, f),
     m_id(-1),
     m_pinned(false),
-    m_sample(nullptr),
+    m_sample(-1),
     m_relevance(0)
   {
   }
@@ -112,13 +103,13 @@ public:
   FT relevance() const { return m_relevance; }
   void set_relevance(FT relevance) { m_relevance = relevance; }
 
-  Sample_* sample() const { return m_sample; }
-  void set_sample(Sample_* sample) { m_sample = sample; }
+  int sample() const { return m_sample; }
+  void set_sample(int sample) { m_sample = sample; }
 
   const Point& relocated() const { return m_relocated; }
   Point& relocated() { return m_relocated; }
 
-  bool  has_sample_assigned() const { return sample() != nullptr; }
+  bool  has_sample_assigned() const { return sample() != -1; }
 };
 //---------------STRUCT LESS VERTEX_HANDLE---------------------
 template <class T>

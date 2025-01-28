@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -27,7 +21,6 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
 
-#include <boost/type_traits/is_same.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -38,7 +31,7 @@ _test_fct_weighted_point_3(const R& )
   std::cout << "Testing functions Weighted_point_3" ;
 
   typedef typename  R::RT    RT;
-  const bool nonexact = boost::is_same<RT, double>::value;
+  const bool nonexact = std::is_floating_point<RT>::value;
 
   CGAL::Point_3<R> p1(RT(18), RT(15), RT(-21), RT(3) ); //  6,  5, -7
   CGAL::Point_3<R> p2(RT(18), RT(15), RT( 12), RT(3) ); //  6,  5,  4

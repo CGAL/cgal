@@ -6,7 +6,7 @@
 #include <fstream>
 
 template <typename Point_3>
-bool read_polylines(const char* fname,
+bool read_polylines(const std::string fname,
                     std::vector<std::vector<Point_3> >& polylines)
 {
   std::ifstream ifs(fname);

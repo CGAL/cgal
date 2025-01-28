@@ -1,8 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/grid_simplify_point_set.h>
+
+#include <boost/unordered_set.hpp>
 
 #include <fstream>
 #include <limits>
@@ -27,6 +28,26 @@ void test (bool expr, const char* msg)
     ++ nb_success;
 }
 
+bool copy_and_assignement()
+{
+  Point_set ps1;
+  ps1.add_property_map("prop", int(3));
+  ps1.add_normal_map();
+  Point_set ps2 = ps1;
+  if (!ps2.has_property_map<int>("prop")) return false;
+  if (!ps2.has_normal_map()) return false;
+  Point_set ps3(ps1);
+  if (!ps3.has_property_map<int>("prop")) return false;
+  if (!ps3.has_normal_map()) return false;
+  ps1=Point_set();
+  Point_set ps4 = ps1;
+  if (ps4.has_property_map<int>("prop")) return false;
+  if (ps4.has_normal_map()) return false;
+  Point_set ps5(ps1);
+  if (ps5.has_property_map<int>("prop")) return false;
+  if (ps5.has_normal_map()) return false;
+  return true;
+}
 
 int main (int, char**)
 {
@@ -36,10 +57,12 @@ int main (int, char**)
   point_set.add_normal_map();
   test (point_set.has_normal_map(), "point set should have normals.");
 
-  std::ifstream f ("data/oni.pwn");
-  CGAL::read_xyz_point_set(f, point_set);
-  
-  f.close ();
+  const std::string fname (CGAL::data_file_path("points_3/oni.pwn"));
+  if(!CGAL::IO::read_point_set(fname, point_set))
+  {
+    test (false, "failed to read input point set.");
+    return EXIT_FAILURE;
+  }
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set,
@@ -48,7 +71,7 @@ int main (int, char**)
   std::size_t size = point_set.size ();
   point_set.remove_from (first_to_remove);
   test ((point_set.size() + point_set.garbage_size() == size), "sizes before and after removal do not match.");
- 
+
   Point_set::Point_range
     range = point_set.points();
 
@@ -72,11 +95,11 @@ int main (int, char**)
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
 
   point_set.remove (*(point_set.begin()));
-  
+
   test (point_set.has_garbage(), "point set should have garbage.");
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
-  
+
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   Point_set::Property_map<Color> color_prop;
   bool garbage;
@@ -92,13 +115,12 @@ int main (int, char**)
       test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
 
-  Point_set::Property_map<Color> color_prop_2;
-  boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
-  test ((color_prop_2 == color_prop), "color property not recovered correctly.");
-  
+  std::optional<Point_set::Property_map<Color>> color_prop_2 = point_set.property_map<Color>("color");
+  test ((color_prop_2.value() == color_prop), "color property not recovered correctly.");
+
   point_set.remove_normal_map ();
   test (!(point_set.has_normal_map()), "point set shouldn't have normals.");
-  
+
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
   point_set.remove_property_map<Color> (color_prop);
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
@@ -106,8 +128,13 @@ int main (int, char**)
   point_set.add_property_map<int> ("label", 0);
   point_set.add_property_map<double> ("intensity", 0.0);
 
+  auto pnt = point_set.properties_and_types();
+  std::cerr << "Properties = " << std::endl;
+  for (const auto& p : pnt)
+    std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
+
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
-  
+
   Point p_before = *(point_set.points().begin());
   point_set.clear_properties();
 
@@ -120,7 +147,12 @@ int main (int, char**)
 
   test (p_before == p_after, "points should not change when clearing properties.");
 
+  std::unordered_set<Point_set::Index> std_hash;
+  boost::unordered_set<Point_set::Index> boost_hash;
+
+  test(copy_and_assignement(), "copy and assignement");
+
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
-  
-  return EXIT_SUCCESS;
+
+  return nb_success==nb_test ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -12,6 +12,10 @@ bool approx_equal(double a, double b) {
   return std::abs(boost::math::float_distance(a, b)) <= 1;
 }
 
+bool approx_equal(float a, float b) {
+  return std::abs(boost::math::float_distance(a, b)) <= 1;
+}
+
 struct Xyz_tag {};
 struct Xy_tag {};
 

@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #include <CGAL/Random.h>
@@ -41,7 +32,7 @@ void _test_circular_arc_point_equal(SK sk) {
 
 
 
-  
+
   (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
@@ -51,16 +42,16 @@ void _test_circular_arc_point_equal(SK sk) {
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   CGAL::Random theRandom(random_seed);
   int random_max = 127;
-  int random_min = -127; 
+  int random_min = -127;
 
   std::cout << "Testing Equal_3 for Circular_arc_point_3..." << std::endl;
   for(int i=0; i<100; i++) {
     int a = theRandom.get_int(random_min,random_max);
     int b = theRandom.get_int(random_min,random_max);
     int c = theRandom.get_int(random_min,random_max);
-    Circular_arc_point_3 circ_a_point_test_2 = 
+    Circular_arc_point_3 circ_a_point_test_2 =
       theConstruct_circular_arc_point_3(a,b,c);
-    Circular_arc_point_3 circ_a_point_test_3 = 
+    Circular_arc_point_3 circ_a_point_test_3 =
       theConstruct_circular_arc_point_3(Point_3(a,b,c));
     assert(theEqual_3(circ_a_point_test_2, circ_a_point_test_3));
   }
@@ -100,14 +91,14 @@ void _test_line_arc_equal(SK sk) {
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   (void)/* Construct_plane_3 theConstruct_plane_3 = */ sk.construct_plane_3_object();
-  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = 
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   CGAL::Random theRandom(random_seed);
   int random_max = 127;
-  int random_min = -127; 
+  int random_min = -127;
 
   std::cout << "Testing Equal_3 for Line_arc_3..." << std::endl;
   for(int i=0; i<100; i++) {
@@ -175,7 +166,7 @@ void _test_circular_arc_equal(SK sk) {
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   CGAL::Random theRandom(random_seed);
   int random_max = 127;
-  int random_min = -127; 
+  int random_min = -127;
 
   std::cout << "Testing Equal_3 for Circular_arc_3..." << std::endl;
   for(int i=0; i<100; i++) {
@@ -204,12 +195,12 @@ void _test_circular_arc_equal(SK sk) {
       x = FT(u);
       y = FT(v);
       z = FT(-(a*u + b*v + d))/FT(c);
-    } 
+    }
     const Plane_3 plane = Plane_3(a,b,c,d);
     const Plane_3 plane2 = Plane_3(2*a,2*b,2*c,2*d);
     const FT sqr = FT(r);
     const Point_3 p = Point_3(x,y,z);
-    const Polynomials_for_circle_3 pfc = 
+    const Polynomials_for_circle_3 pfc =
       std::make_pair(Polynomial_for_spheres_2_3(x,y,z,r),
                      Polynomial_1_3(a,b,c,d));
     Circle_3 circle3 = theConstruct_circle_3(pfc);
@@ -299,7 +290,7 @@ void _test_has_on_predicate(SK sk) {
   Circular_arc_point_3 cp_1_p_1 = Circular_arc_point_3(r_1_p_1);
   Circular_arc_point_3 cp_2_p_1 = Circular_arc_point_3(r_2_p_1);
   assert(!theHas_on_3(p_1,cp_2_p_1));
-  
+
   Line_3 l_1 = theConstruct_line_3(Polynomials_for_line_3(1,1,-1,3,1,0));
   Point_3 p_1_l_1 = Point_3(1,3,0);
   Point_3 p_2_l_1 = Point_3(0,4,-1);
@@ -315,7 +306,7 @@ void _test_has_on_predicate(SK sk) {
   Circular_arc_point_3 cp_2_l_1 = Circular_arc_point_3(r_2_l_1);
   assert(!theHas_on_3(l_1,cp_2_l_1));
 
-  const Polynomials_for_circle_3 pc1 = 
+  const Polynomials_for_circle_3 pc1 =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(1,0,0,0));
   Circle_3 c_1 = theConstruct_circle_3(pc1);
@@ -323,7 +314,7 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_2_c_1 = Point_3(0,1,0);
   Point_3 p_3_c_1 = Point_3(1,0,0);
   std::cout << "Testing has_on(Circle,Circular_arc_point)..." << std::endl;
-  const Polynomials_for_circle_3 pc2 = 
+  const Polynomials_for_circle_3 pc2 =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(1,1,1,0));
   Circle_3 c_2 = theConstruct_circle_3(pc2);
@@ -348,7 +339,7 @@ void _test_has_on_predicate(SK sk) {
   std::cout << "Testing has_on(Line_arc,Circular_arc_point)..." << std::endl;
   for(int vx=0;vx<3;vx++) {
     for(int vy=0;vy<3;vy++) {
-      for(int vz=0;vz<3;vz++) { 
+      for(int vz=0;vz<3;vz++) {
         if(vx == 0 && vy == 0 && vz == 0) continue;
         const FT a = FT(vx);
         const FT b = FT(vy);
@@ -377,7 +368,7 @@ void _test_has_on_predicate(SK sk) {
   std::cout << "Testing has_on(Line,Line_arc)..." << std::endl;
   for(int vx=0;vx<3;vx++) {
     for(int vy=0;vy<3;vy++) {
-      for(int vz=0;vz<3;vz++) { 
+      for(int vz=0;vz<3;vz++) {
         if(vx == 0 && vy == 0 && vz == 0) continue;
         const FT a = FT(vx);
         const FT b = FT(vy);
@@ -403,8 +394,8 @@ void _test_has_on_predicate(SK sk) {
 
   std::cout << "Testing has_on(Circular_arc, Circular_arc_point)..." << std::endl;
 
-  // That cover all the cases, since the orientation is setted by default to be the
-  // clockwise orientation for a well defined normal vector (read the comments on 
+  // That cover all the cases, since the orientation is set by default to be the
+  // clockwise orientation for a well defined normal vector (read the comments on
   // include/CGAL/Circular_kernel_3/Circular_arc_3.h)
   Root_for_spheres_2_3 rt[10];
 
@@ -420,12 +411,12 @@ void _test_has_on_predicate(SK sk) {
   rt[8] = Root_for_spheres_2_3(1,0,0);
   rt[9] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 
-  Circular_arc_point_3 cp[10]; 
+  Circular_arc_point_3 cp[10];
   for(int i=0; i<10; i++) {
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
-  const Polynomials_for_circle_3 pcc_test = 
+  const Polynomials_for_circle_3 pcc_test =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(0,0,1,0));
   Circle_3 cc = theConstruct_circle_3(pcc_test);
@@ -462,7 +453,7 @@ void _test_has_on_predicate(SK sk) {
     cp[i] = theConstruct_circular_arc_point_3(rt2[i]);
   }
 
-  const Polynomials_for_circle_3 pcc_test2 = 
+  const Polynomials_for_circle_3 pcc_test2 =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(1,0,0,0));
   Circle_3 cc2 = theConstruct_circle_3(pcc_test2);
@@ -541,7 +532,7 @@ void _test_do_overlap_predicate(SK sk) {
   std::cout << "Testing do_overlap(Line_arc, Line_arc)..." << std::endl;
   for(int vx=0;vx<2;vx++) {
     for(int vy=0;vy<2;vy++) {
-      for(int vz=0;vz<2;vz++) { 
+      for(int vz=0;vz<2;vz++) {
         if(vx == 0 && vy == 0 && vz == 0) continue;
         const FT a = FT(vx);
         const FT b = FT(vy);
@@ -567,9 +558,9 @@ void _test_do_overlap_predicate(SK sk) {
                   assert(theDo_overlap_3(la,lb));
                 } else {
                   assert(!theDo_overlap_3(la,lb));
-                } 
+                }
               }
-            } 
+            }
           }
         }
       }
@@ -588,12 +579,12 @@ void _test_do_overlap_predicate(SK sk) {
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 
-  Circular_arc_point_3 cp[8]; 
+  Circular_arc_point_3 cp[8];
   for(int i=0; i<8; i++) {
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
-  const Polynomials_for_circle_3 pcc_test = 
+  const Polynomials_for_circle_3 pcc_test =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(0,0,1,0));
   Circle_3 cc = theConstruct_circle_3(pcc_test);
@@ -654,10 +645,10 @@ void _test_bounded_side(SK sk) {
         CGAL::Bounded_side b = theBounded_side_3(s,cp);
         if((x*x + y*y + z*z) < 25) {
           assert(b == CGAL::ON_BOUNDED_SIDE);
-					assert(SK().has_on_bounded_side_3_object()(s,cp));
+                                        assert(SK().has_on_bounded_side_3_object()(s,cp));
         } else if((x*x + y*y + z*z) > 25) {
           assert(b == CGAL::ON_UNBOUNDED_SIDE);
-					assert(SK().has_on_unbounded_side_3_object()(s,cp));
+                                        assert(SK().has_on_unbounded_side_3_object()(s,cp));
         } else assert(b == CGAL::ON_BOUNDARY);
       }
     }
@@ -698,26 +689,26 @@ void _test_lexico_operations(SK sk) {
   (void)// Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
 
-	Circular_arc_point_3 p[3];
-	p[0] = Point_3(1,0,0);
-  p[1] = Point_3(1,0,0); 
+        Circular_arc_point_3 p[3];
+        p[0] = Point_3(1,0,0);
+  p[1] = Point_3(1,0,0);
   p[2] = Point_3(0,1,0);
   std::cout << "Testing lexico_operations(Circular_arc_point, Circular_arc_point)..." << std::endl;
-	assert(p[0] > p[2]);
-	assert(p[0] >= p[1]);
-	assert(p[0] <= p[1]);
-	assert(p[2] < p[0]);
+        assert(p[0] > p[2]);
+        assert(p[0] >= p[1]);
+        assert(p[0] <= p[1]);
+        assert(p[2] < p[0]);
 }
 
 template <class SK>
 void _test_compare(SK /*sk*/) {
-	
-	typedef CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
+
+        typedef CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
   typedef CGAL::Point_3<SK>               Point_3;
 
-	Circular_arc_point_3 p[8];
-	p[0] = Point_3(1,0,0);
-  p[1] = Point_3(1,0,0); 
+        Circular_arc_point_3 p[8];
+        p[0] = Point_3(1,0,0);
+  p[1] = Point_3(1,0,0);
   p[2] = Point_3(0,1,0);
   p[3] = Point_3(0,1,0);
   p[4] = Point_3(0,0,1);
@@ -727,25 +718,25 @@ void _test_compare(SK /*sk*/) {
 
   std::cout << "Testing compare..." << std::endl;
 
-	assert(compare_x(p[0], p[2]) == CGAL::LARGER);
-	assert(compare_x(p[2], p[4]) == CGAL::EQUAL);
-	assert(compare_x(p[2], p[0]) == CGAL::SMALLER);
-	
-	assert(compare_y(p[2], p[0]) == CGAL::LARGER);
-	assert(compare_y(p[2], p[3]) == CGAL::EQUAL);
-	assert(compare_y(p[0], p[2]) == CGAL::SMALLER);
-	
-	assert(compare_z(p[4], p[2]) == CGAL::LARGER);
-	assert(compare_z(p[4], p[5]) == CGAL::EQUAL);
-	assert(compare_z(p[2], p[4]) == CGAL::SMALLER);
-	
-	assert(compare_xy(p[6], p[0]) == CGAL::LARGER);
-	assert(compare_xy(p[6], p[6]) == CGAL::EQUAL);
-	assert(compare_xy(p[0], p[6]) == CGAL::SMALLER);
-	
-	assert(compare_xyz(p[7], p[6]) == CGAL::LARGER);
-	assert(compare_xyz(p[7], p[7]) == CGAL::EQUAL);
-	assert(compare_xyz(p[6], p[7]) == CGAL::SMALLER);
+        assert(compare_x(p[0], p[2]) == CGAL::LARGER);
+        assert(compare_x(p[2], p[4]) == CGAL::EQUAL);
+        assert(compare_x(p[2], p[0]) == CGAL::SMALLER);
+
+        assert(compare_y(p[2], p[0]) == CGAL::LARGER);
+        assert(compare_y(p[2], p[3]) == CGAL::EQUAL);
+        assert(compare_y(p[0], p[2]) == CGAL::SMALLER);
+
+        assert(compare_z(p[4], p[2]) == CGAL::LARGER);
+        assert(compare_z(p[4], p[5]) == CGAL::EQUAL);
+        assert(compare_z(p[2], p[4]) == CGAL::SMALLER);
+
+        assert(compare_xy(p[6], p[0]) == CGAL::LARGER);
+        assert(compare_xy(p[6], p[6]) == CGAL::EQUAL);
+        assert(compare_xy(p[0], p[6]) == CGAL::SMALLER);
+
+        assert(compare_xyz(p[7], p[6]) == CGAL::LARGER);
+        assert(compare_xyz(p[7], p[7]) == CGAL::EQUAL);
+        assert(compare_xyz(p[6], p[7]) == CGAL::SMALLER);
 }
 
 template <class SK>

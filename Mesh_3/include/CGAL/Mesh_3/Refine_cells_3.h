@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
 
@@ -35,7 +26,6 @@
   #include <tbb/blocked_range.h>
   #include <tbb/parallel_for.h>
 #endif
-#include <CGAL/atomic.h>
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
 #include <CGAL/Meshes/Filtered_multimap_container.h>
@@ -47,10 +37,8 @@
 
 #include <boost/format.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
-
+#include <atomic>
 
 namespace CGAL {
 
@@ -183,9 +171,9 @@ template<class Tr,
          class Previous_,
          class Concurrency_tag,
 #ifdef CGAL_LINKED_WITH_TBB
-         class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
+         class Container_ = std::conditional_t // (parallel/sequential?)
          <
-          boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+          std::is_convertible_v<Concurrency_tag, Parallel_tag>,
 
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
@@ -220,7 +208,7 @@ template<class Tr,
           Meshes::Double_map_container<typename Tr::Cell_handle,
                                        typename Criteria::Cell_quality>
 # endif
-         >::type // boost::if (parallel/sequential)
+         > // std::conditional (parallel/sequential)
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -328,7 +316,7 @@ public:
                  C3T3& c3t3,
                  std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 );
   // For parallel
@@ -341,7 +329,7 @@ public:
                  WorksharingDataStructureType *worksharing_ds,
                  std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 );
 
@@ -381,7 +369,7 @@ public:
   {
 #ifndef CGAL_NO_ATOMIC
     if(m_stop_ptr != 0 &&
-       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+       m_stop_ptr->load(std::memory_order_acquire) == true)
     {
       return true;
     }
@@ -443,11 +431,12 @@ public:
    && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
     this->remove_element(c);
   #endif
+    CGAL_USE(c);
   }
   // Parallel: it's always lazy, so do nothing
   void remove_element_from_refinement_queue(Cell_handle, Parallel_tag) {}
 
-  /// Handle cells contained in \c zone (before their destruction by insertion)
+  /// Handles cells contained in `zone` (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
 
   bool try_lock_element(const Cell_handle &ch, int lock_radius = 0) const
@@ -478,7 +467,8 @@ public:
   std::string debug_info_element_impl(const Cell_handle &ch) const
   {
     std::stringstream sstr;
-    sstr << "Cell { " << std::endl
+    sstr.precision(17);
+    sstr << "Cell " << (void*)(ch.operator->()) << " { " << std::endl
     << "  " << *ch->vertex(0) << std::endl
     << "  " << *ch->vertex(1) << std::endl
     << "  " << *ch->vertex(2) << std::endl
@@ -487,8 +477,8 @@ public:
 
     return sstr.str();
   }
-  
-  /// Adds \c cell to the refinement queue if needed
+
+  /// Adds `cell` to the refinement queue if needed.
   void treat_new_cell(const Cell_handle& cell);
 
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
@@ -529,7 +519,7 @@ private:
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
-  
+
   // -----------------------------------
   // -----------------------------------
   // -----------------------------------
@@ -540,20 +530,20 @@ private:
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star_self(const Vertex_handle& vertex);
 
-  /// Set \c cell to domain, with subdomain index \c index
+  /// Sets `cell` to domain, with subdomain index `index`.
   void set_cell_in_domain(const Cell_handle& cell,
                           const Subdomain_index& index)
   {
     r_c3t3_.add_to_complex(cell, index);
   }
 
-  /// Removes \c cell from domain
+  /// Removes `cell` from domain.
   void remove_cell_from_domain(const Cell_handle& cell)
   {
     r_c3t3_.remove_from_complex(cell);
   }
 
-  /// Sets index and dimension of vertex \c v
+  /// Sets index and dimension of vertex `v`.
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -581,7 +571,7 @@ private:
 
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+  std::atomic<bool>* const m_stop_ptr;
 #endif
 private:
   // Disabled copy constructor
@@ -603,7 +593,7 @@ Refine_cells_3(Tr& triangulation,
                C3T3& c3t3,
                std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-               , CGAL::cpp11::atomic<bool>* stop_ptr
+               , std::atomic<bool>* stop_ptr
 #endif
                )
   : Mesher_level<Tr, Self, Cell_handle, P_,
@@ -636,7 +626,7 @@ Refine_cells_3(Tr& triangulation,
                WorksharingDataStructureType *worksharing_ds,
                std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-               , CGAL::cpp11::atomic<bool>* stop_ptr
+               , std::atomic<bool>* stop_ptr
 #endif
                )
   : Mesher_level<Tr, Self, Cell_handle, P_,
@@ -671,17 +661,17 @@ scan_triangulation_impl()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Ct, Parallel_tag>::value)
+  if (std::is_convertible<Ct, Parallel_tag>::value)
   {
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (in parallel)";
 # endif
     add_to_TLS_lists(true);
-    
+
     typedef typename Tr::All_cells_iterator All_cells_iterator;
 
     // WITH PARALLEL_FOR
-    // Copy cells into an std::vector to allow the use of tbb::parallel_for
+    // Copy cells into an std::vector to enable the use of tbb::parallel_for
     // which requires random-access.
     // Note that we're using all_cells_begin() instead of finite_cells_begin()
     // because it's faster to do the is_infinite() test in parallel.
@@ -711,15 +701,18 @@ scan_triangulation_impl()
   {
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+    int count = 0;
 #endif
 
-    int count = 0;
+
     for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
         cell_it != r_tr_.finite_cells_end();
         ++cell_it)
     {
       treat_new_cell(cell_it);
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       ++count;
+#endif
     }
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << count << " cells scanned, ";
@@ -755,8 +748,9 @@ int
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 number_of_bad_elements_impl()
 {
-  typedef typename MD::Subdomain Subdomain;
-  typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef std::optional<Subdomain_index>    Subdomain;
+  typedef typename Tr::Finite_cells_iterator  Finite_cell_iterator;
 
   int count = 0;
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
@@ -803,7 +797,7 @@ conflicts_zone_impl(const Weighted_point& point
 
   facet_is_in_its_cz = true; // Always true
 
-  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", 
+  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone",
                           static_cast<unsigned int>(zone.cells.size()));
   return zone;
 }
@@ -932,7 +926,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
-  typedef boost::optional<typename MD::Subdomain_index> Subdomain;
+  typedef std::optional<typename MD::Subdomain_index> Subdomain;
 
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));

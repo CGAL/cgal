@@ -1,4 +1,5 @@
 Algebraic_foundations
+BGL
 Circulator
 Installation
 Interval_support
@@ -7,5 +8,6 @@ Modular_arithmetic
 Number_types
 Polygon
 Profiling_tools
+Property_map
 STL_Extension
 Stream_support

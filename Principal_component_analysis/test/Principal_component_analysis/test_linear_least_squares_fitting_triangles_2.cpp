@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // test for the linear_least_square_fitting() functions.
 #include <CGAL/Simple_cartesian.h>
@@ -52,7 +52,7 @@ void test_1()
   quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,CGAL::Dimension_tag<2>());
   quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
-  
+
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
@@ -94,7 +94,7 @@ void test_2()
   quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
-  
+
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;

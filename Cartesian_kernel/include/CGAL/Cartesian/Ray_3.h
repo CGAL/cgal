@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -52,16 +43,16 @@ public:
   RayC3() {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : base(CGAL::make_array(sp, secondp)) {}
+    : base{sp, secondp} {}
 
   RayC3(const Point_3 &sp, const Vector_3 &v)
-    : base(CGAL::make_array(sp, sp + v)) {}
+    : base{sp, sp + v} {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : base(CGAL::make_array(sp, sp + d.to_vector())) {}
+    : base{sp, sp + d.to_vector()} {}
 
   RayC3(const Point_3 &sp, const Line_3 &l)
-    : base(CGAL::make_array(sp, sp + l.to_vector())) {}
+    : base{sp, sp + l.to_vector()} {}
 
   typename R::Boolean          operator==(const RayC3 &r) const;
   typename R::Boolean          operator!=(const RayC3 &r) const;
@@ -92,7 +83,7 @@ typename R::Boolean
 RayC3<R>::operator==(const RayC3<R> &r) const
 {
     if (CGAL::identical(base, r.base))
-	return true;
+        return true;
     return source() == r.source() && direction() == r.direction();
 }
 

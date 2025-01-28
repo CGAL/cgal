@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/grid_simplify_point_set.h>
 
@@ -29,25 +28,22 @@ void test (bool expr, const char* msg)
 }
 
 void print_point_set (const Point_set& ps, const char* msg)
-                      
+
 {
-  Point_set::Property_map<int> intensity;
-  bool has_intensity;
-  boost::tie (intensity, has_intensity)
+  std::optional<Point_set::Property_map<int>> intensity
     = ps.property_map<int>("intensity");
-  
+
   std::cerr << msg << std::endl;
   for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
   {
     std::cerr << *it << ": " << ps.point(*it);
     if (ps.has_normal_map())
       std::cerr << ", normal " << ps.normal(*it);
-    if (has_intensity)
-      std::cerr << ", intensity " << intensity[*it];
+    if (intensity.has_value())
+      std::cerr << ", intensity " << intensity.value()[*it];
     std::cerr << std::endl;
   }
 }
-
 
 int main (int, char**)
 {
@@ -58,7 +54,7 @@ int main (int, char**)
     ps1.insert (Point (double(i), double(i), double(i)), Vector (double(i), double(i), double(i)));
 
   ps1.remove (ps1.end() - 3);
-  
+
   for (std::size_t i = 5; i < 10; ++ i)
     ps2.insert (Point (double(i), double(i), double(i)));
 
@@ -72,7 +68,7 @@ int main (int, char**)
 
   Point_set ps3;
   ps3.add_normal_map();
-    
+
   Point_set::Property_map<int> intensity;
   bool okay;
 
@@ -89,6 +85,6 @@ int main (int, char**)
   print_point_set (ps1, "PS1 with PS3 properties = ");
   ps1.insert (ps3, *it);
   print_point_set (ps1, "PS1 with PS3 properties + PS3 item copied = ");
-  
+
   return EXIT_SUCCESS;
-};
+}

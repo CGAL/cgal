@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -27,6 +18,8 @@
 #include <CGAL/Three/Buffer_objects.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
+
+#include <memory> // for std::unique_ptr
 
 using namespace CGAL::Three;
 
@@ -159,7 +152,7 @@ public:
   //!
   //! \name Setters for the shaders parameters.
   //!@{
-  
+
   //! Setter for the "selected" uniform parameter.
   void setSelected(bool);
   //! Setter for the "color" parameter.
@@ -172,7 +165,7 @@ public:
   void setTupleSize(int ts);
   //!setter for the clipping. If `b` is `false`, then the clipping box will have no effect.
   void setClipping(bool b);
-  
+
   //!@}
 
   //!
@@ -202,7 +195,7 @@ public:
   //! setter for the texture data at UV coordinates (`i`,`j`).
   void setTextureData  (int i, int j, int r, int g, int b);
   //!
-  //! \brief Returns the `Vao` bound to `viewer`.
+  //! \brief returns the `Vao` bound to `viewer`.
   //!
   Vao* getVao(Viewer_interface* viewer)const;
   //!
@@ -245,10 +238,10 @@ public:
   //! \brief getCenterSize returns the number of instances of
   //! the item in this container.
   std::size_t getCenterSize()const;
-  
+
   //! \name Getters for the shaders parameters.
   //!@{
-  
+
   //! getter for the "selected" parameter
   bool isSelected()const;
   //! getter for the "color" parameter
@@ -257,7 +250,7 @@ public:
   //!
 private:
   friend struct D;
-  mutable D* d;
+  std::unique_ptr<D> d;
 }; //end of class Triangle_container
 
 }

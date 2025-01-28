@@ -12,7 +12,7 @@ int main()
 {
   SM sm;
   Mesh mesh(sm);
-  std::ifstream in("data/cube.off");
+  std::ifstream in(CGAL::data_file_path("meshes/cube.off"));
   in >> sm;
 
   assert( num_vertices(mesh) == num_vertices(sm) );
@@ -22,7 +22,7 @@ int main()
   Mesh mesh2(sm2);
   try {
     if( target( *(halfedges(mesh).first), mesh2) == *(vertices(mesh).first)){
-      CGAL_error_msg("The previous lie should have throw a exception");
+      CGAL_error_msg("The previous line should have throw an exception");
     }
   } catch(...){
     std::cerr << "we caught it" << std::endl;

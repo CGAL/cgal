@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
+//
+// source        :
 // file          : include/CGAL/_test_types.h
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-// Create a mininal traits class
+// Create a minimal traits class
 class Triangulation_test_point {
 public:
   typedef Triangulation_test_point Point;
@@ -39,12 +39,12 @@ public:
   Triangulation_test_point(const Point &p) : _x(p.test_x()), _y(p.test_y()) {}
   Triangulation_test_point(double x, double y) : _x(x), _y(y) {}
   Triangulation_test_point(double hx, double hy, double hw) :
-    _x(hx/hw), _y(hy/hw) 
+    _x(hx/hw), _y(hy/hw)
     {}
 
   TESTFT test_x() const { return _x; }
   TESTFT test_y() const { return _y; }
-  bool   compare(const Point &p) const 
+  bool   compare(const Point &p) const
     { return test_x()==p.test_x()  &&   test_y()==p.test_y(); }
   bool   uncompare(const Point &p) const { return !compare(p); }
   Point  &operator=(const Point &p) { _x=p.test_x(); _y=p.test_y(); return *this; }
@@ -63,7 +63,7 @@ class Triangulation_test_segment {
       : _p(p), _q(q) {}
 
     void test_set(const Point &p, const Point &q) { _p=p; _q=q; }
-    
+
  };
 
 class Triangulation_test_line {
@@ -80,10 +80,10 @@ class Triangulation_test_line {
   Point second_point() const {return _q;}
 
 //     Triangulation_test_direction direction() {
-//     	return Triangulation_test_direction(_p,_q);
+//             return Triangulation_test_direction(_p,_q);
 //     }
 //   Triangulation_test_line opposite() {
-//     	return Triangulation_test_line(_q, _p);
+//             return Triangulation_test_line(_q, _p);
 //     }
 //     void test_set(const Point &p, const Point &q) { _p=p; _q=q; }
 };
@@ -98,10 +98,10 @@ public:
     Triangulation_test_direction() {}
     Triangulation_test_direction(const Point &p, const Point &q)
       : _p(p), _q(q) {}
-    Triangulation_test_direction(const Line &l) 
+    Triangulation_test_direction(const Line &l)
       : _p(l.first_point()), _q(l.second_point()) {}
  //    Triangulation_test_direction perpendicular(const CGAL::Orientation &) const {
-//     	return *this;
+//             return *this;
 //     }
 //     void test_set(const Point &p, const Point &q) { _p=p; _q=q; }
 };
@@ -143,7 +143,7 @@ class Triangulation_test_triangle {
 class Triangulation_test_Less_x_2{
 public:
   typedef Triangulation_test_point  Point;
-  bool operator()( const Point& p, const Point&  q) const 
+  bool operator()( const Point& p, const Point&  q) const
     {
       return (p.test_x() < q.test_x());
     }
@@ -152,7 +152,7 @@ public:
 class Triangulation_test_Less_y_2{
 public:
   typedef Triangulation_test_point  Point;
-  bool operator()( const Point& p, const Point&  q) const 
+  bool operator()( const Point& p, const Point&  q) const
     {
       return (p.test_y() < q.test_y());
     }
@@ -162,7 +162,7 @@ public:
 class Triangulation_test_Compare_x_2{
 public:
   typedef Triangulation_test_point  Point;
-  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
+  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const
     {
       if (p.test_x() < q.test_x()) return CGAL::SMALLER;
       else if (p.test_x() > q.test_x()) return CGAL::LARGER;
@@ -174,7 +174,7 @@ public:
 class Triangulation_test_Compare_y_2{
 public:
   typedef Triangulation_test_point  Point;
-  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const 
+  CGAL::Comparison_result operator()( const Point& p, const Point&  q) const
     {
       if (p.test_y() < q.test_y()) return CGAL::SMALLER;
       else if (p.test_y() > q.test_y()) return CGAL::LARGER;
@@ -187,11 +187,11 @@ class Triangulation_test_Orientation_2
 public:
   typedef Triangulation_test_point  Point;
   CGAL::Orientation
-  operator()( const Point& p, const Point&  q, const Point& r) const 
+  operator()( const Point& p, const Point&  q, const Point& r) const
      {
        typedef Point::TESTFT RT;
-       RT det = (q.test_x()-p.test_x()) * (r.test_y()-p.test_y()) 
-	      - (r.test_x()-p.test_x()) * (q.test_y()-p.test_y());
+       RT det = (q.test_x()-p.test_x()) * (r.test_y()-p.test_y())
+              - (r.test_x()-p.test_x()) * (q.test_y()-p.test_y());
        if ( det < RT(0) ) return CGAL::CLOCKWISE;
        if ( RT(0) < det ) return CGAL::COUNTERCLOCKWISE;
        return CGAL::COLLINEAR;
@@ -203,10 +203,10 @@ class Triangulation_test_Side_of_oriented_circle_2
 {
 public:
   typedef Triangulation_test_point     Point;
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &t) const
+  CGAL::Oriented_side operator() (const Point &p,
+                                  const Point &q,
+                                  const Point &r,
+                                  const Point &t) const
     {
       typedef Point::TESTFT RT;
 
@@ -218,17 +218,17 @@ public:
       RT ry( r.test_y());
       RT tx( t.test_x());
       RT ty( t.test_y());
-      
+
       RT RT0(0);
       RT RT1(1);
 
       RT det = CGAL::determinant(px, py, px*px + py*py, RT1,
-				       qx, qy, qx*qx + qy*qy, RT1,
-				       rx, ry, rx*rx + ry*ry, RT1,
-				       tx, ty, tx*tx + ty*ty, RT1);
+                                       qx, qy, qx*qx + qy*qy, RT1,
+                                       rx, ry, rx*rx + ry*ry, RT1,
+                                       tx, ty, tx*tx + ty*ty, RT1);
 
       return (det<RT0) ? CGAL::ON_NEGATIVE_SIDE
-	: ((det==RT0) ? CGAL::ON_ORIENTED_BOUNDARY : CGAL::ON_POSITIVE_SIDE);
+        : ((det==RT0) ? CGAL::ON_ORIENTED_BOUNDARY : CGAL::ON_POSITIVE_SIDE);
     }
 };
 
@@ -236,9 +236,9 @@ class Triangulation_test_Construct_circumcenter_2
 {
 public:
   typedef Triangulation_test_point     Point;
-  Point  operator() (const Point &p, 
-		     const Point &q,
-		     const Point &r) const
+  Point  operator() (const Point &p,
+                     const Point &q,
+                     const Point &r) const
     {typedef Point::TESTFT FT;
 
       FT px( p.test_x());
@@ -247,7 +247,7 @@ public:
       FT qy( q.test_y());
       FT rx( r.test_x());
       FT ry( r.test_y());
-  
+
       FT px_qx( px - qx);
       FT py_qy( py - qy);
       FT qx_rx( qx - rx);
@@ -258,10 +258,10 @@ public:
       FT px2_py2( px*px + py*py);
       FT qx2_qy2( qx*qx + qy*qy);
       FT rx2_ry2( rx*rx + ry*ry);
-  
+
       FT num_x( px2_py2*qy_ry + qx2_qy2*ry_py + rx2_ry2*py_qy);
       FT num_y( px2_py2*qx_rx + qx2_qy2*rx_px + rx2_ry2*px_qx);
-  
+
       FT den_x( ( px*qy_ry + qx*ry_py + rx*py_qy) * FT( 2));
       FT den_y( ( py*qx_rx + qy*rx_px + ry*px_qx) * FT( 2));
 
@@ -276,7 +276,7 @@ public:
   Point operator()(const Point &p, const Point &q)
     {
       return Point((p.test_x() + q.test_x())/2. ,
-		   (p.test_y() + q.test_y())/2. );
+                   (p.test_y() + q.test_y())/2. );
     }
 };
 
@@ -289,8 +289,8 @@ public:
     {
       Triangulation_test_Construct_midpoint construct_midpoint;
       Point m  = construct_midpoint(p,q);
-      Point mp = Point(m.test_x() + p.test_y() - q.test_y(), 
-		       m.test_y() - p.test_x() + q.test_x());
+      Point mp = Point(m.test_x() + p.test_y() - q.test_y(),
+                       m.test_y() - p.test_x() + q.test_x());
       return Line(m,mp);
     }
 };
@@ -345,13 +345,13 @@ public:
   Triangulation_test_Compare_distance_2() {}
 
   Point::TESTFT sqr(const Point::TESTFT x) const { return x*x; }
-  CGAL::Comparison_result  
+  CGAL::Comparison_result
   operator() ( const Point& p, const Point& q, const Point& r) const
     {
-      Point::TESTFT dq = sqr(p.test_x()-q.test_x()) 
-	               + sqr(p.test_y()-q.test_y());
-      Point::TESTFT dr = sqr(p.test_x()-r.test_x()) 
-	               + sqr(p.test_y()-r.test_y());
+      Point::TESTFT dq = sqr(p.test_x()-q.test_x())
+                       + sqr(p.test_y()-q.test_y());
+      Point::TESTFT dr = sqr(p.test_x()-r.test_x())
+                       + sqr(p.test_y()-r.test_y());
       if( dq < dr) return CGAL::SMALLER ;
       else if (dq == dr) return CGAL::EQUAL;
       return CGAL::LARGER;
@@ -388,7 +388,7 @@ public:
                                              Construct_bisector_2;
   typedef Triangulation_test_Construct_midpoint
                                              Construct_midpoint;
-  typedef Triangulation_test_Compare_distance_2 
+  typedef Triangulation_test_Compare_distance_2
                                              Compare_distance_2;
   typedef Triangulation_test_Construct_segment_2   Construct_segment_2;
   typedef Triangulation_test_Construct_triangle_2  Construct_triangle_2;
@@ -424,7 +424,7 @@ public:
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
     {return Side_of_oriented_circle_2();}
- 
+
   Construct_circumcenter_2
   construct_circumcenter_2_object() const
     { return Construct_circumcenter_2();}
@@ -432,7 +432,7 @@ public:
   Construct_bisector_2
   construct_bisector_2_object() const
     {return Construct_bisector_2();}
-  
+
   Construct_midpoint
   construct_midpoint_object() const
     {return Construct_midpoint();}

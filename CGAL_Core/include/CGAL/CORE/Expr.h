@@ -4,37 +4,26 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Expr.h
  * Synopsis: a class of Expression in Level 3
- * 
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *       Vikram Sharma<sharma@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 // We need to include BigFloat.h here because there is a circular dependency
@@ -47,7 +36,7 @@
 #include <CGAL/CORE/ExprRep.h>
 #include <CGAL/assertions.h>
 
-namespace CORE { 
+namespace CORE {
 
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
@@ -72,20 +61,18 @@ public:
   Expr(unsigned long ul) : RCExpr(new ConstRealRep(Real(ul))) {}
 
   /// constructor for <tt>float</tt>
-  /** \note the results of this constructor may appear unpredictable to the 
+  /** \note the results of this constructor may appear unpredictable to the
    *  user.  E.g.,  one may assume that new Expr(.1) is exactly equal to .1,
    *  but it will be print as
    *      .1000000000000000055511151231257827021181583404541015625.
    *  This is so because .1 cannot be represented exactly as a double
-   *  (or, for that matter, as a binary fraction of any finite length). 
+   *  (or, for that matter, as a binary fraction of any finite length).
    *  The value is the closest double value determined by the compiler.
    */
   Expr(float f) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(f)) {
-      core_error(" ERROR : constructed an invalid float! ", __FILE__, __LINE__, false);
-      if (get_static_AbortFlag())
-        abort();
+      CGAL_error_msg("ERROR : constructed an invalid float! ");
       get_static_InvalidFlag() = -1;
     }
     rep = new ConstDoubleRep(f);
@@ -94,9 +81,7 @@ public:
   Expr(double d) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(d)) {
-      core_error(" ERROR : constructed an invalid double! ", __FILE__, __LINE__, false);
-      if (get_static_AbortFlag())
-        abort();
+      CGAL_error_msg("ERROR : constructed an invalid double! ");
       get_static_InvalidFlag() = -2;
     }
     rep = new ConstDoubleRep(d);
@@ -106,6 +91,14 @@ public:
   Expr(const BigInt& I) : RCExpr(new ConstRealRep(Real(I))) {}
   /// constructor for <tt>BigRat</tt>
   Expr(const BigRat& R) : RCExpr(new ConstRealRep(Real(R))) {}
+  /// constructor from expression template
+  template <class TmplExpr,
+            class = std::enable_if_t<
+              boost::multiprecision::is_number_expression<TmplExpr>::value> >
+  Expr(const TmplExpr& R)
+    : RCExpr(new ConstRealRep(Real(
+        std::conditional_t<boost::multiprecision::number_category<TmplExpr>::value == boost::multiprecision::number_kind_integer,
+        BigInt, BigRat>(R)))) {}
 
   /// constructor for <tt>BigFloat</tt>
   Expr(const BigFloat& F) : RCExpr(new ConstRealRep(Real(F))) {}
@@ -184,9 +177,7 @@ public:
   /// /= operator
   Expr& operator/=(const Expr& e) {
     if ((e.rep)->getSign() == 0) {
-      core_error(" ERROR : division by zero ! ",__FILE__, __LINE__, false);
-      if (get_static_AbortFlag())
-        abort();
+      CGAL_error_msg("ERROR : division by zero ! ");
       get_static_InvalidFlag() = -3;
     }
     *this = new DivRep(rep, e.rep);
@@ -220,7 +211,7 @@ public:
     *this -= 1;
     return *this;
   }
-  /// right deccrement operator (i--)
+  /// right decrement operator (i--)
   Expr operator--(int) {
     Expr t(*this);
     *this -= 1;
@@ -355,7 +346,11 @@ public:
 
 /// I/O Stream operator<<
 inline std::ostream& operator<<(std::ostream& o, const Expr& e) {
-  o << *(const_cast<ExprRep*>(&e.getRep()));
+  if (o.precision() > 17) {
+    o << *(const_cast<ExprRep*>(&e.getRep()));
+  } else {
+    o << e.doubleValue();
+  }
   return o;
 }
 /// I/O Stream operator>>
@@ -363,7 +358,7 @@ inline std::istream& operator>>(std::istream& i, Expr& e) {
   Real rVal;
   i >> rVal; // precision is = get_static_defInputDigits()
   if (i)
-    e = rVal;		// only assign when reading is successful.
+    e = rVal;                // only assign when reading is successful.
   return i;
 }
 
@@ -376,7 +371,7 @@ CGAL_CORE_EXPORT Expr pow(const Expr&, unsigned long);
 inline Expr operator+(const Expr& e1, const Expr& e2) {
   return Expr(new AddRep(e1.Rep(), e2.Rep()));
 }
-/// substraction
+/// subtraction
 inline Expr operator-(const Expr& e1, const Expr& e2) {
   return Expr(new SubRep(e1.Rep(), e2.Rep()));
 }
@@ -387,9 +382,7 @@ inline Expr operator*(const Expr& e1, const Expr& e2) {
 /// division
 inline Expr operator/(const Expr& e1, const Expr& e2) {
   if (e2.sign() == 0) {
-    core_error(" ERROR : division by zero ! ", __FILE__, __LINE__, false);
-    if (get_static_AbortFlag())
-      abort();
+    CGAL_error_msg("ERROR : division by zero ! ");
     get_static_InvalidFlag() = -4;
   }
   return Expr(new DivRep(e1.Rep(), e2.Rep()));
@@ -480,7 +473,7 @@ inline Expr power(const Expr& e, unsigned long p) {
 /** We do not check if e2 is 0.
  * */
 // NOTE:  The name "isDivisible" is not consistent
-// 		with the analogous "divisible" predicate in BigInt!
+//                 with the analogous "divisible" predicate in BigInt!
 inline bool isDivisible(const Expr& e1, const Expr& e2) {
   Expr result;
   floor(e1/e2, result);
@@ -490,9 +483,7 @@ inline bool isDivisible(const Expr& e1, const Expr& e2) {
 /// square root
 inline Expr sqrt(const Expr& e) {
   if (e.sign() < 0) {
-    core_error(" ERROR : sqrt of negative value ! ", __FILE__, __LINE__, false);
-    if (get_static_AbortFlag())
-      abort();
+    CGAL_error_msg("ERROR : sqrt of negative value ! ");
     get_static_InvalidFlag() = -5;
   }
   return Expr(new SqrtRep(e.Rep()));
@@ -521,7 +512,7 @@ inline Expr rootOf(const Polynomial<NT>& p, const BFInterval& I) {
 /// helper function for constructing Polynomial node with pair of BigFloats
 template <class NT>
 inline Expr rootOf(const Polynomial<NT>& p, const BigFloat& x,
-		const BigFloat& y) {
+                const BigFloat& y) {
   return Expr(p, BFInterval(x, y) );
 }
 /// helper function for constructing Polynomial node with pair of doubles

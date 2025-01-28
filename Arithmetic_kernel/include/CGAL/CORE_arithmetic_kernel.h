@@ -1,26 +1,17 @@
 // Copyright (c) 2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 //
 // ============================================================================
 //
-//    \brief provide class LEDA_arithmetic_kernel, a collection of number types. 
+//    \brief provide class LEDA_arithmetic_kernel, a collection of number types.
 //
 
 
@@ -32,7 +23,7 @@
 
 #ifdef CGAL_USE_CORE
 
-#define CGAL_HAS_CORE_ARITHMETIC_KERNEL 
+#define CGAL_HAS_CORE_ARITHMETIC_KERNEL
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
@@ -51,7 +42,7 @@ class CORE_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CORE::BigInt Integer;
-    //! exact float nummber
+    //! exact float number
     typedef CORE::BigRat Exact_float_number;
     //! exact rationals, constructible from integers
     typedef CORE::BigRat Rational;
@@ -65,14 +56,6 @@ public:
 
 
 template <>
-struct Get_arithmetic_kernel<CORE::BigInt>{
-  typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
-struct Get_arithmetic_kernel<CORE::BigRat>{
-  typedef CORE_arithmetic_kernel Arithmetic_kernel;
-};
-template <>
 struct Get_arithmetic_kernel<CORE::Expr>{
   typedef CORE_arithmetic_kernel Arithmetic_kernel;
 };
@@ -82,6 +65,8 @@ struct Get_arithmetic_kernel<CORE::BigFloat>{
 };
 
 } //namespace CGAL
+
+#include <CGAL/BOOST_MP_arithmetic_kernel.h>
 
 #endif // CGAL_USE_CORE
 

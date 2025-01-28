@@ -4,9 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-// workaround a bug in Boost-1.54
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
-
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
@@ -15,11 +13,16 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int /* argc */, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh sm;
-  std::ifstream in(argv[1]);
-  in >> sm;
+  std::string fname = argc==1?CGAL::data_file_path("meshes/knot1.off"):argv[1];
+  if(!CGAL::IO::read_polygon_mesh(fname, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = sm.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 
@@ -40,16 +43,16 @@ int main(int /* argc */, char* argv[])
   for(vertex_descriptor vd : vertices(sm)){
     std::cout <<  "        " << sm.point(vd) << "\n";
   }
-  
+
   std::cout << "        ]\n"
     "     }\n"
-    "      coordIndex [\n"; 
+    "      coordIndex [\n";
   for(vertex_descriptor vd : vertices(sm)){
     if(predecessor[vd]!=vd){
       std::cout << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
     }
   }
-  
+
   std::cout << "]\n"
     "  }#IndexedLineSet\n"
     "}# Shape\n";

@@ -5,10 +5,10 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction` providing the inverse element with 
-respect to multiplication of a `Field`. 
+`AdaptableUnaryFunction` providing the inverse element with
+respect to multiplication of a `Field`.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 
@@ -17,30 +17,30 @@ respect to multiplication of a `Field`.
 class Inverse {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns the inverse element of \f$ x\f$ with respect to multiplication. 
-\pre \f$ x \neq0\f$. 
+returns the inverse element of \f$ x\f$ with respect to multiplication.
+\pre \f$ x \neq0\f$.
 
-*/ 
-result_type operator()(argument_type x) const; 
+*/
+result_type operator()(argument_type x) const;
 
 /// @}
 

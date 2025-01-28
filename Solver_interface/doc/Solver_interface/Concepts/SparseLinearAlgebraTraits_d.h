@@ -1,13 +1,13 @@
 /*!
 \ingroup PkgSolverInterfaceConcepts
-
 \cgalConcept
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>.
 
-\cgalHasModel `CGAL::Eigen_solver_traits<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_solver_traits<T>}
+\cgalHasModelsEnd
 */
-
 class SparseLinearAlgebraTraits_d
 {
 public:
@@ -62,13 +62,14 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied
 by a sparse matrix.
 
-\cgalRefines DefaultConstructible
+\cgalRefines{DefaultConstructible}
 
-\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_vector<T>}
+\cgalHasModelsEnd
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Matrix`
-
 */
 class SparseLinearAlgebraTraits_d::Vector
 {
@@ -126,15 +127,16 @@ NT& operator[](Index row);
 }; /* end Vector */
 
 /*!
-
 \cgalConcept
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
 
-\cgalRefines DefaultConstructible
+\cgalRefines{Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
-\cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_sparse_matrix<T>}
+\cgalHasModels{CGAL::Eigen_sparse_symmetric_matrix<T>}
+\cgalHasModelsEnd
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Vector`
@@ -150,7 +152,6 @@ Index type
 */
 typedef unspecified_type Index;
 
-  
 /*!
 
 */
@@ -214,8 +215,8 @@ in the matrix by setting `new_coef` to `true`.
 void set_coef(Index row, Index column, NT value, bool new_coef = false);
 
 /*!
-swaps the content of `*this` and `m`
- */
+Swaps the content of `*this` and `m`.
+*/
 void swap(Matrix& m);
 
 /// Multiplication with a scalar.

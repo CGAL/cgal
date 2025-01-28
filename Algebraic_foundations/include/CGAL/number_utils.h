@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -29,14 +20,15 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
 
 
-// AST-Functor adapting functions UNARY 
+// AST-Functor adapting functions UNARY
 template< class AS >
-inline 
+inline
 void
 simplify( AS& x ) {
     typename Algebraic_structure_traits< AS >::Simplify simplify;
@@ -55,8 +47,8 @@ unit_part( const AS& x ) {
 template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Is_square::result_type
-is_square( const AS& x, 
-           typename Algebraic_structure_traits< AS >::Is_square::second_argument_type y ) 
+is_square( const AS& x,
+           typename Algebraic_structure_traits< AS >::Is_square::second_argument_type y )
 {
     typename Algebraic_structure_traits< AS >::Is_square is_square;
     return is_square( x, y );
@@ -89,7 +81,7 @@ inverse( const AS& x ) {
 }
 
 template< class AS >
-inline 
+inline
 typename Algebraic_structure_traits<AS>::Is_one::result_type
 is_one( const AS& x ) {
     typename Algebraic_structure_traits< AS >::Is_one is_one;
@@ -112,14 +104,14 @@ typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type>
 ::Integral_division::result_type
 integral_division( const A& x, const B& y ) {
     typedef typename Coercion_traits<A,B>::Type Type;
-    typename Algebraic_structure_traits< Type >::Integral_division 
+    typename Algebraic_structure_traits< Type >::Integral_division
         integral_division;
     return integral_division( x, y );
 }
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type> 
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type>
 ::Divides::result_type
 divides( const A& x, const B& y ) {
   typedef typename Coercion_traits<A,B>::Type Type;
@@ -166,26 +158,26 @@ div( const A& x, const B& y ) {
 }
 
 template< class A, class B >
-inline 
+inline
 void
-div_mod( 
+div_mod(
         const A& x,
         const B& y,
-        typename Coercion_traits<A,B>::Type& q, 
+        typename Coercion_traits<A,B>::Type& q,
         typename Coercion_traits<A,B>::Type& r ) {
     typedef typename Coercion_traits<A,B>::Type Type;
     typename Algebraic_structure_traits< Type >::Div_mod div_mod;
     div_mod( x, y, q, r );
 }
 
-// others 
+// others
 template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Kth_root::result_type
 kth_root( int k, const AS& x ) {
     typename Algebraic_structure_traits< AS >::Kth_root
         kth_root;
-    return kth_root( k, x );                                                                    
+    return kth_root( k, x );
 }
 
 
@@ -194,60 +186,60 @@ inline
 typename Algebraic_structure_traits< typename std::iterator_traits<Input_iterator>::value_type >
 ::Root_of::result_type
 root_of( int k, Input_iterator begin, Input_iterator end ) {
-    typedef typename std::iterator_traits<Input_iterator>::value_type AS; 
+    typedef typename std::iterator_traits<Input_iterator>::value_type AS;
     return typename Algebraic_structure_traits<AS>::Root_of()( k, begin, end );
 }
 
 // AST- and RET-functor adapting function
 template< class Number_type >
-inline 
+inline
 // select a Is_zero functor
-typename boost::mpl::if_c< 
- ::boost::is_same< typename Algebraic_structure_traits< Number_type >::Is_zero,
- Null_functor  >::value ,
+typename std::conditional_t<
+ std::is_same_v< typename Algebraic_structure_traits< Number_type >::Is_zero,
+ Null_functor  >,
   typename Real_embeddable_traits< Number_type >::Is_zero,
   typename Algebraic_structure_traits< Number_type >::Is_zero
->::type::result_type
+>::result_type
 is_zero( const Number_type& x ) {
     // We take the Algebraic_structure_traits<>::Is_zero functor by default. If it
     //  is not available, we take the Real_embeddable_traits functor
-    typename ::boost::mpl::if_c< 
-        ::boost::is_same<
+    std::conditional_t<
+        std::is_same_v<
              typename Algebraic_structure_traits< Number_type >::Is_zero,
-             Null_functor >::value ,
+             Null_functor > ,
        typename Real_embeddable_traits< Number_type >::Is_zero,
-       typename Algebraic_structure_traits< Number_type >::Is_zero >::type
+       typename Algebraic_structure_traits< Number_type >::Is_zero >
        is_zero;
-return is_zero( x );                                                                    
+return is_zero( x );
 }
 
 
 template <class A, class B>
 inline
 typename Real_embeddable_traits< typename Coercion_traits<A,B>::Type >
-::Compare::result_type 
+::Compare::result_type
 compare(const A& a, const B& b)
-{ 
+{
     typedef typename Coercion_traits<A,B>::Type Type;
     typename Real_embeddable_traits<Type>::Compare compare;
     return compare (a,b);
-    // return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL; 
+    // return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL;
 }
 
 
 // RET-Functor adapting functions
 template< class Real_embeddable >
-inline 
-//Real_embeddable 
-typename Real_embeddable_traits< Real_embeddable >::Abs::result_type 
+inline
+//Real_embeddable
+typename Real_embeddable_traits< Real_embeddable >::Abs::result_type
 abs( const Real_embeddable& x ) {
     typename Real_embeddable_traits< Real_embeddable >::Abs abs;
     return abs( x );
 }
 
 template< class Real_embeddable >
-inline 
-//::Sign 
+inline
+//::Sign
 typename Real_embeddable_traits< Real_embeddable >::Sgn::result_type
 sign( const Real_embeddable& x ) {
     typename Real_embeddable_traits< Real_embeddable >::Sgn sgn;
@@ -255,7 +247,7 @@ sign( const Real_embeddable& x ) {
 }
 
 template< class Real_embeddable >
-inline 
+inline
 //bool
 typename Real_embeddable_traits< Real_embeddable >::Is_finite::result_type
 is_finite( const Real_embeddable& x ) {
@@ -263,10 +255,10 @@ is_finite( const Real_embeddable& x ) {
 }
 
 template< class Real_embeddable >
-inline 
+inline
 typename Real_embeddable_traits< Real_embeddable >::Is_positive::result_type
 is_positive( const Real_embeddable& x ) {
-    typename Real_embeddable_traits< Real_embeddable >::Is_positive 
+    typename Real_embeddable_traits< Real_embeddable >::Is_positive
         is_positive;
     return is_positive( x );
 }
@@ -296,7 +288,7 @@ inline
 typename Real_embeddable_traits< Real_embeddable >::To_double::result_type
 //double
 to_double( const Real_embeddable& x ) {
-    typename Real_embeddable_traits< Real_embeddable >::To_double to_double;  
+    typename Real_embeddable_traits< Real_embeddable >::To_double to_double;
     return to_double( x );
 }
 
@@ -305,30 +297,65 @@ inline
 typename Real_embeddable_traits< Real_embeddable >::To_interval::result_type
 //std::pair< double, double >
 to_interval( const Real_embeddable& x) {
-    typename Real_embeddable_traits< Real_embeddable >::To_interval 
+    typename Real_embeddable_traits< Real_embeddable >::To_interval
         to_interval;
     return to_interval( x );
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+typename Coercion_traits<double, NT>::Type
+approximate_sqrt(const NT& x, CGAL::Null_functor)
 {
-  return NT(sqrt(CGAL::to_double(nt)));
+  return sqrt(CGAL::to_double(x));
 }
 
-template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+template <typename NT, typename Sqrt>
+typename Sqrt::result_type
+approximate_sqrt(const NT& nt, Sqrt sqrt)
 {
   return sqrt(nt);
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt)
+decltype(auto) approximate_sqrt(const NT& nt)
 {
+  // the initial version of this function was using Algebraic_category
+  // for the dispatch but some ring type (like Gmpz) provides a Sqrt
+  // functor even if not being Field_with_sqrt.
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  typedef typename AST::Algebraic_category Algebraic_category;
-  return approximate_sqrt(nt, Algebraic_category());
+  typedef typename AST::Sqrt Sqrt;
+  return approximate_sqrt(nt, Sqrt());
 }
+
+template <class NT>
+typename Same_uncertainty_nt<Comparison_result, NT>::type
+compare_quotients(const NT& xnum, const NT& xden,
+                  const NT& ynum, const NT& yden)
+{
+  // No assumptions on the sign of  den  are made
+
+  // code assumes that SMALLER == - 1;
+  CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
+
+  int xsign =  sign(xnum) *  sign(xden) ;
+  int ysign =  sign(ynum) *  sign(yden) ;
+  if (xsign == 0) return static_cast<Comparison_result>(-ysign);
+  if (ysign == 0) return static_cast<Comparison_result>(xsign);
+  // now (x != 0) && (y != 0)
+  int diff = xsign - ysign;
+  if (diff == 0)
+    {
+      int msign =  sign(xden) *  sign(yden);
+      NT leftop  = NT(xnum * yden * msign);
+      NT rightop = NT(ynum * xden * msign);
+      return  CGAL::compare(leftop, rightop);
+    }
+  else
+    {
+      return (xsign < ysign) ? SMALLER : LARGER;
+    }
+}
+
 
 CGAL_NTS_END_NAMESPACE
 } //namespace CGAL

@@ -30,8 +30,7 @@ p = q;
 std::cout << p.x() << " " << p.y() << std::endl;
 \endcode
 
-\cgalModels `Kernel::Point_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Point_2,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -55,6 +54,7 @@ typedef unspecified_type Cartesian_const_iterator;
 /*!
 introduces a variable `p` with %Cartesian coordinates
 \f$ (0,0)\f$.
+\cgalEpicExact
 */
 Point_2(const Origin &ORIGIN);
 
@@ -66,22 +66,25 @@ Point_2(int x, int y);
 /*!
 introduces a point `p` initialized to `(x,y)`
 provided `RT` supports construction from `double`.
+\cgalEpicExact
 */
 Point_2(double x, double y);
 
 /*!
 introduces a point `p` initialized to `(hx/hw,hy/hw)`.
-\pre `hw` \f$ \neq\f$ `Kernel::RT(0)`.
+\pre `hw != Kernel::RT(0)`.
 */
 Point_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1));
 
 /*!
 introduces a point `p` initialized to `(x,y)`.
+\cgalEpicExact
 */
 Point_2(const Kernel::FT &x, const Kernel::FT &y);
 
 /*!
 introduces a point from a weighted point.
+\cgalEpicExact
 
 \warning The `explicit` keyword is used to avoid accidental implicit conversions
          between Point_2 and Weighted_point_2.
@@ -141,11 +144,13 @@ Kernel::RT hw() const;
 
 /*!
 returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
@@ -159,19 +164,23 @@ Kernel::FT y() const;
 
 /*!
 returns the i'th homogeneous coordinate of `p`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `p`.
-\pre \f$ 0\leq i \leq1\f$.
+\pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq1\f$.
+\pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -194,6 +203,7 @@ int dimension() const;
 
 /*!
 returns a bounding box containing `p`.
+\cgalEpicExact
 */
 Bbox_2 bbox() const;
 

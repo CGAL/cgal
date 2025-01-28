@@ -9,13 +9,9 @@
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <fstream>
 #include <cassert>
-
-
-
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
+
 namespace po = boost::program_options;
-#endif
 
 
 typedef PolyhedralSurf::Traits          Kernel;
@@ -44,13 +40,13 @@ typedef boost::associative_property_map< Face2Vector_map > Face2Vector_property_
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
-				    VertexFT_property_map,
-				    VertexVector_property_map > Ridge_approximation;
+                                    VertexFT_property_map,
+                                    VertexVector_property_map > Ridge_approximation;
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-				      VertexFT_property_map,
-				      VertexVector_property_map > Umbilic_approximation;
+                                      VertexFT_property_map,
+                                      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
 VertexFT_map vertex_k1_map, vertex_k2_map,
@@ -83,8 +79,8 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 */
 template <typename VertexPointMap>
 void gather_fitting_points(vertex_descriptor v,
-			   std::vector<Point_3> &in_points,
-			   Poly_rings& poly_rings,
+                           std::vector<Point_3> &in_points,
+                           Poly_rings& poly_rings,
                            VertexPointMap vpm)
 {
   //container to collect vertices of v on the PolyhedralSurf
@@ -145,7 +141,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     assert( d_monge >= 3);
     // run the main fct : perform the fitting
     monge_form = monge_fit(in_points.begin(), in_points.end(),
-			   d_fitting, d_monge);
+                           d_fitting, d_monge);
 
     //switch min-max ppal curv/dir wrt the mesh orientation
     const Vector_3 normal_mesh = computeFacetsAverageUnitNormal(P,v, face2normal_pm, Kernel());
@@ -161,18 +157,18 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     if ( d_monge >= 4) {
       //= 3*b1^2+(k1-k2)(c0-3k1^3)
       vertex_P1_map[v] =
-	3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
-	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
-	*(monge_form.coefficients()[6]
-	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
-	  *monge_form.coefficients()[0]);
+        3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
+        +(monge_form.coefficients()[0]-monge_form.coefficients()[1])
+        *(monge_form.coefficients()[6]
+          -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
+          *monge_form.coefficients()[0]);
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
       vertex_P2_map[v] =
-	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
-	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
-	*(monge_form.coefficients()[10]
-	  -3*monge_form.coefficients()[1]*monge_form.coefficients()[1]
-	  *monge_form.coefficients()[1]);
+        3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
+        +(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
+        *(monge_form.coefficients()[10]
+          -3*monge_form.coefficients()[1]*monge_form.coefficients()[1]
+          *monge_form.coefficients()[1]);
     }
   } //END FOR LOOP
 }
@@ -193,7 +189,7 @@ int main()
    po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<std::string>(&if_name)->default_value("data/poly2x^2+y^2-0.062500.off"),
+      ("input-file,f", po::value<std::string>(&if_name)->default_value(CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off")),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
        "degree of the jet,  3 <= degre-jet <= 4")
@@ -225,12 +221,12 @@ int main()
       if ( int_tag == 3 ) tag_order = CGAL::Ridge_order_3;
       if ( int_tag == 4 ) tag_order = CGAL::Ridge_order_4;
       if ( int_tag != 3 && int_tag != 4 )
-	{std::cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
-	  return 1;}
+        {std::cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
+          return 1;}
     }
-#else 
+#else
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    if_name = "data/poly2x^2+y^2-0.062500.off";
+    if_name = CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off");
     d_fitting = 3;
     d_monge = 3;
     nb_rings = 0;
@@ -258,26 +254,26 @@ int main()
     if (of_name[i] == '/') of_name[i]='_';
   std::ostringstream str_4ogl;
   str_4ogl << "data/"
-	   << of_name << "RIDGES"
-	   << "-d" << d_fitting
-	   << "-m" << d_monge
-	   << "-t" << tag_order
-	   << "-a" << nb_rings
-	   << "-p" << nb_points_to_use
-	   << ".4ogl.txt";
+           << of_name << "RIDGES"
+           << "-d" << d_fitting
+           << "-m" << d_monge
+           << "-t" << tag_order
+           << "-a" << nb_rings
+           << "-p" << nb_points_to_use
+           << ".4ogl.txt";
   std::cout << str_4ogl.str() << std::endl ;
   std::ofstream out_4ogl(str_4ogl.str().c_str() , std::ios::out);
 
   //if verbose only...
   std::ostringstream str_verb;
   str_verb << "data/"
-	   << of_name << "RIDGES"
-	   << "-d" << d_fitting
-	   << "-m" << d_monge
-	   << "-t" << tag_order
-	   << "-a" << nb_rings
-	   << "-p" << nb_points_to_use
-	   << ".verb.txt";
+           << of_name << "RIDGES"
+           << "-d" << d_fitting
+           << "-m" << d_monge
+           << "-t" << tag_order
+           << "-a" << nb_rings
+           << "-p" << nb_points_to_use
+           << ".verb.txt";
   std::cout << str_verb.str() << std::endl ;
   std::ofstream out_verb(str_verb.str().c_str() , std::ios::out);
 
@@ -286,11 +282,11 @@ int main()
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-	  (int)P.size_of_vertices(), (int)P.size_of_facets());
+          static_cast<int>(P.size_of_vertices()), static_cast<int>(P.size_of_facets()));
   if(verbose)
     out_verb << "Polysurf with " << P.size_of_vertices()
-	     << " vertices and " << P.size_of_facets()
-	     << " facets. " << std::endl;
+             << " vertices and " << P.size_of_facets()
+             << " facets. " << std::endl;
 
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())
@@ -311,10 +307,10 @@ int main()
   //--------------------------------------------------------------------------
   std::cout << "Compute ridges..." << std::endl;
   Ridge_approximation ridge_approximation(P,
-					  vertex_k1_pm, vertex_k2_pm,
-					  vertex_b0_pm, vertex_b3_pm,
-					  vertex_d1_pm, vertex_d2_pm,
-					  vertex_P1_pm, vertex_P2_pm );
+                                          vertex_k1_pm, vertex_k2_pm,
+                                          vertex_b0_pm, vertex_b3_pm,
+                                          vertex_d1_pm, vertex_d2_pm,
+                                          vertex_P1_pm, vertex_P2_pm );
   std::vector<Ridge_line*> ridge_lines;
   std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
@@ -325,11 +321,11 @@ int main()
 
   // or with the global function
   CGAL::compute_max_ridges(P,
-			   vertex_k1_pm, vertex_k2_pm,
-			   vertex_b0_pm, vertex_b3_pm,
-			   vertex_d1_pm, vertex_d2_pm,
-			   vertex_P1_pm, vertex_P2_pm,
-			   ii, tag_order);
+                           vertex_k1_pm, vertex_k2_pm,
+                           vertex_b0_pm, vertex_b3_pm,
+                           vertex_d1_pm, vertex_d2_pm,
+                           vertex_P1_pm, vertex_P2_pm,
+                           ii, tag_order);
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(),
     iter_end = ridge_lines.end();
@@ -358,14 +354,14 @@ int main()
 
   //explicit construction of the class
  //  Umbilic_approximation umbilic_approximation(P,
-// 					      vertex_k1_pm, vertex_k2_pm,
-// 					      vertex_d1_pm, vertex_d2_pm);
+//                                               vertex_k1_pm, vertex_k2_pm,
+//                                               vertex_d1_pm, vertex_d2_pm);
 //   umbilic_approximation.compute(umb_it, umb_size);
   //or global function call
   CGAL::compute_umbilics(P,
-			 vertex_k1_pm, vertex_k2_pm,
-			 vertex_d1_pm, vertex_d2_pm,
-			 umb_it, umb_size);
+                         vertex_k1_pm, vertex_k2_pm,
+                         vertex_d1_pm, vertex_d2_pm,
+                         umb_it, umb_size);
 
   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(),
     iter_umb_end = umbilics.end();

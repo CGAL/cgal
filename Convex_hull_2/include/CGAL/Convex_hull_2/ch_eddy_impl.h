@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -29,44 +20,59 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/algorithm.h>
 #include <list>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
 template <class List, class ListIterator, class Traits>
 void
-ch__recursive_eddy(List& L, 
-                        ListIterator  a_it, ListIterator  b_it, 
+ch__recursive_eddy(List& L,
+                        ListIterator  a_it, ListIterator  b_it,
                         const Traits& ch_traits)
 {
-  using namespace boost;
+  typedef typename Traits::Point_2                            Point_2;
 
-  typedef  typename Traits::Point_2                         Point_2;    
-  typedef  typename Traits::Left_turn_2                     Left_turn_2;
-  typedef  typename Traits::Less_signed_distance_to_line_2  Less_dist;
+  typedef typename Traits::Compare_signed_distance_to_line_2  Compare_dist_2;
+  typedef typename Traits::Less_xy_2                          Less_xy_2;
+  typedef typename Traits::Left_turn_2                        Left_turn_2;
 
-  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
-  
-  CGAL_ch_precondition( \
+  Compare_dist_2 cmp_dist = ch_traits.compare_signed_distance_to_line_2_object();
+  Left_turn_2 left_turn = ch_traits.left_turn_2_object();
+  Less_xy_2 less_xy = ch_traits.less_xy_2_object();
+
+  CGAL_precondition( \
     std::find_if(a_it, b_it, \
-                 boost::bind(left_turn, *b_it, *a_it, _1)) \
+                 [&left_turn, a_it, b_it](const Point_2& p)
+                 { return left_turn(*b_it, *a_it, p); }) \
     != b_it );
 
+  const Point_2& a = *a_it;
+  const Point_2& b = *b_it;
 
   ListIterator f_it = std::next(a_it);
-  Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
-  ListIterator 
-      c_it = std::min_element( f_it, b_it,  // max before
-                               boost::bind(less_dist, *a_it, *b_it, _1, _2));
+
+  // We need the farthest point, but since we are on the right side of the line,
+  // signed distances are negative. Hence std::min_element.
+  auto less_dist = [&a, &b, &cmp_dist, &less_xy](const Point_2&p1, const Point_2& p2) -> bool
+  {
+    CGAL::Comparison_result res = cmp_dist(a, b, p1, p2);
+    if(res == CGAL::EQUAL)
+      return less_xy(p1, p2);
+
+    return (res == CGAL::SMALLER);
+  };
+
+  ListIterator c_it = std::min_element( f_it, b_it, less_dist);
   Point_2 c = *c_it;
 
-  c_it = std::partition(f_it, b_it, boost::bind(left_turn, c, *a_it, _1));
-  f_it = std::partition(c_it, b_it, boost::bind(left_turn, *b_it, c, _1));
+  c_it = std::partition(f_it, b_it, [&left_turn, &c, a_it](const Point_2& p)
+                                    {return left_turn(c, *a_it, p);});
+  f_it = std::partition(c_it, b_it, [&left_turn, &c, b_it](const Point_2& p)
+                                    {return left_turn(*b_it, c, p);});
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
@@ -86,14 +92,12 @@ ch_eddy(InputIterator first, InputIterator last,
              OutputIterator  result,
              const Traits& ch_traits)
 {
-  using namespace boost;
-
-  typedef  typename Traits::Point_2                         Point_2;    
+  typedef  typename Traits::Point_2                         Point_2;
   typedef  typename Traits::Left_turn_2                     Left_turn_2;
-  typedef  typename Traits::Equal_2                         Equal_2;   
+  typedef  typename Traits::Equal_2                         Equal_2;
 
-  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();  
-  Equal_2     equal_points = ch_traits.equal_2_object();   
+  Left_turn_2 left_turn    = ch_traits.left_turn_2_object();
+  Equal_2     equal_points = ch_traits.equal_2_object();
 
   if (first == last) return result;
   std::list< Point_2 >   L (first, last);
@@ -111,9 +115,10 @@ ch_eddy(InputIterator first, InputIterator last,
 
   L.erase(w);
   L.erase(e);
-  
-  e = std::partition(L.begin(), L.end(), 
-                     boost::bind(left_turn, ep, wp, _1) );
+
+  e = std::partition(L.begin(), L.end(),
+                     [&left_turn, &wp, &ep](const Point_2& p)
+                     {return left_turn(ep, wp, p);} );
   L.push_front(wp);
   e = L.insert(e, ep);
 
@@ -121,7 +126,8 @@ ch_eddy(InputIterator first, InputIterator last,
   {
       ch__recursive_eddy( L, L.begin(), e, ch_traits);
   }
-  w = std::find_if( e, L.end(), boost::bind(left_turn, wp, ep, _1) );
+  w = std::find_if( e, L.end(), [&left_turn, &wp, &ep](const Point_2& p)
+                                { return left_turn(wp, ep, p); });
   if ( w == L.end() )
   {
       L.erase( ++e, L.end() );
@@ -131,9 +137,9 @@ ch_eddy(InputIterator first, InputIterator last,
   ch__recursive_eddy( L, e, w, ch_traits);
 
 
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( L.begin(), w, ch_traits) );
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( first, last, \
                                    L.begin(), w, ch_traits ) );
 

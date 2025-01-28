@@ -1,8 +1,8 @@
                           input files for test_bop (test boolean operations on two polygons)
                           ------------------------------------------------------------------
 
-strcutre of file:
-----------------
+structure of file:
+-----------------
 
 # first polygon
 T1  # polygon's type : 0 is Polygon_2, 1 is Polygon_with_holes_2
@@ -22,8 +22,8 @@ NUION_RES #if BOOL is 1,NUION_RES is a Polygon_with_holes_2
 N # number of polygon with holes
 POLYGON_WITH_HOLES # (Polygon_with_holes_2)
     |
-    |                        
-    | 
+    |
+    |
 POLYGON_WITH_HOLES # (Polygon_with_holes_2)
 
 # P1 - P2 (difference of P1 and P2)
@@ -65,11 +65,11 @@ example:
 
 # union result
 1  # P1 and P2 intersect
-# the result is Polygon_with_holes_2 (representing the entire plane) 
-0  
+# the result is Polygon_with_holes_2 (representing the entire plane)
+0
 0
 
-# intersection result 
+# intersection result
 1
 3
 0/1 0/1
@@ -115,7 +115,7 @@ example:
 1/1 2/1
 0
 
-# complement of P1 
+# complement of P1
 1
 0
 1

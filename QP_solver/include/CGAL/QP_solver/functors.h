@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Sven Schoenherr 
+//
+// Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
+//                 Franz Wessendorp
 //                 Kaspar Fischer
 
 #ifndef CGAL_QP_SOLVER_FUNCTORS_H
@@ -69,9 +60,9 @@ class QP_vector_accessor : public CGAL::cpp98::unary_function<
     int, typename std::iterator_traits<VectorIt>::value_type > {
 
   public:
-    typedef typename 
+    typedef typename
         CGAL::cpp98::unary_function<
-           int, 
+           int,
            typename std::iterator_traits<VectorIt>::value_type >::result_type
     result_type;
     QP_vector_accessor( VectorIt it, int lower = 0, int upper = 0)
@@ -80,9 +71,9 @@ class QP_vector_accessor : public CGAL::cpp98::unary_function<
 
     result_type  operator ( ) ( int i) const
     {
-	if ( check_lower && i <  l) return z;
-	if ( check_upper && i >= u) return z;
-	return v[ i];
+        if ( check_lower && i <  l) return z;
+        if ( check_upper && i >= u) return z;
+        return v[ i];
     }
 
   private:
@@ -101,36 +92,36 @@ template < class MatrixIt, bool check_1st_lower, bool check_1st_upper,
                            bool check_2nd_lower, bool check_2nd_upper >
 class QP_matrix_accessor {
 
-  public:    
+  public:
     typedef int argument1_type;
     typedef int argument2_type;
     typedef typename std::iterator_traits<MatrixIt>::value_type VectorIt;
     typedef typename std::iterator_traits<VectorIt>::value_type result_type;
 
     QP_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
-			              int lower_2 = 0, int upper_2 = 0)
-	: z( 0), m( it)
+                                      int lower_2 = 0, int upper_2 = 0)
+        : z( 0), m( it)
     {
-	if ( check_1st_lower) l1 = lower_1;
-	if ( check_1st_upper) u1 = upper_1;
-	if ( check_2nd_lower) l2 = lower_2;
-	if ( check_2nd_upper) u2 = upper_2;
+        if ( check_1st_lower) l1 = lower_1;
+        if ( check_1st_upper) u1 = upper_1;
+        if ( check_2nd_lower) l2 = lower_2;
+        if ( check_2nd_upper) u2 = upper_2;
     }
 
     result_type  operator () ( int r, int c) const
     {
-	if ( check_1st_lower && ( r <  l1)) return z;
-	if ( check_1st_upper && ( r >= u1)) return z;
-	if ( check_2nd_lower && ( c <  l2)) return z;
-	if ( check_2nd_upper && ( c >= u2)) return z;
-	return VectorIt(m[ r])[ c];
+        if ( check_1st_lower && ( r <  l1)) return z;
+        if ( check_1st_upper && ( r >= u1)) return z;
+        if ( check_2nd_lower && ( c <  l2)) return z;
+        if ( check_2nd_upper && ( c >= u2)) return z;
+        return VectorIt(m[ r])[ c];
     }
 
   private:
     const result_type  z;
     MatrixIt           m;
     int   l1, u1, l2, u2;
-};		 		 
+};
 
 // ----------------------------------------------------------------------------
 
@@ -140,32 +131,32 @@ class QP_matrix_accessor {
 template < class MatrixIt, typename ResultType >
 class QP_matrix_pairwise_accessor {
   typedef  typename std::iterator_traits<MatrixIt>::value_type  VectorIt;
-  
+
 public:
   typedef int        argument_type;
   typedef ResultType result_type;
-  
+
   // The following default constructor is needed to make it possible
   // to use QP_matrix_pairwise_accessor with CGAL's Join_input_iterator_1
   // (more precisely: once Join_input_iterator_1 should not use an internal
   // mutable variable 'val' anymore, you can remove the following default
   // constructor).
   //QP_matrix_pairwise_accessor() {}
-  
+
   QP_matrix_pairwise_accessor( MatrixIt it, int row)
-    : m (it), v (*(it + row)), r (row)                                  
+    : m (it), v (*(it + row)), r (row)
   {}
-  
+
   ResultType operator () ( int c) const
   {
     // make sure that only entries on or below the diagonal are
     // accessed
     if (c <= r)
-      return ResultType(v[ c]); 
+      return ResultType(v[ c]);
     else
       return ResultType((*(m + c))[ r]);
   }
-  
+
 private:
   MatrixIt           m;
   VectorIt           v;
@@ -190,24 +181,24 @@ class Value_by_basic_index : public CGAL::cpp98::unary_function<
     result_type;
 
     Value_by_basic_index( RndAccIt x_B_O_it, int n_original)
-	: o( x_B_O_it), s( x_B_O_it),
-	  l( n_original), u( n_original+0),
-	  z( 0)
-	{ }
+        : o( x_B_O_it), s( x_B_O_it),
+          l( n_original), u( n_original+0),
+          z( 0)
+        { }
 
     Value_by_basic_index( RndAccIt x_B_O_it, int n_original,
-			  RndAccIt x_B_S_it, int n_slack = 0)
-	: o( x_B_O_it), s( x_B_S_it),
-	  l( n_original), u( n_original+n_slack),
-	  z( 0)
-	{ }
+                          RndAccIt x_B_S_it, int n_slack = 0)
+        : o( x_B_O_it), s( x_B_S_it),
+          l( n_original), u( n_original+n_slack),
+          z( 0)
+        { }
 
     result_type  operator () ( int i) const
         {
-	    if ( i < 0) return z;
-	    if ( i >= l && i < u) return s[ i];
-	    return o[ i];
-	}
+            if ( i < 0) return z;
+            if ( i >= l && i < u) return s[ i];
+            return o[ i];
+        }
 
   private:
     RndAccIt     o, s;
@@ -252,7 +243,7 @@ public:
 private:
   const Map* map; // pointer to map
   mapped_type d;  // default value
-  
+
 public:
   // construction
   Map_with_default ()
@@ -263,6 +254,7 @@ public:
     : map(m), d(v)
   {}
 
+#if defined(BOOST_MSVC) && (_MSC_VER < 1920) // 1920 is Visual Studio 2019 version 16.0.0
   // Added as workaround for VC2017 with /arch:AVX to fix
   // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/QP_solver/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
   Map_with_default& operator=(const Map_with_default& other)
@@ -271,7 +263,8 @@ public:
     d = other.d;
     return *this;
   }
-  
+#endif
+
   // operator()
   const mapped_type& operator() (key_type n) const {
     CGAL_qpe_precondition (map != 0);

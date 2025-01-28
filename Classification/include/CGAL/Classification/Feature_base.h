@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -23,14 +14,14 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <boost/shared_ptr.hpp>
-
+#include <memory>
+#include <string>
 #include <vector>
 
 namespace CGAL {
 
 namespace Classification {
-  
+
 /*!
   \ingroup PkgClassificationFeature
 
@@ -42,7 +33,7 @@ namespace Classification {
 class Feature_base
 {
   std::string m_name;
-  
+
 public:
 
   /// \cond SKIP_IN_MANUAL
@@ -51,18 +42,18 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the name of the feature (initialized to
+    \brief returns the name of the feature (initialized to
     `abstract_feature` for `Feature_base`).
   */
   const std::string& name() const { return m_name; }
 
   /*!
-    \brief Changes the name of the feature.
+    \brief changes the name of the feature.
   */
   void set_name (const std::string& name) { m_name = name; }
-  
+
   /*!
-    \brief Returns the value taken by the feature for at the item for
+    \brief returns the value taken by the feature for at the item for
     the item at position `index`. This method must be implemented by
     inherited classes.
   */
@@ -77,31 +68,34 @@ public:
 
   \brief %Handle to a `Feature_base`.
 
-  \cgalModels Handle
+  \cgalModels{Handle}
 */
 class Feature_handle { };
 #else
-//typedef boost::shared_ptr<Feature_base> Feature_handle;
 
 class Feature_set;
-  
+
 class Feature_handle
 {
   friend Feature_set;
-  
-  boost::shared_ptr<boost::shared_ptr<Feature_base> > m_base;
 
-  template <typename Feature>
-  Feature_handle (Feature* f) : m_base (new boost::shared_ptr<Feature_base>(f)) { }
+  using Feature_base_ptr = std::unique_ptr<Feature_base>;
+  std::shared_ptr<Feature_base_ptr> m_base;
 
-  template <typename Feature>
-  void attach (Feature* f) const
+  template <typename Feature_ptr>
+  Feature_handle (Feature_ptr f)
+    : m_base (std::make_shared<Feature_base_ptr>(std::move(f)))
   {
-    *m_base = boost::shared_ptr<Feature_base>(f);
+  }
+
+  template <typename Feature_ptr>
+  void attach (Feature_ptr f)
+  {
+    *m_base = std::move(f);
   }
 public:
 
-  Feature_handle() : m_base (new boost::shared_ptr<Feature_base>()) { }
+  Feature_handle() : m_base (std::make_shared<Feature_base_ptr>()) { }
 
   Feature_base& operator*() { return **m_base; }
 
@@ -113,8 +107,19 @@ public:
   bool operator< (const Feature_handle& other) const { return *m_base < *(other.m_base); }
   bool operator== (const Feature_handle& other) const { return *m_base == *(other.m_base); }
 };
-  
+
 #endif
+
+/*!
+  \ingroup PkgClassificationFeature
+
+  \brief casts a feature handle to a specialized feature pointer.
+*/
+template <typename FeatureType>
+FeatureType* feature_cast (Feature_handle fh)
+{
+  return dynamic_cast<FeatureType*>(&*(fh));
+}
 
 
 } // namespace Classification

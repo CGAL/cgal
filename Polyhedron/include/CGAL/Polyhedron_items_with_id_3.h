@@ -1,25 +1,19 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H
-#define CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H 1
+#define CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
 #include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
@@ -50,24 +44,24 @@ void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds )
   std::size_t vertex_id   = 0 ;
   std::size_t halfedge_id = 0 ;
   std::size_t face_id     = 0 ;
-  
+
   for ( typename HalfedgeDS_with_id::Vertex_iterator vit = hds.vertices_begin(), evit = hds.vertices_end()
       ; vit != evit
       ; ++  vit
       )
-    vit->id() = vertex_id ++ ;    
-    
+    vit->id() = vertex_id ++ ;
+
   for ( typename HalfedgeDS_with_id::Halfedge_iterator hit = hds.halfedges_begin(), ehit = hds.halfedges_end()
       ; hit != ehit
       ; ++  hit
       )
-    hit->id() = halfedge_id ++ ;    
-    
+    hit->id() = halfedge_id ++ ;
+
   for ( typename HalfedgeDS_with_id::Face_iterator fit = hds.facets_begin(), efit = hds.facets_end()
       ; fit != efit
       ; ++  fit
       )
-    fit->id() = face_id ++ ;    
+    fit->id() = face_id ++ ;
 }
 
 } //namespace CGAL

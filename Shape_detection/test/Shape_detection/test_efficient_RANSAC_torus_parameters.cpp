@@ -12,7 +12,7 @@ template <class K>
 bool test_torus_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
-  
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
@@ -42,7 +42,7 @@ bool test_torus_parameters() {
 
     // Add outliers in second half of rounds.
     if (i >= NB_ROUNDS / 2)
-      for (std::size_t j = 0; j < NB_POINTS / 2; j++) 
+      for (std::size_t j = 0; j < NB_POINTS / 2; j++)
         points.push_back(random_pwn_in<K>(bbox));
 
     Efficient_ransac ransac;
@@ -72,8 +72,8 @@ bool test_torus_parameters() {
     if (shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Torus> torus =
-      boost::dynamic_pointer_cast<Torus>((*shapes.first));
+    std::shared_ptr<Torus> torus =
+      std::dynamic_pointer_cast<Torus>((*shapes.first));
 
     // Check: shape detected is a torus.
     if (!torus)
@@ -82,7 +82,7 @@ bool test_torus_parameters() {
     Point pos = torus->center();
 
     // Check radii and alignment with axis.
-    if (CGAL::abs(major_radius - torus->major_radius()) > (FT) 0.02 
+    if (CGAL::abs(major_radius - torus->major_radius()) > (FT) 0.02
       || CGAL::abs(minor_radius - torus->minor_radius()) > (FT) 0.02
       || CGAL::abs(CGAL::abs(axis * torus->axis()) - 1.0) > (FT) 0.02)
       continue;
@@ -112,7 +112,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_torus_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_torus_parameters<CGAL::Simple_cartesian<float> >()) 
+  if (!test_torus_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_torus_parameters<CGAL::Simple_cartesian<double>> ";
@@ -120,7 +120,7 @@ int main() {
     success = false;
 
   std::cout << "test_torus_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_torus_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_torus_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

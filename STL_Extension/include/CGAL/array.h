@@ -1,20 +1,11 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -22,11 +13,9 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-#  include <array>
-#else
-#  include <boost/array.hpp>
-#endif
+#include <CGAL/type_traits.h>
+#include <array>
+#include <utility>
 
 namespace CGAL {
 
@@ -42,14 +31,14 @@ namespace CGAL {
 // https://lists.boost.org/Archives/boost/2006/08/109003.php
 //
 // C++0x has it under discussion here :
-// http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
+// https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
 
 // Hopefully C++0x will fix this properly with initializer_lists.
 // So, it's temporary, therefore I do not document it and keep it internal.
 
 // NOTE : The above is actually untrue !  It is possible to do :
 //     struct S2 {
-//       typedef boost::array<M,2> Ar;
+//       typedef std::array<M,2> Ar;
 //       Ar m;
 //       S2 (const M&a) : m ((Ar) { { a, a } }) {}
 //     };
@@ -57,25 +46,63 @@ namespace CGAL {
 
 // It's also untrue that this is not documented...  It is !
 
-template< typename T, typename... Args >
-inline
-std::array< T, 1 + sizeof...(Args) >
-make_array(const T & t, const Args & ... args)
-{
-  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
-  return a;
-}
+template <typename T, typename ...Args>
+struct Make_array_element_type {
+  using type = T;
+};
 
+template <typename ...Args>
+struct Make_array_element_type<void, Args...> {
+  using type = typename std::common_type_t<Args...>;
+};
+
+template <typename T, typename ...Args>
+using Make_array_element_type_t = typename Make_array_element_type<T, Args...>::type;
+
+template<typename T = void, typename... Args>
+constexpr
+std::array<Make_array_element_type_t<T, Args...>, sizeof...(Args) >
+make_array(Args&& ... args)
+{
+  using Target_type = Make_array_element_type_t<T, Args...>;
+
+// MSVC 2017 chokes on the following code, so we simplify it for this compiler
+// See https://godbolt.org/z/7Y34Y1c53
+#if ! defined(_MSC_VER) || (_MSC_VER > 1916)
+  if constexpr ( (CGAL::is_convertible_without_narrowing_v<cpp20::remove_cvref_t<Args>, Target_type>&&...) )
+    return {{ std::forward<Args>(args)... }};
+  else
+#endif // not MSVC or MSVC 2019 or later
+  {
+    std::array< Target_type, sizeof...(Args) > a = { { static_cast<Target_type>(args)... } };
+    return a;
+  }
+}
 
 // Functor version
 struct Construct_array
 {
-  template <typename T, typename... Args>
-  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  template <typename... Args>
+  constexpr
+  decltype(auto)
+  operator()(Args&& ... args) const
   {
-    return make_array (t, args...);
+    return make_array( std::forward<Args>(args)... );
   }
 };
+
+template <std::size_t...Is, typename T>
+constexpr std::array<T, sizeof...(Is)>
+make_filled_array_aux(const T& value, std::index_sequence<Is...>)
+{
+  return {(static_cast<void>(Is), value)...};
+}
+
+template <std::size_t N, typename T>
+constexpr std::array<T, N> make_filled_array(const T& value)
+{
+  return make_filled_array_aux(value, std::make_index_sequence<N>());
+}
 
 } //namespace CGAL
 

@@ -3,20 +3,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -25,6 +16,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 
@@ -33,19 +28,19 @@ namespace CGAL {
 namespace Surface_mesher {
 
 template <typename Tr, typename Surface>
-class Vertices_on_the_same_psc_element_criterion : 
+class Vertices_on_the_same_psc_element_criterion :
     public Refine_criterion <Tr> {
 public:
   typedef Refine_criterion <Tr> Criterion;
   typedef typename Criterion::Quality Quality;
-  
+
 private:
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
 
   const Surface& surface;
-  
+
 public:
   Vertices_on_the_same_psc_element_criterion(const Surface& surface)
     : surface(surface)
@@ -59,7 +54,7 @@ public:
     const Vertex_handle& v2 = ch->vertex((i+2)&3);
     const Vertex_handle& v3 = ch->vertex((i+3)&3);
 
-    const bool is_bad = 
+    const bool is_bad =
       surface.vertices_not_on_same_surface_patch(v1, v2, v3);
 
     q = (is_bad ? Quality(0) : Quality(1));

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -112,7 +103,7 @@ protected:
                                         // (stored in the visitor class).
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_unb_planar_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
@@ -121,7 +112,7 @@ public:
     m_he_ind_map_p(nullptr)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_unb_planar_construction_helper(){}
 
   /// \name Notification functions.
@@ -130,8 +121,7 @@ public:
   /* A notification issued before the sweep process starts. */
   virtual void before_sweep();
 
-  /*!
-   * A notification invoked before the sweep-line starts handling the given
+  /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */
   virtual void before_handle_event(Event* event);
@@ -141,11 +131,11 @@ public:
                             Subcurve* /* sc */)
   {}
 
-  /*! Collect a subcurve index that does not see any status-line from below. */
+  /*! collects a subcurve index that does not see any status-line from below. */
   void add_subcurve_in_top_face(unsigned int index)
   { m_subcurves_at_ubf.push_back(index); }
 
-  /*! Get the indices of the halfedges below the subcurve. */
+  /*! obtains the indices of the halfedges below the subcurve. */
   Indices_list& halfedge_indices_list() { return (m_subcurves_at_ubf); }
 
 
@@ -159,33 +149,31 @@ public:
   }
   //@}
 
-  /*!
-   * Set the map that maps each halfedge to the list of subcurve indices
+  /*! sets the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
   { m_he_ind_map_p = &table; }
 
-  /*!
-   * Determine if we should swap the order of predecessor halfedges when
+  /*! determines if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
   bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the top edge of the
     // ficititous bounding rectangle, we have to flip the order of predecessor
-    // halfegdes.
+    // halfedges.
     return ((event->parameter_space_in_x() == ARR_INTERIOR) &&
             (event->parameter_space_in_y() == ARR_TOP_BOUNDARY));
   }
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   Face_handle top_face() const
   { return (m_th->face()); }
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -281,6 +269,21 @@ before_handle_event(Event* event)
     if (m_prev_minus_inf_x_event != nullptr)
       m_prev_minus_inf_x_event->set_halfedge_handle(m_lh->next());
     m_prev_minus_inf_x_event = event;
+
+    // If the event lies also on the top boundary, associate all curve indices
+    // of subcurves that "see" m_th from below with the top fictitious halfedge
+    // (m_th->next()).
+    if (ps_y == ARR_TOP_BOUNDARY) {
+      if (m_he_ind_map_p != nullptr) {
+        Indices_list& list_ref = (*m_he_ind_map_p)[m_th];
+        list_ref.clear();
+        list_ref.splice(list_ref.end(), m_subcurves_at_ubf);
+      }
+      else {
+        m_subcurves_at_ubf.clear();
+      }
+      CGAL_assertion(m_subcurves_at_ubf.empty());
+    }
     return;
 
    case ARR_RIGHT_BOUNDARY:

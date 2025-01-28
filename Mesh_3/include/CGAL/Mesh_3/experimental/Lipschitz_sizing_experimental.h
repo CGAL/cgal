@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -26,11 +17,11 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
-#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
+#include <CGAL/Mesh_3/experimental/Facet_patch_id_map.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 
@@ -38,7 +29,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <sstream>
@@ -54,7 +45,7 @@ namespace Mesh_3
 template <class Kernel, class MeshDomain
         , typename AABBTreeTemplate = CGAL::Default
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-        , typename Get_facet_patch_id_ = CGAL::Default
+        , typename Facet_patch_id_map_ = CGAL::Default
         , typename Patches_ids_ = CGAL::Default
 #endif
 >
@@ -67,8 +58,8 @@ public:
   typedef typename Kernel::Point_3    Point_3;
 
   typedef typename std::list<Triangle>::iterator        Tr_iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Tr_iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive>               AABB_tr_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Tr_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive>             AABB_tr_traits;
   typedef CGAL::AABB_tree<AABB_tr_traits>               AABB_tree;
 
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;
@@ -86,12 +77,12 @@ public:
   typedef std::vector<Patches_ids>                      Patches_ids_map;
 
   typedef typename CGAL::Default::Get<
-    Get_facet_patch_id_,
-    CGAL::Mesh_3::Get_facet_patch_id<typename Tree::Primitive>
-  >::type                                               Get_facet_patch_id;
+    Facet_patch_id_map_,
+    CGAL::Mesh_3::Facet_patch_id_map<MeshDomain, typename Tree::Primitive>
+  >::type                                               Facet_patch_id_map;
 
   typedef CGAL::Mesh_3::Filtered_projection_traits<
-    typename Tree::AABB_traits, Get_facet_patch_id>     AABB_filtered_traits;
+    typename Tree::AABB_traits, Facet_patch_id_map>     AABB_filtered_traits;
 
 private:
   typedef CGAL::Search_traits_3<Kernel>                 KdTreeTraits;
@@ -102,7 +93,7 @@ private:
 private:
   //only one of these aabb_trees is needed
   const Tree* m_ptree;
-  boost::shared_ptr<Tree> m_own_ptree;
+  std::shared_ptr<Tree> m_own_ptree;
 
   const MeshDomain& m_domain;
   Parameters m_params;
@@ -113,9 +104,9 @@ private:
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   //help to accelerate aabb_tree queries in m_ptree
-  boost::shared_ptr<Kd_tree> m_kd_tree;
+  mutable std::shared_ptr<Kd_tree> m_kd_tree;
 
-  Get_facet_patch_id m_get_facet_patch_id;
+  Facet_patch_id_map m_facet_patch_id_map;
   const Patches_ids_map& patches_ids_map;
 #endif
 
@@ -145,7 +136,7 @@ public:
     , m_bbox(bbox)
     , m_domain_is_a_box(domain_is_a_box)
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-    , m_get_facet_patch_id()
+    , m_facet_patch_id_map()
     , patches_ids_map(patches_ids_map)
 #endif
   {
@@ -210,7 +201,7 @@ public:
       const typename MeshDomain::Curve_index& curve_id =
         m_domain.curve_index(index);
       const Patches_ids& ids = patches_ids_map[curve_id];
-      
+
       if (m_domain_is_a_box && ids.size() == 2)
       {
         //we are on an edge of the box
@@ -319,7 +310,6 @@ public:
 
     m_own_ptree.reset(new Tree(triangles.begin(), triangles.end()));
     m_own_ptree->build();
-    m_own_ptree->accelerate_distance_queries();
   }
 
 private:
@@ -397,7 +387,7 @@ private:
   }
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-  void kd_tree()
+  void kd_tree() const
   {
     typedef typename MeshDomain::Polyhedron Polyhedron;
     if(m_kd_tree.get() == 0) {
@@ -435,7 +425,7 @@ private:
                                         boundary_ids.begin(),
                                         boundary_ids.end(),
                                         m_ptree->traits(),
-                                        m_get_facet_patch_id);
+                                        m_facet_patch_id_map);
     kd_tree();//build it if needed
     Neighbor_search search(*m_kd_tree, p, 1);
     projection_traits.reset(search.begin()->first);

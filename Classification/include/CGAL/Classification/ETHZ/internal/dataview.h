@@ -1,32 +1,19 @@
 // Copyright (c) 2014 Stefan Walk
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in
-// the Software without restriction, including without limitation the rights to
-// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-// of the Software, and to permit persons to whom the Software is furnished to do
-// so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: LicenseRef-RFL
+// License notice in Installation/LICENSE.RFL
 //
 // Author(s)     : Stefan Walk
 
 // Modifications from original library:
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
+//
+
 
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_DATAVIEW_H
@@ -34,7 +21,7 @@
 #include <vector>
 
 namespace CGAL { namespace internal {
-    
+
 namespace liblearning {
 //! \brief A view for one-dimensional data
 //
@@ -62,7 +49,7 @@ struct DataView1D {
         data(&vec[0]), step(1), num_elements(vec.size())
     {
     }
-    
+
     //! \brief Construct empty view
     DataView1D() : data(0), step(1), num_elements(0)
     {
@@ -92,17 +79,17 @@ struct DataView2D {
     {
         return *(data + row_step * row_idx + col_step * col_idx);
     }
-    //! \brief Return a 1D view of a row
+    //! \brief returns a 1D view of a row
     DataView1D<ElementType> row(size_t row_idx)
     {
         return DataView1D<ElementType>(data + row_step * row_idx, cols, col_step);
     }
-    //! \brief Return a 1D view of a column
+    //! \brief returns a 1D view of a column
     DataView1D<ElementType> col(size_t col_idx)
     {
         return DataView1D<ElementType>(data + col_step * col_idx, rows, row_step);
     }
-    //! \brief Return a new view, using a subset of rows
+    //! \brief returns a new view, using a subset of rows
     DataView2D row_range(size_t start_row, size_t end_row) const
     {
         DataView2D ret(*this);
@@ -110,7 +97,7 @@ struct DataView2D {
         ret.rows = end_row - start_row;
         return ret;
     }
-    //! \brief Return a new view, using a subset of columns
+    //! \brief returns a new view, using a subset of columns
     DataView2D col_range(size_t start_col, size_t end_col) const
     {
         DataView2D ret(*this);
@@ -118,7 +105,7 @@ struct DataView2D {
         ret.cols = end_col - start_col;
         return ret;
     }
-    //! \brief Transpose the matrix (actually done by swapping the steps, no
+    //! \brief transposes the matrix (actually done by swapping the steps, no
     //                               copying)
     DataView2D transpose() const
     {
@@ -137,23 +124,23 @@ struct DataView2D {
     {
         return DataView2D(vec.data, 1, vec.num_elements);
     }
-    //! \brief Return the number of elements in this view
+    //! \brief returns the number of elements in this view
     size_t num_elements() { return rows * cols; }
-    //! \brief Return true if the view is empty (no elements)
+    //! \brief returns true if the view is empty (no elements)
     bool   empty() { return num_elements() == 0; }
-    //! \brief Return true if rows in this view are continuous in memory
+    //! \brief returns true if rows in this view are continuous in memory
     bool row_continuous() {
         return col_step == 1;
     }
-    //! \brief Return true if columns in this view are continuous in memory
+    //! \brief returns true if columns in this view are continuous in memory
     bool col_continuous() {
         return row_step == 1;
     }
-    //! \brief Get pointer to row (only valid if row-continuous)
+    //! \brief gets pointer to row (only valid if row-continuous)
     ElementType* row_pointer(size_t row_idx) {
         return data + row_idx * row_step;
     }
-    //! \brief Get pointer to column (only valid if column-continuous)
+    //! \brief gets pointer to column (only valid if column-continuous)
     ElementType* col_pointer(size_t col_idx) {
         return data + col_idx * col_step;
     }
@@ -165,7 +152,7 @@ struct DataView2D {
     size_t cols; //!< Number of columns in the view
 };
 
-//! \brief Determine if two 2D views have the same dimensions
+//! \brief determines if two 2D views have the same dimensions
 template <typename A, typename B>
 bool equal_dims(DataView2D<A> view_a, DataView2D<B> view_b)
 {

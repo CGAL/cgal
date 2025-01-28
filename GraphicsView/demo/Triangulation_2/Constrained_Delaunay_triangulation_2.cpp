@@ -24,10 +24,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/write_vtu.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/write_VTU.h>
 #include <CGAL/IO/WKT.h>
-#endif
 
 // Qt headers
 #include <QtGui>
@@ -89,7 +87,7 @@ discoverInfiniteComponent(const CDT & ct)
     Face_handle fh = queue.front();
     queue.pop_front();
     fh->set_in_domain(false);
-    
+
     for(int i = 0; i < 3; i++)
     {
       Face_handle fi = fh->neighbor(i);
@@ -101,7 +99,7 @@ discoverInfiniteComponent(const CDT & ct)
 }
 
 template<typename SeedList>
-void 
+void
 discoverComponents(const CDT & ct,
                    const SeedList& seeds)
 {
@@ -124,7 +122,7 @@ discoverComponents(const CDT & ct,
   {
     typename CDT::Face_handle fh_loc = ct.locate(*sit);
 
-    if(fh_loc == NULL || !fh_loc->is_in_domain())
+    if(fh_loc == nullptr || !fh_loc->is_in_domain())
       continue;
 
     std::list<typename CDT::Face_handle> queue;
@@ -146,7 +144,7 @@ discoverComponents(const CDT & ct,
       }
     }
   }
-} 
+}
 
 
 
@@ -155,9 +153,9 @@ class MainWindow :
   public Ui::Constrained_Delaunay_triangulation_2
 {
   Q_OBJECT
-  
-private:  
-  CDT cdt; 
+
+private:
+  CDT cdt;
   QGraphicsScene scene;
   std::list<Point_2> m_seeds;
 
@@ -173,7 +171,7 @@ public:
   void clear();
 
 private:
-  template <typename Iterator> 
+  template <typename Iterator>
   void insert_polyline(Iterator b, Iterator e)
   {
     Point_2 p, q;
@@ -190,7 +188,7 @@ private:
         vh = wh;
         p = q;
       } else {
-        std::cout << "duplicate point: " << p << std::endl; 
+        std::cout << "duplicate point: " << p << std::endl;
       }
     }
     Q_EMIT( changed());
@@ -218,9 +216,9 @@ public Q_SLOTS:
   void on_actionShow_seeds_toggled(bool checked);
 
   void on_actionInsertPolyline_toggled(bool checked);
-  
+
   void on_actionInsertSeeds_OnOff_toggled(bool checked);
-  
+
   void on_actionCircumcenter_toggled(bool checked);
 
   void on_actionClear_triggered();
@@ -230,7 +228,7 @@ public Q_SLOTS:
   void on_actionLoadConstraints_triggered();
 
   void loadWKT(QString);
-  
+
   void loadFile(QString);
 
   void loadPolyConstraints(QString);
@@ -274,7 +272,7 @@ MainWindow::MainWindow()
   QColor facesColor(::Qt::blue);
   facesColor.setAlpha(150);
   dgi->setFacesInDomainBrush(facesColor);
-    
+
   QObject::connect(this, SIGNAL(changed()),
                    dgi, SLOT(modelChanged()));
   dgi->setVerticesPen(
@@ -288,30 +286,30 @@ MainWindow::MainWindow()
   scene.addItem(dgi);
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
-  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
+  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
                    this, SLOT(processInput(CGAL::Object)));
-  
+
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  
+
   dms = new CGAL::Qt::DelaunayMeshInsertSeeds<CDT>(&scene, &cdt, this);//input seeds
   QObject::connect(dms, SIGNAL(generate(CGAL::Object)),
                    this, SLOT(processInput(CGAL::Object)));
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
                    this, SLOT(close()));
-  
+
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPolyline);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPolyline->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
   this->actionShowVertices->setChecked(true);
@@ -332,7 +330,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -341,7 +339,9 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Constrained_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+#if QT_SVG_LIB
   this->setupExportSVG(this->actionExport_SVG, this->graphicsView);
+#endif
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
@@ -378,10 +378,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -478,7 +478,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
   if(checked){
     scene.installEventFilter(tcc);
     tcc->show();
-  } else {  
+  } else {
     scene.removeEventFilter(tcc);
     tcc->hide();
   }
@@ -502,7 +502,7 @@ MainWindow::clear()
     dgi->setVisibleSeeds(true, m_seeds.end(), m_seeds.end());
 }
 
-void 
+void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
@@ -528,9 +528,7 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
     } else if(fileName.endsWith(".wkt")){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKT(fileName);
-#endif
     }
     this->addToRecentFiles(fileName);
   }
@@ -542,116 +540,52 @@ void
 MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Constraint File"),
-						  ".",
-						  tr("Edge files (*.edg);;"
+                                                  tr("Open Constraint File"),
+                                                  ".",
+                                                  tr("Edge files (*.edg);;"
                                                      "Polyline files (*.polygons.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "Plg files (*.plg);;"
                                                      "CGAL files (*.cpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.WKT *.wkt);;"
-                                                   #endif
                                                      "All (*)"));
   open(fileName);
 }
 
-void 
-MainWindow::loadWKT(QString
-                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-                    filename
-                    #endif
-                    )
+void
+MainWindow::loadWKT(QString filename)
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
-  do
-  {
-    typedef CGAL::Polygon_with_holes_2<K> Polygon;
-    typedef CGAL::Point_2<K> Point;
-    std::vector<Polygon> mps;
-    CGAL::read_multi_polygon_WKT(ifs, mps);
-    BOOST_FOREACH(const Polygon& p, mps)
-    {
-      if(p.outer_boundary().is_empty())
-        continue;
-      
-      BOOST_FOREACH(Point point, p.outer_boundary().container())
-          cdt.insert(point);
-      for(Polygon::General_polygon_2::Edge_const_iterator 
-          e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
-        cdt.insert_constraint(e_it->source(), e_it->target());
-      
-      for(Polygon::Hole_const_iterator h_it = 
-          p.holes_begin(); h_it != p.holes_end(); ++h_it)
-      {                  
-        BOOST_FOREACH(Point point, h_it->container())
-            cdt.insert(point);
-        for(Polygon::General_polygon_2::Edge_const_iterator 
-            e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
-        {
-          cdt.insert_constraint(e_it->source(), e_it->target());
-        }
-      }
+
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef CGAL::Point_2<K> Point;
+
+  std::deque<Point> points;
+  std::deque<std::vector<Point>> linestrings;
+  std::deque<Polygon> polygons;
+
+  CGAL::IO::read_WKT(ifs, points, linestrings, polygons);
+
+  cdt.insert(points.begin(),points.end());
+
+  for(const std::vector<Point>& line : linestrings){
+    cdt.insert_constraint(line.begin(), line.end());
+  }
+
+  for(const Polygon& p : polygons){
+    if(p.outer_boundary().is_empty())
+      continue;
+
+    cdt.insert_constraint(p.outer_boundary().vertices_begin(), p.outer_boundary().vertices_end(),true);
+
+    for(Polygon::Hole_const_iterator h_it = p.holes_begin(); h_it != p.holes_end(); ++h_it){
+      cdt.insert_constraint(h_it->vertices_begin(), h_it->vertices_end(),true);
     }
-  }while(ifs.good() && !ifs.eof());
-  //Edges
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    typedef std::vector<K::Point_2> LineString;
-    std::vector<LineString> mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
-    BOOST_FOREACH(const LineString& ls, mls)
-    {
-      if(ls.empty())
-        continue;
-      K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
-      bool first = true;
-      CDT::Vertex_handle vp, vq, vqold;
-      LineString::const_iterator it = 
-          ls.begin();
-      for(; it != ls.end(); ++it) {
-        p = *it++;
-        q = *it;
-        if(p == q){
-          continue;
-        }
-        if((!first) && (p == qold)){
-          vp = vqold;
-        } else {
-          vp = cdt.insert(p);
-        }
-        vq = cdt.insert(q, vp->face());
-        if(vp != vq) {
-          cdt.insert_constraint(vp,vq);
-        }
-        qold = q;
-        vqold = vq;
-        first = false;
-      }
-    }
-  }while(ifs.good() && !ifs.eof());
-  
-  //Points
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    std::vector<K::Point_2> mpts;
-    CGAL::read_multi_point_WKT(ifs, mpts);
-    BOOST_FOREACH(const K::Point_2& p, mpts)
-    {
-      cdt.insert(p);
-    }
-  }while(ifs.good() && !ifs.eof());
-  
+  }
+
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
-#endif
 }
 
 void
@@ -669,7 +603,7 @@ void
 MainWindow::loadPolyConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
-  read_triangle_poly_file(cdt,ifs);
+  CGAL::IO::read_triangle_poly_file(cdt,ifs);
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
@@ -704,7 +638,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
       cdt.insert_constraint(vp, vfirst);
     }
   }
-  
+
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
@@ -722,7 +656,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   bool first=true;
   int n;
   ifs >> n;
-  
+
   K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
 
   CDT::Vertex_handle vp, vq, vqold;
@@ -759,7 +693,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -768,8 +702,8 @@ MainWindow::on_actionSaveConstraints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 
-						  tr("Save Constraints"),
-						  ".",
+                                                  tr("Save Constraints"),
+                                                  ".",
                                                   tr("CGAL files (*.cpts.cgal);;"
                                                      "VTU files (*.vtu);;"
                                                      "All (*)"));
@@ -783,12 +717,12 @@ void
 MainWindow::saveConstraints(QString fileName)
 {
   std::ofstream output(qPrintable(fileName));
-  
+
   if(!fileName.endsWith("vtu") && output)
     output << cdt;
   else if (output)
   {
-    CGAL::write_vtu(output, cdt);
+    CGAL::IO::write_VTU(output, cdt);
   }
 }
 
@@ -850,9 +784,9 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
-      m_seeds.begin(), m_seeds.end(),
-      Criteria(shape, edge_len),
-      false);//mesh the subdomains including NO seed
+                               CGAL::parameters::seeds(m_seeds)
+                               .criteria(Criteria(shape, edge_len))
+                               .seeds_are_in_domain(false));//mesh the subdomains including NO seed
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
@@ -915,8 +849,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  const int number_of_points = 
-      QInputDialog::getInt(this, 
+  const int number_of_points =
+      QInputDialog::getInt(this,
                            tr("Number of random points"),
                            tr("Enter number of random points"),
                            100,
@@ -924,7 +858,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
                            (std::numeric_limits<int>::max)(),
                            1,
                            &ok);
-  
+
   if(!ok) {
     return;
   }
@@ -973,9 +907,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
   }
 
   CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = nb,
-      seeds_begin = m_seeds.begin(),
-      seeds_end = m_seeds.end());
+      CGAL::parameters::number_of_iterations(nb).seeds(m_seeds));
 
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -993,7 +925,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

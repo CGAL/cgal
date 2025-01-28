@@ -43,18 +43,18 @@ aforementioned concepts.
 \cgalCRPSection{Concepts}
 
 - `ApolloniusSite_2`
+- `ApolloniusGraphTraits_2`
 - `ApolloniusGraphDataStructure_2`
 - `ApolloniusGraphVertexBase_2`
-- `ApolloniusGraphTraits_2`
 - `ApolloniusGraphHierarchyVertexBase_2`
 
 \cgalCRPSection{Classes}
 
 - `CGAL::Apollonius_graph_2<Gt,Agds>`
 - `CGAL::Apollonius_site_2<K>`
-- `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 - `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 - `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+- `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 - `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>`
 - `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>`
 

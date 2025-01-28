@@ -1,20 +1,11 @@
 // Copyright (c) 2001-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -48,8 +39,13 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// Protection has a different meaning than in Filtered_predicate, it says
+// whether we need to set the rounding mode: some predicates only do
+// comparisons and don't need it. Probably this should be done inside this
+// class, based on Uses_no_arithmetic, but I have some doubts about C2A,
+// converting a long long to Interval_nt requires protection.
 
-template <class EP, class AP, class C2E, class C2A, bool Protection = true>
+template <class K, class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate2
 {
 //TODO: pack (at least use a tuple)
@@ -67,14 +63,13 @@ public:
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
 
-  // FIXME: should use result_of, see emails by Nico
+  // FIXME: should use result_of or decltype(auto), see emails by Nico
   typedef typename EP::result_type  result_type;
   // AP::result_type must be convertible to EP::result_type.
 
   Filtered_predicate2()
   {}
 
-  template <class K>
   Filtered_predicate2(const K& k)
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}
@@ -88,16 +83,17 @@ public:
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  // No forward here, the arguments may still be needed
-	  auto res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          // No forward here, the arguments may still be needed
+          auto res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
 };

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author        : Jane Tournois
@@ -27,7 +18,6 @@
 
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/result_of.h>
 #include <iterator>
 
 namespace CGAL
@@ -40,14 +30,18 @@ namespace CGAL
       //classical typedefs
       typedef Iterator key_type;
       typedef typename GeomTraits::Point_3 value_type;
-      typedef typename cpp11::result_of<
-        typename GeomTraits::Construct_vertex_3(typename GeomTraits::Tetrahedron_3, int)
-      >::type reference;
+      typedef decltype(
+        std::declval<typename GeomTraits::Construct_vertex_3>()(
+          std::declval<typename GeomTraits::Tetrahedron_3>(),
+          std::declval<int>())) reference;
+      // typedef decltype(
+      //   typename GeomTraits::Construct_vertex_3()(
+      //     *std::declval<key_type&>(), 0)) reference; // fails CGAL Lab!
       typedef boost::readable_property_map_tag category;
+      typedef Point_from_cell_iterator_proprety_map<GeomTraits, Iterator> Self;
 
-      inline friend
-        typename Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>::reference
-        get(Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>, Iterator it)
+      inline friend reference
+      get(Self, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;
         return point(it->vertex(1)->point());
@@ -64,8 +58,8 @@ namespace CGAL
       typedef boost::readable_property_map_tag category;
 
       inline friend
-        reference
-        get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
+      value_type
+      get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;
         return value_type(point(it->vertex(0)->point()),

@@ -3,62 +3,64 @@
 \ingroup PkgBoundingVolumesConcepts
 \cgalConcept
 
-This concept defines the requirements for traits classes of 
-`CGAL::Min_ellipse_2<Traits>`. 
+This concept defines the requirements for traits classes of
+`CGAL::Min_ellipse_2<Traits>`.
 
-\cgalHasModel `CGAL::Min_ellipse_2_traits_2<K>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Min_ellipse_2_traits_2<K>}
+\cgalHasModelsEnd
 
-\sa `CGAL::Min_ellipse_2<Traits>` 
+\sa `CGAL::Min_ellipse_2<Traits>`
 
 */
 
 class MinEllipse2Traits {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-The point type must provide default and copy constructor, 
-assignment and equality test. 
-*/ 
-typedef unspecified_type Point; 
+The point type must provide default and copy constructor,
+assignment and equality test.
+*/
+typedef unspecified_type Point;
 
 /*!
 
-The ellipse type must fulfill the requirements listed below 
-in the next section. 
-*/ 
-typedef unspecified_type Ellipse; 
+The ellipse type must fulfill the requirements listed below
+in the next section.
+*/
+typedef unspecified_type Ellipse;
 
-/// @} 
+/// @}
 
-/// \name Variables 
+/// \name Variables
 /// @{
 
 /*!
 
-The current ellipse. This variable is maintained by the algorithm, 
-the user should neither access nor modify it directly. 
-*/ 
-Ellipse ellipse; 
+The current ellipse. This variable is maintained by the algorithm,
+the user should neither access nor modify it directly.
+*/
+Ellipse ellipse;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// Only default and copy constructor are required.
 /// @{
 
 /*!
 
-*/ 
-Traits( ); 
+*/
+Traits( );
 
 /*!
 
-*/ 
-Traits( const Traits&); 
+*/
+Traits( const Traits&);
 
 /// @}
 

@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_CONSTRUCTIONS_3_H
 #define CGAL__TEST_FCT_CONSTRUCTIONS_3_H
@@ -75,6 +69,7 @@ _test_fct_constructions_3(const R& r)
   assert( CGAL::midpoint( p110, p001) == p);
   assert( CGAL::midpoint( p010, p101) == p);
   assert( CGAL::midpoint( p100, p011) == p);
+  assert( CGAL::midpoint( Segment{p100, p011}) == p);
 
   // circumcenter
   assert( CGAL::circumcenter( p111, p001, p010, p000) == p);
@@ -136,6 +131,8 @@ _test_fct_constructions_3(const R& r)
   assert( r.construct_projected_point_3_object()(ray, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(2,0,0)) == Point(1,1,0));
+  assert( r.construct_projected_point_3_object()(Point(0,0,0), Point(2,0,0)) == Point(0,0,0));
+
   return true;
 }
 

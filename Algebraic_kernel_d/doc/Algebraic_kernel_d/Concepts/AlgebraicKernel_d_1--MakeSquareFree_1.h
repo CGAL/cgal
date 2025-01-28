@@ -3,9 +3,9 @@
 \ingroup PkgAlgebraicKernelDConceptsUni
 \cgalConcept
 
-Returns a square free part of a univariate polynomial. 
+Returns a square free part of a univariate polynomial.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_1::IsSquareFree_1`
 \sa `AlgebraicKernel_d_1::SquareFreeFactorize_1`
@@ -15,28 +15,28 @@ Returns a square free part of a univariate polynomial.
 class AlgebraicKernel_d_1::MakeSquareFree_1 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_1::Polynomial_1 result_type; 
+*/
+typedef AlgebraicKernel_d_1::Polynomial_1 result_type;
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_1::Polynomial_1 argument_type; 
+*/
+typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns a square free part of \f$ p\f$ 
-*/ 
-result_type operator()(argument_type p); 
+Returns a square free part of \f$ p\f$
+*/
+result_type operator()(argument_type p);
 
 /// @}
 

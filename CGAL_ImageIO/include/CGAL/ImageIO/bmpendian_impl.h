@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -53,11 +43,11 @@ CGAL_INLINE_FUNCTION
 int readINT8little(FILE *f, CGAL_INT8 *i)
 {
     int rc;
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     *i = CGAL_INT8(rc & 0xff);
     return 0;
 }
@@ -66,11 +56,11 @@ CGAL_INLINE_FUNCTION
 int readUINT8little(FILE *f, CGAL_UINT8 *i)
 {
     int  rc;
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     *i = CGAL_UINT8(rc & 0xff);
     return 0;
 }
@@ -86,13 +76,13 @@ int readINT16little(FILE *f, CGAL_INT16 *i)
 {
     int rc;
     CGAL_INT16 temp = 0;
-    
+
     temp = (fgetc(f) & 0xff);
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     temp = temp | CGAL_INT16((rc & 0xff) << 8);
     *i = temp;
     return 0;
@@ -103,13 +93,13 @@ int readUINT16little(FILE *f, CGAL_UINT16 *i)
 {
     int rc;
     CGAL_UINT16 temp = 0;
-    
+
     temp = (fgetc(f) & 0xff);
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     temp = CGAL_INT16(temp | ((rc & 0xff) << 8));
     *i = temp;
     return 0;
@@ -125,15 +115,15 @@ int readINT32little(FILE *f, CGAL_INT32 *i)
 {
     int rc;
     CGAL_INT32 temp = 0;
-    
+
     temp = ((long)fgetc(f) & 0xff);
     temp = CGAL_INT32(temp | (((long)fgetc(f) & 0xff) << 8));
     temp = CGAL_INT32(temp | (((long)fgetc(f) & 0xff) << 16));
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     temp = CGAL_INT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
     return 0;
@@ -144,15 +134,15 @@ int readUINT32little(FILE *f, CGAL_UINT32 *i)
 {
     int rc;
     CGAL_UINT32 temp = 0;
-    
+
     temp = ((long)fgetc(f) & 0xff);
     temp = CGAL_UINT32(temp | (((long)fgetc(f) & 0xff) << 8));
     temp = CGAL_UINT32(temp | (((long)fgetc(f) & 0xff) << 16));
-    
+
     rc = fgetc(f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     temp = CGAL_UINT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
     return 0;
@@ -182,11 +172,11 @@ CGAL_INLINE_FUNCTION
 int writeINT16little(FILE *f, CGAL_INT16 i)
 {
     int rc;
-    
+
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     return fputc(((i >> 8) & 0xff), f);
 }
 
@@ -194,11 +184,11 @@ CGAL_INLINE_FUNCTION
 int writeUINT16little(FILE *f, CGAL_UINT16 i)
 {
     int rc;
-    
+
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     return fputc(((i >> 8) & 0xff), f);
 }
 
@@ -206,19 +196,19 @@ CGAL_INLINE_FUNCTION
 int writeINT32little(FILE *f, CGAL_INT32 i)
 {
     int rc;
-    
+
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     rc = fputc(((i >> 8) & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     rc = fputc(((i >> 16) & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     return fputc(((i >> 24) & 0xff), f);
 }
 
@@ -227,19 +217,19 @@ CGAL_INLINE_FUNCTION
 int writeUINT32little(FILE *f, CGAL_UINT32 i)
 {
     int rc;
-    
+
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     rc = fputc(((i >> 8) & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     rc = fputc(((i >> 16) & 0xff), f);
     if (rc == EOF)
-	return EOF;
-    
+        return EOF;
+
     return fputc(((i >> 24) & 0xff), f);
 }
 

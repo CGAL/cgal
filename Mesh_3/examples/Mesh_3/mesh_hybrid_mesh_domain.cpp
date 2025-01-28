@@ -12,8 +12,8 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-// Ouput
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+// Output
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 // Read 1D features from input file
 #include "read_polylines.h"
@@ -99,9 +99,9 @@ public:
   {
     Is_in_domain(const Hybrid_domain& domain) : r_domain_(domain) {}
 
-    boost::optional<Subdomain_index> operator()(const K::Point_3& p) const
+    std::optional<Subdomain_index> operator()(const K::Point_3& p) const
     {
-      boost::optional<Subdomain_index> subdomain_index =
+      std::optional<Subdomain_index> subdomain_index =
         r_domain_.implicit_domain.is_in_domain_object()(p);
       if(subdomain_index) return 2;
       else return r_domain_.polyhedron_domain.is_in_domain_object()(p);
@@ -186,16 +186,15 @@ FT sphere_centered_at_111 (const Point& p)
   const FT dx=p.x()-1;
   const FT dy=p.y()-1;
   const FT dz=p.z()-1;
-  
+
   return dx*dx+dy*dy+dz*dz-1;
 }
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
-  const char* fname = "data/cube.off";
+  const std::string fname = CGAL::data_file_path("meshes/cube.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);
@@ -215,8 +214,7 @@ int main()
   // (Warning: Sphere_3 constructor uses square radius !)
   Implicit_domain sphere_domain =
     Implicit_domain::create_implicit_mesh_domain(sphere_centered_at_111,
-                                                 K::Sphere_3(K::Point_3(1, 1, 1),
-                                                             2.));
+                                                 K::Sphere_3(K::Point_3(1, 1, 1), K::FT(2)));
 
   Domain domain(sphere_domain, polyhedron_domain);
 
@@ -237,11 +235,11 @@ int main()
   Facet_criteria facet_criteria(30, 0.08, 0.025); // angle, size, approximation
   Cell_criteria cell_criteria(2, 0.1); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-  
+
   // Mesh generation (without optimization)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      no_perturb(), no_exude());
-  
+                                      params::no_perturb().no_exude());
+
   // Output
   dump_c3t3(c3t3, "out");
 

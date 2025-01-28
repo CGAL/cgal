@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -30,7 +21,6 @@
 #include <CGAL/Search_traits_adapter.h>
 
 #include <boost/type_traits.hpp>
-#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -79,6 +69,21 @@ public:
     }
 
     return (distance <= sq_radius);
+  }
+
+  template <typename Coord_iterator>
+  bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+    // test whether the distance between c and p is less than the radius
+    FT distance = FT(0);
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it =
+      traits.construct_cartesian_const_iterator_d_object();
+    typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+      end = construct_it(c, 0);
+
+    for (; cit != end && (distance <= sq_radius); ++cit, ++it_coord_begin)
+      distance += ((*cit) - (*it_coord_begin))*((*cit) - (*it_coord_begin));
+
+    return (distance < sq_radius);
   }
 
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
@@ -148,11 +153,10 @@ public:
   Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){}
 
   // Constructor for any point type that is not `SearchTraits::Point_d`
-  template <typename Point> // boost::disable_if requires a template argument to work
+  template <typename Point> // std::enable_if_t requires a template argument to work
   Fuzzy_sphere(const Point& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
-               typename boost::disable_if<
-               boost::is_same<typename SearchTraits::Point_d,
-               Point> >::type* = 0)
+               std::enable_if_t<
+                 !std::is_same<typename SearchTraits::Point_d,Point>::value >* = 0)
     : Base(center,radius,epsilon,traits_) {}
 
   Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),

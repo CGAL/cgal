@@ -13,12 +13,12 @@ char * Option_parser::s_type_opts[] = {
 };
 
 char * Option_parser::s_strategy_opts[] = {
-  "RIC", "naive", "walk", "simple", "triangle", "landmarks", 
+  "RIC", "naive", "walk", "simple", "triangle", "landmarks",
   "R",   "n",     "w",    "s",      "t",        "l"
 };
 
 template <class MyId>
-void Option_parser::my_validate(boost::any & v,
+void Option_parser::my_validate(std::any & v,
                                 const std::vector<std::string> & values)
 {
   typedef std::vector<MyId>     Vector_id;
@@ -28,11 +28,11 @@ void Option_parser::my_validate(boost::any & v,
       if (v.empty()) {
         Vector_id vec;
         vec.push_back(MyId(i));
-        v = boost::any(vec);
+        v = std::any(vec);
       } else {
-        Vector_id vec = boost::any_cast<Vector_id>(v);
+        Vector_id vec = std::any_cast<Vector_id>(v);
         vec.push_back(MyId(i));
-        v = boost::any(vec);
+        v = std::any(vec);
       }
       return;
     }
@@ -41,20 +41,20 @@ void Option_parser::my_validate(boost::any & v,
 }
 
 /* Overload the 'validate' function for the user-defined class */
-void validate(boost::any & v, const std::vector<std::string> & values,
+void validate(std::any & v, const std::vector<std::string> & values,
               Option_parser::Vector_type_id * target_type, int)
 {
   Option_parser::my_validate<Option_parser::Type_id>(v, values);
 }
 
 /* Overload the 'validate' function for the user-defined class */
-void validate(boost::any & v, const std::vector<std::string> & values,
+void validate(std::any & v, const std::vector<std::string> & values,
               Option_parser::Vector_strategy_id * target_type, int)
 {
   Option_parser::my_validate<Option_parser::Strategy_id>(v, values);
 }
 
-/*! Constructor */
+/*! constructs */
 Option_parser::Option_parser() :
   m_generic_opts("Generic options"),
   m_config_opts("Configuration options"),
@@ -85,10 +85,10 @@ Option_parser::Option_parser() :
   m_generic_opts.add_options()
     ("author,a", "print author name(s)")
     ("help,h", "print help message")
-    ("license,l", "print licence information")
+    ("license,l", "print license information")
     ("version,v", "print version string")
     ;
-    
+
   // Options allowed on the command line, config file, or env. variables
   m_config_opts.add_options()
     ("input-path,P", po::value<Input_path>()->composing(), "input path")
@@ -122,7 +122,7 @@ Option_parser::Option_parser() :
      po::value<unsigned int>(&m_win_height)->default_value(DEF_WIN_HEIGHT),
      "window height")
     ;
-  
+
   // Options hidden to the user. Allowed only on the command line:
   m_hidden_opts.add_options()
     ("input-file", po::value<Input_path>()->composing(), "input file")
@@ -133,16 +133,16 @@ Option_parser::Option_parser() :
   m_config_file_opts.add(m_bench_opts).add(m_config_opts);
   m_environment_opts.add(m_bench_opts).add(m_config_opts);
 
-  m_positional_opts.add("input-file", -1);  
+  m_positional_opts.add("input-file", -1);
 }
 
-/*! Parse the options */
+/*! parses the options */
 void Option_parser::operator()(int argc, char * argv[])
 {
   po::store(po::command_line_parser(argc, argv).
             options(m_cmd_line_opts).positional(m_positional_opts).run(),
             m_variable_map);
-  
+
   std::ifstream ifs(".bench.cfg");
   po::store(parse_config_file(ifs, m_config_file_opts), m_variable_map);
   po::notify(m_variable_map);
@@ -179,7 +179,7 @@ void Option_parser::operator()(int argc, char * argv[])
       m_type_mask |= 0x1 << ((*it).m_id % size);
     }
   }
-  
+
   if (m_variable_map.count("strategy")) {
     Vector_strategy_id strategys =
       m_variable_map["strategy"].as<Vector_strategy_id>();
@@ -193,7 +193,7 @@ void Option_parser::operator()(int argc, char * argv[])
 
   // Add directories specified on the command line via the "input-path" opt.:
   Add_dir tmp = for_each_dir(Add_dir(m_dirs));
-  
+
   if (!m_variable_map.count("input-file")) {
     std::string str("input file missing!");
     throw Input_file_missing_error(str);
@@ -216,7 +216,7 @@ void Option_parser::operator()(int argc, char * argv[])
         break;
       }
     }
-    if (m_full_names[m_number_files].empty()) {      
+    if (m_full_names[m_number_files].empty()) {
       std::cerr << "cannot find file " << (*it).c_str() << "!" << std::endl;
       throw Error_exception(FILE_NOT_FOUND);
       return;
@@ -225,20 +225,20 @@ void Option_parser::operator()(int argc, char * argv[])
   }
 }
 
-/*! Obtain the base file-name */
+/*! obtains the base file-name */
 const std::string & Option_parser::get_file_name(unsigned int i) const
 {
   return m_variable_map["input-file"].as<Input_path>()[i];
 }
 
-/*! Obtain the full file-name */
+/*! obtains the full file-name */
 const std::string & Option_parser::get_full_name(unsigned int i) const
 { return m_full_names[i]; }
 
-/*! Obtain number of type options */
+/*! obtains number of type options */
 unsigned int Option_parser::get_number_opts(Type_id &)
 { return sizeof(s_type_opts) / sizeof(char *); }
 
-/*! Obtain number of strategy options */
+/*! obtains number of strategy options */
 unsigned int Option_parser::get_number_opts(Strategy_id &)
 { return sizeof(s_strategy_opts) / sizeof(char *); }

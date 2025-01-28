@@ -5,10 +5,10 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction`, 
-returns true in case the argument is the one of the ring. 
+`AdaptableUnaryFunction`,
+returns true in case the argument is the one of the ring.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 
@@ -17,29 +17,29 @@ returns true in case the argument is the one of the ring.
 class IsOne {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Boolean`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Boolean`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-returns true in case \f$ x\f$ is the one of the ring. 
-*/ 
-result_type operator()(argument_type x); 
+returns true in case \f$ x\f$ is the one of the ring.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

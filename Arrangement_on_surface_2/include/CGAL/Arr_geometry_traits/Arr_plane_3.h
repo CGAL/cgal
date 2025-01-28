@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
@@ -62,15 +53,15 @@ private:
 
   /*! The z coefficient */
   FT m_c;
-  
+
 public:
-  /*! Default Constructor */
+  /*! constructs default */
   Arr_plane_3() : m_a(0), m_b(0), m_c(0) {}
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(typename Kernel::Plane_3 p)
   {
     CGAL_precondition_code(Kernel kernel;);
@@ -80,7 +71,7 @@ public:
     m_a = p.a(); m_b = p.b(); m_c = p.c() ;
   }
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(const Point_3 & p, const Point_3 & r)
   {
     FT prx = r.x() - p.x();
@@ -91,16 +82,16 @@ public:
     m_c = r.x() * pry - prx * r.y();
   }
 
-  /*! Obtain the x coefficient */
+  /*! obtains the x coefficient */
   const FT & a() const { return m_a; }
 
-  /*! Obtain the y coefficient */
+  /*! obtains the y coefficient */
   const FT & b() const { return m_b; }
 
-  /*! Obtain the z coefficient */
+  /*! obtains the z coefficient */
   const FT & c() const { return m_c; }
-  
-  /*! Obtain the i-th coefficient of the plane
+
+  /*! obtains the i-th coefficient of the plane
    * \param i the index of the coefficient
    * \return the i-th coefficient
    */
@@ -117,14 +108,14 @@ public:
             (c() == plane.c()));
   }
 
-  /*! Convert to kernel's plane */
+  /*! converts to kernel's plane */
   operator typename Kernel::Plane_3 () const
   {
     Kernel kernel;
     return kernel.construct_plane_3_object() (m_a, m_b, m_c, 0);
   }
 
-  /*! Compute the image point of the projection of p under an affine
+  /*! computes the image point of the projection of p under an affine
    * transformation, which maps the plane onto the xy-plane, with the
    * z-coordinate removed.
    * \param p the point
@@ -134,8 +125,8 @@ public:
   {
     Kernel kernel;
     typename Kernel::Plane_3 base_plane(m_a, m_b, m_c, 0);
-    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);    
-    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);    
+    Vector_3 v1 = kernel.construct_base_vector_3_object()(base_plane, 1);
+    Vector_3 v2 = kernel.construct_base_vector_3_object()(base_plane, 2);
     Vector_3 v3 = kernel.construct_orthogonal_vector_3_object()(base_plane);
 
     FT denom = v2[1]*v3[0]*v1[2] - v2[0]*v3[1]*v1[2] + v3[2]*v2[0]*v1[1] +
@@ -144,11 +135,11 @@ public:
               v2[0]*v3[1]*p[2] - v3[2]*v2[0]*p[1] - v2[2]*v3[1]*p[0]) / denom;
     FT y = (v1[1]*v3[2]*p[0] - v1[1]*v3[0]*p[2] - v3[1]*p[0]*v1[2] +
             v3[1]*v1[0]*p[2] + p[1]*v3[0]*v1[2] - p[1]*v3[2]*v1[0]) / denom;
-    
+
     return Point_2(x, y);
   }
 
-  /*! Compute a 3d point p_3 coincident to the plane, such that the image point
+  /*! computes a 3d point p_3 coincident to the plane, such that the image point
    * of the projection of p_3 under an affine transformation, which maps the
    * plane onto the a given axis-parallel plane is a given 2d point.
    * \param p_2 the image point
@@ -164,7 +155,7 @@ public:
     std::cout << "(a, b, c): " << a() << "," << b() << "," << c()
               << std::endl;
 #endif
-    
+
     if (i == 0) {
       CGAL_assertion(m_a != 0);
       FT y = p_2.x();
@@ -192,7 +183,7 @@ public:
     return p_3;
   }
 
-  /*! Determine the relative position of a point and the plane
+  /*! determines the relative position of a point and the plane
    * \param p the point
    * \return ON_ORIENTED_BOUNDARY, ON_POSITIVE_SIDE, or ON_NEGATIVE_SIDE,
    * determined by the position of p relative to the oriented plane.
@@ -203,55 +194,57 @@ public:
   }
 };
 
-/*! Intersect 2 planes
+/*! intersects 2 planes
  * \param plane1 the first plane
  * \param plane2 the second plane
- * \return a geometric object that represents the intersection. Could be
- * the line of intersection, or a plane in case plane1 and plane2 coincide.
+ * \return a variant that represents the intersection. It wraps a line of
+ * intersection or a plane in case plane1 and plane2 coincide.
  */
-template <class Kernel>
-CGAL::Object intersect(const Arr_plane_3<Kernel> & plane1,
+template <typname Kernel>
+std::variant<typename Kernel::Line_3, Arr_plane_3<Kernel> >
+intersect(const Arr_plane_3<Kernel> & plane1,
                        const Arr_plane_3<Kernel> & plane2)
 {
   typedef typename Kernel::Point_3      Point_3;
   typedef typename Kernel::Direction_3  Direction_3;
   typedef typename Kernel::Line_3       Line_3;
   typedef typename Kernel::FT           FT;
+  typedef std::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
 
-  // We know that the plane goes throgh the origin
-  const FT & a1 = plane1.a();
-  const FT & b1 = plane1.b();
-  const FT & c1 = plane1.c();
+  // We know that the plane goes through the origin
+  const FT& a1 = plane1.a();
+  const FT& b1 = plane1.b();
+  const FT& c1 = plane1.c();
 
-  const FT & a2 = plane2.a();
-  const FT & b2 = plane2.b();
-  const FT & c2 = plane2.c();
+  const FT& a2 = plane2.a();
+  const FT& b2 = plane2.b();
+  const FT& c2 = plane2.c();
 
   FT det = a1*b2 - a2*b1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(b1*c2 - c1*b2, a2*c1 - a1*c2, det);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   det = a1*c2 - a2*c1;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(c1*b2 - b1*c2, det, a2*b1 - a1*b2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
   det = b1*c2 - c1*b2;
   if (det != 0) {
     Point_3 is_pt = Point_3(0, 0, 0, det);
     Direction_3 is_dir = Direction_3(det, c1*a2 - a1*c2, a1*b2 - b1*a2);
-    return make_object(Line_3(is_pt, is_dir));
+    return Intersection_result(Line_3(is_pt, is_dir));
   }
 
   // degenerate case
-  return make_object(plane1);
+  return Intersection_result(plane1);
 }
 
-/*! Compute the image point of the projection of p under an affine
+/*! computes the image point of the projection of p under an affine
  * transformation, which maps the plane onto the xy-plane, with the
  * z-coordinate removed.
  * \param plane the plane
@@ -266,7 +259,7 @@ construct_projected_xy_point(const Arr_plane_3<Kernel> & plane,
   return plane.to_2d(p);
 }
 
-/*! Export a plane to an output stream
+/*! exports a plane to an output stream
  * \param os the output stream
  * \param plane the plane
  * \return the output stream
@@ -277,8 +270,8 @@ inline std::ostream & operator<<(std::ostream & os,
 {
   os << plane[0] << ", " << plane[1] << ", " << plane[2];
   return os;
-}  
+}
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

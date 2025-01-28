@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -47,13 +38,13 @@ protected:
   /** \name INITIALIZED */
 
   enum Initialization {
-    NONE,     /**< \c this is not initialized. */
-    CLUSTERS, /**< \c this clusters are initialized. */
-    DELAUNAY, /**< \c this has been \e Delaunay-initialized. */
-    GABRIEL   /**< \c this has been \e Gabriel-initialized. */
+    NONE,     /**< `this` is not initialized. */
+    CLUSTERS, /**< `this` clusters are initialized. */
+    DELAUNAY, /**< `this` has been \e Delaunay-initialized. */
+    GABRIEL   /**< `this` has been \e Gabriel-initialized. */
   };
 
-// --- PROTECTED DATAS ---
+// --- PROTECTED DATA ---
   Initialization initialized;
   Tr& tr;
   Null_mesher_level null_level;
@@ -88,9 +79,9 @@ private:
         return false;
     return true;
   }
-  
+
 public:  /** \name ACCESS TO CLUSTERS */
-  typedef typename Mesh_2::Clusters<Tr>::Cluster_vertices_iterator 
+  typedef typename Mesh_2::Clusters<Tr>::Cluster_vertices_iterator
     Cluster_vertices_iterator;
   typedef typename Mesh_2::Clusters<Tr>::Vertices_in_cluster_iterator
     Vertices_in_cluster_iterator;
@@ -212,7 +203,7 @@ public:
   bool is_conforming_done()
     // This function cannot be "const" because, as edges_to_be_conformed is
     // filtred, its empty() method is not const.
-  { return ( edges_level_Gabriel.no_longer_element_to_refine() 
+  { return ( edges_level_Gabriel.no_longer_element_to_refine()
              && edges_level_Delaunay.no_longer_element_to_refine() );
   }
 
@@ -224,9 +215,9 @@ public:
   {
     return edges_level_Delaunay.one_step(null_visitor);
   }
-  
+
   bool try_one_step_conforming_Gabriel()
-  {  
+  {
     return edges_level_Gabriel.one_step(null_visitor);
   }
 

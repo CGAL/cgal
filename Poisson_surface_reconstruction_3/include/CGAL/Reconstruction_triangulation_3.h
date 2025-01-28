@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
@@ -30,11 +21,12 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/bounding_box.h>
@@ -154,6 +146,12 @@ template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 {
   typedef Point_with_normal_3<BaseGt> Point_3;
+};
+
+
+template < class BaseGt >
+struct Triangulation_structural_filtering_traits<Reconstruction_triangulation_default_geom_traits_3<BaseGt> > {
+  typedef typename Triangulation_structural_filtering_traits<BaseGt>::Use_structural_filtering_tag  Use_structural_filtering_tag;
 };
 
 
@@ -351,18 +349,18 @@ public:
     Vertex_handle v = Base::insert(p, lt, ch, li, lj);
     v->type() = static_cast<unsigned char>(type);
     return v;
-    
+
   }
 
   /// Insert the [first, beyond) range of points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// @commentheading Template Parameters:
-  /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
+  /// *Template Parameters:*
+  /// @tparam InputIterator iterator over input points.
+  /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
   ///        It can be omitted if InputIterator value_type is convertible to Point_3.
-  /// @param NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
-  ///
+  /// @tparam NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
+  /// @tparam Visitor the visitor type
   /// @return the number of inserted points.
 
   // This variant requires all parameters.
@@ -401,14 +399,14 @@ public:
 
     fractions.clear();
     fractions.push_back(1.0);
-    
+
     double m = static_cast<double>(n);
-    
+
     while(m > 500){
       m /= 2;
       fractions.push_front(m/n);
     }
-    
+
     insert_fraction(visitor);
     return 0;
   }
@@ -464,7 +462,7 @@ public:
   template <class CellIt>
   Vertex_handle
   insert_in_hole(const Point_with_normal& p, CellIt cell_begin, CellIt cell_end,
-	         Cell_handle begin, int i,
+                 Cell_handle begin, int i,
                  Point_type type = STEINER)
   {
       Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
@@ -500,7 +498,7 @@ public:
   {
     constrained_vertex = v;
   }
-  
+
 
 }; // end of Reconstruction_triangulation_3
 

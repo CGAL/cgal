@@ -4,13 +4,15 @@
 \cgalConcept
 
 This concept describes the geometric types and predicates required to build
-a Delaunay triangulation. It corresponds to the first template parameter of the class 
+a Delaunay triangulation. It corresponds to the first template parameter of the class
 `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`.
 
-\cgalRefines `TriangulationTraits`
+\cgalRefines{TriangulationTraits}
 
-\cgalHasModel `CGAL::Epick_d<Dim>`
-\cgalHasModel `CGAL::Epeck_d<Dim>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Epick_d<Dim>}
+\cgalHasModels{CGAL::Epeck_d<Dim>}
+\cgalHasModelsEnd
 
 \sa `TriangulationTraits`
 */
@@ -33,7 +35,7 @@ defined by the points in range `[start,end)`.
 If the simplex is positively
 oriented, then the positive side of sphere corresponds geometrically
 to its bounded side.
-\pre If `Dimension`=`CGAL::Dimension_tag<D>`, 
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`,
 then `std::distance(start,end)=D+1`.
 The points in range
 `[start,end)` must be affinely independent, i.e., the simplex must

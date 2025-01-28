@@ -2,20 +2,7 @@
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public License
-// as published by the Free Software Foundation, version 2.
-//
-// This library is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-// SPDX-License-Identifier: LGPL-2.0
+// SPDX-License-Identifier: GPL-2.0-only
 //
 //=============================================================================
 
@@ -150,7 +137,7 @@ public:
     }
 
 
-    /// assign a scalar to all componenets
+    /// assign a scalar to all components
     Vector<Scalar,N>& operator=(const Scalar s)
     {
         for (int i=0; i<N; ++i)
@@ -223,7 +210,7 @@ public:
     Vector<Scalar,N>& normalize()
     {
         Scalar n = norm(*this);
-        if (n > std::numeric_limits<Scalar>::min())
+        if (n > (std::numeric_limits<Scalar>::min)())
             *this *= 1.0/n;
         return *this;
     }
@@ -513,7 +500,7 @@ public:
     Vector<Scalar,3>& normalize()
     {
         Scalar n = norm(*this);
-        n = (n > std::numeric_limits<Scalar>::min()) ? 1.0/n : 0.0;
+        n = (n > (std::numeric_limits<Scalar>::min)()) ? 1.0/n : 0.0;
         x *= n;
         y *= n;
         z *= n;

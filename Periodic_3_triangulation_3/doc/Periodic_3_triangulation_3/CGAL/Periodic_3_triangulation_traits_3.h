@@ -16,7 +16,7 @@ will be used if the flag `Traits::Has_static_filters` exists and is `true`.
 By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel` and
 `CGAL::Exact_predicates_exact_constructions_kernel`.
 
-\cgalModels `Periodic_3TriangulationTraits_3`
+\cgalModels{Periodic_3TriangulationTraits_3}
 */
 template< typename Traits, typename Offset >
 class Periodic_3_triangulation_traits_3 : public Traits {

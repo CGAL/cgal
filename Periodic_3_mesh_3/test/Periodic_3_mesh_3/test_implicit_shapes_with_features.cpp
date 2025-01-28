@@ -98,7 +98,7 @@ void test_protected_sphere()
 
   // Output
   std::ofstream medit_file_bis("protected_sphere.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ void test_protected_squary_cylinder()
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -276,7 +276,7 @@ void test_protected_squary_cylinder_2()
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder_2.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 

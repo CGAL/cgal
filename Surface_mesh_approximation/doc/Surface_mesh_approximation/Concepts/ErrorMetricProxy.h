@@ -6,8 +6,10 @@ The concept `ErrorMetricProxy` defines the notion of proxy,
 computes the fitting error from a face to a proxy,
 and fits a proxy from a range of faces.
 
-\cgalHasModel `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`
-\cgalHasModel `CGAL::Surface_mesh_approximation::L2_metric_plane_proxy`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Surface_mesh_approximation::L21_metric_plane_proxy}
+\cgalHasModels{CGAL::Surface_mesh_approximation::L2_metric_plane_proxy}
+\cgalHasModelsEnd
 */
 
 class ErrorMetricProxy {

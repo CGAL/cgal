@@ -1,16 +1,3 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-// 
-//
-// Author(s)     :  
-//
-// ============================================================================
-
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
 
@@ -34,21 +21,21 @@ void test_descartes(){
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
     {
-        typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type 
+        typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type
             Polynomial;
         typedef ::CGAL::internal::Descartes<Polynomial,Rational> Isolator;
-        
+
         // general test of concept RealRootIsolator
         CGAL::internal::test_real_root_isolator<Isolator>();
     }{
-        typedef typename CGAL::Polynomial_type_generator<Rational,1>::Type 
+        typedef typename CGAL::Polynomial_type_generator<Rational,1>::Type
             Polynomial;
         typedef ::CGAL::internal::Descartes<Polynomial,Rational> Isolator;
         // general test of concept RealRootIsolator
         CGAL::internal::test_real_root_isolator<Isolator>();
-    }    
+    }
 }
-    
+
 int main(){
 #ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
   std::cout << " TEST AK1 USING LEDA " << std::endl;

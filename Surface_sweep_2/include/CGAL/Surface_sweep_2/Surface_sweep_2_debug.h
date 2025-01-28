@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Efi Fogel       <efifogel@gmail.com>
@@ -141,19 +132,7 @@ template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::
 PrintOpenBoundaryType(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  switch (ps_x) {
-   case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; return;
-   case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; return;
-   case ARR_INTERIOR:
-   default: break;
-  }
-
-  switch (ps_y) {
-   case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; return;
-   case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; return;
-   case ARR_INTERIOR:
-   default: CGAL_error();
-  }
+  std::cout << "[" << ps_x << "," << ps_y << "]";
 }
 
 template <typename Vis>
@@ -164,7 +143,11 @@ void No_intersection_surface_sweep_2<Vis>::PrintEvent(const Event* e)
     Arr_parameter_space x = e->parameter_space_in_x();
     Arr_parameter_space y = e->parameter_space_in_y();
     PrintOpenBoundaryType(x, y);
-    std::cout << " with open curve: " << e->curve();
+    if (! e->is_isolated()) {
+      Arr_curve_end ce;
+      std::cout << " with open curve: " << e->boundary_touching_curve(ce)
+                << " at " << ce;
+    }
   }
 }
 

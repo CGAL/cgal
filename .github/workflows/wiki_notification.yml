@@ -1,0 +1,38 @@
+name: Wiki Notification
+
+on: gollum
+
+jobs:
+  prepare_email:
+    runs-on: ubuntu-latest
+    outputs:
+      messages: ${{ steps.set-result.outputs.result }}
+    steps:
+    - name: get informations and prepare email
+      uses: actions/github-script@v7
+      id: set-result
+      with:
+        result-encoding: string
+        script: |
+          const payload = context.payload;
+          const actor = payload.sender;
+          const pages = payload.pages;
+          let messages = "Subject:Updates to CGAL Wiki \nContent-Type: text/html\n";
+          messages += "<html><body>";
+          messages += `<p>The following CGAL Wiki page were modified by <a href="${actor.html_url}">"${actor.login}"</a>:</p><ul>\n`
+          for (const page of pages){
+              messages += `<li><a href="${page.html_url}">${page.title}</a> (link to <a href="${page.html_url}/_compare/${page.sha}%5E...${page.sha}">the diff</a>)</li>\n`;
+          }
+          messages += "</ul></body></html>";
+          console.log( messages );
+          return messages;
+  call_send_email:
+    needs: prepare_email
+    uses: ./.github/workflows/send_email.yml
+    with:
+      message: ${{needs.prepare_email.outputs.messages}}
+    secrets:
+      email: ${{ secrets.CGAL_SEND_WIKI_EMAIL_TO }}
+      private_key: ${{ secrets.CGAL_SEND_WIKI_EMAIL_SSH_PRIVATE_KEY }}
+      user: ${{ secrets.CGAL_SEND_WIKI_EMAIL_SSH_USER }}
+      host: ${{ secrets.CGAL_SEND_WIKI_EMAIL_SSH_HOST }}

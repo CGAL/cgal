@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
 //                 Mariette Yvinec
@@ -23,22 +14,24 @@
 #ifndef CGAL_TEST_CLS_DELAUNAY_C
 #define CGAL_TEST_CLS_DELAUNAY_C
 
-#include <cassert>
-#include <iostream>
-#include <fstream>
-#include <list>
-#include <vector>
-
-#include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
-
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
 #include "_test_remove_cluster.h"
 
-#include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+
+#include <boost/mpl/identity.hpp>
+
+#include <cassert>
+#include <iostream>
+#include <sstream>
+#include <list>
+#include <vector>
+#include <type_traits>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -46,12 +39,12 @@
 
 template < typename T, typename Weighted_tag = typename T::Weighted_tag >
 struct Test_location_policy {
-	typedef typename T::Location_policy Location_policy;
+        typedef typename T::Location_policy Location_policy;
 };
 
 template < typename T >
 struct Test_location_policy <T, CGAL::Tag_true> {
-	struct Location_policy{};
+        struct Location_policy{};
 };
 
 template < typename T, typename P >
@@ -99,22 +92,6 @@ nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c)
 {
   return nearest_vertex_in_cell(t, p, c, typename T::Weighted_tag());
 }
-
-// Template meta programming if.
-template < typename Cond, typename Then, typename Else >
-struct If;
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_true, Then, Else>
-{
-  typedef Then type;
-};
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_false, Then, Else>
-{
-  typedef Else type;
-};
 
 template < typename T, typename P >
 void test_conflicts(T& T3_13, const P *q)
@@ -164,8 +141,8 @@ void test_conflicts(T& T3_13, const P *q)
           T3_13.insert_in_hole(q[i], C.begin(), C.end(),
                                F.begin()->first, F.begin()->second);
       else {
-	  // alternately test the overload which takes a Vertex_handle.
-	  Vertex_handle v = T3_13.tds().create_vertex();
+          // alternately test the overload which takes a Vertex_handle.
+          Vertex_handle v = T3_13.tds().create_vertex();
           T3_13.insert_in_hole(q[i], C.begin(), C.end(),
                                F.begin()->first, F.begin()->second, v);
       }
@@ -178,6 +155,11 @@ void
 _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
 
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
@@ -206,7 +188,7 @@ _test_cls_delaunay_3(const Triangulation &)
   typedef typename Cls::size_type            size_type;
 
   typedef typename Cls::Vertex_handle        Vertex_handle;
-  typedef typename Cls::Cell_handle          Cell_handle; 
+  typedef typename Cls::Cell_handle          Cell_handle;
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Cell_iterator        Cell_iterator;
   typedef typename Cls::Locate_type          Locate_type;
@@ -223,6 +205,10 @@ _test_cls_delaunay_3(const Triangulation &)
   CGAL_USE_TYPE(Cell);
   CGAL_USE_TYPE(Vertex_iterator);
   CGAL_USE_TYPE(Cell_iterator);
+
+  CGAL_USE_TYPE(typename Cls::Periodic_tag);
+  CGAL_USE_TYPE(typename Cls::Weighted_tag);
+
   // +++ We define now some points for building triangulations +++++//
 
 // list of Points for T1_0 , T1_1, T1_2 :
@@ -246,22 +232,22 @@ _test_cls_delaunay_3(const Triangulation &)
     l3.push_back(ppp[i]);
 
 // Points for T2_0 :
-  Point p1=Point(5,5,0); 
+  Point p1=Point(5,5,0);
   Point p2=Point(4,4,0);
   Point p3=Point(6,6,0); // 1- dimensional until this point
   Point p4=Point(5,3,0); // 2-dimensional
-  Point p5=Point(5,7,0); 
-  Point p6=Point(5,4,0); 
-  Point p7=Point(5,6,0); 
-  Point p8=Point(0,0,0); 
-  Point p9=Point(5,5,0); 
+  Point p5=Point(5,7,0);
+  Point p6=Point(5,4,0);
+  Point p7=Point(5,6,0);
+  Point p8=Point(0,0,0);
+  Point p9=Point(5,5,0);
 
   // Points for T3_1 :
-  Point q[22] = 
+  Point q[22] =
   {
     Point(0,0,0), Point(4,4,0), Point(0,4,0), Point(4,0,0),
     Point(1,3,1), Point(3,1,1), Point(3,3,1), Point(1,1,1), Point(2,2,2),
-    Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3), 
+    Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3),
     Point(0,0,4), Point(4,4,4), Point(0,4,4), Point(4,0,4),
     Point(1,3,5), Point(3,1,5), Point(3,3,5), Point(1,1,5), Point(2,2,6)};
 
@@ -272,14 +258,14 @@ _test_cls_delaunay_3(const Triangulation &)
 //   for (a=0;a!=10;a++)
 //     for (b=0;b!=10;b++)
 //       for (d=0;d!=10;d++)
-// 	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
-// 			   a*a-d*d+b));
+//         lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+//                            a*a-d*d+b));
 
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
       for (d=0;d!=5;d++)
-	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
-			   a*a-d*d+b));
+        lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+                           a*a-d*d+b));
 
   // Points for T3_2 :
 
@@ -287,8 +273,8 @@ _test_cls_delaunay_3(const Triangulation &)
   for (a=0;a!=4;a++)
     for (b=0;b!=4;b++)
       for (d=0;d!=4;d++)
-	lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
-			    a*a-d*d-b));
+        lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
+                            a*a-d*d-b));
 
   //########################################################################
 
@@ -299,7 +285,7 @@ _test_cls_delaunay_3(const Triangulation &)
   std::cout << "    Constructor " << std::endl;
   // Beginning with an empty triangulation and adding point until reaching
   // 3-dimentional triangulation.
-  Cls T0; 
+  Cls T0;
   assert(T0.dimension() == -1);
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
@@ -307,12 +293,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
-        oFileT1 << T0 << std::endl;
-      }
-      std::ifstream iFileT1("Test1_triangulation_IO_3",std::ios::in);
-      iFileT1 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == -1);
       assert(Tfromfile.number_of_vertices() == 0);
@@ -328,12 +311,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-	std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
-        oFileT2 << T0 << std::endl;
-      }
-      std::ifstream iFileT2("Test2_triangulation_IO_3",std::ios::in);
-      iFileT2 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 0);
       assert(Tfromfile.number_of_vertices() == 1);
@@ -350,12 +330,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
-        oFileT3 << T0 << std::endl;
-      }
-      std::ifstream iFileT3("Test3_triangulation_IO_3",std::ios::in);
-      iFileT3 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == 2);
@@ -372,12 +349,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT4("Test4_triangulation_IO_3",std::ios::out);
-        oFileT4 << T0;
-      }
-      std::ifstream iFileT4("Test4_triangulation_IO_3",std::ios::in);
-      iFileT4 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 3);
@@ -394,12 +368,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT5("Test5_triangulation_IO_3",std::ios::out);
-        oFileT5 << T0;
-      }
-      std::ifstream iFileT5("Test5_triangulation_IO_3",std::ios::in);
-      iFileT5 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 4);
@@ -412,22 +383,23 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
-  
+
   // copy constructor
   Cls T1(T0);
   assert(T1.dimension() == 3);
   assert(T1.number_of_vertices() == 4);
   assert(T1.is_valid());
-   
+
   T1.clear();
   assert(T1.dimension() == -1);
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0);
 
    // Affectation :
-  T1=T0;  
+  T1=T0;
   assert(T1.dimension() == 3);
   assert(T1.number_of_vertices() == 4);
   assert(T1.is_valid());
@@ -442,7 +414,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
   T0.swap(T1);
-  
+
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
@@ -457,6 +429,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1_0.dimension()==1);
   assert(T1_0.number_of_vertices()==n);
   assert(T1_0.is_valid());
+  test_tr_23::test_move_semantic(T1_0);
   std::cout << "    Constructor7 " << std::endl;
   Cls T1_1;
   n = T1_1.insert(l2.begin(),l2.end());
@@ -475,19 +448,16 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT6("Test6_triangulation_IO_3",std::ios::out);
-        oFileT6 << T1_2;
-      }
-      std::ifstream iFileT6("Test6_triangulation_IO_3",std::ios::in);
-      iFileT6 >> Tfromfile;
+      std::stringstream ss;
+      ss << T1_2;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == n);
   }
 
   std::cout << "    Constructor9 " << std::endl;
-  // 2-dimensional triangulations 
+  // 2-dimensional triangulations
 
   Cls T2_0;
   v0=T2_0.insert(p1);
@@ -517,15 +487,15 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
+  test_tr_23::test_move_semantic(T2_0);
+
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT7("Test7_triangulation_IO_3",std::ios::out);
-        oFileT7 << T2_0;
-      }
-      std::ifstream iFileT7("Test7_triangulation_IO_3",std::ios::in);
-      iFileT7 >> Tfromfile;
+
+      std::stringstream ss;
+      ss << T2_0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 8);
@@ -541,8 +511,8 @@ _test_cls_delaunay_3(const Triangulation &)
   for (m=0; m<20; m++)
     for (n=0; n<20; n++)
       {
-	qq[m+20*n] = Point(m*px+(int)n*qx, m*py+(int)n*qy, 1);
-	T2_1.insert( qq[m+20*n] );
+        qq[m+20*n] = Point(m*px+(int)n*qx, m*py+(int)n*qy, 1);
+        T2_1.insert( qq[m+20*n] );
       }
   assert( T2_1.number_of_vertices() == m*n );
   assert( T2_1.dimension()==2 );
@@ -556,30 +526,32 @@ _test_cls_delaunay_3(const Triangulation &)
   Point r[225];
   for (z=0 ; z<5 ; z++)
     for (y=0 ; y<5 ; y++)
-      for (x=0 ; x<5 ; x++) 
-	{
-	  r[x+5*y+25*z] = Point(x,y,z);
-	  v0=T3_0.insert(r[x+5*y+25*z]);
-	}
+      for (x=0 ; x<5 ; x++)
+        {
+          r[x+5*y+25*z] = Point(x,y,z);
+          v0=T3_0.insert(r[x+5*y+25*z]);
+        }
   assert(T3_0.is_valid());
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
 
+  test_tr_23::test_move_semantic(T3_0);
+
   if (del) {
     std::cout << "    deletion in Delaunay - grid case - (dim 3) " <<
-      std::endl; 
+      std::endl;
     Cls Tdel( T3_0 );
-    
+
     std::vector<Vertex_handle> vertices;
     for (Finite_vertices_iterator vi = Tdel.finite_vertices_begin();
-	 vi != Tdel.finite_vertices_end(); ++vi)
+         vi != Tdel.finite_vertices_end(); ++vi)
       vertices.push_back(vi);
 
     size_type n = Tdel.number_of_vertices();
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
     assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
-    std::cout << "    successfull" << std::endl; 
+    std::cout << "    successful" << std::endl;
   }
 
 
@@ -594,12 +566,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test8_triangulation_IO_3",std::ios::out);
-        oFileT8 << T3_1;
-      }
-      std::ifstream iFileT8("Test8_triangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_1;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
@@ -647,12 +616,13 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    Testing nearest_vertex()" << std::endl;
     // We do a nearest_vertex() and two nearest_vertex_in_cell()
     // queries on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // in the cube [-1;6]^3. In each case we check explicitly that the
     // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.tds().cell(T3_13.infinite_vertex());
     for (int x = -1; x < 7; ++x)
       for (int y = -1; y < 7; ++y)
+<<<<<<< HEAD
 	for (int z = -1; z < 7; ++z) {
 	  Point p(x, y, z);
 	  Vertex_handle v = nearest_vertex(T3_13, p);
@@ -680,17 +650,43 @@ _test_cls_delaunay_3(const Triangulation &)
                      CGAL::squared_distance(p, T3_13.point(c2,i)));
 	  }
 	}
+=======
+        for (int z = -1; z < 7; ++z) {
+          Point p(x, y, z);
+          Vertex_handle v = nearest_vertex(T3_13, p);
+          for (typename Cls::Finite_vertices_iterator
+                 fvit = T3_13.finite_vertices_begin();
+               fvit != T3_13.finite_vertices_end(); ++fvit){
+
+            assert(CGAL::squared_distance(p,
+                                          v->point()) <=
+                   CGAL::squared_distance(p, fvit->point()));
+          }
+                   Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1)
+;
+          int i1 = c1->index(v1);
+           for(int i=0; i<4; ++i) {
+            if (i != i1)
+              assert(CGAL::squared_distance(p, v1->point()) <=
+              CGAL::squared_distance(p, c1->vertex(i)->point()));
+          }
+          Vertex_handle v2 = nearest_vertex_in_cell(T3_13, p, c2);
+          int i2 = c2->index(v2);
+          for(int i=0; i<4; ++i) {
+            if (i != i2 && c2->vertex(i) != T3_13.infinite_vertex())
+              assert(CGAL::squared_distance(p, v2->point()) <=
+              CGAL::squared_distance(p, c2->vertex(i)->point()));
+          }
+        }
+>>>>>>> cgal/master
   }
 
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test13_triangulation_IO_3",std::ios::out);
-        oFileT8 << T3_13;
-      }
-      std::ifstream iFileT8("Test13_triangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_13;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
@@ -740,19 +736,19 @@ _test_cls_delaunay_3(const Triangulation &)
     else
       if (count < 100)
         std::cout << count << '\b' << '\b' ;
-      else 
+      else
         if (count < 1000)
           std::cout << count << '\b' << '\b' << '\b' ;
         else
-	  std::cout << count << std::endl;
+          std::cout << count << std::endl;
     std::cout.flush();
   }
   std::cout << std::endl;
   assert(T3_2.is_valid());
   assert(T3_2.dimension()==3);
   assert(T3_2.number_of_vertices()==500);
- 
- 
+
+
 
   Point p110(-5,5,0), p111(-2,-5,2), p112(-2,-9,6), p113(4,8,9), p114(5,-6,0),
     p115(3,0,5), p116(-9,0,-10), p117(1,6,-2), p118(-3,2,-4), p119(3,-3,-1);
@@ -777,6 +773,7 @@ _test_cls_delaunay_3(const Triangulation &)
     Vertex_handle v;
     while ( T3_5.number_of_vertices() >= 1 ) {
       if ( T3_5.dimension() == 3 )
+<<<<<<< HEAD
 	v = T3_5.tds().vertex(T3_5.infinite_cell(), (T3_5.tds().index(T3_5.infinite_cell(), T3_5.infinite_vertex() ) +1 )&3 );
       else if ( T3_5.dimension() == 2 )
 	v = T3_5.tds().vertex(T3_5.infinite_cell(), (T3_5.tds().index(T3_5.infinite_cell(), T3_5.infinite_vertex() ) +1 )%3 );
@@ -784,6 +781,18 @@ _test_cls_delaunay_3(const Triangulation &)
         v = T3_5.tds().vertex(T3_5.infinite_cell(), (T3_5.tds().index(T3_5.infinite_cell(), T3_5.infinite_vertex() ) +1 )%2 );
 	else
 	  v = T3_5.tds().vertex(T3_5.tds().neighbor(T3_5.infinite_cell(),0), 0);
+=======
+        v = T3_5.infinite_cell()->vertex
+          ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )&3 );
+      else if ( T3_5.dimension() == 2 )
+        v = T3_5.infinite_cell()->vertex
+          ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%3 );
+      else if ( T3_5.dimension() == 1 )
+          v = T3_5.infinite_cell()->vertex
+            ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%2 );
+        else
+          v = T3_5.infinite_cell()->neighbor(0)->vertex(0);
+>>>>>>> cgal/master
 
       T3_5.remove( v );
     }
@@ -809,18 +818,18 @@ _test_cls_delaunay_3(const Triangulation &)
 //   bool success(true);
 //   if (del) {
 //     std::cout << "    deletion in a Delaunay of "
-// 	      << T3_4.number_of_vertices() << " random points";
+//               << T3_4.number_of_vertices() << " random points";
 //     Vertex_handle v;
 //     while ( T3_4.number_of_vertices() >= 1 ) {
 //       if ( T3_4.dimension() > 1 )
-// 	v = T3_4.infinite_cell()->vertex
-// 	  ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )&3 );
+//         v = T3_4.infinite_cell()->vertex
+//           ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )&3 );
 //       else
-// 	if ( T3_4.dimension() == 1 )
-// 	  v = T3_4.infinite_cell()->vertex
-// 	    ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )%2 );
-// 	else
-// 	  v = T3_4.infinite_cell()->neighbor(0)->vertex(0);
+//         if ( T3_4.dimension() == 1 )
+//           v = T3_4.infinite_cell()->vertex
+//             ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )%2 );
+//         else
+//           v = T3_4.infinite_cell()->neighbor(0)->vertex(0);
 
 //       success = T3_4.remove( v );
 //     }
@@ -847,10 +856,10 @@ _test_cls_delaunay_3(const Triangulation &)
       _test_vertex_iterator(T3_1);
       _test_triangulation_iterator(T3_1);
       _test_vertex_iterator(T3_0);
-      _test_triangulation_iterator(T3_0); 
-      _test_vertex_iterator(T3_2);        
-      _test_triangulation_iterator(T3_2); 
-      
+      _test_triangulation_iterator(T3_0);
+      _test_vertex_iterator(T3_2);
+      _test_triangulation_iterator(T3_2);
+
 
       std::cout << "    Testing Circulator  "<< std::endl;
       _test_circulator(T0);
@@ -886,7 +895,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T4.is_Gabriel(e));
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
-    
+
   std::cout <<"   Test dual (minimal test for now)" << std::endl;
 
   // We only test return types and instantiation, basically.
@@ -915,6 +924,7 @@ _test_cls_delaunay_3(const Triangulation &)
     Cls Ta (q, q+22), Tb(q, q+22);
     assert(Ta == Tb);
     for (Finite_vertices_iterator ita = Ta.finite_vertices_begin(),
+<<<<<<< HEAD
 		                  itb = Tb.finite_vertices_begin(),
 		                  end = Ta.finite_vertices_end();
 	 ita != end; ++ita, ++itb)
@@ -927,20 +937,34 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Ta.point(ita, 1) == Tb.point(itb, 1));
       assert(Ta.point(ita, 2) == Tb.point(itb, 2));
       assert(Ta.point(ita, 3) == Tb.point(itb, 3));
+=======
+                                  itb = Tb.finite_vertices_begin(),
+                                  end = Ta.finite_vertices_end();
+         ita != end; ++ita, ++itb)
+      assert(ita->point() == itb->point());
+    for (Finite_cells_iterator ita = Ta.finite_cells_begin(),
+                               itb = Tb.finite_cells_begin(),
+                               end = Ta.finite_cells_end();
+         ita != end; ++ita, ++itb) {
+      assert(ita->vertex(0)->point() == itb->vertex(0)->point());
+      assert(ita->vertex(1)->point() == itb->vertex(1)->point());
+      assert(ita->vertex(2)->point() == itb->vertex(2)->point());
+      assert(ita->vertex(3)->point() == itb->vertex(3)->point());
+>>>>>>> cgal/master
     }
   }
-  
+
   /**********************/
   /******* MOVE *********/
   std::cout << "    displacements" << std::endl;
 
   std::cout << "    degenerate cases: " << std::endl;
-  
+
   Cls TM_0;
   Vertex_handle tmv1 = TM_0.insert(Point(0,0,0));
   Vertex_handle tmv2 = TM_0.insert(Point(0,1,0));
 
-	TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
+  TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);
@@ -1056,7 +1080,7 @@ _test_cls_delaunay_3(const Triangulation &)
   TM_0.move_if_no_collision(tmv4, Point(0, 1, 2));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
-  assert(TM_0.dimension() == 1);   
+  assert(TM_0.dimension() == 1);
 
   TM_0.move_if_no_collision(tmv4, Point(0, 3, 0));
   assert(TM_0.tds().is_valid());
@@ -1133,7 +1157,7 @@ _test_cls_delaunay_3(const Triangulation &)
   TM_1.insert(points.begin(), points.end());
   Vertex_handle vTM_1;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator 
+    for(typename Cls::Finite_vertices_iterator
           fvi = TM_1.finite_vertices_begin();
         fvi != TM_1.finite_vertices_end(); fvi++) {
       Point p = Point(0, 0, rand()%30000);
@@ -1151,9 +1175,9 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(0, rand()%30000, rand()%30000));
   }
   TM_2.insert(points.begin(), points.end());
-	Vertex_handle vTM_2;
+        Vertex_handle vTM_2;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator 
+    for(typename Cls::Finite_vertices_iterator
          fvi = TM_2.finite_vertices_begin();
          fvi != TM_2.finite_vertices_end(); fvi++) {
       Point p = Point(0, rand()%30000, rand()%30000);
@@ -1164,7 +1188,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(TM_2.is_valid());
 
   std::cout << "    random 3D: " << std::endl;
-  Cls TM_3;	
+  Cls TM_3;
   // non-degenerate cases
   points.clear(); TM_3.clear();
   for(int count=0; count<50; count++) {
@@ -1173,10 +1197,10 @@ _test_cls_delaunay_3(const Triangulation &)
   TM_3.insert(points.begin(), points.end());
 
   assert(TM_3.is_valid());
-	
+
   Vertex_handle vTM_3;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator 
+    for(typename Cls::Finite_vertices_iterator
           fvi = TM_3.finite_vertices_begin();
         fvi != TM_3.finite_vertices_end(); fvi++) {
       Point p = Point(rand()%30000, rand()%30000, rand()%30000);
@@ -1191,9 +1215,22 @@ _test_cls_delaunay_3(const Triangulation &)
 
   // Test remove cluster
   {
-		_test_remove_cluster<Triangulation>();
+                _test_remove_cluster<Triangulation>();
   }
 
+  // Test from issue https://github.com/CGAL/cgal/issues/5396
+  {
+    auto Triangulate = []() -> Triangulation
+    {
+      Triangulation tri;
+      for (int i=0; i<10; i++)
+        tri.insert(Point(i+1, i+2, i+3));
+
+      return tri;
+    };
+    auto t = Triangulate();
+    auto t2 = std::move(t);
+  }
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C

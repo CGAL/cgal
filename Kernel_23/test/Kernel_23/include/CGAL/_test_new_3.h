@@ -1,26 +1,20 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Michael Seel
 //                 Stefan Schirra
- 
+
 
 #ifndef CGAL_TEST_NEW_3_H
 #define CGAL_TEST_NEW_3_H
@@ -28,8 +22,12 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
+#include <CGAL/_test_compare_angle_3.h>
+#include <CGAL/Has_member.h>
 
 #include <CGAL/use.h>
+
+CGAL_GENERATE_MEMBER_DETECTOR(needs_FT);
 
 using CGAL::internal::use;
 
@@ -43,7 +41,7 @@ _test_new_3_sqrt(const R&, CGAL::Tag_false)
     std::cout << std::endl
               << "NOTE : FT doesn't support sqrt(),"
                  " hence some functions are not tested."
-	      << std::endl;
+              << std::endl;
     return true;
 }
 
@@ -81,6 +79,28 @@ _test_new_3_sqrt(const R& rep, CGAL::Tag_true)
   return true;
 }
 
+template <bool b = false> struct Test_needs_FT
+{
+  template <typename ...T> void operator()(const T&...) const {}
+};
+
+template <> struct Test_needs_FT<true>
+{
+  template <typename Compare_distance_3,
+            typename Point_3, typename Segment_3, typename Line_3>
+  void operator()(const Compare_distance_3& compare_dist,
+                  const Point_3& p1, const Point_3 p2, const Point_3& p3,
+                  const Segment_3& s2, const Line_3& l1) const
+  {
+    assert(!compare_dist.needs_FT(p1, p2, p3));
+    assert(!compare_dist.needs_FT(p2, s2, s2));
+    assert(!compare_dist.needs_FT(p2, p2, s2));
+    assert(!compare_dist.needs_FT(p1, s2, p2));
+    assert(compare_dist.needs_FT(l1, p1, p1));
+    assert(compare_dist.needs_FT(p2, p3, p2, p3));
+    assert(compare_dist.needs_FT(p2, s2, l1, s2));
+  }
+};
 
 template <class R>
 bool
@@ -152,7 +172,7 @@ test_new_3(const R& rep)
   Direction_3 d2 = construct_direction(v3);
   Direction_3 d3 = construct_direction(1,1,5);
   Direction_3 d4 = construct_direction(1,5,5);
-  // remaining constructions tested below, after the 
+  // remaining constructions tested below, after the
   // corresponding types have been introduced
 
   typename R::Construct_segment_3 construct_segment
@@ -190,7 +210,7 @@ test_new_3(const R& rep)
   Vector_3 v7 = construct_vector(s2);
   Vector_3 v8 = construct_vector(r2);
   Vector_3 v9 = construct_vector(l2);
-  
+
   typename R::Construct_plane_3 construct_plane
         = rep.construct_plane_3_object();
   Plane_3 h1;
@@ -267,7 +287,7 @@ test_new_3(const R& rep)
           tmp2f = construct_vertex_3(iso1, 0);
           tmp2f = construct_vertex_3(t2, 0);
           tmp2f = construct_vertex_3(th2, 0);
-  
+
   typename R::Construct_min_vertex_3 construct_min_vertex_3
         = rep.construct_min_vertex_3_object();
           tmp2f = construct_min_vertex_3(iso1);
@@ -294,7 +314,7 @@ test_new_3(const R& rep)
   Bbox_3 bb5 = construct_bbox_3(sp1); // Sphere_3
   Bbox_3 bb6 = construct_bbox_3(iso1); // Iso_cuboid_3
 
-  typename R::Construct_cartesian_const_iterator_3 
+  typename R::Construct_cartesian_const_iterator_3
     construct_cartesian_const_iterator_3
     = rep.construct_cartesian_const_iterator_3_object();
 
@@ -455,7 +475,7 @@ test_new_3(const R& rep)
   tmp11 = compute_squared_length(s2);
   (void) tmp11;
 
-  
+
   typename R::Compute_squared_radius_3 Compute_squared_radius
         = rep.compute_squared_radius_3_object();
   FT tmp11aa = Compute_squared_radius(sp1);
@@ -605,12 +625,24 @@ test_new_3(const R& rep)
     bool tmp = _test_compare_dihedral_angle_3(rep);
     assert(tmp);
   }
+  {
+    bool tmp = _test_compare_angle_3(rep);
+    assert(tmp);
+  }
 
   typename R::Compare_distance_3 compare_dist
         = rep.compare_distance_3_object();
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
+  tmp34ab = compare_dist(p1, s2, s2);
+  tmp34ab = compare_dist(p1, p2, s2);
+  tmp34ab = compare_dist(p1, s2, p2);
   tmp34ab = compare_dist(p2,p3,p2,p3);
-  tmp34ab = compare_dist(p1, p2, p3, p4);  
+  tmp34ab = compare_dist(p1, p2, p3, p4);
+  tmp34ab = compare_dist(l2, p1, p1);
+
+  Test_needs_FT<R::Has_filtered_predicates &&
+      has_needs_FT<typename R::Compare_distance_3>::value> test_needs_ft;
+  test_needs_ft(compare_dist, p1, p2, p3, s2, l1);
   (void) tmp34ab;
 
   typename R::Compare_squared_distance_3 compare_sq_dist
@@ -624,8 +656,8 @@ test_new_3(const R& rep)
   tmp34ab = compare_sq_dist(p1, p2, p3, p4);
 
   tmp34ab = CGAL::compare_distance(p2,p3,p2,p3);
-  tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);  
-  tmp34ab = CGAL::compare_distance(p1, p2, p3);  
+  tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);
+  tmp34ab = CGAL::compare_distance(p1, p2, p3);
 
   typename R::Compare_power_distance_3 compare_power_dist
         = rep.compare_power_distance_3_object();
@@ -753,6 +785,7 @@ test_new_3(const R& rep)
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
                 tmp39 = oriented_side(sp9,p2);
+                tmp39 = oriented_side(p2,v3,p2);
   (void) tmp39;
 
   typename R::Bounded_side_3 bounded_side
@@ -816,7 +849,7 @@ test_new_3(const R& rep)
         = rep.angle_3_object();
   Angle tmp46 = angle(p2,p3,p4);
   (void) tmp46;
-  
+
   typename R::Construct_bisector_3 construct_bisector
         = rep.construct_bisector_3_object();
   Plane_3 tmp47 = construct_bisector(p2,p3);
@@ -825,23 +858,23 @@ test_new_3(const R& rep)
   // kill warnings ...
   use(v1); use(d1); use(s1); use(l1); use(l4); use(l5);
   use(l6); use(d4); use(d5); use(d6); use(d7); use(r1);
-  use(h1); use(h4); use(h5); use(h6); 
+  use(h1); use(h4); use(h5); use(h6);
   use(sp4); use(sp5); use(sp6); use(sp7); use(sp8);
   use(t1); use(th1);
   use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
   use(tmp12a); use(tmp12aa); use(tmp12b);
-  use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
+  use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6);
   use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
   use(cccit);
 
   // More tests, that require sqrt().
-  typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
-  static const bool has_sqrt = 
-      ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+  typedef ::CGAL::Algebraic_structure_traits<FT> AST;
+  static const bool has_sqrt =
+      ! ::std::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
   _test_new_3_sqrt(rep, ::CGAL::Boolean_tag<has_sqrt>() );
-  
+
   return true;
 }
 

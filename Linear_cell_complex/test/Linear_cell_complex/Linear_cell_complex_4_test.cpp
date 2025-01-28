@@ -35,7 +35,8 @@ struct Myattrib : public  CGAL::Cell_attribute_with_point
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
+  MonInfo(long long int i=0) : mnb(i==0?rand():static_cast<int>(i)),
+                               ptr(reinterpret_cast<char*>(this))
   {}
 
   bool operator==(const MonInfo& info) const
@@ -46,8 +47,19 @@ struct MonInfo
   char *ptr;
 };
 
+struct Min_items: public CGAL::Linear_cell_complex_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Myitems_4b
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+  using Index_type=std::uint64_t;
+#endif
   template <class LCC>
   struct Dart_wrapper
   {
@@ -61,6 +73,9 @@ struct Myitems_4b
 
 struct Myitems_4c
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class LCC>
   struct Dart_wrapper
   {
@@ -76,13 +91,14 @@ int main()
 
   // ****************** TEST FOR CMAP ******************
   trace_display_msg("test_LCC_4<LCC4>");
-  typedef CGAL::Linear_cell_complex_for_combinatorial_map<4> LCC4;
+  typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
+      CGAL::Linear_cell_complex_traits<4>, Min_items> LCC4;
   if ( !test_LCC_4<LCC4>() )
   {
     std::cout<<" Error during Test_LCC_4<LCC4>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_4<LCC4b>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
                                     CGAL::Linear_cell_complex_traits<4>,
@@ -105,7 +121,8 @@ int main()
 
   // ****************** TEST FOR GMAP ******************
   trace_display_msg("test_LCC_4<GLCC4>");
-  typedef CGAL::Linear_cell_complex_for_generalized_map<4> GLCC4;
+  typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
+      CGAL::Linear_cell_complex_traits<4>, Min_items> GLCC4;
   if ( !test_LCC_4<GLCC4>() )
   {
     std::cout<<" Error during Test_LCC_4<GLCC4>."<<std::endl;

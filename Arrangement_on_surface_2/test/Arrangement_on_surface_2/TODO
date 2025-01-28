@@ -19,7 +19,7 @@ way of testing them. I therefore see no gain in testing them.
 
 What would be a good test for Bezier curves is a program that reads sets
 of Beizer curves from a file (like Bezier_curves.cpp in the examples folder),
-preferrably in degenerate positions, and computes their arrangement.
+preferably in degenerate positions, and computes their arrangement.
 This way Split is tested at any case.
 
 By the way - if you really want to test AreMergeable and Merge, you can do the

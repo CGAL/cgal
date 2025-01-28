@@ -14,7 +14,7 @@ typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in( (argc>1)? argv[1] : "data/cube.xyz");
+  std::ifstream in( (argc>1)? argv[1] : CGAL::data_file_path("points_3/cube.xyz"));
   std::vector<Point_3> points;
   Point_3 p;
   while(in >> p){
@@ -23,12 +23,12 @@ int main(int argc, char* argv[])
 
   // define polyhedron to hold convex hull
   Polyhedron_3 poly;
-  
+
   // compute convex hull of non-collinear points
   CGAL::convex_hull_3(points.begin(), points.end(), poly);
 
   std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
-  
+
   Surface_mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 

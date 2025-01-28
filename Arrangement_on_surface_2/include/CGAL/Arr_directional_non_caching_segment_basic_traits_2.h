@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
@@ -48,7 +39,7 @@ public:
   typedef typename Base::Segment_assertions                Segment_assertions;
   typedef typename Base::Has_exact_division                Has_exact_division;
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_directional_non_caching_segment_basic_traits_2() : Base() {}
 
   /// \name Types and functors inherited from the base, required by the
@@ -112,7 +103,7 @@ public:
   //@{
   typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2;
 
-  /*! Obtain a Construct_opposite_2 functor object. */
+  /*! obtains a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
 
@@ -123,7 +114,7 @@ public:
     /*! The traits (in case it has state). */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructs
      * \param traits the traits (in case it has state).
      */
     Compare_endpoints_xy_2(const Traits& traits) : m_traits(traits) {}
@@ -131,7 +122,7 @@ public:
     friend class Arr_directional_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
-    /*! Compare the two endpoints of a given curve lexigoraphically.
+    /*! compares the two endpoints of a given curve lexigoraphically.
      * \param cv The curve.
      * \return SMALLER if cv is directed from left to right and LARGER
      * otherwise.
@@ -147,7 +138,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_endpoints_xy_2 functor object. */
+  /*! obtains a Compare_endpoints_xy_2 functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(*this); }
   //@}

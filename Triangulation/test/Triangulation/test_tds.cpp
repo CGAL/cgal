@@ -11,7 +11,7 @@ void test(const int d, const string & type)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that TDS contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename TDS::Vertex_handle Vertex_handle;
     typedef typename TDS::Vertex_iterator Vertex_iterator;
     typedef typename TDS::Full_cell_handle Full_cell_handle;
@@ -31,7 +31,7 @@ void test(const int d, const string & type)
     {
         vhs.push_back(tds.insert_increase_dimension(vhs[0]));
         ++nb_verts;
-        
+
         assert(i == tds.current_dimension());
         assert(!tds.is_vertex(Vertex_handle()));
         assert(!tds.is_full_cell(Full_cell_handle()));
@@ -91,19 +91,20 @@ void test(const int d, const string & type)
         cout << '\n' << tds.number_of_full_cells() << " full cells, ";
         cout << ' ' << nbfft << " facets.";
     }
- 
+
     // TEST File I/O
     std::ofstream fo((string("output-tds-")+type).c_str());
     if( d % 2 )
-        CGAL::set_binary_mode(fo);
+        CGAL::IO::set_binary_mode(fo);
     fo << tds;
     fo.close();
 
     std::ifstream fi((string("output-tds-")+type).c_str());
     if( d % 2 )
-        CGAL::set_binary_mode(fi);
+        CGAL::IO::set_binary_mode(fi);
     TDS input_tds(d);
     fi >> input_tds;
+    assert( input_tds.is_valid(true) );
     fi.close();
 
     // TEST Copy Constructor

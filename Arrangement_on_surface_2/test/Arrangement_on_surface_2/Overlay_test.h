@@ -745,7 +745,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init()
 
   // Expected arrangement.
   Formatter formatter;
-  CGAL::read(m_arr, p_stream, formatter);
+  CGAL::IO::read(m_arr, p_stream, formatter);
 
   p_stream.close();
 
@@ -981,13 +981,13 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::perform()
   Arrangement arr;
   Overlay_traits overlay_traits(m_verbose_level);
   // Formatter formatter;
-  // CGAL::write(m_arr2, std::cout, formatter);
+  // CGAL::IO::write(m_arr2, std::cout, formatter);
 
   CGAL::overlay(m_arr1, m_arr2, arr, overlay_traits);
 
   // Generate the output for debugging purposes
   // Formatter formatter;
-  // CGAL::write(arr, std::cout, formatter);
+  // CGAL::IO::write(arr, std::cout, formatter);
 
   // Verify the resulting arrangement:
   if (!equivalent_arr(arr, m_arr)) {

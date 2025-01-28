@@ -32,11 +32,7 @@ concepts for the rest.
 
 
 
-\cgalModels `Kernel_d`
-\cgalModels `DelaunayTriangulationTraits`
-\cgalModels `RegularTriangulationTraits`
-\cgalModels `SearchTraits`
-\cgalModels `RangeSearchTraits`
+\cgalModels{Kernel_d,DelaunayTriangulationTraits,RegularTriangulationTraits,SearchTraits,RangeSearchTraits}
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
@@ -47,8 +43,7 @@ template< typename DimensionTag >
 struct Epick_d {
 /*!
 represents a point in the Euclidean space
-\cgalModels `DefaultConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,Assignable}
 */
 class Point_d {
 public:
@@ -76,8 +71,7 @@ Cartesian_const_iterator_d cartesian_end()const;
 
 /*!
 represents a weighted point in the Euclidean space
-\cgalModels `DefaultConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,Assignable}
 */
 class Weighted_point_d {
 public:
@@ -89,7 +83,7 @@ Point_d point() const;
 double weight() const;
 };
 
-/*! \cgalModels `Kernel_d::Center_of_sphere_d`
+/*! \cgalModels{Kernel_d::Center_of_sphere_d}
  */
 class Construct_circumcenter_d {
 public:
@@ -109,7 +103,16 @@ public:
 template<class ForwardIterator>
 FT operator()(ForwardIterator first, ForwardIterator last);
 };
-/*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
+class Compute_squared_radius_smallest_orthogonal_sphere_d {
+public:
+/*! returns the radius of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and orthogonal to all the spheres of A. The order of the points of A does not matter.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+FT operator()(ForwardIterator first, ForwardIterator last);
+};
+/*! \cgalModels{Kernel_d::Side_of_bounded_sphere_d}
  */
 class Side_of_bounded_sphere_d {
 public:
@@ -120,7 +123,35 @@ public:
 template<class ForwardIterator>
 Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Point_d&p);
 };
+class Power_side_of_bounded_power_sphere_d {
+public:
+/*! returns the relative position of weighted point p to the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and orthogonal to all the spheres of A. The order of the points of A does not matter.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Weighted_point_d&p);
+};
+class Construct_power_sphere_d {
+public:
+/*! returns a weighted point on the affine hull of the weighted points of `A=tuple[first,last)` at power distance 0 of each of them. In other words, this returns the smallest sphere orthogonal to the spheres of A.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+Weighted_point_d operator()(ForwardIterator first, ForwardIterator last);
+};
+class Compute_power_product_d {
+public:
+/*! returns the power product (aka power distance) of the weighted points `pw` and `qw`, that is, the squared Euclidean distance between the points minus their weights.
+ */
+FT operator()(Weighted_point_d pw, Weighted_point_d qw);
+};
 Construct_circumcenter_d construct_circumcenter_d_object();
+Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
+Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Construct_power_sphere_d construct_power_sphere_d_object();
+Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */

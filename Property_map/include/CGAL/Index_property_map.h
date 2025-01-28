@@ -1,20 +1,11 @@
 // Copyright (c) 20009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret
 
@@ -22,7 +13,7 @@
 #define CGAL_INDEX_PROPERTY_MAP_H
 
 #include <CGAL/property_map.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <iterator>
 #include <map>
@@ -30,7 +21,7 @@
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-  
+
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
@@ -55,11 +46,11 @@ struct Compare_iterator_address
 // ----------------------------------------------------------------------------
 
 
-/// Template class "index" property map, which associates a 0-based index (unsigned int) 
+/// Template class "index" property map, which associates a 0-based index (unsigned int)
 /// to the `[first, beyond)` range of elements.
-/// 
+///
 /// 2 specializations exist:
-/// - if Iter is a random access iterator (typically vector and deque), 
+/// - if Iter is a random access iterator (typically vector and deque),
 /// get() just calls std::distance() and is very efficient;
 /// - else, the property map allocates a std::map to store indices
 /// and get() requires a lookup in the map.
@@ -74,7 +65,7 @@ struct Compare_iterator_address
 // This is the default variant that creates a temporary std::map<Iter,unsigned int>.
 template <class Iter,
           typename iterator_tag=typename std::iterator_traits<Iter>::iterator_category>
-class Index_property_map 
+class Index_property_map
   : public boost::associative_property_map< std::map<Iter,
                                                      unsigned int,
                                                      internal::Compare_iterator_address<Iter> > >
@@ -91,7 +82,7 @@ public:
   Index_property_map(
     Iter first,  ///< iterator over the first element (index 0)
     Iter beyond) ///< past-the-end iterator over the elements
-    
+
   : m_index_map(new Index_map)  // Allocate std::map
   {
     // Index elements in std::map
@@ -99,19 +90,19 @@ public:
     unsigned int index;
     for (it = first, index = 0; it != beyond; it++, index++)
       (*m_index_map)[it] = index;
-      
+
     // Wrap std::map in property map
     (Base&)(*this) = *m_index_map;
   }
 
 private:
   // Property maps must be lightweight classes => share std::map
-  boost::shared_ptr<Index_map> m_index_map;
+  std::shared_ptr<Index_map> m_index_map;
 };
 
 /// @cond SKIP_IN_MANUAL
 // This variant is optimized for a random access container.
-template <class Iter> 
+template <class Iter>
 class Index_property_map<Iter,
                          std::random_access_iterator_tag>
 {
@@ -130,7 +121,7 @@ public:
 
   /// Free function to access the map elements.
   friend inline
-  reference get(const Index_property_map& map, key_type p)
+  value_type get(const Index_property_map& map, key_type p)
   {
     return std::distance(map.m_first, p);
   }
@@ -145,7 +136,7 @@ private:
 ///
 /// @tparam Iter iterator over input elements.
 ///
-/// @return an "index" property map, which associates a 0-based index (unsigned int) 
+/// @return an "index" property map, which associates a 0-based index (unsigned int)
 /// to the `[first, beyond)` range of elements.
 template <class Iter>
 Index_property_map<Iter>

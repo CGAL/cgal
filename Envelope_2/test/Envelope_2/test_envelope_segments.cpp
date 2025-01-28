@@ -15,7 +15,7 @@ using std::strcmp;
 typedef CGAL::Exact_rational                            NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
-typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 
+typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2,
                                       int>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Segment_traits_2::Curve_2                       Segment_2;
@@ -35,7 +35,7 @@ enum Coord_input_format
  * \param filename The name of the input file.
  * \param format The coordinate format.
  * \param segs Output: The segments.
- * \return Whether the segments were successfuly read.
+ * \return Whether the segments were successfully read.
  */
 bool read_segments (const char* filename,
                     Coord_input_format format,
@@ -80,7 +80,7 @@ bool read_segments (const char* filename,
     else {
       ifile >> x1 >> y1 >> x2 >> y2;
     }
-      
+
     Segment_2 seg = Segment_2 (Point_2 (x1, y1), Point_2 (x2, y2));
     segs.push_back (Curve_2(seg, static_cast<int>(segs.size())));
   }
@@ -113,7 +113,7 @@ bool find_curve(I begin, I end, const Curve_2& c)
  * Check the envelope of a given set of segments.
  * \param segs The segments.
  * \param diag The diagram.
- * \param is_lower Does the diagram reprsent the lower or the upper envelope.
+ * \param is_lower Does the diagram represent the lower or the upper envelope.
  * \return Whether the diagram structure is correct.
  */
 bool check_envelope (const Curve_list& segs,
@@ -177,7 +177,7 @@ bool check_envelope (const Curve_list& segs,
       }
     }
 
-    
+
 
     // Go over all segments.
     for (sit = segs.begin(); sit != segs.end(); ++sit)
@@ -203,28 +203,28 @@ bool check_envelope (const Curve_list& segs,
         {
           // Compare the segment with the segment associated with the edge.
           y_res = comp_y_at_x (p_mid, *sit, e->curve());
-          
+
           // Check for violations of the diagram properties.
           if ((is_lower && y_res == CGAL::SMALLER) ||
               (! is_lower && y_res == CGAL::LARGER))
           {
             std::cerr << "The edge (" << e->left()->point()
-                      << ") -> (" << e->right()->point() 
+                      << ") -> (" << e->right()->point()
                       << ") is associated with the segment ["
-                      << e->curve() << "], but the segment [" 
+                      << e->curve() << "], but the segment ["
                       << *sit << "] violates the envelope properties."
                       << std::endl;
             return (false);
           }
-          
+
           // If it is equal, the segment should be in the diagram.
-          if (y_res == CGAL::EQUAL && 
+          if (y_res == CGAL::EQUAL &&
               find_curve(e->curves_begin(), e->curves_end(), *sit) == false)
           {
             std::cerr << "The edge (" << e->left()->point()
-                      << ") -> (" << e->right()->point() 
+                      << ") -> (" << e->right()->point()
                       << ") is associated with the segment ["
-                      << e->curve() << "], but the segment [" 
+                      << e->curve() << "], but the segment ["
                       << *sit << "] is not in the list of its curves."
                       << std::endl;
             return (false);
@@ -254,25 +254,25 @@ bool check_envelope (const Curve_list& segs,
         {
           // Compare the segment with the segment associated with the edge.
           y_res = comp_y_at_x (v->point(), *sit);
-          
+
           // Check for violations of the diagram properties.
           if ((is_lower && y_res == CGAL::LARGER) ||
               (! is_lower && y_res == CGAL::SMALLER))
           {
             std::cerr << "The vertex (" << v->point()
-                      << ") and the segment [" 
+                      << ") and the segment ["
                       << *sit << "] violate the envelope properties."
                       << std::endl;
             return (false);
           }
-          
+
           // If it is equal, the segment should be in the diagram.
-          if (y_res == CGAL::EQUAL && 
+          if (y_res == CGAL::EQUAL &&
               find_curve(v->curves_begin(), v->curves_end(), *sit) == false)
           {
             std::cerr << "The vertex (" << v->point()
-                      << ") does not contain the segment [" 
-                      << *sit << "] in the list of its curves, but they have" 
+                      << ") does not contain the segment ["
+                      << *sit << "] in the list of its curves, but they have"
                       << " equal values."
                       << std::endl;
             return (false);
@@ -285,7 +285,7 @@ bool check_envelope (const Curve_list& segs,
     e = v->right();
   }
 
-    
+
   // If we reached here, the diagram is valid.
   return (true);
 }
@@ -297,7 +297,7 @@ int main (int argc, char *argv[])
 {
   if (argc % 2 == 0 || argc == 1)
   {
-    std::cerr << "Usage: " << argv[0] 
+    std::cerr << "Usage: " << argv[0]
               << "<input file> [ -q | -i | -d ]" << std::endl;
     return (1);
   }
@@ -306,27 +306,27 @@ int main (int argc, char *argv[])
   for (int i = 0; i < number_of_tests; ++i)
   {
     std::cout << "Checking input file: " << argv[2*i + 1] << std::endl;
-    
+
     // Determine the input format.
     Coord_input_format   format = F_RATIONAL;
-    
+
     if (strcmp (argv[2*i + 2], "-i") == 0 || strcmp (argv[2*i + 2], "-I") == 0)
       format = F_INTEGER;
     else if (strcmp (argv[2*i + 2], "-d") == 0 || strcmp (argv[2*i + 2], "-D") == 0)
       format = F_DOUBLE;
-    
+
     // Read the input segments.
     Curve_list   segments;
-    
+
     if (! read_segments (argv[2*i + 1], format, segments))
       return (1);
-    
+
     // Compute their lower envelope.
     Diagram_1              min_diag;
-    
+
     lower_envelope_2 (segments.begin(), segments.end(),
                       min_diag);
-    
+
     // Check the lower envelope.
     if (! check_envelope (segments, min_diag, true))
     {
@@ -337,13 +337,13 @@ int main (int argc, char *argv[])
     {
       std::cout << "The lower envelope is valid." << std::endl;
     }
-    
+
     // Compute the upper envelope.
     Diagram_1              max_diag;
-    
+
     upper_envelope_2 (segments.begin(), segments.end(),
                       max_diag);
-    
+
     // Check the upper envelope.
     if (! check_envelope (segments, max_diag, false))
     {

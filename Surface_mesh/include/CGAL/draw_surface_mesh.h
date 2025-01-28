@@ -1,22 +1,14 @@
-// Copyright (c) 2018 GeometryFactory (France)
+// Copyright (c) 2018-2020 GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_SURFACE_MESH_H
 #define CGAL_DRAW_SURFACE_MESH_H
@@ -26,211 +18,177 @@
 /*!
 \ingroup PkgDrawSurfaceMesh
 
-Open a new window and draw `asm`, an instance of the `CGAL::Surface_mesh` class. The function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
-\tparam SM an instance of the `CGAL::Surface_mesh` class.
-\param asm the surface mesh to draw.
+opens a new window and draws a surface mesh. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\tparam SM which must be an instantiation of a `CGAL::Surface_mesh<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param sm the surface mesh to draw.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class K, class GSOptions>
+
+ void CGAL::draw(const CGAL::Surface_mesh<K>& sm, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class SM, class GSOptions>
+void draw(const SM& sm, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+A shortcut to `CGAL::draw(sm, Graphics_scene_options{})`.
+*/
+  template<class SM>
+  void draw(const SM& sm);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+adds the vertices, edges and faces of `sm` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\tparam SM which must be an instantiation of a `CGAL::Surface_mesh<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param sm the surface mesh to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class K, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const CGAL::Surface_mesh<K>& sm, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class SM, class GSOptions>
+void add_to_graphics_scene(const SM& sm,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+A shortcut to `CGAL::add_to_graphics_scene(sm, gs, Graphics_scene_options{})`.
 */
 template<class SM>
-void draw(const SM& asm);
+void add_to_graphics_scene(const SM& sm,
+                           CGAL::Graphics_scene& gs);
 
 #else // DOXYGEN_RUNNING
-  
+
 #include <CGAL/license/Surface_mesh.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/draw_face_graph.h>
+#include <CGAL/Qt/Basic_viewer.h>
+
+namespace CGAL {
+
+// Check if there are any color maps that could be used
+template <typename K>
+struct Graphics_scene_options_surface_mesh
+  : public Graphics_scene_options<Surface_mesh<K>,
+                           typename boost::graph_traits<::CGAL::Surface_mesh<K>>::vertex_descriptor,
+                           typename boost::graph_traits<::CGAL::Surface_mesh<K>>::edge_descriptor,
+                           typename boost::graph_traits<::CGAL::Surface_mesh<K>>::face_descriptor>
+{
+  using SM = ::CGAL::Surface_mesh<K>;
+  using vertex_descriptor = typename boost::graph_traits<SM>::vertex_descriptor;
+  using edge_descriptor = typename boost::graph_traits<SM>::edge_descriptor;
+  using face_descriptor = typename boost::graph_traits<SM>::face_descriptor;
+
+  Graphics_scene_options_surface_mesh(const SM& amesh)
+  {
+    auto _vcolors = amesh.template property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
+    if(_vcolors.has_value())
+    {
+      vcolors = _vcolors.value();
+      this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return true; };
+      this->vertex_color=[this](const SM &, vertex_descriptor v)->CGAL::IO::Color
+      { return get(vcolors, v); };
+    }
+    else
+    { this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return false; }; }
+
+    auto _ecolors = amesh.template property_map<edge_descriptor, CGAL::IO::Color>("e:color");
+    if(_ecolors.has_value())
+    {
+      ecolors = _ecolors.value();
+      this->colored_edge=[](const SM &, edge_descriptor)->bool { return true; };
+      this->edge_color=[this](const SM &, edge_descriptor e)->CGAL::IO::Color
+      { return get(ecolors, e); };
+    }
+    else
+    { this->colored_edge=[](const SM &, edge_descriptor)->bool { return false; }; }
+
+    auto _fcolors = amesh.template property_map<face_descriptor, CGAL::IO::Color>("f:color");
+    if(_fcolors.has_value())
+    {
+      fcolors = _fcolors.value();
+      this->colored_face=[](const SM &, face_descriptor)->bool { return true; };
+      this->face_color=[this](const SM &, face_descriptor f)->CGAL::IO::Color
+      { return get(fcolors, f); };
+    }
+    else
+    { this->colored_face=[](const SM &, face_descriptor)->bool { return false; }; }
+  }
+
+private:
+  typename SM::template Property_map<vertex_descriptor, CGAL::IO::Color> vcolors;
+  typename SM::template Property_map<edge_descriptor, CGAL::IO::Color> ecolors;
+  typename SM::template Property_map<face_descriptor, CGAL::IO::Color> fcolors;
+};
+
+template<class K,  class GSOptions>
+void add_to_graphics_scene(const Surface_mesh<K>& amesh,
+                           CGAL::Graphics_scene &graphics_scene,
+                           const GSOptions &gs_options)
+{ add_to_graphics_scene_for_fg(amesh, graphics_scene, gs_options); }
+
+template<class K>
+void add_to_graphics_scene(const Surface_mesh<K>& amesh,
+                           CGAL::Graphics_scene &graphics_scene)
+{ add_to_graphics_scene_for_fg(amesh, graphics_scene,
+                               Graphics_scene_options_surface_mesh<K>(amesh)); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Random.h>
-
-namespace CGAL
-{
-
-// Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorSM
-{
-  template<typename SM>
-  static CGAL::Color run(const SM&,
-                         typename SM::Face_index fh)
-  {
-    if (fh==boost::graph_traits<SM>::null_face()) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
-
-    CGAL::Random random((unsigned int)fh);
-    return get_random_color(random);
-  }
-};
-
-template<class SM, class ColorFunctor>
-class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
-{
-  typedef Basic_viewer_qt Base;
-  typedef typename SM::Point Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
-  typedef typename SM::Vertex_index vertex_descriptor;
-  typedef typename SM::Face_index face_descriptor;
-  typedef typename SM::Edge_index edge_descriptor;
-  typedef typename SM::Halfedge_index halfedge_descriptor;
-
-public:
-  /// Construct the viewer.
-  /// @param amesh the surface mesh to view
-  /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
-  SimpleSurfaceMeshViewerQt(QWidget* parent,
-                            const SM& amesh,
-                            const char* title="Basic Surface_mesh Viewer",
-                            bool anofaces=false,
-                            const ColorFunctor& fcolor=ColorFunctor()) :
-    // First draw: no vertex; edges, faces; mono-color; inverse normal
-    Base(parent, title, false, true, true, true, false),
-    sm(amesh),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor)
-  {
-    compute_elements();
-  }
-
-protected:
-  void compute_face(face_descriptor fh)
-  {
-    CGAL::Color c=m_fcolor.run(sm, fh);
-    face_begin(c);
-    halfedge_descriptor hd=sm.halfedge(fh);
-    do
-    {
-      add_point_in_face(sm.point(sm.source(hd)), get_vertex_normal(hd));
-      hd=sm.next(hd);
-    }
-    while(hd!=sm.halfedge(fh));
-    face_end();
-  }
-
-  void compute_edge(edge_descriptor e)
-  {
-    add_segment(sm.point(sm.source(sm.halfedge(e))),
-                sm.point(sm.target(sm.halfedge(e))));
-  } 
-
-  void compute_vertex(vertex_descriptor vh)
-  { add_point(sm.point(vh)); }
-
-  void compute_elements()
-  {
-    clear();
-
-    if (!m_nofaces)
-    {
-      for (typename SM::Face_range::iterator f=sm.faces().begin();
-           f!=sm.faces().end(); ++f)
-      {
-        if (*f!=boost::graph_traits<SM>::null_face())
-        { compute_face(*f); }
-      }
-    }
-    
-    for (typename SM::Edge_range::iterator e=sm.edges().begin();
-         e!=sm.edges().end(); ++e)
-    { compute_edge(*e); }
-
-    for (typename SM::Vertex_range::iterator v=sm.vertices().begin();
-         v!=sm.vertices().end(); ++v)
-    { compute_vertex(*v); }
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
-  }
-
-protected:
-  Local_vector get_face_normal(halfedge_descriptor he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    halfedge_descriptor end=he;
-    unsigned int nb=0;
-    do
-    {
-      internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.source(he))),
-         internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.target(he))), normal);
-      ++nb;
-      he=sm.next(he);
-    }
-    while (he!=end);
-    assert(nb>0);
-    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
-  }
-  
-  Local_vector get_vertex_normal(halfedge_descriptor he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    halfedge_descriptor end=he;
-    do
-    {
-      if (!sm.is_border(he))
-      {
-        Local_vector n=get_face_normal(he);
-        normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
-      }
-      he=sm.next(sm.opposite(he));
-    }
-    while (he!=end);
-    
-    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Local_kernel::Construct_scaled_vector_3()
-              (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
-    return normal;
-  }
-
-protected:
-  const SM& sm;
-  bool m_nofaces;
-  const ColorFunctor& m_fcolor;
-};
-
-// Specialization of draw function.
+  // Specialization of draw function.
 template<class K>
 void draw(const Surface_mesh<K>& amesh,
-          const char* title="Surface_mesh Basic Viewer",
-          bool nofill=false)
+          const char* title="Surface_mesh Basic Viewer")
 {
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    int argc=1;
-    const char* argv[2]={"surface_mesh_viewer","\0"};
-    QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorSM fcolor;
-    SimpleSurfaceMeshViewerQt<Surface_mesh<K>, DefaultColorFunctorSM>
-      mainwindow(app.activeWindow(), amesh, title, nofill, fcolor);
-    mainwindow.show();
-    app.exec();
-  }
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(amesh, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
-} // End namespace CGAL
+template<class K, class GSOptions>
+void draw(const Surface_mesh<K>& amesh,
+          const GSOptions &gs_options,
+          const char* title="Surface_mesh Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(amesh, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
+}
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // DOXYGEN_RUNNING
 

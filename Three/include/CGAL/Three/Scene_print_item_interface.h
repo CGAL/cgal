@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime GIMENO
 
@@ -53,13 +44,13 @@ public:
   //! Prints all the primitive ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   virtual void printAllIds() = 0;
-  //! \brief Tests if an id should be displayed or not.
+  //! \brief tests if an id should be displayed or not.
   //!
   //! \returns true if the Id should be displayed
   //! \returns false if the Id should not be displayed (if it is hidden for example)
   virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const = 0;
 
-  //! \brief Tests if this item should display its ids.
+  //! \brief tests if this item should display its ids.
   //!
   //! The default behavior is to only display ids of the currently selected item (\see mainSelectionIndex()).
   //! This function allows to override this behavior.
@@ -70,6 +61,6 @@ public:
 }
 }
 
-Q_DECLARE_INTERFACE(CGAL::Three::Scene_print_item_interface, "com.geometryfactory.PolyhedronDemo.PrintInterface/1.0")
+Q_DECLARE_INTERFACE(CGAL::Three::Scene_print_item_interface, "com.geometryfactory.CGALLab.PrintInterface/1.0")
 #endif // SCENE_PRINT_ITEM_INTERFACE_H
 

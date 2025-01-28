@@ -2,10 +2,9 @@
 
 #include <CGAL/use.h>
 
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 
-typedef boost::unordered_set<std::size_t>                        id_map;
+typedef std::unordered_set<std::size_t>                        id_map;
 
 template <typename Graph>
 void test_isolated_vertex()
@@ -29,12 +28,12 @@ void test_halfedge_around_vertex_iterator(const Graph& g)
   vertex_iterator vit, vend;
   for(boost::tie(vit, vend) = vertices(g); vit != vend; ++vit) {
     halfedge_around_target_iterator havit, havend;
-    for(boost::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, g), g); 
+    for(boost::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, g), g);
         havit != havend; ++havit) {
       assert(target(*havit, g) == *vit);
 
       // check if we are really moving clockwise
-      halfedge_around_target_iterator step = boost::next(havit);
+      halfedge_around_target_iterator step = std::next(havit);
       if(step != havend) {
         halfedge_descriptor stepd = *step;
         assert(stepd == opposite(next(*havit, g), g));
@@ -68,7 +67,7 @@ void test_halfedge_iterators(const G& g)
   // do we iterate as many as that?
   halfedge_iterator hb, he;
   boost::tie(hb, he) = halfedges(g);
-  assert(boost::numeric_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
+  assert(static_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
 
   id_map ids;
   unsigned int count = 0;
@@ -90,11 +89,11 @@ void test_edge_iterators(const G& g)
   typedef typename Traits::edges_size_type edges_size_type;
 
   // assert(g.size_of_halfedges() / 2 == num_edges(g));
-  
+
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
+  assert(static_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;
@@ -135,7 +134,7 @@ void test_vertex_iterators(const G& g)
 }
 
 template<typename G>
-void test_out_edges(const G& g) 
+void test_out_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -162,7 +161,7 @@ void test_out_edges(const G& g)
 }
 
 template<typename G>
-void test_in_edges(const G& g) 
+void test_in_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -187,7 +186,7 @@ void test_in_edges(const G& g)
 }
 
 template<typename G>
-void test_in_out_edges(const G& g) 
+void test_in_out_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;

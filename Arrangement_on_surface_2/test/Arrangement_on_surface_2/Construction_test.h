@@ -152,18 +152,18 @@ protected:
   typedef typename Geom_traits::Top_side_category       Top_side_category;
   typedef typename Geom_traits::Right_side_category     Right_side_category;
   typedef typename
-  CGAL::Arr_are_all_sides_non_open_tag<Left_side_category,
-                                       Bottom_side_category,
-                                       Top_side_category,
-                                       Right_side_category>::result
-    Arr_are_all_sides_non_open_category;
+  CGAL::Arr_all_sides_not_open_category<Left_side_category,
+                                        Bottom_side_category,
+                                        Top_side_category,
+                                        Right_side_category>::result
+    All_sides_not_open_category;
 
   bool is_open() const
-  { return is_open(Arr_are_all_sides_non_open_category()); }
+  { return is_open(All_sides_not_open_category()); }
 
-  bool is_open(CGAL::Arr_all_sides_non_open_tag) const { return false; }
+  bool is_open(CGAL::Arr_all_sides_not_open_tag) const { return false; }
 
-  bool is_open(CGAL::Arr_not_all_sides_non_open_tag) const { return true; }
+  bool is_open(CGAL::Arr_not_all_sides_not_open_tag) const { return true; }
 };
 
 /*! Constructor */
@@ -172,7 +172,7 @@ Construction_test<T_Geom_traits, T_Topol_traits>::
 Construction_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr(NULL),
+  m_arr(nullptr),
   m_verbose_level(0)
 {}
 
@@ -188,7 +188,7 @@ void Construction_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
-    m_arr = NULL;
+    m_arr = nullptr;
   }
 }
 
@@ -553,12 +553,12 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::test6()
     CGAL::insert_point(*m_arr, m_isolated_points[i]);
 #if TEST_TOPOL_TRAITS != SPHERICAL_TOPOL_TRAITS
   if (! CGAL::is_valid(*m_arr)) {
-    std::cout << "ERROR : (6) The aggregated x-monotone inertion test failed (invalid)."
+    std::cout << "ERROR : (6) The aggregated x-monotone insertion test failed (invalid)."
               << std::endl;
   }
 #endif
   if (! are_same_results()) {
-    std::cout << "ERROR : (6) The aggregated x-monotone inertion test failed."
+    std::cout << "ERROR : (6) The aggregated x-monotone insertion test failed."
               << std::endl;
      return false;
   }

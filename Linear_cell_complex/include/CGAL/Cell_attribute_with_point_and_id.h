@@ -1,20 +1,11 @@
 // Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -24,7 +15,7 @@
 #include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
-  
+
   // A cell attribute with point and id, when Info_!=void
   template <class Refs, class Info_=void, class Tag_=Tag_true,
             class OnMerge=Null_functor,
@@ -41,19 +32,22 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
   public:
     typedef typename Base::Point Point;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point_and_id()
     {}
 
-    /// Contructor with an info in parameter.
+    /// Constructor with an info in parameter.
     Cell_attribute_with_point_and_id(const Point& apoint) : Base(apoint)
     {}
 
-    /// Contructor with a point and an attribute in parameters.
+    /// Constructor with a point and an attribute in parameters.
     Cell_attribute_with_point_and_id(const Point& apoint, const Info_& ainfo) :
       Base(apoint, ainfo)
     {}
@@ -73,15 +67,18 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
   public:
     typedef typename Base::Point Point;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point_and_id()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point_and_id(const Point& apoint) : Base(apoint)
     {}
   };

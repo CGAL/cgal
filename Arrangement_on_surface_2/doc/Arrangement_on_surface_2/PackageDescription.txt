@@ -7,6 +7,9 @@
 /// The namespace containing concepts specific to Arrangements.
 namespace ArrTraits {}
 
+/// \defgroup PkgArrangementOnSurface2ConceptsTopologyTraits Topology Traits Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
+
 /// \defgroup PkgArrangementOnSurface2ConceptsDCEL DCEL Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
@@ -16,10 +19,10 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangementOnSurface2ConceptsFunctionObjects Function Object Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangementOnSurface2ConceptsTraits Traits Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsTraits Geometry Traits Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangementOnSurface2TraitsClasses Traits Classes
+/// \defgroup PkgArrangementOnSurface2TraitsClasses Geometry Traits Classes
 /// \ingroup PkgArrangementOnSurface2Ref
 
 /// \defgroup PkgArrangementOnSurface2DCEL DCEL
@@ -41,6 +44,12 @@ namespace ArrTraits {}
 /// \ingroup PkgArrangementOnSurface2Ref
 
 /// \defgroup PkgArrangementOnSurface2Funcs Free Functions
+/// \ingroup PkgArrangementOnSurface2Ref
+
+/*!
+\cgalInclude{CGAL/draw_arrangement_2.h}
+*/
+/// \defgroup PkgArrangementOnSurface2Draw Drawing
 /// \ingroup PkgArrangementOnSurface2Ref
 
 /// \defgroup PkgArrangementOnSurface2Insert CGAL::insert()
@@ -97,6 +106,9 @@ implemented as peripheral classes or as free (global) functions.
 
 - `CGAL::Arr_oblivious_side_tag`
 - `CGAL::Arr_open_side_tag`
+- `CGAL::Arr_closed_side_tag`
+- `CGAL::Arr_contracted_side_tag`
+- `CGAL::Arr_identified_side_tag`
 
 \cgalCRPSection{Concepts}
 
@@ -105,19 +117,45 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementDcelVertex`
 - `ArrangementDcelHalfedge`
 - `ArrangementDcelFace`
-- `ArrangementDcelHole`
+- `ArrangementDcelOuterCcb`
+- `ArrangementDcelInnerCcb`
 - `ArrangementDcelIsolatedVertex`
+- `ArrangementBasicTopologyTraits`
 - `ArrangementBasicTraits_2`
+- `ArrangementConstructXMonotoneCurveTraits_2`
+- `ArrangementConstructCurveTraits_2`
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
+- `ArrangementHorizontalSideTraits_2`
+- `ArrangementVerticalSideTraits_2`
+- `ArrangementIdentifiedVerticalTraits_2`
+- `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
+- `ArrangementSphericalBoundaryTraits_2`
 - `ArrangementInputFormatter`
 - `ArrangementOutputFormatter`
 - `ArrangementWithHistoryInputFormatter`
 - `ArrangementWithHistoryOutputFormatter`
 - `ArrangementPointLocation_2`
 - `ArrangementVerticalRayShoot_2`
+- `ArrangementOpenLeftTraits_2`
+- `ArrangementOpenRightTraits_2`
+- `ArrangementOpenBottomTraits_2`
+- `ArrangementOpenTopTraits_2`
+- `ArrangementClosedLeftTraits_2`
+- `ArrangementClosedRightTraits_2`
+- `ArrangementClosedBottomTraits_2`
+- `ArrangementClosedTopTraits_2`
+- `ArrangementContractedLeftTraits_2`
+- `ArrangementContractedRightTraits_2`
+- `ArrangementContractedBottomTraits_2`
+- `ArrangementContractedTopTraits_2`
+- `ArrangementLeftSideTraits_2`
+- `ArrangementRightSideTraits_2`
+- `ArrangementBottomSideTraits_2`
+- `ArrangementTopSideTraits_2`
+- `ArrangementTopologyTraits`
 
 \cgalCRPSection{Geometric Object Concepts}
 
@@ -132,15 +170,19 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::ConstructMinVertex_2`
 - `ArrTraits::ConstructMaxVertex_2`
 - `ArrTraits::IsVertical_2`
+- `ArrTraits::IsOnXIdentification_2`
+- `ArrTraits::IsOnYIdentification_2`
 - `ArrTraits::CompareYAtX_2`
 - `ArrTraits::CompareYAtXLeft_2`
 - `ArrTraits::CompareYAtXRight_2`
 - `ArrTraits::Equal_2`
 - `ArrTraits::ParameterSpaceInX_2`
 - `ArrTraits::ParameterSpaceInY_2`
-- `ArrTraits::CompareXAtLimit_2`
-- `ArrTraits::CompareXNearLimit_2`
+- `ArrTraits::CompareXOnBoundary_2`
+- `ArrTraits::CompareYOnBoundary_2`
+- `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
 - `ArrTraits::AreMergeable_2`
@@ -148,48 +190,57 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::MakeXMonotone_2`
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
+- `ArrTraits::ConstructCurve_2`
 
 \cgalCRPSection{Classes}
 
+- `CGAL::Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`
+- `CGAL::Arrangement_on_surface_with_history_2<GeometryTraits_2,TopologyTraits>`
 - `CGAL::Arrangement_2<Traits,Dcel>`
-- `CGAL::Arr_accessor<Arrangement>`
-- `CGAL::Arr_observer<Arrangement>`
 - `CGAL::Arrangement_with_history_2<Traits,Dcel>`
 - `CGAL::Arrangement_2::Vertex`
 - `CGAL::Arrangement_2::Halfedge`
 - `CGAL::Arrangement_2::Face`
-- `CGAL::Arr_dcel_base<V,H,F>`
-- `CGAL::Arr_default_dcel<Traits>`
-- `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
-- `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
-- `CGAL::Arr_segment_traits_2<Kernel>`
-- `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
-- `CGAL::Arr_linear_traits_2<Kernel>`
-- `CGAL::Arr_polyline_traits_2<SegmentTraits>`
+- `CGAL::Arr_accessor<Arrangement>`
+- `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+- `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+- `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_circle_segment_traits_2<Kernel>`
-- `CGAL::Arr_line_arc_traits_2<CircularKernel>`
 - `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
 - `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
 - `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
-- `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
-- `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
-- `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
-- `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
 - `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
-- `CGAL::Arr_text_formatter<Arrangement>`
-- `CGAL::Arr_face_extended_text_formatter<Arrangement>`
-- `CGAL::Arr_extended_dcel_text_formatter<Arrangement>`
-- `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
-- `CGAL::Arr_naive_point_location<Arrangement>`
-- `CGAL::Arr_walk_along_line_point_location<Arrangement>`
-- `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
-- `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
-- `CGAL::Arr_vertex_index_map<Arrangement>`
+- `CGAL::Arr_counting_traits_2<BaseTraits>`
+- `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
+- `CGAL::Arr_dcel_base<V,H,F>`
+- `CGAL::Arr_dcel<Traits,V,H,F>`
+- `CGAL::Arr_default_dcel<Traits>`
+- `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
 - `CGAL::Arr_face_index_map<Arrangement>`
+- `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
+- `CGAL::Arr_extended_dcel_text_formatter<Arrangement>`
+- `CGAL::Arr_face_extended_text_formatter<Arrangement>`
+- `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel,x,y>`
+- `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
+- `CGAL::Arr_line_arc_traits_2<CircularKernel>`
+- `CGAL::Arr_linear_traits_2<Kernel>`
+- `CGAL::Arr_naive_point_location<Arrangement>`
+- `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
+- `CGAL::Arr_observer<Arrangement_2>`
+- `CGAL::Arr_polyline_traits_2<SegmentTraits>`
 - `CGAL::Arr_point_location_result<Arrangement>`
-
-\cgalCRPSection{Macros}
-- \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
+- `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
+- `CGAL::Arr_segment_traits_2<Kernel>`
+- `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
+- `CGAL::Arr_text_formatter<Arrangement>`
+- `CGAL::Arr_tracing_traits_2<BaseTraits>`
+- `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
+- `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
+- `CGAL::Arr_vertex_index_map<Arrangement>`
+- `CGAL::Arr_walk_along_line_point_location<Arrangement>`
+- `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+- `CGAL::Aos_observer<ArrangementOnSurface_2>`
+- `CGAL::CORE_algebraic_number_traits`
 
 \cgalCRPSection{Functions}
 
@@ -203,10 +254,13 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::locate()`
 - `CGAL::decompose()`
 - `CGAL::overlay()`
-- `CGAL::read()`
-- `CGAL::write()`
+- `CGAL::IO::read()`
+- `CGAL::IO::write()`
 - `CGAL::remove_curve()`
 - \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
+
+\cgalCRPSection{Draw an `Arrangemen_2` object}
+- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

@@ -47,19 +47,17 @@ of the convex hull of `P`.
 as functions for testing if a given set of points is strongly convex or not.
 There are also a number of functions available for computing particular extreme
 points in 2D and subsequences of the hull points, such as the lower hull or
-upper hull of a set of points. 
+upper hull of a set of points.
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{Assertions}
 
-The assertion flags for the convex hull and extreme point algorithms
-use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
 For the convex hull algorithms, the postcondition
 check tests only convexity (if not disabled), but not containment of the
 input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
-defining `CGAL_CH_CHECK_EXPENSIVE`.
+defining `CGAL_CHECK_EXPENSIVE`.
 
 \cgalCRPSection{Concepts}
 
@@ -105,4 +103,3 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 
 */
-

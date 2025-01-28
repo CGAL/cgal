@@ -11,7 +11,7 @@
 #include <fstream>
 
 #include <CGAL/Timer.h>
- 
+
 typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterator> Traits;
 typedef CGAL::Sliding_midpoint<Traits> Sliding_midpoint;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits> Neighbor_search;
@@ -31,7 +31,7 @@ int main() {
   std::cout << "Enter bucket size \n" ;
   std::cin >> bucket_size;
 
- 
+
   char filename_data_points[80], filename_query_points[80];
 
   std::cout << "Enter input file name containing query points: \n" ;
@@ -39,7 +39,7 @@ int main() {
 
   std::cout << "Enter input file name containing data points: \n" ;
   std::cin >> filename_data_points;
-  
+
   std::ifstream in_data_points, in_query_points;
   int data_point_number;
   int query_point_number;
@@ -49,7 +49,7 @@ int main() {
   in_data_points >> N_data_points;
   in_data_points >> data_point_number;
 
-  
+
   in_query_points.open(filename_query_points);
   in_query_points >> N_query_points;
   in_query_points >> query_point_number;
@@ -57,7 +57,7 @@ int main() {
   assert(N_data_points==N_query_points);
   N=N_data_points;
 
-  std::cout << "nearest neighbour number = " << NN_number << std::endl;
+  std::cout << "nearest neighbor number = " << NN_number << std::endl;
   std::cout << "approximation factor = " << Eps << std::endl;
   std::cout << "dimension = " << N << std::endl;
   std::cout << "query point number = " << query_point_number << std::endl;
@@ -67,23 +67,23 @@ int main() {
   point_list query_points, data_points;
 
   for (int i = 0; i < query_point_number; i++) {
-	std::vector<double> p(N);
+        std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
           in_query_points >> p[j];
-        } 	
+        }
         Point Pnt(p[0],p[1]);
         query_points.push_back(Pnt);
-  }; 
-  
+  };
+
  for (int i = 0; i < data_point_number; i++) {
-	std::vector<double> p(N);
+        std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
           in_data_points >> p[j];
-        } 	
+        }
         Point Pnt(p[0],p[1]);
         data_points.push_back(Pnt);
-  }; 
-  
+  };
+
   t.reset();t.start();
   // Insert data points in the tree
   Sliding_midpoint sliding_midpoint(bucket_size);
@@ -91,9 +91,9 @@ int main() {
   t.stop();
 
   data_points.clear();
-   
+
   std::cout << "created binary search tree containing" << std::endl
-  << data_point_number << " points in time " 
+  << data_point_number << " points in time "
   << t.time() << std::endl;
 
   t.reset();t.start();
@@ -103,7 +103,7 @@ int main() {
   }
   t.stop();
 
-  std::cout << "time per query is "  
+  std::cout << "time per query is "
   << t.time()/query_point_number << std::endl;
   return 0;
 }

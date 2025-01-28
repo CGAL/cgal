@@ -4,10 +4,10 @@ namespace CGAL {
 /*!
 \ingroup PkgModularArithmeticRef
 
-An instance of `Modular_traits` is a model of `ModularTraits`, 
-where <span class="textsc">T</span> is the associated type. 
+An instance of `Modular_traits` is a model of `ModularTraits`,
+where <span class="textsc">T</span> is the associated type.
 
-\cgalModels `ModularTraits`
+\cgalModels{ModularTraits}
 
 */
 template< typename T >

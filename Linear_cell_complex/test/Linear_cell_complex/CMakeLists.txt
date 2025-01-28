@@ -1,28 +1,38 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.12...3.29)
+project(Linear_cell_complex_Tests)
 
-cmake_minimum_required(VERSION 3.1...3.15)
-project( Linear_cell_complex_Tests )
+find_package(CGAL REQUIRED)
 
+set(hfiles Linear_cell_complex_2_test.h
+  Linear_cell_complex_3_test.h Linear_cell_complex_3_test.h)
 
-find_package(CGAL QUIET)
+# create a target per cppfile
+create_single_source_cgal_program(Linear_cell_complex_2_test.cpp ${hfiles})
+create_single_source_cgal_program(Linear_cell_complex_3_test.cpp ${hfiles})
+create_single_source_cgal_program(Linear_cell_complex_4_test.cpp ${hfiles})
+create_single_source_cgal_program(Linear_cell_complex_copy_test.cpp ${hfiles})
+create_single_source_cgal_program(LCC_3_incremental_builder_test.cpp ${hfiles})
 
-if ( CGAL_FOUND )
+# Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
+add_executable(Linear_cell_complex_2_test_index Linear_cell_complex_2_test.cpp ${hfiles})
+target_compile_definitions(Linear_cell_complex_2_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_2_test_index PRIVATE CGAL CGAL::Data)
+cgal_add_compilation_test(Linear_cell_complex_2_test_index)
 
-  file(GLOB hfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+add_executable(Linear_cell_complex_3_test_index Linear_cell_complex_3_test.cpp ${hfiles})
+target_compile_definitions(Linear_cell_complex_3_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_3_test_index PRIVATE CGAL CGAL::Data)
+cgal_add_compilation_test(Linear_cell_complex_3_test_index)
 
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" "${hfiles}" )
-  endforeach()
+add_executable(Linear_cell_complex_4_test_index Linear_cell_complex_4_test.cpp ${hfiles})
+target_compile_definitions(Linear_cell_complex_4_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_4_test_index PRIVATE CGAL CGAL::Data)
+cgal_add_compilation_test(Linear_cell_complex_4_test_index)
 
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
-
+add_executable(Linear_cell_complex_copy_test_index Linear_cell_complex_copy_test.cpp ${hfiles})
+target_compile_definitions(Linear_cell_complex_copy_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_copy_test_index PRIVATE CGAL CGAL::Data)
+cgal_add_compilation_test(Linear_cell_complex_copy_test_index)

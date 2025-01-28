@@ -2,6 +2,9 @@
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
 /// \ingroup PkgBoxIntersectionDRef
 
+/// \defgroup PkgBoxIntersectionDEnums Enumerations
+/// \ingroup PkgBoxIntersectionDRef
+
 /// \defgroup PkgBoxIntersectionDClasses Classes
 /// \ingroup PkgBoxIntersectionDRef
 
@@ -33,7 +36,7 @@
 \cgalPkgSince{3.1}
 \cgalPkgBib{cgal:kmz-isiobd}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -42,6 +45,10 @@
 \cgalCRPSection{Concepts}
 - `BoxIntersectionBox_d`
 - `BoxIntersectionTraits_d`
+
+\cgalCRPSection{Enumerations}
+- `CGAL::Box_intersection_d::Setting`
+- `CGAL::Box_intersection_d::Topology`
 
 \cgalCRPSection{Classes}
 - `CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>`
@@ -56,4 +63,3 @@
 - `CGAL::box_self_intersection_all_pairs_d`
 
 */
-

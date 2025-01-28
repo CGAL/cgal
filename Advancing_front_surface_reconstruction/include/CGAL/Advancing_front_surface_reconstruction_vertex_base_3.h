@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
@@ -182,11 +173,11 @@ namespace CGAL {
     {
       if (m_incident_border == nullptr) return nullptr; //vh is interior
       if (m_incident_border->first->first != nullptr)
-	if (m_incident_border->first->second.second == i)
-	  return m_incident_border->first;
+        if (m_incident_border->first->second.second == i)
+          return m_incident_border->first;
       if (m_incident_border->second->first != nullptr)
-	if (m_incident_border->second->second.second == i)
-	  return m_incident_border->second;
+        if (m_incident_border->second->second.second == i)
+          return m_incident_border->second;
       return nullptr;
     }
 
@@ -197,7 +188,7 @@ namespace CGAL {
     {
       if (m_incident_border == nullptr) return false;
       return ((m_incident_border->first->first == v)||
-	      (m_incident_border->second->first == v));
+              (m_incident_border->second->first == v));
     }
 
     inline Next_border_elt* border_elt(Vertex_handle v) const
@@ -225,13 +216,13 @@ namespace CGAL {
     inline  void set_next_border_elt(const Next_border_elt& elt)
     {
       if (m_incident_border->first->first == nullptr)
-	*m_incident_border->first = elt;
+        *m_incident_border->first = elt;
       else
-	{
-	  if (m_incident_border->second->first != nullptr)
-	    std::cerr << "+++probleme de MAJ du bord <Vertex_base>" << std::endl;
-	  *m_incident_border->second = elt;
-	}
+        {
+          if (m_incident_border->second->first != nullptr)
+            std::cerr << "+++issue while updating border <Vertex_base>" << std::endl;
+          *m_incident_border->second = elt;
+        }
     }
 
 
@@ -266,9 +257,9 @@ namespace CGAL {
     inline void inc_mark()
     {
       if (m_mark==-1)
-	m_mark=1;
+        m_mark=1;
       else
-	m_mark++;
+        m_mark++;
     }
 
     //-------------------------------------------------------------------

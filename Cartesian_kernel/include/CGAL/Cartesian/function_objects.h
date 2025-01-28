@@ -1,24 +1,15 @@
-// Copyright (c) 1999-2005  
+// Copyright (c) 1999-2005
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hoffmann
@@ -26,12 +17,15 @@
 #ifndef CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 #define CGAL_CARTESIAN_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
 namespace CGAL {
 
@@ -56,12 +50,12 @@ namespace CartesianKernelFunctors {
     { return angleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
 
     result_type
-    operator()(const Point_2& p, const Point_2& q, 
+    operator()(const Point_2& p, const Point_2& q,
                const Point_2& r, const Point_2& s) const
     {
       return angleC2(p.x(), p.y(),
-		     q.x(), q.y(),
-		     r.x(), r.y(),
+                     q.x(), q.y(),
+                     r.x(), r.y(),
                      s.x(), s.y());
     }
   };
@@ -78,14 +72,14 @@ namespace CartesianKernelFunctors {
     operator()(const Vector_3& u, const Vector_3& v) const
     {
       return angleC3(u.x(), u.y(), u.z(),
-		     v.x(), v.y(), v.z());
+                     v.x(), v.y(), v.z());
     }
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return angleC3(p.x(), p.y(), p.z(),
-		     q.x(), q.y(), q.z(),
-		     r.x(), r.y(), r.z());
+                     q.x(), q.y(), q.z(),
+                     r.x(), r.y(), r.z());
     }
 
     result_type
@@ -93,9 +87,9 @@ namespace CartesianKernelFunctors {
                const Point_3& r, const Point_3& s) const
     {
       return angleC3(p.x(), p.y(), p.z(),
-		     q.x(), q.y(), q.z(),
-		     r.x(), r.y(), r.z(),
-		     s.x(), s.y(), s.z());
+                     q.x(), q.y(), q.z(),
+                     r.x(), r.y(), r.z(),
+                     s.x(), s.y(), s.z());
     }
 
     result_type
@@ -172,9 +166,9 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Ray_3& r1, const Ray_3& r2) const
     { return parallelC3(r1.source().x(), r1.source().y(), r1.source().z(),
-	r1.second_point().x(), r1.second_point().y(), r1.second_point().z(),
+        r1.second_point().x(), r1.second_point().y(), r1.second_point().z(),
                         r2.source().x(), r2.source().y(), r2.source().z(),
-	r2.second_point().x(), r2.second_point().y(), r2.second_point().z());
+        r2.second_point().x(), r2.second_point().y(), r2.second_point().z());
     }
   };
 
@@ -200,39 +194,39 @@ namespace CartesianKernelFunctors {
     operator()( const Triangle_2& t, const Point_2& p) const
     {
       typename K::Collinear_are_ordered_along_line_2
-	collinear_are_ordered_along_line;
+        collinear_are_ordered_along_line;
       typename K::Orientation_2 orientation;
       typename K::Orientation o1 = orientation(t.vertex(0), t.vertex(1), p),
-	                      o2 = orientation(t.vertex(1), t.vertex(2), p),
-	                      o3 = orientation(t.vertex(2), t.vertex(3), p);
+                              o2 = orientation(t.vertex(1), t.vertex(2), p),
+                              o3 = orientation(t.vertex(2), t.vertex(3), p);
 
       if (o2 == o1 && o3 == o1)
-	return ON_BOUNDED_SIDE;
+        return ON_BOUNDED_SIDE;
       return
-	(o1 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
-	(o2 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
-	(o3 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
-	? ON_BOUNDARY
-	: ON_UNBOUNDED_SIDE;
+        (o1 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
+        (o2 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
+        (o3 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
+        ? ON_BOUNDARY
+        : ON_UNBOUNDED_SIDE;
     }
 
     result_type
     operator()( const Iso_rectangle_2& r, const Point_2& p) const
     {
       bool x_incr = (r.xmin() < p.x()) && (p.x() < r.xmax()),
-	   y_incr = (r.ymin() < p.y()) && (p.y() < r.ymax());
+           y_incr = (r.ymin() < p.y()) && (p.y() < r.ymax());
       if (x_incr)
-	{
-	  if (y_incr)
-	    return ON_BOUNDED_SIDE;
-	  if ( (p.y() == r.ymin()) || (r.ymax() == p.y()) )
-	    return ON_BOUNDARY;
-	}
+        {
+          if (y_incr)
+            return ON_BOUNDED_SIDE;
+          if ( (p.y() == r.ymin()) || (r.ymax() == p.y()) )
+            return ON_BOUNDARY;
+        }
       if ( (p.x() == r.xmin()) || (r.xmax() == p.x()) )
-	if ( y_incr || (p.y() == r.ymin()) || (r.ymax() == p.y()) )
+        if ( y_incr || (p.y() == r.ymin()) || (r.ymax() == p.y()) )
           return ON_BOUNDARY;
 
       return ON_UNBOUNDED_SIDE;
@@ -262,18 +256,18 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     {
-      FT alpha, beta, gamma;
+      FT alpha, beta, gamma, denom;
 
       Cartesian_internal::solve(t.vertex(1)-t.vertex(0),
                                 t.vertex(2)-t.vertex(0),
                                 t.vertex(3)-t.vertex(0),
-                                p - t.vertex(0), alpha, beta, gamma);
+                                p - t.vertex(0), alpha, beta, gamma, denom);
       if (   (alpha < 0) || (beta < 0) || (gamma < 0)
-          || (alpha + beta + gamma > 1) )
+          || (alpha + beta + gamma > denom) )
           return ON_UNBOUNDED_SIDE;
 
       if (   (alpha == 0) || (beta == 0) || (gamma == 0)
-          || (alpha+beta+gamma == 1) )
+          || (alpha+beta+gamma == denom) )
         return ON_BOUNDARY;
 
       return ON_BOUNDED_SIDE;
@@ -299,7 +293,7 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_ordered_along_lineC2
-	(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+        (p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
   };
 
@@ -315,8 +309,8 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_ordered_along_lineC3(p.x(), p.y(), p.z(),
-						q.x(), q.y(), q.z(),
-						r.x(), r.y(), r.z());
+                                                q.x(), q.y(), q.z(),
+                                                r.x(), r.y(), r.z());
     }
   };
 
@@ -332,7 +326,7 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_strictly_ordered_along_lineC2
-	(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+        (p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
   };
 
@@ -348,8 +342,8 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_strictly_ordered_along_lineC3(p.x(), p.y(), p.z(),
-							 q.x(), q.y(), q.z(),
-							 r.x(), r.y(), r.z());
+                                                         q.x(), q.y(), q.z(),
+                                                         r.x(), r.y(), r.z());
     }
   };
 
@@ -375,11 +369,11 @@ namespace CartesianKernelFunctors {
       default:
         switch(make_certain(compare_y(source, second))){
         case SMALLER:
-	  return compare_y(source, p) != LARGER;
+          return compare_y(source, p) != LARGER;
         case LARGER:
-	  return compare_y(p, source) != LARGER;
+          return compare_y(p, source) != LARGER;
         default:
-	  return true; // p == source
+          return true; // p == source
         }
       } // switch
     }
@@ -419,8 +413,8 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return collinearC3(p.x(), p.y(), p.z(),
-			 q.x(), q.y(), q.z(),
-			 r.x(), r.y(), r.z());
+                         q.x(), q.y(), q.z(),
+                         r.x(), r.y(), r.z());
     }
   };
 
@@ -452,19 +446,116 @@ namespace CartesianKernelFunctors {
     }
 
     template <class T1, class T2, class T3>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
+
+  namespace internal {
+
+  template <class K>
+  typename K::Comparison_result
+  compare_distance_pssC3(const typename K::Point_3 &pt,
+                         const typename K::Segment_3 &seg1,
+                         const typename K::Segment_3 &seg2,
+                         const K& k)
+  {
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+
+    typename K::Construct_vector_3 construct_vector;
+
+    FT d1=FT(0), d2=FT(0);
+    RT e1 = RT(1), e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    {
+      Vector_3 diff = construct_vector(seg1.source(), pt);
+      Vector_3 segvec = construct_vector(seg1.source(), seg1.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d1 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d1 = CGAL::internal::squared_distance(pt, seg1.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d1 = FT(wcr*wcr);
+          e1 = e;
+        }
+      }
+    }
+
+    {
+      Vector_3 diff = construct_vector(seg2.source(), pt);
+      Vector_3 segvec = construct_vector(seg2.source(), seg2.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = CGAL::internal::squared_distance(pt, seg2.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+
+    return CGAL::compare(d1*e2, d2*e1);
+  }
+
+  template <class K>
+  typename K::Comparison_result
+  compare_distance_ppsC3(const typename K::Point_3 &pt,
+                         const typename K::Point_3 &pt2,
+                         const typename K::Segment_3 &seg,
+                         const K& k)
+  {
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+
+    typename K::Construct_vector_3 construct_vector;
+
+    RT e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    FT d1 = CGAL::internal::squared_distance(pt, pt2, k);
+    FT d2 = FT(0);
+    {
+      Vector_3 diff = construct_vector(seg.source(), pt);
+      Vector_3 segvec = construct_vector(seg.source(), seg.target());
+      RT d = CGAL::internal::wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = CGAL::internal::squared_distance(pt, seg.target(), k);
+        } else{
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+
+    return CGAL::compare(d1*e2, d2);
+  }
+
+  } // namespace internal
 
   template <typename K>
   class Compare_distance_3
@@ -478,37 +569,37 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
-				 q.x(), q.y(), q.z(),
-				 r.x(), r.y(), r.z());
+                                 q.x(), q.y(), q.z(),
+                                 r.x(), r.y(), r.z());
     }
 
     result_type
     operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2) const
     {
-      return CGAL::internal::compare_distance_pssC3(p1,s1,s2, K());
+      return internal::compare_distance_pssC3(p1,s1,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2) const
     {
-      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
+      return internal::compare_distance_ppsC3(p1,p2,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
     {
-      return opposite(CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K()));
+      return opposite(internal::compare_distance_ppsC3(p1,p2,s2, K()));
     }
 
     template <class T1, class T2, class T3>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
@@ -522,9 +613,9 @@ namespace CartesianKernelFunctors {
     typedef typename K::Weighted_point_2         Weighted_point_2;
     typedef typename K::Point_2                  Point_2;
     typedef typename K::Comparison_result        Comparison_result;
-    
+
     typedef Comparison_result                    result_type;
-    
+
     Comparison_result operator()(const Point_2& r,
                                  const Weighted_point_2& p,
                                  const Weighted_point_2& q) const
@@ -532,6 +623,38 @@ namespace CartesianKernelFunctors {
       return CGAL::compare_power_distanceC2(p.x(), p.y(), p.weight(),
                                             q.x(), q.y(), q.weight(),
                                             r.x(), r.y());
+    }
+  };
+
+  template <typename K>
+  class Compare_signed_distance_to_line_2
+  {
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::Line_2    Line_2;
+    typedef typename K::Equal_2   Equal_2;
+
+  public:
+    typedef typename K::Comparison_result     result_type;
+
+    result_type
+    operator()(const Point_2& a, const Point_2& b,
+               const Point_2& c, const Point_2& d) const
+    {
+      CGAL_kernel_precondition_code(Equal_2 equal;)
+      CGAL_kernel_precondition(! equal(a,b));
+
+      return cmp_signed_dist_to_lineC2( a.x(), a.y(),
+                                        b.x(), b.y(),
+                                        c.x(), c.y(),
+                                        d.x(), d.y());
+    }
+
+    result_type
+    operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
+    {
+      return cmp_signed_dist_to_directionC2(l.a(), l.b(),
+                                            p.x(), p.y(),
+                                            q.x(), q.y());
     }
   };
 
@@ -546,35 +669,41 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(), 
-                                            q.x(), q.y(), q.z(), 
-                                            r.x(), r.y(), r.z(), 
-                                            s.x(), s.y(), s.z() ),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       s.x(), s.y(), s.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(), 
-                                            q.x(), q.y(), q.z(), 
-                                            r.x(), r.y(), r.z()),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const FT& ft) const
     {
-      return CGAL::compare(squared_radiusC3(p.x(), p.y(), p.z(), 
-                                            q.x(), q.y(), q.z() ),
-                           ft);
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
     }
-    
+
     result_type
     operator()(const Point_3&, const FT& ft) const
     {
       return - CGAL_NTS sign(ft);
-    }    
+    }
   };
 
 
@@ -582,6 +711,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -597,9 +727,18 @@ namespace CartesianKernelFunctors {
     operator()(const Segment_2& s1, const Segment_2& s2) const
     {
       return compare_slopesC2(s1.source().x(), s1.source().y(),
-			      s1.target().x(), s1.target().y(),
-			      s2.source().x(), s2.source().y(),
-			      s2.target().x(), s2.target().y());
+                              s1.target().x(), s1.target().y(),
+                              s2.source().x(), s2.source().y(),
+                              s2.target().x(), s2.target().y());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
+      return compare_slopesC2(s1s.x(), s1s.y(),
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 
@@ -619,22 +758,22 @@ namespace CartesianKernelFunctors {
     operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
     {
       return compare_y_at_xC2(p.y(), h1.b(), h1.a(), h1.c(),
-			      h2.b(), h2.a(), h2.c());
+                              h2.b(), h2.a(), h2.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2, const Line_2& h) const
     {
       return compare_y_at_xC2(l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c(),
-			      h.b(), h.a(), h.c());
+                              h.b(), h.a(), h.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       return compare_y_at_xC2(l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c(),
-			      h1.b(), h1.a(), h1.c(), h2.b(), h2.a(), h2.c());
+                              h1.b(), h1.a(), h1.c(), h2.b(), h2.a(), h2.c());
     }
   };
 
@@ -649,7 +788,7 @@ namespace CartesianKernelFunctors {
     operator()( const Point_3& p, const Point_3& q) const
     {
       return compare_lexicographically_xyzC3(p.x(), p.y(), p.z(),
-					     q.x(), q.y(), q.z());
+                                             q.x(), q.y(), q.z());
     }
   };
 
@@ -697,15 +836,15 @@ namespace CartesianKernelFunctors {
     operator()( const Line_2& l, const Line_2& h1, const Line_2& h2) const
     {
       return compare_xC2(l.a(), l.b(), l.c(), h1.a(), h1.b(), h1.c(),
-			 h2.a(), h2.b(), h2.c());
+                         h2.a(), h2.b(), h2.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       return compare_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
-			 h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
+                         h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
     }
   };
 
@@ -750,41 +889,41 @@ namespace CartesianKernelFunctors {
     operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
     {
       return compare_y_at_xC2(p.x(), h1.a(), h1.b(), h1.c(),
-			      h2.a(), h2.b(), h2.c());
+                              h2.a(), h2.b(), h2.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2, const Line_2& h) const
     {
       return compare_y_at_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
-			      h.a(), h.b(), h.c());
+                              h.a(), h.b(), h.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       return compare_y_at_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
-			      h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
+                              h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
     }
 
     result_type
     operator()( const Point_2& p, const Segment_2& s) const
     {
       return compare_y_at_xC2(p.x(), p.y(),
-			      s.source().x(), s.source().y(),
-			      s.target().x(), s.target().y());
+                              s.source().x(), s.source().y(),
+                              s.target().x(), s.target().y());
     }
 
     result_type
     operator()( const Point_2& p,
-	        const Segment_2& s1, const Segment_2& s2) const
+                const Segment_2& s1, const Segment_2& s2) const
     {
       return compare_y_at_x_segment_C2(p.x(),
-				       s1.source().x(), s1.source().y(),
-				       s1.target().x(), s1.target().y(),
-				       s2.source().x(), s2.source().y(),
-				       s2.target().x(), s2.target().y());
+                                       s1.source().x(), s1.source().y(),
+                                       s1.target().x(), s1.target().y(),
+                                       s2.source().x(), s2.source().y(),
+                                       s2.target().x(), s2.target().y());
     }
   };
 
@@ -804,23 +943,23 @@ namespace CartesianKernelFunctors {
     operator()( const Point_2& p, const Line_2& l1, const Line_2& l2) const
     {
       return compare_xC2(p.y(),
-			 l1.b(), l1.a(), l1.c(),
-			 l2.b(), l2.a(), l2.c());
+                         l1.b(), l1.a(), l1.c(),
+                         l2.b(), l2.a(), l2.c());
     }
 
     result_type
     operator()( const Line_2& l, const Line_2& h1, const Line_2& h2) const
     {
       return compare_xC2(l.b(), l.a(), l.c(), h1.b(), h1.a(), h1.c(),
-			 l.b(), l.a(), l.c(), h2.b(), h2.a(), h2.c());
+                         l.b(), l.a(), l.c(), h2.b(), h2.a(), h2.c());
     }
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       return compare_xC2(l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c(),
-			 h1.b(), h1.a(), h1.c(), h2.b(), h2.a(), h2.c());
+                         h1.b(), h1.a(), h1.c(), h2.b(), h2.a(), h2.c());
     }
   };
 
@@ -858,7 +997,7 @@ namespace CartesianKernelFunctors {
 
     typedef double result_type;
 
-    result_type 
+    result_type
     operator() (const Circle_3 & c) const
     // { return c.rep().approximate_area(); }
     { return CGAL_PI * to_double(c.squared_radius()); }
@@ -874,7 +1013,7 @@ namespace CartesianKernelFunctors {
 
     typedef double result_type;
 
-    result_type 
+    result_type
     operator() (const Circle_3 & c) const
     // { return c.rep().approximate_squared_length(); }
     { return CGAL_PI * CGAL_PI * 4.0 * to_double(c.squared_radius()); }
@@ -920,7 +1059,7 @@ namespace CartesianKernelFunctors {
 
     typedef FT result_type;
 
-    result_type 
+    result_type
     operator()(const Circle_3 & c) const
     { return c.rep().area_divided_by_pi(); }
 
@@ -937,7 +1076,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
     {
-	return determinant(v.x(), v.y(), w.x(), w.y());
+        return determinant(v.x(), v.y(), w.x(), w.y());
     }
   };
 
@@ -952,7 +1091,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
     {
-	return determinant(v.x(), v.y(), v.z(),
+        return determinant(v.x(), v.y(), v.z(),
                                  w.x(), w.y(), w.z(),
                                  t.x(), t.y(), t.z());
     }
@@ -969,7 +1108,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
     {
-	return v.x() * w.x() + v.y() * w.y();
+        return v.x() * w.x() + v.y() * w.y();
     }
   };
 
@@ -984,7 +1123,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_3& v, const Vector_3& w) const
     {
-	return v.x() * w.x() + v.y() * w.y() + v.z() * w.z();
+        return v.x() * w.x() + v.y() * w.y() + v.z() * w.z();
     }
   };
 
@@ -1000,13 +1139,13 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Triangle_3& t ) const
     {
-	return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+        return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
     {
-	return squared_areaC3(p.x(), p.y(), p.z(),
+        return squared_areaC3(p.x(), p.y(), p.z(),
                               q.x(), q.y(), q.z(),
                               r.x(), r.y(), r.z());
     }
@@ -1038,7 +1177,7 @@ namespace CartesianKernelFunctors {
 
     typedef FT result_type;
 
-    result_type 
+    result_type
     operator() (const Circle_3 & c) const
     { return c.rep().squared_length_divided_by_pi_square(); }
 
@@ -1102,26 +1241,35 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Point_3& p, const Point_3& q) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-			      q.x(), q.y(), q.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       num, den);
+      return num / den;
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-			      q.x(), q.y(), q.z(),
-			      r.x(), r.y(), r.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       num, den);
+      return num / den;
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
-      return squared_radiusC3(p.x(), p.y(), p.z(),
-			      q.x(), q.y(), q.z(),
-			      r.x(), r.y(), r.z(),
-			      s.x(), s.y(), s.z());
+      FT num, den;
+      squared_radiusC3(p.x(), p.y(), p.z(),
+                       q.x(), q.y(), q.z(),
+                       r.x(), r.y(), r.z(),
+                       s.x(), s.y(), s.z(),
+                       num, den);
+      return num / den;
     }
   };
 
@@ -1137,7 +1285,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()(const Point_3& p0, const Point_3& p1,
-	       const Point_3& p2, const Point_3& p3) const
+               const Point_3& p2, const Point_3& p3) const
     {
       return determinant<FT>(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
                              p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
@@ -1148,7 +1296,7 @@ namespace CartesianKernelFunctors {
     operator()( const Tetrahedron_3& t ) const
     {
       return this->operator()(t.vertex(0), t.vertex(1),
-		              t.vertex(2), t.vertex(3));
+                              t.vertex(2), t.vertex(3));
     }
 
     result_type
@@ -1658,7 +1806,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_3     Point_3;
   public:
     typedef Point_3                 result_type;
-    
+
     result_type
     operator()(const Point_3& p1, const FT&w1, const Point_3& p2) const
     {
@@ -1686,7 +1834,7 @@ namespace CartesianKernelFunctors {
       barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2, p3.x(), p3.y(), p3.z(), x, y, z);
       return construct_point_3(x, y, z);
     }
-    
+
     result_type
     operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
                const Point_3& p3, const FT& w3) const
@@ -1697,7 +1845,7 @@ namespace CartesianKernelFunctors {
                    p3.x(), p3.y(), p3.z(), w3, x, y, z);
       return construct_point_3(x, y, z);
     }
-    
+
     result_type
     operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
                const Point_3& p3, const FT& w3, const Point_3& p4) const
@@ -1719,7 +1867,7 @@ namespace CartesianKernelFunctors {
                    p3.x(), p3.y(), p3.z(), w3, p4.x(), p4.y(), p4.z(), w4, x, y, z);
       return construct_point_3(x, y, z);
     }
-    
+
   };
 
   template <typename K>
@@ -1739,7 +1887,7 @@ namespace CartesianKernelFunctors {
 
     Construct_base_vector_3() {}
     Construct_base_vector_3(const Construct_cross_product_vector_3& cp_,
-			    const Construct_orthogonal_vector_3& co_)
+                            const Construct_orthogonal_vector_3& co_)
       : cp(cp_), co(co_)
     {}
 
@@ -1747,14 +1895,14 @@ namespace CartesianKernelFunctors {
     operator()( const Plane_3& h, int index ) const
     {
       if (index == 1) {
-	if ( CGAL_NTS is_zero(h.a()) )  // parallel to x-axis
-	  return Vector_3(FT(1), FT(0), FT(0));
-	
-	if ( CGAL_NTS is_zero(h.b()) )  // parallel to y-axis
-	  return Vector_3(FT(0), FT(1), FT(0));
-	
-	if ( CGAL_NTS is_zero(h.c()) )  // parallel to z-axis
-	  return Vector_3(FT(0), FT(0), FT(1));
+        if ( CGAL_NTS is_zero(h.a()) )  // parallel to x-axis
+          return Vector_3(FT(1), FT(0), FT(0));
+
+        if ( CGAL_NTS is_zero(h.b()) )  // parallel to y-axis
+          return Vector_3(FT(0), FT(1), FT(0));
+
+        if ( CGAL_NTS is_zero(h.c()) )  // parallel to z-axis
+          return Vector_3(FT(0), FT(0), FT(1));
 
         FT a = CGAL::abs(h.a()),
           b = CGAL::abs(h.b()),
@@ -1771,7 +1919,7 @@ namespace CartesianKernelFunctors {
 
         return Vector_3(-h.b(), h.a(), FT(0));
       } else {
-	return cp(co(h), this->operator()(h,1));
+        return cp(co(h), this->operator()(h,1));
       }
     }
   };
@@ -1808,15 +1956,15 @@ namespace CartesianKernelFunctors {
       bb += this->operator()(t.vertex(2));
       return bb;
       /*
-	  Microsoft (R) C/C++ Optimizing Compiler Version 18.00.40629.0 for x64 
-	  produces a segfault of this functor for Simple_cartesian<Interval_nt<0>>
-	  with the original version of the code below
-	  Note that it also worked for 18.00.21005.1
+          Microsoft (R) C/C++ Optimizing Compiler Version 18.00.40629.0 for x64
+          produces a segfault of this functor for Simple_cartesian<Interval_nt<0>>
+          with the original version of the code below
+          Note that it also worked for 18.00.21005.1
 
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2(t.vertex(0))
-	   + construct_bbox_2(t.vertex(1))
-	   + construct_bbox_2(t.vertex(2));
+           + construct_bbox_2(t.vertex(1))
+           + construct_bbox_2(t.vertex(2));
       */
     }
 
@@ -1880,8 +2028,8 @@ namespace CartesianKernelFunctors {
     {
       typename K::Construct_bbox_3 construct_bbox_3;
       return construct_bbox_3(t.vertex(0))
-	   + construct_bbox_3(t.vertex(1))
-	   + construct_bbox_3(t.vertex(2));
+           + construct_bbox_3(t.vertex(1))
+           + construct_bbox_3(t.vertex(2));
     }
 
     Bbox_3
@@ -1918,7 +2066,7 @@ namespace CartesianKernelFunctors {
       Interval_nt<> minz = z-r;
       Interval_nt<> maxz = z+r;
 
-      return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
+      return Bbox_3(minx.inf(), miny.inf(), minz.inf(),
                     maxx.sup(), maxy.sup(), maxz.sup());
     }
 
@@ -1971,8 +2119,8 @@ namespace CartesianKernelFunctors {
     {
       FT a, b, c, d;
       bisector_of_pointsC3(p.x(), p.y(), p.z(),
-	                   q.x(), q.y(), q.z(),
-			   a, b, c, d);
+                           q.x(), q.y(), q.z(),
+                           a, b, c, d);
       return Plane_3(a, b, c, d);
     }
 
@@ -2038,9 +2186,9 @@ namespace CartesianKernelFunctors {
       typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       centroidC3(p.x(), p.y(), p.z(),
-		 q.x(), q.y(), q.z(),
-		 r.x(), r.y(), r.z(),
-		 x, y, z);
+                 q.x(), q.y(), q.z(),
+                 r.x(), r.y(), r.z(),
+                 x, y, z);
       return construct_point_3(x, y, z);
     }
 
@@ -2051,10 +2199,10 @@ namespace CartesianKernelFunctors {
       typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       centroidC3(p.x(), p.y(), p.z(),
-		 q.x(), q.y(), q.z(),
-		 r.x(), r.y(), r.z(),
-		 s.x(), s.y(), s.z(),
-		 x, y, z);
+                 q.x(), q.y(), q.z(),
+                 r.x(), r.y(), r.z(),
+                 s.x(), s.y(), s.z(),
+                 x, y, z);
       return construct_point_3(x, y, z);
     }
 
@@ -2124,50 +2272,13 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& s) const
     {
-      typename K::Construct_point_3 construct_point_3;
-      // Translate s to origin to simplify the expression.
-      FT psx = p.x()-s.x();
-      FT psy = p.y()-s.y();
-      FT psz = p.z()-s.z();
-      FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
-      FT qsx = q.x()-s.x();
-      FT qsy = q.y()-s.y();
-      FT qsz = q.z()-s.z();
-      FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
-      FT rsx = psy*qsz-psz*qsy;
-      FT rsy = psz*qsx-psx*qsz;
-      FT rsz = psx*qsy-psy*qsx;
+      FT x, y, z;
+      circumcenterC3(p.x(), p.y(), p.z(),
+                     q.x(), q.y(), q.z(),
+                     s.x(), s.y(), s.z(),
+                     x, y, z);
 
-      // The following determinants can be developped and simplified.
-      //
-      // FT num_x = determinant(psy,psz,ps2,
-      //                              qsy,qsz,qs2,
-      //                              rsy,rsz,0);
-      // FT num_y = determinant(psx,psz,ps2,
-      //                              qsx,qsz,qs2,
-      //                              rsx,rsz,0);
-      // FT num_z = determinant(psx,psy,ps2,
-      //                              qsx,qsy,qs2,
-      //                              rsx,rsy,0);
-
-      FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
-	       - qs2 * determinant(psy,psz,rsy,rsz);
-      FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
-	       - qs2 * determinant(psx,psz,rsx,rsz);
-      FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
-	       - qs2 * determinant(psx,psy,rsx,rsy);
-
-      FT den   = determinant(psx,psy,psz,
-                             qsx,qsy,qsz,
-                             rsx,rsy,rsz);
-
-      CGAL_kernel_assertion( den != 0 );
-      FT inv = 1 / (2 * den);
-
-      FT x = s.x() + num_x*inv;
-      FT y = s.y() - num_y*inv;
-      FT z = s.z() + num_z*inv;
-      return construct_point_3(x, y, z);
+      return Point_3(x, y, z);
     }
 
     Point_3
@@ -2178,42 +2289,16 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()(const Point_3& p, const Point_3& q,
-	       const Point_3& r, const Point_3& s) const
+               const Point_3& r, const Point_3& s) const
     {
-      typename K::Construct_point_3 construct_point_3;
-      // Translate p to origin to simplify the expression.
-      FT qpx = q.x()-p.x();
-      FT qpy = q.y()-p.y();
-      FT qpz = q.z()-p.z();
-      FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
-      FT rpx = r.x()-p.x();
-      FT rpy = r.y()-p.y();
-      FT rpz = r.z()-p.z();
-      FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + CGAL_NTS square(rpz);
-      FT spx = s.x()-p.x();
-      FT spy = s.y()-p.y();
-      FT spz = s.z()-p.z();
-      FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
+      FT x, y, z;
+      circumcenterC3(p.x(), p.y(), p.z(),
+                     q.x(), q.y(), q.z(),
+                     r.x(), r.y(), r.z(),
+                     s.x(), s.y(), s.z(),
+                     x, y, z);
 
-      FT num_x = determinant(qpy,qpz,qp2,
-                             rpy,rpz,rp2,
-                             spy,spz,sp2);
-      FT num_y = determinant(qpx,qpz,qp2,
-                             rpx,rpz,rp2,
-                             spx,spz,sp2);
-      FT num_z = determinant(qpx,qpy,qp2,
-                             rpx,rpy,rp2,
-                             spx,spy,sp2);
-      FT den   = determinant(qpx,qpy,qpz,
-                             rpx,rpy,rpz,
-                             spx,spy,spz);
-      CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
-      FT inv = 1 / (2 * den);
-
-      FT x = p.x() + num_x*inv;
-      FT y = p.y() - num_y*inv;
-      FT z = p.z() + num_z*inv;
-      return construct_point_3(x, y, z);
+      return Point_3(x, y, z);
     }
 
     Point_3
@@ -2223,9 +2308,6 @@ namespace CartesianKernelFunctors {
                               t.vertex(2), t.vertex(3));
     }
   };
-
-
-
 
   template <typename K>
   class Construct_cross_product_vector_3
@@ -2238,8 +2320,8 @@ namespace CartesianKernelFunctors {
     operator()(const Vector_3& v, const Vector_3& w) const
     {
       return Vector_3(v.y() * w.z() - v.z() * w.y(),
-		      v.z() * w.x() - v.x() * w.z(),
-		      v.x() * w.y() - v.y() * w.x());
+                      v.z() * w.x() - v.x() * w.z(),
+                      v.x() * w.y() - v.y() * w.x());
     }
   };
 
@@ -2263,9 +2345,9 @@ namespace CartesianKernelFunctors {
 
     Construct_lifted_point_3() {}
     Construct_lifted_point_3(const Construct_base_vector_3& cb_,
-			     const Construct_point_on_3& cp_,
-			     const Construct_scaled_vector_3& cs_,
-			     const Construct_translated_point_3& ct_)
+                             const Construct_point_on_3& cp_,
+                             const Construct_scaled_vector_3& cs_,
+                             const Construct_translated_point_3& ct_)
       : cb(cb_), cp(cp_), cs(cs_), ct(ct_)
     {}
 
@@ -2439,7 +2521,7 @@ namespace CartesianKernelFunctors {
       FT rsy = psz*qsx-psx*qsz;
       FT rsz = psx*qsy-psy*qsx;
 
-      // The following determinants can be developped and simplified.
+      // The following determinants can be developed and simplified.
       //
       // FT num_x = determinant(psy,psz,ps2,
       //                              qsy,qsz,qs2,
@@ -2452,11 +2534,11 @@ namespace CartesianKernelFunctors {
       //                              rsx,rsy,0);
 
       FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
-	       - qs2 * determinant(psy,psz,rsy,rsz);
+               - qs2 * determinant(psy,psz,rsy,rsz);
       FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
-	       - qs2 * determinant(psx,psz,rsx,rsz);
+               - qs2 * determinant(psx,psz,rsx,rsz);
       FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
-	       - qs2 * determinant(psx,psy,rsx,rsy);
+               - qs2 * determinant(psx,psy,rsx,rsy);
 
       FT den   = determinant(psx,psy,psz,
                              qsx,qsy,qsz,
@@ -2504,7 +2586,7 @@ namespace CartesianKernelFunctors {
       else               { miny = q.y(); maxy = p.y(); }
 
       return Rep(Point_2(minx, miny),
-	         Point_2(maxx, maxy), 0);
+                 Point_2(maxx, maxy), 0);
     }
 
     Rep // Iso_rectangle_2
@@ -2516,28 +2598,28 @@ namespace CartesianKernelFunctors {
       CGAL_kernel_assertion(!less_x(right, left));
       CGAL_kernel_assertion(!less_y(top, bottom));
       return Rep(Point_2(left.x(), bottom.y()),
-		 Point_2(right.x(), top.y()), 0);
+                 Point_2(right.x(), top.y()), 0);
     }
 
     Rep // Iso_rectangle_2
     operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy) const
+               const RT& max_hx, const RT& max_hy) const
     {
       CGAL_kernel_precondition(min_hx <= max_hx);
       CGAL_kernel_precondition(min_hy <= max_hy);
       return Rep(Point_2(min_hx, min_hy),
-		 Point_2(max_hx, max_hy), 0);
+                 Point_2(max_hx, max_hy), 0);
     }
 
     Rep // Iso_rectangle_2
     operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+               const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
       if (hw == 1)
-	return Rep(Point_2(min_hx, min_hy),
-		   Point_2(max_hx, max_hy), 0);
+        return Rep(Point_2(min_hx, min_hy),
+                   Point_2(max_hx, max_hy), 0);
       return Rep(Point_2(min_hx/hw, min_hy/hw),
-		 Point_2(max_hx/hw, max_hy/hw), 0);
+                 Point_2(max_hx/hw, max_hy/hw), 0);
     }
 
 
@@ -2562,14 +2644,14 @@ namespace CartesianKernelFunctors {
 
     Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy) const
+               const RT& max_hx, const RT& max_hy) const
     {
       return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy);
     }
 
     Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+               const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
       return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw);
     }
@@ -2717,6 +2799,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Segment_2 Segment_2;
   public:
     typedef Point_2          result_type;
 
@@ -2728,6 +2811,17 @@ namespace CartesianKernelFunctors {
       midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
       return construct_point_2(x, y);
     }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      const Point_2& p = s.source();
+      const Point_2& q = s.target();
+      midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
+      return construct_point_2(x, y);
+    }
   };
 
   template <typename K>
@@ -2735,12 +2829,24 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
+    typedef typename K::Segment_3 Segment_3;
   public:
     typedef Point_3               result_type;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
     {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    {
+      const Point_3& p = s.source();
+      const Point_3& q = s.target();
       typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
@@ -2791,19 +2897,19 @@ namespace CartesianKernelFunctors {
   public:
     typedef typename K::Weighted_point_2                Weighted_point_2;
     typedef typename K::Line_2                          Line_2;
-    
+
     typedef Line_2           result_type;
-    
+
     Line_2
     operator() ( const Weighted_point_2 & p, const Weighted_point_2 & q) const
-    { 
+    {
       typedef typename K::RT RT;
       RT a,b,c;
       radical_axisC2(p.x(),p.y(),p.weight(),q.x(),q.y(),q.weight(),a,b,c);
       return Line_2(a,b,c);
     }
   };
-  
+
 
 
 
@@ -2874,6 +2980,18 @@ namespace CartesianKernelFunctors {
 
       return construct_vector(vx, vy, vz);
     }
+
+    Vector_3
+    operator()( Origin, const Point_3& q, const Point_3& r ) const
+    {
+      // Cross product oq * or
+      FT vx = q.y()*r.z() - r.y()*q.z();
+      FT vy = q.z()*r.x() - r.z()*q.x();
+      FT vz = q.x()*r.y() - r.x()*q.y();
+      typename K::Construct_vector_3 construct_vector;
+
+      return construct_vector(vx, vy, vz);
+    }
   };
 
   template <typename K>
@@ -2888,9 +3006,9 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_precondition( o != COLLINEAR );
       if (o == COUNTERCLOCKWISE)
-	return K().construct_vector_2_object()(-v.y(), v.x());
+        return K().construct_vector_2_object()(-v.y(), v.x());
       else
-	return K().construct_vector_2_object()(v.y(), -v.x());
+        return K().construct_vector_2_object()(v.y(), -v.x());
     }
   };
 
@@ -2906,9 +3024,9 @@ namespace CartesianKernelFunctors {
     {
       CGAL_kernel_precondition( o != COLLINEAR );
       if (o == COUNTERCLOCKWISE)
-	return K().construct_direction_2_object()(-d.dy(), d.dx());
+        return K().construct_direction_2_object()(-d.dy(), d.dx());
       else
-	return K().construct_direction_2_object()(d.dy(), -d.dx());
+        return K().construct_direction_2_object()(d.dy(), -d.dx());
     }
   };
 
@@ -2957,17 +3075,10 @@ namespace CartesianKernelFunctors {
       typedef const Point_2& type;
     };
 
+    template <typename ...Args>
     Rep // Point_2
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y) const
-    { return Rep(x, y); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
-    { return Rep(x, y, w); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
     Point_2
     operator()(const Line_2& l) const
@@ -2979,7 +3090,7 @@ namespace CartesianKernelFunctors {
     }
 
     Point_2
-    operator()(const Line_2& l, const FT i) const
+    operator()(const Line_2& l, const FT& i) const
     {
       typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
@@ -2987,11 +3098,11 @@ namespace CartesianKernelFunctors {
       return construct_point_2(x,y);
     }
 
-    const Point_2& 
+    const Point_2&
     operator()(const Point_2 & p) const
     { return p; }
 
-    const Point_2& 
+    const Point_2&
     operator()(const Weighted_point_2 & p) const
     { return p.rep().point(); }
 
@@ -3002,6 +3113,10 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const RT& x, const RT& y) const
     { return Point_2(x, y); }
+
+    Point_2
+    operator()(RT&& x, RT&& y) const
+    { return Point_2(std::move(x), std::move(y)); }
 
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
@@ -3033,24 +3148,16 @@ namespace CartesianKernelFunctors {
       typedef const Point_3& type;
     };
 
-
+    template <class ...Args>
     Rep // Point_3
-    operator()(Return_base_tag, Origin o) const
-    { return Rep(o); }
+    operator()(Return_base_tag, Args&& ...args) const
+    { return Rep(std::forward<Args>(args)...); }
 
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Rep(x, y, z, w); }
-
-    const Point_3& 
+    const Point_3&
     operator()(const Point_3 & p) const
     { return p; }
 
-    const Point_3& 
+    const Point_3&
     operator()(const Weighted_point_3 & p) const
     { return p.rep().point(); }
 
@@ -3061,6 +3168,10 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Point_3(x, y, z); }
+
+    Point_3
+    operator()(RT&& x, RT&& y, RT&& z) const
+    { return Point_3(std::move(x), std::move(y), std::move(z)); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
@@ -3160,6 +3271,8 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
+    typedef typename K::Segment_2  Segment_2;
+    typedef typename K::Triangle_2 Triangle_2;
   public:
     typedef Point_2                result_type;
 
@@ -3171,6 +3284,14 @@ namespace CartesianKernelFunctors {
       line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
       return construct_point_2(x, y);
     }
+
+    Point_2
+    operator()(const Segment_2& s, const Point_2& p) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(s, p, K()); }
+
+    Point_2
+    operator()(const Triangle_2& t, const Point_2& p) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
   };
 
 
@@ -3184,8 +3305,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::FT         FT;
+
   public:
-    typedef Point_3                result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3212,18 +3342,22 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
-    
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
+
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
-  template <class K> 
+  template <class K>
   class Construct_radical_line_2
   {
     typedef typename K::Line_2            Line_2;
@@ -3234,22 +3368,22 @@ namespace CartesianKernelFunctors {
 
     typedef Line_2 result_type;
 
-    result_type 
+    result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-	  {
+    {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
-      const FT c = CGAL::square(c1.center().x()) + 
-        CGAL::square(c1.center().y()) - c1.squared_radius() -
-        CGAL::square(c2.center().x()) -
-        CGAL::square(c2.center().y()) + c2.squared_radius();
+      const FT c = CGAL::square(c1.center().x()) +
+                   CGAL::square(c1.center().y()) - c1.squared_radius() -
+                   CGAL::square(c2.center().x()) -
+                   CGAL::square(c2.center().y()) + c2.squared_radius();
       return Line_2(a, b, c);
     }
   };
 
-  template <class K> 
+  template <class K>
   class Construct_radical_plane_3
   {
     typedef typename K::Plane_3            Plane_3;
@@ -3260,7 +3394,7 @@ namespace CartesianKernelFunctors {
 
     typedef Plane_3 result_type;
 
-    result_type 
+    result_type
     operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
     {
       // Concentric Spheres don't have radical plane
@@ -3268,12 +3402,12 @@ namespace CartesianKernelFunctors {
       const FT a = 2*(s2.center().x() - s1.center().x());
       const FT b = 2*(s2.center().y() - s1.center().y());
       const FT c = 2*(s2.center().z() - s1.center().z());
-      const FT d = CGAL::square(s1.center().x()) + 
-        CGAL::square(s1.center().y()) +
-        CGAL::square(s1.center().z()) - s1.squared_radius() -
-        CGAL::square(s2.center().x()) -
-        CGAL::square(s2.center().y()) -
-        CGAL::square(s2.center().z()) + s2.squared_radius();
+      const FT d = CGAL::square(s1.center().x()) +
+                   CGAL::square(s1.center().y()) +
+                   CGAL::square(s1.center().z()) - s1.squared_radius() -
+                   CGAL::square(s2.center().x()) -
+                   CGAL::square(s2.center().y()) -
+                   CGAL::square(s2.center().z()) + s2.squared_radius();
       return Plane_3(a, b, c, d);
     }
   };
@@ -3436,11 +3570,17 @@ namespace CartesianKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
+    Rep
+    operator()(Return_base_tag, RT&& x, RT&& y) const
+    { return Rep(std::move(x), std::move(y)); }
+
     Rep // Vector_2
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
 
-
+    Rep
+    operator()(Return_base_tag, RT&& x, RT&& y, RT&& w) const
+    { return Rep(std::move(x), std::move(y), std::move(w)); }
 
     Vector_2
     operator()( const Point_2& p, const Point_2& q) const
@@ -3541,6 +3681,10 @@ namespace CartesianKernelFunctors {
     { return Rep(x, y, z); }
 
     Rep // Vector_3
+    operator()(Return_base_tag, RT&& x, RT&& y, RT&& z) const
+    { return Rep(std::move(x), std::move(y), std::move(z)); }
+
+    Rep // Vector_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
 
@@ -3602,7 +3746,7 @@ namespace CartesianKernelFunctors {
     struct result {
       typedef const Point_2& type;
     };
-    
+
     template<typename F>
     struct result<F(Iso_rectangle_2, int)> {
       typedef Point_2 type;
@@ -3656,27 +3800,27 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return coplanar_orientationC3(p.x(), p.y(), p.z(),
-				    q.x(), q.y(), q.z(),
-				    r.x(), r.y(), r.z());
+                                    q.x(), q.y(), q.z(),
+                                    r.x(), r.y(), r.z());
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
       // p,q,r,s supposed to be coplanar
       // p,q,r supposed to be non collinear
       // tests whether s is on the same side of p,q as r
       // returns :
-      // COLLINEAR if pqr collinear
-      // POSITIVE if qrp and qrs have the same orientation
-      // NEGATIVE if qrp and qrs have opposite orientations
+      // COLLINEAR if qps collinear
+      // POSITIVE if qpr and qps have the same orientation
+      // NEGATIVE if qpr and qps have opposite orientations
       CGAL_kernel_exactness_precondition( ! cl(p, q, r) );
       CGAL_kernel_exactness_precondition( cp(p, q, r, s) );
       return coplanar_orientationC3(p.x(), p.y(), p.z(),
-				    q.x(), q.y(), q.z(),
-				    r.x(), r.y(), r.z(),
-				    s.x(), s.y(), s.z());
+                                    q.x(), q.y(), q.z(),
+                                    r.x(), r.y(), r.z(),
+                                    s.x(), s.y(), s.z());
     }
   };
 
@@ -3696,14 +3840,14 @@ namespace CartesianKernelFunctors {
 #ifdef CGAL_kernel_exactness_preconditions
     Coplanar_side_of_bounded_circle_3() {}
     Coplanar_side_of_bounded_circle_3(const Coplanar_3& cp_,
-				      const Collinear_3& cl_)
+                                      const Collinear_3& cl_)
       : cp(cp_), cl(cl_)
     {}
 #endif // CGAL_kernel_exactness_preconditions
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+                const Point_3& r, const Point_3& t) const
     {
       // p,q,r,t are supposed to be coplanar.
       // p,q,r determine an orientation of this plane (not collinear).
@@ -3712,9 +3856,9 @@ namespace CartesianKernelFunctors {
       CGAL_kernel_exactness_precondition( cp(p,q,r,t) );
       CGAL_kernel_exactness_precondition( !cl(p,q,r) );
       return coplanar_side_of_bounded_circleC3(p.x(), p.y(), p.z(),
-					       q.x(), q.y(), q.z(),
-					       r.x(), r.y(), r.z(),
-					       t.x(), t.y(), t.z());
+                                               q.x(), q.y(), q.z(),
+                                               r.x(), r.y(), r.z(),
+                                               t.x(), t.y(), t.z());
     }
   };
 
@@ -3818,7 +3962,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Segment_3& s, const Point_3& p) const
-    { return s.has_on(p); }
+    { return s.rep().has_on(p); }
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
@@ -3836,24 +3980,24 @@ namespace CartesianKernelFunctors {
                v1 = t.vertex(1)-o,
                v2 = t.vertex(2)-o;
 
-      FT alpha, beta, gamma;
-      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma);
+      FT alpha, beta, gamma, denum;
+      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma, denum);
       return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
-          && ((alpha+beta+gamma == FT(1)));
+          && ((alpha+beta+gamma == denum));
     }
 
     result_type
     operator()(const Circle_3 &a, const Point_3 &p) const
     { return a.rep().has_on(p); }
 
-    result_type
+    Needs_FT<result_type>
     operator()(const Sphere_3 &a, const Circle_3 &p) const
     { return a.rep().has_on(p); }
 
     result_type
     operator()(const Sphere_3 &a, const Point_3 &p) const
-    { return a.rep().has_on(p); }    
-    
+    { return a.rep().has_on(p); }
+
     result_type
     operator()(const Plane_3 &a, const Circle_3 &p) const
     { return a.rep().has_on(p); }
@@ -3872,8 +4016,8 @@ namespace CartesianKernelFunctors {
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       return has_smaller_dist_to_pointC2(p.x(), p.y(),
-					 q.x(), q.y(),
-					 r.x(), r.y());
+                                         q.x(), q.y(),
+                                         r.x(), r.y());
     }
   };
 
@@ -3888,12 +4032,12 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return has_smaller_dist_to_pointC3(p.x(), p.y(), p.z(),
-					 q.x(), q.y(), q.z(),
-					 r.x(), r.y(), r.z());
+                                         q.x(), q.y(), q.z(),
+                                         r.x(), r.y(), r.z());
     }
   };
 
-  // TODO ...
+
   template <typename K>
   class Less_signed_distance_to_line_2
   {
@@ -3910,17 +4054,17 @@ namespace CartesianKernelFunctors {
       CGAL_kernel_precondition_code(Equal_2 equal;)
       CGAL_kernel_precondition(! equal(a,b));
       return cmp_signed_dist_to_lineC2( a.x(), a.y(),
-					b.x(), b.y(),
-					c.x(), c.y(),
-					d.x(), d.y()) == SMALLER;
+                                        b.x(), b.y(),
+                                        c.x(), c.y(),
+                                        d.x(), d.y()) == SMALLER;
     }
 
     result_type
     operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
     {
       return has_smaller_signed_dist_to_directionC2(l.a(), l.b(),
-						    p.x(), p.y(),
-						    q.x(), q.y());
+                                                    p.x(), p.y(),
+                                                    q.x(), q.y());
     }
   };
 
@@ -3937,21 +4081,21 @@ namespace CartesianKernelFunctors {
     operator()( const Plane_3& h, const Point_3& p, const Point_3& q) const
     {
       return has_smaller_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
-						    p.x(), p.y(), p.z(),
-						    q.x(), q.y(), q.z());
+                                                    p.x(), p.y(), p.z(),
+                                                    q.x(), q.y(), q.z());
     }
 
     result_type
     operator()( const Point_3& hp, const Point_3& hq,  const Point_3& hr,
-		const Point_3& p, const Point_3& q) const
+                const Point_3& p, const Point_3& q) const
     {
       CGAL_kernel_precondition_code(Collinear_3 collinear_3;)
       CGAL_kernel_precondition(! collinear_3(hp, hq, hr));
       return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
-						hq.x(), hq.y(), hq.z(),
-						hr.x(), hr.y(), hr.z(),
-						p.x(),  p.y(),  p.z(),
-						q.x(),  q.y(),  q.z());;
+                                                hq.x(), hq.y(), hq.z(),
+                                                hr.x(), hr.y(), hr.z(),
+                                                p.x(),  p.y(),  p.z(),
+                                                q.x(),  q.y(),  q.z());;
     }
   };
 
@@ -4041,7 +4185,7 @@ namespace CartesianKernelFunctors {
     operator()( const Point_2& p, const Point_2& q) const
     {
       return compare_lexicographically_xyC2(p.y(), p.x(),
-					    q.y(), q.x()) == SMALLER;
+                                            q.y(), q.x()) == SMALLER;
     }
   };
 
@@ -4090,8 +4234,7 @@ namespace CartesianKernelFunctors {
   public:
     typedef typename K::Orientation   result_type;
 
-    result_type
-    operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    result_type operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
@@ -4121,20 +4264,29 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
       return orientationC3(p.x(), p.y(), p.z(),
-			   q.x(), q.y(), q.z(),
-			   r.x(), r.y(), r.z(),
-			   s.x(), s.y(), s.z());
+                           q.x(), q.y(), q.z(),
+                           r.x(), r.y(), r.z(),
+                           s.x(), s.y(), s.z());
     }
 
     result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
       return orientationC3(u.x(), u.y(), u.z(),
-			   v.x(), v.y(), v.z(),
-			   w.x(), w.y(), w.z());
+                           v.x(), v.y(), v.z(),
+                           w.x(), w.y(), w.z());
+    }
+
+    result_type
+    operator()( Origin, const Point_3& u,
+                const Point_3& v, const Point_3& w) const
+    {
+      return orientationC3(u.x(), u.y(), u.z(),
+                           v.x(), v.y(), v.z(),
+                           w.x(), w.y(), w.z());
     }
 
     result_type
@@ -4210,6 +4362,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
+    typedef typename K::FT             FT;
   public:
     typedef typename K::Oriented_side  result_type;
 
@@ -4225,26 +4379,50 @@ namespace CartesianKernelFunctors {
     operator()( const Triangle_2& t, const Point_2& p) const
     {
       typename K::Collinear_are_ordered_along_line_2
-	collinear_are_ordered_along_line;
+        collinear_are_ordered_along_line;
       typename K::Orientation_2 orientation;
       // depends on the orientation of the vertices
       typename K::Orientation
                   o1 = orientation(t.vertex(0), t.vertex(1), p),
-	          o2 = orientation(t.vertex(1), t.vertex(2), p),
-	          o3 = orientation(t.vertex(2), t.vertex(3), p),
-	          ot = orientation(t.vertex(0), t.vertex(1), t.vertex(2));
+                  o2 = orientation(t.vertex(1), t.vertex(2), p),
+                  o3 = orientation(t.vertex(2), t.vertex(3), p),
+                  ot = orientation(t.vertex(0), t.vertex(1), t.vertex(2));
 
       if (o1 == ot && o2 == ot && o3 == ot) // ot cannot be COLLINEAR
-	return ot;
+        return ot;
       return
-	(o1 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
-	(o2 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
-	(o3 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
-	? result_type(ON_ORIENTED_BOUNDARY)
-	: opposite(ot);
+        (o1 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
+        (o2 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
+        (o3 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
+        ? result_type(ON_ORIENTED_BOUNDARY)
+        : opposite(ot);
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
+      CGAL_assertion(a != b);
+
+      typename K::Construct_vertex_2 vertex;
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      return circumcenter_oriented_side_of_oriented_segmentC2(
+                  a.x(), a.y(),
+                  b.x(), b.y(),
+                  p0.x(), p0.y(),
+                  p1.x(), p1.y(),
+                  p2.x(), p2.y()
+      );
     }
   };
 
@@ -4259,16 +4437,16 @@ namespace CartesianKernelFunctors {
     operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
     {
       return side_of_bounded_circleC2(p.x(), p.y(),
-				      q.x(), q.y(),
-				      t.x(), t.y());
+                                      q.x(), q.y(),
+                                      t.x(), t.y());
     }
 
     result_type
     operator()( const Point_2& p, const Point_2& q,
-	        const Point_2& r, const Point_2& t) const
+                const Point_2& r, const Point_2& t) const
     {
       return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
-				      t.x(), t.y());
+                                      t.x(), t.y());
     }
   };
 
@@ -4283,29 +4461,29 @@ namespace CartesianKernelFunctors {
     operator()( const Point_3& p, const Point_3& q, const Point_3& test) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-				      q.x(), q.y(), q.z(),
-				      test.x(), test.y(), test.z());
+                                      q.x(), q.y(), q.z(),
+                                      test.x(), test.y(), test.z());
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& test) const
+                const Point_3& r, const Point_3& test) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-				      q.x(), q.y(), q.z(),
-				      r.x(), r.y(), r.z(),
-				      test.x(), test.y(), test.z());
+                                      q.x(), q.y(), q.z(),
+                                      r.x(), r.y(), r.z(),
+                                      test.x(), test.y(), test.z());
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& test) const
+                const Point_3& s, const Point_3& test) const
     {
       return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
-				      q.x(), q.y(), q.z(),
-				      r.x(), r.y(), r.z(),
-				      s.x(), s.y(), s.z(),
-				      test.x(), test.y(), test.z());
+                                      q.x(), q.y(), q.z(),
+                                      r.x(), r.y(), r.z(),
+                                      s.x(), s.y(), s.z(),
+                                      test.x(), test.y(), test.z());
     }
   };
 
@@ -4318,12 +4496,12 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_2& p, const Point_2& q,
-	        const Point_2& r, const Point_2& t) const
+                const Point_2& r, const Point_2& t) const
     {
       return side_of_oriented_circleC2(p.x(), p.y(),
-				       q.x(), q.y(),
-				       r.x(), r.y(),
-				       t.x(), t.y());
+                                       q.x(), q.y(),
+                                       r.x(), r.y(),
+                                       t.x(), t.y());
     }
   };
 
@@ -4336,13 +4514,13 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& test) const
+                const Point_3& s, const Point_3& test) const
     {
       return side_of_oriented_sphereC3(p.x(), p.y(), p.z(),
-				       q.x(), q.y(), q.z(),
-				       r.x(), r.y(), r.z(),
-				       s.x(), s.y(), s.z(),
-				       test.x(), test.y(), test.z());
+                                       q.x(), q.y(), q.z(),
+                                       r.x(), r.y(), r.z(),
+                                       s.x(), s.y(), s.z(),
+                                       test.x(), test.y(), test.z());
     }
   };
 

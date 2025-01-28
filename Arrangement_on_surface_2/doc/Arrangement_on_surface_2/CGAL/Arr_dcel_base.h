@@ -4,19 +4,19 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangementOnSurface2DCEL
 
-\anchor arr_refarr_dcel_base 
+\anchor arr_refarr_dcel_base
 
-The `Arr_dcel_base` class is an important ingredient in the 
-definition of <span class="textsc">Dcel</span> data structures. It serves as a basis class for 
-any instance of the `Dcel` template parameter of the 
-`Arrangement_2` template. In particular it is the basis class of 
-the default `Dcel` template parameter, and the basis class of any 
-extended <span class="textsc">Dcel</span>. The template parameters `V`, `H`, and `F` 
-must be instantiated with models of the concepts 
-`ArrangementDcelVertex`, `ArrangementDcelHalfedge`, 
-and `ArrangementDcelFace` respectively. 
+The `Arr_dcel_base` class is an important ingredient in the
+definition of \dcel data structures. It serves as a basis class for
+any instance of the `Dcel` template parameter of the
+`Arrangement_2` template. In particular it is the basis class of
+the default `Dcel` template parameter, and the basis class of any
+extended \dcel. The template parameters `V`, `H`, and `F`
+must be instantiated with models of the concepts
+`ArrangementDcelVertex`, `ArrangementDcelHalfedge`,
+and `ArrangementDcelFace` respectively.
 
-\cgalModels `ArrangementDcel`
+\cgalModels{ArrangementDcel}
 
 */
 template< typename V, typename H, typename F >
@@ -26,10 +26,10 @@ public:
 
 /*!
 
-The basic <span class="textsc">Dcel</span> face type. Serves as a basis class for an extended 
-face record with auxiliary data fields. 
+The basic \dcel face type. Serves as a basis class for an extended
+face record with auxiliary data fields.
 
-\cgalModels `ArrangementDcelFace`
+\cgalModels{ArrangementDcelFace}
 
 */
 class Arr_face_base {
@@ -39,11 +39,11 @@ class Arr_face_base {
 /*!
 
 
-The basic <span class="textsc">Dcel</span> halfedge type. Serves as a basis class for an 
-extended halfedge record with auxiliary data fields. The `Curve` 
-parameter is the type of \f$ x\f$-monotone curves associated with the vertices. 
+The basic \dcel halfedge type. Serves as a basis class for an
+extended halfedge record with auxiliary data fields. The `Curve`
+parameter is the type of \f$ x\f$-monotone curves associated with the vertices.
 
-\cgalModels `ArrangementDcelHalfedge`
+\cgalModels{ArrangementDcelHalfedge}
 
 */
 template< typename Curve >
@@ -54,11 +54,11 @@ class Arr_halfedge_base {
 /*!
 
 
-The basic <span class="textsc">Dcel</span> vertex type. Serves as a basis class for an extended 
-vertex record with auxiliary data fields. The `Point` parameter is 
-the type of points associated with the vertices. 
+The basic \dcel vertex type. Serves as a basis class for an extended
+vertex record with auxiliary data fields. The `Point` parameter is
+the type of points associated with the vertices.
 
-\cgalModels `ArrangementDcelVertex`
+\cgalModels{ArrangementDcelVertex}
 
 */
 template< typename Point >

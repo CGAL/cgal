@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Simon Giraudot
@@ -24,20 +15,68 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-
-#include <stack>
+#include <typeindex>
 
 #include <CGAL/Surface_mesh/Properties.h>
 
-#include <CGAL/demangle.h>
+#include <CGAL/Point_set_3/IO.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/demangle.h>
+#include <CGAL/assertions.h>
 
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <stack>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+class Point_set_3;
 
+/// \cond SKIP_IN_MANUAL
+namespace internal {
+  template<typename Point, typename Vector>
+  class Point_set_3_index
+  {
+  public:
+#ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
+    typedef std::size_t size_type;
+#else
+    typedef std::uint32_t size_type;
+#endif
+    typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
+
+  private:
+    friend class CGAL::Point_set_3<Point, Vector>;
+    friend class Properties::Property_container<Point_set_3, Point_set_3_index>;
+    template <class> friend class Properties::Property_array;
+    template <class> friend struct Property_map;
+    friend class std::vector<Point_set_3_index>;
+    size_type value;
+
+  public:
+    Point_set_3_index(const Point_set_3_index& index) : value(static_cast<size_type>(index)) { }
+    Point_set_3_index(const std::size_t& value) : value(static_cast<size_type>(value)) { }
+    Point_set_3_index() : value(static_cast<size_type>(-1)) { }
+    Point_set_3_index operator= (const Point_set_3_index& index) { value = index.value; return *this; }
+
+    operator std::size_t() const { return static_cast<std::size_t>(value); }
+    bool operator== (const Point_set_3_index& index) const { return value == index.value; }
+    bool operator!= (const Point_set_3_index& index) const { return value != index.value; }
+    bool operator<  (const Point_set_3_index& index) const { return value < index.value; }
+    Point_set_3_index& operator++ () { ++value; return *this; }
+    Point_set_3_index& operator-- () { --value; return *this; }
+    Point_set_3_index operator++ (int) { Point_set_3_index tmp(*this); ++value; return tmp; }
+    Point_set_3_index operator-- (int) { Point_set_3_index tmp(*this); --value; return tmp; }
+};
+} // namespace internal
+/// \endcond
 
 /*!
 
@@ -52,34 +91,34 @@ namespace CGAL {
   two particular properties that are hard coded by this class: the
   coordinates of the points and the normal vectors.
 
-  The coordinates of a point can be access using the index of the
+  The coordinates of a point can be accessed using the index of the
   point and the member function `point()`. This property is always
   present. The normal vector of a point can be accessed using the
   index of the point and the `normal()` method. This property must
   be explicitly created.
 
   All properties can be accessed as a range using the methods
-  `points()`, `normals()`, and `range()` for points coordinates,
+  `points()`, `normals()`, and `range()` for point coordinates,
   normal vectors, and other properties respectively.
- 
-  Removing a point with properties is achieved by moving its `Index`
+
+  Removing a point with properties is achieved by moving its index
   at the end of the container and keeping track of the number of
   removed elements. A garbage collection method must be called to
   really remove it from memory.
 
   For convenience, all functions of the package \ref
-  PkgPointSetProcessing3 automatically creates the right named
+  PkgPointSetProcessing3 automatically create the right named
   parameters if called with a `CGAL::Point_set_3` object as argument.
 
 
-  \tparam Point Point type.
-  \tparam Vector Normal vector type.
+  \tparam Point Point type
+  \tparam Vector Normal vector type
 
-  \cgalModels `Range`
+  \cgalModels{Range}
  */
 
 template <typename Point,
-          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+          typename Vector>
 class Point_set_3
 {
 public:
@@ -89,7 +128,7 @@ public:
   typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
 
-  class Index;
+  using Index = internal::Point_set_3_index<Point, Vector>;
 
   typedef typename Properties::Property_container<Point_set, Index> Base;
 
@@ -108,53 +147,21 @@ public:
     typedef Property_map<T> type;
   };
   /// \endcond
-  
-  /*!
-    \brief This represents a point with associated properties.
-    \cgalModels `::Index`
-    \cgalModels `LessThanComparable`
-    \cgalModels `Hashable`
+
+#ifdef DOXYGEN_RUNNING
+   /*!
+  \brief This represents a point with associated properties.
+  \cgalModels{::Index,LessThanComparable,Hashable}
   */
-  class Index
-  {
-    /// \cond SKIP_IN_MANUAL
-  public:
-#ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
-    typedef std::size_t size_type;
-#else
-    typedef boost::uint32_t size_type;
+  class Index;
 #endif
-  private:
-    friend class Point_set_3;
-    friend class Properties::Property_container<Point_set_3, Index>;
-    template <class> friend class Properties::Property_array;
-    template <class> friend struct Property_map;
-    friend class std::vector<Index>;
-    size_type value;
-    
-  public:
-    Index (const Index& index) : value (static_cast<size_type>(index)) { }
-    Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
-    Index () : value (static_cast<size_type>(-1)) { }
-    Index operator= (const Index& index) { value = index.value; return *this; }
-    /// \cond SKIP_IN_MANUAL
-    operator std::size_t() const { return static_cast<std::size_t>(value); }
-    bool operator== (const Index& index) const { return value == index.value; }
-    bool operator!= (const Index& index) const { return value != index.value; }
-    bool operator<  (const Index& index) const { return value < index.value; }
-    Index& operator++ () { ++ value; return *this; }
-    Index& operator-- () { -- value; return *this; }
-    Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
-    Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
-    /// \endcond
-  };
 
   typedef Point Point_3; ///< The point type
   typedef Vector Vector_3; ///< The vector type
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
+  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
@@ -170,12 +177,15 @@ public:
   public:
     typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
     typedef boost::transform_iterator<Unary_function,
+                                      typename Point_set::iterator> iterator; // for NP helper
+    typedef boost::transform_iterator<Unary_function,
                                       typename Point_set::const_iterator> const_iterator;
+
   private:
     const_iterator m_begin;
     const_iterator m_end;
     std::size_t m_size;
-    
+
   public:
     Property_range (const Property_map<Type>& pmap,
                     typename Point_set::const_iterator begin,
@@ -186,7 +196,7 @@ public:
       m_end = boost::make_transform_iterator (end, Unary_function(pmap));
       m_size = size;
     }
-    
+
     const_iterator begin() const { return m_begin; }
     const_iterator end() const { return m_end; }
     std::size_t size() const { return m_size; }
@@ -206,7 +216,7 @@ protected:
   Vector_map m_normals;
   std::size_t m_nb_removed;
   /// \endcond
-  
+
 public:
 
   /// \name Construction, Destruction, Assignment
@@ -214,7 +224,7 @@ public:
 
 
   /*!
-    \brief Creates an empty point set with no additional property.
+    \brief creates an empty point set with no additional property.
 
     \param with_normal_map `true` if the normal map should be
     added. If `false` (default value), the normal map can still be
@@ -233,12 +243,24 @@ public:
   Point_set_3& operator= (const Point_set_3& ps)
   {
     m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
-    m_points = this->property_map<Point> ("point").first;
-    m_normals = this->property_map<Vector> ("normal").first;
+    m_indices = this->property_map<Index> ("index").value();
+    m_points = this->property_map<Point> ("point").value();
     m_nb_removed = ps.m_nb_removed;
+    copy_properties(ps);
     return *this;
   }
+
+  /// \cond SKIP_IN_MANUAL
+  // copy constructor (same as assignment)
+  Point_set_3 (const Point_set_3& ps)
+  {
+    m_base = ps.m_base;
+    m_indices = this->property_map<Index> ("index").value();
+    m_points = this->property_map<Point> ("point").value();
+    copy_properties(ps);
+    m_nb_removed = ps.m_nb_removed;
+  }
+  /// \endcond
 
   /// @}
 
@@ -253,7 +275,7 @@ public:
 
   /*!
 
-    \brief Returns `true` if the number of elements not marked as
+    \brief returns `true` if the number of elements not marked as
     removed is 0, `false` otherwise.
 
     \note This does not count the removed elements.
@@ -266,7 +288,7 @@ public:
   bool empty() const { return is_empty(); }
   /// \endcond
   /*!
-    \brief Returns the number of elements (not counting elements marked as removed).
+    \brief returns the number of elements (not counting elements marked as removed).
 
     \note See `number_of_removed_points()` for getting the number of elements marked as removed.
 
@@ -279,7 +301,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Merges `other` in the point set.
+    \brief merges `other` in the point set.
 
     Shifts the indices of points of `other` by `number_of_points() +
     other.number_of_points()`.
@@ -300,14 +322,14 @@ public:
     other.collect_garbage();
     resize (number_of_points() + other.number_of_points());
     m_base.transfer (other.m_base);
-    
+
     // Reset indices
     for (std::size_t i = 0; i < this->m_base.size(); ++ i)
       this->m_indices[i] = i;
 
     return true;
   }
-  
+
   /*!
     \brief Clears the point set properties and content.
 
@@ -318,11 +340,11 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", typename Index::size_type(-1));
-    boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
+    m_indices = this->add_property_map<Index>("index", typename Index::size_type(-1)).first;
+    m_points = this->add_property_map<Point>("point", CGAL::ORIGIN).first;
     m_nb_removed = 0;
   }
-  
+
   /*!
     \brief Clears all properties created.
 
@@ -333,16 +355,16 @@ public:
   {
     Base other;
     other.template add<Index>("index", typename Index::size_type(-1));
-    other.template add<Point>("point", Point (0., 0., 0.));
+    other.template add<Point>("point", CGAL::ORIGIN);
     other.resize(m_base.size());
     other.transfer(m_base);
     m_base.swap(other);
-    boost::tie (m_indices, boost::tuples::ignore) = this->property_map<Index>("index");
-    boost::tie (m_points, boost::tuples::ignore) = this->property_map<Point>("point");
+    m_indices = this->property_map<Index>("index").value();
+    m_points = this->property_map<Point>("point").value();
   }
 
   /*!
-    \brief Increases the capacity of internal containers to be able to
+    \brief increases the capacity of internal containers to be able to
     efficiently accommodate at least `s` elements
 
     \param s Expected final number of elements.
@@ -351,11 +373,11 @@ public:
     is only used for optimization.
    */
   void reserve (std::size_t s) { m_base.reserve (s); }
-  
-  /*!
-    \brief Changes size of the point set.
 
-    \param s Target size of the point set.
+  /*!
+    \brief changes size of the point set.
+
+    \param s Target size of the point set
 
     \note If the given size is larger than the current size, the
     capacity of the internal container is extended. If there are
@@ -388,12 +410,12 @@ public:
   }
 
   /// @}
-  
+
   /// \name Adding Points and Normals
   /// @{
 
   /*!
-    \brief Inserts a new element with default property values.
+    \brief inserts a new element with default property values.
 
     \return The iterator on the newly added element.
 
@@ -423,7 +445,7 @@ public:
   }
 
   /*!
-    \brief Inserts new point with default property values.
+    \brief inserts new point with default property values.
 
     \param p Point to insert
 
@@ -454,8 +476,9 @@ public:
     \note Properties of the added point other than its normal vector
     are initialized to their default value.
 
-    \note A normal property must have been added to the point set
-    before using this method.
+    \note If not already added, a normal property is automatically
+    added to the point set when using this method. The default value
+    for normal vectors is `CGAL::NULL_VECTOR`.
 
     \note If a reallocation happens, all iterators, pointers and
     references related to the container are invalidated.  Otherwise,
@@ -468,12 +491,11 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normal_map());
-    m_normals[size()-1] = n;
+    normal_map()[size()-1] = n;
     return out;
   }
 
-  /*! 
+  /*!
     \brief Convenience method to copy a point with all its properties
     from another point set.
 
@@ -506,50 +528,50 @@ public:
   }
 
   /// @}
-  
+
   /// \name Accessors and Iterators
   /// @{
 
   /*!
-    \brief Returns the begin iterator.
+    \brief returns the begin iterator.
   */
   iterator begin() { return m_indices.begin(); }
   /*!
-    \brief Returns the past-the-end iterator.
+    \brief returns the past-the-end iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   iterator end() { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns the begin constant iterator.
+    \brief returns the begin constant iterator.
   */
   const_iterator begin() const { return m_indices.begin(); }
   /*!
-    \brief Returns the past-the-end constant iterator.
+    \brief returns the past-the-end constant iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   const_iterator end() const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns a reference to the point corresponding to `index`.
+    \brief returns a reference to the point corresponding to `index`.
   */
   Point& point (const Index& index) { return m_points[index]; }
   /*!
-    \brief Returns a constant reference to the point corresponding to `index`.
+    \brief returns a constant reference to the point corresponding to `index`.
   */
   const Point& point (const Index& index) const { return m_points[index]; }
   /*!
-    \brief Returns a reference to the normal corresponding to `index`.
+    \brief returns a reference to the normal corresponding to `index`.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If not already added, a normal property is automatically
+    added to the point set (see `add_normal_map()`).
   */
-  Vector& normal (const Index& index) { return m_normals[index]; }
+  Vector& normal (const Index& index) { return normal_map()[index]; }
   /*!
-    \brief Returns a constant reference to the normal corresponding to `index`.
+    \brief returns a constant reference to the normal corresponding to `index`.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If not already added, a normal property is automatically
+    added to the point set (see `add_normal_map()`).
   */
-  const Vector& normal (const Index& index) const { return m_normals[index]; }
+  const Vector& normal (const Index& index) const { return normal_map()[index]; }
 
   /// @}
 
@@ -557,7 +579,7 @@ public:
   /// @{
 
   /*!
-    \brief Marks all elements between `first` and `last` as removed.
+    \brief marks all elements between `first` and `last` as removed.
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
@@ -594,9 +616,9 @@ public:
     remove (first, end());
   }
   /// \endcond
-  
+
   /*!
-    \brief Marks element specified by iterator as removed.
+    \brief marks element specified by iterator as removed.
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
@@ -613,7 +635,7 @@ public:
   }
 
   /*!
-    \brief Marks element specified by `Index` as removed.
+    \brief marks element specified by `Index` as removed.
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
@@ -636,9 +658,9 @@ public:
 
   /// \name Garbage Management
   /// @{
-  
+
   /*!
-    \brief Returns `true` if the element is marked as removed, `false`
+    \brief returns `true` if the element is marked as removed, `false`
     otherwise.
 
     \note When iterating between `begin()` and `end()`, no element
@@ -650,7 +672,7 @@ public:
   }
 
   /*!
-    \brief Returns `true` if the element is marked as removed, `false`
+    \brief returns `true` if the element is marked as removed, `false`
     otherwise.
 
     \note When iterating between `begin()` and `end()`, no element
@@ -665,12 +687,12 @@ public:
   }
 
   /*!
-    \brief Returns the constant iterator to the first element marked as removed
+    \brief returns the constant iterator to the first element marked as removed
     (equal to `garbage_end()` if no elements are marked as removed.
   */
   const_iterator garbage_begin () const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns the past-the-end constant iterator of the elements marked as removed.
+    \brief returns the past-the-end constant iterator of the elements marked as removed.
   */
   const_iterator garbage_end () const { return m_indices.end(); }
   /*!
@@ -683,15 +705,14 @@ public:
     \sa `number_of_removed_points()`
   */
   std::size_t garbage_size () const { return number_of_removed_points(); }
-  /// \endcond
-  
-  /*!  \brief Returns `true` if there are elements marked as removed,
+
+  /*!  \brief returns `true` if there are elements marked as removed,
     `false` otherwise.
   */
-  bool has_garbage () const { return (m_nb_removed != 0); }  
+  bool has_garbage () const { return (m_nb_removed != 0); }
 
   /*!
-    \brief Erases from memory the elements marked as removed.
+    \brief erases from memory the elements marked as removed.
   */
   void collect_garbage ()
   {
@@ -713,8 +734,8 @@ public:
   }
 
   /*!
-    \brief Restores all removed points.
-    
+    \brief restores all removed points.
+
     After removing one or several points, calling this method restores
     the point set to its initial state: points that were removed (and
     their associated properties) are restored.
@@ -752,9 +773,9 @@ public:
   using Property_map = unspecified_type;
 #endif
 
-  
+
   /*!
-    \brief Tests whether property `name` of type `T` already exists.
+    \brief tests whether property `name` of type `T` already exists.
 
     \tparam T type of the property.
 
@@ -763,13 +784,13 @@ public:
   template <typename T>
   bool has_property_map (const std::string& name) const
   {
-    std::pair<Property_map<T>, bool>
+    std::optional<Property_map<T>>
       pm = m_base.template get<T> (name);
-    return pm.second;
+    return pm.has_value();
   }
-  
+
   /*!
-    \brief Adds a new property `name` of type `T` with given default value.
+    \brief adds a new property `name` of type `T` with given default value.
 
     \tparam T type of the property.
 
@@ -785,35 +806,27 @@ public:
   std::pair<Property_map<T>, bool>
   add_property_map (const std::string& name, const T t=T())
   {
-    Property_map<T> pm;
-    bool added = false;
-    boost::tie (pm, added) = m_base.template add<T> (name, t);
-    return std::make_pair (pm, added);
+    return m_base.template add<T>(name, t);
   }
-  
+
   /*!
-    \brief Returns the property `name` of type `T`.
+    \brief returns the property `name` of type `T`.
 
     \tparam T type of the property.
 
     \param name Name of the property.
 
-    \return Returns a pair containing: the specified property map and a
-    Boolean set to `true` or an empty property map and a Boolean set
-    to `false` (if the property was not found).
+    \return Returns an optional property map (empty if the property was not found).
   */
-  template <class T> 
-  std::pair<Property_map<T>,bool>
+  template <class T>
+  std::optional<Property_map<T>>
   property_map (const std::string& name) const
   {
-    Property_map<T> pm;
-    bool okay = false;
-    boost::tie (pm, okay) = m_base.template get<T>(name);
-    return std::make_pair (pm, okay);
+    return m_base.template get<T>(name);
   }
 
   /*!
-    \brief Removes the specified property.
+    \brief removes the specified property.
 
     \tparam T type of the property.
 
@@ -822,7 +835,7 @@ public:
     \return Returns `true` if the property was removed and `false` if
     the property was not found.
   */
-  template <class T> 
+  template <class T>
   bool remove_property_map (Property_map<T>& prop)
   {
     return m_base.template remove<T> (prop);
@@ -836,8 +849,8 @@ public:
   */
   bool has_normal_map() const
   {
-    std::pair<Vector_map, bool> pm = this->property_map<Vector> ("normal");
-    return pm.second;
+    std::optional<Vector_map> pm = this->property_map<Vector> ("normal");
+    return pm.has_value();
   }
   /*!
     \brief Convenience method that adds a normal property.
@@ -849,24 +862,27 @@ public:
     that is `true` if the property was added and `false` if it already
     exists (and was therefore not added but only returned).
   */
-  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
+  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = CGAL::NULL_VECTOR)
   {
     bool out = false;
-    boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
+    std::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
     return std::make_pair (m_normals, out);
   }
   /*!
-    \brief Returns the property map of the normal property.
+    \brief returns the property map of the normal property.
 
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_map()`).
+    \note If the normal property has not been added yet to the point set
+    before calling this method, the property map is automatically added
+    with `add_normal_map()`.
   */
   Vector_map normal_map ()
   {
+    if (!m_normals)
+      add_normal_map();
     return m_normals;
   }
   /*!
-    \brief Returns the property map of the normal property (constant version).
+    \brief returns the property map of the normal property (constant version).
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -886,7 +902,7 @@ public:
     return m_base.template remove<Vector> (m_normals);
   }
   /*!
-    \brief Returns the property map of the point property.
+    \brief returns the property map of the point property.
   */
   Point_map point_map()
   {
@@ -894,7 +910,7 @@ public:
   }
 
   /*!
-    \brief Returns the property map of the point property (constant version).
+    \brief returns the property map of the point property (constant version).
   */
   const Point_map point_map() const
   {
@@ -911,13 +927,15 @@ public:
   void copy_properties (const Point_set_3& other)
   {
     m_base.copy_properties (other.base());
-    
-    m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
+
+    auto normals = this->property_map<Vector>("normal");
+    if (normals.has_value())
+      m_normals = *normals; // In case normal was added
   }
 
 
   /*!
-    \brief Returns a vector with all strings that describe properties.
+    \brief returns a vector with all strings that describe properties.
   */
   std::vector<std::string> properties() const
   {
@@ -928,33 +946,32 @@ public:
   }
 
   /*!
-    \brief Returns a vector of pairs that describe properties and associated types.
+    \brief returns a vector of pairs that describe properties and associated types.
   */
-  std::vector<std::pair<std::string, std::type_info> > properties_and_types() const
+  std::vector<std::pair<std::string, std::type_index> > properties_and_types() const
   {
     std::vector<std::string> prop = m_base.properties();
     prop.erase (prop.begin()); // remove "index"
     prop.erase (prop.begin()); // remove "point"
-    
-    std::vector<std::pair<std::string, std::type_info> > out; out.reserve (prop.size());
+
+    std::vector<std::pair<std::string, std::type_index> > out; out.reserve (prop.size());
     for (std::size_t i = 0; i < prop.size(); ++ i)
-      out.push_back (std::make_pair (prop[i], m_base.get_type(prop[i])));
+      out.push_back (std::make_pair (prop[i], std::type_index(m_base.get_type(prop[i]))));
     return out;
   }
 
-  
-  /*!
-    \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
 
-    \cgalNamedParamsBegin
-      \cgalParamBegin{point_map} contains the point map (see `point_map()`)\cgalParamEnd
-      \cgalParamBegin{normal_map} contains the normal map (see `normal_map()`)\cgalParamEnd
-      \cgalParamBegin{geom_traits} contains the kernel `typename Kernel_traits<Point>`::`Kernel`\cgalParamEnd
-    \cgalNamedParamsEnd
+  /*!
+    \brief returns a sequence of \ref bgl_namedparameters "Named Parameters" to be used in Point Set Processing algorithms.
+
+    The following named parameters are used:
+    - `point_map`: contains the point property map (see `point_map()`)
+    - `normal_map`: contains the normal map (see `normal_map()`)
+    - `geom_traits`: contains the kernel `typename Kernel_traits<Point>`::`Kernel`
 
     \warning this method does not check if the normal map was
-    instanciated or not. The normal map named parameter should not be
-    used if this property was not instanciated first.
+    instantiated or not. The normal map named parameter should not be
+    used if this property was not instantiated first.
   */
 #ifdef DOXYGEN_RUNNING
   unspecified_type
@@ -972,7 +989,7 @@ public:
   inline parameters() const
   {
     return CGAL::parameters::point_map (m_points).
-      normal_map (m_normals).
+      normal_map (normal_map()).
       geom_traits (typename Kernel_traits<Point>::Kernel());
   }
 
@@ -1005,16 +1022,16 @@ public:
 #endif
 
   /*!
-    \brief Returns a property as a range.
+    \brief returns a property as a range.
   */
   template <class T>
   Property_range<T> range (const Property_map<T>& pmap) const
   {
     return Property_range<T> (pmap, begin(), end(), number_of_points());
   }
-  
+
   /*!
-    \brief Returns a constant range of points.
+    \brief returns a constant range of points.
   */
   Point_range points () const
   {
@@ -1022,15 +1039,15 @@ public:
   }
 
   /*!
-    \brief Returns a constant range of normals.
+    \brief returns a constant range of normals.
   */
   Vector_range normals () const
   {
-    return this->range<Vector> (m_normals);
+    return this->range<Vector> (normal_map());
   }
-  
+
   /// @}
-  
+
   /*!
     \name Push Property Maps and Inserters (Advanced)
 
@@ -1042,26 +1059,26 @@ public:
 
   /// @{
 
-  
+
 #ifdef DOXYGEN_RUNNING
   /// \cgalAdvancedType
-  /// \cgalAdvancedBegin  
+  /// \cgalAdvancedBegin
   /// Model of `OutputIterator` used to insert elements by defining
   /// the value of the property `Property`.
-  /// \cgalAdvancedEnd  
+  /// \cgalAdvancedEnd
   template <class Property>
   using Property_back_inserter = unspecified_type;
 
   /// \cgalAdvancedType
-  /// \cgalAdvancedBegin  
+  /// \cgalAdvancedBegin
   /// Model of `WritablePropertyMap` based on `Property` and that
   /// is allowed to push new items to the point set if needed.
   /// \cgalAdvancedEnd
   template <class Property>
   using Push_property_map = unspecified_type;
 #endif
-  
-  /// \cond SKIP_IN_MANUAL  
+
+  /// \cond SKIP_IN_MANUAL
   template <typename Property>
   class Property_back_inserter {
 
@@ -1077,9 +1094,9 @@ public:
     Point_set* ps;
     Property* prop;
     Index ind;
-  
+
   public:
-    
+
     Property_back_inserter(Point_set* ps, Property* prop, Index ind=Index())
       : ps(ps), prop (prop), ind(ind) {}
     Property_back_inserter& operator++() { return *this; }
@@ -1104,8 +1121,8 @@ public:
     typedef Index key_type;
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-    
+    typedef boost::read_write_property_map_tag category;
+
     Point_set* ps;
     Property* prop;
     mutable Index ind;
@@ -1115,7 +1132,7 @@ public:
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, Index& i, reference t)
+    friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();
@@ -1130,13 +1147,13 @@ public:
     }
 
   };
-  /// \endcond      
+  /// \endcond
 
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on indices
   /// \cgalAdvancedEnd
-  typedef Property_back_inserter<Index_map> Index_back_inserter; 
+  typedef Property_back_inserter<Index_map> Index_back_inserter;
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on points
@@ -1156,7 +1173,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the given property.
+    \brief returns the push property map of the given property.
 
     \tparam T type of the property.
 
@@ -1165,6 +1182,7 @@ public:
     \return Returns a pair containing: the specified property map and a
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
+
     \cgalAdvancedEnd
   */
   template <class T>
@@ -1176,7 +1194,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the point property.
+    \brief returns the push property map of the point property.
     \cgalAdvancedEnd
   */
   Point_push_map point_push_map ()
@@ -1186,10 +1204,11 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the push property map of the normal property.
+    \brief returns the push property map of the normal property.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
+
     \cgalAdvancedEnd
   */
   Vector_push_map normal_push_map ()
@@ -1199,7 +1218,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the back inserter on the index property.
+    \brief returns the back inserter on the index property.
     \cgalAdvancedEnd
   */
   Index_back_inserter index_back_inserter ()
@@ -1209,7 +1228,7 @@ public:
   /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
-    \brief Returns the back inserter on the point property.
+    \brief returns the back inserter on the point property.
     \cgalAdvancedEnd
   */
   Point_back_inserter point_back_inserter ()
@@ -1219,7 +1238,7 @@ public:
 
   /// @}
 
-  
+
 private:
   /// \cond SKIP_IN_MANUAL
   void quick_sort_on_indices (std::ptrdiff_t begin, std::ptrdiff_t end)
@@ -1227,13 +1246,13 @@ private:
     std::stack<std::pair<std::ptrdiff_t, std::ptrdiff_t> >
       todo;
     todo.push (std::make_pair (begin, end));
-    
+
     while (!(todo.empty()))
       {
         std::pair<std::ptrdiff_t, std::ptrdiff_t>
           current = todo.top();
         todo.pop();
-        
+
         if (current.first < current.second)
           {
             std::ptrdiff_t p = current.first + (rand() % (current.second - current.first));
@@ -1259,22 +1278,19 @@ private:
   }
   /// \endcond
 
-  
+
 }; // end of class Point_set_3
-
-
-
 
 /*!
 
   \brief Append `other` at the end of `ps`.
 
   \relates Point_set_3
-  
+
    Shifts the indices of points of `other` by `ps.number_of_points() +
    other.number_of_points()`.
 
-   Copies entries of all property maps which have the same name in `ps` and `other`. 
+   Copies entries of all property maps which have the same name in `ps` and `other`.
    Property maps which are only in `other` are ignored.
 
    \note Garbage is collected in both point sets when calling this method.
@@ -1288,39 +1304,96 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
   return ps;
 }
 
-
-
 /// \cond SKIP_IN_MANUAL
-namespace Point_set_processing_3
+// specialization for default named parameters
+template <typename Point, typename Vector, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, DPM, DVM>
 {
-  template<typename Point, typename Vector>
-  class GetFT<CGAL::Point_set_3<Point, Vector> >
+  typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
+
+  typedef typename Kernel_traits<Point>::Kernel Default_geom_traits;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Vector> DefaultNMap;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultPMap;
+  typedef const typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultConstPMap;
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
+    NamedParameters,DefaultPMap> ::type  Point_map; // public
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
+    NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::geom_traits_t,
+      NamedParameters,
+      Default_geom_traits
+    > ::type  Geom_traits; // public
+
+  typedef typename Geom_traits::FT FT; // public
+
+  typedef typename internal_np::Lookup_named_param_def<
+    internal_np::normal_t,
+    NamedParameters,
+    DefaultNMap
+    > ::type  Normal_map; // public
+
+  static Point_map get_point_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
   {
-  public:
-    typedef typename Kernel_traits<Point>::Kernel::FT type;
-  };
-  
-  namespace parameters
-  {
-    template <typename Point, typename Vector>
-    Named_function_parameters
-    <typename Kernel_traits<Point>::Kernel,
-     internal_np::geom_traits_t,
-     Named_function_parameters
-     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
-      internal_np::normal_t,
-      Named_function_parameters
-      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
-       internal_np::point_t> > >
-    inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
-    {
-      return ps.parameters();
-    }
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
   }
-}
+
+  static Const_point_map get_const_point_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
+  }
+
+  static const Normal_map get_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Normal_map get_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Geom_traits get_geom_traits(const Point_set_3<Point, Vector>&, const NamedParameters& np)
+  {
+    return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+  }
+
+  static bool has_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters&)
+  {
+    if (ps.has_normal_map())
+      return true;
+    using CGAL::parameters::is_default_parameter;
+    return !(is_default_parameter<NamedParameters, internal_np::normal_t>::value);
+  }
+
+  static constexpr bool has_normal_map(Point_set_3<Point, Vector>&, const NamedParameters&)
+  {
+    return true; // either available in named parameters, and always available in Point_set_3 otherwise
+  }
+};
 /// \endcond
 
 } // namespace CGAL
 
+namespace boost {
+template <typename Point, typename Vector>
+std::size_t hash_value(const typename CGAL::internal::Point_set_3_index<Point, Vector>& i)
+{
+  return i;
+}
+} // namespace boost
+
+namespace std {
+template <typename Point, typename Vector>
+struct hash< CGAL::internal::Point_set_3_index<Point, Vector> > {
+  std::size_t operator()(const CGAL::internal::Point_set_3_index<Point, Vector>& i) const
+  {
+    std::size_t ret = i;
+    return ret;
+  }
+};
+} // namespace std
 
 #endif // CGAL_POINT_SET_3_H

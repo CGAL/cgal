@@ -1,16 +1,3 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-// 
-//
-// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
-//
-// ============================================================================
-
 #include <CGAL/config.h>
 #include <CGAL/Algebraic_kernel_d/flags.h>
 
@@ -45,17 +32,17 @@ template<typename Poly_> Poly_ from_string(const char* s) {
     return f;
 }
 
-template<typename AlgebraicKernel_2> 
+template<typename AlgebraicKernel_2>
 int number_of_objects(typename AlgebraicKernel_2::Curve_analysis_2 c) {
 
-    typedef typename AlgebraicKernel_2::Curve_analysis_2::Status_line_1 
+    typedef typename AlgebraicKernel_2::Curve_analysis_2::Status_line_1
         Status_line_1;
 
     int vertical_arcs=0, non_vertical_arcs=0, isolated_vertices=0;
 
     int n = c.number_of_status_lines_with_event();
-    
-    for( int i = 0; i < n; i++ ) { 
+
+    for( int i = 0; i < n; i++ ) {
         const Status_line_1& status_line = c.status_line_at_event(i);
         if(status_line.covers_line()) {
             // vertical
@@ -79,26 +66,26 @@ int number_of_objects(typename AlgebraicKernel_2::Curve_analysis_2 c) {
 
 template<typename Arithmetic_kernel> void test_routine() {
 
-    
+
     typedef typename Arithmetic_kernel::Rational Rational;
     typedef typename Arithmetic_kernel::Integer Integer;
-    
+
     typedef Integer Coefficient;
-    typedef typename 
+    typedef typename
         CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_int1;
-    typedef typename 
+    typedef typename
         CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_int2;
-    
+
     typedef CGAL::internal::Algebraic_real_quadratic_refinement_rep_bfi
         < Coefficient, Rational > Rep_class;
     typedef CGAL::internal::Bitstream_descartes
         < CGAL::internal::Bitstream_descartes_rndl_tree_traits
-            < CGAL::internal::Bitstream_coefficient_kernel<Coefficient> 
-            > 
-        > 
+            < CGAL::internal::Bitstream_coefficient_kernel<Coefficient>
+            >
+        >
         Isolator;
-    
-    typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator> 
+
+    typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator>
         Algebraic_kernel_d_1;
 
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1 Algebraic_real;
@@ -107,19 +94,19 @@ template<typename Arithmetic_kernel> void test_routine() {
 
 #if CGAL_ACK_USE_EXACUS
     typedef AcX::Algebraic_curve_2<Algebraic_kernel_d_1> Algebraic_curve_2;
-    typedef AcX::Algebraic_curve_pair_2<Algebraic_curve_2> 
+    typedef AcX::Algebraic_curve_pair_2<Algebraic_curve_2>
         Algebraic_curve_pair_2;
     typedef CGAL::Algebraic_curve_kernel_2<Algebraic_curve_pair_2,
-        Algebraic_kernel_d_1> 
+        Algebraic_kernel_d_1>
         Algebraic_kernel_d_2;
-#else    
-    typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1> 
+#else
+    typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1>
         Algebraic_kernel_d_2;
 #endif
 
     Algebraic_kernel_d_2 kernel;
 
-    typename Algebraic_kernel_d_2::Construct_curve_2 construct_curve_2 
+    typename Algebraic_kernel_d_2::Construct_curve_2 construct_curve_2
         = kernel.construct_curve_2_object();
 
     typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_analysis_2;
@@ -136,7 +123,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 
     {
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]" 
+        CGAL_ACK_DEBUG_PRINT << "P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]"
                              << std::endl;
 #endif
         f=from_string<Poly_int2>("P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]");
@@ -155,20 +142,20 @@ template<typename Arithmetic_kernel> void test_routine() {
                (loc,
                 curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
         assert( loc == CGAL::TOP_BOUNDARY);
-        
+
     }
     {
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "P[3(0,P[2(0,-2)(2,2)])(1,P[1(1,-1)])(3,P[1(1,-6)])]" << std::endl;
 #endif
         f=from_string<Poly_int2>("P[3(0,P[2(0,-2)(2,2)])(1,P[1(1,-1)])(3,P[1(1,-6)])]");
-        ::CGAL::set_pretty_mode(std::cout);
+        ::CGAL::IO::set_pretty_mode(std::cout);
         curve=construct_curve_2(f);
         assert(curve.number_of_status_lines_with_event()==1);
         assert(number_of_objects<Algebraic_kernel_d_2>(curve)==2);
         event=curve.status_line_at_event(0);
         assert(event.number_of_events()==0);
-        
+
         assert(event.number_of_branches_approaching_minus_infinity().first==0);
         assert(event.number_of_branches_approaching_minus_infinity().second
                ==1);
@@ -193,7 +180,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         f=from_string<Poly_int2>("P[10(1,P[9(4,18)(9,18)])(2,P[9(4,-9)(9,-9)])(3,P[7(2,-12)(7,-12)])(4,P[7(2,6)(3,-18)(7,6)])(5,P[5(3,9)(5,36)])(6,P[5(1,12)(5,-18)])(7,P[3(1,-6)(3,-42)])(8,P[3(3,21)])(9,P[1(1,12)])(10,P[1(1,-6)])]");
         curve=construct_curve_2(f);
         assert(curve.number_of_status_lines_with_event()==10);
-        //    assert(curve.may_be_singular());    
+        //    assert(curve.may_be_singular());
 
         event=curve.status_line_at_exact_x(Algebraic_real(1));
         assert(event.number_of_events()==6);
@@ -205,7 +192,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(event.lower_bound(3) > Rational(122,100));
         assert(event.upper_bound(3) < Rational(123,100));
         assert(! event.is_event(0));
-  
+
         event=curve.status_line_at_exact_x(Algebraic_real(0));
         assert(event.covers_line());
         assert(event.number_of_events()==3);
@@ -223,7 +210,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(event.lower_bound(2) > Rational(199,100));
         assert(event.upper_bound(2) < Rational(201,100));
         assert(! event.is_event(0));
-    
+
         event=curve.status_line_at_exact_x(Algebraic_real(Poly_int1(-3,0,1),0,2));
         assert(event.number_of_events()==6);
         event.refine_to(1,eps);
@@ -264,8 +251,8 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(CGAL::assign
                (loc,curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,5)));
         assert( loc == CGAL::TOP_BOUNDARY);
-        
-        
+
+
         assert(CGAL::assign
                (loc,curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
         assert( loc == CGAL::BOTTOM_BOUNDARY);
@@ -301,7 +288,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 #endif
     }
     {
-        Poly_int2 f1 
+        Poly_int2 f1
             = from_string<Poly_int2>("P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]");
         Poly_int2 f2
             = from_string<Poly_int2>("P[1(0,P[1(0,3)(1,2)])(1,P[0(0,-3)])]");
@@ -313,11 +300,11 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(curve1.polynomial_2()!=curve2.polynomial_2());
     }
     {
-        Poly_int2 f1 
+        Poly_int2 f1
             = from_string<Poly_int2>("P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]");
         Curve_analysis_2 curve1  = construct_curve_2(f1);
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]" 
+        CGAL_ACK_DEBUG_PRINT << "P[1(0,P[1(0,2)(1,2)])(1,P[0(0,-3)])]"
                              << std::endl;
 #endif
         Curve_analysis_2 curve2(curve1);
@@ -343,7 +330,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 #endif
     }
 
-    { // More tests...just analyse some curves and compute their segments
+    { // More tests...just analyze some curves and compute their segments
         Poly_int2 f = from_string<Poly_int2>("P[8(0,P[8(0,24)(1,-8)(2,-162)(3,204)(4,106)(5,-340)(6,240)(7,-72)(8,8)])(1,P[6(0,-60)(1,8)(2,304)(3,-400)(4,148)(5,8)(6,-8)])(2,P[6(0,18)(1,80)(2,-165)(3,-132)(4,367)(5,-212)(6,38)])(3,P[4(0,-30)(1,-136)(2,264)(3,-72)(4,-26)])(4,P[4(0,-15)(1,36)(2,89)(3,-144)(4,49)])(5,P[2(0,30)(1,-24)(2,-6)])(6,P[2(0,-6)(1,-28)(2,22)])(8,P[0(0,3)])]");
         Curve_analysis_2 curve= construct_curve_2(f);
 #if CGAL_ACK_DEBUG_FLAG
@@ -379,21 +366,21 @@ template<typename Arithmetic_kernel> void test_routine() {
         typedef CGAL::Sqrt_extension<Integer, Integer> Sqrt_extension;
 
         typedef Sqrt_extension Coefficient;
-        typedef typename 
+        typedef typename
             CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_sqrt1;
-        typedef typename 
+        typedef typename
             CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_sqrt2;
-    
+
         typedef CGAL::internal::Algebraic_real_quadratic_refinement_rep_bfi
             < Coefficient, Rational > Rep_class;
         typedef CGAL::internal::Bitstream_descartes
             < CGAL::internal::Bitstream_descartes_rndl_tree_traits
-                < CGAL::internal::Bitstream_coefficient_kernel<Coefficient> 
-                > 
-            > 
+                < CGAL::internal::Bitstream_coefficient_kernel<Coefficient>
+                >
+            >
         Isolator;
-    
-        typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator> 
+
+        typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator>
             Algebraic_kernel_d_1_with_sqrt;
 
         typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1_with_sqrt>
@@ -402,22 +389,22 @@ template<typename Arithmetic_kernel> void test_routine() {
         Algebraic_kernel_d_2_with_sqrt kernel;
 
         typename Algebraic_kernel_d_2_with_sqrt::Construct_curve_2
-            sqrt_construct_curve_2 
+            sqrt_construct_curve_2
               = kernel.construct_curve_2_object();
 
         typedef typename Algebraic_kernel_d_2_with_sqrt::Curve_analysis_2
             Sqrt_curve_analysis_2;
-        
-        typedef typename Sqrt_curve_analysis_2::Algebraic_real_1 
+
+        typedef typename Sqrt_curve_analysis_2::Algebraic_real_1
             Sqrt_algebraic_real;
 
-        typedef typename Sqrt_curve_analysis_2::Status_line_1 
+        typedef typename Sqrt_curve_analysis_2::Status_line_1
             Sqrt_status_line_1;
 
- 
+
 
         Sqrt_status_line_1 event;
-        
+
 
 
         Poly_sqrt2 sqrt_f=from_string<Poly_sqrt2>("P[10(1,P[9(4,EXT[0,54,5])(9,EXT[0,54,5])])(2,P[9(4,EXT[0,-27,5])(9,EXT[0,-27,5])])(3,P[7(2,EXT[0,-36,5])(7,EXT[0,-36,5])])(4,P[7(2,EXT[0,18,5])(3,EXT[0,-54,5])(7,EXT[0,18,5])])(5,P[5(3,EXT[0,27,5])(5,EXT[0,108,5])])(6,P[5(1,EXT[0,36,5])(5,EXT[0,-54,5])])(7,P[3(1,EXT[0,-18,5])(3,EXT[0,-126,5])])(8,P[3(3,EXT[0,63,5])])(9,P[1(1,EXT[0,36,5])])(10,P[1(1,EXT[0,-18,5])])]");
@@ -426,7 +413,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 #endif
         Sqrt_curve_analysis_2 sqrt_curve= sqrt_construct_curve_2(sqrt_f);
         assert(sqrt_curve.number_of_status_lines_with_event()==10);
-        //    assert(sqrt_curve.may_be_singular());    
+        //    assert(sqrt_curve.may_be_singular());
 
         event=sqrt_curve.status_line_at_exact_x(Sqrt_algebraic_real(1));
         assert(event.number_of_events()==6);
@@ -438,7 +425,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(event.lower_bound(3) > Rational(122,100));
         assert(event.upper_bound(3) < Rational(123,100));
         assert(! event.is_event(0));
-  
+
         event=sqrt_curve.status_line_at_exact_x(Sqrt_algebraic_real(0));
         assert(event.covers_line());
         assert(event.number_of_events()==3);
@@ -456,7 +443,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(event.lower_bound(2) > Rational(199,100));
         assert(event.upper_bound(2) < Rational(201,100));
         assert(! event.is_event(0));
-    
+
         event=sqrt_curve.status_line_at_exact_x(Sqrt_algebraic_real(Poly_sqrt1(-3,0,1),0,2));
         assert(event.number_of_events()==6);
         event.refine_to(1,eps);
@@ -498,8 +485,8 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(CGAL::assign
                (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,5)));
         assert( loc == CGAL::TOP_BOUNDARY);
-        
-        
+
+
         assert(CGAL::assign
                (loc,sqrt_curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,0)));
         assert( loc == CGAL::BOTTOM_BOUNDARY);

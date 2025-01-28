@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_hull_2
@@ -22,12 +23,13 @@ Modular_arithmetic
 Number_types
 Periodic_3_mesh_3
 Periodic_3_triangulation_3
-Polygon
+Polygon_mesh_processing
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
+SMDS_3
 STL_Extension
 Solver_interface
 Spatial_sorting

@@ -2,6 +2,7 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_decomposition_3
@@ -26,10 +27,8 @@ Nef_S2
 Number_types
 Polygon
 Polyhedron
-Polyhedron_IO
 Profiling_tools
 Property_map
-Random_numbers
 STL_Extension
 Spatial_sorting
 Stream_support

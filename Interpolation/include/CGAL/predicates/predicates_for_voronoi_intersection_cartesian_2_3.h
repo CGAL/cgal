@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Julia Floetotto
 
@@ -76,7 +67,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //  return:   sign( (c-p)(c-p) - (c-t)(c-t))
   //
   //method:
-  // - tranlation of p to the origin.
+  // - translation of p to the origin.
   // - separate computation of det and norm of the expression
 
   return side_of_plane_centered_sphere_translateC3<RT>(ax-px, ay-py, az-pz,
@@ -145,7 +136,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //  return:   sign( (c-p)(c-p) - (c-r)(c-r))
   //
   //method:
-  // - tranlation of p to the origin.
+  // - translation of p to the origin.
   // - separate computation of det and nom of the expression
 
   return side_of_plane_centered_sphere_translateC3<RT>(ax-px, ay-py, az-pz,

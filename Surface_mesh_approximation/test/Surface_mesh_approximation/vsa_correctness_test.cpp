@@ -19,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool load_mesh(const char *file_name, Mesh &mesh)
+bool load_mesh(const std::string file_name, Mesh &mesh)
 {
   std::ifstream input(file_name);
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
@@ -40,7 +40,7 @@ bool load_mesh(const char *file_name, Mesh &mesh)
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   std::cout << "Load mesh " << file_name << " done." << std::endl;
@@ -69,8 +69,8 @@ bool test_shape(const Mesh &mesh, const std::size_t target_num_proxies)
   approx.run(num_iterations);
 
   // eliminate redundant area (local minima) by merging
-  boost::optional<std::pair<std::size_t, std::size_t> > best_pair = boost::none;
-  while ((best_pair = approx.find_best_merge(true)) != boost::none) {
+  std::optional<std::pair<std::size_t, std::size_t> > best_pair = std::nullopt;
+  while ((best_pair = approx.find_best_merge(true)) != std::nullopt) {
     approx.merge(best_pair->first, best_pair->second);
     approx.run(num_iterations);
   }
@@ -96,13 +96,13 @@ bool test_shape(const Mesh &mesh, const std::size_t target_num_proxies)
  */
 int main()
 {
-  const char file_cube[] = "./data/cube.off";
+  const std::string file_cube = CGAL::data_file_path("meshes/cube.off");
   std::cout << "Testing close mesh " << file_cube << std::endl;
   Mesh mesh_cube;
   if (!load_mesh(file_cube, mesh_cube) || !test_shape(mesh_cube, 6))
     return EXIT_FAILURE;
 
-  const char file_cube2[] = "./data/cube-ouvert.off";
+  const std::string file_cube2 = CGAL::data_file_path("meshes/cube-ouvert.off");
   std::cout << "Testing open mesh " << file_cube2 << std::endl;
   Mesh mesh_cube2;
   if (!load_mesh(file_cube2, mesh_cube2) || !test_shape(mesh_cube2, 5))
@@ -113,7 +113,7 @@ int main()
   mesh_cube2.collect_garbage();
   // the second parameter of operator+= should not have garbage, or merge will crash
   mesh_merged += mesh_cube2;
-  std::cout << "Mege done \n#F "
+  std::cout << "Merge done \n#F "
     << std::distance(faces(mesh_merged).first, faces(mesh_merged).second)
     << "\n#V " << std::distance(vertices(mesh_merged).first, vertices(mesh_merged).second)
     <<  std::endl;

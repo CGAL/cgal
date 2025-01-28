@@ -1,0 +1,40 @@
+name: Compile CGAL Lab
+
+on: [push, pull_request,workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  batch_1:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: .github/install.sh
+    - name: run1
+      run: ./.github/test.sh 0 ${{ github.workspace }}
+  batch_2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: .github/install.sh
+    - name: run2
+      run: ./.github/test.sh 1 ${{ github.workspace }}
+  batch_3:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: .github/install.sh
+    - name: run3
+      run: ./.github/test.sh 2 ${{ github.workspace }}
+  batch_4:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: .github/install.sh
+    - name: run4
+      run: ./.github/test.sh 3 ${{ github.workspace }}

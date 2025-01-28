@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Iordan Iordanov
 
@@ -33,10 +24,7 @@
 
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Timer.h>
-
-#include <boost/bind.hpp>
 
 #include <iterator>
 #include <map>
@@ -177,15 +165,11 @@ public:
     spatial_sort(points.begin(), points.end(), geom_traits());
 
     Face_handle f;
-    int cnt = 0;
-    int cnt_good = 0;
     for(typename std::vector<Point>::const_iterator p=points.begin(), end = points.end(); p != end; ++p)
     {
-      ++cnt;
       Vertex_handle v = insert(*p, f);
       if(v != Vertex_handle())
       {
-        ++cnt_good;
         f = v->face();
       }
     }
@@ -283,7 +267,7 @@ public:
 
   Point get_dummy_point(int i) const
   {
-    CGAL_triangulation_precondition(0 <= i && i <= static_cast<int>(dummy_points.size()));
+    CGAL_precondition(0 <= i && i <= static_cast<int>(dummy_points.size()));
     return dummy_points[i]();
   }
 
@@ -296,7 +280,7 @@ public:
     {
       remove(*vit);
     }
-  }   
+  }
 
   bool is_dummy_vertex(Vertex_handle vh) const
   {
@@ -555,7 +539,7 @@ remove(Vertex_handle v)
       int nidx = 0;
       if(nbf->neighbor(1) == nb) nidx = 1;
       if(nbf->neighbor(2) == nb) nidx = 2;
-      CGAL_triangulation_assertion(nbf->neighbor(nidx) == nb);
+      CGAL_assertion(nbf->neighbor(nidx) == nb);
 
       bdry_nbrs.insert(Edge_neighbor(e, Neighbor_pair(nbf, nidx)));
       bdry_verts.push_back(nb->vertex(ccw(idx)));
@@ -608,8 +592,6 @@ remove(Vertex_handle v)
 
     Nbr_history failsafe;
 
-    int internb = 0;
-    int bdrynb = 0;
     for(std::size_t i=0; i<new_f.size(); ++i)
     {
       for(int k=0; k< 3; k++)
@@ -627,15 +609,14 @@ remove(Vertex_handle v)
 
             Nbr_entry side1(nbf, nbidx);
             Nbr_entry side2(nbf->neighbor(nbidx), nbf->neighbor(nbidx)->index(nbf));
-            
-            CGAL_triangulation_assertion(side1.first->neighbor(side1.second) == side2.first);
-            CGAL_triangulation_assertion(side2.first->neighbor(side2.second) == side1.first);  
-            
+
+            CGAL_assertion(side1.first->neighbor(side1.second) == side2.first);
+            CGAL_assertion(side2.first->neighbor(side2.second) == side1.first);
+
             Nbr_pair hist(side1, side2);
             failsafe.push_back(hist);
 
             tds().set_adjacency(nbf, nbidx, new_f[i], k);
-            bdrynb++;
             break;
           }
         }
@@ -653,7 +634,6 @@ remove(Vertex_handle v)
                  new_f[i]->vertex(cw(k))  == new_f[l]->vertex(ccw(j)))
               {
                 tds().set_adjacency(new_f[i], k, new_f[l], j);
-                internb++;
                 break;
               }
             }
@@ -663,9 +643,9 @@ remove(Vertex_handle v)
     }
 
     /*
-      This is a failsafe check: make sure that there are no cycles of length 2 before 
-      deleting the old faces. If everything is OK, then proceed with the actual removal 
-      and keep the new faces. Otherwise the new objects are deleted and the operation 
+      This is a failsafe check: make sure that there are no cycles of length 2 before
+      deleting the old faces. If everything is OK, then proceed with the actual removal
+      and keep the new faces. Otherwise the new objects are deleted and the operation
       is canceled.
     */
     for (Face_iterator fit = this->faces_begin(); fit != this->faces_end(); ++fit) {
@@ -692,7 +672,7 @@ remove(Vertex_handle v)
                 tds().delete_face(new_f[rit]);
               }
 
-              CGAL_triangulation_assertion(this->is_valid(true)); 
+              CGAL_assertion(this->is_valid(true));
 
               return false;
             }
@@ -724,7 +704,7 @@ remove(Vertex_handle v)
 
     tds().delete_vertex(v);
 
-    CGAL_triangulation_assertion(this->is_valid(true));
+    CGAL_assertion(this->is_valid(true));
 
     return true;
   }
@@ -737,6 +717,6 @@ remove(Vertex_handle v)
 
 } // namespace CGAL
 
-#include <CGAL/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_2/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 
 #endif // CGAL_PERIODIC_4_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H

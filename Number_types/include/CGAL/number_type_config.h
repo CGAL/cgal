@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
@@ -28,7 +19,10 @@
 
 #include <CGAL/config.h>
 
-#define CGAL_PI 3.14159265358979323846
+#define CGAL_PI 3.141592653589793238462643383279502884
+#define CGAL_SQRT2 1.414213562373095048801688724209698078
+#define CGAL_SQRT3 1.732050807568877293527446341505872366
+#define CGAL_SQRT5 2.236067977499789696409173668731276235
 
 
 #ifdef CGAL_USE_NTS_NAMESPACE

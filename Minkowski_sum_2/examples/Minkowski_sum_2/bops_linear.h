@@ -2,6 +2,7 @@
 #define BOPS_LINEAR_H
 
 #include <list>
+#include <cassert>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Boolean_set_operations_2.h>

@@ -22,7 +22,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
   Polyhedron tmesh;
   input >> tmesh;
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
   CGAL::Bbox_3 bbox1=CGAL::bbox_3(tmesh.points_begin(), tmesh.points_end());
   Kernel::Vector_3 to_origin(-bbox1.xmin(), -bbox1.ymin(), -bbox1.zmin());
-  
+
   for(Polyhedron::Point_iterator pit=tmesh.points_begin(),
                                  pit_end=tmesh.points_end();pit!=pit_end;++pit)
   {
@@ -39,11 +39,11 @@ int main(int argc, char* argv[])
     double x=new_point.x();
     double y=new_point.y();
     double z=new_point.z();
-    
+
     x = x * factor;
     y = y * factor;
     z = z * factor;
-    
+
     *pit=Point(x, y, z) - to_origin ;
   }
 
@@ -73,24 +73,24 @@ int main(int argc, char* argv[])
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
 
-//scale skelton  
+//scale skeleton
   for(Skeleton_vertex v : vertices(skeleton))
   {
     Point new_point = skeleton[v].point+to_origin;
     double x=new_point.x();
     double y=new_point.y();
     double z=new_point.z();
-    
+
     x = x / factor;
     y = y / factor;
     z = z / factor;
-    
+
     skeleton[v].point=Point(x, y, z)-to_origin;
   }
 
   // Output all the edges of the skeleton.
   std::stringstream ss;
-  ss << "skel." << factor << ".cgal"; 
+  ss << "skel." << factor << ".cgal";
   std::ofstream output(ss.str().c_str());
   for(Skeleton_edge e : edges(skeleton))
   {
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance.cgal");
+  output.open("correspondence.cgal");
   for(Skeleton_vertex v : vertices(skeleton))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";

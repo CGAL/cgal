@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_POINT_3_H
 #define CGAL__TEST_CLS_POINT_3_H
@@ -64,10 +58,10 @@ _test_cls_point_3(const R& )
  CGAL::Weighted_point_3<R> wp(p1);
  CGAL::Point_3<R> p7(wp);
 
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_3<R>,
-                                               CGAL::Point_3<R> >::value));
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_3<R>,
-                                               CGAL::Weighted_point_3<R> >::value));
+ static_assert(!std::is_convertible<CGAL::Weighted_point_3<R>,
+                                    CGAL::Point_3<R> >::value);
+ static_assert(!std::is_convertible<CGAL::Point_3<R>,
+                                    CGAL::Weighted_point_3<R> >::value);
 
  std::cout << '.';
 
@@ -200,7 +194,7 @@ _test_cls_point_3(const R& )
  assert(bb.zmin() <= -20.0);
  assert(bb.zmax() >= -20.0);
 
-  // test compound assignement operator
+  // test compound assignment operator
   CGAL::Point_3<R>  p_1(1,2,3);
   const CGAL::Point_3<R>  p_1_const = p_1;
   CGAL::Vector_3<R> v_1(4,5,6);

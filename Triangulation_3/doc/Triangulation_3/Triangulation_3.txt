@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Triangulations
 \anchor chapterTriangulation3
 \cgalAutoToc
@@ -20,7 +20,7 @@ partition of \f$ \mathbb{R}^3\f$. Its cells (\f$ 3\f$-faces) are such that two c
 either do not intersect or share a common facet (\f$ 2\f$-face), edge
 (\f$ 1\f$-face) or vertex (\f$ 0\f$-face).
 
-\section Triangulation3secintro Representation 
+\section Triangulation3secintro Representation
 
 In order to deal
 only with tetrahedra, which is convenient for many applications, the
@@ -53,9 +53,9 @@ Orientation of a cell (3-dimensional case).
 \cgalFigureEnd
 
 As in the underlying combinatorial triangulation (see
-Chapter \ref chapterTDS3 "3D Triangulation Data Structure"), 
+Chapter \ref chapterTDS3 "3D Triangulation Data Structure"),
 edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces)
-are not explicitly 
+are not explicitly
 represented: a facet is given by a cell and an index (the facet
 `i` of a cell `c` is the facet of `c` that is opposite to
 the vertex with index `i`) and an edge is given by a cell and two
@@ -73,9 +73,9 @@ obtained by linking the additional infinite vertex to each facet of
 the convex hull of the points.
 <UL>
 <LI> <I>dimension 2:</I> when a triangulation only contains
-coplanar points (which is the case when there are only three points), 
+coplanar points (which is the case when there are only three points),
 it consists of triangular faces.
-<LI> <I>dimension 1:</I> the triangulation contains only collinear 
+<LI> <I>dimension 1:</I> the triangulation contains only collinear
 points (which is the case when there are only two points), it consists
 of edges.
 <LI> <I>dimension 0:</I> the triangulation contains only one
@@ -100,7 +100,7 @@ dimension 2, each cell has only one facet of index 3, and 3 edges
 A triangulation of \f$ \mathbb{R}^3\f$ is said to be *locally valid* iff
 
 <B>(a)-(b)</B> Its underlying combinatorial graph, the triangulation
-data structure, is *locally valid* 
+data structure, is *locally valid*
 (see Section \ref TDS3secintro "Introduction" of Chapter \ref chapterTDS3 "3D Triangulation Data Structure")
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
@@ -120,7 +120,7 @@ When all the points are collinear, this condition becomes:
 
 The method  `Triangulation_3::is_valid()` checks
 the local validity of a given triangulation. This does not always
-ensure global validity \cgalCite{mnssssu-cgpvg-96}, \cgalCite{dlpt-ccpps-98} but it is 
+ensure global validity \cgalCite{mnssssu-cgpvg-96}, \cgalCite{dlpt-ccpps-98} but it is
 sufficient for practical cases.
 
 \section Triangulation_3Delaunay Delaunay Triangulation
@@ -138,18 +138,18 @@ computes a unique triangulation even in these cases.
 This implementation is fully dynamic: it supports insertions of points, vertex removals
 and displacements of points.
 
-\section Triangulation3secclassRegulartriangulation Regular Triangulation 
+\section Triangulation3secclassRegulartriangulation Regular Triangulation
 
 The class `Regular_triangulation_3` implements incremental regular
 triangulations, also known as weighted Delaunay triangulations.
 
-Let\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
-\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points. 
+Let\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and
+\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points.
 A weighted point
 \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
-radius \f$ \sqrt{w_p}\f$. 
+radius \f$ \sqrt{w_p}\f$.
 The <I>power product</I> between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
-defined as 
+defined as
 \f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
 where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
 
@@ -169,7 +169,7 @@ called the <I>power circle</I>. The
 two weighted points on the line defined by these two points.
 
 
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. 
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$.
 A sphere \f$ {z}^{(w)}\f$ is said to be
 <I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
 \Pi{({p}^{(w)},{z}^{(w)})}\geq 0\f$.
@@ -178,9 +178,9 @@ A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
 The regular triangulation of
-\f$ {S}^{(w)}\f$ is in fact the projection onto \f$ \mathbb{R}^3\f$ of the convex hull 
+\f$ {S}^{(w)}\f$ is in fact the projection onto \f$ \mathbb{R}^3\f$ of the convex hull
 of the four-dimensional points \f$ (p,\|p-O\|^2-w_p),\f$ for
-\f$ {p}^{(w)}=(p,w_p)\in{S}^{(w)}\f$. 
+\f$ {p}^{(w)}=(p,w_p)\in{S}^{(w)}\f$.
 Note that all points of \f$ {S}^{(w)}\f$ do not
 necessarily appear as vertices of the regular
 triangulation. To know more about regular triangulations, see for
@@ -192,7 +192,7 @@ Delaunay triangulation.
 
 The implementation of 3D regular triangulation supports insertions of weighted points, and vertex removals. Displacements are not supported in the current implementation.
 
-\section Triangulation3secdesign Software Design 
+\section Triangulation3secdesign Software Design
 
 The main classes `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3` are connected to each other by the
@@ -225,17 +225,17 @@ Chapter \ref chapterTDS3 "3D Triangulation Data Structure".
 triangulation class, described in Section \ref Triangulation3seclocpol.
 </UL>
 
-Optionally, the main Delaunay and regular triangulations algorithms (insert, remove) 
+Optionally, the main Delaunay and regular triangulations algorithms (insert, remove)
 support multi-core shared-memory architectures to take advantage of available parallelism.
-For this purpose, a model of the concept `SurjectiveLockDataStructure` can be 
-given as fourth template parameter; it defaults to 
+For this purpose, a model of the concept `SurjectiveLockDataStructure` can be
+given as fourth template parameter; it defaults to
 `Spatial_lock_grid_3`. This data structure
 allows to lock points with coordinates (x, y, z) in a 3D domain. When a thread owns the
 lock on a point, no other thread can lock this point. Locking a facet (resp. a cell)
-boils down to locking all its 3 (resp. 4) incident vertices. 
+boils down to locking all its 3 (resp. 4) incident vertices.
 See Section \ref Triangulation_3ParallelAlgorithms for more details.
 
-\subsection Triangulation3secTraits The Geometric Traits Parameter 
+\subsection Triangulation3secTraits The Geometric Traits Parameter
 
 The first template parameter of the triangulation class
 `Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3>`
@@ -252,7 +252,7 @@ class of `Delaunay_triangulation_3` must define predicates to test for the
 
 In addition to the requirements described before, the geometric traits
 class of `Regular_triangulation_3` must define predicates to test for the
-<I>power distances</I> and orientation tests for <I>power spheres</I>. 
+<I>power distances</I> and orientation tests for <I>power spheres</I>.
 It is described by the concept
 `RegularTriangulationTraits_3`, which refines `TriangulationTraits_3`.
 
@@ -262,7 +262,7 @@ All kernels provided by \cgal can all be used as models for the geometric traits
 parameter.
 
 
-\subsection Triangulation3sectds The Triangulation Data Structure Parameter 
+\subsection Triangulation3sectds The Triangulation Data Structure Parameter
 
 The second template parameter of the main classes (`Triangulation_3`,
 `Delaunay_triangulation_3` and `Regular_triangulation_3`) is a
@@ -288,17 +288,17 @@ all the triangulation classes, so it need not be specified by the user unless
 he wants to use a different triangulation data structure or a different vertex
 or cell base class.
 
-\subsection Triangulation3seclocpol The Location Policy Parameter 
+\subsection Triangulation3seclocpol The Location Policy Parameter
 
 The Delaunay triangulation class supports an optional feature which maintains
-an additional data structure for fast point location queries. 
+an additional data structure for fast point location queries.
 The fast location policy should be used when the user inserts points in a random
 order or needs to do many unrelated queries.
 If the user is able to give a good hint to help the point location of
 its queries (and its newly inserted points), then it should prefer the default
 policy. In such a case where good hints are provided,
 the default policy save some memory (few percents), and is faster.
-Notice that if points are not inserted one by one, but as a range, then a good hint is 
+Notice that if points are not inserted one by one, but as a range, then a good hint is
 automatically computed using spatial sort.
 
 Reading Section \ref Triangulation3seccomplexity on complexity and
@@ -333,7 +333,7 @@ Prior to \cgal 3.6, this functionality was available through the
 
 In order to satisfy as many uses as possible, a design has been selected that
 allows to exchange different parts to meet the users' needs, while still
-re-using a maximum of the provided functionalities. We have already seen that
+reusing a maximum of the provided functionalities. We have already seen that
 the main triangulation classes are parameterized by a geometric traits class
 and a triangulation data structure (TDS), so that each of them can be
 interchanged with alternate implementations.
@@ -395,28 +395,28 @@ Section \ref TDS3secdesign "Software Design" provides more detailed information.
 
 \subsection Triangulation_3ParallelAlgorithms Parallel Algorithms
 
-Parallel algorithms of `Delaunay_triangulation_3` and 
-`Regular_triangulation_3` are enabled 
+Parallel algorithms of `Delaunay_triangulation_3` and
+`Regular_triangulation_3` are enabled
 if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
-reference to a lock data structure instance is provided via the constructor or 
+reference to a lock data structure instance is provided via the constructor or
 by using `Triangulation_3::set_lock_data_structure`. This data structure
-must be a model of the concept `SurjectiveLockDataStructure` and can be 
-optionally given as a template parameter of the triangulation; 
+must be a model of the concept `SurjectiveLockDataStructure` and can be
+optionally given as a template parameter of the triangulation;
 it defaults to `Spatial_lock_grid_3`.
 
-Note that the parallel Delaunay 
-triangulation must use the default compact location policy (and not the fast 
-one). If those conditions are fulfilled, the insertion/removal of a 
-range of points will be performed in parallel, and the individual 
+Note that the parallel Delaunay
+triangulation must use the default compact location policy (and not the fast
+one). If those conditions are fulfilled, the insertion/removal of a
+range of points will be performed in parallel, and the individual
 insert/remove operations will be optionally thread-safe.
 
-Parallel algorithms require the program to be linked against 
-the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+Parallel algorithms require the program to be linked against
+the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details.
 
-\section Triangulation3secexamples Examples 
+\section Triangulation3secexamples Examples
 
 \subsection Triangulation_3BasicExample Basic Example
 
@@ -431,7 +431,7 @@ cell. It uses the default parameter of the `Triangulation_3` class.
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
 
-\subsubsection Triangulation3secexamplescolor Adding a Color 
+\subsubsection Triangulation3secexamplescolor Adding a Color
 
 When the user doesn't need to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -457,10 +457,10 @@ The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
 range over (weighted) points to the insert function. However, an iterator range of
 (weighted) points does not allow to set different information to each vertex.
-To solve this problem, in the case the vertex type of the triangulation 
+To solve this problem, in the case the vertex type of the triangulation
 is a model of the concept `TriangulationVertexBaseWithInfo_3`
-(such as `Triangulation_vertex_base_with_info_3`), we provide three examples 
-doing the same operation: set an unsigned integer as the information 
+(such as `Triangulation_vertex_base_with_info_3`), we provide three examples
+doing the same operation: set an unsigned integer as the information
 of each vertex. The value of this unsigned integer is the initial order
 of the corresponding point given in the range.
 
@@ -505,7 +505,7 @@ Note that you only need the iterator type if you combine the pre \cpp 11 `for`-l
 
 \cgalExample{Triangulation_3/for_loop.cpp}
 
-\subsection Triangulation3secsimplex The Simplex Class 
+\subsection Triangulation3secsimplex The Simplex Class
 
 The triangulation defines a `Triangulation_3::Simplex` class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how
@@ -513,9 +513,17 @@ simplices can be stored in a set.
 
 \cgalExample{Triangulation_3/simplex.cpp}
 
-\subsection Triangulation3exfastlocation Fast Point Location for Delaunay Triangulations 
+\subsection Triangulation3exfastlocation Fast Point Location for Delaunay Triangulations
 
 \cgalExample{Triangulation_3/fast_location_3.cpp}
+
+\subsection Triangulation3exsegmenttraverser Traversing the Triangulation Along a Segment
+
+The package provides iterators that can be used to traverse the triangulation along a segment.
+It is guaranteed that the input segment intersects all cells (resp. simplices) visited by this traversal iterator.
+
+\cgalExample{Triangulation_3/segment_cell_traverser_3.cpp}
+\cgalExample{Triangulation_3/segment_simplex_traverser_3.cpp}
 
 \subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
@@ -535,7 +543,7 @@ be hidden and do not result in vertices in the triangulation.
 \subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Custom Vertex
 
 This example shows that one must use the class `Regular_triangulation_vertex_base_3` as vertex base class,
-if one has to specifiy the template parameter. 
+if one has to specify the template parameter.
 
 \cgalExample{Triangulation_3/regular_with_info_3.cpp}
 
@@ -561,14 +569,15 @@ A 3D triangulation can be visualized by calling the \link PkgDrawTriangulation3 
 
 \cgalExample{Triangulation_3/draw_triangulation_3.cpp}
 
-This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_triangulation_3,draw_triangulation_3.png}
 Result of the run of the draw_triangulation_3 program. A window shows the 3D triangulation and allows to navigate through the 3D scene.
 \cgalFigureEnd
 
 
-\section Triangulation3seccomplexity Complexity and Performance 
+\section Triangulation3seccomplexity Complexity and Performance
 
 In 3D, the worst case complexity of a triangulation is quadratic in the number
 of points. For Delaunay triangulations, this bound is reached in cases such as
@@ -584,7 +593,7 @@ as points distributed on surfaces under some conditions.
 There are several algorithms provided in this package. We will focus here on
 the following ones and give practical numbers on their efficiency :
 <UL>
-<LI>construction of a triangulation from a range of points, 
+<LI>construction of a triangulation from a range of points,
 <LI>location of a point (using the `locate` function),
 <LI>removal of a vertex (using the `remove` function).
 </UL>
@@ -609,7 +618,7 @@ coordinates are generated using the <TT>drand48</TT> C function). In the
 weighted case, the weights are all zero, which means that there are actually no
 hidden points during execution.
 
-The measurements have been performed using \cgal 3.6, using the <span class="textsc">Gnu</span> \cpp compiler
+The measurements have been performed using \cgal 3.6, using the \gnu \cpp compiler
 version 4.3.2, under Linux (Fedora 10 distribution), with the compilation options
 <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel
 Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
@@ -622,170 +631,170 @@ Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
 <TD ALIGN=LEFT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Delaunay</B> 
+<B>Delaunay</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Delaunay</B> 
+<B>Delaunay</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Regular</B> 
+<B>Regular</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Regular</B> 
+<B>Regular</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>%Fast location</B> 
+<B>%Fast location</B>
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>No hidden points</B> 
+<B>No hidden points</B>
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^2\f$ points 
+Construction from \f$ 10^2\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-0.00054 
+0.00054
 <TD ALIGN=RIGHT NOWRAP>
-0.000576 
+0.000576
 <TD ALIGN=RIGHT NOWRAP>
-0.000948 
+0.000948
 <TD ALIGN=RIGHT NOWRAP>
-0.000955 
+0.000955
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^3\f$ points 
+Construction from \f$ 10^3\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-0.00724 
+0.00724
 <TD ALIGN=RIGHT NOWRAP>
-0.00748 
+0.00748
 <TD ALIGN=RIGHT NOWRAP>
-0.0114 
+0.0114
 <TD ALIGN=RIGHT NOWRAP>
 0.0111
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^4\f$ points 
+Construction from \f$ 10^4\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-0.0785 
+0.0785
 <TD ALIGN=RIGHT NOWRAP>
-0.0838 
+0.0838
 <TD ALIGN=RIGHT NOWRAP>
-0.122 
+0.122
 <TD ALIGN=RIGHT NOWRAP>
-0.117 
+0.117
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^5\f$ points 
+Construction from \f$ 10^5\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-0.827 
+0.827
 <TD ALIGN=RIGHT NOWRAP>
-0.878 
+0.878
 <TD ALIGN=RIGHT NOWRAP>
-1.25 
+1.25
 <TD ALIGN=RIGHT NOWRAP>
-1.19 
+1.19
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^6\f$ points 
+Construction from \f$ 10^6\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-8.5 
+8.5
 <TD ALIGN=RIGHT NOWRAP>
-9.07 
+9.07
 <TD ALIGN=RIGHT NOWRAP>
-12.6 
+12.6
 <TD ALIGN=RIGHT NOWRAP>
-12.2 
+12.2
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Construction from \f$ 10^7\f$ points 
+Construction from \f$ 10^7\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-87.4 
+87.4
 <TD ALIGN=RIGHT NOWRAP>
-92.5 
+92.5
 <TD ALIGN=RIGHT NOWRAP>
-129 
+129
 <TD ALIGN=RIGHT NOWRAP>
-125 
+125
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^2\f$ points 
+Point location in \f$ 10^2\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-9.93e-07 
+9.93e-07
 <TD ALIGN=RIGHT NOWRAP>
-1.06e-06 
+1.06e-06
 <TD ALIGN=RIGHT NOWRAP>
-7.19e-06 
+7.19e-06
 <TD ALIGN=RIGHT NOWRAP>
-6.99e-06 
+6.99e-06
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^3\f$ points 
+Point location in \f$ 10^3\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-2.25e-06 
+2.25e-06
 <TD ALIGN=RIGHT NOWRAP>
-1.93e-06 
+1.93e-06
 <TD ALIGN=RIGHT NOWRAP>
-1.73e-05 
+1.73e-05
 <TD ALIGN=RIGHT NOWRAP>
-1.76e-05 
+1.76e-05
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^4\f$ points 
+Point location in \f$ 10^4\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-4.79e-06 
+4.79e-06
 <TD ALIGN=RIGHT NOWRAP>
-3.09e-06 
+3.09e-06
 <TD ALIGN=RIGHT NOWRAP>
-3.96e-05 
+3.96e-05
 <TD ALIGN=RIGHT NOWRAP>
-3.76e-05 
+3.76e-05
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^5\f$ points 
+Point location in \f$ 10^5\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-2.98e-05 
+2.98e-05
 <TD ALIGN=RIGHT NOWRAP>
-6.12e-06 
+6.12e-06
 <TD ALIGN=RIGHT NOWRAP>
-1.06e-04 
+1.06e-04
 <TD ALIGN=RIGHT NOWRAP>
-1.06e-04 
+1.06e-04
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^6\f$ points 
+Point location in \f$ 10^6\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-1e-04 
+1e-04
 <TD ALIGN=RIGHT NOWRAP>
-9.65e-06 
+9.65e-06
 <TD ALIGN=RIGHT NOWRAP>
-2.7e-04 
+2.7e-04
 <TD ALIGN=RIGHT NOWRAP>
-2.67e-04 
+2.67e-04
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Point location in \f$ 10^7\f$ points 
+Point location in \f$ 10^7\f$ points
 <TD ALIGN=RIGHT NOWRAP>
-2.59e-04 
+2.59e-04
 <TD ALIGN=RIGHT NOWRAP>
-1.33e-05 
+1.33e-05
 <TD ALIGN=RIGHT NOWRAP>
-6.25e-04 
+6.25e-04
 <TD ALIGN=RIGHT NOWRAP>
-6.25e-04 
+6.25e-04
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Vertex removal 
+Vertex removal
 <TD ALIGN=RIGHT NOWRAP>
-1e-04 
+1e-04
 <TD ALIGN=RIGHT NOWRAP>
-1.03e-04 
+1.03e-04
 <TD ALIGN=RIGHT NOWRAP>
-1.42e-04 
+1.42e-04
 <TD ALIGN=RIGHT NOWRAP>
-1.38e-04 
+1.38e-04
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 </TABLE>
 </CENTER>
@@ -799,16 +808,16 @@ in \cgalCite{msri52:liu-snoeyink-05}.
 \subsection Triangulation_3ParallelPerformance Parallel Performance
 
 Figure \cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
-and removal speed-ups obtained using the parallel version of the 
-triangulation algorithms of \cgal 4.5. The machine used is a PC running 
-Windows 7 64-bits with two 6-core 
+and removal speed-ups obtained using the parallel version of the
+triangulation algorithms of \cgal 4.5. The machine used is a PC running
+Windows 7 64-bits with two 6-core
 Intel Xeon CPU X5660 clocked at 2.80 GHz
-with 32GB of RAM. The program has been compiled with 
+with 32GB of RAM. The program has been compiled with
 Microsoft Visual C++ 2012 in Release mode.
 
 \cgalFigureBegin{Triangulation3figparallelspeedup,DT3_parallel_benchmark.png}
 Speed-up obtained for the insertion of 1M points randomly generated inside
-a cube (red), and the removal of 100K of them (blue), compared 
+a cube (red), and the removal of 100K of them (blue), compared
 to the sequential version of the algorithm.
 \cgalFigureEnd
 
@@ -832,7 +841,7 @@ system when clearing or destroying the triangulation. This can be important
 for algorithms like simplifications of data sets which will produce fragmented
 memory usage (doing fresh copies of the data structures are one way out in such
 cases). The asymptotic memory overhead of `Compact_container` for its
-internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
+internal bookkeeping is otherwise on the order of \cgalBigO{\sqrt{n}}.
 
 \cgalFigureRef{Triangulation3figmemory} shows the number of bytes used per
 points, as measured empirically using `Memory_sizer` for large triangulations
@@ -846,48 +855,48 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 <TD ALIGN=LEFT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Delaunay</B> 
+<B>Delaunay</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Delaunay</B> 
+<B>Delaunay</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Regular</B> 
+<B>Regular</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Regular</B> 
+<B>Regular</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>%Fast location</B> 
+<B>%Fast location</B>
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>No hidden points</B> 
+<B>No hidden points</B>
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-32bit 
+32bit
 <TD ALIGN=RIGHT NOWRAP>
-274 
+274
 <TD ALIGN=RIGHT NOWRAP>
-291 
+291
 <TD ALIGN=RIGHT NOWRAP>
-336 
+336
 <TD ALIGN=RIGHT NOWRAP>
-282 
+282
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-64bit 
+64bit
 <TD ALIGN=RIGHT NOWRAP>
-519 
+519
 <TD ALIGN=RIGHT NOWRAP>
-553 
+553
 <TD ALIGN=RIGHT NOWRAP>
-635 
+635
 <TD ALIGN=RIGHT NOWRAP>
-527 
+527
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 </TABLE>
 </CENTER>
@@ -950,15 +959,15 @@ also be found in \cgalCite{cgal:dp-eegpd-03}.
 <TD ALIGN=LEFT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Random</B> 
+<B>Random</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Ellipsoid</B> 
+<B>Ellipsoid</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Buddha</B> 
+<B>Buddha</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Molecule</B> 
+<B>Molecule</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>Dryer</B> 
+<B>Dryer</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 
@@ -971,76 +980,76 @@ also be found in \cgalCite{cgal:dp-eegpd-03}.
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>%Handle</B> 
+<B>%Handle</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Number of points 
+Number of points
 <TD ALIGN=RIGHT NOWRAP>
-<B>100000</B> 
+<B>100000</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>100000</B> 
+<B>100000</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>542548</B> 
+<B>542548</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>525296</B> 
+<B>525296</B>
 <TD ALIGN=RIGHT NOWRAP>
-<B>49787</B> 
+<B>49787</B>
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`Simple_cartesian<double>` 
+`Simple_cartesian<double>`
 <TD ALIGN=RIGHT NOWRAP>
-0.69 
+0.69
 <TD ALIGN=RIGHT NOWRAP>
-0.627 
+0.627
 <TD ALIGN=RIGHT NOWRAP>
-4.21 
+4.21
 <TD ALIGN=RIGHT NOWRAP>
-3.8 
+3.8
 <TD ALIGN=RIGHT NOWRAP>
-\f$ \infty \f$-loop 
+\f$ \infty \f$-loop
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`Exact_predicates_inexact_constructions_kernel` 
+`Exact_predicates_inexact_constructions_kernel`
 <TD ALIGN=RIGHT NOWRAP>
-0.824 
+0.824
 <TD ALIGN=RIGHT NOWRAP>
-0.749 
+0.749
 <TD ALIGN=RIGHT NOWRAP>
-4.99 
+4.99
 <TD ALIGN=RIGHT NOWRAP>
-4.64 
+4.64
 <TD ALIGN=RIGHT NOWRAP>
-1.68 
+1.68
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`Exact_predicates_exact_constructions_kernel` 
+`Exact_predicates_exact_constructions_kernel`
 <TD ALIGN=RIGHT NOWRAP>
-4.59 
+4.59
 <TD ALIGN=RIGHT NOWRAP>
-3.85 
+3.85
 <TD ALIGN=RIGHT NOWRAP>
-30.1 
+30.1
 <TD ALIGN=RIGHT NOWRAP>
-26.4 
+26.4
 <TD ALIGN=RIGHT NOWRAP>
-4.57 
+4.57
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`Simple_cartesian<Gmpq>` 
+`Simple_cartesian<Gmpq>`
 <TD ALIGN=RIGHT NOWRAP>
-492 
+492
 <TD ALIGN=RIGHT NOWRAP>
-534 
+534
 <TD ALIGN=RIGHT NOWRAP>
-1120 
+1120
 <TD ALIGN=RIGHT NOWRAP>
-1030 
+1030
 <TD ALIGN=RIGHT NOWRAP>
-75.2 
+75.2
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 </TABLE>
 </CENTER>
@@ -1048,7 +1057,7 @@ Number of points
 Running times (seconds) for various kernels and data sets.
 \cgalFigureCaptionEnd
 
- 
+
 \cgalFigureBegin{Triangulation3figdatasets,api1_01.png,b35-1.png,HD.png}
 Data sets used in the benchmark of \cgalFigureRef{Triangulation3figkernelsanddatasets}.
 \cgalFigureEnd
@@ -1095,7 +1104,7 @@ in \cgalCite{cgal:dt-pvrdr-06}, which allowed to release this
 functionality in \cgal 3.2.
 
 In 2006, Nico Kruithof wrote the `Triangulation_simplex_3` class
-that can store simplices of any dimension and improved the internal 
+that can store simplices of any dimension and improved the internal
 organization of the code.
 
 As of March 2007, Christophe Delage made the iterator range insert methods and
@@ -1121,10 +1130,15 @@ Teillaud in the framework of the Google Summer of Code, 2010.
 In 2013, Clément Jamin added parallel algorithms (insert, remove) to the
 Delaunay and regular triangulations.
 
+In 2014, Thijs van Lankveld implemented the segment cell traverser iterator.
+In 2018, Jane Tournois introduced the segment simplex traverser iterator
+and finalized both iterators that were integrated in release 5.2.
+Olivier Devillers contributed to boost the performances of the cell traverser.
+
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of \cgal. Jean-Daniel Boissonnat is also acknowledged
 \cgalCite{bdty-tcgal-00}.
 
-*/ 
+*/
 } /* namespace CGAL */
 

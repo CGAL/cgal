@@ -1,20 +1,17 @@
-// Copyright (c) 2010 GeometryFactory (France).
+// Copyright (c) 1997-2021
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).
+// GeometryFactory (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -23,10 +20,17 @@
 #ifndef CGAL_INTERSECTIONS_3_BBOX_3_BBOX_3_H
 #define CGAL_INTERSECTIONS_3_BBOX_3_BBOX_3_H
 
+#include <CGAL/Intersection_traits_3.h>
 
 #include <CGAL/Bbox_3.h>
 
+#include <optional>
+#include <variant>
+
+#include <utility>
+
 namespace CGAL {
+
 bool
 inline
 do_intersect(const CGAL::Bbox_3& c,
@@ -35,7 +39,52 @@ do_intersect(const CGAL::Bbox_3& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-} //namespace CGAL
+typename std::optional< typename std::variant< Bbox_3> >
+inline
+intersection(const CGAL::Bbox_3& a,
+             const CGAL::Bbox_3& b)
+{
+  typedef typename std::variant<Bbox_3> variant_type;
+  typedef typename std::optional<variant_type> result_type;
 
+  if(!do_intersect(a,b))
+    return result_type();
+
+  double xmin = (std::max)(a.xmin(), b.xmin());
+  double xmax = (std::min)(a.xmax(), b.xmax());
+  double ymin = (std::max)(a.ymin(), b.ymin());
+  double ymax = (std::min)(a.ymax(), b.ymax());
+  double zmin = (std::max)(a.zmin(), b.zmin());
+  double zmax = (std::min)(a.zmax(), b.zmax());
+
+  return result_type(std::forward<Bbox_3>(Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax)));
+}
+
+namespace Intersections {
+namespace internal {
+
+template <class K>
+typename K::Boolean
+inline
+do_intersect(const CGAL::Bbox_3& c,
+             const CGAL::Bbox_3& bbox,
+             const K&)
+{
+  return CGAL::do_intersect(c, bbox);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, Bbox_3, Bbox_3>::result_type
+intersection(const Bbox_3& a,
+             const Bbox_3& b,
+             const K&)
+{
+  return CGAL::intersection(a, b);
+}
+
+} // namespace internal
+} // namespace Intersections
+} // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_BBOX_3_H

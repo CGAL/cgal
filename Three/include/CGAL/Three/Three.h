@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime GIMENO
@@ -31,6 +22,8 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <QMainWindow>
 #include <QApplication>
+#include <QMutex>
+#include <QWaitCondition>
 
 #ifdef three_EXPORTS
 #  define THREE_EXPORT Q_DECL_EXPORT
@@ -38,9 +31,12 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
+#define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
+
 namespace CGAL{
 namespace Three{
-class Polyhedron_demo_plugin_interface;
+//define enum depending on Qt version
+class CGAL_Lab_plugin_interface;
 class THREE_EXPORT Three{
 public:
 
@@ -60,15 +56,18 @@ public:
   static int getDefaultPointSize();
   static int getDefaultNormalLength();
   static int getDefaultLinesWidth();
+  static bool &isLocked();
+  static QMutex *getMutex();
+  static QWaitCondition* getWaitCondition();
   /*! \brief Adds a dock widget to the interface
    *
-   * Adds a dock widget in the left section of the MainWindow. If the slot is already 
+   * Adds a dock widget in the left section of the MainWindow. If the slot is already
    * taken, the dock widgets will be tabified.
    */
   void addDockWidget(QDockWidget* dock_widget);
 
-  /*! \brief Gets an item of the templated type.
-   * \returns the first `SceneType` item found in the scene's list of currently selected 
+  /*! \brief gets an item of the templated type.
+   * \returns the first `SceneType` item found in the scene's list of currently selected
    * items;
    * \returns nullptr if there is no `SceneType` in the list.
    */
@@ -81,16 +80,33 @@ public:
    *  a corresponding slot named `on_ActionsName_triggered()`
    * in the plugin.
    */
-  static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
+  static void autoConnectActions(CGAL::Three::CGAL_Lab_plugin_interface* plugin);
+  /*!
+   * Displays in the console a blue text preceded by the mention
+   * "INFO: ".
+   */
   static void information(QString);
   /*!
-   * Displays a blue text preceded by the mention "WARNING :".
+   * Displays in the console an orange text preceded by the mention "WARNING: ".
    */
   static void warning(QString);
   /*!
-   * Displays a red text preceded by the mention "ERROR :".
+   * Displays in the console a red text preceded by the mention "ERROR: ".
    */
   static void error(QString);
+  /*!
+   * Displays an information popup.
+   */
+  static void information(QString title, QString message);
+  /*!
+   * Displays a warning popup.
+   */
+  static void warning(QString title, QString message);
+  /*!
+   * Displays an error popup.
+   */
+  static void error(QString title, QString message);
+  static void lock_test_item(bool b);
 protected:
   static QMainWindow* s_mainwindow;
   static Viewer_interface* s_mainviewer;
@@ -103,6 +119,9 @@ protected:
   static int default_point_size;
   static int default_normal_length;
   static int default_lines_width;
+  static QMutex* s_mutex;
+  static QWaitCondition* s_wait_condition;
+  static bool s_is_locked;
 
 public:
   struct CursorScopeGuard

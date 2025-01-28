@@ -3,20 +3,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez
 //
 
@@ -30,6 +21,7 @@
 #include <stack>
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
@@ -54,7 +46,7 @@ private:
   std::vector<Segment> m_segments;
   std::vector<Ray>     m_rays;
   bool m_is_valid;
-  
+
 public:
   Cvd_cell_2(Vertex_handle v)
     : m_vertex(v)
@@ -73,7 +65,7 @@ public:
   bool is_valid() const { return m_is_valid; }
   bool& is_valid()      { return m_is_valid; }
 
-  bool is_infinite() const 
+  bool is_infinite() const
   {
     return !m_rays.empty();
   }
@@ -154,7 +146,7 @@ public:
 
 
 // Cdt should be of the type Constrained_Delaunay_triangulation_2
-// and the face base shoul be Constrained_Delaunay_triangulation_face_base_2
+// and the face base should be Constrained_Delaunay_triangulation_face_base_2
 template <class Cdt>
 class Constrained_voronoi_diagram_2
 {
@@ -164,7 +156,7 @@ public:
   typedef typename Cvd_cell::Construction_dispatcher Construction_dispatcher;
 
 public:
-  // typedefs for basic primitives 
+  // typedefs for basic primitives
   typedef typename Cdt::Geom_traits       Geom_traits;
   typedef typename Cdt::Intersection_tag Intersection_tag;
 
@@ -203,7 +195,7 @@ public:
 
 public:
   // blind = false IFF each face sees its circumcenter
-  void tag_all_faces_blind(const bool blind) 
+  void tag_all_faces_blind(const bool blind)
   {
     for(All_faces_iterator f = m_cdt.all_faces_begin();
          f != m_cdt.all_faces_end();
@@ -237,7 +229,7 @@ public:
 private:
   // test face for blindness with respect to the edge constraint
   void tag_face_blind(Face_handle& f, const Edge& constraint)
-  {  
+  {
     if(segment_hides_circumcenter(m_cdt.segment(constraint),
                                   m_cdt.triangle(f)))
     {
@@ -251,25 +243,9 @@ private:
   bool segment_hides_circumcenter(const Segment& seg,
                                   const Triangle& tr)
   {
-    Point a = seg.source();
-    Point b = seg.target();
-    double dX = b.x() - a.x();
-    double dY = b.y() - a.y();
-
-    const Point& p0 = tr[0];
-    const Point& p1 = tr[1];
-    const Point& p2 = tr[2];
-    double R0 = p0.x()*p0.x() + p0.y()*p0.y();
-    double R1 = p1.x()*p1.x() + p1.y()*p1.y();
-    double R2 = p2.x()*p2.x() + p2.y()*p2.y();
-    double denominator = (p1.x()-p0.x())*(p2.y()-p0.y()) +
-                                   (p0.x()-p2.x())*(p1.y()-p0.y());
-
-    double det = 2*denominator * (a.x()*dY - a.y()*dX)
-                    - (R2-R1) * (p0.x()*dX + p0.y()*dY)
-                    - (R0-R2) * (p1.x()*dX + p1.y()*dY)
-                    - (R1-R0) * (p2.x()*dX + p2.y()*dY);
-    return (det <= 0);
+    typename Geom_traits::Oriented_side_2 os
+      = m_cdt.geom_traits().oriented_side_2_object();
+    return (os(seg, tr) != CGAL::ON_POSITIVE_SIDE);
   }
 
   // tags with their sights, with respect to the Edge constraint,
@@ -279,8 +255,8 @@ private:
     CGAL_assertion(m_cdt.is_constrained(constraint));
     Face_handle seed = constraint.first;
 
-    if(!m_cdt.is_infinite(seed) 
-       && !seed->is_blind() 
+    if(!m_cdt.is_infinite(seed)
+       && !seed->is_blind()
        && !m_cdt.triangle(seed).is_degenerate() )
        //to avoid flat triangles outside the domain
     {
@@ -308,7 +284,7 @@ private:
       Edge edge_i = Edge(f, i);
       if(!m_cdt.is_constrained(edge_i) &&
           !fi->is_blind() &&
-          !m_cdt.is_infinite(fi)) 
+          !m_cdt.is_infinite(fi))
         faces.push(fi);
     }
   }
@@ -321,7 +297,7 @@ public:
   Cvd_cell cvd_cell(Vertex_handle v) const
   {
     Cvd_cell cell(v);
-    
+
     typename Cvd_cell::Construction_dispatcher oit =
       CGAL::dispatch_output<typename Cvd_cell::Segment,
                             typename Cvd_cell::Ray>(
@@ -352,7 +328,7 @@ private:
   OutputIterator finite_cvd_cell(Vertex_handle v, OutputIterator oit) const
   {
     std::vector<Point> polygon;
-    
+
     CGAL_assertion(!m_cdt.is_infinite(v));
     Face_circulator face = m_cdt.incident_faces(v);
     Face_circulator end = face;
@@ -440,8 +416,8 @@ template<typename Tr>
 Cvd_cell_2<Tr> dual(const Tr& tr,
                     const typename Tr::Vertex_handle& v)
 {
-  CGAL_triangulation_precondition( v != typename Tr::Vertex_handle());
-  CGAL_triangulation_precondition( !tr.is_infinite(v));
+  CGAL_precondition( v != typename Tr::Vertex_handle());
+  CGAL_precondition( !tr.is_infinite(v));
 
   Constrained_voronoi_diagram_2<Tr> diagram(tr);
   return diagram.cvd_cell(v);
@@ -461,8 +437,8 @@ Cvd_cell_2<Tr> dual(const Tr& tr,
 //  typedef Tr::Geom_traits::Ray_2    Ray;
 //  typedef Tr::Geom_traits::Vector_2 Vector_2;
 //
-//  CGAL_triangulation_precondition( v != Vertex_handle());
-//  CGAL_triangulation_precondition( !tr.is_infinite(v));
+//  CGAL_precondition( v != Vertex_handle());
+//  CGAL_precondition( !tr.is_infinite(v));
 //
 //  // The Circulator moves ccw.
 //  std::vector<Segment> segments;

@@ -5,9 +5,9 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction`, computing the square of the argument. 
+`AdaptableUnaryFunction`, computing the square of the argument.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 
@@ -16,28 +16,28 @@ namespace AlgebraicStructureTraits_{
 class Square {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns the square of \f$ x\f$. 
-*/ 
-result_type operator()(argument_type x); 
+returns the square of \f$ x\f$.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

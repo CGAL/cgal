@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
+//                 Franz Wessendorp
 //                 Kaspar Fischer
 
 #ifndef CGAL_QP_FULL_FILTERED_PRICING_H
@@ -63,7 +54,7 @@ class QP_full_filtered_pricing : public QP__filtered_base<Q,ET,Tags,NT_,ET2NT_> 
 
     // operations
     int  pricing(int& direction );
-    
+
     // cleanup
     ~QP_full_filtered_pricing() { };
 
@@ -86,11 +77,11 @@ QP_full_filtered_pricing( ET2NT et2nt)
     : Base( "full filtered"),
       Filtered_base( et2nt)
 { }
-    
+
 // operations
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
-pricing (int& direction) 
+pricing (int& direction)
 {
   return (pricing_helper(direction, Is_nonnegative()));
 }
@@ -110,67 +101,67 @@ pricing_helper(int& /*direction*/, Tag_true ) // standard form
     NT   mu, min_mu = this->nt0;
     for ( j = 0; j < w; ++j) {
 
-	// variable non-basic?
-	if ( ! this->solver().is_basic( j)) {
-	
-	    // don't price artificial variables
-	    if (this->solver().is_artificial( j)) continue;
+        // variable non-basic?
+        if ( ! this->solver().is_basic( j)) {
+
+            // don't price artificial variables
+            if (this->solver().is_artificial( j)) continue;
 
 
-	    // compute mu_j
-	    mu = this->mu_j_NT( j);
+            // compute mu_j
+            mu = this->mu_j_NT( j);
 
-	    CGAL_qpe_debug {
-		this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
-	    }
+            CGAL_qpe_debug {
+                this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
+            }
 
-	    // new minimum?
-	    if ( mu < min_mu) { min_j = j; min_mu = mu; }
-	}
+            // new minimum?
+            if ( mu < min_mu) { min_j = j; min_mu = mu; }
+        }
     }
 
     // exact check of entering variable
     if ( min_j >= 0) {
-	if ( this->mu_j( min_j) >= this->et0) {
+        if ( this->mu_j( min_j) >= this->et0) {
 
-	    // exact check failed!
-	    CGAL_qpe_debug {
-		this->vout() << "--> exact check of entering variable failed!"
-		       << std::endl;
-	    }
-	    
-	    min_j  = -1;
-	    min_mu = this->nt0;
-	}
+            // exact check failed!
+            CGAL_qpe_debug {
+                this->vout() << "--> exact check of entering variable failed!"
+                       << std::endl;
+            }
+
+            min_j  = -1;
+            min_mu = this->nt0;
+        }
     }
 
     // certify non-existence of entering variable, if necessary
     if ( min_j < 0) {
 
-	// update row and column maxima
-	this->update_maxima();
+        // update row and column maxima
+        this->update_maxima();
 
-	// loop over all non-basic variables again
-	for ( j = 0; j < w; ++j) {
+        // loop over all non-basic variables again
+        for ( j = 0; j < w; ++j) {
 
-	    // variable non-basic?
-	    if ( ! this->solver().is_basic( j)) {
-	    
-	        // don't price artificial variables
-	        if (this->solver().is_artificial( j)) continue;
+            // variable non-basic?
+            if ( ! this->solver().is_basic( j)) {
+
+                // don't price artificial variables
+                if (this->solver().is_artificial( j)) continue;
 
 
-		// certify 'mu_j >= 0'
-		if ( ! this->certify_mu_j_NT( j)) {
+                // certify 'mu_j >= 0'
+                if ( ! this->certify_mu_j_NT( j)) {
 
-		    // entering variable missed by inexact arithmetic
-		    min_j = j;
-		    break;
-		}
-	    }
-	}
+                    // entering variable missed by inexact arithmetic
+                    min_j = j;
+                    break;
+                }
+            }
+        }
     }
-    CGAL_qpe_debug { 
+    CGAL_qpe_debug {
       this->vout() << std::endl;
     }
     // return index of entering variable
@@ -192,64 +183,64 @@ pricing_helper(int& direction, Tag_false ) // bounds for variables
     NT   mu, min_mu = this->nt0;
     for ( j = 0; j < w; ++j) {
 
-	// variable non-basic?
-	if ( ! this->solver().is_basic( j)) {
-	
-	    // don't price artificial variables
-	    if (this->solver().is_artificial( j)) continue;
+        // variable non-basic?
+        if ( ! this->solver().is_basic( j)) {
+
+            // don't price artificial variables
+            if (this->solver().is_artificial( j)) continue;
 
 
-	    // compute mu_j
-	    mu = this->mu_j_NT( j);
+            // compute mu_j
+            mu = this->mu_j_NT( j);
 
-	    CGAL_qpe_debug {
-		this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
-	    }
-	    // from pricing strategy base class
-	    this->price_dantzig (j, mu, this->nt0, min_j, min_mu, direction);
-	}
+            CGAL_qpe_debug {
+                this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
+            }
+            // from pricing strategy base class
+            this->price_dantzig (j, mu, this->nt0, min_j, min_mu, direction);
+        }
     }
 
     if ( min_j >= 0) {
         // exact check; do we really have an entering variable
-	if (!this->is_improving(min_j, this->mu_j( min_j), this->et0)) {
+        if (!this->is_improving(min_j, this->mu_j( min_j), this->et0)) {
 
-	    // exact check failed!
-	    CGAL_qpe_debug {
-		this->vout() << "--> exact check of entering variable failed!"
-		       << std::endl;
-	    }
-	    
-	    min_j  = -1;
-	    min_mu = this->nt0;
-	}
+            // exact check failed!
+            CGAL_qpe_debug {
+                this->vout() << "--> exact check of entering variable failed!"
+                       << std::endl;
+            }
+
+            min_j  = -1;
+            min_mu = this->nt0;
+        }
     }
 
     if ( min_j == -1) {
         // try to certify non-existence of entering variable, based on
         // error bounds
-	this->update_maxima();
+        this->update_maxima();
 
-	// loop over all non-basic variables again
-	for ( j = 0; j < w; ++j) {
+        // loop over all non-basic variables again
+        for ( j = 0; j < w; ++j) {
 
-	    // variable non-basic?
-	    if ( ! this->solver().is_basic( j)) {
-	    
-	        // don't price artificial variables
-	        if (this->solver().is_artificial( j)) continue;
+            // variable non-basic?
+            if ( ! this->solver().is_basic( j)) {
 
-		// certify that j is not improving
-		if ( ! this->certify_mu_j_NT( j)) {
+                // don't price artificial variables
+                if (this->solver().is_artificial( j)) continue;
 
-		    // entering variable missed by inexact arithmetic
-		    min_j = j;
-		    break;
-		}
-	    }
-	}
+                // certify that j is not improving
+                if ( ! this->certify_mu_j_NT( j)) {
+
+                    // entering variable missed by inexact arithmetic
+                    min_j = j;
+                    break;
+                }
+            }
+        }
     }
-    CGAL_qpe_debug { 
+    CGAL_qpe_debug {
       this->vout() << std::endl;
     }
 

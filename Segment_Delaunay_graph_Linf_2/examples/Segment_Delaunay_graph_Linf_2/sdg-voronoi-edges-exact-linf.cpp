@@ -35,8 +35,6 @@ int main( int argc, char *argv[] ) {
   // read the sites from the stream and insert them in the diagram
   while ( ifs >> site ) {
     sdg.insert( site );
-    CGAL_SDG_DEBUG( sdg.file_output_verbose(std::cout); );
-    CGAL_assertion( sdg.is_valid(false, 1) );
   }
 
   ifs.close();

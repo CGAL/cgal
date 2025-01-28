@@ -1,19 +1,10 @@
 // Copyright (c) 2012  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Gael Guennebaud
 
@@ -34,13 +25,13 @@
 namespace CGAL {
 
   /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_svd` provides an algorithm to solve in the least
 square sense a linear system with a singular value decomposition using
 \ref thirdpartyEigen.
 
-\cgalModels `SvdTraits`
+\cgalModels{SvdTraits}
 
 */
 class Eigen_svd
@@ -60,7 +51,11 @@ public:
   /// \return the condition number of \f$ M\f$
   static FT solve(const Matrix& M, Vector& B)
   {
-    Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Matrix::EigenType, Eigen::ComputeThinU | Eigen::ComputeThinV> jacobiSvd(M.eigen_object());
+#else
+    Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(), ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+#endif
     B.eigen_object()=jacobiSvd.solve(Vector::EigenType(B.eigen_object()));
     return jacobiSvd.singularValues().array().abs().maxCoeff() /
            jacobiSvd.singularValues().array().abs().minCoeff();

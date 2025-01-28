@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_VECTOR_2_H
 #define CGAL__TEST_FCT_VECTOR_2_H
@@ -93,6 +87,7 @@ _test_fct_vector_2(const R& )
  assert( CGAL::scalar_product(v1, v2) == FT(30) );
  assert( v1 * v0 == FT(0) );
  assert( v1.squared_length() == FT(40) );
+ assert( v1.squared_length() == CGAL::squared_length(v1) );
  assert( CGAL::Vector_2<R>( n1, n2) == v1 * RT(2));
  assert( CGAL::Vector_2<R>( n5, n6) == v2 * RT(3));
  assert( CGAL::Vector_2<R>( n1, n2) == RT(2) * v1);

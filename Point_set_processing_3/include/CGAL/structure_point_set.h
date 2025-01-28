@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
@@ -28,7 +19,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 #include <CGAL/intersections.h>
 
@@ -42,7 +32,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -68,8 +58,8 @@ is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 \tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
-- `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-- `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
 template <typename Kernel>
@@ -101,7 +91,7 @@ public:
       CREASE = 2,      ///< Structure coherent, facet adjacent to an edge
       PLANAR = 3       ///< Structure coherent, facet inside a planar section
     };
-  
+
 private:
 
   class My_point_property_map{
@@ -110,11 +100,12 @@ private:
     typedef Point value_type;
     typedef const value_type& reference;
     typedef std::size_t key_type;
-    typedef boost::lvalue_property_map_tag category;  
+    typedef boost::lvalue_property_map_tag category;
+
     My_point_property_map (const std::vector<Point>& pts) : points (pts) {}
+
     reference operator[] (key_type k) const { return points[k]; }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i) 
-    { return ppmap[i]; }
+    friend inline reference get (const My_point_property_map& ppmap, key_type i) { return ppmap[i]; }
   };
 
   struct Edge
@@ -146,18 +137,18 @@ private:
       active = true;
     }
   };
-      
+
 
   std::vector<Point> m_points;
   std::vector<Vector> m_normals;
   std::vector<std::size_t> m_indices;
   std::vector<Point_status> m_status;
-    
+
   std::vector<Plane> m_planes;
   std::vector<std::vector<std::size_t> > m_indices_of_assigned_points;
   std::vector<Edge> m_edges;
   std::vector<Corner> m_corners;
-    
+
 public:
 
 
@@ -170,25 +161,45 @@ public:
     \tparam PlaneRange is a model of `ConstRange`. The value type of
     its iterator is the key type of the named parameter `plane_map`.
 
-    \param points input point range.
+    \param points input point range
     \param planes input plane range.
     \param epsilon size parameter.
-    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+    \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
-      If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Point_3>` is used.\cgalParamEnd
-      \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-      `Kernel::Vector_3`.\cgalParamEnd
-      \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
-      Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
-      a plane).\cgalParamEnd
-      \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
-      `Kernel::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Plane_3>`
-      is used.\cgalParamEnd
-      \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
-    \cgalNamedParamsEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                       of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+        \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+      \cgalParamNEnd
 
+      \cgalParamNBegin{normal_map}
+        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{plane_index_map}
+        \cgalParamDescription{a property map associating the index of a point in the input range
+                              to the index of plane (`-1` if the point is not assigned to a plane)}
+        \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{plane_map}
+        \cgalParamDescription{a property map containing the planes associated to the elements of the plane range `planes`}
+         \cgalParamType{a class model of `ReadablePropertyMap` with `PlaneRange::iterator::value_type`
+                        as key type and `geom_traits::Plane_3` as value type}
+        \cgalParamDefault{`CGAL::Identity_property_map<Kernel::Plane_3>`}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{attraction_factor}
+        \cgalParamDescription{multiple of a tolerance `epsilon` used to connect simplices}
+        \cgalParamType{floating scalar value}
+        \cgalParamDefault{`3`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
   template <typename PointRange,
             typename PlaneRange,
@@ -213,26 +224,25 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     // basic geometric types
-    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Const_point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
     typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                              "Error: no normal map");
-    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
-                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+    CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
+    static_assert(!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value,
                               "Error: no plane index map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-    PlaneMap plane_map = choose_parameter(get_parameter(np, internal_np::plane_map), PlaneMap());
-    PlaneIndexMap index_map = choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
+    PointMap point_map = NP_helper::get_const_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
+    PlaneMap plane_map = choose_parameter<PlaneMap>(get_parameter(np, internal_np::plane_map));
+    PlaneIndexMap index_map = choose_parameter<PlaneIndexMap>(get_parameter(np, internal_np::plane_index_map));
     double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
-    
+
     m_points.reserve(points.size());
     m_normals.reserve(points.size());
     m_indices_of_assigned_points.resize (planes.size());
@@ -246,7 +256,7 @@ public:
     {
       m_points.push_back (get(point_map, *it));
       m_normals.push_back (get(normal_map, *it));
-      int plane_index = get (index_map, idx);
+      int plane_index = static_cast<int>(get (index_map, idx));
       if (plane_index != -1)
       {
         m_indices_of_assigned_points[std::size_t(plane_index)].push_back(idx);
@@ -314,7 +324,7 @@ public:
         m_status[f[1]] == POINT &&
         m_status[f[2]] == POINT)
       return FREEFORM;
-      
+
     // 1- PLANAR CASE
     if (m_status[f[0]] == PLANE &&
         m_status[f[1]] == PLANE &&
@@ -346,7 +356,7 @@ public:
             else
               return INCOHERENT;
           }
-          
+
         // 2- CREASE CASES
         if (sa == EDGE && sb == EDGE && sc == PLANE)
           {
@@ -382,7 +392,7 @@ public:
                      m_edges[a].planes[1] != m_edges[b].planes[0] &&
                      m_edges[a].planes[1] != m_edges[b].planes[1]))
                   return INCOHERENT;
-                  
+
                 for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                   {
                     if (m_corners[c].planes[j] == m_edges[a].planes[0])
@@ -407,7 +417,7 @@ public:
                 for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                   if (m_corners[c].planes[j] == a)
                     return VERTEX;
-                  
+
                 return INCOHERENT;
               }
             else if (sa == PLANE && sb == EDGE)
@@ -415,7 +425,7 @@ public:
                 bool pa = false, b0 = false, b1 = false;
                 if (a != m_edges[b].planes[0] && a != m_edges[b].planes[1])
                   return INCOHERENT;
-                  
+
                 for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                   {
                     if (m_corners[c].planes[j] == a)
@@ -435,7 +445,7 @@ public:
                 bool a0 = false, a1 = false, pb = false;
                 if (b != m_edges[a].planes[0] && b != m_edges[a].planes[1])
                   return INCOHERENT;
-                  
+
                 for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                   {
                     if (m_corners[c].planes[j] == b)
@@ -460,7 +470,7 @@ public:
   }
 
 
-  /// \cond SKIP_IN_MANUAL  
+  /// \cond SKIP_IN_MANUAL
 private:
 
 
@@ -470,7 +480,7 @@ private:
     std::vector<Vector> normals;
     std::vector<std::size_t> indices;
     std::vector<Point_status> status;
-      
+
     for (std::size_t i = 0; i < m_points.size (); ++ i)
       if (m_status[i] != SKIPPED)
         {
@@ -481,7 +491,7 @@ private:
             status.back () = PLANE;
           indices.push_back (m_indices[i]);
         }
-      
+
     m_points.swap (points);
     m_normals.swap (normals);
     m_indices.swap (indices);
@@ -493,28 +503,28 @@ private:
   {
     if (m_planes.empty ())
       return;
-      
+
     double radius = epsilon * attraction_factor;
 
 #ifdef CGAL_PSP3_VERBOSE
     std::cerr << "Computing planar points... " << std::endl;
 #endif
-      
+
     project_inliers ();
     resample_planes (epsilon);
-      
+
 #ifdef CGAL_PSP3_VERBOSE
     std::cerr << " -> Done" << std::endl;
     std::cerr << "Finding adjacent primitives... " << std::endl;
 #endif
-      
+
     find_pairs_of_adjacent_primitives (radius);
 
 #ifdef CGAL_PSP3_VERBOSE
     std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
     std::cerr << "Computing edges... " << std::endl;
 #endif
-      
+
     compute_edges (epsilon);
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -532,7 +542,7 @@ private:
 
     std::cerr << "Computating first set of corners... " << std::endl;
 #endif
-      
+
     compute_corners (radius);
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -541,7 +551,7 @@ private:
     {
       std::size_t size_before = m_points.size ();
 #endif
-        
+
       merge_corners (radius);
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -550,14 +560,14 @@ private:
 
     std::cerr << "Computing corner directions... " << std::endl;
 #endif
-      
+
     compute_corner_directions (epsilon);
 
 #ifdef CGAL_PSP3_VERBOSE
     std::cerr << " -> Done" << std::endl;
     std::cerr << "Refining sampling... " << std::endl;
 #endif
-      
+
     refine_sampling (epsilon);
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -565,7 +575,7 @@ private:
 
     std::cerr << "Cleaning data set... " << std::endl;
 #endif
-      
+
     clean ();
 
 #ifdef CGAL_PSP3_VERBOSE
@@ -594,7 +604,7 @@ private:
         Vector vortho = plane.orthogonal_vector();
         Vector b1 = plane.base1();
         Vector b2 = plane.base2();
-			
+
         b1 = b1 / std::sqrt (b1 * b1);
         b2 = b2 / std::sqrt (b2 * b2);
 
@@ -614,7 +624,7 @@ private:
         CGAL::Bbox_2 box_2d = CGAL::bbox_2 (points_2d.begin(), points_2d.end());
         std::size_t Nx = static_cast<std::size_t>((box_2d.xmax() - box_2d.xmin()) / grid_length) + 1;
         std::size_t Ny = static_cast<std::size_t>((box_2d.ymax() - box_2d.ymin()) / grid_length) + 1;
-          
+
         std::vector<std::vector<bool> > Mask (Nx, std::vector<bool> (Ny, false));
         std::vector<std::vector<bool> > Mask_border (Nx, std::vector<bool> (Ny, false));
         std::vector<std::vector<std::vector<std::size_t> > >
@@ -636,8 +646,8 @@ private:
                 && Mask[i-1][j] && Mask[i][j-1]
                 && Mask[i][j+1] && Mask[i+1][j] )
               Mask[i][j]=true;
-					
-        //finding mask border in 8-connexity	
+
+        //finding mask border in 8-connexity
         for (std::size_t j = 1; j < Ny - 1; ++ j)
           for (std::size_t i = 1; i < Nx - 1; ++ i)
             if( Mask[i][j] &&
@@ -646,7 +656,7 @@ private:
                   !Mask[i][j+1] || !Mask[i+1][j-1] ||
                   !Mask[i+1][j]|| !Mask[i+1][j+1] ) )
               Mask_border[i][j]=true;
-          
+
         for (std::size_t j = 0; j < Ny; ++ j)
           {
             if (Mask[0][j])
@@ -668,12 +678,12 @@ private:
           for (std::size_t i = 0; i < Nx; ++ i)
             if( point_map[i][j].size()>0)
               {
-                //inside: recenter (cell center) the first point of the cell and desactivate the others points 
+                //inside: recenter (cell center) the first point of the cell and deactivate the others points
                 if (!Mask_border[i][j] && Mask[i][j])
                   {
                     double x2pt = (i+0.5) * grid_length + box_2d.xmin();
                     double y2pt = (j+0.4) * grid_length + box_2d.ymin();
-							
+
                     if (i%2 == 1)
                       {
                         x2pt = (i+0.5) * grid_length + box_2d.xmin();
@@ -693,7 +703,7 @@ private:
                       m_status[point_map[i][j][np]] = SKIPPED;
                   }
 
-                //border: recenter (barycenter) the first point of the cell and desactivate the others points
+                //border: recenter (barycenter) the first point of the cell and deactivate the others points
                 else if (Mask_border[i][j] && Mask[i][j])
                   {
                     std::vector<Point> pts;
@@ -757,11 +767,11 @@ private:
           continue;
 
         Fuzzy_sphere query (i, radius, 0., tree.traits());
-          
+
         std::vector<std::size_t> neighbors;
         tree.search (std::back_inserter (neighbors), query);
 
-          
+
         for (std::size_t k = 0; k < neighbors.size(); ++ k)
           {
             std::size_t ind_k = m_indices[neighbors[k]];
@@ -784,14 +794,12 @@ private:
     for (std::size_t i = 0; i < m_edges.size(); ++ i)
       {
         const Plane& plane1 = m_planes[m_edges[i].planes[0]];
-        const Plane& plane2 = m_planes[m_edges[i].planes[1]];       
+        const Plane& plane2 = m_planes[m_edges[i].planes[1]];
 
         double angle_A = std::acos (CGAL::abs (plane1.orthogonal_vector() * plane2.orthogonal_vector()));
         double angle_B = CGAL_PI - angle_A;
 
-        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-          result = CGAL::intersection(plane1, plane2);
-
+        const auto result = CGAL::intersection(plane1, plane2);
         if (!result)
           {
 #ifdef CGAL_PSP3_VERBOSE
@@ -800,7 +808,7 @@ private:
             continue;
           }
 
-        if (const Line* l = boost::get<Line>(&*result))
+        if (const Line* l = std::get_if<Line>(&*result))
           m_edges[i].support = *l;
         else
           {
@@ -809,12 +817,12 @@ private:
 #endif
             continue;
           }
-        
+
         Vector direction_p1 (0., 0., 0.);
         for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[0]].size(); ++ k)
           {
             std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[0]][k];
-              
+
             const Point& point = m_points[index_point];
             Point projected = m_edges[i].support.projection (point);
             if (std::sqrt (CGAL::squared_distance (point, projected))
@@ -829,7 +837,7 @@ private:
         for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[1]].size(); ++ k)
           {
             std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[1]][k];
-              
+
             const Point& point = m_points[index_point];
             Point projected = m_edges[i].support.projection (point);
             if (std::sqrt (CGAL::squared_distance (point, projected))
@@ -841,7 +849,7 @@ private:
           direction_p2 = direction_p2 / std::sqrt (direction_p2 * direction_p2);
 
         double angle = std::acos (direction_p1 * direction_p2);
-      
+
         if (direction_p1.squared_length() == 0
             || direction_p2.squared_length() == 0
             || (CGAL::abs (angle - angle_A) > 1e-2
@@ -856,7 +864,7 @@ private:
   {
     double d_DeltaEdge = std::sqrt (2.) * epsilon;
     double r_edge = d_DeltaEdge / 2.;
-      
+
     for (std::size_t i = 0; i < m_edges.size(); ++ i)
       {
         const Plane& plane1 = m_planes[m_edges[i].planes[0]];
@@ -870,7 +878,7 @@ private:
           }
 
         Vector normal = 0.5 * plane1.orthogonal_vector () + 0.5 * plane2.orthogonal_vector();
-							
+
         //find set of points close (<attraction_radius) to the edge and store in intersection_points
         std::vector<std::size_t> intersection_points;
         for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[0]].size(); ++ k)
@@ -902,7 +910,7 @@ private:
         Point Pmin = t0p;
         Point Pmax = t0p;
         Vector dir = line.to_vector ();
-          
+
         //compute the segment of the edge
         for (std::size_t k = 0; k < intersection_points.size(); ++ k)
           {
@@ -910,7 +918,7 @@ private:
             const Point& point = m_points[ind];
             Point projected = line.projection (point);
             double d = Vector (t0p, projected) * dir;
-                  
+
             if (d < dmin)
               {
                 dmin = d;
@@ -974,8 +982,8 @@ private:
                 std::size_t inde = division_tab[j][k];
 
                 if (CGAL::squared_distance (line, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
-                  m_status[inde] = SKIPPED; // Deactive points too close (except best, see below)
-                  
+                  m_status[inde] = SKIPPED; // Deactivate points too close (except best, see below)
+
                 double distance = CGAL::squared_distance (perfect, m_points[inde]);
                 if (distance < dist_min)
                   {
@@ -1003,13 +1011,13 @@ private:
             Point anchor (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 1) / double(number_of_division),
                           seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 1) / double(number_of_division),
                           seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 1) / double(number_of_division));
-              
-            Plane ortho = seg.supporting_line().perpendicular_plane(anchor); 
+
+            Plane ortho = seg.supporting_line().perpendicular_plane(anchor);
 
             std::vector<Point> pts1, pts2;
             //Computation of the permanent angle and directions
             for (std::size_t k = 0; k < division_tab[j].size(); ++ k)
-              { 
+              {
                 std::size_t inde = division_tab[j][k];
                 std::size_t plane = m_indices[inde];
                 if (plane == m_edges[i].planes[0])
@@ -1018,11 +1026,10 @@ private:
                   pts2.push_back (m_points[inde]);
               }
 
-            typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-              result = CGAL::intersection (plane1, ortho);
+            auto result = CGAL::intersection (plane1, ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts1.empty()))
                       {
@@ -1055,11 +1062,11 @@ private:
 #endif
               }
 
-            
+
             result = CGAL::intersection (plane2,ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts2.empty()))
                       {
@@ -1092,7 +1099,7 @@ private:
 #endif
               }
           }
-        
+
         //if not information enough (not enough edges to create
         //anchor) we unactivate the edge, else we update the angle
         //and directions
@@ -1124,7 +1131,7 @@ private:
       {
         if (plane_edge_adj[i].size () < 2)
           continue;
-          
+
         for (std::size_t j = 0; j < plane_edge_adj[i].size ()- 1; ++ j)
           for (std::size_t k = j + 1; k < plane_edge_adj[i].size (); ++ k)
             {
@@ -1140,7 +1147,7 @@ private:
 
         std::set<std::size_t>::iterator end = edge_adj[i].end();
         end --;
-          
+
         for (std::set<std::size_t>::iterator jit = edge_adj[i].begin ();
              jit != end; ++ jit)
           {
@@ -1156,7 +1163,7 @@ private:
                 std::size_t k = *kit;
                 if (k < j)
                   continue;
-                  
+
                 std::set<std::size_t> planes;
                 planes.insert (m_edges[i].planes[0]);
                 planes.insert (m_edges[i].planes[1]);
@@ -1183,19 +1190,15 @@ private:
         const Plane& plane2 = m_planes[m_corners[i].planes[1]];
         const Plane& plane3 = m_planes[m_corners[i].planes[2]];
 
-        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-          result = CGAL::intersection(plane1, plane2);
-        
+        const auto result = CGAL::intersection(plane1, plane2);
         if (result)
           {
-            if (const Line* l = boost::get<Line>(&*result))
+            if (const Line* l = std::get_if<Line>(&*result))
               {
-                typename cpp11::result_of<typename Kernel::Intersect_3(Line, Plane)>::type
-                  result2 = CGAL::intersection(*l, plane3);
-
+                const auto result2 = CGAL::intersection(*l, plane3);
                 if (result2)
                   {
-                    if (const Point* p = boost::get<Point>(&*result2))
+                    if (const Point* p = std::get_if<Point>(&*result2))
                       m_corners[i].support = *p;
                     else
                       {
@@ -1236,17 +1239,17 @@ private:
 
         // test if point is in bbox + delta
         CGAL::Bbox_3 bbox = CGAL::bbox_3 (m_points.begin (), m_points.end ());
-          
+
         double margin_x = 0.1 * (bbox.xmax() - bbox.xmin());
         double X_min = bbox.xmin() - margin_x;
-        double X_max = bbox.xmax() + margin_x; 
+        double X_max = bbox.xmax() + margin_x;
         double margin_y = 0.1 * (bbox.ymax() - bbox.ymin());
         double Y_min = bbox.ymin() - margin_y;
-        double Y_max = bbox.ymax() + margin_y; 
+        double Y_max = bbox.ymax() + margin_y;
         double margin_z = 0.1* (bbox.zmax() - bbox.zmin());
         double Z_min = bbox.zmin() - margin_z;
         double Z_max = bbox.zmax() + margin_z;
-          
+
         if ((m_corners[i].support.x() < X_min) || (m_corners[i].support.x() > X_max)
             || (m_corners[i].support.y() < Y_min) || (m_corners[i].support.y() > Y_max)
             || (m_corners[i].support.z() < Z_min) || (m_corners[i].support.z() > Z_max))
@@ -1285,7 +1288,7 @@ private:
           continue;
 
         int count_plane_number=3;
-        
+
         for (std::size_t kb = k + 1; kb < m_corners.size(); ++ kb)
           {
             if (!(m_corners[kb].active))
@@ -1298,7 +1301,7 @@ private:
 
             for (std::size_t i = 0; i < m_corners[kb].planes.size (); ++ i)
               {
-                bool testtt = true; 
+                bool testtt = true;
                 for (std::size_t l = 0; l < m_corners[k].planes.size(); ++ l)
                   if (m_corners[kb].planes[i] == m_corners[k].planes[l])
                     {
@@ -1324,7 +1327,7 @@ private:
                     m_corners[k].edges.push_back (m_corners[kb].edges[j]);
 
               }
-              
+
             //update barycenter
             m_corners[k].support = CGAL::barycenter (m_corners[k].support, count_plane_number,
                                                      m_corners[kb].support, count_new_plane);
@@ -1336,7 +1339,7 @@ private:
         for (std::size_t i = 0; i < m_corners[k].planes.size(); ++ i)
           normal = normal + (1. / (double)(m_corners[k].planes.size()))
             * m_planes[m_corners[k].planes[i]].orthogonal_vector();
-          
+
         m_points.push_back (m_corners[k].support);
         m_normals.push_back (normal);
         m_indices.push_back (k);
@@ -1351,7 +1354,7 @@ private:
         for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
           {
             if (m_corners[k].edges[ed] < m_edges.size())
-              {  
+              {
                 const Edge& edge = m_edges[m_corners[k].edges[ed]];
 
                 Vector direction (0., 0., 0.);
@@ -1373,7 +1376,7 @@ private:
           }
       }
   }
-    
+
   void refine_sampling (double epsilon)
   {
     double d_DeltaEdge = std::sqrt (2.) * epsilon;
@@ -1382,7 +1385,7 @@ private:
       {
         if (!(m_corners[k].active))
           continue;
-          
+
         for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
           {
             const Edge& edge = m_edges[m_corners[k].edges[ed]];
@@ -1393,7 +1396,7 @@ private:
                 if (CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
                     < d_DeltaEdge * d_DeltaEdge)
                   m_status[edge.indices[i]] = SKIPPED;
-				
+
                 //if too close from a corner (non dominant side), ->remove
                 if (m_corners[k].directions[ed].squared_length() > 0
                     && (m_corners[k].directions[ed]
@@ -1402,7 +1405,7 @@ private:
                         < 4 * d_DeltaEdge * d_DeltaEdge))
                   m_status[edge.indices[i]] = SKIPPED;
               }
-              
+
           }
       }
 
@@ -1410,12 +1413,12 @@ private:
       {
         if (!(m_corners[k].active))
           continue;
-		
+
         for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
           {
             if (m_corners[k].directions[ed].squared_length() <= 0.)
               continue;
-              
+
             Edge& edge = m_edges[m_corners[k].edges[ed]];
 
             //rajouter un edge a epsilon du cote dominant si pas de point entre SS_edge/2 et 3/2*SS_edge
@@ -1449,7 +1452,7 @@ private:
                 m_indices.push_back (m_corners[k].edges[ed]);
                 edge.indices.push_back (m_points.size() - 1);
               }
-						
+
             //rajouter un edge a 1/3 epsilon du cote dominant
             Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge / 3;
             m_points.push_back (new_edge);
@@ -1462,18 +1465,18 @@ private:
       }
 
   }
-  /// \endcond    
+  /// \endcond
 };
 
 
-  
+
 
 
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
 
-/** 
+/**
    \ingroup PkgPointSetProcessing3Algorithms
 
    This is an implementation of the Point Set Structuring algorithm. This
@@ -1496,25 +1499,51 @@ private:
    <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
-   \param points input point range.
+   \param points input point range
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
-     Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
-     a plane).\cgalParamEnd
-     \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Plane_3>`
-     is used.\cgalParamEnd
-     \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                       of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+        \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{normal_map}
+        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{plane_index_map}
+        \cgalParamDescription{a property map associating the index of a point in the input range
+                              to the index of plane (`-1` if the point is not assigned to a plane)}
+        \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{plane_map}
+        \cgalParamDescription{a property map containing the planes associated to the elements of the plane range `planes`}
+         \cgalParamType{a class model of `ReadablePropertyMap` with `PlaneRange::iterator::value_type`
+                        as key type and `geom_traits::Plane_3` as value type}
+        \cgalParamDefault{`CGAL::Identity_property_map<Kernel::Plane_3>`}
+      \cgalParamNEnd
+
+      \cgalParamNBegin{attraction_factor}
+        \cgalParamDescription{multiple of a tolerance `epsilon` used to connect simplices}
+        \cgalParamType{floating scalar value}
+        \cgalParamDefault{`3`}
+      \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
 */
@@ -1533,7 +1562,8 @@ structure_point_set (const PointRange& points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Geom_traits Kernel;
 
   Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
 
@@ -1543,27 +1573,8 @@ structure_point_set (const PointRange& points,
   return output;
 }
 
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange,
-          typename PlaneRange,
-          typename OutputIterator>
-OutputIterator
-structure_point_set (const PointRange& points, ///< range of points.
-                     const PlaneRange& planes, ///< range of planes.
-                     OutputIterator output, ///< output iterator where output points are written.
-                     double epsilon) ///< size parameter.
-{
-  return structure_point_set
-    (points, planes, output, epsilon,
-     CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
-
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
-

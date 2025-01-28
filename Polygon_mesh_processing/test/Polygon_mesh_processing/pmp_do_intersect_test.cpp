@@ -1,16 +1,16 @@
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include <CGAL/Timer.h>
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/intersection.h>
-
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
@@ -39,10 +39,8 @@ template<class Point>
 int load_polylines(std::ifstream& input,
                    std::vector<std::vector<Point> >& points)
 {
-  int counter = 0;
   std::size_t n;
   while(input >> n) {
-    ++counter;
     std::vector<Point> new_polyline;
     points.push_back(new_polyline);
     std::vector<Point>&polyline = points.back();
@@ -63,8 +61,8 @@ int load_polylines(std::ifstream& input,
 
 template <typename K>
 int
-test_faces_intersections(const char* filename1,
-                         const char* filename2,
+test_faces_intersections(const std::string filename1,
+                         const std::string filename2,
                          const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
@@ -92,8 +90,8 @@ test_faces_intersections(const char* filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_face_intersection(
         m1, m2,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default(),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values(),
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -117,8 +115,8 @@ test_faces_intersections(const char* filename1,
 
 template <typename K>
 int
-test_faces_polyline_intersections(const char* filename1,
-                                  const char* filename2,
+test_faces_polyline_intersections(const std::string filename1,
+                                  const std::string filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -150,7 +148,7 @@ test_faces_polyline_intersections(const char* filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_polyline_intersection(
         m, points,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -174,8 +172,8 @@ test_faces_polyline_intersections(const char* filename1,
 
 template <typename K>
 int
-test_faces_polylines_intersections(const char* filename1,
-                                  const char* filename2,
+test_faces_polylines_intersections(const std::string filename1,
+                                  const std::string filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -211,7 +209,7 @@ test_faces_polylines_intersections(const char* filename1,
         points,
         m,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -235,8 +233,8 @@ test_faces_polylines_intersections(const char* filename1,
 
 template <typename K>
 int
-test_polylines_polylines_intersections(const char* filename1,
-                                  const char* filename2,
+test_polylines_polylines_intersections(const std::string filename1,
+                                  const std::string filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -299,8 +297,8 @@ test_polylines_polylines_intersections(const char* filename1,
 
 template <typename K>
 int
-test_polylines_intersections(const char* filename1,
-                                  const char* filename2,
+test_polylines_intersections(const std::string filename1,
+                                  const std::string filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -359,7 +357,7 @@ test_polylines_intersections(const char* filename1,
 }
 
 template <typename K>
-int test_inter_in_range(const std::vector<const char*>& filenames, std::size_t expected, bool volume)
+int test_inter_in_range(const std::vector<std::string>& filenames, std::size_t expected, bool volume)
 {
   typedef typename K::Point_3                                    Point;
   typedef typename CGAL::Surface_mesh<Point>                     Mesh;
@@ -373,7 +371,7 @@ int test_inter_in_range(const std::vector<const char*>& filenames, std::size_t e
   }
   std::vector<std::pair<std::size_t, std::size_t> > output;
   CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output),
-    CGAL::Polygon_mesh_processing::parameters::do_overlap_test_of_bounded_sides(volume));
+    CGAL::parameters::do_overlap_test_of_bounded_sides(volume));
   std::cout << output.size() <<" pairs."<<std::endl;
   if(output.size() != expected)
     return 1;
@@ -384,17 +382,17 @@ int main()
 {
 
   bool expected = true;
-  const char* filename1 =  "data/tetra1.off";
-  const char* filename2 =  "data/tetra3.off";
-  const char* filename3 =  "data/triangle.polylines.txt";
-  const char* filename4 =  "data/planar.polylines.txt";
-  const char* filename5 =  "data/tetra3_inter.polylines.txt";
-  const char* filename6 =  "data/polylines_inter.polylines.txt";
-  const char* filename7 =  "data/tetra2.off";
-  const char* filename8 =  "data/tetra4.off";
-  const char* filename9 =  "data/small_spheres.off";
-  const char* filename10 = "data/hollow_sphere.off";
-  const char* filename11 = "data-coref/sphere.off";
+  const std::string filename1 =  "data/tetra1.off";
+  const std::string filename2 =  CGAL::data_file_path("meshes/reference_tetrahedron.off");
+  const std::string filename3 =  "data/triangle.polylines.txt";
+  const std::string filename4 =  "data/planar.polylines.txt";
+  const std::string filename5 =  "data/tetra3_inter.polylines.txt";
+  const std::string filename6 =  "data/polylines_inter.polylines.txt";
+  const std::string filename7 =  "data/tetra2.off";
+  const std::string filename8 =  "data/tetra4.off";
+  const std::string filename9 =  "data/small_spheres.off";
+  const std::string filename10 = "data/hollow_sphere.off";
+  const std::string filename11 = CGAL::data_file_path("meshes/sphere.off");
 
 
   std::cout << "First test (Epic):" << std::endl;
@@ -411,7 +409,7 @@ int main()
   std::cout << "Sixth test (Polyline Ranges):" << std::endl;
   r += test_polylines_polylines_intersections<Epic>(filename5, filename6, expected);
   std::cout << "Seventh test (number of intersecting meshes (surface) ):" << std::endl;
-  std::vector<const char*> names;
+  std::vector<std::string> names;
   names.push_back(filename1);
   names.push_back(filename2);
   names.push_back(filename7);

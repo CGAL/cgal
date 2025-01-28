@@ -2,15 +2,13 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Snap_Rounding
 \anchor chapterSnapRounding
 \cgalAutoToc
 \author Eli Packer
 
 \section Snap_rounding_2Introduction Introduction
-
-<span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
 
 Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
@@ -28,9 +26,9 @@ An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 
 \section Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
 
-Given a finite collection \f$ \S\f$ of segments in the plane, the
-arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
-into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
+Given a finite collection \f$ \Sc\f$ of segments in the plane, the
+arrangement of \f$ \Sc\f$ denoted \f$ \Ac(\Sc)\f$ is the subdivision of the plane
+into vertices, edges, and faces induced by \f$ \Sc\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
 the function `snap_rounding_2()` proceeds as follows. We tile the plane
@@ -39,7 +37,7 @@ with integer coordinates. A pixel is <I>hot</I> if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge \f$ e\f$ is
 replaced by the polygonal chain through the centers of the hot pixels
-met by \f$ e\f$, in the same order as they are met by \f$ e\f$. 
+met by \f$ e\f$, in the same order as they are met by \f$ e\f$.
 \cgalFigureRef{figsr1} demonstrates the results of SR.
 
 In a snap-rounded arrangement, the distance between a vertex and
@@ -130,8 +128,7 @@ Polyline number 4:
 The package is supplied with a graphical demo program that opens a window,
 allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
-(see `<CGAL_ROOT>/demo/Snap_rounding_2/demo.cpp`).
+(see `<CGAL_ROOT>/demo/Snap_rounding_2/Snap_rounding_2.cpp`).
 
-*/ 
+*/
 } /* namespace CGAL */
-

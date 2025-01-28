@@ -1,26 +1,11 @@
 // Copyright (c) 2014 Stefan Walk
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in
-// the Software without restriction, including without limitation the rights to
-// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-// of the Software, and to permit persons to whom the Software is furnished to do
-// so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: LicenseRef-RFL
+// License notice in Installation/LICENSE.RFL
 //
 // Author(s)     : Stefan Walk
 
@@ -44,22 +29,21 @@
 #include <numeric>
 #include <limits>
 #include <list>
+#include <CGAL/IO/binary_file_io.h>
 #include <boost/version.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#if BOOST_VERSION >= 104700
-#  include <boost/random/uniform_int_distribution.hpp>
-#else 
-#  include <boost/random/uniform_int.hpp>
-#endif
+#include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/normal_distribution.hpp>
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/vector.hpp>
+#endif
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/make_shared.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <iostream>
 #include <cstdio>
 
@@ -75,21 +59,14 @@ inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_cla
 {
 //    data.resize(n_samples);
 }
-typedef boost::unordered_set<int> FeatureSet;
+typedef std::unordered_set<int> FeatureSet;
 
-#if BOOST_VERSION >= 104700
 typedef boost::random::uniform_int_distribution<> UniformIntDist;
 typedef boost::random::normal_distribution<> NormalDist;
 typedef boost::random::mt19937 RandomGen;
 typedef boost::random::uniform_01<> UnitDist;
-#else 
-typedef boost::uniform_int<> UniformIntDist;
-typedef boost::normal_distribution<> NormalDist;
-typedef boost::uniform_01<> UnitDist;
-typedef boost::mt19937 RandomGen;
-#endif
 
-struct ForestParams { 
+struct ForestParams {
     size_t n_classes;
     size_t n_features;
     size_t n_samples;
@@ -108,6 +85,7 @@ struct ForestParams {
         min_samples_per_node(5),
         sample_reduction(0.368f)
     {}
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -119,6 +97,31 @@ struct ForestParams {
         ar & BOOST_SERIALIZATION_NVP(n_trees);
         ar & BOOST_SERIALIZATION_NVP(min_samples_per_node);
         ar & BOOST_SERIALIZATION_NVP(sample_reduction);
+    }
+#endif
+
+    void write (std::ostream& os)
+    {
+      I_Binary_write_size_t_into_uinteger32 (os, n_classes);
+      I_Binary_write_size_t_into_uinteger32 (os, n_features);
+      I_Binary_write_size_t_into_uinteger32 (os, n_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, n_in_bag_samples);
+      I_Binary_write_size_t_into_uinteger32 (os, max_depth);
+      I_Binary_write_size_t_into_uinteger32 (os, n_trees);
+      I_Binary_write_size_t_into_uinteger32 (os, min_samples_per_node);
+      I_Binary_write_float32 (os, sample_reduction);
+    }
+
+    void read (std::istream& is)
+    {
+      I_Binary_read_size_t_from_uinteger32 (is, n_classes);
+      I_Binary_read_size_t_from_uinteger32 (is, n_features);
+      I_Binary_read_size_t_from_uinteger32 (is, n_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, n_in_bag_samples);
+      I_Binary_read_size_t_from_uinteger32 (is, max_depth);
+      I_Binary_read_size_t_from_uinteger32 (is, n_trees);
+      I_Binary_read_size_t_from_uinteger32 (is, min_samples_per_node);
+      I_Binary_read_float32 (is, sample_reduction);
     }
 };
 
@@ -164,6 +167,7 @@ struct QuadraticSplitter {
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -171,6 +175,7 @@ struct QuadraticSplitter {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct LinearSplitter {
@@ -197,17 +202,19 @@ struct LinearSplitter {
         for (int i_sample = 0; i_sample < n_samples; ++i_sample) {
             int sample_idx    = sample_idxes[i_sample];
             int sample_class  = labels(sample_idx, 0);
-            FeatureType sample_fval = std::inner_product(w.begin(), w.end(), 
+            FeatureType sample_fval = std::inner_product(w.begin(), w.end(),
                                                    samples.row_pointer(sample_idx), 0.0f);
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct AxisAlignedSplitter {
@@ -216,8 +223,8 @@ struct AxisAlignedSplitter {
     int feature;
     FeatureType threshold;
     AxisAlignedSplitter() : feature(-1) {}
-    AxisAlignedSplitter(int feature) : 
-        feature(feature) 
+    AxisAlignedSplitter(int feature) :
+        feature(feature)
     {}
     void set_threshold(FeatureType new_threshold) {
         threshold = new_threshold;
@@ -234,7 +241,7 @@ struct AxisAlignedSplitter {
       std::size_t size = (std::min)(std::size_t(5000), std::size_t(n_samples));
       data_points.clear();
       data_points.reserve(size);
-      
+
       std::size_t step = n_samples / size;
 
       for (int i_sample = 0; i_sample < n_samples; i_sample += step) {
@@ -247,11 +254,25 @@ struct AxisAlignedSplitter {
         data_points.push_back(std::make_pair(sample_fval, sample_class));
       }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(feature);
         ar & BOOST_SERIALIZATION_NVP(threshold);
+    }
+#endif
+
+    void write (std::ostream& os)
+    {
+      os.write((char*)(&feature), sizeof(int));
+      os.write((char*)(&threshold), sizeof(FeatureType));
+    }
+
+    void read (std::istream& is)
+    {
+      is.read((char*)(&feature), sizeof(int));
+      is.read((char*)(&threshold), sizeof(FeatureType));
     }
 };
 
@@ -293,7 +314,7 @@ struct LinearSplitGenerator {
     typedef float FeatureType;
     size_t n_features;
     size_t n_proposals;
-    LinearSplitGenerator(size_t n_proposals = 5) : 
+    LinearSplitGenerator(size_t n_proposals = 5) :
         n_proposals(n_proposals)
     {}
     void init(DataView2D<FeatureType> samples,
@@ -322,7 +343,7 @@ struct QuadraticSplitGenerator {
     typedef float FeatureType;
     size_t n_features;
     size_t n_proposals;
-    QuadraticSplitGenerator(size_t n_proposals = 5) : 
+    QuadraticSplitGenerator(size_t n_proposals = 5) :
         n_proposals(n_proposals)
     {}
     void init(DataView2D<FeatureType> samples,
@@ -351,5 +372,5 @@ struct QuadraticSplitGenerator {
 }
 
 }} // namespace CGAL::internal::
-    
+
 #endif

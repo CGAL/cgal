@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -27,7 +18,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d_traits_3.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
@@ -80,7 +71,7 @@ template <class R_> struct Convex_hull_d_traits_3
       A[3] = *s;
       ++s;
       CGAL_assertion(s == e);
-	
+
       return orientation(A[0],A[1],A[2],A[3]);
     }
   };
@@ -90,53 +81,53 @@ template <class R_> struct Convex_hull_d_traits_3
   struct Affinely_independent_d {
     template <class I>
     bool operator()(I s, I e)
-    { 
+    {
       Point_d A[4];
       CGAL_assertion(s != e);
       A[0] = *s;
       ++s;
       if(s == e){
-	return true;
+        return true;
       }
       A[1] = *s;
       ++s;
       if (s == e){
-	return A[0] != A[1];
+        return A[0] != A[1];
       }
       A[2] = *s;
       ++s;
       if (s == e){
-	return ! collinear( A[0], A[1], A[2] );
+        return ! collinear( A[0], A[1], A[2] );
       }
       A[3] = *s;
       ++s;
       if (s == e){
-	return !coplanar( A[0], A[1], A[2], A[3] );
-      } 
+        return !coplanar( A[0], A[1], A[2], A[3] );
+      }
       return false;
     }
   };
 
 
-  Affinely_independent_d 
+  Affinely_independent_d
   affinely_independent_d_object() const
-  { 
-    return Affinely_independent_d(); 
+  {
+    return Affinely_independent_d();
   }
 
 
   struct Contained_in_simplex_d {
 
     template <class I>
-    bool 
+    bool
     operator()(I s, I e, const Point_d& p)
-    { 
+    {
       Point_d A[4];
       CGAL_assertion(s != e);
       A[0] = *s;
       ++s;
       if(s == e){
-	return A[0] == p;
+        return A[0] == p;
       }
       A[1] = *s;
       ++s;
@@ -160,28 +151,28 @@ template <class R_> struct Convex_hull_d_traits_3
     }
   };
 
-  Contained_in_simplex_d 
+  Contained_in_simplex_d
   contained_in_simplex_d_object() const
-  { 
-    return Contained_in_simplex_d(); 
+  {
+    return Contained_in_simplex_d();
   }
- 
+
   struct Contained_in_affine_hull_d {
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
-    { 
+    {
       CGAL_assertion_code( Affinely_independent_d affinely_independent; )
       CGAL_assertion( affinely_independent(s,e) );
       Point_d A[3];
       A[0] = *s;
       ++s;
       if(s == e){
-	return  p == A[0];
+        return  p == A[0];
       }
       A[1] = *s;
       ++s;
       if (s == e){
-	return collinear( p, A[0], A[1] );
+        return collinear( p, A[0], A[1] );
       }
       A[2] = *s;
       ++s;
@@ -193,10 +184,10 @@ template <class R_> struct Convex_hull_d_traits_3
   };
 
 
-  Contained_in_affine_hull_d 
+  Contained_in_affine_hull_d
   contained_in_affine_hull_d_object() const
-  { 
-    return Contained_in_affine_hull_d(); 
+  {
+    return Contained_in_affine_hull_d();
   }
 
 
@@ -241,31 +232,31 @@ template <class R_> struct Convex_hull_d_traits_3
 
   struct Construct_hyperplane_d {
     template <class I>
-    Hyperplane_d operator()(I s, I e, const Point_d& p, 
+    Hyperplane_d operator()(I s, I e, const Point_d& p,
                             Oriented_side side)
-    { 
+    {
       Hyperplane_d pl;
       Point_d A[3];
       A[0] = *s;
       ++s;
       if(s == e){
-	pl = Hyperplane_d( A[0], A[0] - p);
-      } else { 
-	A[1] = *s;
-	++s;
-	if(s == e){
-	  typename R_::Point_3 hp =
-	    A[0] + cross_product( p - A[0], A[1] - A[0] );
-	  pl = Hyperplane_d( A[0], A[1], hp );
-	} else {
-	  A[2] = *s;
-	  ++s;
-	  if(s == e){
-	    pl = Hyperplane_d( A[0], A[1], A[2] );
-	  } else {
-	    CGAL_error();
-	  }
-	}
+        pl = Hyperplane_d( A[0], A[0] - p);
+      } else {
+        A[1] = *s;
+        ++s;
+        if(s == e){
+          typename R_::Point_3 hp =
+            A[0] + cross_product( p - A[0], A[1] - A[0] );
+          pl = Hyperplane_d( A[0], A[1], hp );
+        } else {
+          A[2] = *s;
+          ++s;
+          if(s == e){
+            pl = Hyperplane_d( A[0], A[1], A[2] );
+          } else {
+            CGAL_error();
+          }
+        }
       }
       if (side != 0) {
         if ( pl.oriented_side(p) !=  side ) { pl = pl.opposite(); }
@@ -277,7 +268,7 @@ template <class R_> struct Convex_hull_d_traits_3
   { return Construct_hyperplane_d(); }
 
   typedef typename R::Intersect_3 Intersect_d;
-  Intersect_d intersect_d_object() const 
+  Intersect_d intersect_d_object() const
   { return Intersect_d(); }
 
 };

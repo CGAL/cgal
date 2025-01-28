@@ -9,6 +9,7 @@
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <cstdlib>
+#include <cassert>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -32,16 +33,15 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 const char* const filenames[] = {
-  "data/patches/patch-01.off",
-  "data/patches/patch-13.off",
-  "data/patches/patch-20.off",
-  "data/patches/patch-21.off",
-  "data/patches/patch-23.off",
-  "data/patches/patch-30.off",
+  "meshes/patch-01.off",
+  "meshes/patch-13.off",
+  "meshes/patch-20.off",
+  "meshes/patch-21.off",
+  "meshes/patch-23.off",
+  "meshes/patch-30.off"
 };
 
 const std::pair<int, int> incident_subdomains[] = {
@@ -63,13 +63,13 @@ int main()
 #endif
 
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
-  CGAL_assertion(sizeof(incident_subdomains) ==
-                 nb_patches * sizeof(std::pair<int, int>));
+  assert(sizeof(incident_subdomains) ==
+         nb_patches * sizeof(std::pair<int, int>));
   std::vector<Face_graph> patches(nb_patches);
   for(std::size_t i = 0; i < nb_patches; ++i) {
-    std::ifstream input(filenames[i]);
+    std::ifstream input(CGAL::data_file_path(filenames[i]));
     if(!(input >> patches[i])) {
-      std::cerr << "Error reading " << filenames[i] << " as a polyhedron!\n";
+      std::cerr << "Error reading " << CGAL::data_file_path(filenames[i]) << " as a polyhedron!\n";
       return EXIT_FAILURE;
     }
   }
@@ -93,9 +93,9 @@ int main()
   domain.detect_features(); //includes detection of borders
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 8,
-                         facet_angle = 25, facet_size = 8, facet_distance = 0.2,
-                         cell_radius_edge_ratio = 3, cell_size = 10);
+  Mesh_criteria criteria(params::edge_size(8).
+                                 facet_angle(25).facet_size(8).facet_distance(0.2).
+                                 cell_radius_edge_ratio(3).cell_size(10));
 
 #ifdef CGAL_MESHING_STEPS_WITH_CIN
   std::cout << "Ready for mesh generation ? (y or n)";
@@ -108,7 +108,8 @@ int main()
 
   //// Output
   //std::ofstream medit_file("out.mesh");
-  //c3t3.output_to_medit(medit_file);
+  //CGAL::IO::write_MEDIT(medit_file, c3t3);
+  //medit_file.close();
 
   return EXIT_SUCCESS;
 }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -47,7 +38,7 @@ public :
    */
     TextItem() {}
     /*!
-     * \brief The construtor for the TextItem
+     * \brief The constructor for the TextItem
      * \param p_x, p_y, p_z the coordinates of the TextItem.
      * \param p_text the text to render.
      * \param p_3D
@@ -61,12 +52,7 @@ public :
         :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
        _width = float(fm.horizontalAdvance(m_text)+2);
-#else
-       _width = float(fm.width(m_text)+2);
-#endif
-
        _height = float(fm.height());
     }
     //!\brief Accessor for the string
@@ -148,12 +134,12 @@ public:
     {
     }
     //!Draws all the `TextItem`s
-    void draw(CGAL::Three::Viewer_interface* viewer);
+    void draw(CGAL::Three::Viewer_interface* viewer, const QVector3D &scaler);
     //!\brief Adds a single TextItem to TextRenderer::local_textItems
     //!
     //! @see addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true,  QFont font = QFont(), QColor p_color = Qt::black)
     void addText(TextItem*);
-    //!\brief Creates a new TextItem in TextRenderer::local_textItems
+    //!\brief creates a new TextItem in TextRenderer::local_textItems
     //!
     //!This is a version of addText(TextItem*) that creates the TextItem on the fly.
     //! @see addText(TextItem*)
@@ -192,7 +178,7 @@ protected:
     QList<TextListItem*> textItems;
     //!\brief List of `TextItem`s
     //!
-    //! Usually fed by the viewer, it holds the text informations from the
+    //! Usually fed by the viewer, it holds the text information from the
     //! viewer that are displayed directly on the screen, like the fps,
     //! the distances, etc.
     QList<TextItem*> local_textItems;

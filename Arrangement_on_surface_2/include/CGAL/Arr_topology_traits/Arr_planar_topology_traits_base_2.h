@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -80,8 +71,8 @@ protected:
   Dcel m_dcel;                           // The DCEL.
 
   const Traits_adaptor_2* m_geom_traits; // The geometry-traits adaptor.
-  bool m_own_geom_traits;                // Inidicate whether we should
-                                         // evetually free the traits object.
+  bool m_own_geom_traits;                // Indicate whether we should
+                                         // eventually free the traits object.
 
   // Copy constructor and assignment operator - not supported.
   Arr_planar_topology_traits_base_2(const Self&);
@@ -91,20 +82,20 @@ public:
   ///! \name Construction methods.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs defaults. */
   Arr_planar_topology_traits_base_2() :
     m_own_geom_traits(true)
   { m_geom_traits = new Traits_adaptor_2; }
 
-  /*! Constructor with a geometry-traits class. */
+  /*! constructs with a geometry-traits class. */
   Arr_planar_topology_traits_base_2 (const Geometry_traits_2* geom_traits) :
     m_own_geom_traits(false)
   { m_geom_traits = static_cast<const Traits_adaptor_2*>(geom_traits); }
 
-  /*! Assign the contents of another topology-traits class. */
+  /*! assigns the contents of another topology-traits class. */
   void assign(const Self& other);
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_planar_topology_traits_base_2()
   {
     // Clear the DCEL.
@@ -115,18 +106,35 @@ public:
       m_geom_traits = nullptr;
     }
   }
+
   //@}
 
   ///! \name Common topology-traits methods.
   //@{
 
-  /*! Get the DCEL (const version). */
+  /*! obtains the DCEL (const version). */
   const Dcel& dcel() const { return m_dcel; }
 
-  /*! Get the DCEL (non-const version). */
+  /*! obtains the DCEL (non-const version). */
   Dcel& dcel() { return (m_dcel); }
 
-  /*! Receive a notification on the creation of a new boundary vertex that
+  /*! receives a notification on the creation of a new boundary vertex that
+   * corresponds to a given point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex*,
+                                          const Point_2& ,
+                                          Arr_parameter_space /* ps_x */,
+                                          Arr_parameter_space /* ps_y */)
+  {
+    // In the planar-topology traits this function should never be invoked:
+    return;
+  }
+
+  /*! receives a notification on the creation of a new boundary vertex that
    * corresponds to the given curve end.
    * \param v The new boundary vertex.
    * \param cv The x-monotone curve.
@@ -144,7 +152,7 @@ public:
     return;
   }
 
-  /*! Determines whether the function should decide on swapping the predecssor
+  /*! determines whether the function should decide on swapping the predecssor
    * halfedges that imply two ccb (and whose signs are given here).
    * If true, swap_predecessors will be correctly set. If false,
    * generic way of searching for lexicographically minimal point and checking
@@ -163,9 +171,8 @@ public:
     return false;
   }
 
-
-  /*! Given signs of two ccbs that show up when splitting upon insertion of
-   * curve into two, determine what happens to the face(s).
+  /*! given signs of two ccbs that show up when splitting upon insertion of
+   * curve into two, determines what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
    * \return A pair indicating whether the insertion will cause the face
@@ -183,7 +190,7 @@ public:
     return std::make_pair(true, true);
   }
 
-  /*! Determine whether the given point lies in the interior of the given face.
+  /*! determines whether the given point lies in the interior of the given face.
    * \param f The face.
    * \param p The query point.
    * \param v The vertex associated with p (if exists).
@@ -191,6 +198,7 @@ public:
    * \return Whether p is contained in f's interior.
    */
   bool is_in_face(const Face* f, const Point_2& p, const Vertex* v) const;
+
   //@}
 
   /// \name Additional accessors, specialized for this topology-traits class.
@@ -203,7 +211,7 @@ public:
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*! Compare the given vertex (which may lie at infinity) and the given point.
+  /*! compares the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -211,7 +219,7 @@ public:
   virtual Comparison_result compare_x(const Point_2& p,
                                       const Vertex* v) const = 0;
 
-  /*! Compare the given vertex (which may lie at infinity) and the given point.
+  /*! compares the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
@@ -219,7 +227,7 @@ public:
   virtual Comparison_result compare_xy(const Point_2& p,
                                        const Vertex* v) const = 0;
 
-  /*! Compare the relative y-position of the given point and the given edge
+  /*! compares the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
@@ -232,7 +240,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

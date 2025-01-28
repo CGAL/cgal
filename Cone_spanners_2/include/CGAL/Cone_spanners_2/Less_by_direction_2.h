@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Authors: Weisheng Si, Quincy Tse
@@ -31,7 +22,6 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/enum.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Aff_transformation_2.h>
 
 #include <boost/config.hpp>
@@ -47,11 +37,11 @@ namespace CGAL {
  *
  *  In this implementation, the ties are broken according to the direction of cw90(D).
  *  This way of breaking ties will prevent the overlapping of cone boundaries when this functor
- *  is used to construct Theta and Yao graphs in `CGAL::Construct_theta_graph_2` and 
+ *  is used to construct Theta and Yao graphs in `CGAL::Construct_theta_graph_2` and
  *  `CGAL::Construct_yao_graph_2`. Resultantly, the cw boundary of a cone will be considered inside this cone,
- *  while the ccw boundary not. On the other hand, if your application requires that 
- *  the ccw boundary of a cone belongs to this cone while the cw boundary not, 
- *  you can modify the code below to use the direction of ccw90(D) to break the ties. 
+ *  while the ccw boundary not. On the other hand, if your application requires that
+ *  the ccw boundary of a cone belongs to this cone while the cw boundary not,
+ *  you can modify the code below to use the direction of ccw90(D) to break the ties.
  *
  *  This function object utilizes the existing function `CGAL::compare_signed_distance_to_line_2()`,
  *  which orders two points according to their signed distance to a base line.
@@ -90,7 +80,7 @@ public:
         }
 
         /* otherwise, outcome == CGAL::EQUAL, ties will be broken by a second order
-         * according to the cw90(base_line) direction. 
+         * according to the cw90(base_line) direction.
          */
         // define a rotation of clockwise 90
         Transformation cw90(0, 1, -1,  0);

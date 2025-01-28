@@ -1,4 +1,5 @@
 #include <CGAL/Exact_spherical_kernel_3.h>
+#include <CGAL/iterator.h>
 
 typedef CGAL::Exact_spherical_kernel_3               SK;
 
@@ -11,29 +12,34 @@ int main(){
   //construct two circles lying on sphere s1
   SK::Circle_3 C1(s1,s2);
   SK::Circle_3 C2(s1,s3);
-  
+
   SK::Intersect_3 inter;
   //create a functor to compare theta-coordinates on sphere s1
   SK::Compare_theta_z_3 cmp(s1);
-  std::vector< CGAL::Object > intersections;
-  inter(C1,C2,std::back_inserter(intersections));
 
-  //unsigned integer indicates multiplicity of intersection point 
-  std::pair<SK::Circular_arc_point_3,unsigned> p1=
-    CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[0]);
-  std::pair<SK::Circular_arc_point_3,unsigned> p2=
-    CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[1]);
 
+
+  //unsigned integer indicates multiplicity of intersection point
+  typedef std::pair<SK::Circular_arc_point_3,unsigned> Point_and_multiplicity;
+
+  // only recover points
+  std::vector< Point_and_multiplicity > intersections;
+  inter(C1,C2,
+        CGAL::dispatch_or_drop_output<Point_and_multiplicity>(std::back_inserter(intersections)));
+
+
+  const Point_and_multiplicity& p1=intersections[0];
+  const Point_and_multiplicity& p2=intersections[1];
 
   SK::Circular_arc_point_3 t_extreme[2];
   //Compute theta extremal points of circle C1 on sphere s1
   CGAL::theta_extremal_points(C1,s1,t_extreme);
-  
+
   //The theta coordinates of theta extremal points of C1 enclose that of each intersection point.
   assert(cmp(t_extreme[0],p1.first)==CGAL::SMALLER);
   assert(cmp(t_extreme[0],p2.first)==CGAL::SMALLER);
   assert(cmp(t_extreme[1],p1.first)==CGAL::LARGER);
   assert(cmp(t_extreme[1],p2.first)==CGAL::LARGER);
-  
+
   return 0;
 }

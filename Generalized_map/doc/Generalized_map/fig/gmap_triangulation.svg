@@ -784,7 +784,7 @@ d="M 7879,3504 A 6128 6128  0  0  1  4544  3717 " />
 " style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
 fill:white;"/>
 <!-- Text -->
-<text xml:space="preserve" x="4570" y="4443" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_handle&#62;v2 = {Dart_of_cell_range&#60;0,2&#62;(dh4)}</text>
+<text xml:space="preserve" x="4570" y="4443" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_descriptor&#62;v2 = {Dart_of_cell_range&#60;0,2&#62;(dh4)}</text>
 <!-- Text -->
 <text xml:space="preserve" x="5028" y="4751" fill="#000000"  font-family="Times" font-style="italic" font-weight="normal" font-size="227" text-anchor="start">a in v1 U v2: gm.remove_cell&#60;1&#62;(a)</text>
 <!-- Text -->
@@ -800,7 +800,7 @@ fill:white;"/>
 <!-- Text -->
 <text xml:space="preserve" x="9987" y="2710" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh4</text>
 <!-- Text -->
-<text xml:space="preserve" x="4458" y="4140" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_handle&#62;v1 = {Dart_of_cell_range&#60;0,2&#62;(dh3)}</text>
+<text xml:space="preserve" x="4458" y="4140" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">Vector&#60;Dart_descriptor&#62;v1 = {Dart_of_cell_range&#60;0,2&#62;(dh3)}</text>
 <!-- Text -->
 <text xml:space="preserve" x="4792" y="4766" fill="#000000"  font-family="Times,Symbol" font-style="normal" font-weight="normal" font-size="265" text-anchor="start">&#8704;</text>
 <!-- Line -->

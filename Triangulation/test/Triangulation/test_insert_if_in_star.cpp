@@ -21,20 +21,20 @@ void test(const int d, const string & type, const int N)
 
   RTri rt(d);
   RTri rt_star_only(d);
-  cerr << "\nBuilding Regular triangulation of (" << type << d 
+  cerr << "\nBuilding Regular triangulation of (" << type << d
        << ") dimension with " << N << " points\n";
   assert(rt.empty());
   assert(rt_star_only.empty());
-  
-  srand(static_cast<unsigned int>(time(NULL)));
+
+  srand(static_cast<unsigned int>(time(nullptr)));
 
   // Insert first point (0, 0...)
   vector<double> coords(d);
   for( int j = 0; j < d; ++j )
     coords[j] = 0;
-  
+
   Weighted_point p = Weighted_point(
-    Bare_point(d, coords.begin(), coords.end()), 
+    Bare_point(d, coords.begin(), coords.end()),
     static_cast<double>(rand() % 10000)/100000);
 
   rt.insert(p);
@@ -45,9 +45,9 @@ void test(const int d, const string & type, const int N)
   {
     for( int j = 0; j < d; ++j )
       coords[j] = 10.*(rand() % RAND_MAX)/RAND_MAX - 5.;
-    
+
     p = Weighted_point(
-      Bare_point(d, coords.begin(), coords.end()), 
+      Bare_point(d, coords.begin(), coords.end()),
       static_cast<double>(rand() % 10000)/1000000);
 
     rt.insert(p);
@@ -57,10 +57,10 @@ void test(const int d, const string & type, const int N)
   cerr << "\nChecking topology and geometry..."
        << (rt.is_valid(true) ? "OK.\n" : "Error.\n");
 
-  cerr << "\nThe triangulation using 'insert' has current dimension " << rt.current_dimension() 
+  cerr << "\nThe triangulation using 'insert' has current dimension " << rt.current_dimension()
        << " and " << rt.number_of_full_cells() << " full cells\n";
-  
-  cerr << "\nThe triangulation using 'insert_if_in_star' has current dimension " << rt.current_dimension() 
+
+  cerr << "\nThe triangulation using 'insert_if_in_star' has current dimension " << rt.current_dimension()
        << " and " << rt_star_only.number_of_full_cells() << " full cells\n";
 
   // Export

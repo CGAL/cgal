@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -33,7 +24,7 @@ namespace CGAL {
 namespace Classification {
 
 namespace Feature {
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -55,7 +46,7 @@ namespace Feature {
     Its default name is "color_hue", "color_saturation" or
     "color_value", depending on which channel is chosen in the
     constructor.
-    
+
     \note The user only needs to provide a map to standard (and more common)
     RGB colors, the conversion to HSV is done internally.
 
@@ -65,7 +56,7 @@ namespace Feature {
     `ColorMap`.
     \tparam ColorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `CGAL::Color`.
+    is `CGAL::IO::Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
 class Color_channel : public Feature_base
@@ -81,15 +72,15 @@ public:
   };
 
 private:
-  
+
   const PointRange& input;
   ColorMap color_map;
   Channel m_channel;
-  
+
 public:
-  
+
   /*!
-    \brief Constructs a feature based on the given color channel.
+    \brief constructs a feature based on the given color channel.
 
     \param input point range.
     \param color_map property map to access the colors of the input points.
@@ -108,7 +99,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-    cpp11::array<double, 3> c = get(color_map, *(input.begin()+pt_index)).to_hsv();
+    std::array<double, 3> c = get(color_map, *(input.begin()+pt_index)).to_hsv();
     return float(c[std::size_t(m_channel)]);
   }
   /// \endcond

@@ -3,14 +3,14 @@
 \ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
-Concept to represent a system of polynomials on `FieldNumberType` 
-capable of storing equations of lines. 
+Concept to represent a system of polynomials on `FieldNumberType`
+capable of storing equations of lines.
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel CGAL::Polynomials_for_lines_3 
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polynomials_for_lines_3}
+\cgalHasModelsEnd
 
 \sa `AlgebraicKernelForSpheres`
 

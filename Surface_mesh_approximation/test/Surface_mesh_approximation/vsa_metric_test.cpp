@@ -46,7 +46,7 @@ struct Compact_metric_point_proxy {
     // fitting center
     Vector_3 center = CGAL::NULL_VECTOR;
     FT sum_areas = FT(0.0);
-    for(const face_descriptor f : faces) {
+    for(const face_descriptor& f : faces) {
       center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
       sum_areas += area_pmap[f];
     }
@@ -67,7 +67,7 @@ typedef CGAL::Variational_shape_approximation<
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/sphere.off");
+  std::ifstream input(CGAL::data_file_path("meshes/sphere.off"));
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -82,7 +82,7 @@ int main()
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 

@@ -1,0 +1,18 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \pspicture[](-2,-1)(2,2)
+  \arraxes(0,0)(-2,-1)(2,2)
+  \psplot[linecolor=blue,linewidth=0.5pt]{-1}{0.5}{x x mul 1 x sub div}\rput(0.22,0.4){$c_1$}
+  \psarc[linecolor=blue,linewidth=0.5pt](0,0.5){0.5}{180}{0}\rput(-0.3,-0.2){$c_2$}
+  %
+  \arrMainVertex(-0.5,0.5){1}%
+  \arrMainVertex(0.5,0.5){2}%
+  \arrMainVertex(-1,0.5){3}%
+  \arrEmptyVertex(0,0){3}%
+  %
+  \endpspicture
+}
+\end{document}

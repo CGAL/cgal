@@ -1,17 +1,17 @@
-#option :
+#options:
 # GIT_REPO the path to the Git repository, default is the current working directory
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
 # VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
-# CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ... 
+# CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ...
 #   Must be followed by -beta<beta_number> if the release is a beta.
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.1...3.15)
-
+cmake_minimum_required(VERSION 3.12...3.29)
+find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
     message(STATUS "handling ${pkg}")
@@ -41,13 +41,8 @@ function(process_package pkg)
       if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
         file(READ "${pkg_dir}/${f}" file_content)
         string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
-        if(EXISTS ${GIT_REPO}/.git)
-          execute_process(
-            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
-            RESULT_VARIABLE RESULT_VAR
-            OUTPUT_VARIABLE OUT_VAR
-            )
-          string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}" file_content "${file_content}")
+        if(GIT_HASH)
+          string(REPLACE "$Id$" "$Id: ${f} ${GIT_HASH} $" file_content "${file_content}")
         else()
           string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content "${file_content}")
         endif()
@@ -74,19 +69,28 @@ if (NOT GIT_REPO)
   set(GIT_REPO ${CMAKE_BINARY_DIR})
 endif()
 
+if(EXISTS ${GIT_REPO}/.git)
+  execute_process(
+    COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h"
+    RESULT_VARIABLE RESULT_VAR
+    OUTPUT_VARIABLE GIT_HASH
+    )
+  string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}$" file_content "${file_content}")
+endif()
+
 if (NOT EXISTS ${GIT_REPO}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
 endif()
 
 file(READ "${GIT_REPO}/Installation/include/CGAL/version.h" version_file_content)
-string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
+string(REGEX MATCH "define CGAL_VERSION ([^\n]*)\n" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
   set(CGAL_VERSION_INPUT "${CMAKE_MATCH_1}")
   if (NOT CGAL_VERSION)
     set(CGAL_VERSION "${CGAL_VERSION_INPUT}")
   endif()
-  set (GITHUB_PREFIX "https://github.com/CGAL/cgal/blob/releases/CGAL-${CGAL_VERSION}")
+  set (GITHUB_PREFIX "https://github.com/CGAL/cgal/blob/v${CGAL_VERSION}")
 else()
   message(FATAL_ERROR "Cannot extract CGAL version number.")
 endif()
@@ -154,6 +158,18 @@ foreach(pkg ${files})
     process_package(${pkg})
   endif()
 endforeach()
+if(EXISTS ${GIT_REPO}/Maintenance/release_building/public_release_name)
+  file(COPY "${GIT_REPO}/Maintenance/release_building/public_release_name"
+    DESTINATION "${release_dir}/doc")
+endif()
+file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/icons
+  DESTINATION "${release_dir}/cmake/modules/demo")
+
+#copy data
+file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
+
+#copy LICENSES files
+file(COPY ${GIT_REPO}/LICENSES DESTINATION "${release_dir}/" PATTERN "GPL-2.0-only.txt" EXCLUDE)
 
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
@@ -167,21 +183,32 @@ if(EXISTS ${GIT_REPO}/.git)
     RESULT_VARIABLE RESULT_VAR
     OUTPUT_VARIABLE OUT_VAR
     )
-  string(REPLACE "CGAL_GIT_HASH abcdef\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
+  string(REGEX REPLACE "CGAL_GIT_HASH [^\n]*\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
 endif()
 #  update CGAL_RELEASE_DATE
 string(TIMESTAMP TODAY "%Y%m%d")
-string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
+string(TIMESTAMP TODAY_FOR_MANPAGES "%B %Y")
+string(REGEX REPLACE "CGAL_RELEASE_DATE [^\n]*" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
 #  update CGAL_VERSION
 string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION}" file_content "${file_content}")
 #  update CGAL_VERSION_NR
 if (CGAL_VERSION_NR)
   string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
+  math(EXPR CGAL_BUILD_VERSION "${CGAL_VERSION_NR} % 10000")
+  file(WRITE ${release_dir}/lib/cmake/CGAL/CGALConfigBuildVersion.cmake "set(CGAL_BUILD_VERSION ${CGAL_BUILD_VERSION})")
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
 
-# make an extra copy of examples and demos for the testsuite and generate
-# create_cgal_test_with_cmake for tests, demos, and examples
+# Equivalent to
+#    # Patch the date and CGAL version in man(1) pages
+#    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
+set(DATE ${TODAY_FOR_MANPAGES})
+file(GLOB MANPAGES RELATIVE "${GIT_REPO}/Installation" "${GIT_REPO}/Installation/auxiliary/*.1")
+foreach(manpage ${MANPAGES})
+  configure_file(${GIT_REPO}/Installation/${manpage} ${release_dir}/${manpage} @ONLY)
+endforeach()
+
+# make an extra copy of examples and demos for the testsuite
 if (TESTSUITE)
   SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from master:%n")
   execute_process(
@@ -200,23 +227,6 @@ if (TESTSUITE)
 #append result in .scm-branch
   file(APPEND ${release_dir}/.scm-branch "${OUT_VAR}")
 
-  file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
-  foreach(d ${tests})
-    if(IS_DIRECTORY "${release_dir}/test/${d}")
-      if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}")
-        endif()
-      endif()
-    endif()
-  endforeach()
-
   file(MAKE_DIRECTORY "${release_dir}/tmp")
   #copy demo/PKG to test/PKG_Demo
   file(GLOB demos RELATIVE "${release_dir}/demo" "${release_dir}/demo/*")
@@ -229,17 +239,6 @@ if (TESTSUITE)
         #do the copy in 2 pass since we cannot specify the target name
         file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/tmp")
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
-        if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
-          execute_process(
-            COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
-            WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
-            RESULT_VARIABLE RESULT_VAR
-            OUTPUT_VARIABLE OUT_VAR
-          )
-          if(NOT "${RESULT_VAR}" STREQUAL "0")
-            message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Demo")
-          endif()
-        endif()
       endif()
     endif()
   endforeach()
@@ -250,17 +249,6 @@ if (TESTSUITE)
       #do the copy in 2 pass since we cannot specify the target name
       file(COPY "${release_dir}/examples/${d}" DESTINATION "${release_dir}/tmp")
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
-      if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
-        execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
-          WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
-          RESULT_VARIABLE RESULT_VAR
-          OUTPUT_VARIABLE OUT_VAR
-        )
-        if(NOT "${RESULT_VAR}" STREQUAL "0")
-          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Examples")
-        endif()
-      endif()
     endif()
   endforeach()
   file(REMOVE_RECURSE "${release_dir}/tmp")
@@ -278,6 +266,7 @@ file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
   file(REMOVE_RECURSE ${release_dir}/test)
+  file(REMOVE_RECURSE ${release_dir}/data/test)
   file(REMOVE_RECURSE ${release_dir}/package_info)
   file(REMOVE_RECURSE ${release_dir}/developer_scripts)
   file(REMOVE_RECURSE ${release_dir}/doc)
@@ -304,7 +293,7 @@ if (GENERATE_TARBALLS)
 
   #create examples+demos
   execute_process(
-  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/data CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE OUT_VAR
   )
@@ -318,6 +307,7 @@ if (GENERATE_TARBALLS)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
   endif()
+  file(REMOVE_RECURSE ${release_dir}/data)
   file(REMOVE_RECURSE ${release_dir}/demo)
   file(REMOVE_RECURSE ${release_dir}/examples)
   file(REMOVE_RECURSE ${release_dir}/scripts)

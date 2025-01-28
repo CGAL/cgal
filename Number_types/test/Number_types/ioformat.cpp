@@ -30,9 +30,7 @@
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
 
-#ifdef CGAL_USE_LONG_LONG
-#  include <CGAL/long_long.h>
-#endif
+#include <CGAL/long_long.h>
 
 #include <CGAL/Number_type_checker.h>
 #include <cassert>
@@ -51,10 +49,10 @@ void test_it(const char* N, int value)
   NT tmp2(0), tmp1 = static_cast<NT>(value);
 
   std::ostringstream os;
-  os << ::CGAL::oformat(tmp1);
+  os << ::CGAL::IO::oformat(tmp1);
   std::cout << os.str() << std::endl;
   std::istringstream is(os.str());
-  is >> ::CGAL::iformat(tmp2);
+  is >> ::CGAL::IO::iformat(tmp2);
   assert( tmp1 == tmp2 );
 }
 
@@ -77,10 +75,8 @@ int main()
   // test_it<unsigned int>("unsigned int");
   // test_it<unsigned long int>("unsigned long int");
   // test_it<unsigned short int>("unsigned short int");
-#ifdef CGAL_USE_LONG_LONG
   test_it<long long>("long long");
   // test_it<unsigned long long>("unsigned long long");
-#endif
   test_it<float>("float");
   test_it<double>("double");
   test_it<long double>("long double");
@@ -110,7 +106,6 @@ int main()
 
   // CORE
 #ifdef CGAL_USE_CORE
-  CGAL_static_assertion(CGAL::Output_rep<CORE::BigRat>::is_specialized == true);
   //bug in io for CORE.
   test_it<CORE::BigInt>("CORE::BigInt");
   test_it<CORE::BigRat>("CORE::BigRat");
@@ -120,7 +115,7 @@ int main()
 
   // LEDA based NTs
 #ifdef CGAL_USE_LEDA
-  CGAL_static_assertion(CGAL::Output_rep<leda_rational>::is_specialized == true);
+  static_assert(CGAL::Output_rep<leda_rational>::is_specialized == true);
   test_it<leda_integer>("leda_integer");
   test_it<leda_rational>("leda_rational");
   test_it<leda_bigfloat>("leda_bigfloat");
