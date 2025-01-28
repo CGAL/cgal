@@ -132,11 +132,12 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr
 SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron,
                                        ControllerSPtr controller,
                                        const std::list<CGAL::FT>& save_offsets,
-                                       const std::filesystem::path& save_path) {
-    polyhedron_ = polyhedron;
-    controller_ = controller;
-    save_offsets_ = save_offsets;
-    save_path_ = save_path;
+                                       const std::filesystem::path& save_path)
+    : polyhedron_(polyhedron),
+      controller_(controller),
+      save_offsets_(save_offsets),
+      save_path_(save_path)
+{
     skel_result_ = StraightSkeleton::create();
 #ifndef CGAL_SS3_NO_SKELETON_DS
     skel_result_->setPolyhedron(polyhedron);
