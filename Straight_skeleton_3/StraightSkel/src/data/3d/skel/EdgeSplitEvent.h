@@ -36,6 +36,8 @@ public:
     void setEdge1(EdgeSPtr edge1);
     EdgeSPtr getEdge2() const;
     void setEdge2(EdgeSPtr edge2);
+    int getEdgeOrientation() const;
+    void setEdgeOrientation(int edge_orientation);
     void setHighlight(bool highlight);
     std::string toString() const override;
 protected:
@@ -43,6 +45,7 @@ protected:
     NodeSPtr node_;
     EdgeSPtr edge1_;
     EdgeSPtr edge2_;
+    int edge_orientation_;
 };
 
 } } }

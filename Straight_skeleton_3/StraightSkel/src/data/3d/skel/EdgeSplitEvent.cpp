@@ -78,6 +78,14 @@ void EdgeSplitEvent::setEdge2(EdgeSPtr edge2) {
     this->edge2_ = edge2;
 }
 
+int EdgeSplitEvent::getEdgeOrientation() const {
+    return edge_orientation_;
+}
+
+void EdgeSplitEvent::setEdgeOrientation(int edge_orientation) {
+    this->edge_orientation_ = edge_orientation;
+}
+
 void EdgeSplitEvent::setHighlight(bool highlight) {
     if (!edge1_->hasData()) {
         SkelEdgeData::create(edge1_);

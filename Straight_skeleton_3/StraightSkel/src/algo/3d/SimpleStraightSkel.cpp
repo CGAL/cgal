@@ -3576,6 +3576,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
             node->setPoint(point);
             event->setEdge1(edge_1);
             event->setEdge2(edge_2);
+            event->setEdgeOrientation(KernelWrapper::orientation(line(edge_1), line(edge_2)));
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
             SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
@@ -5453,8 +5454,7 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
         edges[i] = Edge::create(vertices[i], vertices[(i+1)%4]);
         polyhedron->addEdge(edges[i]);
     }
-    if (KernelWrapper::orientation(line(event->getEdge1()),
-            line(event->getEdge2())) > 0) {
+    if (event->getEdgeOrientation() > 0) {
         edges[0]->setFacetL(edge_2->getFacetR());
         edges[0]->setFacetR(edge_1->getFacetR());
         edges[1]->setFacetL(edge_2->getFacetL());
