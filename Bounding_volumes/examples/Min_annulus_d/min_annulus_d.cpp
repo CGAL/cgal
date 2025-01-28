@@ -27,7 +27,7 @@ int main()
 {
   // points on the squares [-1,1]^2 and [-2,2]^2
   std::array<Point, 8> P = { Point(-1,-1), Point(-1,1), Point(1,-1), Point(1,1),
-                 Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
+  Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
 
   Min_annulus ma(P.begin(), P.end());
   assert (ma.is_valid());

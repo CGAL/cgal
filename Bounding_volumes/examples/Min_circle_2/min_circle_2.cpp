@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <array>
+
 typedef  CGAL::Simple_cartesian<double>                   K;
 typedef  CGAL::Min_sphere_of_points_d_traits_2<K,double>  Traits;
 typedef  CGAL::Min_sphere_of_spheres_d<Traits>            Min_circle;
