@@ -30,6 +30,8 @@
 
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 // #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+
 #define CGAL_SS3_NO_CACHING
 
 #ifdef DEBUG
@@ -607,6 +609,11 @@ bool SimpleStraightSkel::run() {
 
         db::_3d::OBJFile::save("results/init_post.obj", polyhedron, false /*do not triangulate*/);
 
+        PQ queue;
+#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+        collectEvents(polyhedron, offset, queue);
+#endif
+
         for(;;) {
             static int event_id = 0;
 
@@ -637,7 +644,7 @@ bool SimpleStraightSkel::run() {
             // @debug -
 
 #ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-            PQ queue;
+            queue = PQ();
             collectEvents(polyhedron, offset, queue);
 #endif
 
