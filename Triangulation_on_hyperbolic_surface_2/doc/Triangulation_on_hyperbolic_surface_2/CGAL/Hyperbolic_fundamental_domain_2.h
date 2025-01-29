@@ -63,8 +63,7 @@ public:
   std::size_t paired_side(std::size_t i) const;
 
   /*!
-       returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
-       \f$, where \f$ A \f$ is the i-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
+       returns the isometry that maps the side paired to side \f$ i \f$ to side \f$ i \f$.
 
        \pre <code> is_valid() </code>
   */
