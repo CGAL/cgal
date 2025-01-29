@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 project( Triangulation_on_hyperbolic_surface_2_Demo )
 
