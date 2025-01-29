@@ -193,70 +193,70 @@ AbstractEventSPtr EventDAO::find(int skelid, int eventid) {
                 node = dao_node->find(skelid, nid);
             }
             if (etype == AbstractEvent::CONST_OFFSET_EVENT) {
-                result = data::_3d::skel::ConstOffsetEvent::create(nullptr);
+                result = data::_3d::skel::ConstOffsetEvent::create();
             } else if (etype == AbstractEvent::EDGE_EVENT) {
                 data::_3d::skel::EdgeEventSPtr event =
-                        data::_3d::skel::EdgeEvent::create(nullptr);
+                        data::_3d::skel::EdgeEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::EDGE_MERGE_EVENT) {
                 data::_3d::skel::EdgeMergeEventSPtr event =
-                        data::_3d::skel::EdgeMergeEvent::create(nullptr);
+                        data::_3d::skel::EdgeMergeEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::TRIANGLE_EVENT) {
                 data::_3d::skel::TriangleEventSPtr event =
-                        data::_3d::skel::TriangleEvent::create(nullptr);
+                        data::_3d::skel::TriangleEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::DBL_EDGE_MERGE_EVENT) {
                 data::_3d::skel::DblEdgeMergeEventSPtr event =
-                        data::_3d::skel::DblEdgeMergeEvent::create(nullptr);
+                        data::_3d::skel::DblEdgeMergeEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::DBL_TRIANGLE_EVENT) {
                 data::_3d::skel::DblTriangleEventSPtr event =
-                        data::_3d::skel::DblTriangleEvent::create(nullptr);
+                        data::_3d::skel::DblTriangleEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::TETRAHEDRON_EVENT) {
                 data::_3d::skel::TetrahedronEventSPtr event =
-                        data::_3d::skel::TetrahedronEvent::create(nullptr);
+                        data::_3d::skel::TetrahedronEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::VERTEX_EVENT) {
                 data::_3d::skel::VertexEventSPtr event =
-                        data::_3d::skel::VertexEvent::create(nullptr);
+                        data::_3d::skel::VertexEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::FLIP_VERTEX_EVENT) {
                 data::_3d::skel::FlipVertexEventSPtr event =
-                        data::_3d::skel::FlipVertexEvent::create(nullptr);
+                        data::_3d::skel::FlipVertexEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::SURFACE_EVENT) {
                 data::_3d::skel::SurfaceEventSPtr event =
-                        data::_3d::skel::SurfaceEvent::create(nullptr);
+                        data::_3d::skel::SurfaceEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::POLYHEDRON_SPLIT_EVENT) {
                 data::_3d::skel::PolyhedronSplitEventSPtr event =
-                        data::_3d::skel::PolyhedronSplitEvent::create(nullptr);
+                        data::_3d::skel::PolyhedronSplitEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::SPLIT_MERGE_EVENT) {
                 data::_3d::skel::SplitMergeEventSPtr event =
-                        data::_3d::skel::SplitMergeEvent::create(nullptr);
+                        data::_3d::skel::SplitMergeEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::EDGE_SPLIT_EVENT) {
                 data::_3d::skel::EdgeSplitEventSPtr event =
-                        data::_3d::skel::EdgeSplitEvent::create(nullptr);
+                        data::_3d::skel::EdgeSplitEvent::create();
                 event->setNode(node);
                 result = event;
             } else if (etype == AbstractEvent::PIERCE_EVENT) {
                 data::_3d::skel::PierceEventSPtr event =
-                        data::_3d::skel::PierceEvent::create(nullptr);
+                        data::_3d::skel::PierceEvent::create();
                 event->setNode(node);
                 result = event;
             } else {

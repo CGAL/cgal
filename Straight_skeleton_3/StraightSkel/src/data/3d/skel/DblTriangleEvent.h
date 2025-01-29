@@ -27,7 +27,7 @@ namespace data { namespace _3d { namespace skel {
 class DblTriangleEvent : public AbstractEvent {
 public:
     virtual ~DblTriangleEvent();
-    static DblTriangleEventSPtr create(PolyhedronSPtr polyhedron);
+    static DblTriangleEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -36,10 +36,12 @@ public:
     void getVertices(VertexSPtr out[4]) const;
     void getEdges(EdgeSPtr out[5]) const;
     void setHighlight(bool highlight);
+    std::string toString() const override;
+    bool isValid() const override;
 protected:
-    DblTriangleEvent(PolyhedronSPtr polyhedron);
+    DblTriangleEvent();
     NodeSPtr node_;
-    EdgeSPtr edge_;
+    EdgeWPtr edge_;
 };
 
 } } }

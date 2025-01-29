@@ -31,7 +31,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-PierceEvent::PierceEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+PierceEvent::PierceEvent() {
     type_ = AbstractEvent::PIERCE_EVENT;
 }
 
@@ -40,8 +40,8 @@ PierceEvent::~PierceEvent() {
     facet_.reset();
 }
 
-PierceEventSPtr PierceEvent::create(PolyhedronSPtr polyhedron) {
-    PierceEventSPtr result = PierceEventSPtr(new PierceEvent(polyhedron));
+PierceEventSPtr PierceEvent::create() {
+    PierceEventSPtr result = PierceEventSPtr(new PierceEvent());
     return result;
 }
 
@@ -63,8 +63,8 @@ CGAL::FT PierceEvent::getOffset() const {
 }
 
 FacetSPtr PierceEvent::getFacet() const {
-    DEBUG_SPTR(facet_);
-    return facet_;
+    DEBUG_WPTR(facet_);
+    return facet_.lock();
 }
 
 void PierceEvent::setFacet(FacetSPtr facet) {
@@ -72,8 +72,8 @@ void PierceEvent::setFacet(FacetSPtr facet) {
 }
 
 VertexSPtr PierceEvent::getVertex() const {
-    DEBUG_SPTR(vertex_);
-    return vertex_;
+    DEBUG_WPTR(vertex_);
+    return vertex_.lock();
 }
 
 void PierceEvent::setVertex(VertexSPtr vertex) {
@@ -81,16 +81,19 @@ void PierceEvent::setVertex(VertexSPtr vertex) {
 }
 
 void PierceEvent::setHighlight(bool highlight) {
-    if (!vertex_->hasData()) {
-        SkelVertexData::create(vertex_);
+    FacetSPtr facet = getFacet();
+    VertexSPtr vertex = getVertex();
+
+    if (!vertex->hasData()) {
+        SkelVertexData::create(vertex);
     }
-    vertex_->getData()->setHighlight(highlight);
-    if (!facet_->hasData()) {
-        SkelFacetData::create(facet_);
+    vertex->getData()->setHighlight(highlight);
+    if (!facet->hasData()) {
+        SkelFacetData::create(facet);
     }
-    facet_->getData()->setHighlight(highlight);
-    std::list<EdgeSPtr>::iterator it_e = facet_->edges().begin();
-    while (it_e != facet_->edges().end()) {
+    facet->getData()->setHighlight(highlight);
+    std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+    while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
         if (!edge->hasData()) {
             SkelEdgeData::create(edge);
@@ -100,13 +103,21 @@ void PierceEvent::setHighlight(bool highlight) {
 }
 
 std::string PierceEvent::toString() const {
+    FacetSPtr facet = getFacet();
+    VertexSPtr vertex = getVertex();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "PierceEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(vertex=" << getVertex()->getID() << ", face=" << getFacet()->getID() << ")";
+    sstr << "\t(vertex=" << vertex->getID() << ", face=" << facet->getID() << ")";
     return sstr.str();
+}
+
+bool PierceEvent::isValid() const {
+    return node_ && !facet_.expired() && !vertex_.expired();
 }
 
 } } }

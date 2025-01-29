@@ -28,7 +28,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-SurfaceEvent::SurfaceEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+SurfaceEvent::SurfaceEvent() {
     type_ = AbstractEvent::SURFACE_EVENT;
 }
 
@@ -38,8 +38,8 @@ SurfaceEvent::~SurfaceEvent() {
     edge2_.reset();
 }
 
-SurfaceEventSPtr SurfaceEvent::create(PolyhedronSPtr polyhedron) {
-    SurfaceEventSPtr result = SurfaceEventSPtr(new SurfaceEvent(polyhedron));
+SurfaceEventSPtr SurfaceEvent::create() {
+    SurfaceEventSPtr result = SurfaceEventSPtr(new SurfaceEvent());
     return result;
 }
 
@@ -61,8 +61,8 @@ CGAL::FT SurfaceEvent::getOffset() const {
 }
 
 EdgeSPtr SurfaceEvent::getEdge1() const {
-    DEBUG_SPTR(edge1_);
-    return edge1_;
+    DEBUG_WPTR(edge1_);
+    return edge1_.lock();
 }
 
 void SurfaceEvent::setEdge1(EdgeSPtr edge1) {
@@ -70,8 +70,8 @@ void SurfaceEvent::setEdge1(EdgeSPtr edge1) {
 }
 
 EdgeSPtr SurfaceEvent::getEdge2() const {
-    DEBUG_SPTR(edge2_);
-    return edge2_;
+    DEBUG_WPTR(edge2_);
+    return edge2_.lock();
 }
 
 void SurfaceEvent::setEdge2(EdgeSPtr edge2) {
@@ -79,28 +79,39 @@ void SurfaceEvent::setEdge2(EdgeSPtr edge2) {
 }
 
 void SurfaceEvent::setHighlight(bool highlight) {
-    if (!edge1_->hasData()) {
-        SkelEdgeData::create(edge1_);
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
+    if (!edge1->hasData()) {
+        SkelEdgeData::create(edge1);
     }
-    edge1_->getData()->setHighlight(highlight);
-    if (!edge2_->hasData()) {
-        SkelEdgeData::create(edge2_);
+    edge1->getData()->setHighlight(highlight);
+    if (!edge2->hasData()) {
+        SkelEdgeData::create(edge2);
     }
-    edge2_->getData()->setHighlight(highlight);
+    edge2->getData()->setHighlight(highlight);
 }
 
 std::string SurfaceEvent::toString() const {
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "SurfaceEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(edgeA=" << getEdge1()->getID() << "\n\t\t[" << getEdge1()->getVertexSrc()->toString() << "\n\t\t "
-                                                            << getEdge1()->getVertexDst()->toString() << "]\n"
-         << "\t edgeB=" << getEdge2()->getID() << "\n\t\t[" << getEdge2()->getVertexSrc()->toString() << "\n\t\t "
-                                                            << getEdge2()->getVertexDst()->toString() << "])";
+    sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
+                                                       << edge1->getVertexDst()->toString() << "]\n"
+         << "\t edgeB=" << edge2->getID() << "\n\t\t[" << edge2->getVertexSrc()->toString() << "\n\t\t "
+                                                       << edge2->getVertexDst()->toString() << "])";
 
     return sstr.str();
+}
+
+bool SurfaceEvent::isValid() const {
+    return node_ && !edge1_.expired() && !edge2_.expired();
 }
 
 } } }

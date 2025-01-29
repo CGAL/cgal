@@ -30,7 +30,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-TriangleEvent::TriangleEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+TriangleEvent::TriangleEvent() {
     type_ = AbstractEvent::TRIANGLE_EVENT;
 }
 
@@ -38,8 +38,8 @@ TriangleEvent::~TriangleEvent() {
     node_.reset();
 }
 
-TriangleEventSPtr TriangleEvent::create(PolyhedronSPtr polyhedron) {
-    TriangleEventSPtr result = TriangleEventSPtr(new TriangleEvent(polyhedron));
+TriangleEventSPtr TriangleEvent::create() {
+    TriangleEventSPtr result = TriangleEventSPtr(new TriangleEvent());
     return result;
 }
 
@@ -61,9 +61,8 @@ CGAL::FT TriangleEvent::getOffset() const {
 }
 
 FacetSPtr TriangleEvent::getFacet() const {
-    FacetSPtr result = facet_;
-    DEBUG_SPTR(result);
-    return result;
+    DEBUG_WPTR(facet_);
+    return facet_.lock();
 }
 
 void TriangleEvent::setFacet(FacetSPtr facet) {
@@ -71,9 +70,8 @@ void TriangleEvent::setFacet(FacetSPtr facet) {
 }
 
 EdgeSPtr TriangleEvent::getEdgeBegin() const {
-    EdgeSPtr result = edge_begin_;
-    DEBUG_SPTR(result);
-    return result;
+    DEBUG_WPTR(edge_begin_);
+    return edge_begin_.lock();
 }
 
 void TriangleEvent::setEdgeBegin(EdgeSPtr edge_begin) {
@@ -81,21 +79,27 @@ void TriangleEvent::setEdgeBegin(EdgeSPtr edge_begin) {
 }
 
 void TriangleEvent::getVertices(VertexSPtr out[3]) const {
+    FacetSPtr facet = getFacet();
+    EdgeSPtr edge_begin = getEdgeBegin();
+
     for (unsigned int i = 0; i < 3; i++) {
         out[i] = VertexSPtr();
     }
-    out[0] = edge_begin_->src(facet_);
-    out[1] = edge_begin_->dst(facet_);
-    out[2] = edge_begin_->next(facet_)->dst(facet_);
+    out[0] = edge_begin->src(facet);
+    out[1] = edge_begin->dst(facet);
+    out[2] = edge_begin->next(facet)->dst(facet);
 }
 
 void TriangleEvent::getEdges(EdgeSPtr out[3]) const {
+    FacetSPtr facet = getFacet();
+    EdgeSPtr edge_begin = getEdgeBegin();
+
     for (unsigned int i = 0; i < 3; i++) {
         out[i] = EdgeSPtr();
     }
-    out[0] = edge_begin_;
-    out[1] = edge_begin_->next(facet_);
-    out[2] = edge_begin_->prev(facet_);
+    out[0] = edge_begin;
+    out[1] = edge_begin->next(facet);
+    out[2] = edge_begin->prev(facet);
 }
 
 void TriangleEvent::setHighlight(bool highlight) {
@@ -127,6 +131,7 @@ std::string TriangleEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "TriangleEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertices";
@@ -138,6 +143,10 @@ std::string TriangleEvent::toString() const {
         sstr << " " << edges[i]->getID();
     sstr << ")";
     return sstr.str();
+}
+
+bool TriangleEvent::isValid() const {
+    return node_ && !facet_.expired() && !edge_begin_.expired();
 }
 
 } } }

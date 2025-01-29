@@ -28,17 +28,17 @@
 
 namespace data { namespace _3d { namespace skel {
 
-EdgeEvent::EdgeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+EdgeEvent::EdgeEvent() {
     type_ = AbstractEvent::EDGE_EVENT;
 }
 
 EdgeEvent::~EdgeEvent() {
     node_.reset();
-    edge_.reset();
+    edge_.reset(); // @fixme is there still a point since edge_ is a weak pointer?
 }
 
-EdgeEventSPtr EdgeEvent::create(PolyhedronSPtr polyhedron) {
-    EdgeEventSPtr result = EdgeEventSPtr(new EdgeEvent(polyhedron));
+EdgeEventSPtr EdgeEvent::create() {
+    EdgeEventSPtr result = EdgeEventSPtr(new EdgeEvent());
     return result;
 }
 
@@ -60,8 +60,8 @@ CGAL::FT EdgeEvent::getOffset() const {
 }
 
 EdgeSPtr EdgeEvent::getEdge() const {
-    DEBUG_SPTR(edge_);
-    return edge_;
+    DEBUG_WPTR(edge_);
+    return edge_.lock();
 }
 
 void EdgeEvent::setEdge(EdgeSPtr edge) {
@@ -69,21 +69,29 @@ void EdgeEvent::setEdge(EdgeSPtr edge) {
 }
 
 void EdgeEvent::setHighlight(bool highlight) {
-    if (!edge_->hasData()) {
-        SkelEdgeData::create(edge_);
+    EdgeSPtr edge = getEdge();
+    if (!edge->hasData()) {
+        SkelEdgeData::create(edge);
     }
-    edge_->getData()->setHighlight(highlight);
+    edge->getData()->setHighlight(highlight);
 }
 
 std::string EdgeEvent::toString() const {
+    EdgeSPtr edge = getEdge();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "EdgeEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(edgeA=" << getEdge()->getID() << "\n\t\t[" << getEdge()->getVertexSrc()->toString() << "\n\t\t "
-                                                           << getEdge()->getVertexDst()->toString() << "])";
+    sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
+                                                      << edge->getVertexDst()->toString() << "])";
     return sstr.str();
+}
+
+bool EdgeEvent::isValid() const {
+    return node_ && !edge_.expired();
 }
 
 } } }

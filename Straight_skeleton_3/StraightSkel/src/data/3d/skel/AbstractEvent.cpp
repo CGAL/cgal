@@ -22,7 +22,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-AbstractEvent::AbstractEvent(PolyhedronSPtr polyhedron) : polyhedron_(polyhedron) {
+AbstractEvent::AbstractEvent() {
     id_ = -1;
 }
 
@@ -129,6 +129,10 @@ std::string AbstractEvent::toString() const {
     }
     sstr << "(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")";
     return sstr.str();
+}
+
+bool AbstractEvent::isValid() const {
+    return true;
 }
 
 } } }

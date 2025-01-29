@@ -27,7 +27,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-FlipVertexEvent::FlipVertexEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+FlipVertexEvent::FlipVertexEvent() {
     type_ = AbstractEvent::FLIP_VERTEX_EVENT;
 }
 
@@ -39,8 +39,8 @@ FlipVertexEvent::~FlipVertexEvent() {
     facet_2_.reset();
 }
 
-FlipVertexEventSPtr FlipVertexEvent::create(PolyhedronSPtr polyhedron) {
-    FlipVertexEventSPtr result = FlipVertexEventSPtr(new FlipVertexEvent(polyhedron));
+FlipVertexEventSPtr FlipVertexEvent::create() {
+    FlipVertexEventSPtr result = FlipVertexEventSPtr(new FlipVertexEvent());
     return result;
 }
 
@@ -62,8 +62,8 @@ CGAL::FT FlipVertexEvent::getOffset() const {
 }
 
 VertexSPtr FlipVertexEvent::getVertex1() const {
-    DEBUG_SPTR(vertex_1_);
-    return vertex_1_;
+    DEBUG_WPTR(vertex_1_);
+    return vertex_1_.lock();
 }
 
 void FlipVertexEvent::setVertex1(VertexSPtr vertex_1) {
@@ -71,8 +71,8 @@ void FlipVertexEvent::setVertex1(VertexSPtr vertex_1) {
 }
 
 VertexSPtr FlipVertexEvent::getVertex2() const {
-    DEBUG_SPTR(vertex_2_);
-    return vertex_2_;
+    DEBUG_WPTR(vertex_2_);
+    return vertex_2_.lock();
 }
 
 void FlipVertexEvent::setVertex2(VertexSPtr vertex_2) {
@@ -80,8 +80,8 @@ void FlipVertexEvent::setVertex2(VertexSPtr vertex_2) {
 }
 
 FacetSPtr FlipVertexEvent::getFacet1() const {
-    DEBUG_SPTR(facet_1_);
-    return facet_1_;
+    DEBUG_WPTR(facet_1_);
+    return facet_1_.lock();
 }
 
 void FlipVertexEvent::setFacet1(FacetSPtr facet_1) {
@@ -89,8 +89,8 @@ void FlipVertexEvent::setFacet1(FacetSPtr facet_1) {
 }
 
 FacetSPtr FlipVertexEvent::getFacet2() const {
-    DEBUG_SPTR(facet_2_);
-    return facet_2_;
+    DEBUG_WPTR(facet_2_);
+    return facet_2_.lock();
 }
 
 void FlipVertexEvent::setFacet2(FacetSPtr facet_2) {
@@ -98,24 +98,37 @@ void FlipVertexEvent::setFacet2(FacetSPtr facet_2) {
 }
 
 void FlipVertexEvent::setHighlight(bool highlight) {
-    if (!vertex_1_->hasData()) {
-        SkelVertexData::create(vertex_1_);
+    VertexSPtr vertex_1 = getVertex1();
+    VertexSPtr vertex_2 = getVertex2();
+
+    if (!vertex_1->hasData()) {
+        SkelVertexData::create(vertex_1);
     }
-    vertex_1_->getData()->setHighlight(highlight);
-    if (!vertex_2_->hasData()) {
-        SkelVertexData::create(vertex_2_);
+    vertex_1->getData()->setHighlight(highlight);
+    if (!vertex_2->hasData()) {
+        SkelVertexData::create(vertex_2);
     }
-    vertex_2_->getData()->setHighlight(highlight);
+    vertex_2->getData()->setHighlight(highlight);
 }
 
 std::string FlipVertexEvent::toString() const {
+    VertexSPtr vertex_1 = getVertex1();
+    VertexSPtr vertex_2 = getVertex2();
+    FacetSPtr facet_1 = getFacet1();
+    FacetSPtr facet_2 = getFacet2();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "FlipVertexEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
-    sstr << "\t(vertex A=" << getVertex1()->getID() << "; vertex B=" << getVertex2()->getID() << ")\n";
-    sstr << "\t(facet A=" << getFacet1()->getID() << "; facet B=" << getFacet2()->getID() << ")";
+    sstr << "\t(vertex A=" << vertex_1->getID() << "; vertex B=" << vertex_2->getID() << ")\n";
+    sstr << "\t(facet A=" << facet_1->getID() << "; facet B=" << facet_2->getID() << ")";
     return sstr.str();
+}
+
+bool FlipVertexEvent::isValid() const {
+    return node_ && !vertex_1_.expired() && !vertex_2_.expired() && !facet_1_.expired() && !facet_2_.expired();
 }
 
 } } }

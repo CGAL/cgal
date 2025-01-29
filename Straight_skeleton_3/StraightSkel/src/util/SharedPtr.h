@@ -18,6 +18,7 @@
 #define UTIL_SHAREDPTR_H
 
 #include "util/StackTrace.h"
+
 #include <iostream>
 #include <memory>
 

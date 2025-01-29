@@ -28,7 +28,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-EdgeMergeEvent::EdgeMergeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+EdgeMergeEvent::EdgeMergeEvent() {
     type_ = AbstractEvent::EDGE_MERGE_EVENT;
 }
 
@@ -39,8 +39,8 @@ EdgeMergeEvent::~EdgeMergeEvent() {
     edge2_.reset();
 }
 
-EdgeMergeEventSPtr EdgeMergeEvent::create(PolyhedronSPtr polyhedron) {
-    EdgeMergeEventSPtr result = EdgeMergeEventSPtr(new EdgeMergeEvent(polyhedron));
+EdgeMergeEventSPtr EdgeMergeEvent::create() {
+    EdgeMergeEventSPtr result = EdgeMergeEventSPtr(new EdgeMergeEvent());
     return result;
 }
 
@@ -62,8 +62,8 @@ CGAL::FT EdgeMergeEvent::getOffset() const {
 }
 
 FacetSPtr EdgeMergeEvent::getFacet() const {
-    DEBUG_SPTR(facet_);
-    return facet_;
+    DEBUG_WPTR(facet_);
+    return facet_.lock();
 }
 
 void EdgeMergeEvent::setFacet(FacetSPtr facet) {
@@ -71,8 +71,8 @@ void EdgeMergeEvent::setFacet(FacetSPtr facet) {
 }
 
 EdgeSPtr EdgeMergeEvent::getEdge1() const {
-    DEBUG_SPTR(edge1_);
-    return edge1_;
+    DEBUG_WPTR(edge1_);
+    return edge1_.lock();
 }
 
 void EdgeMergeEvent::setEdge1(EdgeSPtr edge1) {
@@ -80,8 +80,8 @@ void EdgeMergeEvent::setEdge1(EdgeSPtr edge1) {
 }
 
 EdgeSPtr EdgeMergeEvent::getEdge2() const {
-    DEBUG_SPTR(edge2_);
-    return edge2_;
+    DEBUG_WPTR(edge2_);
+    return edge2_.lock();
 }
 
 void EdgeMergeEvent::setEdge2(EdgeSPtr edge2) {
@@ -89,16 +89,20 @@ void EdgeMergeEvent::setEdge2(EdgeSPtr edge2) {
 }
 
 void EdgeMergeEvent::setHighlight(bool highlight) {
-    if (!edge1_->hasData()) {
-        SkelEdgeData::create(edge1_);
+    FacetSPtr facet = getFacet();
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
+    if (!edge1->hasData()) {
+        SkelEdgeData::create(edge1);
     }
-    edge1_->getData()->setHighlight(highlight);
-    if (!edge2_->hasData()) {
-        SkelEdgeData::create(edge2_);
+    edge1->getData()->setHighlight(highlight);
+    if (!edge2->hasData()) {
+        SkelEdgeData::create(edge2);
     }
-    edge2_->getData()->setHighlight(highlight);
-    EdgeSPtr edge_toremove_1 = edge1_->next(facet_);
-    EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet_);
+    edge2->getData()->setHighlight(highlight);
+    EdgeSPtr edge_toremove_1 = edge1->next(facet);
+    EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
     if (!edge_toremove_1->hasData()) {
         SkelEdgeData::create(edge_toremove_1);
     }
@@ -110,17 +114,26 @@ void EdgeMergeEvent::setHighlight(bool highlight) {
 }
 
 std::string EdgeMergeEvent::toString() const {
+    FacetSPtr facet = getFacet();
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "EdgeMergeEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(facet=" << getFacet()->getID() << "\n";
-    sstr << "\t(edgeA=" << getEdge1()->getID() << "\n\t\t[" << getEdge1()->getVertexSrc()->toString() << "\n\t\t "
-                                                            << getEdge1()->getVertexDst()->toString() << "])\n";
-    sstr << "\t(edgeB=" << getEdge2()->getID() << "\n\t\t[" << getEdge2()->getVertexSrc()->toString() << "\n\t\t "
-                                                            << getEdge2()->getVertexDst()->toString() << "])\n";
+    sstr << "\t(facet=" << facet->getID() << "\n";
+    sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
+                                                       << edge1->getVertexDst()->toString() << "])\n";
+    sstr << "\t(edgeB=" << edge2->getID() << "\n\t\t[" << edge2->getVertexSrc()->toString() << "\n\t\t "
+                                                       << edge2->getVertexDst()->toString() << "])\n";
     return sstr.str();
+}
+
+bool EdgeMergeEvent::isValid() const {
+    return node_ && !facet_.expired() && !edge1_.expired() && !edge2_.expired();
 }
 
 } } }

@@ -18,12 +18,12 @@
 
 namespace data { namespace _3d { namespace skel {
 
-SaveOffsetEvent::SaveOffsetEvent() : AbstractEvent(nullptr /*polyhedron*/) {
+SaveOffsetEvent::SaveOffsetEvent() {
     this->type_ = AbstractEvent::SAVE_OFFSET_EVENT;
     this->offset_ = -1.0;
 }
 
-SaveOffsetEvent::SaveOffsetEvent(CGAL::FT offset) : AbstractEvent(nullptr /*polyhedron*/) {
+SaveOffsetEvent::SaveOffsetEvent(CGAL::FT offset) {
     this->type_ = AbstractEvent::SAVE_OFFSET_EVENT;
     this->offset_ = offset;
 }

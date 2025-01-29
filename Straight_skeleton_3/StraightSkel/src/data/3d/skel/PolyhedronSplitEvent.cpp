@@ -28,7 +28,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-PolyhedronSplitEvent::PolyhedronSplitEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+PolyhedronSplitEvent::PolyhedronSplitEvent() {
     type_ = AbstractEvent::POLYHEDRON_SPLIT_EVENT;
 }
 
@@ -38,8 +38,8 @@ PolyhedronSplitEvent::~PolyhedronSplitEvent() {
     edge2_.reset();
 }
 
-PolyhedronSplitEventSPtr PolyhedronSplitEvent::create(PolyhedronSPtr polyhedron) {
-    PolyhedronSplitEventSPtr result = PolyhedronSplitEventSPtr(new PolyhedronSplitEvent(polyhedron));
+PolyhedronSplitEventSPtr PolyhedronSplitEvent::create() {
+    PolyhedronSplitEventSPtr result = PolyhedronSplitEventSPtr(new PolyhedronSplitEvent());
     return result;
 }
 
@@ -61,8 +61,8 @@ CGAL::FT PolyhedronSplitEvent::getOffset() const {
 }
 
 EdgeSPtr PolyhedronSplitEvent::getEdge1() const {
-    DEBUG_SPTR(edge1_);
-    return edge1_;
+    DEBUG_WPTR(edge1_);
+    return edge1_.lock();
 }
 
 void PolyhedronSplitEvent::setEdge1(EdgeSPtr edge1) {
@@ -70,8 +70,8 @@ void PolyhedronSplitEvent::setEdge1(EdgeSPtr edge1) {
 }
 
 EdgeSPtr PolyhedronSplitEvent::getEdge2() const {
-    DEBUG_SPTR(edge2_);
-    return edge2_;
+    DEBUG_WPTR(edge2_);
+    return edge2_.lock();
 }
 
 void PolyhedronSplitEvent::setEdge2(EdgeSPtr edge2) {
@@ -79,27 +79,38 @@ void PolyhedronSplitEvent::setEdge2(EdgeSPtr edge2) {
 }
 
 void PolyhedronSplitEvent::setHighlight(bool highlight) {
-    if (!edge1_->hasData()) {
-        SkelEdgeData::create(edge1_);
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
+    if (!edge1->hasData()) {
+        SkelEdgeData::create(edge1);
     }
-    edge1_->getData()->setHighlight(highlight);
-    if (!edge2_->hasData()) {
-        SkelEdgeData::create(edge2_);
+    edge1->getData()->setHighlight(highlight);
+    if (!edge2->hasData()) {
+        SkelEdgeData::create(edge2);
     }
-    edge2_->getData()->setHighlight(highlight);
+    edge2->getData()->setHighlight(highlight);
 }
 
 std::string PolyhedronSplitEvent::toString() const {
+    EdgeSPtr edge1 = getEdge1();
+    EdgeSPtr edge2 = getEdge2();
+
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "PolyhedronSplitEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(edgeA=" << getEdge1()->getID() << "[" << getEdge1()->getVertexSrc()->getID() << "-"
-                                                      << getEdge1()->getVertexDst()->getID() << "]"
-         << "; edgeB=" << getEdge2()->getID() << "[" << getEdge2()->getVertexSrc()->getID() << "-"
-                                                     << getEdge2()->getVertexDst()->getID() << "])";
+    sstr << "\t(edgeA=" << edge1->getID() << "[" << edge1->getVertexSrc()->getID() << "-"
+                                                 << edge1->getVertexDst()->getID() << "]"
+         << "; edgeB=" << edge2->getID() << "[" << edge2->getVertexSrc()->getID() << "-"
+                                                << edge2->getVertexDst()->getID() << "])";
     return sstr.str();
+}
+
+bool PolyhedronSplitEvent::isValid() const {
+    return node_ && !edge1_.expired() && !edge2_.expired();
 }
 
 } } }

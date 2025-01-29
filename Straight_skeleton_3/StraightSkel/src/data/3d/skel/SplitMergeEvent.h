@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class SplitMergeEvent : public AbstractEvent {
 public:
     virtual ~SplitMergeEvent();
-    static SplitMergeEventSPtr create(PolyhedronSPtr polyhedron);
+    static SplitMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -39,13 +39,15 @@ public:
     FacetSPtr getFacet2() const;
     void setFacet2(FacetSPtr facet_2);
     void setHighlight(bool highlight);
+    std::string toString() const override;
+    bool isValid() const override;
 protected:
-    SplitMergeEvent(PolyhedronSPtr polyhedron);
+    SplitMergeEvent();
     NodeSPtr node_;
-    VertexSPtr vertex_1_;
-    VertexSPtr vertex_2_;
-    FacetSPtr facet_1_;
-    FacetSPtr facet_2_;
+    VertexWPtr vertex_1_;
+    VertexWPtr vertex_2_;
+    FacetWPtr facet_1_;
+    FacetWPtr facet_2_;
 };
 
 } } }

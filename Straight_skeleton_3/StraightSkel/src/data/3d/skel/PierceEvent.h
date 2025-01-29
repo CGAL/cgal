@@ -28,7 +28,7 @@ namespace data { namespace _3d { namespace skel {
 class PierceEvent : public AbstractEvent {
 public:
     virtual ~PierceEvent();
-    static PierceEventSPtr create(PolyhedronSPtr polyhedron);
+    static PierceEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -38,11 +38,12 @@ public:
     void setVertex(VertexSPtr vertex);
     void setHighlight(bool highlight);
     std::string toString() const override;
+    bool isValid() const override;
 protected:
-    PierceEvent(PolyhedronSPtr polyhedron);
+    PierceEvent();
     NodeSPtr node_;
-    FacetSPtr facet_;
-    VertexSPtr vertex_;
+    FacetWPtr facet_;
+    VertexWPtr vertex_;
 };
 
 } } }

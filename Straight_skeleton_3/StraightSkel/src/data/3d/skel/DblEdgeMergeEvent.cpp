@@ -17,6 +17,7 @@
 #include "data/3d/skel/DblEdgeMergeEvent.h"
 
 #include "debug.h"
+#include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/skel/Node.h"
@@ -27,7 +28,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-DblEdgeMergeEvent::DblEdgeMergeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+DblEdgeMergeEvent::DblEdgeMergeEvent() {
     type_ = AbstractEvent::DBL_EDGE_MERGE_EVENT;
 }
 
@@ -41,8 +42,8 @@ DblEdgeMergeEvent::~DblEdgeMergeEvent() {
     edge_22_.reset();
 }
 
-DblEdgeMergeEventSPtr DblEdgeMergeEvent::create(PolyhedronSPtr polyhedron) {
-    DblEdgeMergeEventSPtr result = DblEdgeMergeEventSPtr(new DblEdgeMergeEvent(polyhedron));
+DblEdgeMergeEventSPtr DblEdgeMergeEvent::create() {
+    DblEdgeMergeEventSPtr result = DblEdgeMergeEventSPtr(new DblEdgeMergeEvent());
     return result;
 }
 
@@ -64,8 +65,8 @@ CGAL::FT DblEdgeMergeEvent::getOffset() const {
 }
 
 FacetSPtr DblEdgeMergeEvent::getFacet1() const {
-    DEBUG_SPTR(facet_1_);
-    return facet_1_;
+    DEBUG_WPTR(facet_1_);
+    return facet_1_.lock();
 }
 
 void DblEdgeMergeEvent::setFacet1(FacetSPtr facet_1) {
@@ -73,8 +74,8 @@ void DblEdgeMergeEvent::setFacet1(FacetSPtr facet_1) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge11() const {
-    DEBUG_SPTR(edge_11_);
-    return edge_11_;
+    DEBUG_WPTR(edge_11_);
+    return edge_11_.lock();
 }
 
 void DblEdgeMergeEvent::setEdge11(EdgeSPtr edge_11) {
@@ -82,8 +83,8 @@ void DblEdgeMergeEvent::setEdge11(EdgeSPtr edge_11) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge12() const {
-    DEBUG_SPTR(edge_12_);
-    return edge_12_;
+    DEBUG_WPTR(edge_12_);
+    return edge_12_.lock();
 }
 
 void DblEdgeMergeEvent::setEdge12(EdgeSPtr edge_12) {
@@ -91,8 +92,8 @@ void DblEdgeMergeEvent::setEdge12(EdgeSPtr edge_12) {
 }
 
 FacetSPtr DblEdgeMergeEvent::getFacet2() const {
-    DEBUG_SPTR(facet_2_);
-    return facet_2_;
+    DEBUG_WPTR(facet_2_);
+    return facet_2_.lock();
 }
 
 void DblEdgeMergeEvent::setFacet2(FacetSPtr facet_2) {
@@ -100,8 +101,8 @@ void DblEdgeMergeEvent::setFacet2(FacetSPtr facet_2) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge21() const {
-    DEBUG_SPTR(edge_21_);
-    return edge_21_;
+    DEBUG_WPTR(edge_21_);
+    return edge_21_.lock();
 }
 
 void DblEdgeMergeEvent::setEdge21(EdgeSPtr edge_21) {
@@ -109,8 +110,8 @@ void DblEdgeMergeEvent::setEdge21(EdgeSPtr edge_21) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge22() const {
-    DEBUG_SPTR(edge_22_);
-    return edge_22_;
+    DEBUG_WPTR(edge_22_);
+    return edge_22_.lock();
 }
 
 void DblEdgeMergeEvent::setEdge22(EdgeSPtr edge_22) {
@@ -118,43 +119,59 @@ void DblEdgeMergeEvent::setEdge22(EdgeSPtr edge_22) {
 }
 
 void DblEdgeMergeEvent::getVertices(VertexSPtr out[4]) const {
+    EdgeSPtr edge_11 = getEdge11();
+    EdgeSPtr edge_21 = getEdge21();
+    EdgeSPtr edge_12 = getEdge12();
+    EdgeSPtr edge_22 = getEdge22();
+    FacetSPtr facet_1 = getFacet1();
+    FacetSPtr facet_2 = getFacet2();
+
     for (unsigned int i = 0; i < 4; i++) {
         out[i] = VertexSPtr();
     }
-    out[0] = edge_11_->dst(facet_1_);
-    out[1] = edge_21_->dst(facet_2_);
-    out[2] = edge_12_->src(facet_1_);
-    out[3] = edge_22_->src(facet_2_);
+    out[0] = edge_11->dst(facet_1);
+    out[1] = edge_21->dst(facet_2);
+    out[2] = edge_12->src(facet_1);
+    out[3] = edge_22->src(facet_2);
 }
 
 void DblEdgeMergeEvent::getEdges(EdgeSPtr out[4]) const {
+    EdgeSPtr edge_11 = getEdge11();
+    EdgeSPtr edge_12 = getEdge12();
+    FacetSPtr facet_1 = getFacet1();
+
     for (unsigned int i = 0; i < 4; i++) {
         out[i] = EdgeSPtr();
     }
-    out[0] = edge_11_->next(facet_1_);
-    out[1] = out[0]->next(facet_1_);
-    FacetSPtr facet_other = edge_11_->other(facet_1_);
-    out[2] = edge_12_->next(facet_other);
+    out[0] = edge_11->next(facet_1);
+    out[1] = out[0]->next(facet_1);
+    FacetSPtr facet_other = edge_11->other(facet_1);
+    out[2] = edge_12->next(facet_other);
     out[3] = out[2]->next(facet_other);
 }
 
 void DblEdgeMergeEvent::setHighlight(bool highlight) {
-    if (!edge_11_->hasData()) {
-        SkelEdgeData::create(edge_11_);
+    EdgeSPtr edge_11 = getEdge11();
+    EdgeSPtr edge_21 = getEdge21();
+    EdgeSPtr edge_12 = getEdge12();
+    EdgeSPtr edge_22 = getEdge22();
+
+    if (!edge_11->hasData()) {
+        SkelEdgeData::create(edge_11);
     }
-    edge_11_->getData()->setHighlight(highlight);
-    if (!edge_12_->hasData()) {
-        SkelEdgeData::create(edge_12_);
+    edge_11->getData()->setHighlight(highlight);
+    if (!edge_12->hasData()) {
+        SkelEdgeData::create(edge_12);
     }
-    edge_12_->getData()->setHighlight(highlight);
-    if (!edge_21_->hasData()) {
-        SkelEdgeData::create(edge_21_);
+    edge_12->getData()->setHighlight(highlight);
+    if (!edge_21->hasData()) {
+        SkelEdgeData::create(edge_21);
     }
-    edge_21_->getData()->setHighlight(highlight);
-    if (!edge_22_->hasData()) {
-        SkelEdgeData::create(edge_22_);
+    edge_21->getData()->setHighlight(highlight);
+    if (!edge_22->hasData()) {
+        SkelEdgeData::create(edge_22);
     }
-    edge_22_->getData()->setHighlight(highlight);
+    edge_22->getData()->setHighlight(highlight);
     EdgeSPtr edges[4];
     getEdges(edges);
     for (unsigned int i = 0; i < 4; i++) {
@@ -175,15 +192,21 @@ std::string DblEdgeMergeEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "DblEdgeMergeEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(facet A=" << getFacet1()->getID()
-          << "; edge A1=" << getEdge11()->getID()
-          << "; edge A2=" << getEdge12()->getID() << ")\n";
-    sstr << "\t(facet B=" << getFacet2()->getID()
-          << "; edge B1=" << getEdge21()->getID()
-          << "; edge B2=" << getEdge22()->getID() << ")";
+    for (unsigned int i = 0; i < 4; i++) {
+        sstr << "\t(vertex" << i << "=" << *(vertices[i]->getPoint()) << ")\n";
+    }
+    for (unsigned int i = 0; i < 4; i++) {
+        sstr << "\t(edge" << i << "=" << edges[i]->getID() << ")\n";
+    }
+
     return sstr.str();
+}
+
+bool DblEdgeMergeEvent::isValid() const {
+    return node_ && !facet_1_.expired() && !edge_11_.expired() && !edge_12_.expired() && !facet_2_.expired() && !edge_21_.expired() && !edge_22_.expired();
 }
 
 } } }

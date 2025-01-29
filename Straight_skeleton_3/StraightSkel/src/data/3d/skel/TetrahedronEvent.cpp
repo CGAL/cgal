@@ -30,7 +30,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-TetrahedronEvent::TetrahedronEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
+TetrahedronEvent::TetrahedronEvent() {
     type_ = AbstractEvent::TETRAHEDRON_EVENT;
 }
 
@@ -38,8 +38,8 @@ TetrahedronEvent::~TetrahedronEvent() {
     node_.reset();
 }
 
-TetrahedronEventSPtr TetrahedronEvent::create(PolyhedronSPtr polyhedron) {
-    TetrahedronEventSPtr result = TetrahedronEventSPtr(new TetrahedronEvent(polyhedron));
+TetrahedronEventSPtr TetrahedronEvent::create() {
+    TetrahedronEventSPtr result = TetrahedronEventSPtr(new TetrahedronEvent());
     return result;
 }
 
@@ -61,9 +61,8 @@ CGAL::FT TetrahedronEvent::getOffset() const {
 }
 
 EdgeSPtr TetrahedronEvent::getEdgeBegin() const {
-    EdgeSPtr result = edge_begin_;
-    DEBUG_SPTR(result);
-    return result;
+    DEBUG_WPTR(edge_begin_);
+    return edge_begin_.lock();
 }
 
 void TetrahedronEvent::setEdgeBegin(EdgeSPtr edge_begin) {
@@ -71,38 +70,44 @@ void TetrahedronEvent::setEdgeBegin(EdgeSPtr edge_begin) {
 }
 
 void TetrahedronEvent::getVertices(VertexSPtr out[4]) const {
+    EdgeSPtr edge_begin = getEdgeBegin();
+
     for (unsigned int i = 0; i < 4; i++) {
         out[i] = VertexSPtr();
     }
-    out[0] = edge_begin_->getVertexSrc();
-    out[1] = edge_begin_->getVertexDst();
-    EdgeSPtr edge_l = edge_begin_->next(edge_begin_->getFacetL());
-    out[2] = edge_l->dst(edge_begin_->getFacetL());
-    EdgeSPtr edge_r = edge_begin_->next(edge_begin_->getFacetR());
-    out[3] = edge_r->dst(edge_begin_->getFacetR());
+    out[0] = edge_begin->getVertexSrc();
+    out[1] = edge_begin->getVertexDst();
+    EdgeSPtr edge_l = edge_begin->next(edge_begin->getFacetL());
+    out[2] = edge_l->dst(edge_begin->getFacetL());
+    EdgeSPtr edge_r = edge_begin->next(edge_begin->getFacetR());
+    out[3] = edge_r->dst(edge_begin->getFacetR());
 }
 
 void TetrahedronEvent::getEdges(EdgeSPtr out[6]) const {
+    EdgeSPtr edge_begin = getEdgeBegin();
+
     for (unsigned int i = 0; i < 6; i++) {
         out[i] = EdgeSPtr();
     }
-    out[0] = edge_begin_;
-    out[1] = edge_begin_->prev(edge_begin_->getFacetL());
-    out[2] = edge_begin_->next(edge_begin_->getFacetL());
-    out[3] = edge_begin_->prev(edge_begin_->getFacetR());
-    out[4] = edge_begin_->next(edge_begin_->getFacetR());
-    FacetSPtr other = out[2]->other(edge_begin_->getFacetL());
+    out[0] = edge_begin;
+    out[1] = edge_begin->prev(edge_begin->getFacetL());
+    out[2] = edge_begin->next(edge_begin->getFacetL());
+    out[3] = edge_begin->prev(edge_begin->getFacetR());
+    out[4] = edge_begin->next(edge_begin->getFacetR());
+    FacetSPtr other = out[2]->other(edge_begin->getFacetL());
     out[5] = out[2]->prev(other);
 }
 
 void TetrahedronEvent::getFacets(FacetSPtr out[4]) const {
+    EdgeSPtr edge_begin = getEdgeBegin();
+
     for (unsigned int i = 0; i < 4; i++) {
         out[i] = FacetSPtr();
     }
-    out[0] = edge_begin_->getFacetL();
-    out[1] = edge_begin_->getFacetR();
-    out[2] = out[0]->prev(edge_begin_->getVertexDst());
-    out[3] = out[1]->prev(edge_begin_->getVertexSrc());
+    out[0] = edge_begin->getFacetL();
+    out[1] = edge_begin->getFacetR();
+    out[2] = out[0]->prev(edge_begin->getVertexDst());
+    out[3] = out[1]->prev(edge_begin->getVertexSrc());
 }
 
 void TetrahedronEvent::setHighlight(bool highlight) {
@@ -134,6 +139,7 @@ std::string TetrahedronEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "TetrahedronEvent\n";
+    sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertices";
@@ -145,6 +151,10 @@ std::string TetrahedronEvent::toString() const {
         sstr << " " << edges[i]->getID();
     sstr << ")";
     return sstr.str();
+}
+
+bool TetrahedronEvent::isValid() const {
+    return node_ && !edge_begin_.expired();
 }
 
 } } }

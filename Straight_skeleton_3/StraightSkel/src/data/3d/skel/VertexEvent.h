@@ -28,7 +28,7 @@ namespace data { namespace _3d { namespace skel {
 class VertexEvent : public AbstractEvent {
 public:
     virtual ~VertexEvent();
-    static VertexEventSPtr create(PolyhedronSPtr polyhedron);
+    static VertexEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -42,13 +42,14 @@ public:
     void setFacet2(FacetSPtr facet_2);
     void setHighlight(bool highlight);
     std::string toString() const override;
+    bool isValid() const override;
 protected:
-    VertexEvent(PolyhedronSPtr polyhedron);
+    VertexEvent();
     NodeSPtr node_;
-    VertexSPtr vertex_1_;
-    VertexSPtr vertex_2_;
-    FacetSPtr facet_1_;
-    FacetSPtr facet_2_;
+    VertexWPtr vertex_1_;
+    VertexWPtr vertex_2_;
+    FacetWPtr facet_1_;
+    FacetWPtr facet_2_;
 };
 
 } } }

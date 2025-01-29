@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class EdgeMergeEvent : public AbstractEvent {
 public:
     virtual ~EdgeMergeEvent();
-    static EdgeMergeEventSPtr create(PolyhedronSPtr polyhedron);
+    static EdgeMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -38,12 +38,13 @@ public:
     void setEdge2(EdgeSPtr edge2);
     void setHighlight(bool highlight);
     std::string toString() const override;
+    bool isValid() const override;
 protected:
-    EdgeMergeEvent(PolyhedronSPtr polyhedron);
+    EdgeMergeEvent();
     NodeSPtr node_;
-    FacetSPtr facet_;
-    EdgeSPtr edge1_;
-    EdgeSPtr edge2_;
+    FacetWPtr facet_;
+    EdgeWPtr edge1_;
+    EdgeWPtr edge2_;
 };
 
 } } }
