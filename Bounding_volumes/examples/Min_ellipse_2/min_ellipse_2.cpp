@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <array>
+
 typedef  CGAL::Exact_rational             NT;
 typedef  CGAL::Cartesian<NT>              K;
 typedef  CGAL::Point_2<K>                 Point;

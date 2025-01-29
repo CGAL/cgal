@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <array>
 
 typedef CGAL::Homogeneous<CGAL::Exact_integer>   K;
 typedef CGAL::Min_sphere_annulus_d_traits_3<K>   Traits;

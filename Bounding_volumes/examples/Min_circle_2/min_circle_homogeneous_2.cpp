@@ -2,6 +2,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
+
 #include <array>
 #include <iostream>
 
