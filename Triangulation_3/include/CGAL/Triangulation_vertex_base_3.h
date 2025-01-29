@@ -77,13 +77,13 @@ public:
   void iset_point(const Point & p)
   { set_point(p); }
 
-  
+
 private:
   Point _p;
 };
 
-  
-  // AF: We need a triangulation in the loop 
+
+  // AF: We need a triangulation in the loop
 
 template < class GT, class DSVb >
 std::istream&
@@ -101,7 +101,7 @@ operator<<(std::ostream &os, const Triangulation_vertex_base_3<GT, DSVb> &v)
   return os << static_cast<const DSVb&>(v) << v.ipoint();
 }
 
-  
+
 
 } //namespace CGAL
 

@@ -208,7 +208,7 @@ protected:
   {
     return geom_traits().construct_circumcenter_3_object()(p, q, r, s);
   }
-  
+
   Line construct_equidistant_line(const Point& p1, const Point& p2, const Point& p3) const
   {
     return geom_traits().construct_equidistant_line_3_object()(p1, p2, p3);
@@ -274,7 +274,7 @@ public:
     insert(first, last);
   }
 
-  
+
 private:
 
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -373,7 +373,7 @@ public:
       std::cout <<  "We reserve " << (points.size() + 1) << " vertices and "  << (points.size() * 7) << " cells"<< std::endl;
       tds().reserve(points.size()+1, points.size() * 7);
     }
-    
+
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())
@@ -428,7 +428,7 @@ public:
 private:
   using Tr_Base::top_get_first;
   using Tr_Base::top_get_second;
-  
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first, InputIterator last)
   {
@@ -2011,7 +2011,7 @@ is_valid(bool verbose, int level) const
           if(!is_infinite(tds().vertex(tds().neighbor((*it).first, i),
                                        tds().index(tds().neighbor((*it).first, i),
                                                    (*it).first))))
-            
+
           {
             if(side_of_circle((*it).first, 3, point(tds().neighbor((*it).first, i), tds().index((tds().neighbor((*it).first, i)), (*it).first))) == ON_BOUNDED_SIDE)
             {

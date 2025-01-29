@@ -40,18 +40,18 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
-  
+
   Triangulation_ds_vertex_base_3()
-    : _c(), visited_for_vertex_extractor(false) 
+    : _c(), visited_for_vertex_extractor(false)
   {}
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c), visited_for_vertex_extractor(false) 
+    : _c(c), visited_for_vertex_extractor(false)
   {}
 
 #if 0
-  Cell_handle cell() const 
-  { return _c; }  
+  Cell_handle cell() const
+  { return _c; }
 
   void set_cell(Cell_handle c)
   {
@@ -59,14 +59,14 @@ public:
   }
 #else
 
-  Cell_handle icell() const 
-  { return _c; }  
+  Cell_handle icell() const
+  { return _c; }
 
   void iset_cell(Cell_handle c)
   {
     _c = c;
   }
-#endif  
+#endif
   // the following trivial is_valid allows
   // the user of derived cell base classes
   // to add their own purpose checking

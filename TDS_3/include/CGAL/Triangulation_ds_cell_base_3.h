@@ -47,7 +47,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() 
+  Triangulation_ds_cell_base_3()
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     mark = -1;
@@ -73,10 +73,10 @@ public:
 
   // ACCESS FUNCTIONS
 
-private: 
+private:
   Vertex_handle vertex(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_precondition( i >= 0 && i <= 3 );
     CGAL_assume( i >= 0 && i <= 3 );
     return V[i];
   }
@@ -100,13 +100,13 @@ private:
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
     if (v == V[2]) { return 2; }
-    CGAL_triangulation_assertion( v == V[3] );
+    CGAL_assertion( v == V[3] );
     return 3;
   }
 
   Cell_handle neighbor(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     return N[i];
   }
 
@@ -129,7 +129,7 @@ private:
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
     if (n == N[2]) return 2;
-    CGAL_triangulation_assertion( n == N[3] );
+    CGAL_assertion( n == N[3] );
     return 3;
   }
 
@@ -137,14 +137,14 @@ private:
 
   void set_vertex(int i, Vertex_handle v)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     V[i] = v;
   }
 
   void set_neighbor(int i, Cell_handle n)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != n.operator->() );
+    CGAL_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -170,10 +170,10 @@ private:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != &*n0 );
-    CGAL_triangulation_precondition( this != &*n1 );
-    CGAL_triangulation_precondition( this != &*n2 );
-    CGAL_triangulation_precondition( this != &*n3 );
+    CGAL_precondition( this != &*n0 );
+    CGAL_precondition( this != &*n1 );
+    CGAL_precondition( this != &*n2 );
+    CGAL_precondition( this != &*n3 );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -188,11 +188,11 @@ private:
   bool is_valid(bool = false, int = 0) const
   { return true; }
 
-  
+
   // TDS internal data access functions.
   TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-  
+
 public:
   Vertex_handle ivertex(int i) const { return vertex(i); }
   bool ihas_vertex(Vertex_handle v) const { return has_vertex(v); }
@@ -220,7 +220,7 @@ public:
   { return true; }
   TDS_data& itds_data()       { return _tds_data; }
   const TDS_data& itds_data() const { return _tds_data; }
-  
+
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }

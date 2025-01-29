@@ -337,8 +337,8 @@ public:
   template < typename InputIterator >
   size_type remove_cluster(InputIterator first, InputIterator beyond)
   {
-    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
-    CGAL_triangulation_precondition(!this->infinite_vertex_in_range(first, beyond));
+    CGAL_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_precondition(!this->infinite_vertex_in_range(first, beyond));
     size_type n = this->number_of_vertices();
     std::vector<Vertex_handle> vo(first, beyond), vc;
     int l=0;
@@ -364,34 +364,34 @@ public: // some internal methods
   // GIVING NEW FACES
 
   template <class OutputItCells>
-  Vertex_handle insert_and_give_new_cells(const Point  &p, 
+  Vertex_handle insert_and_give_new_cells(const Point  &p,
                                           OutputItCells fit,
                                           Cell_handle start = Cell_handle() );
-		
+
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           OutputItCells /* fit */,
                                           Vertex_handle hint)
   {
-    return insert_and_give_new_cells(p, hint == Vertex_handle() ? 
-                                     this->infinite_cell() : hint->cell());			
+    return insert_and_give_new_cells(p, hint == Vertex_handle() ?
+                                     this->infinite_cell() : hint->cell());
   }
 
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           Locate_type lt,
-                                          Cell_handle c, int li, int lj, 
+                                          Cell_handle c, int li, int lj,
                                           OutputItCells fit);
 
   template <class OutputItCells>
-  void remove_and_give_new_cells(Vertex_handle v, 
+  void remove_and_give_new_cells(Vertex_handle v,
                                  OutputItCells fit);
 
   template <class OutputItCells>
-  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v, 
+  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v,
                                                         const Point &p, OutputItCells fit);
-	
-public:	
+
+public:
 
 
   //LOCATE
@@ -647,12 +647,12 @@ template <class Tr>
 template <class OutputItCells>
 typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
-insert_and_give_new_cells(const Point &p, Locate_type lt, Cell_handle loc, 
+insert_and_give_new_cells(const Point &p, Locate_type lt, Cell_handle loc,
   int li, int lj, OutputItCells fit)
 {
   int vertex_level = random_level();
   // insert at level 0
-  Vertex_handle vertex = 
+  Vertex_handle vertex =
     hierarchy[0]->insert_and_give_new_cells(p,lt,loc,li,lj,fit);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
@@ -687,7 +687,7 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
@@ -703,8 +703,8 @@ void
 Triangulation_hierarchy_3<Tr>::
 remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!is_infinite(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->remove(v);
@@ -720,7 +720,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_if_no_collision(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));	
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
@@ -740,7 +740,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -757,13 +757,13 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));	
+  CGAL_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans = 
+    else ans =
            hierarchy[l]->move_if_no_collision_and_give_new_cells(v, p, fit);
     if(ans != v) return ans;
     if (u == Vertex_handle())
