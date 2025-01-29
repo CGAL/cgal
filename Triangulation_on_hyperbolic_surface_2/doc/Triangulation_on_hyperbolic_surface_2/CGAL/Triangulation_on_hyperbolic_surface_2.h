@@ -218,34 +218,12 @@ Face_const_range faces_const_range() const;
   /// \name Validity
   /// @{
   /*!
-     Checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
+     checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
       If there is an anchor, then checks that the dart descriptor of the anchor does indeed point to a dart of \f$ M \f$, and checks that the three vertices of the anchor lie within the open unit disk.
   */
   bool is_valid() const;
   /// @}
 
-  /// \name Input/Output
-  /// @{
-  /*!
-      writes the triangulation in a stream.
-      The format of the output is the following.
-      Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$ is the number of darts of the triangulation.
-      The first line contains the number \f$ n \f$ of darts.
-      The next line contains either 'yes' or 'no' and tells whether the triangulation has an anchor.
-      If the triangulation has an anchor, then the four next lines print the index of the dart of the anchor, and the three vertices of the anchor.
-      Then, for every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
-      Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by a third line on which the cross ratio of \f$ e \f$ is printed.
-
-      \pre <code> is_valid() </code>
-  */
-  std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
-
-  /*!
-      reads the triangulation from a stream.
-      The format of the input should be the same as the format of the output of the '<<' operator.
- */
-  std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
-  /// @}
 };
 
 }; // namespace CGAL

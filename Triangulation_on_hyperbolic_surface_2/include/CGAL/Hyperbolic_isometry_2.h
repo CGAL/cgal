@@ -57,7 +57,7 @@ private:
 template<class Traits>
   Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2);
 
- template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
+// template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
 
 // When inverse=false, returns the hyperbolic translation that maps -p to zero, and zero to p. Otherwise, returns the hyperbolic translation that maps p to zero, and zero to -p.
 template<class Traits>
@@ -141,16 +141,6 @@ template<class Traits>
     }
   }
   return result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits>
-std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry){
-  for (int k=0; k<4; k++){
-    s << isometry.get_coefficient(k);
-  }
-  return s;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
