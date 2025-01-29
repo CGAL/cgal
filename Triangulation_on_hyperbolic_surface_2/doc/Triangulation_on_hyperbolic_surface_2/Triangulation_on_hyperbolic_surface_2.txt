@@ -99,9 +99,9 @@ It contains a lift \f$ t \f$ of a triangle of \f$ T \f$ in \f$ \mathbb{D} \f$: \
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Delaunay Delaunay Flip Algorithm
 
 Let \f$ T \f$ be a triangulation of a hyperbolic surface. An edge \f$ e \f$ of \f$ T \f$ satisfies the <em>Delaunay criterion</em> if the imaginary part of its cross ratio \f$R_T(e)\f$ is non-positive.
-This definition is equivalent to the usual "empty disk" formulation.
+This definition is equivalent to the usual "empty disk" formulation for the four points of the two triangles incident to \f$ e \f$.
 Then \f$ T \f$ is a <em>Delaunay triangulation</em> if every edge of  \f$ T \f$ satisfies the Delaunay criterion.
-If an edge \f$e \f$ of \f$ T \f$ does not satisfy the Delaunay criterion, then the two triangles incident to \f$ e \f$ form a strictly convex quadrilateral, so \f$ e \f$ can be deleted from \f$ T \f$ and replaced by the other diagonal of the quadrilateron.
+If an edge \f$e \f$ of \f$ T \f$ does not satisfy the Delaunay criterion, \f$e \f$  is called Delaunay flippable, and then the two triangles incident to \f$ e \f$ form a strictly convex quadrilateral, so \f$ e \f$ can be deleted from \f$ T \f$ and replaced by the other diagonal of the quadrilateron.
 This operation is called a Delaunay <em>flip</em>.
 When a flip occurs, the cross ratios of the involved edges are modified via simple formulas.
 The <em>Delaunay flip algorithm</em> flips edges that do not satisfy the Delaunay criterion as long as possible, with no preference on the order of the flips.
