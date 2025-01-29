@@ -108,7 +108,11 @@ public:
   using typename Ctr::Intersection_tag;
 
   using typename Ctr::Constraint;
+  #if defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+  using Vertex_handle = typename Ctr::Vertex_handle; // workaround for VC++ 19.16 (from MSVC 2017)
+#else
   using typename Ctr::Vertex_handle;
+#endif
   using typename Ctr::Face_handle;
   using typename Ctr::Edge;
   using typename Ctr::Finite_faces_iterator;
