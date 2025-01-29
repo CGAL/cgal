@@ -176,7 +176,7 @@ Face_const_range faces_const_range() const;
   /// \name Delaunay Flip Algorithm
   /// @{
   /*!
-      returns whether the edge supported by the dart is Delaunay flippable or not.
+      returns whether the edge supported by the dart is Delaunay flippable or not. An edge \f$ e \f$ is  Delaunay flippable if the imaginary part of its cross ratio is positive.
 
       \pre <code> is_valid() </code>
   */
