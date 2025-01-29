@@ -140,6 +140,8 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron,
       save_offsets_(save_offsets),
       save_path_(save_path)
 {
+    save_offsets_.sort([](const CGAL::FT& a, const CGAL::FT& b) { return CGAL::abs(a) < CGAL::abs(b); });
+
     skel_result_ = StraightSkeleton::create();
 #ifndef CGAL_SS3_NO_SKELETON_DS
     skel_result_->setPolyhedron(polyhedron);
@@ -600,9 +602,8 @@ bool SimpleStraightSkel::run() {
             controller_->wait();
         }
 
-        CGAL::FT offset = 0.0;
-        CGAL::FT offset_prev = 0.0;
-        CGAL::FT offset_next = 0.0;
+        CGAL::FT offset = 0;
+        CGAL::FT offset_prev = 0;
 
         db::_3d::OBJFile::save("results/init_post.obj", polyhedron, false /*do not triangulate*/);
 
@@ -662,50 +663,31 @@ bool SimpleStraightSkel::run() {
 #endif
 
             if (queue.empty() && save_offsets_.empty()) {
-                break; // we are done
+                break;
             }
 
-            // treat the next event
-            AbstractEventSPtr event;
-            bool doSave;
-            bool simultaneousEvents;
+            AbstractEventSPtr event = nextEvent(queue, offset);
+            CGAL_assertion(bool(event));
 
-            if (queue.empty()) {
-                // queue is empty but since we are here, save_offsets are not empty
-                simultaneousEvents = false;
-                doSave = true;
-                event = SaveOffsetEvent::create(save_offsets_.front());
-            } else if (!save_offsets_.empty()) {
-                // queue and save_offsets are not empty
-                CGAL::FT next_save_offset = save_offsets_.front();
-                if (next_save_offset > queue.top()->getOffset()) { // save is strictly earlier
-                    simultaneousEvents = false;
-                    doSave = true;
-                    event = SaveOffsetEvent::create(save_offsets_.front());
-                } else {
-                    // save_offsets exist, but are in the future
-                    std::tie(event, simultaneousEvents) = nextEvent(queue);
-                    doSave = (next_save_offset == event->getOffset());
-                }
-            } else {
-                // queue is not empty and save_offsets are empty
-                std::tie(event, simultaneousEvents) = nextEvent(queue);
-                doSave = false;
+            if (!event->isValid()) {
+                std::cout << "Warning: skipping invalid event" << std::endl;
+                continue;
             }
 
+            bool simultaneousEvents = (!queue.empty() && offset == queue.top()->getOffset());
             if (simultaneousEvents) {
-              std::cerr << "Error: there should not be any simultaneous events these days" << std::endl;
-              std::cerr << "Forgot to enable perturbations in the config file?" << std::endl;
+              std::cerr << "Error: there should not be any simultaneous events" << std::endl;
+              std::cerr << "Did you forget to enable perturbations in the config file?" << std::endl;
               return false;
             }
 
-            offset_next = event->getOffset();
+            offset_prev = offset;
+            offset = event->getOffset();
+            CGAL_assertion(offset < offset_prev);
 
-            DEBUG_PRINT(" current offset: " << offset << "\n"
-                     << " next offset: " << offset_next << " (type " << event->getType() << ")\n"
-                     << " simultaneous? " << simultaneousEvents << "\n"
-                     << " save? " << doSave << "\n"
-                     << " @ " << simultaneousOffset_);
+            DEBUG_PRINT(" current offset: " << offset_prev << "\n"
+                     << " next offset: " << offset << " (type " << event->getType() << ")\n"
+                     << " simultaneous? " << simultaneousEvents);
 #ifdef CGAL_SS3_RUN_TIMERS
             std::cout << "current elapsed time: " << timer.time() << std::endl;
 #endif
@@ -721,19 +703,32 @@ bool SimpleStraightSkel::run() {
             Point3SPtr p_box_min = PolyhedronTransformation::boundingBoxMin(polyhedron);
             Point3SPtr p_box_max = PolyhedronTransformation::boundingBoxMax(polyhedron);
 
-            offset_prev = offset;
-            offset = event->getOffset();
             const CGAL::FT shift = offset - offset_prev;
             CGAL_warning(!is_zero(shift));
-            const bool recompute_positions = (shift != 0);
-            polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift, recompute_positions);
+
+            // polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift);
+            PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
 
             // below will have degeneracies since we haven't treated the event yet
             // db::_3d::OBJFile::save("results/shift_" + std::to_string(event_id) + ".obj",
             //                        polyhedron,
             //                        false /*do not triangulate*/);
 
-            if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
+            if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
+                savePolyhedron(polyhedron, offset,
+                               true /*triangulate*/,
+                               true /*convert to double*/,
+                               false /*attempt untilting*/);
+
+                if (save_offsets_.empty()) {
+                    if (config->isLoaded()) {
+                        if ((config->contains("main", "stop_after_last_save_event") &&
+                             config->getBool("main", "stop_after_last_save_event"))) {
+                            break;
+                        }
+                    }
+                }
+            } else if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
 #ifndef CGAL_SS3_NO_SKELETON_DS
                 event->setPolyhedronResult(polyhedron);
 #endif
@@ -803,24 +798,6 @@ bool SimpleStraightSkel::run() {
 
             if (controller_) {
                 controller_->wait();
-            }
-
-            if (doSave) {
-                savePolyhedron(polyhedron, offset,
-                               true /*triangulate*/,
-                               true /*convert to double*/,
-                               false /*attempt untilting*/);
-
-                save_offsets_.pop_front();
-
-                if (save_offsets_.empty()) {
-                    if (config->isLoaded()) {
-                        if ((config->contains("main", "stop_after_last_save_event") &&
-                             config->getBool("main", "stop_after_last_save_event"))) {
-                            break;
-                        }
-                    }
-                }
             }
 
             ++event_id;
@@ -3901,29 +3878,16 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     timer.start();
 #endif
 
-    // save events are now created directly in the main event loop
-    // @todo when simultaneous event code is purged, it can be here again
-    // if (!save_offsets_.empty()) {
-    //     queue.push(SaveOffsetEvent::create(save_offsets_.front()));
-    // }
-
-    CGAL::FT const_offset = util::Configuration::getInstance()->getDouble(
-            "algo_3d_SimpleStraightSkel", "const_offset");
-    if (const_offset != 0.0) {
-        CGAL::FT next_offset = floor(CGAL::to_double(current_offset/const_offset) + 1.0) * const_offset; // @fixme to interval?
-        if (next_offset >= current_offset) {
-            next_offset += const_offset;
-        }
-
-        queue.push(ConstOffsetEvent::create(next_offset));
-    }
-
     // two types of useless events:
-    // - events that are in the past (i.e., offset > current_offset) (values are negative and decreasing!)
-    // - events that are (stricly) later than the current next tentative offset (i.e., offset < curr_earliest_next_offset)
+    // - events that are in the past:
+    //     offset > current_offset <--- values are negative and decreasing!
+    // - events that are stricly later than the current next tentative offset:
+    //     offset < curr_earliest_next_offset
     CGAL::FT offset_of_nearest_event = queue.empty() ? - (std::numeric_limits<double>::max())
-                                                             : (queue.top()->getOffset());
+                                                     : (queue.top()->getOffset());
 
+    // if we stop immediately after the last save event, there is no point registering events
+    // that are farther away
     if (!save_offsets_.empty()) {
         util::ConfigurationSPtr config = util::Configuration::getInstance();
         if (config->isLoaded()) {
@@ -3964,28 +3928,64 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
 #endif
 }
 
-// Note that this takes care of the pop
-// @fixme can handling an event reveal another event at the same times?
-std::pair<AbstractEventSPtr, bool> SimpleStraightSkel::nextEvent(PQ& queue) {
-    if (queue.empty()) {
-        return { };
+AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
+                                                const CGAL::FT offset_current)
+{
+    CGAL_precondition(!queue.empty() || !save_offsets_.empty());
+
+    // If a save event is closest, delay building it in case a const event is even closer
+
+    AbstractEventSPtr event;
+    CGAL::FT offset_next = 0;
+    bool doSave = false;
+
+    if (save_offsets_.empty()) {
+        event = queue.top();
+        offset_next = event->getOffset();
+    } else {
+        CGAL::FT next_save_offset = save_offsets_.front();
+
+        if (queue.empty()) {
+            // queue is empty but save_offsets cannot be empty as well
+            doSave = true;
+            offset_next = save_offsets_.front();
+        } else {
+            // neither queue nor save_offsets are empty, take the earliest
+            if (next_save_offset > queue.top()->getOffset()) { // save is strictly earlier
+                doSave = true;
+                offset_next = next_save_offset;
+            } else {
+                // save offsets exist, but are farther in the future than the next event
+                event = queue.top();
+                offset_next = event->getOffset();
+            }
+        }
     }
 
-    AbstractEventSPtr event = queue.top();
-    CGAL_assertion(event->getType() != AbstractEvent::SAVE_OFFSET_EVENT);
+    CGAL_assertion(offset_next != 0);
 
+    // Check if the next const event would be (strictly) closer
+    CGAL::FT const_offset = util::Configuration::getInstance()->getDouble(
+            "algo_3d_SimpleStraightSkel", "const_offset");
+    if (const_offset != 0) {
+        CGAL::FT next_const_offset = floor(CGAL::to_double(offset_current / const_offset) + 1.0) * const_offset;
+        if (offset_current > next_const_offset && next_const_offset > offset_next) {
+            doSave = false;
+            return ConstOffsetEvent::create(next_const_offset);
+        }
+    }
+
+    if (doSave) { // save event is the topmost
+        save_offsets_.pop_front();
+        return SaveOffsetEvent::create(offset_next);
+    }
+
+#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     queue.pop();
-    if (queue.empty()) {
-        return { event, false /*not simultaneous*/};
-    }
+#endif
 
-    AbstractEventSPtr next_event = queue.top();
-    bool simultaneousEvents = (event->getOffset() == next_event->getOffset());
-    if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT && simultaneousEvents) {
-        return nextEvent(queue); // the const event is popped and ignored
-    }
-
-    return { event, simultaneousEvents };
+    CGAL_assertion(bool(event));
+    return event;
 }
 
 void SimpleStraightSkel::appendEventNode(NodeSPtr node) {

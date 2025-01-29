@@ -276,7 +276,7 @@ public:
     /**
      * Determines the next event.
      */
-    std::pair<AbstractEventSPtr, bool> nextEvent(PQ& queue);
+    AbstractEventSPtr nextEvent(PQ& queue, CGAL::FT offset_current);
 
     /**
      * Appends a node of an event to the skeleton.
