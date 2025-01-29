@@ -60,8 +60,8 @@ private:
   std::vector<int>                                                  _pairings;
 };
 
-template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
-template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
+//template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
+//template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,18 +145,6 @@ std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream&
   return s;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits>
-std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain){
-  CGAL_precondition(domain.is_valid());
-  return domain.to_stream(s);
-}
-
-template<class Traits>
-std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain){
-  return domain.from_stream(s);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

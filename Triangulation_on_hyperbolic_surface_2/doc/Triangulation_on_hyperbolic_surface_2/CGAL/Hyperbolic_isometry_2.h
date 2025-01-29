@@ -1,4 +1,4 @@
-namespace CGAL{
+ namespace CGAL{
 
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
@@ -85,13 +85,6 @@ class Hyperbolic_isometry_2{
       Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2);
     /// @}
 
-    /// \name Input/Output
-    /// @{
-    /*!
-    writes the isometry in a stream.
-    */
-    std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
-    /// @}
 };
 
 }; // namespace CGAL

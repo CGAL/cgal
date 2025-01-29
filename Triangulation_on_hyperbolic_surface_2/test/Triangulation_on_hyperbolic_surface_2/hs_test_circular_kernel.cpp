@@ -7,6 +7,7 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 
 #include <iostream>

@@ -147,8 +147,8 @@ protected:
   void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 };
 
- template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
- template<class Traits, class Attributes> void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
+// template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
+// template<class Traits, class Attributes> void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -632,19 +632,6 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   if (_has_anchor){
     _anchor.dart = darts_by_id[anchor_dart_id];
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits, class Attributes>
-std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation){
-  triangulation.to_stream(s);
-  return s;
-}
-
-template<class Traits, class Attributes>
-void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation){
-  triangulation.from_stream(s);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

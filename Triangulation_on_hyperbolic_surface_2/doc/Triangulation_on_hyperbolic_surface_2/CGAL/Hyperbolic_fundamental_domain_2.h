@@ -33,7 +33,7 @@ public:
   /*!
     Constructor from vertices and pairings ranges.
     @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is `Point`.
-    @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is `int`.
+    @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is `std::size_t`.
   */
      template<class PointRange, class PairingRange>
        Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings);
@@ -44,7 +44,7 @@ public:
   /*!
       returns the number of vertices (equivalently, the number of sides) of the domain.
 
-      \pre <code> is_valid() </code>
+      \pre <code>  Hyperbolic_fundamental_domain_2< Traits >::is_valid() </code>
   */
   std::size_t size() const;
 
@@ -71,10 +71,22 @@ public:
   Hyperbolic_isometry_2<Traits> side_pairing(std::size_t i) const;
   /// @}
 
-  /// \name Input/Output
+  /// @{
+  /// \name Validity
+  /*!
+  checks that the number of vertices is even, that there are as many side pairings as vertices, and that the vertices all lie within the open unit disk.
+  */
+  bool is_valid() const;
+  /// @}
+
+};
+
+}; // namespace CGAL
+
+ /// \name Input/Output
   /// @{
   /*!
-      writes the domain in a stream.
+      inserts the domain in a stream.
 
       The format of the output is the following.
       The first line prints the number \f$n\f$ of vertices of the domain.
@@ -86,20 +98,9 @@ public:
   std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
-      reads the domain from a stream.
+      extracts the domain from a stream.
 
       The format of the input must be the same as the format of the output of 'operator<<()'.
   */
   std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
-
-  /// @{
-  /// \name Validity
-  /*!
-  checks that the number of vertices is even, that there are as many side pairings as vertices, and that the vertices all lie within the open unit disk.
-  */
-  bool is_valid() const;
-  /// @}
-};
-
-}; // namespace CGAL

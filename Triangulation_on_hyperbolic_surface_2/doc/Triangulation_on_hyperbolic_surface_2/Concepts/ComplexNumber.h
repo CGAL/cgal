@@ -41,8 +41,8 @@ public:
 
   /*!
     Constructor, sets the real part to <code> real_part </code> and the
-    imaginary part to <code> imaginary_part </code>. U and V must be
-    constructible from FT.
+    imaginary part to <code> imaginary_part </code>. FT must be
+    constructible from U and V.
   */
     template<class U,class V>
       ComplexNumber(U&& real_part, V&& imaginary_part);

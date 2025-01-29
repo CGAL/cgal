@@ -1,5 +1,6 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
