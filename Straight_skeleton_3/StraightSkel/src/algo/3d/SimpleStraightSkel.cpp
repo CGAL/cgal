@@ -661,7 +661,7 @@ bool SimpleStraightSkel::run() {
             }
 #endif
 
-            if (queue.empty()) {
+            if (queue.empty() && save_offsets_.empty()) {
                 break; // we are done
             }
 
@@ -670,17 +670,25 @@ bool SimpleStraightSkel::run() {
             bool doSave;
             bool simultaneousEvents;
 
-            if (!save_offsets_.empty()) {
+            if (queue.empty()) {
+                // queue is empty but since we are here, save_offsets are not empty
+                simultaneousEvents = false;
+                doSave = true;
+                event = SaveOffsetEvent::create(save_offsets_.front());
+            } else if (!save_offsets_.empty()) {
+                // queue and save_offsets are not empty
                 CGAL::FT next_save_offset = save_offsets_.front();
                 if (next_save_offset > queue.top()->getOffset()) { // save is strictly earlier
                     simultaneousEvents = false;
                     doSave = true;
                     event = SaveOffsetEvent::create(save_offsets_.front());
                 } else {
+                    // save_offsets exist, but are in the future
                     std::tie(event, simultaneousEvents) = nextEvent(queue);
                     doSave = (next_save_offset == event->getOffset());
                 }
             } else {
+                // queue is not empty and save_offsets are empty
                 std::tie(event, simultaneousEvents) = nextEvent(queue);
                 doSave = false;
             }
