@@ -89,8 +89,14 @@ public:
       const Point>
   {
 public:
-    using Base_it = typename Vertex_list::all_iterator;
     using Self = Point_it;
+    using Base = boost::stl_interfaces::iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+        Point_it,
+#endif
+        std::bidirectional_iterator_tag,
+        const Point>;
+    using Base_it = typename Vertex_list::all_iterator;
 
     Base_it base() const { return it; }
     Base_it& base_reference() { return it; }
@@ -100,6 +106,13 @@ public:
     Point_it(Base_it it) : it(it) {}
 
     const Point& operator*() const { return base()->point(); }
+
+    using Base::operator++;
+    Self& operator++() { ++it; return *this; }
+
+    using Base::operator--;
+    Self& operator--() { --it; return *this; }
+
   private:
     friend bool operator==(const Self& lhs, const Self& rhs) {
       return lhs.base() == rhs.base();
@@ -126,8 +139,14 @@ public:
         const Vertex_handle>
   {
   public:
-    using Base_it = typename Vertex_list::skip_iterator;
     using Self = Vertex_it;
+    using Base = boost::stl_interfaces::iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+          Vertex_it,
+#endif
+          std::bidirectional_iterator_tag,
+          const Vertex_handle>;
+    using Base_it = typename Vertex_list::skip_iterator;
 
     Base_it base() const { return it; }
     Base_it& base_reference() { return it; }
@@ -137,6 +156,12 @@ public:
     Vertex_it(Base_it it) : it(it) {}
 
     const Vertex_handle& operator*() const { return this->base()->vertex(); }
+
+    using Base::operator++;
+    Self& operator++() { ++it; return *this; }
+
+    using Base::operator--;
+    Self& operator--() { --it; return *this; }
 
     operator Point_it() const { return Point_it(this->base()); }
 
