@@ -69,13 +69,13 @@ class Hyperbolic_isometry_2{
     /// \name Operations
     /// @{
     /*!
-      evaluates the isometry at the point.
+      evaluates the isometry at point \f$ p \f$.
     */
-    Point evaluate(const Point& point) const;
+    Point evaluate(const Point& p) const;
    /*!
-      evaluates the isometry at the point.
+      evaluates the isometry at point \f$ p \f$.
     */
-    Point operator()(const Point& point) const;
+    Point operator()(const Point& p) const;
 
     /// @{
     /*!

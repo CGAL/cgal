@@ -6,7 +6,7 @@ namespace CGAL{
 Factory class, whose only purpose is to construct random fundamental domains of
 closed orientable hyperbolic surfaces.
 
-The method `make_hyperbolic_fundamental_domain_g2()` constructs such a domain for
+The function `make_hyperbolic_fundamental_domain_g2()` constructs such a domain for
 a surface of genus two.
 
 \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.

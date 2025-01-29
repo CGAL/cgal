@@ -4,7 +4,7 @@ namespace CGAL{
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
 
-This item defines attributes of edges that are
+This item defines attributes of edges that are of type
 `Complex_number` reprensenting cross-ratios.
 
 \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
@@ -26,7 +26,7 @@ struct Combinatorial_map_with_cross_ratios_item{
 
 represents a triangulation of a closed orientable hyperbolic surface.
 
-Offers functionalities such as the generation of the triangulation from a convex fundamental domain,
+The class provides functions such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
 \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
