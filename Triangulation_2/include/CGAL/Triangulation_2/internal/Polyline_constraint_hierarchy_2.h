@@ -365,26 +365,11 @@ public:
     // - Otherwise all members must be valid pointers or dereferencable iterators.
 
     bool is_singular() const {
-      CGAL_assertion((hierarchy == nullptr) == (constraint_it == Constraint_iterator{}));
-      CGAL_assertion((hierarchy != nullptr) || (vertex_it == Vertex_it{}));
       return hierarchy == nullptr;
     }
 
     bool is_valid() const {
-      if(hierarchy == nullptr) {
-        CGAL_assertion(is_singular());
-        return false;
-      }
-      if(constraint_it == Constraint_iterator{}) {
-        return false;
-      }
-      if(constraint_it == hierarchy->constraints_end()) {
-        return vertex_it == Vertex_it{};
-      }
-      if(vertex_it == Vertex_it{}) {
-        return false;
-      }
-      return true;
+      return (hierarchy != nullptr);
     }
 
     bool is_end() const {
@@ -406,8 +391,8 @@ public:
     bool equal(const Subconstraint_iterator& other) const {
       if(hierarchy != other.hierarchy) return false;
       if(is_singular()) return true;
-      return (constraint_it == other.constraint_it &&
-                  vertex_it == other.vertex_it);
+
+      return (constraint_it == other.constraint_it) && (this->is_end() == other.is_end());
     }
 
     Vertex_it begin_or_null(Constraint_iterator constraint_it) const {
