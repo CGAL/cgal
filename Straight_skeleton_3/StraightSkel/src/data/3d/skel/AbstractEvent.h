@@ -98,6 +98,9 @@ protected:
     std::list<AbstractEventSPtr>::iterator list_it_;
     int type_;
     int id_;
+
+private:
+    static int next_id_;
 };
 
 class AbstractEventSPtrCompare

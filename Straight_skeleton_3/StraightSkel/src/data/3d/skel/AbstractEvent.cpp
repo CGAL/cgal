@@ -22,8 +22,10 @@
 
 namespace data { namespace _3d { namespace skel {
 
+int AbstractEvent::next_id_ = 0;
+
 AbstractEvent::AbstractEvent() {
-    id_ = -1;
+    id_ = next_id_++;
 }
 
 AbstractEvent::~AbstractEvent() {
