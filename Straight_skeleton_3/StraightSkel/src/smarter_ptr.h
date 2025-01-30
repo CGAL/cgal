@@ -17,14 +17,15 @@
 #ifndef SMARTER_PTR_H
 #define SMARTER_PTR_H
 
+#include "config.h"
+
 #include <memory>
 
-#include "config.h"
 #if 0//def DEBUG // issues with linking with clang
-    #include "util/SharedPtr.h"
-    #define SHARED_PTR util::SharedPtr
+# include "util/SharedPtr.h"
+# define SHARED_PTR util::SharedPtr
 #else
-    #define SHARED_PTR std::shared_ptr
+# define SHARED_PTR std::shared_ptr
 #endif
 
 #include "util/WeakPtr.h"

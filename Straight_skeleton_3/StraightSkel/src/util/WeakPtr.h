@@ -25,7 +25,8 @@ namespace util {
  * Adds operator== to std::weak_ptr.
  * This allows to use the WeakPtr in the STL (e.g. list).
  */
-template<class T> class WeakPtr : public std::weak_ptr<T>  {
+template<class T>
+class WeakPtr : public std::weak_ptr<T> {
 public:
     WeakPtr() : std::weak_ptr<T>() {}
     template<class Y> WeakPtr(const WeakPtr<Y>& r) : std::weak_ptr<T>(r) {}
@@ -44,6 +45,19 @@ public:
     }
 };
 
-}
+} // namespace util
+
+namespace std {
+
+template<typename T>
+struct owner_less<util::WeakPtr<T> >
+{
+    bool operator()(const util::WeakPtr<T>& lhs,
+                    const util::WeakPtr<T>& rhs) const {
+        return lhs.owner_before(rhs);
+    }
+};
+
+} // namespace std
 
 #endif /* UTIL_WEAKPTR_H */

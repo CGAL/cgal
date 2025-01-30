@@ -24,7 +24,8 @@
 
 namespace util {
 
-template<class T> class SharedPtr : public std::shared_ptr<T> {
+template<class T>
+class SharedPtr : public std::shared_ptr<T> {
 public:
     SharedPtr() : std::shared_ptr<T>() {}
     SharedPtr(std::nullptr_t) : std::shared_ptr<T>() {}
@@ -49,6 +50,19 @@ public:
     }
 };
 
-}
+} // namespace util
+
+namespace std {
+
+template<typename T>
+struct owner_less<util::SharedPtr<T> >
+{
+    bool operator()(const util::SharedPtr<T>& lhs,
+                    const util::SharedPtr<T>& rhs) const {
+        return lhs.owner_before(rhs);
+    }
+};
+
+} // namespace std
 
 #endif /* UTIL_SHAREDPTR_H */
