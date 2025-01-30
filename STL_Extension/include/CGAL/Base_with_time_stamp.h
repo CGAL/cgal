@@ -20,7 +20,15 @@ template <typename Base>
 class Base_with_time_stamp : public Base {
   std::size_t time_stamp_ = std::size_t(-2);
 public:
+#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1920)
   using Base::Base;
+#else // workaround for MSVC 2017
+  // VC++ 19.16 (from MSVC 2017) may mix up the constructor `Base::Base`
+  // with a possible member type `Base` from the base class.
+  //   see a repro of the issue at https://compiler-explorer.com/z/d5hxv7Wze
+  using base_t = Base;
+  using base_t::base_t;
+#endif
 
   using Has_timestamp = CGAL::Tag_true;
 

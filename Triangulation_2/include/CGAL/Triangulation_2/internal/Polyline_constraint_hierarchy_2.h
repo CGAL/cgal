@@ -23,6 +23,7 @@
 #include <list>
 #include <array>
 #include <queue>
+#include <iterator>
 
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
@@ -107,11 +108,11 @@ public:
 
     const Point& operator*() const { return base()->point(); }
 
-    using Base::operator++;
     Self& operator++() { ++it; return *this; }
+    Self operator++(int i) { return static_cast<Self>(Base::operator++(i)); }
 
-    using Base::operator--;
     Self& operator--() { --it; return *this; }
+    Self operator--(int i) { return static_cast<Self>(Base::operator--(i)); }
 
   private:
     friend bool operator==(const Self& lhs, const Self& rhs) {
@@ -127,8 +128,10 @@ public:
   };
 
   BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Point_it, std::bidirectional_iterator);
+#if BOOST_VERSION >= 108300
   BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(Point_it, std::bidirectional_iterator_tag,
     std::bidirectional_iterator, Point, const Point&, const Point*, std::ptrdiff_t);
+#endif
 
   // only nodes with a vertex_handle that is still in the triangulation
   class Vertex_it : public boost::stl_interfaces::iterator_interface<
@@ -149,19 +152,23 @@ public:
     using Base_it = typename Vertex_list::skip_iterator;
 
     Base_it base() const { return it; }
+
     Base_it& base_reference() { return it; }
     const Base_it& base_reference() const { return it; }
 
     Vertex_it() = default;
-    Vertex_it(Base_it it) : it(it) {}
+    Vertex_it(Base_it it) : it(it) {
+      [[maybe_unused]] Vertex_it itt;
+      static_assert(std::is_same_v<decltype(++itt), Vertex_it&>);
+    }
 
     const Vertex_handle& operator*() const { return this->base()->vertex(); }
 
-    using Base::operator++;
     Self& operator++() { ++it; return *this; }
+    Self operator++(int i) { return static_cast<Self>(Base::operator++(i)); }
 
-    using Base::operator--;
     Self& operator--() { --it; return *this; }
+    Self operator--(int i) { return static_cast<Self>(Base::operator--(i)); }
 
     operator Point_it() const { return Point_it(this->base()); }
 
@@ -180,9 +187,10 @@ public:
     Base_it it;
   };
   BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Vertex_it, std::bidirectional_iterator);
+#if BOOST_VERSION >= 108300
   BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(Vertex_it, std::bidirectional_iterator_tag,
     std::bidirectional_iterator, Vertex_handle, const Vertex_handle&, const Vertex_handle*, std::ptrdiff_t);
-
+#endif
   struct Vertex_list_with_info {
     const Polyline_constraint_hierarchy_2* hierarchy_ptr = nullptr;
     Vertex_list vl{};
@@ -610,9 +618,11 @@ public:
 
   Subconstraint_iterator subconstraints_begin() const {
     BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Subconstraint_iterator, std::bidirectional_iterator);
+#if BOOST_VERSION >= 108300
     BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(
       Subconstraint_iterator, std::bidirectional_iterator_tag, std::bidirectional_iterator,
       Subconstraint, Subconstraint, typename Subconstraint_iterator::pointer, std::ptrdiff_t);
+#endif
     return Subconstraint_iterator(Subconstraint_iterator::Construction_access::begin_tag(),
                                   this);
   }
