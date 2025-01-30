@@ -18,6 +18,12 @@
 
 // ----
 
+// This is just to keep old code for a while in case of bugs;
+// it should always be defined.
+#define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+
+// ----
+
 // @todo figure out a proper stack so shared pointers do not contaminate everything
 // currently, we have:
 // - event -> polyhedron
@@ -28,15 +34,27 @@
 
 // ----
 
-#define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+// If enabled, events are added to the queue even if they are farther than the filtering bound.
 // #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-#define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+
+#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+  // If enabled, the filtering bound is tightened with closer new events, otherwise, it's
+  // only the initial events (from save offsets if we use them + terminate on last save offset)
+// # define CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
+#endif
+
+// Whether the queue is filled once at the beginning and updated, or entirely recomputed
+// at each iteration.
+// #define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+
+// ----
 
 #define CGAL_SS3_NO_CACHING
 
 #ifdef DEBUG
-# define CGAL_SS3_DEBUG_PRINT_QUEUE
+# define CGAL_SS3_RUN_TIMERS
 // # define CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
+# define CGAL_SS3_DEBUG_PRINT_QUEUE
 # define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
 #endif // DEBUG
 
@@ -2022,7 +2040,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
         queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
         offset_of_nearest_event = offset_event;
 #endif
     }
@@ -2171,7 +2189,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
         queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
         offset_of_nearest_event = offset_event;
 #endif
     }
@@ -2280,7 +2298,7 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
 
         queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
         offset_of_nearest_event = offset_event;
 #endif
     }
@@ -2398,7 +2416,7 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
         queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
         offset_of_nearest_event = offset_event;
 #endif
     }
@@ -2467,7 +2485,7 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
 
         queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
         offset_of_nearest_event = offset_event;
 #endif
     }
@@ -2544,7 +2562,7 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -2725,7 +2743,7 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
             std::cout << "Accepted vertex event: " << event->toString() << std::endl;
             std::cout << "point at zero x ? " << is_zero(point->x()) << std::endl;
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -2907,7 +2925,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -3073,7 +3091,7 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -3178,7 +3196,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -3355,7 +3373,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -3594,7 +3612,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
 
             queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
         }
@@ -3851,7 +3869,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
 
                     queue.push(event);
 
-#ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
                     offset_of_nearest_event = offset_event;
 #endif
                 }
