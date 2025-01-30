@@ -419,6 +419,24 @@ public:
 
     typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
     FT val1 = *(mpit+split_coord);
+
+    // Avoid using the low coord value as it results in an empty split
+    if (val1 == tbox.min_coord(split_coord)) {
+      iterator it = std::min_element(mid, end(), [=](const Point_d* a, const Point_d* b) -> bool {
+        FT a_c = *(construct_it(*a) + split_coord);
+        FT b_c = *(construct_it(*b) + split_coord);
+
+        if (a_c == val1)
+          return false;
+
+        if (b_c == val1)
+          return true;
+
+        return a_c < b_c;
+        });
+      return *(construct_it(**it) + split_coord);
+    }
+
     mid++;
     mpit = construct_it((*(*mid)));
     FT val2 = *(mpit+split_coord);
