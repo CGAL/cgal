@@ -39,7 +39,7 @@ public:
     void setID(int id);
 
     virtual void setHighlight(bool highlight);
-    virtual CGAL::FT getOffset() const = 0;  // abstract
+    virtual CGAL::FT getOffset() const = 0; // abstract
 
     static const int SAVE_OFFSET_EVENT = 0;
 

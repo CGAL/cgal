@@ -31,14 +31,14 @@ public:
     static TriangleEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     FacetSPtr getFacet() const;
     void setFacet(FacetSPtr facet);
     EdgeSPtr getEdgeBegin() const;
     void setEdgeBegin(EdgeSPtr edge_begin);
     void getVertices(VertexSPtr out[3]) const;
     void getEdges(EdgeSPtr out[3]) const;
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

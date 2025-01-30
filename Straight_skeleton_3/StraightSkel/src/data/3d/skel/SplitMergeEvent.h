@@ -29,7 +29,7 @@ public:
     static SplitMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     VertexSPtr getVertex1() const;
     void setVertex1(VertexSPtr vertex_1);
     VertexSPtr getVertex2() const;
@@ -38,7 +38,7 @@ public:
     void setFacet1(FacetSPtr facet_1);
     FacetSPtr getFacet2() const;
     void setFacet2(FacetSPtr facet_2);
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

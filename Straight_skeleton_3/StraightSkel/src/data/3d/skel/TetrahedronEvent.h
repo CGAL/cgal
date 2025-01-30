@@ -31,13 +31,13 @@ public:
     static TetrahedronEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     EdgeSPtr getEdgeBegin() const;
     void setEdgeBegin(EdgeSPtr edge_begin);
     void getVertices(VertexSPtr out[4]) const;
     void getEdges(EdgeSPtr out[6]) const;
     void getFacets(FacetSPtr out[4]) const;
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

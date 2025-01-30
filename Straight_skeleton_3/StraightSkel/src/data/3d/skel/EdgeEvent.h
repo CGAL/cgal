@@ -31,10 +31,10 @@ public:
     static EdgeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     EdgeSPtr getEdge() const;
     void setEdge(EdgeSPtr edge);
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

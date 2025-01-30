@@ -31,14 +31,14 @@ public:
     static EdgeSplitEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     EdgeSPtr getEdge1() const;
     void setEdge1(EdgeSPtr edge1);
     EdgeSPtr getEdge2() const;
     void setEdge2(EdgeSPtr edge2);
     int getEdgeOrientation() const;
     void setEdgeOrientation(int edge_orientation);
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

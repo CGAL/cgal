@@ -31,12 +31,12 @@ public:
     static PierceEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     FacetSPtr getFacet() const;
     void setFacet(FacetSPtr facet);
     VertexSPtr getVertex() const;
     void setVertex(VertexSPtr vertex);
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:

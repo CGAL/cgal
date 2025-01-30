@@ -31,7 +31,7 @@ public:
     static DblEdgeMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    CGAL::FT getOffset() const;
+    CGAL::FT getOffset() const override;
     FacetSPtr getFacet1() const;
     void setFacet1(FacetSPtr facet_1);
     EdgeSPtr getEdge11() const;
@@ -46,7 +46,7 @@ public:
     void setEdge22(EdgeSPtr edge_22);
     void getVertices(VertexSPtr out[4]) const;
     void getEdges(EdgeSPtr out[4]) const;
-    void setHighlight(bool highlight);
+    void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
 protected:
