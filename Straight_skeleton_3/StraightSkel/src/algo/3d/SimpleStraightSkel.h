@@ -151,7 +151,9 @@ public:
     std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
                                                                              FacetSPtr facet_1,
                                                                              FacetSPtr facet_2,
-                                                                             FacetSPtr facet_3);
+                                                                             FacetSPtr facet_3,
+                                                                             const CGAL::FT& past_bound,
+                                                                             const CGAL::FT& future_bound);
 
     /**
      * Returns the point where the edge will vanish.

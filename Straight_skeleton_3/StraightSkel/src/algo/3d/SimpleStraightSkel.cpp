@@ -1272,7 +1272,9 @@ bool SimpleStraightSkel::isTetrahedron(EdgeSPtr edge_begin) {
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
                                                                                              FacetSPtr facet_1,
                                                                                              FacetSPtr facet_2,
-                                                                                             FacetSPtr facet_3)
+                                                                                             FacetSPtr facet_3,
+                                                                                             const CGAL::FT& offset_past_bound,
+                                                                                             const CGAL::FT& offset_future_bound)
 {
 #ifdef CGAL_SS3_NO_CACHING
     Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
@@ -1283,12 +1285,14 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPla
     CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
     CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
     CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
-    return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
-#endif
-
+    return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                          plane_2, speed_2, plane_3, speed_3,
+                                                          offset_past_bound, offset_future_bound);
+#else
     std::size_t ids[] = {facet_0->getBasePlaneID(), facet_1->getBasePlaneID(), facet_2->getBasePlaneID(), facet_3->getBasePlaneID()};
     std::sort(std::begin(ids), std::end(ids));
-    auto canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
+    std::array<std::size_t, 4> canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
+
     std::pair<Point3SPtr, CGAL::FT> dummy_intersection;
     auto res = intersectionCache_.emplace(canonical_ids, dummy_intersection);
     if (res.second) {
@@ -1318,23 +1322,18 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPla
     std::cout << "speed #3 = " << speed_3 << std::endl;
 #endif
 
-      std::tie(point_and_time.first, point_and_time.second) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-        plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+      std::tie(point_and_time.first, point_and_time.second) =
+          KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                         plane_2, speed_2, plane_3, speed_3,
+                                                         offset_past_bound, offset_future_bound);
 
-      // @debug +
-      if (point_and_time.first) {
-        CGAL_assertion(*(point_and_time.first) == *(KernelWrapper::intersectionOffsetPlanes(
-            facet_0->getPlane(), speed_0, facet_1->getPlane(), speed_1,
-            facet_2->getPlane(), speed_2, facet_3->getPlane(), speed_3)));
-      }
-      // @debug -
-
-      // std::cout << "recompute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
+      // std::cout << "compute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
     } else {
       // std::cout << "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
     }
 
     return res.first->second;
+#endif // CGAL_SS3_NO_CACHING
 }
 
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
@@ -1410,27 +1409,8 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
         CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
         CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-        std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facetL, facetP, facetR, facetN);
-
-        // Ignore the intersection if it is in the past
-        // This is equivalent to the check that the point lives
-        // on the inward half plane (split by the edge's supporting line) of the bisector plane
-        if (!(offset_event < offset_past_bound)) { // written that way so that it matches when using CTRL+F
-#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-            std::cout << "event is strictly in the past" << std::endl;
-#endif
-          return { };
-        }
-
-        // Ignore the event if it happens further the future compared to the soonest top event.
-        if (offset_event <= offset_future_bound) {
-#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-            std::cout << "event is too far in the future" << std::endl;
-#endif
-            return { };
-        }
-
-        return { point, offset_event };
+        return intersectionAndTimeOffsetPlanesWithCache(facetL, facetP, facetR, facetN,
+                                                        offset_past_bound, offset_future_bound);
     }
 #endif // CGAL_SS3_OLD_CODE_VANISH_AT
 }
@@ -1544,7 +1524,7 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     return true;
 }
 
-// this one does an early exit if the result is irrelevant (in the past or too far in the)
+// this one does an early exit if the result is irrelevant (in the past or too far in the future)
 // @speed, should be able to not solve the system but just exit early if the 4 planes are clearly not intersecting (diametral spheres around the edges of size something?)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
@@ -1575,37 +1555,16 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     Point3SPtr point;
     CGAL::FT offset_event;
-    std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet_l1, facet_r1, facet_l2, facet_r2);
+    std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet_l1, facet_r1, facet_l2, facet_r2,
+                                                                             offset_past_bound, offset_future_bound);
 
     if (!point) {
-        std::cerr << "Warning: no crash?" << std::endl;
         return { };
     }
 
 #ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "Intersection: " << *point << " @ " << offset_event << std::endl;
 #endif
-
-    CGAL_assertion(*point == *(KernelWrapper::intersectionOffsetPlanes(
-        plane_l1, speed_l1, plane_r1, speed_r1, plane_l2, speed_l2, plane_r2, speed_r2)));
-
-    // Ignore the intersection if it is in the past
-    // This is equivalent to the check that the point lives
-    // on the inward half plane (split by the edge's supporting line) of the bisector plane
-    if (!(offset_event < offset_past_bound)) { // written that way so that it matches when using CTRL+F
-#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-        std::cout << "event is strictly in the past" << std::endl;
-#endif
-      return { };
-    }
-
-    // Ignore the event if it happens further the future compared to the soonest top event.
-    if (offset_event <= offset_future_bound) {
-#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-        std::cout << "event is too far in the future" << std::endl;
-#endif
-        return { };
-    }
 
     // Check that the point is inside bounds
     FacetSPtr facet_1_src = getFacetSrc(edge_1);
@@ -1618,8 +1577,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     std::cout << "Facet 1 DST = " << facet_1_dst->getID() << std::endl;
     std::cout << "Facet 2 SRC = " << facet_2_src->getID() << std::endl;
     std::cout << "Facet 2 DST = " << facet_2_dst->getID() << std::endl;
-
-    std::cout << "Point: " << *point << std::endl;
 #endif
 
 // #define CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
@@ -3791,7 +3748,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
                 CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
 
-                std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet, f0, f1, f2);
+                std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet, f0, f1, f2, current_offset, offset_of_nearest_event);
                 if (!point) {
                     continue;
                 }
@@ -3803,8 +3760,11 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 // std::cout << "f1 = " << f1->getID() << std::endl;
                 // std::cout << "f2 = " << f2->getID() << std::endl;
                 // std::cout << "ipoint: " << *point << " time: " << offset_event << std::endl;
+
+                CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 #endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
 
+                // @todo this check can be removed when the old code above is removed
                 if (offset_event < current_offset && offset_event >= offset_of_nearest_event) {
                     // Filter if the event point is on an edge (and a fortiori on a vertex)
                     // as it will be a different kind of event
