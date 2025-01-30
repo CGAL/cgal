@@ -79,7 +79,7 @@ struct Lazy_result_type
 
 class Enum_holder {
 protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ };
+  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ , PAIR};
 };
 
 } // internal
@@ -213,6 +213,7 @@ private:
   CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_point_3_for_polyhedral_envelope, OPTIONAL_)
+  CGAL_WRAPPER_TRAIT(Intersect_offset_planes_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
   CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_y_3, NT)

@@ -23,6 +23,7 @@ _test_fct_plane_sqrt_3(const R&)
 {
  typedef typename  R::Point_3  Point_3;
  typedef typename  R::Plane_3  Plane_3;
+ typedef typename   R::FT       FT;
 
  // bisector of 2 planes
  Point_3 q0(0, 0, 0, 1);
@@ -42,6 +43,11 @@ _test_fct_plane_sqrt_3(const R&)
  assert( bl3 == ql3 );
  assert( CGAL::bisector(ql4, ql2) == ql3 );
  assert( CGAL::bisector(ql1, ql5) == ql1 );
+
+FT one(1);
+
+// std::pair<Point_3, FT> res =
+FT res = CGAL::intersect_offset_planes(ql1, ql2, ql3, ql4, one, one, one, one);
 
  return true;
 }

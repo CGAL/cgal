@@ -4525,6 +4525,32 @@ namespace CartesianKernelFunctors {
   };
 
 
+template <typename K>
+  class Intersect_offset_planes_3
+  {
+    typedef typename K::FT FT;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+  public:
+    // typedef std::pair<Point_3,FT> result_type;
+    typedef FT result_type;
+
+    result_type operator()(const Plane_3& p0, const FT& t0,
+                           const Plane_3& p1, const FT& t1,
+                           const Plane_3& p2, const FT& t2,
+                           const Plane_3& p3, const FT& t3) const
+    {
+      FT x, y, z, t;
+      intersect_offset_planesC3(p0.a(), p0.b(), p0.c(), p0.d(), t0,
+                                p1.a(), p1.b(), p1.c(), p1.d(), t1,
+                                p2.a(), p2.b(), p2.c(), p2.d(), t2,
+                                p3.a(), p3.b(), p3.c(), p3.d(), t3,
+                                x, y, z, t);
+      // return std::make_pair(Point_3(x, y, z),t);
+      return t;
+    }
+  };
+
 } // namespace CartesianKernelFunctors
 
 } //namespace CGAL

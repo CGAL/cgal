@@ -807,6 +807,24 @@ has_smaller_signed_distance_to_plane(const typename K::Point_3 &hp,
 
 template < class K >
 inline
+// std::pair<typename K::Point_3, typename K::FT>
+typename K::FT
+intersect_offset_planes(const typename K::Plane_3 &p0,
+                        const typename K::Plane_3 &p1,
+                        const typename K::Plane_3 &p2,
+                        const typename K::Plane_3 &p3,
+                        const typename K::FT &t0,
+                        const typename K::FT &t1,
+                        const typename K::FT &t2,
+                        const typename K::FT &t3,
+                        const K &k)
+{
+  return k.intersect_offset_planes_3_object()(p0, t0, p1, t1, p2, t2, p3, t3);
+}
+
+
+template < class K >
+inline
 typename K::Boolean
 less_x(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
