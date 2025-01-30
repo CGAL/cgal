@@ -122,11 +122,7 @@ void TriangleEvent::setHighlight(bool highlight) {
 }
 
 std::string TriangleEvent::toString() const {
-    VertexSPtr vertices[3];
-    getVertices(vertices);
-
-    EdgeSPtr edges[3];
-    getEdges(edges);
+    FacetSPtr facet = getFacet();
 
     std::stringstream sstr;
     sstr.precision(17);
@@ -134,14 +130,7 @@ std::string TriangleEvent::toString() const {
     sstr << "\t(ID=" << getID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(vertices";
-    for(int i=0; i<3; ++i)
-        sstr << " " << vertices[i]->getID();
-    sstr << ")\n";
-    sstr << "\t(edges";
-    for(int i=0; i<3; ++i)
-        sstr << " " << edges[i]->getID();
-    sstr << ")";
+    sstr << "\t(facet=" << facet->getID() << ")\n";
     return sstr.str();
 }
 
