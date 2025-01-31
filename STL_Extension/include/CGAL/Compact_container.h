@@ -402,7 +402,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     const auto ts = Time_stamper::time_stamp(ret);
-    std::allocator_traits<allocator_type>::construct(alloc, ret, std::forward<Args>(args)...);
+    new (ret) value_type(std::forward<Args>(args)...);
     Time_stamper::restore_timestamp(ret, ts);
     Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);

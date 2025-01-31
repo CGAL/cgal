@@ -353,7 +353,7 @@ public:
     pointer ret = init_insert(fl);
     auto erase_counter = EraseCounterStrategy<T>::erase_counter(*ret);
     const auto ts = Time_stamper::time_stamp(ret);
-    std::allocator_traits<allocator_type>::construct(m_alloc, ret, std::forward<Args>(args)...);
+    new (ret) value_type(std::forward<Args>(args)...);
     Time_stamper::restore_timestamp(ret, ts);
     EraseCounterStrategy<T>::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
