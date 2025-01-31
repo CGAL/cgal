@@ -89,7 +89,7 @@ struct Time_stamper
   }
 
   static std::size_t hash_value(const T* p) {
-    CGAL_assertion(is_valid(p));
+    CGAL_assertion(nullptr== p || is_valid(p));
     if(nullptr == p)
       return std::size_t(-1);
     else
