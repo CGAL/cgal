@@ -220,6 +220,10 @@ class Compact_container
                              CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
+
+  template <typename U> using EraseCounterStrategy =
+      internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
+
   typedef Compact_container <T, Al, Ip, Ts>         Self;
   typedef Compact_container_traits <T>              Traits;
 public:
@@ -354,7 +358,7 @@ public:
     return all_items[block_number].first[index_in_block];
   }
 
-  friend void swap(Compact_container& a, Compact_container b) {
+  friend void swap(Compact_container& a, Compact_container b) noexcept {
     a.swap(b);
   }
 
@@ -390,22 +394,16 @@ public:
   // (just forward the arguments to the constructor, to optimize a copy).
   template < typename... Args >
   iterator
-  emplace(const Args&... args)
+  emplace(Args&&... args)
   {
     if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    new (ret) value_type(args...);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
+    const auto ts = Time_stamper::time_stamp(ret);
+    std::allocator_traits<allocator_type>::construct(alloc, ret, std::forward<Args>(args)...);
+    Time_stamper::restore_timestamp(ret, ts);
     Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
@@ -414,24 +412,7 @@ public:
 
   iterator insert(const T &t)
   {
-    if (free_list == nullptr)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
-    Time_stamper::set_time_stamp(ret, time_stamp);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    return iterator(ret, 0);
+    return emplace(t);
   }
 
   template < class InputIterator >
@@ -450,22 +431,14 @@ public:
 
   void erase(iterator x)
   {
-    typedef internal::Erase_counter_strategy<
-      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+    auto ptr = &*x;
+    CGAL_precondition(type(ptr) == USED);
+    EraseCounterStrategy<T>::increment_erase_counter(*x);
+    const auto ts = Time_stamper::time_stamp(ptr);
+    std::allocator_traits<allocator_type>::destroy(alloc, ptr);
+    Time_stamper::restore_timestamp(ptr, ts);
 
-    CGAL_precondition(type(&*x) == USED);
-    EraseCounterStrategy::increment_erase_counter(*x);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = x->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-    if constexpr (Time_stamper::has_timestamp) {
-      x->set_time_stamp(ts);
-    }
-
-    put_on_free_list(&*x);
+    put_on_free_list(ptr);
     --size_;
   }
 
@@ -697,7 +670,7 @@ public:
   static bool is_begin_or_end(const_pointer ptr)
   { return type(ptr)==START_END; }
 
-  void swap(Self &c)
+  void swap(Self &c) noexcept
   {
     std::swap(alloc, c.alloc);
     std::swap(capacity_, c.capacity_);
@@ -805,9 +778,6 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
 void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
 {
-  typedef internal::Erase_counter_strategy<
-    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
@@ -816,7 +786,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
   {
-    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    EraseCounterStrategy<T>::set_erase_counter(*(new_block + i), 0);
     Time_stamper::initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i);
   }
