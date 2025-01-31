@@ -1025,11 +1025,11 @@ public:
 
 
 //____________________________________________________________________________________
-// 
+//
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
 class Lazy_rep_8_2 final
-  : public Lazy_rep<typename AC::result_type, 
+  : public Lazy_rep<typename AC::result_type,
                     typename EC::result_type, E2A>
   , private EC
 {
@@ -1054,7 +1054,7 @@ public:
   update_exact() const
   {
     auto* p = new typename Base::Indirect();
-    p->et_ = ec()(CGAL::exact(l10_),CGAL::exact(l11_),CGAL::exact(l12_),CGAL::exact(l13_), 
+    p->et_ = ec()(CGAL::exact(l10_),CGAL::exact(l11_),CGAL::exact(l12_),CGAL::exact(l13_),
                   CGAL::exact(l20_),CGAL::exact(l22_),CGAL::exact(l22_),CGAL::exact(l23_));
     this->set_at(p);
     this->set_ptr(p);
