@@ -1054,7 +1054,8 @@ public:
   update_exact() const
   {
     auto* p = new typename Base::Indirect();
-    p->et_ = ec()(CGAL::exact(l1_), CGAL::exact(l2_));
+    p->et_ = ec()(CGAL::exact(l10_),CGAL::exact(l11_),CGAL::exact(l12_),CGAL::exact(l13_), 
+                  CGAL::exact(l20_),CGAL::exact(l22_),CGAL::exact(l22_),CGAL::exact(l23_));
     this->set_at(p);
     this->set_ptr(p);
     // Prune lazy tree
@@ -1295,6 +1296,7 @@ struct Lazy_construction_pair_8
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
+  typedef typename LK::E2A E2A;
   typedef typename std::pair<typename LK::Point_3,typename LK::FT> result_type;
 
   CGAL_NO_UNIQUE_ADDRESS AC ac;
@@ -1313,8 +1315,8 @@ struct Lazy_construction_pair_8
       Protect_FPU_rounding<Protection> P;
       try {
         typedef Lazy_rep_8_2<AC, EC, E2A, L1, L2> LazyPairRep;
-        LazyPointRep;
-        LazyFTRep;
+        // LazyPointRep;
+        // LazyFTRep;
         auto rep = new LazyPairRep(ac, ec,
                                    l10, l11, l12, l13,
                                    l20, l21, l22, l23);
