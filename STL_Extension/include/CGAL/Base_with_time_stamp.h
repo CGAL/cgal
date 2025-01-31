@@ -16,19 +16,11 @@
 
 namespace CGAL {
 
-template <typename Base>
-class Base_with_time_stamp : public Base {
+template <typename B_w_ts_base>
+class Base_with_time_stamp : public B_w_ts_base {
   std::size_t time_stamp_ = std::size_t(-2);
 public:
-#if !defined(BOOST_MSVC) || (BOOST_MSVC >= 1920)
-  using Base::Base;
-#else // workaround for MSVC 2017
-  // VC++ 19.16 (from MSVC 2017) may mix up the constructor `Base::Base`
-  // with a possible member type `Base` from the base class.
-  //   see a repro of the issue at https://compiler-explorer.com/z/d5hxv7Wze
-  using base_t = Base;
-  using base_t::base_t;
-#endif
+  using B_w_ts_base::B_w_ts_base;
 
   using Has_timestamp = CGAL::Tag_true;
 
@@ -41,7 +33,7 @@ public:
 
   template < class TDS >
   struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS>::Other Base2;
+    typedef typename B_w_ts_base::template Rebind_TDS<TDS>::Other Base2;
     typedef Base_with_time_stamp<Base2> Other;
   };
 };
