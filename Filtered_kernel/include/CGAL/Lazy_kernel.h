@@ -213,7 +213,7 @@ private:
   CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_point_3_for_polyhedral_envelope, OPTIONAL_)
-  CGAL_WRAPPER_TRAIT(Intersect_offset_planes_3, NT)
+  CGAL_WRAPPER_TRAIT(Intersect_offset_planes_3, PAIR)
   CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
   CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
@@ -258,6 +258,13 @@ private:
   struct Select_wrapper_impl<Construction, OPTIONAL_> {
     template<typename Kernel, typename AKC, typename EKC>
     struct apply { typedef Lazy_construction_optional_for_polygonal_envelope<Kernel, AKC, EKC> type; };
+  };
+
+
+  template <typename Construction>
+  struct Select_wrapper_impl<Construction, PAIR> {
+    template<typename Kernel, typename AKC, typename EKC>
+    struct apply { typedef Lazy_construction_pair_8<Kernel, AKC, EKC> type; };
   };
 
   template <typename Construction>
