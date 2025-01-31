@@ -1028,6 +1028,78 @@ public:
 // The following rep class stores two non-const reference parameters of type R1 and R2
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
+class Lazy_rep_8_2 final
+  : public Lazy_rep<std::pair<typename R1::AT,typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, E2A>
+  , private EC
+{
+  typedef std::pair<typename R1::AT, typename R2::AT> AT;
+  typedef std::pair<typename R1::ET, typename R2::ET> ET;
+  typedef Lazy_rep<AT, ET, E2A> Base;
+
+  mutable L1 l10_;
+  mutable L1 l11_;
+  mutable L1 l12_;
+  mutable L1 l13_;
+  mutable L2 l20_;
+  mutable L2 l21_;
+  mutable L2 l22_;
+  mutable L2 l23_;
+
+  const EC& ec() const { return *this; }
+
+public:
+
+  void
+  update_exact() const
+  {
+    auto* p = new typename Base::Indirect();
+    p->et_ = ec()(CGAL::exact(l1_), CGAL::exact(l2_));
+    this->set_at(p);
+    this->set_ptr(p);
+    // Prune lazy tree
+    lazy_reset_member(l10_);
+    lazy_reset_member(l11_);
+    lazy_reset_member(l12_);
+    lazy_reset_member(l13_);
+    lazy_reset_member(l20_);
+    lazy_reset_member(l21_);
+    lazy_reset_member(l22_);
+    lazy_reset_member(l23_);
+  }
+
+  Lazy_rep_8_2(const AC& ac, const EC& /*ec*/,
+               const L1& l10, const L1& l11, const L1& l12, const L1& l13,
+               const L2& l20, const L2& l21,const L2& l22,const L2& l23)
+    : Lazy_rep<AT,ET,E2A>()
+    , l10_(l10), l11_(l11), l12_(l12), l13_(l13)
+    , l20_(l20), l21_(l21), l22_(l22), l23_(l23)
+  {
+    this->set_depth((std::max)({CGAL::depth(l10_), CGAL::depth(l2_))}); // todo
+    this->at_orig.at_ = ac(CGAL::approx(l10_),CGAL::approx(l11_),CGAL::approx(l12_),CGAL::approx(l13_), CGAL::approx(l20_), CGAL::approx(l21_), CGAL::approx(l22_), CGAL::approx(l23_));
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_rep_8_2"  << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l10_, os, level+1);
+      CGAL::print_dag(l11_, os, level+1);
+      CGAL::print_dag(l12_, os, level+1);
+      CGAL::print_dag(l13_, os, level+1);
+      CGAL::print_dag(l20_, os, level+1);
+      CGAL::print_dag(l21_, os, level+1);
+      CGAL::print_dag(l22_, os, level+1);
+      CGAL::print_dag(l23_, os, level+1);
+    }
+  }
+#endif
+};
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
 class Lazy_rep_2_2 final
   : public Lazy_rep<std::pair<typename R1::AT,typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, E2A>
   , private EC
@@ -1215,6 +1287,36 @@ struct Lazy_construction_bbox
 
 
 template <typename LK, typename AC, typename EC>
+struct Lazy_construction_pair
+{
+  static const bool Protection = true;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename AC::result_type result_type;
+
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+  template <typename L1>
+  decltype(auto)
+  operator()(const L1& l1) const
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    {
+      // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+      Protect_FPU_rounding<Protection> P;
+      try {
+        auto ap(CGAL::approx(l1)); // pair<AK::Point, Interval_nt>
+      } catch (Uncertain_conversion_exception&) {}
+    }
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+    auto ep = ec(CGAL::exact(l1));   pair<EK::Point, Exact_rational>
+  }
+};
+
+template <typename LK, typename AC, typename EC>
 struct Lazy_construction_optional_for_polygonal_envelope
 {
   static const bool Protection = true;
@@ -1300,6 +1402,13 @@ struct Lazy_construction_optional_for_polygonal_envelope
     return std::make_optional(lp);
   }
 };
+
+
+     pair( lp  ,  le)
+            |
+            lrep4plans
+
+
 
 
 template <typename LK, typename AC, typename EC>
