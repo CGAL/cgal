@@ -1074,7 +1074,8 @@ public:
     , l10_(l10), l11_(l11), l12_(l12), l13_(l13)
     , l20_(l20), l21_(l21), l22_(l22), l23_(l23)
   {
-    this->set_depth((std::max)({CGAL::depth(l10_), CGAL::depth(l2_))}); // todo
+    this->set_depth((std::max)({CGAL::depth(l10_), CGAL::depth(l11_), CGAL::depth(l12_), CGAL::depth(l13_),
+                                CGAL::depth(l20_), CGAL::depth(l21_), CGAL::depth(l22_), CGAL::depth(l23_)}));
     this->at_orig.at_ = ac(CGAL::approx(l10_),CGAL::approx(l11_),CGAL::approx(l12_),CGAL::approx(l13_), CGAL::approx(l20_), CGAL::approx(l21_), CGAL::approx(l22_), CGAL::approx(l23_));
   }
 
@@ -1287,7 +1288,7 @@ struct Lazy_construction_bbox
 
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_construction_pair
+struct Lazy_construction_pair_8
 {
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
@@ -1299,20 +1300,23 @@ struct Lazy_construction_pair
 
   template <typename L1>
   decltype(auto)
-  operator()(const L1& l1) const
+  operator()(const L1& l10, const L1& l11, const L1& l12, const L1& l13,
+             const L2& l20, const L2& l21, const L2& l22, const L2& l23) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
       Protect_FPU_rounding<Protection> P;
       try {
-        auto ap(CGAL::approx(l1)); // pair<AK::Point, Interval_nt>
+        auto pair_approx = ap(CGAL::approx(l10),CGAL::approx(l11),CGAL::approx(l12),CGAL::approx(l13),
+                              CGAL::approx(l20),CGAL::approx(l21),CGAL::approx(l22),CGAL::approx(l23)); // pair<AK::Point, Interval_nt>
       } catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    auto ep = ec(CGAL::exact(l1));   pair<EK::Point, Exact_rational>
+    auto pair_exact = ec(CGAL::exact(l10),CGAL::exact(l11),CGAL::exact(l12),CGAL::exact(l13),
+                         CGAL::exact(l20),CGAL::exact(l21),CGAL::exact(l22),CGAL::exact(l23));
   }
 };
 
@@ -1402,13 +1406,6 @@ struct Lazy_construction_optional_for_polygonal_envelope
     return std::make_optional(lp);
   }
 };
-
-
-     pair( lp  ,  le)
-            |
-            lrep4plans
-
-
 
 
 template <typename LK, typename AC, typename EC>
