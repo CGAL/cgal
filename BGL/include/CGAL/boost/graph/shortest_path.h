@@ -14,6 +14,9 @@
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <boost/property_map/property_map.hpp>
 #include <vector>
 #include <unordered_map>
@@ -64,12 +67,15 @@ namespace internal {
 * @param mesh the mesh
 * @param halfedge_sequence the sequence of halfedges that form the shortest path on `mesh`
 */
-template<typename Mesh>
-void shortest_path_between_two_vertices(
+template<typename Mesh,
+         typename OutputIterator,
+         typename NamedParameters = parameters::Default_named_parameters>
+OutputIterator shortest_path_between_two_vertices(
   const typename boost::graph_traits<Mesh>::vertex_descriptor vs,//source
   const typename boost::graph_traits<Mesh>::vertex_descriptor vt,//target
   const Mesh& mesh,
-  std::vector<typename boost::graph_traits<Mesh>::halfedge_descriptor>& halfedge_sequence)
+  OutputIterator halfedge_sequence_oit,
+  const NamedParameters& np = parameters::default_values())
 {
   using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
@@ -87,10 +93,7 @@ void shortest_path_between_two_vertices(
     boost::dijkstra_shortest_paths(mesh, vs,
       boost::predecessor_map(pred_pmap).visitor(vis));
   }
-  catch (const std::exception& e)
-  {
-    std::cout << e.what() << std::endl;
-  }
+  catch (const std::exception& e){}
 
   // Walk back from target to source and collect vertices along the way
   struct vertex_on_path
@@ -128,8 +131,9 @@ void shortest_path_between_two_vertices(
     const std::pair<halfedge_descriptor, bool>
       h = halfedge((path_it + 1)->vertex, path_it->vertex, mesh);
     if (h.second)
-      halfedge_sequence.push_back(h.first);
+      *halfedge_sequence_oit++ = h.first;
   }
+  return halfedge_sequence_oit;
 }
 
 } // namespace CGAL

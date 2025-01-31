@@ -57,7 +57,8 @@ int main(int argc, char** argv)
   }
 
   std::vector<halfedge_descriptor> halfedge_sequence;
-  CGAL::shortest_path_between_two_vertices(vs, vt, sm, halfedge_sequence);
+  CGAL::shortest_path_between_two_vertices(vs, vt, sm,
+    std::back_inserter(halfedge_sequence));
 
   // dump
   std::cout << "Shortest path between vertices " << i0 << " and " << i1
