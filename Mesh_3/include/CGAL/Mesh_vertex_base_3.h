@@ -250,7 +250,7 @@ private:
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
-  std::size_t time_stamp_ = std::size_t(-1);
+  std::size_t time_stamp_ = std::size_t(-2);
 public:
 
   friend std::istream& operator>>(std::istream &is, Mesh_vertex_3& v)

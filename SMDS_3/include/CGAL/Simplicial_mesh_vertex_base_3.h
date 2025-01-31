@@ -217,7 +217,7 @@ private:
   // that contains me. Negative values are a marker for special vertices.
   short dimension_;
   bool cache_validity;
-  std::size_t time_stamp_ = std::size_t(-1);
+  std::size_t time_stamp_ = std::size_t(-2);
 
 public:
   friend std::istream& operator>>(std::istream& is,

@@ -47,18 +47,7 @@ public:
 
 public:
   // Constructors
-  Compact_simplicial_mesh_cell_3() {}
-
-  Compact_simplicial_mesh_cell_3(const Compact_simplicial_mesh_cell_3& rhs)
-    : N(rhs.N)
-    , V(rhs.V)
-    , time_stamp_(rhs.time_stamp_)
-    , subdomain_index_(rhs.subdomain_index_)
-  {
-    for(int i=0; i <4; i++){
-      surface_index_table_[i] = rhs.surface_index_table_[i];
-    }
-  }
+  Compact_simplicial_mesh_cell_3() = default;
 
   Compact_simplicial_mesh_cell_3(Vertex_handle v0,
                                  Vertex_handle v1,
@@ -277,7 +266,7 @@ private:
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
 
-  std::size_t time_stamp_ =  std::size_t(-1);
+  std::size_t time_stamp_ =  std::size_t(-2);
 
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};
