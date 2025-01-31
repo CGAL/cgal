@@ -46,8 +46,9 @@ _test_fct_plane_sqrt_3(const R&)
 
 FT one(1);
 
-// std::pair<Point_3, FT> res =
-FT res = CGAL::intersect_offset_planes(ql1, ql2, ql3, ql4, one, one, one, one);
+ std::pair<Point_3, FT> res =
+//FT res =
+CGAL::intersect_offset_planes(ql1, ql2, ql3, ql4, one, one, one, one);
 
  return true;
 }

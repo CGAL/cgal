@@ -1307,6 +1307,8 @@ struct Lazy_construction_pair_8
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
+      typedef Lazy<typename AK::Point_3, typename EK::Point_3, E2A> Handle_1;
+      typedef Lazy<typename AK::FT, typename AK::ET, E2A> Handle_2;
       // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
       Protect_FPU_rounding<Protection> P;
       try {
@@ -1320,8 +1322,6 @@ struct Lazy_construction_pair_8
                      std::pair<typename EK::Point_3, typename EK::FT>, E2A> Lazy_pair;
         Lazy_pair lv(rep);
 
-        typedef Lazy<typename AK::Point_3, typename EK::Point_3, E2A> Handle_1;
-        typedef Lazy<typename AK::FT, typename AK::ET, E2A> Handle_2;
 
         typename LK::Point_3 lpt(Handle_1(new Lazy_rep_n<void, void,
                                                          First< std::pair<typename AK::Point_3, typename AK::FT> >,
@@ -1346,6 +1346,9 @@ struct Lazy_construction_pair_8
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     auto pair_exact = ec(CGAL::exact(l10),CGAL::exact(l11),CGAL::exact(l12),CGAL::exact(l13),
                          CGAL::exact(l20),CGAL::exact(l21),CGAL::exact(l22),CGAL::exact(l23));
+    typename LK::Point_3 lpt(Handle_1(new Lazy_rep_0<AK::Point_3, EK::Point_3,E2A>(pair_exact.first)));
+    typename LK::FT lft(Handle_2(new Lazy_rep_0<AK::FT, EK::FT,E2A>(pair_exact.second)));
+    return std::make_pair(lpt, lft);
   }
 };
 
