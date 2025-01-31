@@ -1289,6 +1289,29 @@ struct Lazy_construction_bbox
   }
 };
 
+template <typename T>
+struct First
+{
+   typedef typename T::first_type result_type;
+
+   const typename T::first_type&
+   operator()(const T& p) const
+   {
+     return p.first;
+   }
+ };
+
+template <typename T>
+struct Second
+{
+  typedef typename T::second_type result_type;
+
+  const typename T::second_type&
+  operator()(const T& p) const
+  {
+    return p.second;
+  }
+};
 
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_pair_8
@@ -1329,13 +1352,13 @@ struct Lazy_construction_pair_8
                                                          First< std::pair<typename AK::Point_3, typename AK::FT> >,
                                                          First< std::pair<typename EK::Point_3, typename EK::FT> >,
                                                          E2A, false,
-                                                         Lazy_pair>(First< std::pair<typename AK::Point_3, typename AK::FT> > >(),
+                                                         Lazy_pair>(First< std::pair<typename AK::Point_3, typename AK::FT> >(),
                                                                     First< std::pair<typename EK::Point_3, typename EK::FT> >(), lv)));
         typename LK::FT lft(Handle_2(new Lazy_rep_n<void, void,
                                                     Second< std::pair<typename AK::Point_3, typename AK::FT> >,
                                                     Second< std::pair<typename EK::Point_3, typename EK::FT> >,
                                                     E2A, false,
-                                                    Lazy_pair>(Second< std::pair<typename AK::Point_3, typename AK::FT> > >(),
+                                                    Lazy_pair>(Second< std::pair<typename AK::Point_3, typename AK::FT> >(),
                                                                Second< std::pair<typename EK::Point_3, typename EK::FT> >(), lv)));
 
         return std::make_pair(lpt, lft);
@@ -1348,8 +1371,8 @@ struct Lazy_construction_pair_8
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     auto pair_exact = ec(CGAL::exact(l10),CGAL::exact(l11),CGAL::exact(l12),CGAL::exact(l13),
                          CGAL::exact(l20),CGAL::exact(l21),CGAL::exact(l22),CGAL::exact(l23));
-    typename LK::Point_3 lpt(Handle_1(new Lazy_rep_0<AK::Point_3, EK::Point_3,E2A>(pair_exact.first)));
-    typename LK::FT lft(Handle_2(new Lazy_rep_0<AK::FT, EK::FT,E2A>(pair_exact.second)));
+    typename LK::Point_3 lpt(Handle_1(new Lazy_rep_0<typename AK::Point_3, typename EK::Point_3,E2A>(pair_exact.first)));
+    typename LK::FT lft(Handle_2(new Lazy_rep_0<typename AK::FT, typename EK::FT,E2A>(pair_exact.second)));
     return std::make_pair(lpt, lft);
   }
 };
@@ -1699,31 +1722,6 @@ public:
     typename R1::ET et;
     ec(CGAL::exact(l1), CGAL::exact(l2), et);
     r1 = R1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et));
-  }
-};
-
-
-template <typename T>
-struct First
-{
-   typedef typename T::first_type result_type;
-
-   const typename T::first_type&
-   operator()(const T& p) const
-   {
-     return p.first;
-   }
- };
-
-template <typename T>
-struct Second
-{
-  typedef typename T::second_type result_type;
-
-  const typename T::second_type&
-  operator()(const T& p) const
-  {
-    return p.second;
   }
 };
 
