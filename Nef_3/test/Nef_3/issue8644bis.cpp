@@ -1,8 +1,8 @@
 #include <CGAL/Extended_cartesian.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
-using Kernel = CGAL::Extended_cartesian<CGAL::Gmpq>;
+using Kernel = CGAL::Extended_cartesian<CGAL::Exact_rational>;
 using Nef = CGAL::Nef_polyhedron_3<Kernel>;
 
 int main()
