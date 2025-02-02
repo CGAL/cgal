@@ -55,8 +55,8 @@ template <typename K>
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
   public:
-    // typedef std::pair<Point_3,T> result_type;
-    typedef FT result_type;
+    typedef std::pair<Point_3,FT> result_type;
+    //typedef FT result_type;
 
     result_type operator()(const Plane_3& p0, const FT& t0,
                            const Plane_3& p1, const FT& t1,
@@ -71,9 +71,7 @@ template <typename K>
                                 p3.a(), p3.b(), p3.c(), p3.d(), t3,
                                 x, y, z, t);
       */
-      // return std::make_pair(Point_3(x, y, z),t);
-      assert(false);
-      return t;
+      return std::make_pair(Point_3(x, y, z),t);
     }
   };
   template <typename K>
