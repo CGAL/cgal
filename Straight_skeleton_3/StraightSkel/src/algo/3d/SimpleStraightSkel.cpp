@@ -3145,9 +3145,8 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
             CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
             CGAL::FT shift = offset_event - current_offset;
-            Point3SPtr e1so = PolyhedronTransformation::shiftPoint(edge_1->getVertexSrc(), shift);
-            Point3SPtr e1to = PolyhedronTransformation::shiftPoint(edge_1->getVertexDst(), shift);
-            if(*(e1so) != *(e1to)) {
+            Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
+            if (!e1o->is_degenerate()) {
                 // not a polyhedron split (edge split?)
                 continue;
             }
@@ -3397,22 +3396,36 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_RUN_TIMERS
+    std::cout << "Collect reflex edges: " << timer.time() << std::endl;
+#endif
+
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     std::cout << edges_reflex.size() << " reflex edges" << std::endl;
 
-    std::stringstream ss_filename;
-    ss_filename << save_path_.string() << "/reflex_edge_count.txt";
-    std::ofstream out(ss_filename.str(), std::ios::app);
-    out.precision(17);
-    out << edges_reflex.size() << "\n";
-    out.close();
+    // std::stringstream ss_filename;
+    // ss_filename << save_path_.string() << "/reflex_edge_count.txt";
+    // std::ofstream out(ss_filename.str(), std::ios::app);
+    // out.precision(17);
+    // out << edges_reflex.size() << "\n";
+    // out.close();
 #endif
+
+    // upper bound on the maximum interesting shift
+    // @todo use an "is_initialized?" flag or something to avoid the case where it is max()?
+    CGAL::FT shift = offset_of_nearest_event - current_offset;
 
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex.begin();
     while (it_e1 != edges_reflex.end()) {
         EdgeSPtr edge_1 = *it_e1++;
         FacetSPtr facet_1_src = getFacetSrc(edge_1);
         FacetSPtr facet_1_dst = getFacetDst(edge_1);
+
+        Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift);
+        CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+        b1 += edge_1->getVertexDst()->getPoint()->bbox();
+        b1 += offset_e1->source().bbox();
+        b1 += offset_e1->target().bbox();
 
         std::list<EdgeSPtr>::iterator it_e2 = it_e1; // starts at 'it_e1' => unique rep.
         while (it_e2 != edges_reflex.end()) {
@@ -3454,93 +3467,38 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
             }
 
             // Filter if edges are too far
-            //
-            // @speed the best filtering would be to first have a loop over all combinations
+
+            // @speed the best filtering could be to first have a loop over all combinations
             // to tighten the bound, and only then compute the crashAt, but below is
             // to get an easy speed-up
-            //
-            //
-#if 0
-            this does not filter enough because edges can still see very far
-            also broken after update of vanish/crash functions not returning local offsets
 
-            // check shifted planes and edges orientations: if a shifted edge is still in the negative
-            // side of the planes, we can 'continue'
-            auto is_shifted_edge_definitely_on_negative_side_of_planes = [&offset_of_nearest_event](EdgeSPtr lhs, EdgeSPtr rhs) {
-                // @speed note that here and in other places, we could speed up shifting computations
-                // because there is a lot of redundant computations: for example here, the two
-                // points are the intersection of 2 planes with the same shifted edge line
-                // but we compute it from scratch for both
-                Point3SPtr offset_e1so = PolyhedronTransformation::shiftPoint(lhs->getVertexSrc(), offset_of_nearest_event);
-                Point3SPtr offset_e1to = PolyhedronTransformation::shiftPoint(lhs->getVertexDst(), offset_of_nearest_event);
-
-                Plane3SPtr offset_pl0 = PolyhedronTransformation::shiftPlane(rhs->getFacetL(), offset_of_nearest_event);
-                Plane3SPtr offset_pl1 = PolyhedronTransformation::shiftPlane(rhs->getFacetR(), offset_of_nearest_event);
-
-                auto is_shifted_edge_definitely_on_negative_side_of_plane = [](Point3SPtr os, Point3SPtr od, Plane3SPtr opl, Plane3SPtr other_opl) {
-                    auto orient_s = KernelWrapper::side(opl, os);
-                    auto orient_d = KernelWrapper::side(opl, od);
-                    if (orient_s * orient_d < 0) {
-                        // the offset edge crosses opl; is it entirely on the negative side of the other plane?
-                        //
-                        // @todo we can still have the segment be on the union of the negative sides
-                        // even if it crosses both planes
-                        return (KernelWrapper::side(other_opl, os) < 0 && KernelWrapper::side(other_opl, od) < 0);
-                    } else {
-                        return (orient_s < 0);
-                    }
-                };
-
-                return (is_shifted_edge_definitely_on_negative_side_of_plane(offset_e1so, offset_e1to, offset_pl0, offset_pl1) ||
-                        is_shifted_edge_definitely_on_negative_side_of_plane(offset_e1so, offset_e1to, offset_pl1, offset_pl0));
-            };
-
-            if (is_shifted_edge_definitely_on_negative_side_of_planes(edge_1, edge_2) ||
-                is_shifted_edge_definitely_on_negative_side_of_planes(edge_2, edge_1)) {
-                ++filtered_candidates;
-                continue;
-            } else {
-                // std::cout << "Checking possible edge split event\n\t"
-                //           << edge_1->toString() << "\n\t"
-                //           << edge_2->toString() << std::endl;
-            }
-#else
             // build 2 pairs of quads from each edge + shifted edge and check intersections
             //
             // a very important point is that the shifted edge could definitely be different due
             // to other events... but then another event will come first to modify the shifted edge!
 
             // let's just check if bboxes overlap first
-            Point3SPtr offset_e1so = PolyhedronTransformation::shiftPoint(edge_1->getVertexSrc(), offset_of_nearest_event);
-            Point3SPtr offset_e1to = PolyhedronTransformation::shiftPoint(edge_1->getVertexDst(), offset_of_nearest_event);
-            CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
-            b1 += edge_1->getVertexDst()->getPoint()->bbox();
-            b1 += offset_e1so->bbox();
-            b1 += offset_e1to->bbox();
-
-            Point3SPtr offset_e2so = PolyhedronTransformation::shiftPoint(edge_2->getVertexSrc(), offset_of_nearest_event);
-            Point3SPtr offset_e2to = PolyhedronTransformation::shiftPoint(edge_2->getVertexDst(), offset_of_nearest_event);
+            Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift);
             CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
             b2 += edge_2->getVertexDst()->getPoint()->bbox();
-            b2 += offset_e2so->bbox();
-            b2 += offset_e2to->bbox();
+            b2 += offset_e2->source().bbox();
+            b2 += offset_e2->target().bbox();
             if (!CGAL::do_overlap(b1, b2)) {
-# ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                 ++filtered_candidates;
-# endif
+#endif
                 // std::cout << "Filtered edge split candidates\n\t"
                 //           << edge_1->toString() << "\n\t"
                 //           << edge_2->toString() << std::endl;
                 continue;
             } else {
-# ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                 ++tested_candidates;
-# endif
+#endif
                 // std::cout << "Checking possible edge split event\n\t"
                 //           << edge_1->toString() << "\n\t"
                 //           << edge_2->toString() << std::endl;
             }
-#endif
 
             // calculate intersection point
             Point3SPtr point;
@@ -3552,16 +3510,14 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
 
             // @fixme below needs to be double checked
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            CGAL::FT shift = offset_event - current_offset;
-            Point3SPtr e1so = PolyhedronTransformation::shiftPoint(edge_1->getVertexSrc(), shift);
-            Point3SPtr e1to = PolyhedronTransformation::shiftPoint(edge_1->getVertexDst(), shift);
-            if(*(e1so) == *(e1to)) {
+            shift = offset_event - current_offset;
+            Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
+            if (e1o->is_degenerate()) {
                 // polyhedron split
                 continue;
             }
-            Point3SPtr e2so = PolyhedronTransformation::shiftPoint(edge_2->getVertexSrc(), shift);
-            Point3SPtr e2to = PolyhedronTransformation::shiftPoint(edge_2->getVertexDst(), shift);
-            if(*(e2so) == *(e2to)) {
+            Segment3SPtr e2o = PolyhedronTransformation::shiftEdge(edge_2, shift);
+            if (e2o->is_degenerate()) {
                 // polyhedron split
                 continue;
             }
@@ -3607,13 +3563,13 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+    std::cout << "  " << filtered_candidates << " filtered, " << tested_candidates << " tests" << std::endl;
+#endif
+
 #ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
     std::cout << "Sought Edge Split Events in: " << timer.time() << std::endl;
-#endif
-
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-    std::cout << "  " << filtered_candidates << " filtered, " << tested_candidates << " tests" << std::endl;
 #endif
 }
 
@@ -3646,6 +3602,9 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
             ++pierce_vertex_counter;
 #endif
+
+            const CGAL::FT shift = offset_of_nearest_event - current_offset;
+            Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, shift);
 
             std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
             while (it_f != polyhedron->facets().end()) {
@@ -3683,17 +3642,16 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 }
 
                 // shrinking, so the vertex must be on the backside of the plane
-                if (KernelWrapper::side(facet->plane(), vertex->getPoint()) > 0) {
+                if (KernelWrapper::side(facet->getPlane(), vertex->getPoint()) > 0) {
                     continue;
                 }
 
                 // if the face is so far that even when shifting point and plane by the current
                 // best lower bound on offset delta, the vertex has not crossed it yet, then we are done
-                Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, offset_of_nearest_event); // @FIXME BAD SHIFT
-                Plane3SPtr shifted_plane = PolyhedronTransformation::shiftPlane(facet, offset_of_nearest_event);
+                Plane3SPtr shifted_plane = PolyhedronTransformation::shiftPlane(facet, shift);
                 if (KernelWrapper::side(shifted_plane, shifted_pt) < 0) {
                     // std::cerr << "Filtering " << facet->getID() << " & " << *(vertex->getPoint()) << std::endl;
-                    // std::cerr << "offset_of_nearest_event: " << offset_of_nearest_event << std::endl;
+                    // std::cerr << "shift: " << shift << std::endl;
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                     ++filtered_candidates;
 #endif
@@ -3869,15 +3827,14 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
         }
     }
 
-#ifdef CGAL_SS3_RUN_TIMERS
-    timer.stop();
-    std::cout << "Sought Pierce Events in: " << timer.time() << std::endl;
-#endif
-
-
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     DEBUG_PRINT("  " << pierce_vertex_counter << " reflex vertices");
     DEBUG_PRINT("  " << filtered_candidates << " filtered, " << tested_candidates << " tests");
+#endif
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+    std::cout << "Sought Pierce Events in: " << timer.time() << std::endl;
 #endif
 }
 
