@@ -70,7 +70,8 @@ namespace internal {
 * @param vs source vertex
 * @param vt target vertex
 * @param g the graph
-* @param halfedge_sequence the sequence of halfedges that form the shortest path on `g`
+* @param halfedge_sequence_oit the output iterator holding the output sequence
+* of halfedges that form the shortest path from `vs` to `vt` on `g`
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * ** edge_weight_map : @todo deal with input mesh with no internal pmap.
 *                       default in boost is `get(boost::edge_weight, mesh)`
