@@ -148,12 +148,12 @@ public:
      * Return the intersection point and time of the 4 shifting planes.
      * Query the cache first, and fill it if it was not.
      */
-    std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
-                                                                             FacetSPtr facet_1,
-                                                                             FacetSPtr facet_2,
-                                                                             FacetSPtr facet_3,
-                                                                             const CGAL::FT& past_bound,
-                                                                             const CGAL::FT& future_bound);
+    std::pair<Point3SPtr, CGAL::FT> intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
+                                                                         FacetSPtr facet_1,
+                                                                         FacetSPtr facet_2,
+                                                                         FacetSPtr facet_3,
+                                                                         const CGAL::FT& past_bound,
+                                                                         const CGAL::FT& future_bound);
 
     /**
      * Returns the point where the edge will vanish.

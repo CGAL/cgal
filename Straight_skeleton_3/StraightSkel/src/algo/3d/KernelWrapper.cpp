@@ -272,20 +272,14 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
     return result;
 }
 
-std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                               const CGAL::FT& w0,
-                                                                               Plane3SPtr plane_1,
-                                                                               const CGAL::FT& w1,
-                                                                               Plane3SPtr plane_2,
-                                                                               const CGAL::FT& w2,
-                                                                               Plane3SPtr plane_3,
-                                                                               const CGAL::FT& w3,
-                                                                               const CGAL::FT& past_bound,
-                                                                               const CGAL::FT& future_bound)
+// @speed return num / den and re-use the denominator for point computation
+static CGAL::FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                             Plane3SPtr plane_1, const CGAL::FT& w1,
+                                             Plane3SPtr plane_2, const CGAL::FT& w2,
+                                             Plane3SPtr plane_3, const CGAL::FT& w3,
+                                             const CGAL::FT& past_bound, const CGAL::FT& future_bound)
 {
-    if(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)) {
-        return { };
-    }
+    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
     const CGAL::FT& a0 = plane_0->a();
     const CGAL::FT& b0 = plane_0->b();
@@ -335,7 +329,185 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     }
 
     if (!usePerturbations) {
-        std::exit(1); // @tmp
+        if(CGAL::is_zero(den))
+        {
+            std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+            return { };
+        }
+    }
+
+    CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+    // It's about as likely to be greater than 'past' than it is to be lower than 'future'
+    if (t >= past_bound) {
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+        std::cout << "event is strictly in the past" << std::endl;
+#endif
+      return { };
+    }
+
+    if (t <= future_bound) {
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+        std::cout << "event is too far in the future" << std::endl;
+#endif
+        return { };
+    }
+
+    return t;
+}
+
+Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
+                                                        const CGAL::FT& w0,
+                                                        Plane3SPtr plane_1,
+                                                        const CGAL::FT& w1,
+                                                        Plane3SPtr plane_2,
+                                                        const CGAL::FT& w2,
+                                                        Plane3SPtr plane_3,
+                                                        const CGAL::FT& w3)
+{
+    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+
+    const CGAL::FT& a0 = plane_0->a();
+    const CGAL::FT& b0 = plane_0->b();
+    const CGAL::FT& c0 = plane_0->c();
+    const CGAL::FT& d0 = plane_0->d();
+    const CGAL::FT& a1 = plane_1->a();
+    const CGAL::FT& b1 = plane_1->b();
+    const CGAL::FT& c1 = plane_1->c();
+    const CGAL::FT& d1 = plane_1->d();
+    const CGAL::FT& a2 = plane_2->a();
+    const CGAL::FT& b2 = plane_2->b();
+    const CGAL::FT& c2 = plane_2->c();
+    const CGAL::FT& d2 = plane_2->d();
+    const CGAL::FT& a3 = plane_3->a();
+    const CGAL::FT& b3 = plane_3->b();
+    const CGAL::FT& c3 = plane_3->c();
+    const CGAL::FT& d3 = plane_3->d();
+
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                  << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                  << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                  << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
+    std::cout << "Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3 << std::endl;
+    std::cout << "CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                   a1, b1, c1, d1,
+                                                   a2, b2, c2, d2,
+                                                   a3, b3, c3, d3) << std::endl;
+#endif
+
+    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
+    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
+    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
+    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
+
+    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+            config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+            config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    if (!usePerturbations) {
+        if(CGAL::is_zero(den))
+        {
+            std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+            return { };
+        }
+    }
+
+    // warning: only valid for normalized coefficients!!
+    CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
+
+    CGAL::FT y = (-a0*c1*d2*w3 + a0*c1*d3*w2 + a0*c2*d1*w3 - a0*c2*d3*w1 - a0*c3*d1*w2 + a0*c3*d2*w1 + a1*c0*d2*w3 - a1*c0*d3*w2 - a1*c2*d0*w3 + a1*c2*d3*w0 + a1*c3*d0*w2 - a1*c3*d2*w0 - a2*c0*d1*w3 + a2*c0*d3*w1 + a2*c1*d0*w3 - a2*c1*d3*w0 - a2*c3*d0*w1 + a2*c3*d1*w0 + a3*c0*d1*w2 - a3*c0*d2*w1 - a3*c1*d0*w2 + a3*c1*d2*w0 + a3*c2*d0*w1 - a3*c2*d1*w0) / den;
+
+    CGAL::FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
+
+    Point3SPtr point = KernelFactory::createPoint3(x, y, z);
+
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
+    std::cout << a0*x + b0*y + c0*z + d0 - w0*t << std::endl;
+    std::cout << a1*x + b1*y + c1*z + d1 - w1*t << std::endl;
+    std::cout << a2*x + b2*y + c2*z + d2 - w2*t << std::endl;
+    std::cout << a3*x + b3*y + c3*z + d3 - w3*t << std::endl;
+
+    CGAL_assertion(a0*x + b0*y + c0*z + d0 - w0*t == 0);
+    CGAL_assertion(a1*x + b1*y + c1*z + d1 - w1*t == 0);
+    CGAL_assertion(a2*x + b2*y + c2*z + d2 - w2*t == 0);
+    CGAL_assertion(a3*x + b3*y + c3*z + d3 - w3*t == 0);
+#endif
+
+    return point;
+}
+
+std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                                                    const CGAL::FT& w0,
+                                                                                    Plane3SPtr plane_1,
+                                                                                    const CGAL::FT& w1,
+                                                                                    Plane3SPtr plane_2,
+                                                                                    const CGAL::FT& w2,
+                                                                                    Plane3SPtr plane_3,
+                                                                                    const CGAL::FT& w3,
+                                                                                    const CGAL::FT& past_bound,
+                                                                                    const CGAL::FT& future_bound)
+{
+    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+
+    const CGAL::FT& a0 = plane_0->a();
+    const CGAL::FT& b0 = plane_0->b();
+    const CGAL::FT& c0 = plane_0->c();
+    const CGAL::FT& d0 = plane_0->d();
+    const CGAL::FT& a1 = plane_1->a();
+    const CGAL::FT& b1 = plane_1->b();
+    const CGAL::FT& c1 = plane_1->c();
+    const CGAL::FT& d1 = plane_1->d();
+    const CGAL::FT& a2 = plane_2->a();
+    const CGAL::FT& b2 = plane_2->b();
+    const CGAL::FT& c2 = plane_2->c();
+    const CGAL::FT& d2 = plane_2->d();
+    const CGAL::FT& a3 = plane_3->a();
+    const CGAL::FT& b3 = plane_3->b();
+    const CGAL::FT& c3 = plane_3->c();
+    const CGAL::FT& d3 = plane_3->d();
+
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                  << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                  << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                  << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
+    std::cout << "Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3 << std::endl;
+    std::cout << "CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                   a1, b1, c1, d1,
+                                                   a2, b2, c2, d2,
+                                                   a3, b3, c3, d3) << std::endl;
+#endif
+
+    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
+    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
+    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
+    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
+
+    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+            config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+            config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    if (!usePerturbations) {
         if(CGAL::is_zero(den))
         {
             std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
@@ -384,18 +556,18 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     return { result, t };
 }
 
-std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                               const CGAL::FT& w0,
-                                                                               Plane3SPtr plane_1,
-                                                                               const CGAL::FT& w1,
-                                                                               Plane3SPtr plane_2,
-                                                                               const CGAL::FT& w2,
-                                                                               Plane3SPtr plane_3,
-                                                                               const CGAL::FT& w3)
+std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                                                    const CGAL::FT& w0,
+                                                                                    Plane3SPtr plane_1,
+                                                                                    const CGAL::FT& w1,
+                                                                                    Plane3SPtr plane_2,
+                                                                                    const CGAL::FT& w2,
+                                                                                    Plane3SPtr plane_3,
+                                                                                    const CGAL::FT& w3)
 {
-    return intersectionAndTimeOffsetPlanes(plane_0, w0, plane_1, w1, plane_2, w2, plane_3, w3,
-                                           (std::numeric_limits<CGAL::FT>::max)(), // past
-                                           - (std::numeric_limits<CGAL::FT>::max)()); // future
+    return intersectionPointAndTimeOffsetPlanes(plane_0, w0, plane_1, w1, plane_2, w2, plane_3, w3,
+                                                (std::numeric_limits<CGAL::FT>::max)(), // past
+                                                - (std::numeric_limits<CGAL::FT>::max)()); // future
 }
 
 

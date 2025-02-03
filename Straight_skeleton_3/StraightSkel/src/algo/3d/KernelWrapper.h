@@ -76,15 +76,26 @@ public:
     static Plane3SPtr offsetPlane(Plane3SPtr plane, const CGAL::FT& offset);
     static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, const CGAL::FT& offset);
 
-    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
-                                                                           Plane3SPtr plane_1, const CGAL::FT& w1,
-                                                                           Plane3SPtr plane_2, const CGAL::FT& w2,
-                                                                           Plane3SPtr plane_3, const CGAL::FT& w3,
-                                                                           const CGAL::FT& past_bound, const CGAL::FT& future_bound);
-    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
-                                                                           Plane3SPtr plane_1, const CGAL::FT& w1,
-                                                                           Plane3SPtr plane_2, const CGAL::FT& w2,
-                                                                           Plane3SPtr plane_3, const CGAL::FT& w3);
+    static CGAL::FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                 Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                 Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                 Plane3SPtr plane_3, const CGAL::FT& w3,
+                                                 const CGAL::FT& past_bound, const CGAL::FT& future_bound);
+
+    static Point3SPtr intersectionPointOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                    Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                    Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                    Plane3SPtr plane_3, const CGAL::FT& w3);
+
+    static std::pair<Point3SPtr, CGAL::FT> intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                                                Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                                                Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                                                Plane3SPtr plane_3, const CGAL::FT& w3,
+                                                                                const CGAL::FT& past_bound, const CGAL::FT& future_bound);
+    static std::pair<Point3SPtr, CGAL::FT> intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                                                Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                                                Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                                                Plane3SPtr plane_3, const CGAL::FT& w3);
 
     /**
      * http://de.wikipedia.org/wiki/Drehmatrix

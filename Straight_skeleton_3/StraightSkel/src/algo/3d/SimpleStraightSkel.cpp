@@ -1269,67 +1269,52 @@ bool SimpleStraightSkel::isTetrahedron(EdgeSPtr edge_begin) {
     return result;
 }
 
-std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
-                                                                                             FacetSPtr facet_1,
-                                                                                             FacetSPtr facet_2,
-                                                                                             FacetSPtr facet_3,
-                                                                                             const CGAL::FT& offset_past_bound,
-                                                                                             const CGAL::FT& offset_future_bound)
+std::pair<Point3SPtr, CGAL::FT>
+SimpleStraightSkel::intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
+                                                         FacetSPtr facet_1,
+                                                         FacetSPtr facet_2,
+                                                         FacetSPtr facet_3,
+                                                         const CGAL::FT& offset_past_bound,
+                                                         const CGAL::FT& offset_future_bound)
 {
+    auto compute_point_and_time = [&]() -> std::pair<Point3SPtr, CGAL::FT>
+    {
+        Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
+        Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
+        Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
+        Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
+
+        // @fixme in theory, one would need to check if the data exists etc. etc.
+        // for now, it's a good to check if speeds are properly set
+        CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+        CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+        CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+        CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+        return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                                  plane_2, speed_2, plane_3, speed_3,
+                                                                  offset_past_bound, offset_future_bound);
+    };
+
 #ifdef CGAL_SS3_NO_CACHING
-    Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
-    Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
-    Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
-    Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
-    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
-    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
-    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
-    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
-    return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                          plane_2, speed_2, plane_3, speed_3,
-                                                          offset_past_bound, offset_future_bound);
+    return compute_point_and_time();
 #else
-    std::size_t ids[] = {facet_0->getBasePlaneID(), facet_1->getBasePlaneID(), facet_2->getBasePlaneID(), facet_3->getBasePlaneID()};
+    std::size_t ids[] = {facet_0->getBasePlaneID(),
+                         facet_1->getBasePlaneID(),
+                         facet_2->getBasePlaneID(),
+                         facet_3->getBasePlaneID()};
     std::sort(std::begin(ids), std::end(ids));
     std::array<std::size_t, 4> canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
 
-    std::pair<Point3SPtr, CGAL::FT> dummy_intersection;
-    auto res = intersectionCache_.emplace(canonical_ids, dummy_intersection);
-    if (res.second) {
-      // successful insertion, first time seeing it so actual computation is required
-      std::pair<Point3SPtr, CGAL::FT>& point_and_time = res.first->second;
+    std::pair<Point3SPtr, CGAL::FT> dummy;
+    auto res = intersectionCache_.emplace(canonical_ids, dummy);
+    if (res.second) { // successful insertion, first time seeing it so actual computation is required
+        // std::cout << "compute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " "
+        //                                 << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
 
-      Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID()); // canonical order doesn't matter
-      Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
-      Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
-      Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
-
-      // @fixme in theory, one would need to check if the data exists etc. etc.
-      // for now, it's a good to check if speeds are properly set
-      CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
-      CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
-      CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
-      CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
-
-#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
-    std::cout << "plane #0 = " << *plane_0 << std::endl;
-    std::cout << "plane #1 = " << *plane_1 << std::endl;
-    std::cout << "plane #2 = " << *plane_2 << std::endl;
-    std::cout << "plane #3 = " << *plane_3 << std::endl;
-    std::cout << "speed #0 = " << speed_0 << std::endl;
-    std::cout << "speed #1 = " << speed_1 << std::endl;
-    std::cout << "speed #2 = " << speed_2 << std::endl;
-    std::cout << "speed #3 = " << speed_3 << std::endl;
-#endif
-
-      std::tie(point_and_time.first, point_and_time.second) =
-          KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                         plane_2, speed_2, plane_3, speed_3,
-                                                         offset_past_bound, offset_future_bound);
-
-      // std::cout << "compute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
+        res.first->second = compute_point_and_time();
     } else {
-      // std::cout << "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
+        // std::cout << "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " "
+        //                                   << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
     }
 
     return res.first->second;
@@ -1409,8 +1394,8 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
         CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
         CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-        return intersectionAndTimeOffsetPlanesWithCache(facetL, facetP, facetR, facetN,
-                                                        offset_past_bound, offset_future_bound);
+        return intersectionPointAndTimeOffsetPlanes(facetL, facetP, facetR, facetN,
+                                                    offset_past_bound, offset_future_bound);
     }
 #endif // CGAL_SS3_OLD_CODE_VANISH_AT
 }
@@ -1555,8 +1540,8 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     Point3SPtr point;
     CGAL::FT offset_event;
-    std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet_l1, facet_r1, facet_l2, facet_r2,
-                                                                             offset_past_bound, offset_future_bound);
+    std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet_l1, facet_r1, facet_l2, facet_r2,
+                                                                         offset_past_bound, offset_future_bound);
 
     if (!point) {
         return { };
@@ -3748,7 +3733,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
                 CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
 
-                std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet, f0, f1, f2, current_offset, offset_of_nearest_event);
+                std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet, f0, f1, f2, current_offset, offset_of_nearest_event);
                 if (!point) {
                     continue;
                 }
