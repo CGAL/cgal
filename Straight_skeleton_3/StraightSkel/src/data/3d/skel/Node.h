@@ -27,6 +27,7 @@ namespace data { namespace _3d { namespace skel {
 class Node : public std::enable_shared_from_this<Node> {
 public:
     virtual ~Node();
+    static NodeSPtr create();
     static NodeSPtr create(Point3SPtr point);
 
     Point3SPtr getPoint() const;
@@ -71,6 +72,7 @@ public:
     std::string toString() const;
 
 protected:
+    Node();
     Node(Point3SPtr point);
     Point3SPtr point_;
     CGAL::FT offset_;

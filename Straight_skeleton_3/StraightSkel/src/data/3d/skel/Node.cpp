@@ -24,6 +24,11 @@
 
 namespace data { namespace _3d { namespace skel {
 
+Node::Node() {
+    offset_ = 0.0;
+    id_ = -1;
+}
+
 Node::Node(Point3SPtr point) {
     offset_ = 0.0;
     point_ = point;
@@ -32,6 +37,11 @@ Node::Node(Point3SPtr point) {
 
 Node::~Node() {
     point_.reset();
+}
+
+NodeSPtr Node::create() {
+    NodeSPtr result = NodeSPtr(new Node());
+    return result;
 }
 
 NodeSPtr Node::create(Point3SPtr point) {
