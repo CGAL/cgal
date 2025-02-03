@@ -3974,9 +3974,7 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
         return SaveOffsetEvent::create(offset_next);
     }
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     queue.pop();
-#endif
 
     CGAL_assertion(bool(event));
     return event;
