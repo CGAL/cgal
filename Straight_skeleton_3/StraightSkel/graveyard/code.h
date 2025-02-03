@@ -4411,7 +4411,6 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
 
 
 
-
 Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
                                                    const CGAL::FT& w0,
                                                    Plane3SPtr plane_1,
@@ -4497,6 +4496,74 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     Point3SPtr result = KernelFactory::createPoint3(x, y, z);
     return result;
 }
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+    // Filter if edges are too far
+    //
+    // @speed the best filtering would be to first have a loop over all combinations
+    // to tighten the bound, and only then compute the crashAt, but below is
+    // to get an easy speed-up
+
+    this does not filter enough because edges can still see very far
+    also broken after update of vanish/crash functions not returning local offsets
+
+    // check shifted planes and edges orientations: if a shifted edge is still in the negative
+    // side of the planes, we can 'continue'
+    auto is_shifted_edge_definitely_on_negative_side_of_planes = [&offset_of_nearest_event](EdgeSPtr lhs, EdgeSPtr rhs) {
+        // @speed note that here and in other places, we could speed up shifting computations
+        // because there is a lot of redundant computations: for example here, the two
+        // points are the intersection of 2 planes with the same shifted edge line
+        // but we compute it from scratch for both
+        Point3SPtr offset_e1so = PolyhedronTransformation::shiftPoint(lhs->getVertexSrc(), offset_of_nearest_event);
+        Point3SPtr offset_e1to = PolyhedronTransformation::shiftPoint(lhs->getVertexDst(), offset_of_nearest_event);
+
+        Plane3SPtr offset_pl0 = PolyhedronTransformation::shiftPlane(rhs->getFacetL(), offset_of_nearest_event);
+        Plane3SPtr offset_pl1 = PolyhedronTransformation::shiftPlane(rhs->getFacetR(), offset_of_nearest_event);
+
+        auto is_shifted_edge_definitely_on_negative_side_of_plane = [](Point3SPtr os, Point3SPtr od, Plane3SPtr opl, Plane3SPtr other_opl) {
+            auto orient_s = KernelWrapper::side(opl, os);
+            auto orient_d = KernelWrapper::side(opl, od);
+            if (orient_s * orient_d < 0) {
+                // the offset edge crosses opl; is it entirely on the negative side of the other plane?
+                //
+                // @todo we can still have the segment be on the union of the negative sides
+                // even if it crosses both planes
+                return (KernelWrapper::side(other_opl, os) < 0 && KernelWrapper::side(other_opl, od) < 0);
+            } else {
+                return (orient_s < 0);
+            }
+        };
+
+        return (is_shifted_edge_definitely_on_negative_side_of_plane(offset_e1so, offset_e1to, offset_pl0, offset_pl1) ||
+                is_shifted_edge_definitely_on_negative_side_of_plane(offset_e1so, offset_e1to, offset_pl1, offset_pl0));
+    };
+
+    if (is_shifted_edge_definitely_on_negative_side_of_planes(edge_1, edge_2) ||
+        is_shifted_edge_definitely_on_negative_side_of_planes(edge_2, edge_1)) {
+        ++filtered_candidates;
+        continue;
+    } else {
+        // std::cout << "Checking possible edge split event\n\t"
+        //           << edge_1->toString() << "\n\t"
+        //           << edge_2->toString() << std::endl;
+    }
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
 
 
 

@@ -23,8 +23,12 @@
 #include "data/3d/skel/SkelFacetData.h"
 #include "data/3d/Triangle.h"
 #include "util/StringFactory.h"
-#include <sstream>
+
+#include <iostream>
+#include <list>
 #include <map>
+#include <memory>
+#include <sstream>
 
 namespace data { namespace _3d {
 

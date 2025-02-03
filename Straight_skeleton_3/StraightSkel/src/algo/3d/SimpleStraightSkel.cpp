@@ -14,8 +14,6 @@
  * @date   2012-03-08
  */
 
-// - handle the case where the queue is empty (possibly because of the bound) but there is still a save offset
-
 // ----
 
 // This is just to keep old code for a while in case of bugs;
@@ -24,15 +22,18 @@
 
 // ----
 
-// @todo figure out a proper stack so shared pointers do not contaminate everything
-// currently, we have:
-// - event -> polyhedron
-// - skeleton -> event
-// - skeleton -> polyhedron
-// etc.
+// As to not waste energy building the skeleton if we do not care about it
+// The construction is also likely broken since the commit that made it so the polyhedron
+// is not rebuilt from scratch at each and every iteration
 #define CGAL_SS3_NO_SKELETON_DS
 
+#define CGAL_SS3_EXIT_ASAP
+
 // ----
+
+// Whether the queue is filled once at the beginning and updated, or entirely recomputed
+// at each iteration.
+#define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
 
 // If enabled, events are added to the queue even if they are farther than the filtering bound.
 // #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
@@ -40,16 +41,25 @@
 #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
   // If enabled, the filtering bound is tightened with closer new events, otherwise, it's
   // only the initial events (from save offsets if we use them + terminate on last save offset)
-// # define CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
+# define CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
 #endif
 
-// Whether the queue is filled once at the beginning and updated, or entirely recomputed
-// at each iteration.
-// #define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
+# ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+#  error "If you are not refreshing at each iteration, updating the bound = missing events"
+# endif
+#endif
 
 // ----
 
+// Sometimes should be disabled not to run out of memory.
+// @todo Does not seem very effective currently, need to bench again to check
+// where the real cost is in events
+// @todo could store only a Boolean value to improve memory footprint at the expanse
+// of computation.
 #define CGAL_SS3_NO_CACHING
+
+// ----
 
 #ifdef DEBUG
 # define CGAL_SS3_RUN_TIMERS
@@ -314,7 +324,7 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
     return result;
 }
 
-// @speed cache this, it doesn't change when we shift facets
+// @speed cache this? it doesn't change when we shift edges (facets)
 bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     if (vertex->degree() == 0) {
         return false;
@@ -648,7 +658,9 @@ bool SimpleStraightSkel::run() {
             // }
 
             // @debug +
+#ifndef CGAL_SS3_NO_CACHING
             DEBUG_PRINT(intersectionCache_.size() << " elements in crash cache");
+#endif
 
             std::list<FacetSPtr>::iterator it_f_tmp = polyhedron->facets().begin();
             while (it_f_tmp != polyhedron->facets().end()) {
@@ -1362,7 +1374,6 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
                 sheets[1]->getPlane(),
                 sheets[2]->getPlane());
         if (p_intersect) {
-            // @fixme? negative offsets only?
             // @fixme should it check with the other incident facet as well?
             if (KernelWrapper::side(facet->plane(), p_intersect) <= 0) {
                 // inside polyhedron
@@ -1509,8 +1520,10 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     return true;
 }
 
-// this one does an early exit if the result is irrelevant (in the past or too far in the future)
-// @speed, should be able to not solve the system but just exit early if the 4 planes are clearly not intersecting (diametral spheres around the edges of size something?)
+// this function does an early exit if the result is irrelevant (in the past or too far in the future)
+//
+// @speed, should be able to not solve the system but just exit early if the 4 planes are clearly
+// not intersecting (diametral spheres around the edges of size something?)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
                             const CGAL::FT offset_past_bound,
@@ -1546,6 +1559,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     if (!point) {
         return { };
     }
+
+    // @speed we could delay point computation and porientation checks below to queue pop time,
+    // but it probably does not gain much: 99.99% of the time, we compute an intersection time
+    // and it is filtered, so the times where we compute a point and apply filters is somewhat
+    // negligible (for now).
 
 #ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "Intersection: " << *point << " @ " << offset_event << std::endl;
@@ -1696,7 +1714,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // src is the target of the edge when in the right face
         if (!check_bisector(edge_1, facet_r1, rt1, facet_1_src, point)) {
             // std::cout << "reject #2b" << std::endl;
-#define CGAL_SS3_EXIT_ASAP
 #ifdef CGAL_SS3_EXIT_ASAP
             return { };
 #else
@@ -1781,6 +1798,8 @@ CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
     return result;
 }
 
+// @speed can we associate shiftPoint(v, max_offset) to all points as to create bounding boxes
+// and filter events?
 void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
                                            const CGAL::FT current_offset,
                                            CGAL::FT& offset_of_nearest_event,
@@ -1821,7 +1840,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
         // This does not work when there is more than one edge between both facets.
         // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
-        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check with findEdges happen in other events?...
+        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check also happen in other events?...
 
         bool split_event = false;
         std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
@@ -1891,7 +1910,6 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
             if ((lt2 > 0) || (rt2 > 0)) {
 #ifdef CGAL_SS3_EXIT_ASAP
                 // can 'break' directly because it's the same value for all 'edge_2's
-                // @todo take it out of the loop
                 break;
 #else
                 split_event_current_1_b = false;
@@ -3801,7 +3819,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                     }
 
                     if (boundary_rejection) {
-                        DEBUG_PRINT("Pierce event on boundary --> rejected");
+                        // DEBUG_PRINT("Pierce event on boundary --> rejected");
                         continue;
                     }
 
@@ -3838,6 +3856,8 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
 #endif
 }
 
+// @todo can we associate a Boolean value to elements that say: "there is an event associated"
+// to this element, and not look further for other events for this element?
 void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
                                        const CGAL::FT current_offset,
                                        PQ& queue)
@@ -4061,7 +4081,6 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         vertices[i] = VertexSPtr();
     }
 
-    // @fixme? should seek the first non-collinear vertex? Or is a different type of event?
     vertices[0] = vertex_src_offset->prev(edge_offset->getFacetL());
     vertices[1] = vertex_src_offset->next(edge_offset->getFacetR());
     vertices[2] = vertex_dst_offset->prev(edge_offset->getFacetR());
@@ -4254,13 +4273,10 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
             flip_edge = (angle_flipped >= angle_no_flip);
         }
 #else
-# ifndef USE_CGAL
-#  error
-# endif
-        Vector3SPtr n0 = KernelFactory::createVector3(facets[0]->plane());
-        Vector3SPtr n2 = KernelFactory::createVector3(facets[2]->plane());
-        Vector3SPtr n1 = KernelFactory::createVector3(facets[1]->plane());
-        Vector3SPtr n3 = KernelFactory::createVector3(facets[3]->plane());
+        Vector3SPtr n0 = KernelFactory::createVector3(facets[0]->getPlane());
+        Vector3SPtr n2 = KernelFactory::createVector3(facets[2]->getPlane());
+        Vector3SPtr n1 = KernelFactory::createVector3(facets[1]->getPlane());
+        Vector3SPtr n3 = KernelFactory::createVector3(facets[3]->getPlane());
         CGAL::Comparison_result dac = CGAL::compare_angle(*n0, *n2, *n1, *n3);
 
         if (edge_event_ == 0) {

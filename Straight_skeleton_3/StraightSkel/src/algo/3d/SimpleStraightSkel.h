@@ -331,8 +331,11 @@ protected:
     CGAL::FT simultaneousOffset_ = 0;
 
     std::vector<Plane3SPtr> basePlanes_;
+
+#ifndef CGAL_SS3_NO_CACHING
     std::unordered_map<std::array<std::size_t, 4>,
                        std::pair<Point3SPtr, CGAL::FT> > intersectionCache_;
+#endif
 };
 
 } }

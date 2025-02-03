@@ -116,7 +116,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
             FacetSPtr facet = FacetSPtr(facet_wptr);
             Plane3SPtr plane = facet->plane();
 
-            // @fixme only valid if we are doing perturbations
+            // @fixme only meaningful if we are doing perturbations
             if (vertex->degree() != 3) {
                 // planes are _offset_ planes, but it doesn't matter for the tests
                 bool independent = true;
