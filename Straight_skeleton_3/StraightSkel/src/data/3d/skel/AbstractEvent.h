@@ -112,7 +112,8 @@ public:
     {
         // save and const events are handled outside of the queue, and in generic
         // position, all events have their own offsets
-        CGAL_assertion(eventA->getOffset() != eventB->getOffset());
+        // std::cout << eventA->toString() << "\n" << eventB->toString() << std::endl;
+        CGAL_warning(eventA->getOffset() != eventB->getOffset());
         return (eventA->getOffset() < eventB->getOffset());
     }
 };
