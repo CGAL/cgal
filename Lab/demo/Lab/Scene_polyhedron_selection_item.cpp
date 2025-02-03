@@ -31,6 +31,7 @@
 #include "triangulate_primitive.h"
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/boost/graph/shortest_path.h>
 #include <CGAL/boost/graph/properties.h>
 
 using namespace CGAL::Three;
@@ -1486,103 +1487,31 @@ void Scene_polyhedron_selection_item::emitTempInstruct()
   Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(d->m_temp_instructs));
 }
 
-/// An exception used while catching a throw that stops Dijkstra's algorithm
-/// once the shortest path to a target has been found.
-class Dijkstra_end_exception : public std::exception
-{
-  const char* what() const throw ()
-  {
-    return "Dijkstra shortest path: reached the target vertex.";
-  }
-};
-
-/// Visitor to stop Dijkstra's algorithm once the given target turns 'BLACK',
-/// that is when the target has been examined through all its incident edges and
-/// the shortest path is thus known.
-class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
-{
-  fg_vertex_descriptor destination_vd;
-
-public:
-  Stop_at_target_Dijkstra_visitor(fg_vertex_descriptor destination_vd)
-    : destination_vd(destination_vd)
-  { }
-
-  void initialize_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_edge(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void edge_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void discover_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void edge_not_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void finish_vertex(const fg_vertex_descriptor &vd, const Face_graph& /* mesh*/) const
-  {
-    if(vd == destination_vd)
-      throw Dijkstra_end_exception();
-  }
-};
 
 void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
 {
+  const auto& mesh = *item->polyhedron();
+  std::vector<fg_halfedge_descriptor> path_halfedges;
+  for(auto it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
+  {
+    fg_vertex_descriptor t(*it), s(*(it+1));
+
+    CGAL::shortest_path_between_two_vertices(s, t, mesh,
+      std::back_inserter(path_halfedges));
+  }
+
   item->temp_selected_edges.clear();
   path.clear();
 
-  typedef std::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
-  typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
-
-  Pred_umap predecessor;
-  Pred_pmap pred_pmap(predecessor);
-
-  vertex_on_path vop;
-  QList<fg_vertex_descriptor>::iterator it;
-  for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
-  {
-    fg_vertex_descriptor t(*it), s(*(it+1));
-    Stop_at_target_Dijkstra_visitor vis(t);
-
-    try
-    {
-      boost::dijkstra_shortest_paths(*item->polyhedron(), s,
-                                     boost::predecessor_map(pred_pmap).visitor(vis));
-    }
-    catch (const std::exception& e)
-    {
-      std::cout << e.what() << std::endl;
-    }
-
-    // Walk back from target to source and collect vertices along the way
-    do
-    {
-      vop.vertex = t;
-      if(constrained_vertices.contains(t))
-      {
-        vop.is_constrained = true;
-      }
-      else
-        vop.is_constrained = false;
-      path.append(vop);
-      t = get(pred_pmap, t);
-    }
-    while(t != s);
-  }
-
-  // Add the last vertex
-  vop.vertex = constrained_vertices.last();
-  vop.is_constrained = true;
-  path.append(vop);
-
   // Display path
   double path_length = 0;
-  QList<vertex_on_path>::iterator path_it;
-  for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
+  VPmap vpm = get(CGAL::vertex_point, mesh);
+  for(auto h : path_halfedges)
   {
-    std::pair<fg_halfedge_descriptor, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
-    if(h.second)
-    {
-      VPmap vpm = get(CGAL::vertex_point,*polyhedron());
-      Point p1(get(vpm, (path_it+1)->vertex)), p2(get(vpm, path_it->vertex));
-          path_length += CGAL::sqrt(Vector(p1,p2).squared_length());
-      item->temp_selected_edges.insert(edge(h.first, *item->polyhedron()));
-    }
+    const Point& p1 = get(vpm, target(h, mesh));
+    const Point& p2 = get(vpm, source(h, mesh));
+    path_length += CGAL::approximate_sqrt(CGAL::squared_distance(p1, p2));
+    item->temp_selected_edges.insert(edge(h, *item->polyhedron()));
   }
   item->printMessage(QString("New path length: %1").arg(path_length));
 }
