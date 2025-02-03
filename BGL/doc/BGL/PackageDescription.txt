@@ -467,6 +467,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPartition Partitioning Operations
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLTraversal Graph Traversal
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
 
@@ -760,6 +763,9 @@ user might encounter.
 
 \cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`
+
+\cgalCRPSection{Graph Traversal}
+- `CGAL::shortest_path_between_two_vertices()`
 
 \cgalCRPSection{Graph Adaptors}
 - `CGAL::Dual`

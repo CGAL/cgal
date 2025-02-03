@@ -39,22 +39,22 @@ namespace internal {
   /// Visitor to stop Dijkstra's algorithm once the given target turns 'BLACK',
   /// that is when the target has been examined through all its incident edges and
   /// the shortest path is thus known.
-  template<typename Mesh>
+  template<typename Graph>
   class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
   {
-    using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
-    using edge_descriptor = typename boost::graph_traits<Mesh>::edge_descriptor;
+    using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+    using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
 
   public:
     vertex_descriptor destination_vd;
 
-    void initialize_vertex(const vertex_descriptor& /*s*/, const Mesh& /*mesh*/) const {}
-    void examine_vertex(const vertex_descriptor& /*s*/, const Mesh& /*mesh*/) const {}
-    void examine_edge(const edge_descriptor& /*e*/, const Mesh& /*mesh*/) const {}
-    void edge_relaxed(const edge_descriptor& /*e*/, const Mesh& /*mesh*/) const {}
-    void discover_vertex(const vertex_descriptor& /*s*/, const Mesh& /*mesh*/) const {}
-    void edge_not_relaxed(const edge_descriptor& /*e*/, const Mesh& /*mesh*/) const {}
-    void finish_vertex(const vertex_descriptor& vd, const Mesh& /* mesh*/) const
+    void initialize_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
+    void examine_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
+    void examine_edge(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+    void edge_relaxed(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+    void discover_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
+    void edge_not_relaxed(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+    void finish_vertex(const vertex_descriptor& vd, const Graph& /* g*/) const
     {
       if (vd == destination_vd)
         throw Dijkstra_end_exception();
@@ -63,28 +63,31 @@ namespace internal {
 } // namespace internal
 
 /*!
-*@tparam Mesh a model of the concept `HalfedgeListGraph`
+* \ingroup PkgBGLTraversal
+* Computes the shortest path between two vertices in a graph `g`
+*
+*@tparam Graph a model of the concept `HalfedgeListGraph`
 * @param vs source vertex
 * @param vt target vertex
-* @param mesh the mesh
-* @param halfedge_sequence the sequence of halfedges that form the shortest path on `mesh`
+* @param g the graph
+* @param halfedge_sequence the sequence of halfedges that form the shortest path on `g`
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * ** edge_weight_map : @todo deal with input mesh with no internal pmap.
 *                       default in boost is `get(boost::edge_weight, mesh)`
 *
 */
-template<typename Mesh,
+template<typename Graph,
          typename OutputIterator,
          typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator shortest_path_between_two_vertices(
-  const typename boost::graph_traits<Mesh>::vertex_descriptor vs,//source
-  const typename boost::graph_traits<Mesh>::vertex_descriptor vt,//target
-  const Mesh& mesh,
+  const typename boost::graph_traits<Graph>::vertex_descriptor vs,//source
+  const typename boost::graph_traits<Graph>::vertex_descriptor vt,//target
+  const Graph& g,
   OutputIterator halfedge_sequence_oit,
   const NamedParameters& np = parameters::default_values())
 {
-  using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
-  using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<Graph>::halfedge_descriptor;
 
   using Pred_umap = std::unordered_map<vertex_descriptor, vertex_descriptor>;
   using Pred_pmap = boost::associative_property_map<Pred_umap>;
@@ -93,16 +96,16 @@ OutputIterator shortest_path_between_two_vertices(
   using parameters::choose_parameter;
 
   const auto w_map = choose_parameter(get_parameter(np, internal_np::edge_weight),
-                                      get(boost::edge_weight, mesh));
+                                      get(boost::edge_weight, g));
 
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
 
-  internal::Stop_at_target_Dijkstra_visitor<Mesh> vis;
+  internal::Stop_at_target_Dijkstra_visitor<Graph> vis;
   vis.destination_vd = vt;
   try
   {
-    boost::dijkstra_shortest_paths(mesh, vs,
+    boost::dijkstra_shortest_paths(g, vs,
       boost::predecessor_map(pred_pmap)
       .visitor(vis)
       .weight_map(w_map));
@@ -143,7 +146,7 @@ OutputIterator shortest_path_between_two_vertices(
   for (auto path_it = path.begin(); path_it != path.end() - 1; ++path_it)
   {
     const std::pair<halfedge_descriptor, bool>
-      h = halfedge((path_it + 1)->vertex, path_it->vertex, mesh);
+      h = halfedge((path_it + 1)->vertex, path_it->vertex, g);
     if (h.second)
       *halfedge_sequence_oit++ = h.first;
   }
