@@ -18,6 +18,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/property_map/property_map.hpp>
+#include <CGAL/boost/graph/properties.h>
+
 #include <vector>
 #include <unordered_map>
 
@@ -66,6 +68,10 @@ namespace internal {
 * @param vt target vertex
 * @param mesh the mesh
 * @param halfedge_sequence the sequence of halfedges that form the shortest path on `mesh`
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* ** edge_weight_map : @todo deal with input mesh with no internal pmap.
+*                       default in boost is `get(boost::edge_weight, mesh)`
+*
 */
 template<typename Mesh,
          typename OutputIterator,
@@ -83,6 +89,12 @@ OutputIterator shortest_path_between_two_vertices(
   using Pred_umap = std::unordered_map<vertex_descriptor, vertex_descriptor>;
   using Pred_pmap = boost::associative_property_map<Pred_umap>;
 
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  const auto w_map = choose_parameter(get_parameter(np, internal_np::edge_weight),
+                                      get(boost::edge_weight, mesh));
+
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
 
@@ -91,7 +103,9 @@ OutputIterator shortest_path_between_two_vertices(
   try
   {
     boost::dijkstra_shortest_paths(mesh, vs,
-      boost::predecessor_map(pred_pmap).visitor(vis));
+      boost::predecessor_map(pred_pmap)
+      .visitor(vis)
+      .weight_map(w_map));
   }
   catch (const std::exception& e){}
 
