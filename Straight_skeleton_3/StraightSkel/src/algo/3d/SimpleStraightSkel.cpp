@@ -2880,14 +2880,23 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                                               PQ& queue)
 {
     DEBUG_PRINT(">>> Collect Surface Events");
+
+#ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
+#endif
 
     ReadLock l(polyhedron->mutex());
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+    unsigned int filtered_candidates = 0;
+    unsigned int tested_candidates = 0;
+#endif
 
     std::list<EdgeSPtr>::iterator it_e1 = polyhedron->edges().begin();
     while (it_e1 != polyhedron->edges().end()) {
         EdgeSPtr edge_1 = *it_e1++;
+
         FacetSPtr facet_1_src = getFacetSrc(edge_1);
         FacetSPtr facet_1_dst = getFacetDst(edge_1);
         std::list<EdgeSPtr> edges_2;
@@ -2895,6 +2904,17 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                 facet_1_src->edges().begin(), facet_1_src->edges().end());
         edges_2.insert(edges_2.end(),
                 facet_1_dst->edges().begin(), facet_1_dst->edges().end());
+
+        // upper bound on the maximum interesting shift
+        // @todo use an "is_initialized?" flag or something?
+        CGAL::FT shift = offset_of_nearest_event - current_offset;
+
+        Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift);
+        CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+        b1 += edge_1->getVertexDst()->getPoint()->bbox();
+        b1 += offset_e1->source().bbox();
+        b1 += offset_e1->target().bbox();
+
         std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
         while (it_e2 != edges_2.end()) {
             EdgeSPtr edge_2 = *it_e2++;
@@ -2990,6 +3010,29 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
+            // let's just check if bboxes overlap first
+            Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift);
+            CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+            b2 += edge_2->getVertexDst()->getPoint()->bbox();
+            b2 += offset_e2->source().bbox();
+            b2 += offset_e2->target().bbox();
+            if (!CGAL::do_overlap(b1, b2)) {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                ++filtered_candidates;
+#endif
+                // std::cout << "Filtered possible surface event candidates\n\t"
+                //           << edge_1->toString() << "\n\t"
+                //           << edge_2->toString() << std::endl;
+                continue;
+            } else {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                ++tested_candidates;
+#endif
+                // std::cout << "Checking possible surface event event\n\t"
+                //           << edge_1->toString() << "\n\t"
+                //           << edge_2->toString() << std::endl;
+            }
+
             // calculate intersection point
             Point3SPtr point;
             CGAL::FT offset_event;
@@ -3038,6 +3081,10 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
 #endif
         }
     }
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+    std::cout << "  " << filtered_candidates << " filtered, " << tested_candidates << " tests" << std::endl;
+#endif
 
 #ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
