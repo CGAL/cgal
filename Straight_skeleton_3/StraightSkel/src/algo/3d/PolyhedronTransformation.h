@@ -44,6 +44,11 @@ public:
     static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
 
     /**
+     * returns the shifted position of the edge of a polyhedron
+     */
+    static Segment3SPtr shiftEdge(EdgeSPtr edge, CGAL::FT offset);
+
+    /**
      * returns the shifted position of the facet of a polyhedron
      */
     static Plane3SPtr shiftPlane(FacetSPtr vertex, CGAL::FT offset);

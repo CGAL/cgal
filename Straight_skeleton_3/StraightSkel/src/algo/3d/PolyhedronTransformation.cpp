@@ -166,6 +166,55 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     return point;
 }
 
+Segment3SPtr PolyhedronTransformation::shiftEdge(EdgeSPtr edge,
+                                                 CGAL::FT offset)
+{
+    FacetSPtr facet_l = edge->getFacetL();
+    FacetSPtr facet_r = edge->getFacetR();
+    FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
+    FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
+
+    CGAL::FT speed_l = 1.0;
+    if (facet_l->hasData()) {
+        speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
+    }
+
+    CGAL::FT speed_r = 1.0;
+    if (facet_r->hasData()) {
+        speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
+    }
+
+    CGAL::FT speed_src = 1.0;
+    if (facet_src->hasData()) {
+        speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
+    }
+
+    CGAL::FT speed_dst = 1.0;
+    if (facet_dst->hasData()) {
+        speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
+    }
+
+        // Offset the two common planes
+    Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), offset*speed_l);
+    Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), offset*speed_r);
+    Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), offset*speed_src);
+    Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), offset*speed_dst);
+
+#if 0
+    // leaving it here because it's not that intuitive: factoring the intersection of the
+    // two common planes is much slower than computing the 3-plane intersection
+    Line3SPtr common_line = KernelWrapper::intersection(offset_plane_l, offset_plane_r);
+    Point3SPtr src_point = KernelWrapper::intersection(offset_plane_src, common_line);
+    Point3SPtr dst_point = KernelWrapper::intersection(offset_plane_dst, common_line);
+#else
+    Point3SPtr src_point = KernelWrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
+    Point3SPtr dst_point = KernelWrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
+#endif
+
+    CGAL_assertion(bool(src_point) && bool(dst_point));
+    return KernelFactory::createSegment3(src_point, dst_point);
+}
+
 Plane3SPtr PolyhedronTransformation::shiftPlane(FacetSPtr facet,
                                                 CGAL::FT offset)
 {
