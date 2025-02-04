@@ -9,8 +9,8 @@
 //
 // Author(s)     : Léo Valque
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING
-#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING
+#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
+#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
 
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
@@ -26,7 +26,7 @@ namespace Polygon_mesh_processing
 /**
 * 
 *
-* Round the coordinates of the points so that they fit in doubles while keeping the model intersection free.
+* rounds the coordinates of the points so that they fit in doubles while keeping the model intersection free.
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
 * between the input and the output bounded by M*2^-gs*k where M is the maximum absolute coordinate in the model, gs the snap_grid_size (see below) and k the number of iteration
 * performed by the algorithm.
@@ -59,20 +59,21 @@ namespace Polygon_mesh_processing
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
 *   \cgalParamNEnd
-*   \cgalParamNBegin{visitor}
-*     \cgalParamDescription{a visitor used to track the creation of new faces}
-*     \cgalParamType{a class model of `PMPAutorefinementVisitor`}
-*     \cgalParamDefault{`Autorefinement::Default_visitor`}
-*     \cgalParamExtra{The visitor will be copied.}
-*   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
 *     \cgalParamDescription{Scale the points to [-2^gs, 2^gs] where gs is the snap_grid_size before to round them on integer.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
+*   \cgalParamNBegin{numbers_of_iteration}
+*     \cgalParamDescription{Maximum number of iteration performed by the algorithm.}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{20}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not 
+* able to provide such a triangle soup within the number of iterations.
 */
 template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool snap_polygon_soup(PointRange &points,
@@ -92,15 +93,6 @@ bool snap_polygon_soup(PointRange &points,
     Sequential_tag
   > ::type Concurrency_tag;
 
-  // visitor
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::visitor_t,
-    NamedParameters,
-    Autorefinement::Default_visitor//default
-  > ::type Visitor;
-  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
-
-
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
 #ifndef CGAL_LINKED_WITH_TBB
@@ -113,7 +105,7 @@ bool snap_polygon_soup(PointRange &points,
 
   //Get the grid size from the named parameter, the grid size could not be greater than 52
   const unsigned int grid_size = (std::min)(52,choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23));
-
+  const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 20);
 
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
   std::cout << "Compute the scaling of the coordinates" << std::endl;
@@ -147,8 +139,7 @@ bool snap_polygon_soup(PointRange &points,
                     snap(p.z(),scale[2]) );
   };
 
-  static constexpr std::size_t nb_max_of_iteration = 20; // TODO named parameter
-  for (std::size_t i = 0; i <= nb_max_of_iteration; ++i)
+  for (std::size_t i = 0; i <= max_nb_of_iteration; ++i)
   {
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Start Iteration " << i << std::endl;
@@ -216,8 +207,7 @@ bool snap_polygon_soup(PointRange &points,
   }
   return false;
 }
-}
 
-}
+} } //end of CGAL::Polygon_mesh_processing namespace
 
-#endif
+#endif //CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
