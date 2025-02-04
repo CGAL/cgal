@@ -1289,6 +1289,11 @@ SimpleStraightSkel::intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
                                                          const CGAL::FT& offset_past_bound,
                                                          const CGAL::FT& offset_future_bound)
 {
+    DEBUG_SPTR(facet_0);
+    DEBUG_SPTR(facet_1);
+    DEBUG_SPTR(facet_2);
+    DEBUG_SPTR(facet_3);
+
     auto compute_point_and_time = [&]() -> std::pair<Point3SPtr, CGAL::FT>
     {
         Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
@@ -3734,36 +3739,20 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
 #else
                 CGAL_assertion(vertex->facets().size() >= 3);
 
-                FacetWPtr wf0 = *(std::next(vertex->facets().begin(), 0)); // @todo can be factorized
-                FacetWPtr wf1 = *(std::next(vertex->facets().begin(), 1));
-                FacetWPtr wf2 = *(std::next(vertex->facets().begin(), 2));
+                FacetSPtr fs[3];
+                for (int i = 0; i < 3; ++i) {
+                    FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
+                    CGAL_assertion(!wf.expired());
+                    fs[i] = wf.lock();
+                }
 
-                CGAL_assertion(!wf0.expired());
-                CGAL_assertion(!wf1.expired());
-                CGAL_assertion(!wf2.expired());
-
-                FacetSPtr f0(wf0);
-                FacetSPtr f1(wf1);
-                FacetSPtr f2(wf2);
-
-                Plane3SPtr plane = facet->plane();
-                Plane3SPtr plane_0 = f0->plane();
-                Plane3SPtr plane_1 = f1->plane();
-                Plane3SPtr plane_2 = f2->plane();
-
-                CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-                CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(f0->getData())->getSpeed();
-                CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
-                CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
-
-                std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet, f0, f1, f2, current_offset, offset_of_nearest_event);
+                std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet, fs[0], fs[1], fs[2], current_offset, offset_of_nearest_event);
                 if (!point) {
                     continue;
                 }
 
                 // std::cout << " **" << std::endl;
                 // std::cout << "facet = " << facet->getID() << std::endl;
-                // std::cout << "plane = " << *plane << std::endl;
                 // std::cout << "f0 = " << f0->getID() << std::endl;
                 // std::cout << "f1 = " << f1->getID() << std::endl;
                 // std::cout << "f2 = " << f2->getID() << std::endl;
@@ -3779,6 +3768,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                     FacetSPtr facet_offset = facet->clone();
 
                     CGAL::FT shift = offset_event - current_offset;
+                    const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
                     Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), shift*speed);
                     facet_offset->setPlane(offset_plane);
 
