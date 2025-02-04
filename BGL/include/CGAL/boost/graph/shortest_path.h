@@ -111,7 +111,7 @@ OutputIterator shortest_path_between_two_vertices(
       .visitor(vis)
       .weight_map(w_map));
   }
-  catch (const std::exception& e){}
+  catch (const internal::Dijkstra_end_exception& ){}
 
   // Walk back from target to source and collect vertices along the way
   struct vertex_on_path
