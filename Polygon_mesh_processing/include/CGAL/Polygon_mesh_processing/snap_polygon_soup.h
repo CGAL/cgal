@@ -166,6 +166,10 @@ bool snap_polygon_soup(PointRange &points,
     }
 
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Number of pairs of intersecting triangles: " << pairs_of_intersecting_triangles.size() << std::endl;
+#endif
+
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
 #endif
     //Get all the snap version of the points of the vertices of the intersecting triangles
