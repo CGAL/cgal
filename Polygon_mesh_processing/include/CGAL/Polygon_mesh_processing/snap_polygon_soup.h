@@ -23,29 +23,117 @@ namespace CGAL
 namespace Polygon_mesh_processing
 {
 
-template <typename PointRange, typename PolygonRange>
+/**
+* 
+*
+* Round the coordinates of the points so that they fit in doubles while keeping the model intersection free.
+* The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
+* between the input and the output bounded by M*2^-gs*k where M is the maximum absolute coordinate in the model, gs the snap_grid_size (see below) and k the number of iteration
+* performed by the algorithm.
+*
+* @tparam PointRange a model of the concept `RandomAccessContainer`
+* whose value type is the point type
+* @tparam TriangleRange a model of the concepts `RandomAccessContainer`, `BackInsertionSequence` and `Swappable`, whose
+* value type is a model of the concept `RandomAccessContainer` whose value type is convertible to `std::size_t` and that
+* is constructible from an `std::initializer_list<std::size_t>` of size 3.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* @param soup_points points of the soup of polygons
+* @param soup_triangles each element in the range describes a triangle using the indexed position of the points in `soup_points`
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+*     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+*     \cgalParamDefault{`CGAL::Sequential_tag`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the range `soup_points`}
+*     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
+*     \cgalParamDefault{`CGAL::Identity_property_map`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{visitor}
+*     \cgalParamDescription{a visitor used to track the creation of new faces}
+*     \cgalParamType{a class model of `PMPAutorefinementVisitor`}
+*     \cgalParamDefault{`Autorefinement::Default_visitor`}
+*     \cgalParamExtra{The visitor will be copied.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{snap_grid_size}
+*     \cgalParamDescription{Scale the points to [-2^gs, 2^gs] where gs is the snap_grid_size before to round them on integer.}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{23}
+*     \cgalParamExtra{Must be lower than 52.}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool snap_polygon_soup(PointRange &points,
-                                        PolygonRange &triangles)
+                       PolygonRange &triangles,
+                       const NamedParameters& np = parameters::default_values())
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
+  typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
+  Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
+  // visitor
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Autorefinement::Default_visitor//default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
+
+
+  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+
+#ifndef CGAL_LINKED_WITH_TBB
+  static_assert (!parallel_execution,
+                 "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+
   using Point_3 = std::remove_cv_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Kernel = typename Kernel_traits<Point_3>::Kernel;
-  static constexpr int coarseness = 23;
-  // TODO named parameters
 
+  //Get the grid size from the named parameter, the grid size could not be greater than 52
+  const unsigned int grid_size = (std::min)(52,choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23));
+
+
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+  std::cout << "Compute the scaling of the coordinates" << std::endl;
+#endif
+
+  //
   auto exp = [](const double v)
   {
     int n;
     frexp(v, &n);
-    return n + 1;
+    return n;
   };
 
   Bbox_3 bb = bbox_3(points.begin(), points.end());
   std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
                                 (std::max)(-bb.ymin(), bb.ymax()),
                                 (std::max)(-bb.zmin(), bb.zmax())};
-  std::array<double, 3> scale{std::pow(2, coarseness - exp(max_abs[0])),
-                              std::pow(2, coarseness - exp(max_abs[1])),
-                              std::pow(2, coarseness - exp(max_abs[2]))};
+  std::array<double, 3> scale{std::pow(2, grid_size - exp(max_abs[0]) - 1),
+                              std::pow(2, grid_size - exp(max_abs[1]) - 1),
+                              std::pow(2, grid_size - exp(max_abs[2]) - 1)};
 
   // If EPECK, use exact TODO
   auto snap = [](typename Kernel::FT x, double scale)
@@ -62,25 +150,39 @@ bool snap_polygon_soup(PointRange &points,
   static constexpr std::size_t nb_max_of_iteration = 20; // TODO named parameter
   for (std::size_t i = 0; i <= nb_max_of_iteration; ++i)
   {
-    std::cout << "after autorefine " << triangles.size() << std::endl;
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Start Iteration " << i << std::endl;
+    std::cout << "Model size: " << points.size() << " " << triangles.size() << std::endl;
+#endif
 
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Round all coordinates on doubles" << std::endl;
+#endif
     for (Point_3 &p : points)
       p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
-    repair_polygon_soup(points, triangles);
+    repair_polygon_soup(points, triangles, np);
 
-    std::vector<std::pair<std::size_t, std::size_t>> out;
-    triangle_soup_self_intersections(points, triangles, std::back_inserter(out));
+    std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
+    triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles));
 
-    if (out.empty())
+    if (pairs_of_intersecting_triangles.empty())
     {
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "End of the snapping" << std::endl;
+#endif
       CGAL_assertion(!does_triangle_soup_self_intersect(points, triangles));
       return true;
     }
 
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
+#endif
+    //Get all the snap version of the points of the vertices of the intersecting triangles
+    //Note: points will not be modified here, they will be modified in the next for loop
     std::vector<Point_3> snap_points;
-    snap_points.reserve(out.size() * 3);
+    snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
 
-    for (auto &pair : out)
+    for (auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
         snap_points.emplace_back(snap_p(points[pi]));
@@ -88,9 +190,15 @@ bool snap_polygon_soup(PointRange &points,
         snap_points.emplace_back(snap_p(points[pi]));
     }
 
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Snap the coordinates of the vertices close-by the previous ones" << std::endl;
+#endif
+    //TODO: TBB version of this for loop
+
     std::sort(snap_points.begin(), snap_points.end());
     snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
 
+    //If the snapped version of a point correspond to one of the previous point, we snap it too
     for (Point_3 &p : points)
     {
       Point_3 p_snap = snap_p(p);
@@ -98,12 +206,13 @@ bool snap_polygon_soup(PointRange &points,
         p = p_snap;
     }
 
-    repair_polygon_soup(points, triangles);
+    repair_polygon_soup(points, triangles, np);
     //TODO do not pass all triangles
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
-    std::cout << "Before autorefine " << triangles.size() << std::endl;
+    std::cout << "Autorefine the soup" << std::endl;
+    std::cout << "Model size: " << points.size() << " " << triangles.size() << std::endl;
 #endif
-    autorefine_triangle_soup(points, triangles, parameters::concurrency_tag(Parallel_tag()));
+    autorefine_triangle_soup(points, triangles, np);
   }
   return false;
 }
