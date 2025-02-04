@@ -1,4 +1,4 @@
-//#define  PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+#define  PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/snap_polygon_soup.h>

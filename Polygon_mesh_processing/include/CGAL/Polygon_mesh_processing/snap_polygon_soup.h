@@ -174,6 +174,8 @@ bool snap_polygon_soup(PointRange &points,
 #endif
     //Get all the snap version of the points of the vertices of the intersecting triangles
     //Note: points will not be modified here, they will be modified in the next for loop
+
+#if 1
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
 
@@ -200,6 +202,56 @@ bool snap_polygon_soup(PointRange &points,
       if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
         p = p_snap;
     }
+#else
+    std::map<Point_3, size_t> snap_points;
+    std::size_t index=0;
+    for (auto &pair : pairs_of_intersecting_triangles)
+    {
+      for (size_t pi : triangles[pair.first])
+      {
+        auto res=snap_points.emplace(snap_p(points[pi]), index);
+        if(res.second)
+          ++index;
+      }
+      for (size_t pi : triangles[pair.second])
+      {
+        auto res=snap_points.emplace(snap_p(points[pi]), index);
+        if(res.second)
+          ++index;
+      }
+    }
+
+    //TODO: TBB version of this for loop
+
+    std::vector<std::vector<size_t>> identical_points(index);
+    //If the snapped version of a point correspond to one of the previous point, we snap it too
+    for (size_t i=0; i!=points.size(); ++i)
+    {
+      Point_3 p_snap = snap_p(points[i]);
+      auto it=snap_points.find(p_snap);
+      if (it!=snap_points.end()){
+        identical_points[it->second].push_back(i);
+      }
+    }
+
+    for(const auto &v: identical_points){
+      if(v.size()>1){
+        std::array<double, 3> a{0,0,0};
+        for(auto i: v){
+          a[0]+=points[i].x();
+          a[1]+=points[i].y();
+          a[2]+=points[i].z();
+        }
+        a[0]/=v.size();
+        a[1]/=v.size();
+        a[2]/=v.size();
+        for(auto i: v){
+          points[i]=Point_3(a[0],a[1],a[2]);
+        }
+      }
+    }
+#endif
+
 
     repair_polygon_soup(points, triangles, np);
     //TODO do not pass all triangles
