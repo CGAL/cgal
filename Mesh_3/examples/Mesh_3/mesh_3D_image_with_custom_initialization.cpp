@@ -54,7 +54,7 @@ int main()
                          .facet_angle(30).facet_size(3).facet_distance(1)
                          .cell_radius_edge_ratio(3).cell_size(3));
 
-  // custom_initial_points_generator will put points on the mesh for initialisation.
+  // custom_initial_points_generator will put points on the mesh for initialization.
   // Those points are objects of type std::tuple<Weighted_point_3, int, Index>.
   //   Weighted_point_3 is the point's position and weight,
   //   int is the dimension of the minimal dimension subcomplex on which the point lies,
