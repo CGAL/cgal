@@ -28,7 +28,7 @@ namespace CGAL {
 namespace Frechet_distance {
 
 /*!
- * A data structure to store curves with a function that enables to find those curves which are close to a query curve.
+ * A data structure to store curves with a function that enables to find those curves which are closer than a distance bound to a query curve.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
@@ -45,7 +45,13 @@ class Neighbor_search
     using PolylineIDs = std::vector<PolylineID>;
 
 public:
+#ifndef DOXYGEN_RUNNING
     Neighbor_search() = default;
+#endif
+
+#ifdef DOXYGEN_RUNNING
+using Point = Traits::Point_d;
+#endif
 
     /*! inserts curves
     */
@@ -72,7 +78,12 @@ void Neighbor_search<PointRange, Traits>::insert(
 }
 
 template <class PointRange, class Traits>
-auto Neighbor_search<PointRange, Traits>::get_close_curves(
+#ifdef DOXYGEN_RUNNING
+std::vector<std::size_t>
+#else
+auto
+#endif
+Neighbor_search<PointRange, Traits>::get_close_curves(
     const Polyline& curve, double distance) -> PolylineIDs
 {
     auto result = kd_tree.search(curve, distance);

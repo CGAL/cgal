@@ -4,7 +4,7 @@
 
 The concept `FrechetDistanceTraits` defines the requirements of the
 first template parameter of the functions `CGAL::is_Frechet_distance_larger()`
-and `CGAL::approximate_Frechet_distance()`.
+and `CGAL::bounded_error_Frechet_distance()`.
 
 
 \cgalHasModelsBegin

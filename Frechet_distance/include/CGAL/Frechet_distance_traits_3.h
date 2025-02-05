@@ -49,6 +49,10 @@ public:
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
      return Construct_cartesian_const_iterator_d();
   }
+
+  Compare_squared_distance_d construct_compare_squared_distance_d_object() const {
+   return Compare_squared_distance_d();
+  }
 };
 
 }  // end of namespace CGAL
