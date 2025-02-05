@@ -48,6 +48,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         typedef typename Get_type<Base, Weighted_point_tag>::type        Weighted_point_d;
         typedef typename Get_functor<Base, Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
         typedef typename Get_functor<Base, Compare_lexicographically_tag>::type Compare_lexicographically_d;
+        typedef typename Get_functor<Base, Compare_squared_distance_tag>::type Compare_squared_distance_d;
         typedef typename Get_functor<Base, Equal_points_tag>::type Equal_d;
         typedef typename Get_functor<Base, Less_lexicographically_tag>::type Less_lexicographically_d;
         typedef typename Get_functor<Base, Less_or_equal_lexicographically_tag>::type Less_or_equal_lexicographically_d;
@@ -230,6 +231,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         Compute_coordinate_d compute_coordinate_d_object()const{ return Compute_coordinate_d(*this); }
         Has_on_positive_side_d has_on_positive_side_d_object()const{ return Has_on_positive_side_d(*this); }
         Compare_lexicographically_d compare_lexicographically_d_object()const{ return Compare_lexicographically_d(*this); }
+        Compare_squared_distance_d compare_squared_distance_d_object()const{ return Compare_squared_distance_d(*this); }
         Equal_d equal_d_object()const{ return Equal_d(*this); }
         Less_lexicographically_d less_lexicographically_d_object()const{ return Less_lexicographically_d(*this); }
         Less_or_equal_lexicographically_d less_or_equal_lexicographically_d_object()const{ return Less_or_equal_lexicographically_d(*this); }

@@ -16,6 +16,9 @@ create_single_source_cgal_program( "Frechet_DS_2.cpp" )
 create_single_source_cgal_program( "Frechet_DS_3.cpp" )
 
 if(TARGET CGAL::Eigen3_support)
+create_single_source_cgal_program( "Frechet_DS_d.cpp" )
+target_link_libraries(Frechet_DS_d PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program( "Frechet_distance_d.cpp" )
 target_link_libraries(Frechet_distance_d PUBLIC CGAL::Eigen3_support)
 endif()

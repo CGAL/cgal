@@ -278,6 +278,7 @@ namespace CGAL {
         CGAL_DECL_PREDICATE(Compare_point_cartesian_coordinate);
         CGAL_DECL_PREDICATE(Compare_distance);
         CGAL_DECL_PREDICATE(Compare_lexicographically);
+        CGAL_DECL_PREDICATE(Compare_squared_distance);
         CGAL_DECL_PREDICATE(Less_lexicographically);
         CGAL_DECL_PREDICATE(Less_or_equal_lexicographically);
         CGAL_DECL_PREDICATE(Equal_points);
