@@ -40,6 +40,7 @@ public:
   using Construct_bbox_d = typename Kernel::Construct_bbox_d;
   using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_d;
   using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_d;
+  using Compare_squared_distance_d = typename Kernel::Compare_squared_distance_d;
 
   Construct_bbox_d construct_bbox_d_object() const {
      return Construct_bbox_d();
@@ -47,6 +48,10 @@ public:
 
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
      return Construct_cartesian_const_iterator_d();
+  }
+
+  Compare_squared_distance_d construct_compare_squared_distance_d_object() const {
+   return Compare_squared_distance_d();
   }
 };
 
