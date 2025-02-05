@@ -32,14 +32,14 @@
 
 namespace CGAL {
 
-template<class PointIterator, class HoleIterator, class K>
+template<class PointIterator, class HoleIterator,
+         class K = Exact_predicates_inexact_constructions_kernel>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
                                     , HoleIterator  aHolesBegin
                                     , HoleIterator  aHolesEnd
-                                    , K const&
-                                    )
+                                    , const K& = K())
 {
   typedef Straight_skeleton_2<K> Ss ;
 
@@ -62,30 +62,13 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
   return ssb.construct_skeleton();
 }
 
-template<class PointIterator, class HoleIterator>
-boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
-inline
-create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , HoleIterator  aHolesBegin
-                                    , HoleIterator  aHolesEnd
-                                    )
-{
-  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
-                                            ,aOuterContour_VerticesEnd
-                                            ,aHolesBegin
-                                            ,aHolesEnd
-                                            ,Exact_predicates_inexact_constructions_kernel()
-                                            );
-}
-
-template<class PointIterator, class K>
+template<class PointIterator,
+         class K = Exact_predicates_inexact_constructions_kernel>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
-                                    , K const&      k
-                                    )
+                                    , const K& k = K())
 {
   typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
@@ -99,24 +82,12 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                             );
 }
 
-template<class PointIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-inline
-create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    )
-{
-  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
-                                            ,aOuterContour_VerticesEnd
-                                            ,Exact_predicates_inexact_constructions_kernel()
-                                            );
-}
-
-template<class Polygon, class K>
+template<class Polygon,
+         class K = Exact_predicates_inexact_constructions_kernel>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
-                                      K const& k,
+create_interior_straight_skeleton_2 ( const Polygon& aOutContour,
+                                      const K& k = K(),
                                       std::enable_if_t<
                                         ! CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>* = nullptr)
 {
@@ -126,26 +97,18 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
                                             );
 }
 
-template<class Polygon>
-boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
-inline
-create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
-{
-  return create_interior_straight_skeleton_2(aOutContour, Exact_predicates_inexact_constructions_kernel() );
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// EXTERIOR
 
-template<class FT, class PointIterator, class K>
+template<class FT, class PointIterator,
+         class K = Exact_predicates_inexact_constructions_kernel>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     , PointIterator  aVerticesBegin
                                     , PointIterator  aVerticesEnd
-                                    , K const&       k
-                                    )
+                                    , const K& k = K())
 {
   CGAL_precondition( aMaxOffset > 0 ) ;
 
@@ -195,41 +158,18 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
   return rSkeleton ;
 }
 
-template<class FT, class PointIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-inline
-create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
-                                    , PointIterator  aVerticesBegin
-                                    , PointIterator  aVerticesEnd
-                                    )
-{
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aVerticesBegin
-                                            ,aVerticesEnd
-                                            ,Exact_predicates_inexact_constructions_kernel()
-                                            );
-}
-
-template<class FT, class Polygon, class K>
+template<class FT, class Polygon,
+         class K = Exact_predicates_inexact_constructions_kernel>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
+create_exterior_straight_skeleton_2(const FT& aMaxOffset,
+                                    const Polygon& aPoly,
+                                    const K& k = K())
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,CGAL_SS_i::vertices_begin(aPoly)
                                             ,CGAL_SS_i::vertices_end  (aPoly)
                                             ,k
-                                            );
-}
-
-template<class FT, class Polygon>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-inline
-create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly )
-{
-  return create_exterior_straight_skeleton_2(aMaxOffset
-                                            ,aPoly
-                                            ,Exact_predicates_inexact_constructions_kernel()
                                             );
 }
 

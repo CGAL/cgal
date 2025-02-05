@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Straight_skeleton_2/IO/print.h>
@@ -24,44 +25,33 @@
 
 namespace SS = CGAL::CGAL_SS_i;
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT = K::FT;
-using Point_2 = K::Point_2;
-using Vector_2 = K::Vector_2;
-using Point_3 = K::Point_3;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
 
-using Polygon_2 = CGAL::Polygon_2<K>;
-using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
-
-using Straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
-using Straight_skeleton_2_ptr = boost::shared_ptr<Straight_skeleton_2>;
-
-using Mesh = CGAL::Surface_mesh<Point_3>;
-
-Polygon_2 generate_random_polygon(CGAL::Random& rnd)
+template <typename K>
+void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 {
-  typedef CGAL::Random_points_in_square_2<Point_2> Point_generator;
+  using FT = typename K::FT;
+  using Point_2 = typename K::Point_2;
+  using Point_3 = typename K::Point_3;
 
-  Polygon_2 poly;
-  CGAL::random_polygon_2(10, std::back_inserter(poly), Point_generator(0.25, rnd));
-  return poly;
-}
+  using Polygon_2 = CGAL::Polygon_2<K>;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 
-int main(int argc, char** argv)
-{
-  std::cout.precision(17);
-  std::cerr.precision(17);
+  using Straight_skeleton_2 = CGAL::Straight_skeleton_2<K>;
+  using Straight_skeleton_2_ptr = boost::shared_ptr<Straight_skeleton_2>;
 
-  int hole_n = (argc > 1) ? std::atoi(argv[1]) : 2;
-  int hole_nv = (argc > 2) ? std::atoi(argv[2]) : 10;
-  int seed = (argc > 3) ? std::atoi(argv[3]) : std::time(nullptr);
+  using Mesh = CGAL::Surface_mesh<Point_3>;
 
-  CGAL::Random rnd(seed);
+  auto generate_random_polygon = [&](CGAL::Random& rnd) -> Polygon_2
+  {
+    typedef CGAL::Random_points_in_square_2<Point_2> Point_generator;
 
-  std::cout << "Seed is " << rnd.get_seed() << std::endl;
-  std::cout << 2*hole_n << " holes of size " << hole_nv << std::endl;
-
-  std::vector<std::vector<FT> > weights(1);
+    Polygon_2 poly;
+    CGAL::random_polygon_2(hole_nv, std::back_inserter(poly), Point_generator(0.25, rnd));
+    return poly;
+  };
 
   // each hole is in a square of size 1
   std::vector<Point_2> ob = { Point_2(-hole_n-1, -0.5),
@@ -72,6 +62,8 @@ int main(int argc, char** argv)
   Polygon_with_holes_2 pwh(obp);
 
   std::cout << "pwh.outer_boundary() = " << pwh.outer_boundary() << std::endl;
+
+  std::vector<std::vector<FT> > weights(1);
 
   // tiny weight (far-reaching) for vertical sides
   weights[0].push_back(rnd.get_double(0.05, 0.5));
@@ -120,33 +112,49 @@ int main(int argc, char** argv)
     std::cout << std::endl;
   }
 
-//  CGAL::draw(pwh); // @tmp remove draw() calls
+//  CGAL::draw(pwh);
 
-  auto ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights, K());
-
+  Straight_skeleton_2_ptr ss_ptr = CGAL::create_interior_weighted_straight_skeleton_2(pwh, weights, K());
+  assert(ss_ptr);
   if(!ss_ptr)
   {
     std::cerr << "Error: failed to create straight skeleton" << std::endl;
-    return EXIT_FAILURE;
+    return;
   }
 
 //  CGAL::draw(*ss_ptr);
 
-  auto offsets = CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(FT(0.1), pwh, weights);
-  CGAL_USE(offsets);
-
   Mesh sm;
   bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
-
+  assert(success);
   if(!success)
   {
     std::cerr << "Error: failed to extrude skeleton" << std::endl;
-    return EXIT_FAILURE;
+    return;
   }
 
   std::cout << num_vertices(sm) << " vertices and " << num_faces(sm) << " faces" << std::endl;
 
 //  CGAL::draw(sm);
+}
+
+int main(int argc, char** argv)
+{
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
+  int hole_n = (argc > 1) ? std::atoi(argv[1]) : 2;
+  int hole_nv = (argc > 2) ? std::atoi(argv[2]) : 10;
+  int seed = (argc > 3) ? std::atoi(argv[3]) : std::time(nullptr);
+
+  CGAL::Random rnd(seed);
+
+  std::cout << "Seed is " << rnd.get_seed() << std::endl;
+  std::cout << 2*hole_n << " holes of size " << hole_nv << std::endl;
+
+  test_kernel<EPICK>(hole_n, hole_nv, rnd);
+  test_kernel<EPECK>(hole_n, hole_nv, rnd);
+  test_kernel<EPECK_w_sqrt>(hole_n, hole_nv, rnd);
 
   return EXIT_SUCCESS;
 }

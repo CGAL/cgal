@@ -34,6 +34,8 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_polygon_2.h>
 
+#include <CGAL/use.h>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cassert>
@@ -221,9 +223,8 @@ void test_kernel()
 {
 //  CGAL_STSKEL_TRAITS_ENABLE_TRACE
 
-#ifndef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
-  // test_API<K>();
-#endif
+  void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   test_skeleton<K>("data/pseudo_split_0.poly", 13, 40, 8);
   test_skeleton<K>("data/pseudo_split_1.poly", 21, 68, 12);
