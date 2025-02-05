@@ -16,11 +16,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( cache_set var )
     set ( ${var} ${ARGN} CACHE INTERNAL "" )
-    set ( ${var} ${ARGN} CACHE INTERNAL "" )
   endmacro()
 
   macro( typed_cache_set type doc var )
-    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
     set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
   endmacro()
 

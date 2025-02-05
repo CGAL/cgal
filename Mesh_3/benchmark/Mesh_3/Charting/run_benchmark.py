@@ -158,7 +158,7 @@ def main(argv):
   cell_scan_time = parse_xml_file(xml_filename, "Cells_scan_time")
   cell_refine_time = parse_xml_file(xml_filename, "Cells_refine_time")
 
-  # Optimisation
+  # Optimization
   lloyd_optim_time = parse_xml_file(xml_filename, "Lloyd_optim_time")
   odt_optim_time = parse_xml_file(xml_filename, "Odt_optim_time")
   perturber_optim_time = parse_xml_file(xml_filename, "Perturber_optim_time")

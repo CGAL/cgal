@@ -65,7 +65,7 @@ template < class PolynomialIterator,
 int gen_agebraic_reals_with_mults( PolynomialIterator           fac,
                                    PolynomialIterator           fac_end,
                                    IntIterator                  mul,
-                                   IntIterator                  CGAL_precondition_code(mul_end),
+                                   IntIterator                  CGAL_assertion_code(mul_end),
                                    AlgebraicRealOutputIterator  oi_root,
                                    IntOutputIterator            oi_mult){
 

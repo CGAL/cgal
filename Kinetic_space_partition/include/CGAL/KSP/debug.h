@@ -50,6 +50,11 @@ get_idx_color(std::size_t idx) {
     static_cast<unsigned char>(rand.get_int(32, 192)));
 }
 
+CGAL::IO::Color get_color(std::size_t idx) {
+  CGAL::Random rand(static_cast<unsigned int>(idx));
+  return CGAL::IO::Color(rand.get_int(32, 192), rand.get_int(32, 192), rand.get_int(32, 192));
+}
+
 template<typename DS>
 void dump_intersection_edges(const DS& data, const std::string tag = std::string()) {
 
@@ -110,12 +115,12 @@ void dump_2d_surface_mesh(
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-  using Int_map    = typename Mesh::template Property_map<Face_index, int>;
+  using Int_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
 
   Mesh mesh;
-  Int_map red   = mesh.template add_property_map<Face_index, int>("red", 0).first;
-  Int_map green = mesh.template add_property_map<Face_index, int>("green", 0).first;
-  Int_map blue  = mesh.template add_property_map<Face_index, int>("blue", 0).first;
+  Int_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
+  Int_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
+  Int_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -332,7 +337,7 @@ public:
   { }
 
   void initialize(std::stringstream& stream) const {
-    stream.precision(20);
+    stream.precision(17);
   }
 
   void export_points_2(
@@ -495,7 +500,8 @@ public:
       stream << polygon.size() << " ";
       for (std::size_t j = 0; j < polygon.size(); ++j)
         stream << i++ << " ";
-      stream << get_idx_color(polygon_id) << std::endl;
+      auto col = get_idx_color(polygon_id);
+      stream << int(col.r()) << " " << int(col.g()) << " " << int(col.b()) << std::endl;
       ++polygon_id;
     }
     save(stream, file_name + ".ply");
@@ -528,7 +534,8 @@ public:
         stream << polygon.size() << " ";
         for (std::size_t j = 0; j < polygon.size(); ++j)
           stream << i++ << " ";
-        stream << get_idx_color(region_id) << std::endl;
+        auto col = get_idx_color(region_id);
+        stream << int(col.r()) << " " << int(col.g()) << " " << int(col.b()) << std::endl;
       }
       ++region_id;
     }
@@ -539,7 +546,7 @@ public:
     const std::vector<Point_3>& vertices,
     const std::vector<std::size_t>& tris,
     const std::string file_name) const {
-    assert((tris.size() % 3) == 0);
+    CGAL_assertion((tris.size() % 3) == 0);
 
     std::stringstream stream;
     initialize(stream);
@@ -700,17 +707,16 @@ private:
     const std::size_t size) const {
 
     stream <<
-    "ply"                  +  std::string(_NL_) + ""                      <<
-    "format ascii 1.0"     +  std::string(_NL_) + ""                      <<
-    "element vertex "      << size        << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""                     <<
-    "property double y"    +  std::string(_NL_) + ""                     <<
-    "property double z"    +  std::string(_NL_) + ""                      <<
-    "property uchar red"   +  std::string(_NL_) + ""                      <<
-    "property uchar green" +  std::string(_NL_) + ""                      <<
-    "property uchar blue"  +  std::string(_NL_) + ""                      <<
-    "property uchar alpha" +  std::string(_NL_) + ""                      <<
-    "end_header"           +  std::string(_NL_) + "";
+    "ply" << std::endl <<
+    "format ascii 1.0" << std::endl <<
+    "element vertex " << size << std::endl <<
+    "property double x" << std::endl <<
+    "property double y" << std::endl <<
+    "property double z" << std::endl <<
+    "property uchar red" << std::endl <<
+    "property uchar green" << std::endl <<
+    "property uchar blue" << std::endl <<
+    "end_header" << std::endl;
   }
 
   void add_ply_header_normals(
@@ -718,16 +724,16 @@ private:
     const std::size_t size) const {
 
     stream <<
-      "ply" + std::string(_NL_) + "" <<
-      "format ascii 1.0" + std::string(_NL_) + "" <<
-      "element vertex " << size << "" + std::string(_NL_) + "" <<
-      "property double x" + std::string(_NL_) + "" <<
-      "property double y" + std::string(_NL_) + "" <<
-      "property double z" + std::string(_NL_) + "" <<
-      "property double nx" + std::string(_NL_) + "" <<
-      "property double ny" + std::string(_NL_) + "" <<
-      "property double nz" + std::string(_NL_) + "" <<
-      "end_header" + std::string(_NL_) + "";
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << size << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "property double nx" << std::endl <<
+      "property double ny" << std::endl <<
+      "property double nz" << std::endl <<
+      "end_header" << std::endl;
   }
 
   void add_ply_header_normals_colors(
@@ -735,20 +741,19 @@ private:
     const std::size_t size) const {
 
     stream <<
-      "ply" + std::string(_NL_) + "" <<
-      "format ascii 1.0" + std::string(_NL_) + "" <<
-      "element vertex " << size << "" + std::string(_NL_) + "" <<
-      "property double x" + std::string(_NL_) + "" <<
-      "property double y" + std::string(_NL_) + "" <<
-      "property double z" + std::string(_NL_) + "" <<
-      "property double nx" + std::string(_NL_) + "" <<
-      "property double ny" + std::string(_NL_) + "" <<
-      "property double nz" + std::string(_NL_) + "" <<
-      "property uchar red" + std::string(_NL_) + "" <<
-      "property uchar green" + std::string(_NL_) + "" <<
-      "property uchar blue" + std::string(_NL_) + "" <<
-      "property uchar alpha" + std::string(_NL_) + "" <<
-      "end_header" + std::string(_NL_) + "";
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << size << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "property double nx" << std::endl <<
+      "property double ny" << std::endl <<
+      "property double nz" << std::endl <<
+      "property uchar red" << std::endl <<
+      "property uchar green" << std::endl <<
+      "property uchar blue" << std::endl <<
+      "end_header" << std::endl;
   }
 
   void add_ply_header_regions(
@@ -775,19 +780,19 @@ private:
     const std::size_t num_faces) const {
 
     stream <<
-      "ply" + std::string(_NL_) + "" <<
-      "format ascii 1.0" + std::string(_NL_) + "" <<
-      "element vertex " << num_vertices << "" + std::string(_NL_) + "" <<
-      "property double x" + std::string(_NL_) + "" <<
-      "property double y" + std::string(_NL_) + "" <<
-      "property double z" + std::string(_NL_) + "" <<
-      "element face " << num_faces << "" + std::string(_NL_) + "" <<
-      "property list uchar int vertex_indices" + std::string(_NL_) + "" <<
-      "property uchar red" + std::string(_NL_) + "" <<
-      "property uchar green" + std::string(_NL_) + "" <<
-      "property uchar blue" + std::string(_NL_) + "" <<
-      "property uchar alpha" + std::string(_NL_) + "" <<
-      "end_header" + std::string(_NL_) + "";
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << num_vertices << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "element face " << num_faces << std::endl <<
+      "property list uchar int vertex_indices" << std::endl <<
+      "property uchar red" << std::endl <<
+      "property uchar green" << std::endl <<
+      "property uchar blue" << std::endl <<
+      "property uchar alpha" << std::endl <<
+      "end_header" << std::endl;
   }
 
   void add_ply_header_mesh_no_color(
@@ -796,15 +801,15 @@ private:
     const std::size_t num_faces) const {
 
     stream <<
-      "ply" + std::string(_NL_) + "" <<
-      "format ascii 1.0" + std::string(_NL_) + "" <<
-      "element vertex " << num_vertices << "" + std::string(_NL_) + "" <<
-      "property double x" + std::string(_NL_) + "" <<
-      "property double y" + std::string(_NL_) + "" <<
-      "property double z" + std::string(_NL_) + "" <<
-      "element face " << num_faces << "" + std::string(_NL_) + "" <<
-      "property list ushort int vertex_indices" + std::string(_NL_) + "" <<
-      "end_header" + std::string(_NL_) + "";
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << num_vertices << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "element face " << num_faces << std::endl <<
+      "property list ushort int vertex_indices" << std::endl <<
+      "end_header" << std::endl;
   }
 };
 
@@ -1015,14 +1020,22 @@ void dump_points(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector
 
 template<typename DS>
 void dump_ifaces(const DS& data, const std::string tag = std::string()) {
+
+  using From_exact = CGAL::Cartesian_converter<typename DS::Intersection_kernel, typename DS::Kernel>;
+  From_exact from_exact;
   // write all polygons into a separate ply with support plane index and iface index
-  for (std::size_t sp_idx = data.number_of_support_planes(); sp_idx++;) {
+  for (std::size_t sp_idx = 0; sp_idx < data.number_of_support_planes(); sp_idx++) {
     for (typename DS::IFace f : data.support_plane(sp_idx).ifaces()) {
-      Saver<typename DS::Kernel> saver;
       std::vector<std::vector<typename DS::Kernel::Point_3> > pts(1);
-      for (auto v : data.igraph().face(f).vertices)
-        pts.back().push_back(data.igraph().point_3(v));
-      saver.export_polygon_soup_3(pts, tag + "-" + std::to_string(sp_idx) + "-" + std::to_string(f));
+      std::vector<CGAL::IO::Color> cols;
+      cols.push_back(get_color(std::size_t(f)));
+      Saver<typename DS::Kernel> saver;
+      for (auto v : data.igraph().face(f).vertices) {
+        typename DS::IkPoint_3 ip = data.igraph().point_3(v);
+        Point_3 p = from_exact(ip);
+        pts.back().push_back(p);
+      }
+      saver.export_polygon_soup_3(pts, cols, tag + "-" + std::to_string(sp_idx) + "-" + std::to_string(f));
     }
   }
 }

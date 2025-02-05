@@ -232,11 +232,12 @@ public:
       "Create Facegraph from Selected Facets"            ,
       "Erase Selected Facets"             ,
       "Keep Connected Components of Selected Facets"           ,
-      "Expand Face Selection to Stay Manifold After Removal"   ,
-      "Convert from Edge Selection to Facets Selection"        ,
-      "Convert from Edge Selection to Point Selection"         ,
-      "Convert from Facet Selection to Boundary Edge Selection",
-      "Convert from Facet Selection to Point Selection"
+      "Expand Face Selection to Remain Manifold After Removal"   ,
+      "Select Edges Incident to Selected Facets"        ,
+      "Select Vertices Incident to Selected Edges"         ,
+      "Select Edges on the Boundary of Regions of Selected Facets",
+      "Select Vertices of Selected Facets",
+      "Add Triangle Face from Selected Vertices"
     };
 
     operations_map[operations_strings[0]] = 0;
@@ -249,6 +250,7 @@ public:
     operations_map[operations_strings[7]] = 7;
     operations_map[operations_strings[8]] = 8;
     operations_map[operations_strings[9]] = 9;
+    operations_map[operations_strings[10]] = 10;
   }
   virtual void closure() override
   {
@@ -555,8 +557,6 @@ public Q_SLOTS:
     }
   }
   void on_Selection_type_combo_box_changed(int index) {
-    std::cout << "on_Selection_type_combo_box_changed(" << index << ")" << std::endl;
-
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
@@ -906,6 +906,20 @@ public Q_SLOTS:
       selection_item->itemChanged();
       break;
     }
+    //Add Triangle Face to FaceGraph
+    case 10:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_vertices.size() != 3) {
+        print_message("Error: there is not exactly 3 vertices selected!");
+        return;
+      }
+      selection_item->add_facet_from_selected_vertices();
+    }
     default :
       break;
     }
@@ -1175,6 +1189,8 @@ void filter_operations()
   if(has_v)
   {
     ui_widget.operationsBox->addItem(operations_strings[0]);
+    if(selection_item->selected_vertices.size() == 3)
+      ui_widget.operationsBox->addItem(operations_strings[10]);
   }
   if(has_e)
   {
