@@ -52,8 +52,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <optional>
-#include <boost/tuple/tuple.hpp>
+
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -62,10 +61,12 @@
 #include <fstream>
 #include <iterator>
 #include <list>
+#include <optional>
 #include <sstream>
 #include <set>
 #include <stack>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -511,11 +512,11 @@ private:
                                                                            const Vertex_handle v2,
                                                                            const Curve_index& curve_index) const;
 
-  boost::tuple<Bare_point, Bare_point, Bare_point> get_positions(const Vertex_handle v1,
-                                                                 const Vertex_handle v2,
-                                                                 const Vertex_handle v3,
-                                                                 const Curve_index& curve_index,
-                                                                 const CGAL::Orientation orientation) const;
+  std::tuple<Bare_point, Bare_point, Bare_point> get_positions(const Vertex_handle v1,
+                                                               const Vertex_handle v2,
+                                                               const Vertex_handle v3,
+                                                               const Curve_index& curve_index,
+                                                               const CGAL::Orientation orientation) const;
 
 private:
   C3T3& c3t3_;
@@ -953,9 +954,9 @@ get_positions_with_unknown_orientation(const Vertex_handle v1,
 
 
 template <typename C3T3, typename MD, typename Sf>
-boost::tuple<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
-             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
-             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+std::tuple<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+           typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+           typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 get_positions(const Vertex_handle v1,
               const Vertex_handle v2,
@@ -969,7 +970,7 @@ get_positions(const Vertex_handle v1,
   std::tie(p2_check, p3) = get_positions(v2, v3, curve_index, orientation);
   CGAL_assertion(p2_check == p2);
 
-  return boost::make_tuple(p1, p2, p3);
+  return std::make_tuple(p1, p2, p3);
 }
 
 

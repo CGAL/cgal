@@ -27,7 +27,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Origin.h>
 
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 namespace CGAL {
 
@@ -96,7 +96,7 @@ namespace CGAL {
     {
       const Self& oracle;
 
-      boost::tuple<int, FT, FT>
+      std::tuple<int, FT, FT>
       intersection_line_sphere_lambda(const Surface_3& sphere,
                                       const Point& a,
                                       const Point& b) const
@@ -148,18 +148,18 @@ namespace CGAL {
         switch( CGAL::sign(deltaprime) )
         {
         case ZERO:
-          return boost::make_tuple(1, ab_ac / ab2, 0);
+          return std::make_tuple(1, ab_ac / ab2, 0);
         case POSITIVE:
           {
             const FT sqrt_deltaprime = CGAL::sqrt(deltaprime);
-            return boost::make_tuple(2,
-                                     (ab_ac - sqrt_deltaprime) / ab2,
-                                     (ab_ac + sqrt_deltaprime) / ab2);
+            return std::make_tuple(2,
+                                   (ab_ac - sqrt_deltaprime) / ab2,
+                                   (ab_ac + sqrt_deltaprime) / ab2);
           }
         case NEGATIVE:
           break;
         }
-        return boost::make_tuple(0, 0, 0);
+        return std::make_tuple(0, 0, 0);
       } //end intersection_line_sphere_lambda
 
       template <class Assert_on_lambda>
