@@ -87,20 +87,21 @@ namespace internal
  * \ingroup PkgFrechetDistanceFunctions
  * determines if the Frechet distance between two polylines is larger than a given distance bound.
  *
- * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type
+ * \tparam PointRange  a model of the concept `RandomAccessContainer` whose value type is a `Point_d`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param polyline1 the first polyline defined by a sequence of consecutive points
- * \param polyline2 the second polyline defined by a sequence of consecutive points
+ * \param polyline1 the first polyline, defined by a sequence of consecutive points
+ * \param polyline2 the second polyline, defined by a sequence of consecutive points
  * \param distance_bound the distance to compare against
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" containing the one listed below:
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a model of `FrechetDistanceTraits`}
- *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or`Frechet_distance_traits_d`, depending on the dimension of the point type.}
+ *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or `Frechet_distance_traits_d`, depending on the dimension of the point type
+ *                       deduced from the point type, using `Kernel_traits`.}
+ *     \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -144,27 +145,28 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * returns an estimate of the Fréchet distance between the two polylines that is at most `error_bound`
  * away from the actual Fréchet distance between the two polylines.
  *
- * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
+ * \tparam PointRange  a model of the concept `RandomAccessContainer` whose value type is a `Point_d`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param polyline1 the first polyline defined by a sequence of consecutive points
- * \param polyline2 the second polyline defined by a sequence of consecutive points
+ * \param polyline1 the first polyline, defined by a sequence of consecutive points
+ * \param polyline2 the second polyline, defined by a sequence of consecutive points
  * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the actual Fréchet distance
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" containing the one listed below:
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a model of `FrechetDistanceTraits`}
- *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or`Frechet_distance_traits_d`, depending on the dimension of the point type.}
+ *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or `Frechet_distance_traits_d`, depending on the dimension of the point type
+ *                       deduced from the point type, using `Kernel_traits`.}
+ *      \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre the polylines must not be empty
  *
- * @return an interval enclosing the exact result, the difference between the upper and
- * the lower bound being less than `error_bound`.
+ * @return an interval enclosing the exact Fréchet distance, the difference between the upper and
+ * the lower bound being smaller than `error_bound`.
  */
 template <class PointRange, class NamedParameters =  parameters::Default_named_parameters>
 std::pair<double,double> bounded_error_Frechet_distance(const PointRange& polyline1,

@@ -14,10 +14,10 @@ namespace CGAL {
 
 This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
 
-\section secFrechetDistanceIntroduction Introdution
+\section secFrechetDistanceIntroduction Introduction
 
 The Fréchet distance is a classical dissimilarity measure between polylines.
-Its advantages over other measures is that it both considers the polylines as continuous objects and takes into account the ordering of the points.
+Its advantages over other measures are that it both considers the polylines as continuous objects and takes into account the ordering of the points.
 Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline,
 they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human
 and the dog to jointly walk from start to end on their respective trajectories.
@@ -45,11 +45,10 @@ The traits classes have as template parameter a kernel, model of the concept `Ke
 In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
 combine interval arithmetic with a fallback to exact computing in case comparisons of intervals
 are uncertain.  This means for `Simple_cartesian<double>` that there are no guarantees, for
-`Simple_cartesian<Exact_rational>` that all computation is done with exact rationals,
+`Simple_cartesian<Exact_rational>` that all computations are performed with exact rationals,
 and for kernels such as `Exact_predicates_inexact_constructions_kernel`,  `Exact_predicates_exact_constructions_kernel`,
 `Exact_predicates_exact_constructions_kernel_with_sqrt`,
-as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence fast and at
-the same time guaranteed to be correct.
+as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both fast and guaranteed to be correct.
 
 
 \section secFrechetDistanceImplementation Implementation
@@ -90,6 +89,14 @@ The following example shows how we can compute the Fréchet distance up to a giv
 polylines in 4-dimensional Euclidean space using `bounded_error_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_d.cpp}
+
+
+\subsection subsecFrechetDistanceDSExample Searching Close Curves
+
+The following example shows how to store many curves in a data structure and to find all curves
+closed than a distance bound for a query curve.
+
+\cgalExample{Frechet_distance/Frechet_DS_3.cpp}
 
 
 \subsection subsecFrechetDistanceImageCredits  Image Credits
