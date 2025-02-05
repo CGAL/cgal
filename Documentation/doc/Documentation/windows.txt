@@ -6,7 +6,7 @@
 15.9, 16.0, 17.0 (\visualstudio 2017, 2019, and 2022).
 
 \cgal is a library that has mandatory dependencies that must be first installed:
-\ref thirdpartyBoost and \ref thirdpartyMPFR.
+\ref thirdpartyBoost and a \ref thirdpartyMP.
 
 You have two options to install \cgal and its dependencies: you can either use
 the *Vcpkg library manager*, which will automatically install an appropriate version of

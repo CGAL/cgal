@@ -156,9 +156,9 @@ bool read_multi_point_WKT(std::istream& in,
 //!
 //! The first line starting with LINESTRING in the stream will be used.
 //!
-//! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`,
+//! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`,
 //! and have:
-//! - a function `push_back()` that takes a `CGAL::Point_2`.
+//! - a function `push_back()` that takes a point.
 //! - a function `clear()`,
 //! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
@@ -166,6 +166,7 @@ bool read_multi_point_WKT(std::istream& in,
 //! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename LineString>
 bool read_linestring_WKT(std::istream& in,
                          LineString& polyline)
@@ -209,7 +210,6 @@ bool read_linestring_WKT(std::istream& in,
 //!
 //! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
-//! \see `CGAL::Point_2`
 template<typename MultiLineString>
 bool read_multi_linestring_WKT(std::istream& in,
                                MultiLineString& mls)
@@ -359,11 +359,12 @@ bool read_multi_polygon_WKT(std::istream& in,
 //!
 //! \brief writes `point` into a WKT stream.
 //!
-//! \tparam Point is a `CGAL::Point_2`
+//! \tparam Point is a `CGAL::Point_2` or `CGAL::Point_3`
 //!
 //! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename Point>
 std::ostream& write_point_WKT(std::ostream& out,
                               const Point& point)
@@ -399,11 +400,12 @@ std::ostream& write_polygon_WKT(std::ostream& out,
 //!
 //! \brief writes the content of `ls` into a WKT stream.
 //!
-//! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`.
+//! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //!
 //! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //!\see `CGAL::Point_2`
+//!\see `CGAL::Point_3`
 template<typename LineString>
 std::ostream& write_linestring_WKT(std::ostream& out,
                                    LineString ls)
@@ -420,10 +422,11 @@ std::ostream& write_linestring_WKT(std::ostream& out,
 //!
 //! \brief writes the content of `mp` into a WKT stream.
 //!
-//! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`.
+//! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //!
 //! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
+//!\see `CGAL::Point_2`
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
 std::ostream& write_multi_point_WKT(std::ostream& out,

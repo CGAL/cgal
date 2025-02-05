@@ -870,7 +870,7 @@ public:
 #endif
 
   /// @cond CGAL_DOCUMENT_INTERNALS
-  // typedefs which make it easier to write the partial specialisation of boost::graph_traits
+  // typedefs which make it easier to write the partial specialization of boost::graph_traits
 
   typedef Vertex_index   vertex_index;
   typedef P                   vertex_property_type;

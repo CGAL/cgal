@@ -575,7 +575,7 @@ void test_algebraic_extension_traits(){
     typedef CGAL::Sqrt_extension<RAT1_EXT,INT,ACDE_TAG> RAT2_EXT;
     typedef CGAL::Sqrt_extension<INT1_EXT,INT,ACDE_TAG> INT2_EXT;
 
-    // normalisation factor
+    // normalization factor
     typedef CGAL::Algebraic_extension_traits<RAT1_EXT> RAT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<INT1_EXT> INT1_EXT_ANT;
     typedef CGAL::Algebraic_extension_traits<RAT2_EXT> RAT2_EXT_ANT;

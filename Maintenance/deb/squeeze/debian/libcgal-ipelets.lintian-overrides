@@ -1,1 +1,0 @@
-libcgal-ipelets: hardening-no-fortify-functions usr/lib/ipe/*/ipelets/libCGAL_*.so

@@ -43,7 +43,7 @@ public:
 
   // Constructors
 
-  // Default constructor initialises to undefined simplex:
+  // Default constructor initializes to undefined simplex:
   Triangulation_simplex_3() : ref(-1), ch() { }
 
   Triangulation_simplex_3(Vertex_handle vh) {

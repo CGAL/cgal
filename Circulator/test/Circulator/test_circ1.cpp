@@ -2380,7 +2380,6 @@ void test_circulator_from_iterator() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -2492,7 +2491,6 @@ void test_circulator_from_iterator() {
         Circulator i = c;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == c);
         assert( i == c);
         // Do I reach myself.
         ++i;
@@ -2735,7 +2733,6 @@ void test_circulator_from_iterator() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -2896,7 +2893,6 @@ void test_circulator_from_iterator() {
         Circulator i = c;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == c);
         assert( i == c);
         // Do I reach myself.
         ++i;
@@ -3308,7 +3304,6 @@ void test_circulator_from_iterator() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -3533,7 +3528,6 @@ void test_circulator_from_iterator() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -3742,7 +3736,6 @@ void test_circulator_from_container() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -3854,7 +3847,6 @@ void test_circulator_from_container() {
         Circulator i = c;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == c);
         assert( i == c);
         // Do I reach myself.
         ++i;
@@ -4097,7 +4089,6 @@ void test_circulator_from_container() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -4259,7 +4250,6 @@ void test_circulator_from_container() {
         Circulator i = c;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == c);
         assert( i == c);
         // Do I reach myself.
         ++i;
@@ -4671,7 +4661,6 @@ void test_circulator_from_container() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == c);
-        assert( i == c);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -4896,7 +4885,6 @@ void test_circulator_from_container() {
         Circulator i = c;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == c);
         assert( i == c);
         // Do I reach myself.
         ++i;

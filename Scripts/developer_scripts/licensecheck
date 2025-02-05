@@ -89,7 +89,7 @@ The two configuration files F</etc/devscripts.conf> and
 F<~/.devscripts> are sourced by a shell in that order to set
 configuration variables.  Command line options can be used to override
 configuration file settings.  Environment variable settings are
-ignored for this purpose.  The currently recognised variables are:
+ignored for this purpose.  The currently recognized variables are:
 
 =over 4
 

@@ -57,7 +57,7 @@ protected:
   Face_const_handle m_spherical_face;
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_spherical_batched_pl_helper(const Arrangement_2* arr) :
@@ -124,7 +124,7 @@ public:
   }
   //@}
 
-  /*! Obtain the current top face. */
+  /*! obtains the current top face. */
   Face_const_handle top_face() const { return m_spherical_face; }
 };
 

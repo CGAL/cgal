@@ -105,7 +105,12 @@ void simplify_range(HalfedgeRange& halfedge_range,
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
   typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Range_halfedges;
 
-  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm, false);
+  const bool all_hedges = (::CGAL::internal::exact_num_halfedges(tm)==halfedge_range.size());
+
+  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm, all_hedges);
+  if (!all_hedges)
+    for(halfedge_descriptor h : halfedge_range)
+      put(range_halfedges, h, true);
 
   CGAL_postcondition_code(const std::size_t initial_n = halfedge_range.size();)
 

@@ -234,7 +234,7 @@ private:
       // If the target is a corner vertex, we have the complete length of a side in 'len'
       // and we must "normalize" the previous entries
       if(get(vpmap, vt)) {
-        // If both extremeties of a segment are corners, offsets are already correct
+        // If both extremities of a segment are corners, offsets are already correct
         if(!get(vpmap, vs)) {
           CGAL_assertion(len != 0.0);
           double ld = 1.0 / len;

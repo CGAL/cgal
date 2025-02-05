@@ -304,7 +304,6 @@ void test_struct(){
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == start);
-        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_circulator j = i;
@@ -412,7 +411,6 @@ void test_struct(){
         Struct_const_circulator i = start;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == start);
         assert( i == start);
         // Do I reach myself.
         ++i;
@@ -651,7 +649,6 @@ void test_struct(){
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == start);
-        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_bi_circulator j = i;
@@ -808,7 +805,6 @@ void test_struct(){
         Struct_bi_const_circulator i = start;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == start);
         assert( i == start);
         // Do I reach myself.
         ++i;
@@ -969,7 +965,6 @@ void test_class(){
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == start);
-        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_circulator j = i;
@@ -1077,7 +1072,6 @@ void test_class(){
         Class_const_circulator i = start;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == start);
         assert( i == start);
         // Do I reach myself.
         ++i;
@@ -1316,7 +1310,6 @@ void test_class(){
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == start);
-        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_bi_circulator j = i;
@@ -1473,7 +1466,6 @@ void test_class(){
         Class_bi_const_circulator i = start;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == start);
         assert( i == start);
         // Do I reach myself.
         ++i;
@@ -1891,7 +1883,6 @@ void test_array() {
         assert( ! (i == nullptr));
         assert(   i != nullptr);
         assert( i == start);
-        assert( i == start);
         // Do I reach myself.
         ++i;
         Circulator j = i;
@@ -2118,7 +2109,6 @@ void test_array() {
         Circulator i = start;
         assert( ! (i == nullptr));
         assert(   i != nullptr);
-        assert( i == start);
         assert( i == start);
         // Do I reach myself.
         ++i;

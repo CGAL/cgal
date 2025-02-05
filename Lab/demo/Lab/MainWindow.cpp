@@ -663,15 +663,7 @@ void MainWindow::loadPlugins()
     }
   }
   QString env_path = qgetenv("LAB_DEMO_PLUGINS_PATH");
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
   QChar separator = QDir::listSeparator();
-#else
-#if defined(_WIN32)
-  QChar separator = ';';
-#else
-  QChar separator = ':';
-#endif
-#endif
   if(!env_path.isEmpty()) {
 #if defined(_WIN32)
     QString path = qgetenv("PATH");
@@ -2652,17 +2644,10 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().horizontalAdvance("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_View_")));
-#else
-  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
-  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
-  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
-#endif
 }
 
 void MainWindow::reset_default_loaders()

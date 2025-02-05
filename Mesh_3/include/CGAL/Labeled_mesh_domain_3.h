@@ -1097,7 +1097,7 @@ public:
     Surface_patch operator()(const Point_3& a, const Point_3& b) const
     {
       // If f(a) != f(b), then [a,b] intersects some surface. Here we consider
-      // [a,b] intersects surface_patch labelled <f(a),f(b)> (or <f(b),f(a)>).
+      // [a,b] intersects surface_patch labeled <f(a),f(b)> (or <f(b),f(a)>).
       // It may be false, further rafinement will improve precision
       const Subdomain_index value_a = r_domain_.function_(a);
       const Subdomain_index value_b = r_domain_.function_(b);

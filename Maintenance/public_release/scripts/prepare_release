@@ -82,7 +82,7 @@ zip -q -r ../cgal_manual.zip *
 popd
 
 pushd /srv/CGAL/www/precompiled_libs/auxiliary/x64/
-cp CGAL-5.2-win64-auxiliary-libraries-gmp-mpfr.zip "$DEST_DIR/${PUBLIC_RELEASE_NAME}-win64-auxiliary-libraries-gmp-mpfr.zip"
+cp CGAL-6.0.1-win64-auxiliary-libraries-gmp-mpfr.zip "$DEST_DIR/${PUBLIC_RELEASE_NAME}-win64-auxiliary-libraries-gmp-mpfr.zip"
 popd
 
 pushd "$DEST_DIR"

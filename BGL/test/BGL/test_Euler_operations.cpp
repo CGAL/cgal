@@ -17,6 +17,7 @@ test_copy_face_graph_nm_umbrella()
   T g;
   Kernel::Point_3 p(0,0,0);
 
+  // make two connected components
   CGAL::make_tetrahedron(p, p, p, p, g);
   CGAL::make_tetrahedron(p, p, p, p, g);
 

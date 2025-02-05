@@ -72,12 +72,12 @@ protected:
   bool m_use_cache;
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_circle_segment_traits_2 (bool use_intersection_caching = false) :
     m_use_cache(use_intersection_caching)
   {}
 
-  /*! Get the next curve index. */
+  /*! obtains the next curve index. */
   static unsigned int get_index ()
   {
 #ifdef CGAL_NO_ATOMIC
@@ -94,8 +94,7 @@ public:
   class Compare_x_2
   {
   public:
-    /*!
-     * Compare the x-coordinates of two points.
+    /*! compares the \f$x\f$-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
@@ -111,7 +110,7 @@ public:
     }
   };
 
-  /*! Get a Compare_x_2 functor object. */
+  /*! obtains a `Compare_x_2` functor object. */
   Compare_x_2 compare_x_2_object () const
   {
     return Compare_x_2();
@@ -120,8 +119,7 @@ public:
   class Compare_xy_2
   {
   public:
-    /*!
-     * Compares two points lexigoraphically: by x, then by y.
+    /*! compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
@@ -142,7 +140,7 @@ public:
     }
   };
 
-  /*! Get a Compare_xy_2 functor object. */
+  /*! obtains a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2();
@@ -151,8 +149,7 @@ public:
   class Construct_min_vertex_2
   {
   public:
-    /*!
-     * Get the left endpoint of the x-monotone curve (segment).
+    /*! obtains the left endpoint of the \f$x\f$-monotone curve (segment).
      * \param cv The curve.
      * \return The left endpoint.
      */
@@ -162,7 +159,7 @@ public:
     }
   };
 
-  /*! Get a Construct_min_vertex_2 functor object. */
+  /*! obtains a `Construct_min_vertex_2` functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
     return Construct_min_vertex_2();
@@ -171,8 +168,7 @@ public:
   class Construct_max_vertex_2
   {
   public:
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
+    /*! obtains the right endpoint of the \f$x\f$-monotone curve (segment).
      * \param cv The curve.
      * \return The right endpoint.
      */
@@ -182,7 +178,7 @@ public:
     }
   };
 
-  /*! Get a Construct_max_vertex_2 functor object. */
+  /*! obtains a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return Construct_max_vertex_2();
@@ -191,8 +187,7 @@ public:
   class Is_vertical_2
   {
   public:
-    /*!
-     * Check whether the given x-monotone curve is a vertical segment.
+    /*! checks whether the given \f$x\f$-monotone curve is a vertical segment.
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
@@ -202,7 +197,7 @@ public:
     }
   };
 
-  /*! Get an Is_vertical_2 functor object. */
+  /*! obtains an `Is_vertical_2` functor object. */
   Is_vertical_2 is_vertical_2_object () const
   {
     return Is_vertical_2();
@@ -211,11 +206,10 @@ public:
   class Compare_y_at_x_2
   {
   public:
-    /*!
-     * Return the location of the given point with respect to the input curve.
+    /*! returns the location of the given point with respect to the input curve.
      * \param cv The curve.
      * \param p The point.
-     * \pre p is in the x-range of cv.
+     * \pre p is in the \f$x\f$-range of `cv`.
      * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
@@ -229,7 +223,7 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_2 functor object. */
+  /*! obtains a `Compare_y_at_x_2` functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
     return Compare_y_at_x_2();
@@ -238,9 +232,8 @@ public:
   class Compare_y_at_x_right_2
   {
   public:
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the right
-     * of their intersection point.
+    /*! compares the y value of two \f$x\f$-monotone curves immediately to the
+     * right of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param p The intersection point.
@@ -283,7 +276,7 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_right_2 functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return Compare_y_at_x_right_2();
@@ -292,16 +285,15 @@ public:
   class Compare_y_at_x_left_2
   {
   public:
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the left
-     * of their intersection point.
+    /*! compares the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
+     * the left of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be also be
+     * \pre The point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
@@ -338,7 +330,7 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
     return Compare_y_at_x_left_2();
@@ -347,8 +339,8 @@ public:
   class Equal_2
   {
   public:
-    /*!
-     * Check if the two x-monotone curves are the same (have the same graph).
+    /*! checks if the two \f$x\f$-monotone curves are the same (have the same
+     * graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
@@ -362,8 +354,7 @@ public:
       return (cv1.equals (cv2));
     }
 
-    /*!
-     * Check if the two points are the same.
+    /*! checks if the two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
@@ -374,7 +365,7 @@ public:
     }
   };
 
-  /*! Get an Equal_2 functor object. */
+  /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object () const
   {
     return Equal_2();
@@ -395,7 +386,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Approximate_2(const Traits& traits) : m_traits(traits) {}
@@ -403,24 +394,24 @@ public:
     friend class Arr_circle_segment_traits_2<Kernel, Filter>;
 
   public:
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const {
       CGAL_precondition((i == 0) || (i == 1));
       return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
     }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
     { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
@@ -430,7 +421,7 @@ public:
     }
 
   private:
-    /*! Handle segments.
+    /*! handles segments.
      */
     template <typename OutputIterator>
     OutputIterator approximate_segment(const X_monotone_curve_2& xcv,
@@ -477,7 +468,7 @@ public:
       return oi;
     }
 
-    /*! Compute the circular point given the parameter t and the transform
+    /*! computes the circular point given the parameter t and the transform
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
@@ -486,7 +477,7 @@ public:
       y = r * std::sin(t);
     }
 
-    /*! Transform a point. In particular, rotate the canonical point
+    /*! transforms a point. In particular, rotate the canonical point
      * (`xc`,`yc`) by an angle, the sine and cosine of which are `sint` and
      * `cost`, respectively, and translate by (`cx`,`cy`).
      */
@@ -496,7 +487,7 @@ public:
       y = yc + cy;
     }
 
-    /*! Handle circular arcs.
+    /*! handles circular arcs.
      */
     template <typename OutputIterator>
     OutputIterator approximate_arc(const X_monotone_curve_2& xcv,
@@ -554,7 +545,7 @@ public:
     }
   };
 
-  /*! Obtain an Approximate_2 functor object. */
+  /*! obtains an `Approximate_2` functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
   //@}
 
@@ -562,7 +553,7 @@ public:
   //@{
 
   /*! \class
-   * A functor for subdividing a curve into x-monotone curves.
+   * A functor for subdividing a curve into \f$x\f$-monotone curves.
    */
   class Make_x_monotone_2 {
   private:
@@ -573,8 +564,8 @@ public:
   public:
     Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache) {}
 
-    /*! Subdivide a given circular arc or line segment into x-monotone subcurves
-     * and insert them to a given output iterator.
+    /*! subdivides a given circular arc or line segment into \f$x\f$-monotone
+     * subcurves and insert them to a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its dereference type is a
      *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
@@ -632,7 +623,7 @@ public:
       else {
         // Act according to the number of vertical tangency points.
         if (n_vpts == 2) {
-          // Subdivide the circular arc into three x-monotone arcs.
+          // Subdivide the circular arc into three \f$x\f$-monotone arcs.
           *oi++ = X_monotone_curve_2(circ,
                                      cv.source(), vpts[0],
                                      cv.orientation(),
@@ -650,7 +641,7 @@ public:
                                      index);
         }
         else if (n_vpts == 1) {
-          // Subdivide the circular arc into two x-monotone arcs.
+          // Subdivide the circular arc into two \f$x\f$-monotone arcs.
           *oi++ = X_monotone_curve_2(circ,
                                      cv.source(),
                                      vpts[0],
@@ -666,7 +657,7 @@ public:
         else {
           CGAL_assertion(n_vpts == 0);
 
-          // The arc is already x-monotone:
+          // The arc is already \f$x\f$-monotone:
           *oi++ = X_monotone_curve_2(circ,
                                      cv.source(),
                                      cv.target(),
@@ -679,7 +670,7 @@ public:
     }
   };
 
-  /*! Get a Make_x_monotone_2 functor object. */
+  /*! obtains a `Make_x_monotone_2` functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(m_use_cache); }
 
@@ -687,13 +678,13 @@ public:
   {
   public:
 
-    /*!
-     * Split a given x-monotone curve at a given point into two sub-curves.
+    /*! splits a given \f$x\f$-monotone curve at a given point into two
+     * sub-curves.
      * \param cv The curve to split
      * \param p The split point.
-     * \param c1 Output: The left resulting subcurve (p is its right endpoint).
-     * \param c2 Output: The right resulting subcurve (p is its left endpoint).
-     * \pre p lies on cv but is not one of its end-points.
+     * \param c1 Output: The left resulting subcurve (`p` is its right endpoint).
+     * \param c2 Output: The right resulting subcurve (`p` is its left endpoint).
+     * \pre `p` lies on cv but is not one of its end-points.
      */
     void operator() (const X_monotone_curve_2& cv, const Point_2& p,
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
@@ -707,7 +698,7 @@ public:
     }
   };
 
-  /*! Get a Split_2 functor object. */
+  /*! obtains a `Split_2` functor object. */
   Split_2 split_2_object () const
   {
     return Split_2();
@@ -718,10 +709,10 @@ public:
     Intersection_map& _inter_map;       // The map of intersection points.
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Intersect_2(Intersection_map& map) : _inter_map(map) {}
 
-    /*! Find the intersections of the two given curves and insert them to the
+    /*! finds the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
      * \param cv1 The first curve.
@@ -736,18 +727,18 @@ public:
     { return (cv1.intersect(cv2, oi, &_inter_map)); }
   };
 
-  /*! Get an Intersect_2 functor object. */
+  /*! obtains an `Intersect_2` functor object. */
   Intersect_2 intersect_2_object() const { return (Intersect_2(inter_map)); }
 
   class Are_mergeable_2
   {
   public:
-    /*!
-     * Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given \f$x\f$-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \return (true) if the two curves are mergeable - if they are supported
-     *         by the same line and share a common endpoint; (false) otherwise.
+     * \return (true) if `cv1` and `cv2` are mergeable, that is, if they are
+     *         supported by the same line and share a common endpoint; (false)
+     *         otherwise.
      */
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
@@ -756,14 +747,14 @@ public:
     }
   };
 
-  /*! Get an Are_mergeable_2 functor object. */
+  /*! obtains an `Are_mergeable_2` functor object. */
   Are_mergeable_2 are_mergeable_2_object () const
   {
     return Are_mergeable_2();
   }
 
   /*! \class Merge_2
-   * A functor that merges two x-monotone arcs into one.
+   * A functor that merges two \f$x\f$-monotone arcs into one.
    */
   class Merge_2
   {
@@ -773,7 +764,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! Constructs
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
@@ -781,8 +772,7 @@ public:
     friend class Arr_circle_segment_traits_2<Kernel, Filter>;
 
   public:
-    /*!
-     * Merge two given x-monotone curves into a single curve.
+    /*! merges two given \f$x\f$-monotone curves into a single curve.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
@@ -799,7 +789,7 @@ public:
     }
   };
 
-  /*! Get a Merge_2 functor object. */
+  /*! obtains a `Merge_2` functor object. */
   Merge_2 merge_2_object () const
   {
     return Merge_2(this);
@@ -808,10 +798,9 @@ public:
   class Compare_endpoints_xy_2
   {
   public:
-    /*!
-     * compare lexicogrphic the endpoints of a x-monotone curve.
+    /*! compares lexicogrphic the endpoints of a \f$x\f$-monotone curve.
      * \param cv the curve
-     * \return SMALLER if the curve is directed right, else return SMALLER
+     * \return `SMALLER` if the curve is directed right, else return `LARGER`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv) const
     {
@@ -821,7 +810,7 @@ public:
     }
   };
 
-  /*! Get a Compare_endpoints_xy_2 functor object. */
+  /*! obtains a `Compare_endpoints_xy_2` functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   {
     return Compare_endpoints_xy_2();
@@ -830,10 +819,9 @@ public:
   class Construct_opposite_2
   {
   public:
-    /*!
-     * construct an opposite x-monotone curve.
+    /*! constructs an opposite \f$x\f$-monotone curve.
      * \param cv the curve
-     * \return an opposite x-monotone curve.
+     * \return an opposite \f$x\f$-monotone curve.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const
     {
@@ -841,7 +829,7 @@ public:
     }
   };
 
-  /*! Get a Construct_opposite_2 functor object. */
+  /*! obtains a `Construct_opposite_2` functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
@@ -854,7 +842,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Trim_2(const Traits& traits) : m_traits(traits) {}
@@ -862,7 +850,7 @@ public:
     friend class Arr_circle_segment_traits_2<Kernel, Filter>;
 
   public:
-    /*! Obtain a trimmed version of an arc
+    /*! obtains a trimmed version of an arc
      * \param xcv The arc
      * \param src the new first endpoint
      * \param tgt the new second endpoint
@@ -893,14 +881,14 @@ public:
     }
   };
 
-  /*! Obtain a Trim_2 functor object. */
+  /*! obtains a `Trim_2` functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   // @}
 
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

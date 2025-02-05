@@ -1102,16 +1102,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_23">
           <item>
+           <widget class="QCheckBox" name="dim2_checkBox">
+            <property name="text">
+             <string>2D</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="polygon_checkBox">
             <property name="text">
-             <string>From Polygon_2</string>
+             <string>Polygon(s)</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="fill_checkBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Triangulate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="oneperline_checkBox">
+            <property name="text">
+             <string>One Per Line</string>
             </property>
            </widget>
           </item>
@@ -1222,5 +1239,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <include location="../../CGALlab.qrc"/>
   <include location="../../CGALlab.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>polygon_checkBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>fill_checkBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>534</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
