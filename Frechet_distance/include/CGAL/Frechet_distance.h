@@ -101,7 +101,7 @@ namespace internal
  *     \cgalParamType{a model of `FrechetDistanceTraits`}
  *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or `Frechet_distance_traits_d`, depending on the dimension of the point type
  *                       deduced from the point type, using `Kernel_traits`.}
- *     \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.
+ *     \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -159,7 +159,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  *     \cgalParamType{a model of `FrechetDistanceTraits`}
  *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or `Frechet_distance_traits_d`, depending on the dimension of the point type
  *                       deduced from the point type, using `Kernel_traits`.}
- *      \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.
+ *      \cgalParamExtra{The input point type (the range's value type) must be equal to the traits' `Point_d` type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
