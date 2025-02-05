@@ -475,7 +475,7 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
 }
 
 template<typename KERNEL>
-void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso, std::size_t components, std::size_t euler, std::size_t boundaries)
+void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso, std::size_t components, int euler, std::size_t boundaries)
 {
   using K = KERNEL;
   using Grid = IS::Cartesian_grid_3<K>;
@@ -640,7 +640,7 @@ int main(int, char**)
   // this does not properly work
   iso = generate_predefined_iso_edge(IsoEdgeCase::DOUBLE_SINGULAR, case_values);
   compare_tmc_mc_trilinear<K>(case_values, iso);
-  // assert_tmc<K>(case_values, iso, 1, 1, 1);
+  assert_tmc<K>(case_values, iso, 1, 1, 1);
 
   // this cetagory includes cases that are almost always non-manifold
   iso = generate_predefined_plane(PlaneCase::CROSS, case_values);
