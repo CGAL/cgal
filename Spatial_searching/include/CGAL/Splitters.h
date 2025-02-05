@@ -19,6 +19,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/basic.h>
 #include <CGAL/Point_container.h>
 #include <CGAL/Plane_separator.h>
 
