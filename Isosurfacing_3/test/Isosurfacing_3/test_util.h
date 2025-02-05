@@ -61,7 +61,7 @@ bool has_degenerate_faces(PolygonMesh& pmesh)
 }
 
 template <typename PolygonMesh>
-int connected_components(PolygonMesh& mesh)
+std::size_t connected_components(PolygonMesh& mesh)
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
@@ -77,7 +77,7 @@ int euler_characteristic(const PolygonMesh& mesh)
 }
 
 template <typename PolygonMesh>
-int boundary_components(const PolygonMesh& mesh)
+std::size_t boundary_components(const PolygonMesh& mesh)
 {
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   std::vector<halfedge_descriptor> border_cycles;
