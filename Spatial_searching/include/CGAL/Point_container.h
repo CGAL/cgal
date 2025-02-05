@@ -438,6 +438,9 @@ public:
     }
 
     mid++;
+    if (mid == end())
+      return val1;
+
     mpit = construct_it((*(*mid)));
     FT val2 = *(mpit+split_coord);
     return (val1+val2)/FT(2);
