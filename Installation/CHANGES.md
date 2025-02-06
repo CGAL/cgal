@@ -7,6 +7,9 @@
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
+### [BGL](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+-   Added the function `CGAL::Euler::remove_degree_2_vertex()`, which enables users to remove vertices which have exactly two incident edges.
+
 ### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
