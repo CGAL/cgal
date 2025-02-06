@@ -5,23 +5,15 @@
 #include <string>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/IO/polygon_mesh_io.h>
-#include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/poisson_eliminate.h>
 #include <CGAL/IO/write_points.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/Real_timer.h>
 
-#include <CGAL/Fuzzy_sphere.h>
-
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
-typedef CGAL::Surface_mesh<Point_3> Mesh;
-typedef CGAL::Search_traits_3<K> Traits;
-typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_box;
 
-void sampling(const std::string &filename) {
+void sampling(const std::string& filename) {
   std::vector<Point_3> points;
 
   if (!CGAL::IO::read_points(
@@ -61,7 +53,7 @@ void sampling(const std::string &filename) {
   output.reserve(target_size);
   CGAL::Real_timer timer;
   timer.start();
-  CGAL::Polygon_mesh_processing::poisson_eliminate(points, target_size, std::back_inserter(output), CGAL::parameters::progressive(progressive).weight_limiting(weight_limiting).tiling(tiling));
+  CGAL::poisson_eliminate(points, target_size, std::back_inserter(output), CGAL::parameters::progressive(progressive).weight_limiting(weight_limiting).tiling(tiling));
   timer.stop();
   std::cout << std::endl << timer.time() << std::endl;
   CGAL::IO::write_points("out.xyz", output, CGAL::parameters::stream_precision(17));
