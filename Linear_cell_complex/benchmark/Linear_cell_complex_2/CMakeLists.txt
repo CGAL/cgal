@@ -16,7 +16,7 @@ include_directories(BEFORE "/usr/include/libxml2/")
 #add_compile_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 # add_compile_definitions("-g")
-
+return()
 # OpenMesh
 find_package(OpenMesh REQUIRED)
 include(CGAL_OpenMesh_support)
