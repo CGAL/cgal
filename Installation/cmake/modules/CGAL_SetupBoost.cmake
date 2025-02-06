@@ -10,11 +10,7 @@
 #
 # and defines the function :command:`use_CGAL_Boost_support`.
 
-if ( CGAL_Boost_Setup )
-  return()
-endif()
-set ( CGAL_Boost_Setup TRUE )
-
+include_guard(GLOBAL)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
 cmake_policy(VERSION 3.12...3.30)

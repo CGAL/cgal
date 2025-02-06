@@ -35,7 +35,7 @@ target_link_libraries(lcc_performance_2 CGAL::CGAL)
 add_executable(
   surface_mesh_performance performance_2.h surface_mesh_performance.h
                            surface_mesh_performance.cpp)
-target_link_libraries(surface_mesh_performance surface_mesh)
+target_link_libraries(surface_mesh_performance lcc_surface_mesh_lib)
 
 # Open_mesh
 add_executable(openmesh_performance performance_2.h openmesh_performance.h
@@ -79,7 +79,7 @@ add_executable(
 target_link_libraries(
   performance_2
   CGAL::CGAL
-  surface_mesh
+  lcc_surface_mesh_lib
   algo
   assimp
   container
