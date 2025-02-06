@@ -127,7 +127,7 @@ which is the case for point queries.
 The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
 distance. The second one is a specialization for incremental neighbor
-searching and distance browsing. Both require extendes nodes.
+searching and distance browsing. Both require extended nodes.
 
 `Orthogonal_k_neighbor_search<Traits,
 OrthogonalDistance, Splitter, SpatialTree>`
