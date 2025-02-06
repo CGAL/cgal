@@ -171,8 +171,56 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
 
 }
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+   Performs poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
+   neighborhood of each point and eliminates points until the output size is reached.
+
+   For more details, please refer to \cgalCite{cgal:cgal:y-sefpdss}.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \tparam OutputIterator Type of the output iterator. Must accept input of the same type as the iterator of `PointRange`.
+
+   \param points input point range
+   \param number_of_points target output size, must be smaller that the number of points in the input range
+   \param output where output points are put
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+       \cgalParamNBegin{point_map}
+         \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+         \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                        of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+         \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+       \cgalParamNEnd
+
+       \cgalParamNBegin{progressive}
+         \cgalParamDescription{reorders the points in `output` in a progressive way, i.e., the first n points in `output` with n < `number_of_points` have a poisson disk distribution with a larger radius. }
+         \cgalParamType{Boolean}
+         \cgalParamDefault{`false`}
+       \cgalParamNEnd
+
+       \cgalParamNBegin{maximum_radius}
+         \cgalParamDescription{radius of the poisson disk in which the neighboring points are taken into account for elimination.}
+         \cgalParamType{double}
+       \cgalParamNEnd
+
+       \cgalParamNBegin{weight_functor}
+         \cgalParamDescription{a weight functor that calculates the weight of a neighbor point based on its squared distance and the `maximum_radius`.}
+         \cgalParamType{an instance of `std::function<double(double,double)>`.}
+       \cgalParamNEnd
+
+       \cgalParamNBegin{geom_traits}
+         \cgalParamDescription{an instance of a geometric traits class}
+         \cgalParamType{a model of `Kernel`}
+         \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+       \cgalParamNEnd
+     \cgalNamedParamsEnd
+*/
 template<class PointRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIterator out, const NamedParameters& np = parameters::default_values()) {
+void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIterator output, const NamedParameters& np = parameters::default_values()) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -200,7 +248,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   const double beta = 0.65;
   const double gamma = 1.5;
   // named parameters for weight limiting
-  const bool weight_limiting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_limiting), true);
+  const bool weight_limiting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_limiting), false);
   // named parameter for progressive
   const bool progressive = parameters::choose_parameter(parameters::get_parameter(np, internal_np::progressive), false);
   // named parameter for tiling
@@ -322,7 +370,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   } while (progressive && target_points >= 3);
 
   for (std::size_t i = 0; i < number_of_points; i++)
-    out++ = get(ipm, heap[i]);
+    output++ = get(ipm, heap[i]);
 }
 
 } // namespace CGAL
