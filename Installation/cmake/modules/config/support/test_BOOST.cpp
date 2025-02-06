@@ -23,7 +23,7 @@
 
 using boost::tuple;
 using boost::make_tuple;
-using std::tie;
+using boost::tie;
 using boost::get;
 
 int main()
