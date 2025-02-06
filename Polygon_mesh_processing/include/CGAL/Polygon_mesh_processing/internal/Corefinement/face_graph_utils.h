@@ -1680,7 +1680,7 @@ void
 remove_patches(TriangleMesh& tm,
                const boost::dynamic_bitset<>& patches_to_remove,
                PatchContainer& patches,
-               const EdgeMarkMap& edge_mark_map)
+               EdgeMarkMap& edge_mark_map)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -1766,7 +1766,7 @@ void compute_inplace_operation(
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
         EdgeMarkMapIn1& edge_mark_map_in1,
-  const EdgeMarkMapIn2& edge_mark_map_in2,
+        EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
   std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
@@ -1873,9 +1873,9 @@ void compute_inplace_operation(
   bool reverse_patch_orientation_tm2,
   const VertexPointMap1& vpm1,
   const VertexPointMap2& vpm2,
-  const EdgeMarkMapIn1& edge_mark_map_in1,
-  const EdgeMarkMapIn2& edge_mark_map_in2,
-  const EdgeMarkMapOut1& edge_mark_map_out1,
+        EdgeMarkMapIn1& edge_mark_map_in1,
+        EdgeMarkMapIn2& edge_mark_map_in2,
+        EdgeMarkMapOut1& edge_mark_map_out1,
   const IntersectionPolylines& polylines,
         UserVisitor& user_visitor)
 {

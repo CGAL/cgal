@@ -477,8 +477,13 @@ generic_clip_impl(
   typedef OR_property_map<Algo_ecm1, User_ecm1> Ecm1;
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
 
-  Algo_ecm1 algo_ecm1  = get(CGAL::dynamic_edge_property_t<bool>(), tm1);
+  Algo_ecm1 algo_ecm1  = get(CGAL::dynamic_edge_property_t<bool>(), tm1, false);
   Ecm1 ecm1 = Ecm1(algo_ecm1, choose_parameter<User_ecm1>(get_parameter(np1, internal_np::edge_is_constrained)));
+  //TODO: HERE is seems hard to use the flag, it is even invalid right now if the user ecm is not empty!
+  //const bool mark_inter_edges =
+  //  choose_parameter(get_parameter(np, internal_np::constrain_intersection_edges), true);
+  bool mark_inter_edges = true;
+
   Ecm2 ecm2;
 
   // Face index point maps
@@ -510,7 +515,7 @@ generic_clip_impl(
   Ob ob(tm1, tm2, vpm1, vpm2, algo_ecm1, fid_map1, use_compact_clipper);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Vpm2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2), &tm2);
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2,mark_inter_edges), &tm2);
   functor(CGAL::Emptyset_iterator(), false, true);
 }
 
@@ -619,6 +624,16 @@ clip(TriangleMesh& tm,
     internal::generic_clip_impl(tm, clipper, np_tm, np_c);
     return true;
   }
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm;
+
+  const bool mark_inter_edges =
+    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::constrain_intersection_edges), true);
+
+  Ecm ecm = parameters::choose_parameter<Ecm>(parameters::get_parameter(np_tm, internal_np::edge_is_constrained));
 
   const bool clip_volume =
     parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
@@ -626,7 +641,9 @@ clip(TriangleMesh& tm,
   if(clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
   return corefine_and_compute_intersection(tm, clipper, tm,
-                                           np_tm.use_bool_op_to_clip_surface(true),
+                                           np_tm.use_bool_op_to_clip_surface(true)
+                                                .constrain_intersection_edges(mark_inter_edges)
+                                                .edge_is_constrained_map(ecm),
                                            np_c);
 }
 
