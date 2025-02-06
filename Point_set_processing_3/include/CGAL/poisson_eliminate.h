@@ -8,18 +8,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Sven Oesau
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_POISSON_ELIMINATE_H
-#define CGAL_POLYGON_MESH_PROCESSING_POISSON_ELIMINATE_H
+#ifndef CGAL_POISSON_ELIMINATE_H
+#define CGAL_POISSON_ELIMINATE_H
 
-#include <CGAL/license/Polygon_mesh_processing/distance.h>
+#include <CGAL/license/Point_set_processing_3.h>
 
 #ifdef CGAL_USE_CY
 #include <cyVector.h>
 #include <cySampleElim.h>
 #endif
-
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
@@ -28,39 +27,44 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/distance.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 
 
 namespace CGAL {
-namespace Polygon_mesh_processing {
+
 namespace internal {
-template <class FT>
-FT get_maximum_radius(std::size_t dimensions, std::size_t sample_size, FT domain_size) {
-  FT sampleArea = domain_size / (FT)sample_size;
-  FT r_max;
+
+double get_maximum_radius(std::size_t dimensions, std::size_t sample_size, double domain_size) {
+  double sampleArea = domain_size / double(sample_size);
+  double r_max;
   switch (dimensions) {
-  case 2: r_max = CGAL::sqrt(sampleArea / (FT(2) * CGAL::sqrt(FT(3)))); break;
-  case 3: r_max = std::pow(sampleArea / (FT(4) * CGAL::sqrt(FT(2))), FT(1) / FT(3)); break;
+  case 2: r_max = CGAL::sqrt(sampleArea / (2.0 * CGAL::sqrt(3.0))); break;
+  case 3: r_max = std::pow(sampleArea / (4.0 * CGAL::sqrt(2.0)), 1.0 / 3.0); break;
   default:
-    FT c;
+    double c;
     std::size_t d_start;
-    if ((dimensions & 1)) { c = FT(2);      d_start = 3; }
-    else { c = CGAL_PI; d_start = 4; }
-    for (std::size_t d = d_start; d <= dimensions; d += 2) c *= FT(2) * CGAL_PI / FT(d);
-    r_max = std::pow(sampleArea / c, FT(1) / FT(dimensions));
+    if ((dimensions & 1)) {
+      c = 2.0;
+      d_start = 3;
+    }
+    else {
+      c = CGAL_PI;
+      d_start = 4;
+    }
+    for (std::size_t d = d_start; d <= dimensions; d += 2)
+      c *= 2.0 * CGAL_PI / double(d);
+
+    r_max = std::pow(sampleArea / c, 1.0 / double(dimensions));
     break;
   }
   return r_max;
 }
 
-template <class FT>
-FT get_minimum_radius(std::size_t inputSize, std::size_t outputSize, FT beta, FT gamma, FT r_max) {
-  FT ratio = FT(outputSize) / FT(inputSize);
+double get_minimum_radius(std::size_t input_size, std::size_t output_size, double beta, double gamma, double r_max) {
+  double ratio = output_size / input_size;
   return r_max * (1 - std::pow(ratio, gamma)) * beta;
 }
 
-template<class Point, class FT = CGAL::Kernel_traits<Point>::FT, unsigned int dim = CGAL::Ambient_dimension<Point>::value>
+template<class Point, class FT = typename CGAL::Kernel_traits<Point>::FT, unsigned int dim = CGAL::Ambient_dimension<Point>::value>
 Point construct(const std::array<FT, dim>& coords) {
   if constexpr (dim == 2) { return Point(coords[0], coords[1]); }
   else if constexpr (dim == 3) { return Point(coords[0], coords[1], coords[2]); }
@@ -76,11 +80,11 @@ void copy_and_replace(const Point& in, Point& out, std::size_t replace, FT value
     else
       tmp[replace] = value;
 
-  out = construct<Point>(tmp);
+  out = construct<Point, FT, CGAL::Ambient_dimension<Point>::value>(tmp);
 }
 
 template<class PointRange, class PointMap>
-class Indexed_point_map {
+class Indexed_extended_point_map {
 public:
   using value_type = typename boost::property_traits<PointMap>::value_type;
   using reference = const value_type&;
@@ -93,7 +97,7 @@ private:
   const PointMap& point_map;
 
 public:
-  Indexed_point_map(const PointRange& input, const std::vector<value_type>& tiling, const PointMap& point_map)
+  Indexed_extended_point_map(const PointRange& input, const std::vector<value_type>& tiling, const PointMap& point_map)
     : range(input), tiling_points(tiling), point_map(point_map) {}
 
   reference operator[](key_type k) const {
@@ -104,7 +108,7 @@ public:
       return tiling_points[k - range.size()];
   }
 
-  friend reference get(const Indexed_point_map& ppmap, key_type k) {
+  friend reference get(const Indexed_extended_point_map& ppmap, key_type k) {
     CGAL_assertion(k < (ppmap.range.size() + ppmap.tiling_points.size()));
     if ((k < ppmap.range.size()))
       return get(ppmap.point_map, ppmap.range[k]);
@@ -113,26 +117,22 @@ public:
   }
 };
 
-
-template<class Point_3>
 class Weight_functor {
 public:
-  using FT = typename Kernel_traits<Point_3>::Kernel::FT;
-  Weight_functor(FT r_min = 0, FT alpha = 8) : r_min(r_min), alpha(alpha) {}
+  Weight_functor(double r_min = 0, double alpha = 8) : r_min(CGAL::to_double(r_min)), alpha(CGAL::to_double(alpha)) {}
 
-  FT operator()(const Point_3&, const Point_3&, FT d2, FT r_max) {
-    FT d = CGAL::sqrt(d2);
+  double operator()(double d2, double r_max) {
+    double d = CGAL::sqrt(d2);
     if (d < r_min) d = r_min;
-    return std::pow(FT(1) - d / r_max, alpha);
+    return std::pow(double(1) - d / r_max, alpha);
   }
 
 private:
-  FT r_min;
-  FT alpha;
+  double r_min;
+  double alpha;
 };
 
-template<class FT>
-void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t heap_size, std::vector<FT>& weights, std::size_t idx) {
+void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t heap_size, std::vector<double>& weights, std::size_t idx) {
   CGAL_assertion(idx <= heap.size());
   std::size_t child = idx * 2 + 1;
 
@@ -159,8 +159,7 @@ void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_po
   }
 }
 
-template<class FT>
-void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t &heap_size, std::vector<FT>& weights) {
+void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t &heap_size, std::vector<double>& weights) {
   std::swap(heap.front(), heap[heap_size - 1]);
   heap_pos[heap.front()] = 0;
   heap_pos[heap[heap_size - 1]] = heap_size - 1;
@@ -169,29 +168,6 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
 
   move_down(heap, heap_pos, heap_size, weights, 0);
 }
-
-/*
-template<class FT>
-void check_heap(std::vector<std::size_t>& heap, std::size_t heap_size, std::vector<FT>& weights) {
-  std::size_t idx = 0;
-  std::size_t child = 2 * idx + 1;
-
-  while (child + 1 < heap_size) {
-    if (weights[heap[idx]] < weights[heap[child]])
-      std::cout << std::endl;
-    if (weights[heap[idx]] < weights[heap[child + 1]])
-      std::cout << std::endl;
-
-    idx++;
-    child = 2 * idx + 1;
-  }
-
-  if (child < heap_size) {
-    if (weights[heap[idx]] < weights[heap[child]])
-      std::cout << std::endl;
-  }
-}
-*/
 
 }
 
@@ -205,13 +181,10 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   using Point = typename boost::property_traits<PointMap>::value_type;
   using GeomTraits = typename Kernel_traits<Point>::Kernel;
   using FT = typename GeomTraits::FT;
-  using IPM = internal::Indexed_point_map<PointRange, PointMap>;
+  using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
   PointMap point_map = NP_helper::get_point_map(points, np);
 
-  CGAL::Real_timer timer, heap_t;
-
   using Search_traits = CGAL::Search_traits_adapter<std::size_t, IPM, CGAL::Search_traits_3<GeomTraits>>;
-  //using Splitter = CGAL::Sliding_midpoint<Search_traits>;
   using Splitter = CGAL::Sliding_midpoint<Search_traits>;
   using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
   using Tree = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
@@ -220,12 +193,12 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   Bbox_3 bb = bbox_3(make_transform_iterator_from_property_map(points.begin(), point_map),
     make_transform_iterator_from_property_map(points.end(), point_map));
 
-  FT domain_size = (bb.xmax() - bb.xmin()) * (bb.ymax() - bb.ymin()) * (bb.zmax() - bb.zmin());
+  double domain_size = (bb.xmax() - bb.xmin()) * (bb.ymax() - bb.ymin()) * (bb.zmax() - bb.zmin());
 
   // named parameters for alpha, beta and gamma
-  const FT alpha = 8;
-  const FT beta = 0.65;
-  const FT gamma = 1.5;
+  const double alpha = 8;
+  const double beta = 0.65;
+  const double gamma = 1.5;
   // named parameters for weight limiting
   const bool weight_limiting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_limiting), true);
   // named parameter for progressive
@@ -236,19 +209,18 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), ambient_dimension);
 
   // named parameter for r_max
-  FT r_max = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * internal::get_maximum_radius(dimension, number_of_points, domain_size));
-  FT r_min = (weight_limiting ? internal::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
+  double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * internal::get_maximum_radius(dimension, number_of_points, domain_size)));
+  double r_min = CGAL::to_double(weight_limiting ? internal::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
 
-  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_functor), internal::Weight_functor<Point>(r_min, alpha));
+  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_functor), internal::Weight_functor(r_min, alpha));
 
   std::size_t heap_size = points.size();
-  std::size_t u = 0;
   std::vector<Point> tiling_points;
 
   IPM ipm(points, tiling_points, point_map);
 
-  auto tile_point = [&tiling_points, &bb, &r_max, &ambient_dimension](const Point& p, std::size_t dim = 0) {
-    auto do_tiling = [&tiling_points, &bb, &r_max, &ambient_dimension](const auto& self, const Point& p, std::size_t dim) -> void {
+  auto tile_point = [&tiling_points, &bb, &r_max](const Point& p, std::size_t dim = 0) {
+    auto do_tiling = [&tiling_points, &bb, &r_max](const auto& self, const Point& p, std::size_t dim) -> void {
       auto it = p.cartesian_begin();
 
       if (bb.min_coord(int(dim)) > (*(it + dim) - r_max)) {
@@ -256,7 +228,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < ambient_dimension)
+        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
       }
 
@@ -265,11 +237,11 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < ambient_dimension)
+        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
       }
 
-      if (dim + 1 < ambient_dimension)
+      if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
         self(self, p, dim + 1);
       };
     do_tiling(do_tiling, p, dim);
@@ -291,7 +263,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
   do {
     // Computing weights
-    std::vector<FT> weights(points.size(), 0);
+    std::vector<double> weights(points.size(), 0);
     std::vector<std::size_t> res;
     for (std::size_t i = 0; i < heap_size; i++) {
       const Point& p = get(ipm, heap[i]);
@@ -299,14 +271,12 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
       tree.search(std::back_inserter(res), Fuzzy_sphere(p, r_max, 0, Search_traits(ipm)));
 
       for (std::size_t n = 0; n < res.size(); n++) {
-        // Why heap_pos[res[n]] >= heap_size? it excludes points from former progressive steps?
-        // How do I still consider tiling points?
         if (i == res[n] || res[n] >= heap_pos.size() || heap_pos[res[n]] >= heap_size)
           continue;
 
         const Point p2 = get(ipm, res[n]);
-        FT d2 = (p - p2).squared_length();
-        weights[i] += weight_functor(p, p2, d2, r_max);
+        double d2 = CGAL::to_double((p - p2).squared_length());
+        weights[i] += weight_functor(d2, r_max);
       }
     }
 
@@ -335,9 +305,9 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
           continue;
 
         const Point p2 = get(point_map, points[res[n]]);
-        FT d2 = (p - p2).squared_length();
+        double d2 = CGAL::to_double((p - p2).squared_length());
 
-        weights[res[n]] -= weight_functor(p2, p, d2, r_max);
+        weights[res[n]] -= weight_functor(d2, r_max);
 
         internal::move_down(heap, heap_pos, heap_size, weights, heap_pos[res[n]]);
       }
@@ -347,67 +317,14 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
     if (progressive) {
       target_points = target_points>>1;
-      r_max = r_max * FT(std::pow(2.0, (1.0) / double(3.0)));
+      r_max = r_max * std::pow(2.0, 1.0 / 3.0);
     }
   } while (progressive && target_points >= 3);
 
   for (std::size_t i = 0; i < number_of_points; i++)
     out++ = get(ipm, heap[i]);
 }
-/*
 
-template <class TriangleMesh, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void poisson_eliminate(const TriangleMesh& sm, OutputIterator out, const NamedParameters& np = parameters::default_values())
-{
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
-  typedef typename GeomTraits::Point_3                                            Point_3;
-
-  Bbox_3 bb = bbox_3(sm.points().begin(), sm.points().end());
-  cy::Vec3d bl(bb.xmin(), bb.ymin(), bb.zmin());
-  cy::Vec3d tr(bb.xmax(), bb.ymax(), bb.zmax());
-
-  std::vector<cy::Vec3d> inputPoints, outputPoints;
-  std::vector<Point_3> points, output;
-
-  // @todo write with a transform_iterator directly into inputPoints
-  sample_triangle_mesh(sm,
-                       std::back_inserter(points),
-                       CGAL::parameters::number_of_points_on_faces(2* num_vertices(sm))
-                         .do_sample_vertices(false)
-                         .do_sample_edges(false));
-  double area = CGAL::Polygon_mesh_processing::area(sm);
-
-  for(int i = 0; i < points.size(); ++i){
-    inputPoints.push_back(cy::Vec3d(to_double(points[i].x()), to_double(points[i].y()), to_double(points[i].z())));
-  }
-
-  outputPoints.resize(num_vertices(sm)/2);
-
-  CGAL::IO::write_points("orig_poisson.xyz", points, CGAL::parameters::stream_precision(17));
-
-  cy::WeightedSampleElimination< cy::Vec3d, double, 3, int > wse;
-  wse.SetBoundsMin(bl);
-  wse.SetBoundsMax(tr);
-  bool isProgressive = true;
-
-  double d_max = 2 * wse.GetMaxPoissonDiskRadius( 2, outputPoints.size(), area );
-
-  poisson_eliminate2(points, outputPoints.size(), std::back_inserter(output), parameters::maximum_radius(d_max));
-  CGAL::IO::write_points("my_poisson.xyz", output, CGAL::parameters::stream_precision(17));
-
-  wse.Eliminate( inputPoints.data(), inputPoints.size(),
-                 outputPoints.data(), outputPoints.size(),
-                 isProgressive,
-                 d_max, 2 );
-
-  for (const cy::Vec3d& p : outputPoints){
-    *out++ = Point_3(p.x, p.y, p.z);
-  }
-}*/
-
-} // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-//#endif // ifdef CGAL_USE_CY
-
-#endif // CGAL_POLYGON_MESH_PROCESSING_POISSON_ELIMINATE_H
+#endif // CGAL_POISSON_ELIMINATE_H
