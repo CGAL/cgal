@@ -18,6 +18,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 #include <CGAL/Cartesian/MatrixC33.h>
+#include <CGAL/Cartesian/CrossProduct.h>
 
 #include <limits>
 #include <vector>
@@ -101,6 +102,8 @@ private :
   void extract_triangle_data();
   void extract_boundary_data();
 
+  double maxBb;
+
   void add_boundary_preservation_constraints(const Boundary_data_vector& aBdry);
   void add_volume_preservation_constraints(const Triangle_data_vector& triangles);
   void add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
@@ -118,42 +121,6 @@ private :
 
   const Geom_traits& geom_traits() const { return mProfile.geom_traits(); }
   const TM& surface() const { return mProfile.surface(); }
-
-#if 0
-  // a*b - c*d
-  // The next two functions are from https://stackoverflow.com/questions/63665010/accurate-floating-point-computation-of-the-sum-and-difference-of-two-products
-  static double diff_of_products_kahan(const double a, const double b, const double c, const double d)
-  {
-    double w = d * c;
-    double e = std::fma(c, -d, w);
-    double f = std::fma(a, b, -w);
-    return f + e;
-  }
-
-  static double diff_of_products_cht(const double a, const double b, const double c, const double d)
-  {
-    double p1 = a * b;
-    double p2 = c * d;
-    double e1 = std::fma (a, b, -p1);
-    double e2 = std::fma (c, -d, p2);
-    double r = p1 - p2;
-    double e = e1 + e2;
-    return r + e;
-  }
-
-  static double diff_of_products(const double a, const double b, const double c, const double d)
-  {
-    // the next two are equivalent in results and speed
-    return diff_of_products_kahan(a, b, c, d);
-    // return diff_of_products_cht(a, b, c, d);
-  }
-
-  template <typename OFT>
-  static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
-  {
-    return a*b - c*d;
-  }
-#endif
 
 #ifdef __AVX__
   static Vector SL_cross_product_avx(const Vector& A, const Vector& B)
@@ -353,11 +320,17 @@ extract_triangle_data()
 {
   mTriangle_data.reserve(mProfile.triangles().size());
 
+  //TODO for obscur reason, computing this abs_max increase running time by 10%
+  double abs_max;
   for(const Triangle& tri : mProfile.triangles())
   {
     const Point_reference p0 = get_point(tri.v0);
     const Point_reference p1 = get_point(tri.v1);
     const Point_reference p2 = get_point(tri.v2);
+
+    abs_max=(std::max)({abs_max,std::abs(p0.x()),std::abs(p0.y()),std::abs(p0.z()),
+                             std::abs(p1.x()),std::abs(p1.y()),std::abs(p1.z()),
+                             std::abs(p2.x()),std::abs(p2.y()),std::abs(p2.z())});
 
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
@@ -370,6 +343,7 @@ extract_triangle_data()
 
     mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
   }
+  maxBb= abs_max;
 }
 
 template<class TM, class K>
@@ -687,7 +661,11 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
     FT l = CGAL_NTS sqrt(slai);
     CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
 
-    if(!CGAL_NTS is_zero(l))
+    // Due to double number type, l may have a small value instead of zero (example sum of the faces normals of a tetrahedra for volumic constraint)
+    // if bin is greater than maxBb, we consider that l is zero
+    CGAL_SMS_LT_TRACE(3, "      error consider: " << (std::abs(bi) / (2*maxBb)));
+    if(l > (std::abs(bi) / (2*maxBb)))
+    // if(!CGAL_NTS is_zero(l))
     {
       Vector Ain = Ai / l;
       FT bin = bi / l;
@@ -862,6 +840,7 @@ add_constraint_from_gradient(const Matrix& H,
     }
       break;
   }
+
 }
 
 } // namespace internal
