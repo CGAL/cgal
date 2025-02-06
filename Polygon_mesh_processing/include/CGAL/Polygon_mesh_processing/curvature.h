@@ -34,7 +34,7 @@ namespace Polygon_mesh_processing {
   *
   * The angle sum is given in degrees.
   *
-  * @tparam PolygonMesh a model of `HalfedgeGraph`
+  * @tparam PolygonMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param v the vertex whose sum of angles is computed
@@ -114,7 +114,7 @@ angle_sum(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param v the vertex whose discrete Gaussian curvature is being computed
@@ -227,7 +227,7 @@ discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_d
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,
@@ -284,7 +284,7 @@ void discrete_Gaussian_curvatures(const TriangleMesh& tmesh,
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param v the vertex whose discrete mean curvature is being computed
@@ -425,7 +425,7 @@ discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descr
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,
