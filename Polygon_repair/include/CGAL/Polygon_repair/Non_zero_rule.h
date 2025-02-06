@@ -18,11 +18,12 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-/// \addtogroup PkgPolygonRepairRef
+/// \addtogroup PkgPolygonRepairRules
 /// @{
 
 /*!
   Tag class to select the non zero rule when calling `CGAL::Polygon_repair::repair()`.
+  The non-zero rule results in areas with a non-zero winding number.
   */
   struct Non_zero_rule {};
 

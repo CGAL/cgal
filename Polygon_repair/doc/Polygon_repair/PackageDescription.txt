@@ -1,8 +1,9 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
-
 /// \defgroup PkgPolygonRepairRef 2D Polygon Repair Reference
 
 /// \defgroup PkgPolygonRepairFunctions Functions
+/// \ingroup PkgPolygonRepairRef
+
+/// \defgroup PkgPolygonRepairRules Repair Rules
 /// \ingroup PkgPolygonRepairRef
 
 /*!

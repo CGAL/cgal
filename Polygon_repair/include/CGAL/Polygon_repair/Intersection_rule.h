@@ -18,11 +18,14 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-/// \addtogroup PkgPolygonRepairRef
+/// \addtogroup PkgPolygonRepairRules
 /// @{
 
 /*!
   Tag class to select the %intersection rule when calling `CGAL::Polygon_repair::repair()`.
+  The intersection rule are useful when given
+two or more similar valid polygons with holes.
+The intersection rule results in areas that are contained in all input polygons with holes.
   */
   struct Intersection_rule {};
 

@@ -18,11 +18,15 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-/// \addtogroup PkgPolygonRepairRef
+/// \addtogroup PkgPolygonRepairRules
 /// @{
 
 /*!
   Tag class to select the even odd rule when calling `CGAL::Polygon_repair::repair()`.
+  The even-odd rule results in areas that are alternately assigned as polygon
+interiors and exterior/holes each time that an input edge is passed.
+It does not distinguish between edges that are part of outer boundaries
+from those of inner boundaries.
   */
   struct Even_odd_rule {};
 

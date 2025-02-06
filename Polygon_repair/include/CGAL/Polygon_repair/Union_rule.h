@@ -18,11 +18,13 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-/// \addtogroup PkgPolygonRepairRef
+/// \addtogroup PkgPolygonRepairRules
 /// @{
 
 /*!
   Tag class to select the %union rule when calling `CGAL::Polygon_repair::repair()`.
+  The union rules are useful when given two or more similar valid polygons with holes.
+The union rule results in areas that are contained in at least one of the input polygons with holes.
   */
   struct Union_rule {};
 

@@ -25,9 +25,9 @@ It does not distinguish between edges that are part of outer boundaries
 from those of inner boundaries.
 The non-zero rule results in areas with a non-zero winding number.
 The union and intersection rules are useful when given
-two or more similar valid polygons with holes. They compute either their
-union or their intersection, and they are hence <em>conservative</em>
-by bounding from the interior or the exterior.
+two or more similar valid polygons with holes.
+The union rule results in areas that are contained in at least one of the input polygons with holes.
+Similarly, the intersection rule results in areas that are contained in all input polygons with holes.
 
 \section SectionPolygonRepair_Definitions Definitions
 
