@@ -119,13 +119,21 @@ bool snap_polygon_soup(PointRange &points,
     return n;
   };
 
+  auto pow_2 = [](const int k){
+      return (k>=0)?std::pow(2,k):1/std::pow(2,-k);
+  };
+
   Bbox_3 bb = bbox_3(points.begin(), points.end());
   std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
                                 (std::max)(-bb.ymin(), bb.ymax()),
                                 (std::max)(-bb.zmin(), bb.zmax())};
-  std::array<double, 3> scale{std::pow(2, grid_size - exp(max_abs[0]) - 1),
-                              std::pow(2, grid_size - exp(max_abs[1]) - 1),
-                              std::pow(2, grid_size - exp(max_abs[2]) - 1)};
+  std::array<double, 3> scale{pow_2(grid_size - exp(max_abs[0]) - 1),
+                              pow_2(grid_size - exp(max_abs[1]) - 1),
+                              pow_2(grid_size - exp(max_abs[2]) - 1)};
+
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+  std::cout << "Scaling: " << scale[0] << " " << scale[1] << " " << scale[2] << std::endl;
+#endif
 
   // If EPECK, use exact TODO
   auto snap = [](typename Kernel::FT x, double scale)
@@ -256,8 +264,8 @@ bool snap_polygon_soup(PointRange &points,
     repair_polygon_soup(points, triangles, np);
     //TODO do not pass all triangles
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
-    std::cout << "Autorefine the soup" << std::endl;
     std::cout << "Model size: " << points.size() << " " << triangles.size() << std::endl;
+    std::cout << "Autorefine the soup" << std::endl;
 #endif
     autorefine_triangle_soup(points, triangles, np);
   }
