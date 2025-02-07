@@ -810,19 +810,6 @@ bool SimpleStraightSkel::run() {
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
 
-            // std::cout << "-- Degen count --" << std::endl;
-            // std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-            // while (it_f != polyhedron->facets().end()) {
-            //     FacetSPtr facet = *it_f++;
-            //     auto it_v = facet->vertices().begin();
-            //     Point3SPtr p0 = (*(it_v++))->getPoint();
-            //     Point3SPtr p1 = (*(it_v++))->getPoint();
-            //     Point3SPtr p2 = (*it_v)->getPoint();
-            //     if (CGAL::collinear(*p0, *p1, *p2)) {
-            //         std::cout << *p0 << " " << *p1 << " " << *p2 << " is degen" << std::endl;
-            //     }
-            // }
-
             CGAL_assertion(polyhedron->isConsistent());
 #ifndef CGAL_SS3_NO_SKELETON_DS
             CGAL_assertion(skel_result_->isConsistent());

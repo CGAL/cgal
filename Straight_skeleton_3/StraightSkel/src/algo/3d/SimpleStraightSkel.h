@@ -326,10 +326,6 @@ protected:
     int edge_event_;
     StraightSkeletonSPtr skel_result_;
 
-    bool usingTemporaryPerturbedMode_ = false;
-    CGAL::FT perturbationOffset_ = 0;
-    CGAL::FT simultaneousOffset_ = 0;
-
     std::vector<Plane3SPtr> basePlanes_;
 
 #ifndef CGAL_SS3_NO_CACHING
