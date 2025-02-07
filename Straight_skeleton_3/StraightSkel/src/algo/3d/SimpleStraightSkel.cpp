@@ -2213,12 +2213,8 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
 
         CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
 
-        if ((KernelWrapper::side(edge->getFacetL()->plane(), point) > 0) ||
-                KernelWrapper::side(edge->getFacetR()->plane(), point) > 0) {
-            // triangle may not be a hole
-            // after pierce event
-            continue;
-        }
+        CGAL_assertion(KernelWrapper::side(edge->getFacetL()->plane(), point) < 0);
+        CGAL_assertion(KernelWrapper::side(edge->getFacetR()->plane(), point) < 0);
 
         TriangleEventSPtr event = TriangleEvent::create();
         NodeSPtr node = Node::create();
