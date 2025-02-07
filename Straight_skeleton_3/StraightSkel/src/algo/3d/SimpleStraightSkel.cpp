@@ -1823,7 +1823,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
         FacetSPtr facet_src = getFacetSrc(edge);
         FacetSPtr facet_dst = getFacetDst(edge);
@@ -2105,7 +2105,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
         EdgeMergeEventSPtr event = EdgeMergeEvent::create();
         NodeSPtr node = Node::create();
@@ -2209,7 +2209,7 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
         CGAL_assertion(KernelWrapper::side(edge->getFacetL()->plane(), point) < 0);
         CGAL_assertion(KernelWrapper::side(edge->getFacetR()->plane(), point) < 0);
@@ -2326,7 +2326,7 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
         DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create();
         NodeSPtr node = Node::create();
@@ -2400,7 +2400,7 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
             continue;
         }
 
-        CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
         DblTriangleEventSPtr event = DblTriangleEvent::create();
         NodeSPtr node = Node::create();
@@ -2477,7 +2477,7 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             TetrahedronEventSPtr event = TetrahedronEvent::create();
             NodeSPtr node = Node::create();
@@ -2664,7 +2664,7 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             VertexEventSPtr event = VertexEvent::create();
             NodeSPtr node = Node::create();
@@ -2848,7 +2848,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             FlipVertexEventSPtr event = FlipVertexEvent::create();
             NodeSPtr node = Node::create();
@@ -3045,7 +3045,7 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             SurfaceEventSPtr event = SurfaceEvent::create();
             NodeSPtr node = Node::create();
@@ -3146,7 +3146,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             CGAL::FT shift = offset_event - current_offset;
             Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
@@ -3342,7 +3342,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
                 continue;
             }
 
-            CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+            CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
             SplitMergeEventSPtr event = SplitMergeEvent::create();
             NodeSPtr node = Node::create();
@@ -3732,14 +3732,7 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                     continue;
                 }
 
-                // std::cout << " **" << std::endl;
-                // std::cout << "facet = " << facet->getID() << std::endl;
-                // std::cout << "f0 = " << f0->getID() << std::endl;
-                // std::cout << "f1 = " << f1->getID() << std::endl;
-                // std::cout << "f2 = " << f2->getID() << std::endl;
-                // std::cout << "ipoint: " << *point << " time: " << offset_event << std::endl;
-
-                CGAL_assertion(offset_event < current_offset && offset_event >= offset_of_nearest_event);
+                CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 #endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
 
                 // @todo this check can be removed when the old code above is removed
