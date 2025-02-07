@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Mesh_3_Examples)
 
 add_compile_definitions(CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
