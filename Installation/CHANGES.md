@@ -13,6 +13,14 @@
 ### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
+-   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
+
+-   Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generates initial points,
+  - `initial_points` : enables the user to specify a `Range` of initial points.
+
 
 ### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
 

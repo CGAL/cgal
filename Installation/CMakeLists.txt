@@ -4,7 +4,7 @@
 # ${CGAL_SOURCE_DIR} and to the root binary directory of the project as
 # ${CGAL_BINARY_DIR} or ${CGAL_BINARY_DIR}.
 if(NOT PROJECT_NAME)
-  cmake_minimum_required(VERSION 3.12...3.29)
+  cmake_minimum_required(VERSION 3.12...3.31)
   project(CGAL CXX C)
 endif()
 
