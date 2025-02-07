@@ -11,4 +11,5 @@ This header provides all necessary functions so the fundamental types
 
 Due to overflow neither of those types is considered as exact.
 
+\cgalModels{RealEmbeddable, EuclideanRing}
 */
