@@ -5,10 +5,10 @@
 
 This header provides all necessary functions so the fundamental type
 `long double` is a model of the concepts `RealEmbeddable` and
-`FieldWithSqrt`. Due to rounding errors and overflow `long double` is
+`FieldWithKthRoot`. Due to rounding errors and overflow `long double` is
 considered as not exact.
 
-\cgalModels{FieldWithSqrt,RealEmbeddable}
+\cgalModels{FieldWithKthRoot,RealEmbeddable}
 */
 
 namespace CGAL {
