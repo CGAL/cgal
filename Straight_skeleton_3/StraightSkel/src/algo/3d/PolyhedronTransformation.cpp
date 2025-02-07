@@ -678,6 +678,11 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
+
+        // If we are doing random point perturbation, the mesh must be a triangle mesh
+        // otherwise points will no longer be on the supporting planes of its incident faces
+        CGAL_assertion(facet->vertices().size() == 3);
+
         facet->storePlaneCoefficients();
     }
 
