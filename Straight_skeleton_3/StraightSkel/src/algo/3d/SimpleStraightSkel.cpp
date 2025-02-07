@@ -16,9 +16,7 @@
 
 // ----
 
-// This is just to keep old code for a while in case of bugs;
-// it should always be defined.
-#define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+// #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 
 // ----
 
@@ -713,14 +711,14 @@ bool SimpleStraightSkel::run() {
 
             bool simultaneousEvents = (!queue.empty() && offset == queue.top()->getOffset());
             if (simultaneousEvents) {
-              std::cerr << "Error: there should not be any simultaneous events" << std::endl;
+              std::cerr << "Warning: there should not be any simultaneous events" << std::endl;
               std::cerr << "Did you forget to enable perturbations in the config file?" << std::endl;
               return false;
             }
 
             offset_prev = offset;
             offset = event->getOffset();
-            CGAL_assertion(offset < offset_prev);
+            CGAL_warning(offset < offset_prev);
 
             DEBUG_PRINT(" current offset: " << offset_prev << "\n"
                      << " next offset: " << offset << " (type " << event->getType() << ")\n"
