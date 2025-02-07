@@ -1790,7 +1790,8 @@ CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
 
 // @speed can we associate shiftPoint(v, max_offset) to all points as to create bounding boxes
 // and filter events?
-void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
+                                           PolyhedronSPtr polyhedron,
                                            const CGAL::FT current_offset,
                                            CGAL::FT& offset_of_nearest_event,
                                            PQ& queue)
@@ -1799,8 +1800,8 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
 
         VertexSPtr vertex_src = edge->getVertexSrc();
@@ -1996,7 +1997,17 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
+                                           const CGAL::FT current_offset,
+                                           CGAL::FT& offset_of_nearest_event,
+                                           PQ& queue)
+{
+    return collectEdgeEvents(polyhedron->edges(), polyhedron,
+                             current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
+                                                PolyhedronSPtr polyhedron,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
@@ -2005,8 +2016,8 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
 
         VertexSPtr vertex_src = edge->getVertexSrc();
@@ -2145,7 +2156,17 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                                const CGAL::FT current_offset,
+                                                CGAL::FT& offset_of_nearest_event,
+                                                PQ& queue)
+{
+    return collectEdgeMergeEvents(polyhedron->edges(), polyhedron,
+                                  current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
+                                               PolyhedronSPtr polyhedron,
                                                const CGAL::FT current_offset,
                                                CGAL::FT& offset_of_nearest_event,
                                                PQ& queue)
@@ -2154,8 +2175,8 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
 
         if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
@@ -2250,7 +2271,17 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
+                                               const CGAL::FT current_offset,
+                                               CGAL::FT& offset_of_nearest_event,
+                                               PQ& queue)
+{
+    return collectTriangleEvents(polyhedron->edges(), polyhedron,
+                                 current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
+                                                   PolyhedronSPtr polyhedron,
                                                    const CGAL::FT current_offset,
                                                    CGAL::FT& offset_of_nearest_event,
                                                    PQ& queue)
@@ -2259,8 +2290,8 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
 
         if (!isReflex(edge)) {
@@ -2368,7 +2399,17 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                                   const CGAL::FT current_offset,
+                                                   CGAL::FT& offset_of_nearest_event,
+                                                   PQ& queue)
+{
+    return collectDblEdgeMergeEvents(polyhedron->edges(), polyhedron,
+                                     current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
+                                                  PolyhedronSPtr polyhedron,
                                                   const CGAL::FT current_offset,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
@@ -2377,8 +2418,8 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
         if (isTetrahedron(edge)) {
             continue;
@@ -2437,7 +2478,17 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
+                                                  const CGAL::FT current_offset,
+                                                  CGAL::FT& offset_of_nearest_event,
+                                                  PQ& queue)
+{
+    return collectDblTriangleEvents(polyhedron->edges(), polyhedron,
+                                    current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
+                                                  PolyhedronSPtr polyhedron,
                                                   const CGAL::FT current_offset,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
@@ -2446,8 +2497,8 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
         EdgeSPtr edge = *it_e++;
         if (isTetrahedron(edge)) {
 
@@ -2515,7 +2566,17 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
+                                                  const CGAL::FT current_offset,
+                                                  CGAL::FT& offset_of_nearest_event,
+                                                  PQ& queue)
+{
+    return collectTetrahedronEvents(polyhedron->edges(), polyhedron,
+                                    current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertices,
+                                             PolyhedronSPtr polyhedron,
                                              const CGAL::FT current_offset,
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
@@ -2524,8 +2585,8 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
-    while (it_v1 != polyhedron->vertices().end()) {
+    std::list<VertexSPtr>::const_iterator it_v1 = vertices.begin();
+    while (it_v1 != vertices.end()) {
         VertexSPtr vertex_1 = *it_v1++;
         if (isConvex(vertex_1)) {
             continue;
@@ -2696,7 +2757,17 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
+                                             const CGAL::FT current_offset,
+                                             CGAL::FT& offset_of_nearest_event,
+                                             PQ& queue)
+{
+    return collectVertexEvents(polyhedron->vertices(), polyhedron,
+                               current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
+                                                 PolyhedronSPtr polyhedron,
                                                  const CGAL::FT current_offset,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
@@ -2705,8 +2776,8 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
-    while (it_v1 != polyhedron->vertices().end()) {
+    std::list<VertexSPtr>::const_iterator it_v1 = vertices.begin();
+    while (it_v1 != vertices.end()) {
         VertexSPtr vertex_1 = *it_v1++;
         if (isConvex(vertex_1)) {
             continue;
@@ -2878,7 +2949,17 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
+                                                 const CGAL::FT current_offset,
+                                                 CGAL::FT& offset_of_nearest_event,
+                                                 PQ& queue)
+{
+    return collectFlipVertexEvents(polyhedron->vertices(), polyhedron,
+                                   current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
+                                              PolyhedronSPtr polyhedron,
                                               const CGAL::FT current_offset,
                                               CGAL::FT& offset_of_nearest_event,
                                               PQ& queue)
@@ -2897,8 +2978,8 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
     unsigned int tested_candidates = 0;
 #endif
 
-    std::list<EdgeSPtr>::iterator it_e1 = polyhedron->edges().begin();
-    while (it_e1 != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e1 = edges.begin();
+    while (it_e1 != edges.end()) {
         EdgeSPtr edge_1 = *it_e1++;
 
         FacetSPtr facet_1_src = getFacetSrc(edge_1);
@@ -2984,9 +3065,9 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
             }
 
             bool is_conv_split_event = false;
-            std::list<EdgeSPtr> edges = edge_1->getFacetL()->findEdges(edge_1->getFacetR());
-            std::list<EdgeSPtr>::iterator it_e = edges.begin();
-            while (it_e != edges.end()) {
+            std::list<EdgeSPtr> common_edges = edge_1->getFacetL()->findEdges(edge_1->getFacetR());
+            std::list<EdgeSPtr>::iterator it_e = common_edges.begin();
+            while (it_e != common_edges.end()) {
                 EdgeSPtr edge = *it_e++;
                 if (edge == edge_1) {
                     continue;
@@ -3096,7 +3177,17 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
 #endif
 }
 
-void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
+                                              const CGAL::FT current_offset,
+                                              CGAL::FT& offset_of_nearest_event,
+                                              PQ& queue)
+{
+    return collectSurfaceEvents(polyhedron->edges(), polyhedron,
+                                current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
+                                                      PolyhedronSPtr polyhedron,
                                                       const CGAL::FT current_offset,
                                                       CGAL::FT& offset_of_nearest_event,
                                                       PQ& queue)
@@ -3105,8 +3196,8 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr>::iterator it_e1 = polyhedron->edges().begin();
-    while (it_e1 != polyhedron->edges().end()) {
+    std::list<EdgeSPtr>::const_iterator it_e1 = edges.begin();
+    while (it_e1 != edges.end()) {
         EdgeSPtr edge_1 = *it_e1++;
         if (!isReflex(edge_1)) {
             continue;
@@ -3195,7 +3286,17 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
+                                                      const CGAL::FT current_offset,
+                                                      CGAL::FT& offset_of_nearest_event,
+                                                      PQ& queue)
+{
+    return collectPolyhedronSplitEvents(polyhedron->edges(), polyhedron,
+                                        current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
+                                                 PolyhedronSPtr polyhedron,
                                                  const CGAL::FT current_offset,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
@@ -3204,8 +3305,8 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<VertexSPtr>::iterator it_v1 = polyhedron->vertices().begin();
-    while (it_v1 != polyhedron->vertices().end()) {
+    std::list<VertexSPtr>::const_iterator it_v1 = vertices.begin();
+    while (it_v1 != vertices.end()) {
         VertexSPtr vertex_1 = *it_v1++;
         if (isConvex(vertex_1)) {
             continue;
@@ -3372,7 +3473,18 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
     }
 }
 
-void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+                                                 const CGAL::FT current_offset,
+                                                 CGAL::FT& offset_of_nearest_event,
+                                                 PQ& queue)
+{
+    return collectSplitMergeEvents(polyhedron->vertices(), polyhedron,
+                                   current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges_1,
+                                                const std::list<EdgeSPtr>& edges_2,
+                                                PolyhedronSPtr polyhedron,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
@@ -3391,36 +3503,36 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<EdgeSPtr> edges_reflex;
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
-        EdgeSPtr edge = *it_e++;
-        if (isReflex(edge)) {
-            edges_reflex.push_back(edge);
+    std::list<EdgeSPtr> edges_reflex_1, edges_reflex_2;
+    auto fill_reflex_edges = [&](const std::list<EdgeSPtr>& edges,
+                                 std::list<EdgeSPtr>& edges_reflex) {
+      std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+      while (it_e != edges.end()) {
+            EdgeSPtr edge = *it_e++;
+            if (isReflex(edge)) {
+              edges_reflex.push_back(edge);
+            }
         }
-    }
+    };
+    fill_reflex_edges(edges_1, edges_reflex_1);
+    fill_reflex_edges(edges_2, edges_reflex_2);
 
 #ifdef CGAL_SS3_RUN_TIMERS
     std::cout << "Collect reflex edges: " << timer.time() << std::endl;
 #endif
 
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-    std::cout << edges_reflex.size() << " reflex edges" << std::endl;
+    std::cout << edges_reflex_1.size() << " reflex edges [1]" << std::endl;
+    std::cout << edges_reflex_2.size() << " reflex edges [2]" << std::endl;
 
-    // std::stringstream ss_filename;
-    // ss_filename << save_path_.string() << "/reflex_edge_count.txt";
-    // std::ofstream out(ss_filename.str(), std::ios::app);
-    // out.precision(17);
-    // out << edges_reflex.size() << "\n";
-    // out.close();
 #endif
 
     // upper bound on the maximum interesting shift
     // @todo use an "is_initialized?" flag or something to avoid the case where it is max()?
     CGAL::FT shift = offset_of_nearest_event - current_offset;
 
-    std::list<EdgeSPtr>::iterator it_e1 = edges_reflex.begin();
-    while (it_e1 != edges_reflex.end()) {
+    std::list<EdgeSPtr>::iterator it_e1 = edges_reflex_1.begin();
+    while (it_e1 != edges_reflex_1.end()) {
         EdgeSPtr edge_1 = *it_e1++;
         FacetSPtr facet_1_src = getFacetSrc(edge_1);
         FacetSPtr facet_1_dst = getFacetDst(edge_1);
@@ -3431,8 +3543,9 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
         b1 += offset_e1->source().bbox();
         b1 += offset_e1->target().bbox();
 
-        std::list<EdgeSPtr>::iterator it_e2 = it_e1; // starts at 'it_e1' => unique rep.
-        while (it_e2 != edges_reflex.end()) {
+        // @speed avoid again e1-e2 and e2-e1
+        std::list<EdgeSPtr>::iterator it_e2 = edges_reflex_2.begin();
+        while (it_e2 != edges_reflex_2.end()) {
             EdgeSPtr edge_2 = *it_e2++;
             if (edge_1->getFacetL() == edge_2->getFacetL() ||
                     edge_1->getFacetL() == edge_2->getFacetR() ||
@@ -3577,7 +3690,18 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
 #endif
 }
 
-void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
+void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
+                                                const CGAL::FT current_offset,
+                                                CGAL::FT& offset_of_nearest_event,
+                                                PQ& queue)
+{
+    return collectEdgeSplitEvents(polyhedron->edges(), polyhedron->edges(), polyhedron,
+                                  current_offset, offset_of_nearest_event, queue);
+}
+
+void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertices,
+                                             const std::list<FacetSPtr>& facets,
+                                             PolyhedronSPtr polyhedron,
                                              const CGAL::FT current_offset,
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
@@ -3597,8 +3721,8 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
 
     ReadLock l(polyhedron->mutex());
 
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
+    std::list<VertexSPtr>::const_iterator it_v = vertices.begin();
+    while (it_v != vertices.end()) {
         VertexSPtr vertex = *it_v++;
 
         // actual check
@@ -3610,9 +3734,10 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
             const CGAL::FT shift = offset_of_nearest_event - current_offset;
             Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, shift);
 
-            std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-            while (it_f != polyhedron->facets().end()) {
+            std::list<FacetSPtr>::const_iterator it_f = facets.begin();
+            while (it_f != facets.end()) {
                 FacetSPtr facet = *it_f++;
+
                 bool contains_vertex = false;
                 std::list<VertexSPtr>::iterator it_v2 = facet->vertices().begin();
                 while (it_v2 != facet->vertices().end()) {
@@ -3818,6 +3943,15 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
     timer.stop();
     std::cout << "Sought Pierce Events in: " << timer.time() << std::endl;
 #endif
+}
+
+void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
+                                             const CGAL::FT current_offset,
+                                             CGAL::FT& offset_of_nearest_event,
+                                             PQ& queue)
+{
+    return collectPierceEvents(polyhedron->vertices(), polyhedron->facets(), polyhedron,
+                               current_offset, offset_of_nearest_event, queue);
 }
 
 // @todo can we associate a Boolean value to elements that say: "there is an event associated"

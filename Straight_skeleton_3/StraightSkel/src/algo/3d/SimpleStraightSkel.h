@@ -177,13 +177,34 @@ public:
     static CGAL::FT offsetDist(FacetSPtr facet, Point3SPtr point);
 
     /**
+     * Vanish events.
+     */
+    void collectVanishEvents(PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& offset_of_nearest_event,
+                             PQ& queue);
+
+    /**
      * Edge flip event.
      */
-    void collectEdgeEvents(PolyhedronSPtr polyhedron,
+    void collectEdgeEvents(const std::list<EdgeSPtr>& edges,
+                           PolyhedronSPtr polyhedron,
+                           const CGAL::FT current_offset,
+                           CGAL::FT& offset_of_nearest_event,
+                           PQ& queue);
+     void collectEdgeEvents(PolyhedronSPtr polyhedron,
                            const CGAL::FT current_offset,
                            CGAL::FT& offset_of_nearest_event,
                            PQ& queue);
 
+    /**
+     * Edge Merge event.
+     */
+    void collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
+                                PolyhedronSPtr polyhedron,
+                                const CGAL::FT current_offset,
+                                CGAL::FT& offset_of_nearest_event,
+                                PQ& queue);
     void collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                 const CGAL::FT current_offset,
                                 CGAL::FT& offset_of_nearest_event,
@@ -192,17 +213,38 @@ public:
     /**
      * The triangle on the surface vanishes.
      */
-    void collectTriangleEvents(PolyhedronSPtr polyhedron,
+    void collectTriangleEvents(const std::list<EdgeSPtr>& edges,
+                               PolyhedronSPtr polyhedron,
+                               const CGAL::FT current_offset,
+                               CGAL::FT& offset_of_nearest_event,
+                               PQ& queue);
+     void collectTriangleEvents(PolyhedronSPtr polyhedron,
                                const CGAL::FT current_offset,
                                CGAL::FT& offset_of_nearest_event,
                                PQ& queue);
 
-    void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
+    /**
+     * Dbl Edge Merge.
+     */
+     void collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
+                                    PolyhedronSPtr polyhedron,
+                                    const CGAL::FT current_offset,
+                                    CGAL::FT& offset_of_nearest_event,
+                                    PQ& queue);
+     void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                    const CGAL::FT current_offset,
                                    CGAL::FT& offset_of_nearest_event,
                                    PQ& queue);
 
-    void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
+    /**
+     * Dbl Edge Merge.
+     */
+    void collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
+                                  PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& offset_of_nearest_event,
+                                  PQ& queue);
+     void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
                                   const CGAL::FT current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
@@ -210,7 +252,12 @@ public:
     /**
      * A tetrahedron causes one final event only.
      */
-    void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
+    void collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
+                                  PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& offset_of_nearest_event,
+                                  PQ& queue);
+     void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                                   const CGAL::FT current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
@@ -218,11 +265,24 @@ public:
     /**
      * Two vertices crash into each other.
      */
+    void collectVertexEvents(const std::list<VertexSPtr>& vertices,
+                             PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& offset_of_nearest_event,
+                             PQ& queue);
     void collectVertexEvents(PolyhedronSPtr polyhedron,
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
 
+    /**
+     * Flip vertex event
+     */
+    void collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
+                                 PolyhedronSPtr polyhedron,
+                                 const CGAL::FT current_offset,
+                                 CGAL::FT& offset_of_nearest_event,
+                                 PQ& queue);
     void collectFlipVertexEvents(PolyhedronSPtr polyhedron,
                                  const CGAL::FT current_offset,
                                  CGAL::FT& offset_of_nearest_event,
@@ -232,7 +292,12 @@ public:
      * Split event on the surface.
      * Edges do not need to be reflex.
      */
-    void collectSurfaceEvents(PolyhedronSPtr polyhedron,
+    void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
+                              PolyhedronSPtr polyhedron,
+                              const CGAL::FT current_offset,
+                              CGAL::FT& offset_of_nearest_event,
+                              PQ& queue);
+     void collectSurfaceEvents(PolyhedronSPtr polyhedron,
                               const CGAL::FT current_offset,
                               CGAL::FT& offset_of_nearest_event,
                               PQ& queue);
@@ -241,12 +306,25 @@ public:
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
+    void collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
+                                      PolyhedronSPtr polyhedron,
+                                      const CGAL::FT current_offset,
+                                      CGAL::FT& offset_of_nearest_event,
+                                      PQ& queue);
+     void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
                                       const CGAL::FT current_offset,
                                       CGAL::FT& offset_of_nearest_event,
                                       PQ& queue);
 
-    void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+    /**
+     * Split Merge event
+     */
+     void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
+                                  PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& offset_of_nearest_event,
+                                  PQ& queue);
+     void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
                                  const CGAL::FT current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
@@ -255,6 +333,12 @@ public:
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
+    void collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges_1,
+                                const std::list<EdgeSPtr>& edges_2,
+                                PolyhedronSPtr polyhedron,
+                                const CGAL::FT current_offset,
+                                CGAL::FT& offset_of_nearest_event,
+                                PQ& queue);
     void collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
                                 const CGAL::FT current_offset,
                                 CGAL::FT& offset_of_nearest_event,
@@ -263,7 +347,13 @@ public:
     /**
      * A reflex vertex reaches a facet.
      */
-    void collectPierceEvents(PolyhedronSPtr polyhedron,
+    void collectPierceEvents(const std::list<VertexSPtr>& vertices,
+                             const std::list<FacetSPtr>& facets,
+                             PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& offset_of_nearest_event,
+                             PQ& queue);
+     void collectPierceEvents(PolyhedronSPtr polyhedron,
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
