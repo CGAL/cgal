@@ -149,7 +149,9 @@ public:
     // Angles
     MIN_ANGLE,
     MAX_ANGLE,
-    MEAN_ANGLE
+    MEAN_ANGLE,
+    MIN_DIHEDRAL_ANGLE,
+    MAX_DIHEDRAL_ANGLE
   };
 
   bool has_stats()const override{return true;}

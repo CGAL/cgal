@@ -4,6 +4,7 @@
 #include <CGAL/Distance_3/Point_3_Point_3.h>
 #include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -79,6 +80,14 @@ template<typename Mesh>
 void angles(Mesh* poly, double& mini, double& maxi, double& ave)
 {
   compute_angles(poly, Angles_test(), mini, maxi, ave);
+}
+
+template<typename Mesh>
+void dihedral_angles(Mesh* poly, double& minda, double& maxda)
+{
+  auto da = CGAL::Polygon_mesh_processing::minmax_dihedral_angle(*poly);
+  minda = da.first.second;
+  maxda = da.second.second;
 }
 
 template<typename Mesh, typename Face_set>
