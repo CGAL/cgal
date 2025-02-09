@@ -49,7 +49,8 @@ foreach(
   edge_aware_upsample_point_set_example
   structuring_example
   read_ply_points_with_colors_example
-  write_ply_points_example)
+  write_ply_points_example
+  poisson_eliminate_example)
   create_single_source_cgal_program("${target}.cpp")
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
@@ -144,11 +145,9 @@ endif()
 find_path(CYCODEBASE_INCLUDE "cySampleElim.h" DOC "Path to the cyCodeBase directory (https://github.com/cemyuksel/cyCodeBase)")
 
 if(NOT CYCODEBASE_INCLUDE)
-  message( STATUS "poisson_eliminate will be compiled without the cyCodeBase library (https://github.com/cemyuksel/cyCodeBase)")
-  create_single_source_cgal_program("poisson_eliminate.cpp")
+  message( STATUS "poisson_eliminate_example will be compiled without the cyCodeBase library (https://github.com/cemyuksel/cyCodeBase)")
 else()
   message(CYCODEBASE_INCLUDE="${CYCODEBASE_INCLUDE}")
-  create_single_source_cgal_program("poisson_eliminate.cpp")
-  target_compile_definitions( poisson_eliminate PRIVATE CGAL_USE_CY )
-  target_include_directories( poisson_eliminate AFTER PRIVATE ${CYCODEBASE_INCLUDE} )
+  target_compile_definitions( poisson_eliminate_example PRIVATE CGAL_USE_CY )
+  target_include_directories( poisson_eliminate_example AFTER PRIVATE ${CYCODEBASE_INCLUDE} )
 endif()
