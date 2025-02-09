@@ -951,6 +951,17 @@ power_distance_to_power_sphereC3(const FT &px, const FT &py, const FT &pz, const
   return -ff0/(ff1 - ff0);
 }
 
+
+template < class FT >
+void
+intersect_offset_planesC3(const FT &p1a, const FT &p1b, const FT &p1c, const FT &p1d, const FT &t1,
+                          const FT &p2a, const FT &p2b, const FT &p2c, const FT &p2d, const FT &t2,
+                          const FT &p3a, const FT &p3b, const FT &p3c, const FT &p3d, const FT &t3,
+                          const FT &p4a, const FT &p4b, const FT &p4c, const FT &p4d, const FT &t4 ,
+                          FT&px, FT &py, FT &pz, FT& t)
+{
+}
+
  // I will use this to test if the radial axis of three spheres
   // intersect the triangle formed by the centers.
 //   // resolution of the system (where we note c the center)

@@ -1025,7 +1025,83 @@ public:
 
 
 //____________________________________________________________________________________
-// The following rep class stores two non-const reference parameters of type R1 and R2
+//
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2>
+class Lazy_rep_8_2 final
+  : public Lazy_rep<typename AC::result_type,
+                    typename EC::result_type, E2A>
+  , private EC
+{
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy_rep<AT, ET, E2A> Base;
+
+  mutable L1 l10_;
+  mutable L1 l11_;
+  mutable L1 l12_;
+  mutable L1 l13_;
+  mutable L2 l20_;
+  mutable L2 l21_;
+  mutable L2 l22_;
+  mutable L2 l23_;
+
+  const EC& ec() const { return *this; }
+
+public:
+
+  void
+  update_exact() const
+  {
+    auto* p = new typename Base::Indirect();
+    p->et_ = ec()(CGAL::exact(l10_),CGAL::exact(l11_),CGAL::exact(l12_),CGAL::exact(l13_),
+                  CGAL::exact(l20_),CGAL::exact(l22_),CGAL::exact(l22_),CGAL::exact(l23_));
+    this->set_at(p);
+    this->set_ptr(p);
+    // Prune lazy tree
+    lazy_reset_member(l10_);
+    lazy_reset_member(l11_);
+    lazy_reset_member(l12_);
+    lazy_reset_member(l13_);
+    lazy_reset_member(l20_);
+    lazy_reset_member(l21_);
+    lazy_reset_member(l22_);
+    lazy_reset_member(l23_);
+  }
+
+  Lazy_rep_8_2(const AC& ac, const EC& ec,
+               const L1& l10, const L1& l11, const L1& l12, const L1& l13,
+               const L2& l20, const L2& l21,const L2& l22,const L2& l23)
+    : Lazy_rep<AT,ET,E2A>()
+    , EC(ec)
+    , l10_(l10), l11_(l11), l12_(l12), l13_(l13)
+    , l20_(l20), l21_(l21), l22_(l22), l23_(l23)
+  {
+    this->set_depth((std::max)({CGAL::depth(l10_), CGAL::depth(l11_), CGAL::depth(l12_), CGAL::depth(l13_),
+                                CGAL::depth(l20_), CGAL::depth(l21_), CGAL::depth(l22_), CGAL::depth(l23_)}));
+    this->at_orig.at_ = ac(CGAL::approx(l10_),CGAL::approx(l11_),CGAL::approx(l12_),CGAL::approx(l13_), CGAL::approx(l20_), CGAL::approx(l21_), CGAL::approx(l22_), CGAL::approx(l23_));
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    os << "A Lazy_rep_8_2"  << std::endl;
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l10_, os, level+1);
+      CGAL::print_dag(l11_, os, level+1);
+      CGAL::print_dag(l12_, os, level+1);
+      CGAL::print_dag(l13_, os, level+1);
+      CGAL::print_dag(l20_, os, level+1);
+      CGAL::print_dag(l21_, os, level+1);
+      CGAL::print_dag(l22_, os, level+1);
+      CGAL::print_dag(l23_, os, level+1);
+    }
+  }
+#endif
+};
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
 class Lazy_rep_2_2 final
@@ -1213,6 +1289,93 @@ struct Lazy_construction_bbox
   }
 };
 
+template <typename T>
+struct First
+{
+   typedef typename T::first_type result_type;
+
+   const typename T::first_type&
+   operator()(const T& p) const
+   {
+     return p.first;
+   }
+ };
+
+template <typename T>
+struct Second
+{
+  typedef typename T::second_type result_type;
+
+  const typename T::second_type&
+  operator()(const T& p) const
+  {
+    return p.second;
+  }
+};
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_construction_pair_8
+{
+  static const bool Protection = true;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename LK::E2A E2A;
+  typedef typename std::pair<typename LK::Point_3,typename LK::FT> result_type;
+
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+  template <typename L1, typename L2>
+  decltype(auto)
+  operator()(const L1& l10, const L1& l11, const L1& l12, const L1& l13,
+             const L2& l20, const L2& l21, const L2& l22, const L2& l23) const
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    {
+      typedef Lazy<typename AK::Point_3, typename EK::Point_3, E2A> Handle_1;
+      typedef Lazy<typename AK::FT, typename AK::ET, E2A> Handle_2;
+      // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+      Protect_FPU_rounding<Protection> P;
+      try {
+        typedef Lazy_rep_8_2<AC, EC, E2A, L1, L2> LazyPairRep;
+        // LazyPointRep;
+        // LazyFTRep;
+        auto rep = new LazyPairRep(ac, ec,
+                                   l10, l11, l12, l13,
+                                   l20, l21, l22, l23);
+        typedef Lazy<std::pair<typename AK::Point_3, typename AK::FT>,
+                     std::pair<typename EK::Point_3, typename EK::FT>, E2A> Lazy_pair;
+        Lazy_pair lv(rep);
+
+
+        typename LK::Point_3 lpt(Handle_1(new Lazy_rep_n<void, void,
+                                                         First< std::pair<typename AK::Point_3, typename AK::FT> >,
+                                                         First< std::pair<typename EK::Point_3, typename EK::FT> >,
+                                                         E2A, false,
+                                                         Lazy_pair>(First< std::pair<typename AK::Point_3, typename AK::FT> >(),
+                                                                    First< std::pair<typename EK::Point_3, typename EK::FT> >(), lv)));
+        typename LK::FT lft(Handle_2(new Lazy_rep_n<void, void,
+                                                    Second< std::pair<typename AK::Point_3, typename AK::FT> >,
+                                                    Second< std::pair<typename EK::Point_3, typename EK::FT> >,
+                                                    E2A, false,
+                                                    Lazy_pair>(Second< std::pair<typename AK::Point_3, typename AK::FT> >(),
+                                                               Second< std::pair<typename EK::Point_3, typename EK::FT> >(), lv)));
+
+        return std::make_pair(lpt, lft);
+
+
+      } catch (Uncertain_conversion_exception&) {}
+    }
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+    auto pair_exact = ec(CGAL::exact(l10),CGAL::exact(l11),CGAL::exact(l12),CGAL::exact(l13),
+                         CGAL::exact(l20),CGAL::exact(l21),CGAL::exact(l22),CGAL::exact(l23));
+    typename LK::Point_3 lpt(Handle_1(new Lazy_rep_0<typename AK::Point_3, typename EK::Point_3,E2A>(pair_exact.first)));
+    typename LK::FT lft(Handle_2(new Lazy_rep_0<typename AK::FT, typename EK::FT,E2A>(pair_exact.second)));
+    return std::make_pair(lpt, lft);
+  }
+};
 
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_optional_for_polygonal_envelope
@@ -1559,31 +1722,6 @@ public:
     typename R1::ET et;
     ec(CGAL::exact(l1), CGAL::exact(l2), et);
     r1 = R1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et));
-  }
-};
-
-
-template <typename T>
-struct First
-{
-   typedef typename T::first_type result_type;
-
-   const typename T::first_type&
-   operator()(const T& p) const
-   {
-     return p.first;
-   }
- };
-
-template <typename T>
-struct Second
-{
-  typedef typename T::second_type result_type;
-
-  const typename T::second_type&
-  operator()(const T& p) const
-  {
-    return p.second;
   }
 };
 
