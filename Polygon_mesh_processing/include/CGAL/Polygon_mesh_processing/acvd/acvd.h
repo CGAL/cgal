@@ -41,9 +41,8 @@
 #include <unordered_set>
 #include <iostream>
 
-#define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1 // TODO add as a parameter: subdivide input until #cluster*threshold < num_vertices --> should be 0.01
-// TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length -l3
-// cheese crashes
+
+// TODO: cheese crashes
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
 #define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
@@ -376,17 +375,21 @@ std::pair<
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
+  const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.1);
+  // TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length -l3
+
+
   // TODO: copy the mesh in order to not modify the original mesh
   //TriangleMesh pmesh = pmesh_org;
   int nb_vertices = num_vertices(pmesh);
 
 
   // For remeshing, we might need to subdivide the mesh before clustering
-  // This shoould always hold: nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // This should always hold: nb_clusters <= nb_vertices * clusters_to_vertices_threshold_ratio
   // So do the following till the condition is met
-  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+  while (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
   {
-    typename GT::FT curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    typename GT::FT curr_factor = nb_clusters / (nb_vertices * clusters_to_vertices_threshold_ratio);
     int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
@@ -1000,7 +1003,7 @@ std::pair<
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{postprocessing_qem}
-*     \cgalParamDescription{indicates if a project step using QEM should be applied to cluster centers at the end of the minimisation,
+*     \cgalParamDescription{indicates if a project step using QEM should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in visual issues or even self-intersections.}
 *     \cgalParamType{bool}
@@ -1008,11 +1011,19 @@ std::pair<
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_qem_metric}
-*     \cgalParamDescription{indicates if QEM should be applied during the minimisation algorithm in order for example to recover sharp features.
+*     \cgalParamDescription{indicates if QEM should be applied during the minimization algorithm in order for example to recover sharp features.
 *                           This is a slower than when using `postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
 *     \cgalParamExtra{If this parameter is `true` then postprocessing_qem will automatically set to `false`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{clusters_to_vertices_threshold_ratio}
+*     \cgalParamDescription{a ratio used to subdivide the input mesh so that the mesh used as input for the clustering has enough vertices.
+*                           More precisely, the number of vertices of the subdivided mesh should at least be the ratio times `nb_vertices`.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{0.1}
+*     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
@@ -1034,10 +1045,8 @@ std::pair<
 *
 * \cgalNamedParamsEnd
 *
-* @pre only triangle meshes are supported for now
 * @return the simplified mesh as a TriangleMesh
 *
-* @todo how is uniform affected by input mesh ? (check area based sampling?)
 * @todo implement manifold version
 * @todo how to handle output vertex point map
 */
@@ -1062,7 +1071,6 @@ TriangleMesh acvd_isotropic_remeshing(
 
 } // namespace CGAL
 
-#undef CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
 #undef CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD
 
 #endif // CGAL_PMP_ACVD_REMESHING_H
