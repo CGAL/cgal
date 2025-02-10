@@ -54,7 +54,7 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
 
   else()
 
-    file(GLOB list "*")
+    file(GLOB list "${subdir_name}/*")
 
   endif()
 
