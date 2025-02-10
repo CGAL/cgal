@@ -20,6 +20,7 @@
 #include <cySampleElim.h>
 #endif
 
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -60,7 +61,7 @@ double get_maximum_radius(std::size_t dimensions, std::size_t sample_size, doubl
 }
 
 double get_minimum_radius(std::size_t input_size, std::size_t output_size, double beta, double gamma, double r_max) {
-  double ratio = output_size / input_size;
+  double ratio = output_size / double(input_size);
   return r_max * (1 - std::pow(ratio, gamma)) * beta;
 }
 
@@ -176,9 +177,9 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
    Performs poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
    neighborhood of each point and eliminates points until the output size is reached.
 
-   For more details, please refer to \cgalCite{cgal:cgal:y-sefpdss}.
+   For more details, please refer to \cgalCite{cgal:y-sefpdss}.
 
-   \tparam PointRange is a model of `ConstRange`. The value type of
+   \tparam PointRange is a model of `RandomAccessRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
    \tparam OutputIterator Type of the output iterator. Must accept input of the same type as the iterator of `PointRange`.
@@ -267,8 +268,8 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
   IPM ipm(points, tiling_points, point_map);
 
-  auto tile_point = [&tiling_points, &bb, &r_max](const Point& p, std::size_t dim = 0) {
-    auto do_tiling = [&tiling_points, &bb, &r_max](const auto& self, const Point& p, std::size_t dim) -> void {
+  auto tile_point = [&tiling_points, &bb, &r_max, &ambient_dimension](const Point& p, std::size_t dim = 0) {
+    auto do_tiling = [&tiling_points, &bb, &r_max, &ambient_dimension](const auto& self, const Point& p, std::size_t dim) -> void {
       auto it = p.cartesian_begin();
 
       if (bb.min_coord(int(dim)) > (*(it + dim) - r_max)) {
@@ -276,7 +277,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
+        if (dim + 1 < ambient_dimension)
           self(self, tiling_points.back(), dim + 1);
       }
 
@@ -285,11 +286,11 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
+        if (dim + 1 < ambient_dimension)
           self(self, tiling_points.back(), dim + 1);
       }
 
-      if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
+      if (dim + 1 < ambient_dimension)
         self(self, p, dim + 1);
       };
     do_tiling(do_tiling, p, dim);
