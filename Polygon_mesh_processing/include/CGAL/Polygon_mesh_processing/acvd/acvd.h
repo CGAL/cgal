@@ -1061,7 +1061,7 @@ std::pair<
       cluster.compute_representative(qem_energy_minimization);
 //      e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
     }
-      
+
 
 
     nb_disconnected = 0;
@@ -1176,13 +1176,13 @@ std::pair<
             cluster1_v1_to_c2.compute_representative(qem_energy_minimization);
             cluster2_v1_to_c2.compute_representative(qem_energy_minimization);
             e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
-  
+
           }
 
           if ( ( clusters[ c2 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(hi, c2) ) ){
             cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
             cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
-  
+
             cluster1_v2_to_c1.compute_representative(qem_energy_minimization);
             cluster2_v2_to_c1.compute_representative(qem_energy_minimization);
             e_v2_to_c1 = cluster1_v2_to_c1.compute_energy() + cluster2_v2_to_c1.compute_energy();
