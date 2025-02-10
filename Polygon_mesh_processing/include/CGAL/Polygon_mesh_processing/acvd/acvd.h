@@ -182,7 +182,7 @@ struct QEMClusterData {
   Eigen::Matrix<typename GT::FT, 4, 4> quadric_sum;
   typename GT::Vector_3 representative_point;
   typename GT::FT energy;
-  bool valid_energy = false;
+  bool modified = true;
 
   size_t nb_vertices;
 
@@ -202,7 +202,7 @@ struct QEMClusterData {
     this->weight_sum += weight;
     this->quadric_sum += quadric;
     this->nb_vertices++;
-    this->valid_energy=false;
+    this->modified=true;
   }
 
   void add_vertex(const typename GT::Point_3 vertex_position, const typename GT::FT weight, const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
@@ -216,12 +216,12 @@ struct QEMClusterData {
     this->weight_sum -= weight;
     this->quadric_sum -= quadric;
     this->nb_vertices--;
-    this->valid_energy=false;
+    this->modified=true;
   }
 
   typename GT::FT compute_energy()
   {
-    if (!valid_energy)
+    if (modified)
     {
       auto dot_product = GT().compute_scalar_product_3_object();
 
