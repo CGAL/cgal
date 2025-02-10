@@ -22,7 +22,7 @@ namespace params = CGAL::parameters;
 int main(int argc, char* argv[])
 {
   Surface_Mesh smesh;
-  CGAL::get_default_random() = CGAL::Random( 1739197120 ); //connexity constraint issue
+  //CGAL::get_default_random() = CGAL::Random( 1739197120 ); //connexity constraint issue + infinite loop with cheese
   //CGAL::get_default_random() = CGAL::Random( 1739199762 ); //one small edge
   std::cout << "Seed : " << CGAL::get_default_random().get_seed() << std::endl;
   const std::string filename = (argc > 1) ?

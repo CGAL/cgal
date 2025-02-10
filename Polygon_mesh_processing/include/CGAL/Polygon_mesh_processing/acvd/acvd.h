@@ -42,7 +42,6 @@
 #include <iostream>
 
 
-// TODO: cheese crashes
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
 #define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
@@ -67,8 +66,8 @@ void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector
     -determinantABC
   };
 
-  for (int i = 0; i < 4; i++)
-    for (int j = 0; j < 4; j++)
+  for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 4; ++j)
       quadric(i, j) = n[i] * n[j];
 }
 
@@ -77,7 +76,7 @@ void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_
 {
   quadric.setZero();
 
-  for (int i = 0; i < cluster_tris.size(); i++)
+  for (int i = 0; i < cluster_tris.size(); ++i)
   {
     Eigen::Matrix<typename GT::FT, 4, 4> q;
     compute_qem_face<GT>(cluster_tris[i][0], cluster_tris[i][1], cluster_tris[i][2], q);
@@ -110,7 +109,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
   // compute all eigen values absolute values
   typename GT::FT AbsolutesEigenValues[3];
   typename GT::FT maxW = -1.0;
-  for (int j = 0; j < 3; j++)
+  for (int j = 0; j < 3; ++j)
   {
     typename GT::FT AbsoluteEigenValue = fabs(w[j]);
     AbsolutesEigenValues[j] = AbsoluteEigenValue;
@@ -121,13 +120,13 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
 
   Matrix3d tempMatrix, tempMatrix2;
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     typename GT::FT LocalMaxW = -1;
     int IndexMax = -1;
 
     // find the remaining eigenvalue with highest absolute value
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; ++j)
     {
       if (LocalMaxW < AbsolutesEigenValues[j])
       {
@@ -150,7 +149,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
       tempMatrix(IndexMax, 0) = 0;
       tempMatrix(IndexMax, 1) = 0;
       tempMatrix(IndexMax, 2) = 0;
-      rank_deficiency++;
+      ++rank_deficiency;
     }
 
     // set the eigenvalu to -2 to remove it from subsequent tests
@@ -181,7 +180,7 @@ struct QEMClusterData {
   typename GT::Vector_3 site_sum;
   typename GT::FT weight_sum;
   Eigen::Matrix<typename GT::FT, 4, 4> quadric_sum;
-  typename GT::Vector_3 representative_point;
+  typename GT::Vector_3 representative_point_;
   typename GT::FT energy;
   bool modified = true;
   int last_modification_iteration = 0;
@@ -190,7 +189,7 @@ struct QEMClusterData {
   QEMClusterData() :
     site_sum(0, 0, 0),
     weight_sum(0),
-    representative_point(0, 0, 0),
+    representative_point_(0, 0, 0),
     energy(0)
   {
     quadric_sum.setZero();
@@ -201,7 +200,7 @@ struct QEMClusterData {
     this->site_sum += vertex_position * weight;
     this->weight_sum += weight;
     this->quadric_sum += quadric;
-    this->nb_vertices++;
+    ++this->nb_vertices;
     this->modified=true;
   }
 
@@ -219,37 +218,39 @@ struct QEMClusterData {
     this->modified=true;
   }
 
-  typename GT::FT compute_energy()
-  {
-    if (modified)
-    {
-      auto dot_product = GT().compute_scalar_product_3_object();
-
-      this->energy = (this->representative_point).squared_length() * this->weight_sum
-                     - 2 * dot_product(this->representative_point, this->site_sum);
-    }
-    return this->energy;
-  }
-
-  //TODO: computing the representative before the mesh creation is not needed if QEM is off. add a bool minimization_loop?
-  typename GT::Vector_3 compute_representative(bool qem)
+  void compute_representative(bool qem)
   {
     if (this->weight_sum > 0)
     {
       if (qem)
       {
         int rank_deficiency = 0;
-        typename GT::Point_3 point =  CGAL::ORIGIN + (this->site_sum / this->weight_sum);//{ this->representative_point.x(), this->representative_point.y(), this->representative_point.z() };
+        typename GT::Point_3 point =  CGAL::ORIGIN + (this->site_sum / this->weight_sum);
         compute_representative_point<GT>(this->quadric_sum, point, rank_deficiency);
-        this->representative_point = { point.x(), point.y(), point.z() };
+        this->representative_point_ = { point.x(), point.y(), point.z() };
       }
       else
-        this->representative_point = (this->site_sum) / this->weight_sum;
-
-      return this->representative_point;
+        this->representative_point_ = (this->site_sum) / this->weight_sum;
     }
-    else
-      return typename GT::Vector_3(0, 0, 0);
+  }
+
+  typename GT::FT compute_energy(bool qem)
+  {
+    if (modified)
+    {
+      compute_representative(qem);
+      auto dot_product = GT().compute_scalar_product_3_object();
+
+      this->energy = (this->representative_point_).squared_length() * this->weight_sum
+                     - 2 * dot_product(this->representative_point_, this->site_sum);
+    }
+    return this->energy;
+  }
+
+  typename GT::Point_3 representative_point(bool qem)
+  {
+    if (modified) compute_representative(qem);
+    return ORIGIN+representative_point_;
   }
 };
 
@@ -284,7 +285,7 @@ void upsample_subdivision_property(TriangleMesh& pmesh, const NamedParameters& n
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Upsample_mask_3<TriangleMesh,VPM> mask(&pmesh, vpm);
 
-  for (unsigned int i = 0; i < step; i++){
+  for (unsigned int i = 0; i < step; ++i){
     for (Vertex_descriptor vd : vertices(pmesh))
       old_vertices.insert(vd);
 
@@ -355,7 +356,7 @@ std::pair<
   using parameters::is_default_parameter;
 
   Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
-    get_property_map(CGAL::vertex_point, pmesh));
+                                             get_property_map(CGAL::vertex_point, pmesh));
 
   // get curvature related parameters
   const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
@@ -376,8 +377,10 @@ std::pair<
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.1);
-  // TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length -l3
-
+  // TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length
+  // TODO cheese crashes
+  // TODO compute less qem things if not used
+  // TODO use symmetric matrices?
 
   // TODO: copy the mesh in order to not modify the original mesh
   //TriangleMesh pmesh = pmesh_org;
@@ -438,12 +441,12 @@ std::pair<
 
     // compute quadric for the face
     Matrix4x4 face_quadric;
-    compute_qem_face<GT>(vp1, vp2, vp3, face_quadric);
+    if (use_qem_metric)
+      compute_qem_face<GT>(vp1, vp2, vp3, face_quadric);
 
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
     {
       typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
-      Matrix4x4 vertex_quadric = get(vertex_quadric_pmap, vd);
 
       if (gradation_factor == 0) // no adaptive clustering
         vertex_weight += weight;
@@ -458,8 +461,12 @@ std::pair<
       weight_avg += vertex_weight;
       put(vertex_weight_pmap, vd, vertex_weight);
 
-      vertex_quadric += face_quadric;
-      put(vertex_quadric_pmap, vd, vertex_quadric);
+      if (use_qem_metric)
+      {
+        Matrix4x4 vertex_quadric = get(vertex_quadric_pmap, vd);
+        vertex_quadric += face_quadric;
+        put(vertex_quadric_pmap, vd, vertex_quadric);
+      }
     }
   }
   weight_avg /= nb_vertices;
@@ -476,7 +483,7 @@ std::pair<
 
   // randomly initialize clusters
   //TODO: std::lower_bound with vertex_weight_pmap
-  for (int ci = 0; ci < nb_clusters; ci++)
+  for (int ci = 0; ci < nb_clusters; ++ci)
   {
     int vi;
     Vertex_descriptor vd;
@@ -506,7 +513,7 @@ std::pair<
 
   do
   {
-
+    // reset cluster data
     for ( auto &cluster : clusters) cluster = QEMClusterData<GT>();
     for ( Vertex_descriptor v : vertices( pmesh ) ) {
       typename GT::FT v_weight = get(vertex_weight_pmap, v);
@@ -515,17 +522,12 @@ std::pair<
       if ( cluster_id != -1 )
         clusters[ cluster_id ].add_vertex( get(vpm, v), v_weight, v_qem);
     }
-    for ( auto &cluster : clusters) {
-      cluster.compute_representative(qem_energy_minimization);
-//      e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
-    }
-
 
     int nb_iterations = -1;
     nb_disconnected = 0;
     do
     {
-      nb_iterations++;
+      ++nb_iterations;
       nb_modifications = 0;
 
       while (!clusters_edges_active.empty()) {
@@ -552,14 +554,13 @@ std::pair<
           typename GT::Point_3 vp1 = get(vpm, v1);
           typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
           clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
-          clusters[c2].compute_representative(qem_energy_minimization);
           clusters[c2].last_modification_iteration = nb_iterations;
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
             //TODO: if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
-          nb_modifications++;
+          ++nb_modifications;
         }
         else if (c2 == -1)
         {
@@ -568,14 +569,13 @@ std::pair<
           typename GT::Point_3 vp2 = get(vpm, v2);
           typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
           clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
-          clusters[c1].compute_representative(qem_energy_minimization);
           clusters[c1].last_modification_iteration = nb_iterations;
 
           // add all halfedges around v2 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
             //TODO: if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
-          nb_modifications++;
+          ++nb_modifications;
         }
         else if ( c1 != c2 )
         {
@@ -619,8 +619,6 @@ std::pair<
             return true;
           };
 
-
-
           // compare the energy of the 3 cases
           typename GT::Point_3 vp1 = get(vpm, v1);
           typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
@@ -631,8 +629,6 @@ std::pair<
           Matrix4x4 v1_qem = get (vertex_quadric_pmap, v1);
           Matrix4x4 v2_qem = get (vertex_quadric_pmap, v2);
 
-//          clusters[c1].compute_representative(qem_energy_minimization);
-//          clusters[c2].compute_representative(qem_energy_minimization);
           cluster1_v2_to_c1 = clusters[c1];
           cluster2_v2_to_c1 = clusters[c2];
           cluster1_v1_to_c2 = clusters[c1];
@@ -642,7 +638,8 @@ std::pair<
           cluster1_v1_to_c2.last_modification_iteration = nb_iterations;
           cluster2_v1_to_c2.last_modification_iteration = nb_iterations;
 
-          typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+          typename GT::FT e_no_change = clusters[c1].compute_energy(qem_energy_minimization) +
+                                        clusters[c2].compute_energy(qem_energy_minimization);
           typename GT::FT e_v1_to_c2 = (std::numeric_limits< double >::max)();
           typename GT::FT e_v2_to_c1 = (std::numeric_limits< double >::max)();
 
@@ -650,20 +647,16 @@ std::pair<
           {
             cluster1_v1_to_c2.remove_vertex(vpv1, v1_weight, v1_qem);
             cluster2_v1_to_c2.add_vertex(vpv1, v1_weight, v1_qem);
-
-            cluster1_v1_to_c2.compute_representative(qem_energy_minimization);
-            cluster2_v1_to_c2.compute_representative(qem_energy_minimization);
-            e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
+            e_v1_to_c2 = cluster1_v1_to_c2.compute_energy(qem_energy_minimization) +
+                         cluster2_v1_to_c2.compute_energy(qem_energy_minimization);
           }
 
           if ( ( clusters[ c2 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(hi, c2) ) )
           {
             cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
             cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
-
-            cluster1_v2_to_c1.compute_representative(qem_energy_minimization);
-            cluster2_v2_to_c1.compute_representative(qem_energy_minimization);
-            e_v2_to_c1 = cluster1_v2_to_c1.compute_energy() + cluster2_v2_to_c1.compute_energy();
+            e_v2_to_c1 = cluster1_v2_to_c1.compute_energy(qem_energy_minimization) +
+                         cluster2_v2_to_c1.compute_energy(qem_energy_minimization);
           }
 
 
@@ -750,13 +743,13 @@ std::pair<
     }
 
     // loop over clusters to delete disconnected components except the largest one
-    for (int c = 0; c < nb_clusters; c++)
+    for (int c = 0; c < nb_clusters; ++c)
     {
       if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
-      nb_disconnected++;
+      ++nb_disconnected;
       std::size_t max_component_size = 0;
       std::size_t max_component_index = -1;
-      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); ++component_i)
       {
         if (cluster_components[c][component_i].size() > max_component_size)
         {
@@ -765,7 +758,7 @@ std::pair<
         }
       }
       // set cluster to -1 for all components except the largest one
-      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); ++component_i)
       {
         if (component_i != max_component_index)
         {
@@ -793,7 +786,7 @@ std::pair<
 
 
     std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
-    nb_loops++;
+    ++nb_loops;
 
   } while (nb_disconnected > 0 || nb_loops < 2 );
 
@@ -805,16 +798,12 @@ std::pair<
   TriangleMesh simplified_mesh;
 
 
-  for (int i = 0; i < nb_clusters; i++)
+  for (int i = 0; i < nb_clusters; ++i)
   {
     if (clusters[i].weight_sum > 0)
     {
       valid_cluster_map[i] = points.size();
-      typename GT::Vector_3 cluster_representative = clusters[i].representative_point;
-
-      typename GT::Point_3 cluster_representative_p(cluster_representative.x(), cluster_representative.y(), cluster_representative.z());
-      points.push_back(cluster_representative_p);
-
+      points.push_back(clusters[i].representative_point(qem_energy_minimization));
     }
   }
 
@@ -823,7 +812,7 @@ std::pair<
     std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
 
     // initialize quadrics
-    for (int i = 0; i < nb_clusters; i++)
+    for (int i = 0; i < nb_clusters; ++i)
       cluster_quadrics[i].setZero();
 
     // for storing the vertex_descriptor of each face
@@ -865,13 +854,13 @@ std::pair<
 
     int valid_index = 0;
 
-    for (int i = 0; i < nb_clusters; i++)
+    for (int i = 0; i < nb_clusters; ++i)
     {
       if (clusters[i].weight_sum > 0)
       {
         int rank_deficiency = 0;
         compute_representative_point<GT>(cluster_quadrics[i], points[valid_index], rank_deficiency);
-        valid_index++;
+        ++valid_index;
       }
     }
   }
