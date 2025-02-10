@@ -43,6 +43,10 @@ class Neighbor_search
     using Polylines = std::vector<Polyline>;
 
 public:
+/*!
+ * constructs a neighbor search data structure for `polylines`
+ * \tparam PolylineRange must be a model of `RandomAccessRange` with value type `PointRange`
+*/
     template <typename PolylineRange>
     Neighbor_search(const PolylineRange& polylines)
     : curves(polylines.begin(), polylines.end())
