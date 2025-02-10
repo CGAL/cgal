@@ -28,8 +28,7 @@ int main()
   Curve query = curves.back();
   curves.pop_back();
 
-  CGAL::Frechet_distance::Neighbor_search<Curve, Traits> ds;
-  ds.insert(curves);
+  CGAL::Frechet_distance::Neighbor_search<Curve, Traits> ds(curves);
 
   for(const Curve& c : curves){
     std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(c, query, 0.000001);
