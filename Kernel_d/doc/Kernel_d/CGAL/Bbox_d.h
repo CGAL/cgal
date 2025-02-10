@@ -34,7 +34,7 @@ typedef unspecified_type Cartesian_const_iterator;
 constructs an \em empty bounding box with lower left
 corner coordinates at \f$ \infty \f$
 and with upper right corner coordinates at
-\f$ -\infty \f$, \f$ \infty \f$ being
+\f$ -\infty \f$, where \f$ \infty \f$ means
 `std::numeric_limits<double>::%infinity()`.
 */
   Bbox_d();

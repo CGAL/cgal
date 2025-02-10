@@ -188,10 +188,10 @@ public:
     using Cartesian_const_iterator = Concatenate_iterator<array_const_iterator,array_const_iterator>;
 
     inline constexpr int dimension() const { return D; }
-    Bbox_d(int d = 0          ) { CGAL_assertion(d==N || d==0); this->init(d       ); }
-    Bbox_d(int d, double range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
+    Bbox_d() { this->init(N      ); }
+    Bbox_d(double range) { this->init(N, range); }
     template <typename I>
-    Bbox_d(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
+    Bbox_d(I b, I e) { this->init(N, b, e); }
 
     Bbox_d(const Bbox_2& bb2){ this->init(bb2);}
     Bbox_d(const Bbox_3& bb3){ this->init(bb3);}
