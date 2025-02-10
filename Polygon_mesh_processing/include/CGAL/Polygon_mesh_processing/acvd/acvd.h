@@ -1031,6 +1031,9 @@ std::pair<
   int nb_qem_iters = 0;
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
+
+  QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
+
   // bool just_switched_to_qem = false;
   do
   {
@@ -1096,26 +1099,26 @@ std::pair<
 
           clusters[c1].compute_representative(qem_energy_minimization);
           clusters[c2].compute_representative(qem_energy_minimization);
+          cluster1_v2_to_c1 = clusters[c1];
+          cluster2_v2_to_c1 = clusters[c2];
+          cluster1_v1_to_c2 = clusters[c1];
+          cluster2_v1_to_c2 = clusters[c2];
+
           typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
-          clusters[c1].remove_vertex(vpv1, v1_weight, v1_qem);
-          clusters[c2].add_vertex(vpv1, v1_weight, v1_qem);
+          cluster1_v1_to_c2.remove_vertex(vpv1, v1_weight, v1_qem);
+          cluster2_v1_to_c2.add_vertex(vpv1, v1_weight, v1_qem);
 
-          clusters[c1].compute_representative(qem_energy_minimization);
-          clusters[c2].compute_representative(qem_energy_minimization);
-          typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+          cluster1_v1_to_c2.compute_representative(qem_energy_minimization);
+          cluster2_v1_to_c2.compute_representative(qem_energy_minimization);
+          typename GT::FT e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
 
-          // reset to no change
-          clusters[c1].add_vertex(vpv1, v1_weight, v1_qem);
-          clusters[c2].remove_vertex(vpv1, v1_weight, v1_qem);
+          cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
+          cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
 
-          // The effect of the following should always be reversed after the comparison
-          clusters[c2].remove_vertex(vpv2, v2_weight, v2_qem);
-          clusters[c1].add_vertex(vpv2, v2_weight, v2_qem);
-
-          clusters[c1].compute_representative(qem_energy_minimization);
-          clusters[c2].compute_representative(qem_energy_minimization);
-          typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+          cluster1_v2_to_c1.compute_representative(qem_energy_minimization);
+          cluster2_v2_to_c1.compute_representative(qem_energy_minimization);
+          typename GT::FT e_v2_to_c1 = cluster1_v2_to_c1.compute_energy() + cluster2_v2_to_c1.compute_energy();
 
           if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && clusters[c2].nb_vertices > 0) // > 0 as 1 vertex was removed from c2
           {
@@ -1128,10 +1131,9 @@ std::pair<
             for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
               //TODO: if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
-            nb_modifications++;
-
-            clusters[c1].compute_representative(qem_energy_minimization);
-            clusters[c2].compute_representative(qem_energy_minimization);
+            ++nb_modifications;
+            clusters[c1] = cluster1_v2_to_c1;
+            clusters[c2] = cluster2_v2_to_c1;
           }
           else if (e_v1_to_c2 < e_no_change && clusters[c1].nb_vertices > 2) // > 2 as 1 vertex was added to c1
           {
@@ -1139,32 +1141,20 @@ std::pair<
             // move v1 to c2
             put(vertex_cluster_pmap, v1, c2);
 
-            // need to reset cluster data and then update
-            clusters[c2].add_vertex(vpv2, v2_weight, v2_qem);
-            clusters[c1].remove_vertex(vpv2, v2_weight, v2_qem);
-
-            clusters[c1].remove_vertex(vpv1, v1_weight, v1_qem);
-            clusters[c2].add_vertex(vpv1, v1_weight, v1_qem);
+            clusters[c1] = cluster1_v1_to_c2;
+            clusters[c2] = cluster2_v1_to_c2;
 
             // add all halfedges around v1 except hi to the queue
             for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
               //TODO: if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
-            nb_modifications++;
+            ++nb_modifications;
 
-            clusters[c1].compute_representative(qem_energy_minimization);
-            clusters[c2].compute_representative(qem_energy_minimization);
           }
           else
           {
             // no change but need to reset cluster data
-            clusters[c2].add_vertex(vpv2, v2_weight, v2_qem);
-            clusters[c1].remove_vertex(vpv2, v2_weight, v2_qem);
-
             clusters_edges_new.push(hi);
-
-            clusters[c1].compute_representative(qem_energy_minimization);
-            clusters[c2].compute_representative(qem_energy_minimization);
           }
         }
       }
