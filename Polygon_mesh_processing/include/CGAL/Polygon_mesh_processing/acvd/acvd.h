@@ -182,6 +182,7 @@ struct QEMClusterData {
   Eigen::Matrix<typename GT::FT, 4, 4> quadric_sum;
   typename GT::Vector_3 representative_point;
   typename GT::FT energy;
+  bool valid_energy = false;
 
   size_t nb_vertices;
 
@@ -201,6 +202,12 @@ struct QEMClusterData {
     this->weight_sum += weight;
     this->quadric_sum += quadric;
     this->nb_vertices++;
+    this->valid_energy=false;
+  }
+
+  void add_vertex(const typename GT::Point_3 vertex_position, const typename GT::FT weight, const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
+  {
+    add_vertex( vertex_position - ORIGIN, weight, quadric );
   }
 
   void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight, const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
@@ -209,14 +216,18 @@ struct QEMClusterData {
     this->weight_sum -= weight;
     this->quadric_sum -= quadric;
     this->nb_vertices--;
+    this->valid_energy=false;
   }
 
   typename GT::FT compute_energy()
   {
-    auto dot_product = GT().compute_scalar_product_3_object();
+    if (!valid_energy)
+    {
+      auto dot_product = GT().compute_scalar_product_3_object();
 
-    this->energy = (this->representative_point).squared_length() * this->weight_sum
-                   - 2 * dot_product(this->representative_point, this->site_sum);
+      this->energy = (this->representative_point).squared_length() * this->weight_sum
+                     - 2 * dot_product(this->representative_point, this->site_sum);
+    }
     return this->energy;
   }
 
@@ -864,7 +875,6 @@ std::pair<
   return std::make_pair(points, polygons);
 }
 
-
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
@@ -1038,6 +1048,22 @@ std::pair<
   // bool just_switched_to_qem = false;
   do
   {
+
+    for ( auto &cluster : clusters) cluster = QEMClusterData<GT>();
+    for ( Vertex_descriptor v : vertices( pmesh ) ) {
+      typename GT::FT v_weight = get(vertex_weight_pmap, v);
+      Matrix4x4 v_qem = get (vertex_quadric_pmap, v);
+      int cluster_id = get(vertex_cluster_pmap, v );
+      if ( cluster_id != -1 )
+        clusters[ cluster_id ].add_vertex( get(vpm, v), v_weight, v_qem);
+    }
+    for ( auto &cluster : clusters) {
+      cluster.compute_representative(qem_energy_minimization);
+//      e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
+    }
+      
+
+
     nb_disconnected = 0;
     do
     {
@@ -1060,6 +1086,7 @@ std::pair<
           typename GT::Point_3 vp1 = get(vpm, v1);
           typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
           clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
+          clusters[c2].compute_representative(qem_energy_minimization);
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
@@ -1074,6 +1101,7 @@ std::pair<
           typename GT::Point_3 vp2 = get(vpm, v2);
           typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
           clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
+          clusters[c1].compute_representative(qem_energy_minimization);
 
           // add all halfedges around v2 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
@@ -1129,8 +1157,8 @@ std::pair<
           Matrix4x4 v1_qem = get (vertex_quadric_pmap, v1);
           Matrix4x4 v2_qem = get (vertex_quadric_pmap, v2);
 
-          clusters[c1].compute_representative(qem_energy_minimization);
-          clusters[c2].compute_representative(qem_energy_minimization);
+//          clusters[c1].compute_representative(qem_energy_minimization);
+//          clusters[c2].compute_representative(qem_energy_minimization);
           cluster1_v2_to_c1 = clusters[c1];
           cluster2_v2_to_c1 = clusters[c2];
           cluster1_v1_to_c2 = clusters[c1];
@@ -1296,6 +1324,8 @@ std::pair<
         }
       }
     }
+
+
 
     std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
     nb_loops++;
