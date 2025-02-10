@@ -4,7 +4,8 @@
 
 The concept `FrechetDistanceTraits` defines the requirements of the
 first template parameter of the functions `CGAL::is_Frechet_distance_larger()`
-and `CGAL::bounded_error_Frechet_distance()`.
+and `CGAL::bounded_error_Frechet_distance()`, as well as of the
+class template `CGAL::Frechet_distance::Neighbor_search`.
 
 
 \cgalHasModelsBegin
@@ -57,7 +58,7 @@ using Construct_bbox_d = unspecified_type;
 /*!
 Functor with operator to compare the squared distance of two objects of type `Point_d` with a bound of type `FT`,
 returning a `CGAL::Comparison_result`.
-\note Only needed by class template `CGAL::Frechet_distance_Neighor_search`.
+\note Only needed by class template `CGAL::Frechet_distance::Neighbor_search`.
 */
 using Compare_squared_distance_d = unspecified_type;
 /// @}
