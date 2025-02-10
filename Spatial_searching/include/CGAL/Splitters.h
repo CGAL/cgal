@@ -237,7 +237,7 @@ namespace CGAL {
     void
     operator() (Separator& sep, Container& c0, Container& c1) const
     {
-      if (!CGAL::is_zero(c0.max_spread()))
+      if (!CGAL::is_zero(c0.tight_bounding_box().max_coord(c0.max_span_coord()) - c0.tight_bounding_box().min_coord(c0.max_span_coord())))
         sep = Separator(c0.max_span_coord(),FT(0));
       else sep = Separator(c0.max_tight_span_coord(), FT(0));
       sep.set_cutting_value(c0.median(sep.cutting_dimension()));
