@@ -51,7 +51,7 @@ constructs a d-dimensional bounding box from a range of coordinates
 \tparam InputIterator  an input iterator with value type `double`
 */
 template <typename InputIterator>
-Bbox_d(int d, InputIterator b, InputIterator e);
+Bbox_d(InputIterator b, InputIterator e);
 
 /*!
 constructs a d-dimensional bounding box from a 3D bounding box.
