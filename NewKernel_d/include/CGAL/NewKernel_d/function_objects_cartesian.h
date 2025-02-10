@@ -1021,8 +1021,7 @@ template<class R_> struct Construct_bbox : private Store_kernel<R_> {
         result_type operator()(Point const&a)const{
                 CI ci(this->kernel());
                 typename Real_embeddable_traits<RT>::To_interval f;
-                typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
-                return result_type(pd(a), make_transforming_iterator(ci(a, Begin_tag()), f), make_transforming_iterator(ci(a, End_tag()), f));
+                return result_type(make_transforming_iterator(ci(a, Begin_tag()), f), make_transforming_iterator(ci(a, End_tag()), f));
         }
 };
 }

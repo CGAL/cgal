@@ -230,10 +230,10 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 
     res.ends[0] = curve.front();
     res.ends[1] = curve.back();
-    Bbox_d<Dimension_tag<dim>> bb(dim);
+    Bbox_d<Dimension_tag<dim>> bb;
     for (auto const& point : curve) {
         Bbox_d<Dimension_tag<dim>> bbb = construct_bbox(point);
-        bb +=  bbb;
+        bb += bbb;
     }
     res.bbox.reserve(2*dim);
     for(auto it = bb.cartesian_begin(); it != bb.cartesian_end(); ++it){
