@@ -1080,12 +1080,7 @@ std::pair<
             clusters_edges_new.push(hd);
           nb_modifications++;
         }
-        else if (c1 == c2)
-        {
-          // TODO @hoskillua This is not needed, right?
-          clusters_edges_new.push(hi);
-        }
-        else
+        else if ( c1 != c2 )
         {
           // compare the energy of the 3 cases
           typename GT::Point_3 vp1 = get(vpm, v1);
