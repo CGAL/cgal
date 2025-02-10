@@ -183,6 +183,7 @@ struct QEMClusterData {
   typename GT::Vector_3 representative_point;
   typename GT::FT energy;
   bool modified = true;
+  int last_modification_iteration;
 
   size_t nb_vertices;
 
@@ -191,7 +192,8 @@ struct QEMClusterData {
     weight_sum(0),
     representative_point(0, 0, 0),
     energy(0),
-    nb_vertices(0)
+    nb_vertices(0),
+    last_modification_iteration(0)
   {
     quadric_sum.setZero();
   }
@@ -1063,10 +1065,11 @@ std::pair<
     }
 
 
-
+    int nb_iterations = -1;
     nb_disconnected = 0;
     do
     {
+      nb_iterations++;
       nb_modifications = 0;
 
       while (!clusters_edges_active.empty()) {
@@ -1078,6 +1081,13 @@ std::pair<
 
         int c1 = get(vertex_cluster_pmap, v1);
         int c2 = get(vertex_cluster_pmap, v2);
+        if ( ( clusters[ c1 ].last_modification_iteration < nb_iterations - 1 ) &&
+          ( clusters[ c2 ].last_modification_iteration < nb_iterations - 1 ) )
+          {
+            clusters_edges_new.push(hi);
+            continue;
+
+          }
 
         if (c1 == -1)
         {
@@ -1087,6 +1097,7 @@ std::pair<
           typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
           clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
           clusters[c2].compute_representative(qem_energy_minimization);
+          clusters[c2].last_modification_iteration = nb_iterations;
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
@@ -1102,6 +1113,7 @@ std::pair<
           typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
           clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
           clusters[c1].compute_representative(qem_energy_minimization);
+          clusters[c1].last_modification_iteration = nb_iterations;
 
           // add all halfedges around v2 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
@@ -1163,6 +1175,10 @@ std::pair<
           cluster2_v2_to_c1 = clusters[c2];
           cluster1_v1_to_c2 = clusters[c1];
           cluster2_v1_to_c2 = clusters[c2];
+          cluster1_v2_to_c1.last_modification_iteration = nb_iterations;
+          cluster2_v2_to_c1.last_modification_iteration = nb_iterations;
+          cluster1_v1_to_c2.last_modification_iteration = nb_iterations;
+          cluster2_v1_to_c2.last_modification_iteration = nb_iterations;
 
           typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
           typename GT::FT e_v1_to_c2 = std::numeric_limits< double >::max();
