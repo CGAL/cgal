@@ -17,6 +17,7 @@ typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
 typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::property_map<Surface_Mesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
 
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
 #if 0
   std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
-  auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
+  auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::postprocessing_qem(true));
   CGAL::IO::write_polygon_mesh(stem+"_acvd_qem-pp_"+nbc+extension, acvd_mesh_qem_pp);
 
   std::cout << "Completed" << std::endl;
@@ -63,7 +64,7 @@ int main(int argc, char* argv[])
 
   std::cout << "Uniform QEM ACVD ...." << std::endl;
 
-  auto acvd_mesh_qem = PMP::acvd_qem_remeshing(smesh, nb_clusters);
+  auto acvd_mesh_qem = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, params::use_qem_metric(true));
   CGAL::IO::write_polygon_mesh( stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 
   std::cout << "Completed" << std::endl;
