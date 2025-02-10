@@ -238,11 +238,16 @@ struct QEMClusterData {
   {
     if (modified)
     {
-      compute_representative(qem);
-      auto dot_product = GT().compute_scalar_product_3_object();
+      if (qem)
+      {
+        compute_representative(qem);
+        auto dot_product = GT().compute_scalar_product_3_object();
 
-      this->energy = (this->representative_point_).squared_length() * this->weight_sum
-                     - 2 * dot_product(this->representative_point_, this->site_sum);
+        this->energy = (this->representative_point_).squared_length() * this->weight_sum
+                       - 2 * dot_product(this->representative_point_, this->site_sum);
+      }
+      else
+        this->energy = - (this->site_sum).squared_length() / this->weight_sum;
     }
     return this->energy;
   }

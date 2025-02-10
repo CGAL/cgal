@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   }
 
   ///// Uniform Isotropic ACVD
-#if 0
+#if 1
   std::cout << "Uniform Isotropic ACVD ...." << std::endl;
   auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
   CGAL::IO::write_polygon_mesh(stem+"_acvd_"+nbc+extension, acvd_mesh);
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 #endif
 
   //// With Post-Processing QEM Optimization
-#if 0
+#if 1
   std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
   auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::postprocessing_qem(true));
