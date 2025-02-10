@@ -21,6 +21,8 @@ typedef boost::property_map<Surface_Mesh, CGAL::dynamic_vertex_property_t<CGAL::
 int main(int argc, char* argv[])
 {
   Surface_Mesh smesh;
+  //CGAL::get_default_random() = CGAL::Random( 1739197120 );
+  std::cout << "Seed : " << CGAL::get_default_random().get_seed() << std::endl;
   const std::string filename = (argc > 1) ?
     argv[1] :
     CGAL::data_file_path("meshes/fandisk.off");

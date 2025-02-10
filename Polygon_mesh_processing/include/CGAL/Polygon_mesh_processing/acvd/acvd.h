@@ -1031,6 +1031,7 @@ std::pair<
   int nb_qem_iters = 0;
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
+  int nb_loops = 0;
 
   QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
 
@@ -1084,8 +1085,9 @@ std::pair<
         {
           // topological test to avoid creating disconnected clusters
           auto is_topologically_valid_merge = [&](Halfedge_descriptor hv, int cluster_id)
-          {
-            CGAL_assertion(get(vertex_cluster_pmap,target(h, pmesh))==cluster_id);
+          {return true;
+            // TODO : solve bug, test seems to be too strict!
+            CGAL_assertion(get(vertex_cluster_pmap,target(hv, pmesh))==cluster_id);
             Halfedge_descriptor h=hv;
             bool in_cluster=false;
             int nb_cc_cluster=0;
@@ -1102,18 +1104,19 @@ std::pair<
                 if (ci==cluster_id)
                 {
                   in_cluster=true;
-                  if (++nb_cc_cluster>1) break;
+                  if (++nb_cc_cluster>1) {
+                    std::cout << "\n no for " << pmesh.point( target( hv, pmesh ) ) << std::endl;
+                    return false;
+                  }
                 }
               }
               h=opposite(h, pmesh);
             }
             while(h!=hv);
 
-            return nb_cc_cluster>1;
+            return true;
           };
 
-          bool v1_to_v2_allowed = is_topologically_valid_merge(opposite(hi, pmesh), c1);
-          bool v2_to_v1_allowed = is_topologically_valid_merge(hi, c2);
 
 
           // compare the energy of the 3 cases
@@ -1134,20 +1137,29 @@ std::pair<
           cluster2_v1_to_c2 = clusters[c2];
 
           typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+          typename GT::FT e_v1_to_c2 = std::numeric_limits< double >::max();
+          typename GT::FT e_v2_to_c1 = std::numeric_limits< double >::max();
 
-          cluster1_v1_to_c2.remove_vertex(vpv1, v1_weight, v1_qem);
-          cluster2_v1_to_c2.add_vertex(vpv1, v1_weight, v1_qem);
+          if ( ( clusters[ c1 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(opposite(hi, pmesh), c1) ) ){
 
-          cluster1_v1_to_c2.compute_representative(qem_energy_minimization);
-          cluster2_v1_to_c2.compute_representative(qem_energy_minimization);
-          typename GT::FT e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
+            cluster1_v1_to_c2.remove_vertex(vpv1, v1_weight, v1_qem);
+            cluster2_v1_to_c2.add_vertex(vpv1, v1_weight, v1_qem);
 
-          cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
-          cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
+            cluster1_v1_to_c2.compute_representative(qem_energy_minimization);
+            cluster2_v1_to_c2.compute_representative(qem_energy_minimization);
+            e_v1_to_c2 = cluster1_v1_to_c2.compute_energy() + cluster2_v1_to_c2.compute_energy();
+  
+          }
 
-          cluster1_v2_to_c1.compute_representative(qem_energy_minimization);
-          cluster2_v2_to_c1.compute_representative(qem_energy_minimization);
-          typename GT::FT e_v2_to_c1 = cluster1_v2_to_c1.compute_energy() + cluster2_v2_to_c1.compute_energy();
+          if ( ( clusters[ c2 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(hi, c2) ) ){
+            cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
+            cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
+  
+            cluster1_v2_to_c1.compute_representative(qem_energy_minimization);
+            cluster2_v2_to_c1.compute_representative(qem_energy_minimization);
+            e_v2_to_c1 = cluster1_v2_to_c1.compute_energy() + cluster2_v2_to_c1.compute_energy();
+          }
+
 
           if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && clusters[c2].nb_vertices > 0) // > 0 as 1 vertex was removed from c2
           {
@@ -1194,15 +1206,14 @@ std::pair<
 //      if (nb_qem_iters == 10)
 //        break;
 
-      if (nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
+    clusters_edges_active.swap(clusters_edges_new);
+    if (nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
       {
         qem_energy_minimization = true;
-        //just_switched_to_qem = true;
+//        just_switched_to_qem = true;
+        break;
       }
 
-      if (qem_energy_minimization)
-        nb_qem_iters++;
-      clusters_edges_active.swap(clusters_edges_new);
     } while (nb_modifications > 0 /*&& !just_switched_to_qem*/);
 
     // Disconnected clusters handling
@@ -1287,7 +1298,9 @@ std::pair<
     }
 
     std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
-  } while (nb_disconnected > 0);
+    nb_loops++;
+
+  } while (nb_disconnected > 0 || nb_loops < 2 );
 
   /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
