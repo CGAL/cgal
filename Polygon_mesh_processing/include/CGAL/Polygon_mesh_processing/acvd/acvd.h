@@ -227,7 +227,7 @@ struct QEMClusterData {
       if (qem)
       {
         int rank_deficiency = 0;
-        typename GT::Point_3 point = { this->representative_point.x(), this->representative_point.y(), this->representative_point.z() };
+        typename GT::Point_3 point =  CGAL::ORIGIN + (this->site_sum / this->weight_sum);//{ this->representative_point.x(), this->representative_point.y(), this->representative_point.z() };
         compute_representative_point<GT>(this->quadric_sum, point, rank_deficiency);
         this->representative_point = { point.x(), point.y(), point.z() };
       }
