@@ -41,7 +41,9 @@
 #include <unordered_set>
 #include <iostream>
 
-#define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1
+#define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1 // TODO add as a parameter: subdivide input until #cluster*threshold < num_vertices --> should be 0.01
+// TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length -l3
+// cheese crashes
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
 #define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
@@ -183,17 +185,14 @@ struct QEMClusterData {
   typename GT::Vector_3 representative_point;
   typename GT::FT energy;
   bool modified = true;
-  int last_modification_iteration;
-
-  size_t nb_vertices;
+  int last_modification_iteration = 0;
+  size_t nb_vertices = 0;
 
   QEMClusterData() :
     site_sum(0, 0, 0),
     weight_sum(0),
     representative_point(0, 0, 0),
-    energy(0),
-    nb_vertices(0),
-    last_modification_iteration(0)
+    energy(0)
   {
     quadric_sum.setZero();
   }
@@ -481,13 +480,14 @@ std::pair<
   }
 
   // randomly initialize clusters
+  //TODO: std::lower_bound with vertex_weight_pmap
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     int vi;
     Vertex_descriptor vd;
     do {
       vi = CGAL::get_default_random().get_int(0, num_vertices(pmesh));
-      vd = *(vertices(pmesh).begin() + vi);
+      vd = *(vertices(pmesh).begin() + vi); // TODO: bad with Polyhedron
     } while (get(vertex_cluster_pmap, vd) != -1);
 
     put(vertex_cluster_pmap, vd, ci);
@@ -1040,14 +1040,13 @@ std::pair<
   // the energy minimization loop (clustering loop)
   int nb_modifications = 0;
   int nb_disconnected = 0;
-  int nb_qem_iters = 0;
+
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
   int nb_loops = 0;
 
   QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
 
-  // bool just_switched_to_qem = false;
   do
   {
 
@@ -1125,7 +1124,8 @@ std::pair<
         {
           // topological test to avoid creating disconnected clusters
           auto is_topologically_valid_merge = [&](Halfedge_descriptor hv, int cluster_id)
-          {return true;
+          {
+            return true;
             // TODO : solve bug, test seems to be too strict!
             CGAL_assertion(get(vertex_cluster_pmap,target(hv, pmesh))==cluster_id);
             Halfedge_descriptor h=hv;
@@ -1146,6 +1146,7 @@ std::pair<
                   in_cluster=true;
                   if (++nb_cc_cluster>1) {
                     std::cout << "\n no for " << pmesh.point( target( hv, pmesh ) ) << std::endl;
+                    // throw std::runtime_error("BOOM!\n");
                     return false;
                   }
                 }
@@ -1181,8 +1182,8 @@ std::pair<
           cluster2_v1_to_c2.last_modification_iteration = nb_iterations;
 
           typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
-          typename GT::FT e_v1_to_c2 = std::numeric_limits< double >::max();
-          typename GT::FT e_v2_to_c1 = std::numeric_limits< double >::max();
+          typename GT::FT e_v1_to_c2 = (std::numeric_limits< double >::max)();
+          typename GT::FT e_v2_to_c1 = (std::numeric_limits< double >::max)();
 
           if ( ( clusters[ c1 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(opposite(hi, pmesh), c1) ) ){
 
@@ -1245,20 +1246,14 @@ std::pair<
       }
       std::cout << "# Modifications: " << nb_modifications << "\n";
 
-      //if(qem_energy_minimization)
-      //  just_switched_to_qem = false;
-//      if (nb_qem_iters == 10)
-//        break;
-
     clusters_edges_active.swap(clusters_edges_new);
     if (nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
       {
         qem_energy_minimization = true;
-//        just_switched_to_qem = true;
         break;
       }
 
-    } while (nb_modifications > 0 /*&& !just_switched_to_qem*/);
+    } while (nb_modifications > 0);
 
     // Disconnected clusters handling
     // the goal is to delete clusters with multiple connected components and only keep the largest connected component of each cluster
