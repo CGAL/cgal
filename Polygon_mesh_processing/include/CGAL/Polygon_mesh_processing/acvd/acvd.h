@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Hossam Saeed
+// Author(s)     : Hossam Saeed, Sébastien Valette, and Sébastien Loriot
 //
 
 #ifndef CGAL_PMP_ACVD_REMESHING_H
@@ -1061,5 +1061,6 @@ TriangleMesh acvd_isotropic_remeshing(
 } // namespace CGAL
 
 #undef CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD
+#undef CGAL_TO_QEM_MODIFICATION_THRESHOLD
 
 #endif // CGAL_PMP_ACVD_REMESHING_H
