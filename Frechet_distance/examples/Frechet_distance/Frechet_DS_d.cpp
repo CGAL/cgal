@@ -8,7 +8,7 @@
 #include <fstream>
 #include <filesystem>
 
-using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<2>>;
+using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<4>>;
 using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
 using Point = Traits::Point_d;
 using Curve = std::vector<Point>;
@@ -36,8 +36,7 @@ int main()
     Curve query = curves.back();
     curves.pop_back();
 
-    CGAL::Frechet_distance::Neighbor_search<Curve, Traits> ds;
-    ds.insert(curves);
+    CGAL::Frechet_distance::Neighbor_search<Curve,Traits> ds(curves);
 
     for(const Curve& c : curves){
         std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(c, query, 0.000001);

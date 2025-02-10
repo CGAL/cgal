@@ -28,7 +28,7 @@ namespace CGAL {
 namespace Frechet_distance {
 
 /*!
- * A data structure to store curves with a function that enables to find those curves which are closer than a distance bound to a query curve.
+ * A data structure to store polylines with a function that enables to find those polylines which are closer than a distance bound to a query polyline.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
@@ -39,43 +39,32 @@ class Neighbor_search
     using PT = Traits; //  Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
     using Point = typename PT::Point_d;
-    using Polyline = std::vector<Point>;
+    using Polyline = PointRange;
     using Polylines = std::vector<Polyline>;
-    using PolylineID = std::size_t;
-    using PolylineIDs = std::vector<PolylineID>;
 
 public:
-#ifndef DOXYGEN_RUNNING
-    Neighbor_search() = default;
-#endif
+    template <typename PolylineRange>
+    Neighbor_search(const PolylineRange& polylines)
+    : curves(polylines.begin(), polylines.end())
+    {
+      kd_tree.insert(curves);
+      kd_tree.build();
+    }
 
 #ifdef DOXYGEN_RUNNING
-using Point = Traits::Point_d;
+    using Point = Traits::Point_d;
 #endif
 
-    /*! inserts curves
-    */
-    void insert(const Polylines& curves);
 
-     /*!  returns the indices of the inserted curves that are closer than `distance` to `curve`.
+     /*!  returns the indices of the inserted polylines that are closer than `distance` to the polyline `query`.
      */
-    std::vector<std::size_t> get_close_curves(const Polyline& curve, double distance);
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance);
 
 private:
     Polylines curves;
     Frechet_distance::internal::FrechetKdTree<Traits> kd_tree;
 };
 
-// TODO: store preprocessed curves after CGALization
-template <class PointRange, class Traits>
-void Neighbor_search<PointRange, Traits>::insert(
-    const Polylines& curves)
-{
-    this->curves = curves;  // FIXME: copies all the curves...
-
-    kd_tree.insert(curves);
-    kd_tree.build();
-}
 
 template <class PointRange, class Traits>
 #ifdef DOXYGEN_RUNNING
@@ -84,11 +73,11 @@ std::vector<std::size_t>
 auto
 #endif
 Neighbor_search<PointRange, Traits>::get_close_curves(
-    const Polyline& curve, double distance) -> PolylineIDs
+    const PointRange& curve, double distance) -> std::vector<std::size_t>
 {
     auto result = kd_tree.search(curve, distance);
 
-    auto predicate = [&](PolylineID id) {
+    auto predicate = [&](std::size_t id) {
       CGAL_assertion(id < curves.size());
         return  is_Frechet_distance_larger(
             curve, curves[id], distance, parameters::geom_traits(Traits()));

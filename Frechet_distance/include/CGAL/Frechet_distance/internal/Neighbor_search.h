@@ -39,6 +39,7 @@ class FrechetKdTree
     using PT = Traits; // model of FrechetDistanceTraits
     using FT = typename PT::FT;
     using Point = typename PT::Point_d;
+    using Cartesian_const_iterator = typename PT::Cartesian_const_iterator_d;
     using Construct_cartesian_const_iterator = typename PT::Construct_cartesian_const_iterator_d;
     using Compare_squared_distance = typename PT::Compare_squared_distance_d;
     using Construct_bbox = typename PT::Construct_bbox_d;
@@ -56,7 +57,7 @@ class FrechetKdTree
         using BB = Bbox_d<Dimension_tag<dim>>;
         Point ends[2];
         std::vector<FT> bbox;
-        using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
+        using PP = Concatenate_iterator<Cartesian_const_iterator, Cartesian_const_iterator>;
         using Cartesian_const_iterator_d = Concatenate_iterator<PP, typename std::vector<FT>::const_iterator>;
 
         Cartesian_const_iterator_d cartesian_begin() const
