@@ -1082,6 +1082,40 @@ std::pair<
         }
         else if ( c1 != c2 )
         {
+          // topological test to avoid creating disconnected clusters
+          auto is_topologically_valid_merge = [&](Halfedge_descriptor hv, int cluster_id)
+          {
+            CGAL_assertion(get(vertex_cluster_pmap,target(h, pmesh))==cluster_id);
+            Halfedge_descriptor h=hv;
+            bool in_cluster=false;
+            int nb_cc_cluster=0;
+            do{
+              h=next(h, pmesh);
+
+              int ci = get(vertex_cluster_pmap, target(h,pmesh));
+              if (in_cluster)
+              {
+                if (ci!=cluster_id) in_cluster=false;
+              }
+              else
+              {
+                if (ci==cluster_id)
+                {
+                  in_cluster=true;
+                  if (++nb_cc_cluster>1) break;
+                }
+              }
+              h=opposite(h, pmesh);
+            }
+            while(h!=hv);
+
+            return nb_cc_cluster>1;
+          };
+
+          bool v1_to_v2_allowed = is_topologically_valid_merge(opposite(hi, pmesh), c1);
+          bool v2_to_v1_allowed = is_topologically_valid_merge(hi, c2);
+
+
           // compare the energy of the 3 cases
           typename GT::Point_3 vp1 = get(vpm, v1);
           typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
