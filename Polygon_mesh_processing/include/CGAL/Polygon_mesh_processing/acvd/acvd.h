@@ -1172,8 +1172,8 @@ std::pair<
 
       //if(qem_energy_minimization)
       //  just_switched_to_qem = false;
-      if (nb_qem_iters == 10)
-        break;
+//      if (nb_qem_iters == 10)
+//        break;
 
       if (nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
       {
