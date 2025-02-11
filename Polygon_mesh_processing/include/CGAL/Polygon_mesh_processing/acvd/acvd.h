@@ -35,6 +35,9 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
+
 #include <numeric>
 #include <vector>
 #include <queue>
@@ -61,7 +64,6 @@ void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, s
                                           CGAL::IO::orange(),
                                           CGAL::IO::deep_blue(),
                                           CGAL::IO::yellow(),
-                                          CGAL::IO::black(),
                                           CGAL::IO::violet(),
                                           CGAL::IO::gray(),
                                           CGAL::IO::white() }};
@@ -368,10 +370,10 @@ template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
   std::vector<typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Point_3>,
-  std::vector<std::vector<int>>
+  std::vector<std::array<std::size_t, 3>>
 > acvd_impl(
     TriangleMesh& pmesh,
-    const int nb_clusters,
+    int nb_clusters,
     const NamedParameters& np = parameters::default_values()
   )
 {
@@ -610,18 +612,25 @@ std::pair<
   int nb_loops = 0;
 
   QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
-
+  std::vector<bool> frozen_clusters(nb_clusters, false);
+  do
+  {
   do
   {
     // reset cluster data
-    for ( auto &cluster : clusters) cluster = QEMClusterData<GT>();
+    for (int ci=0; ci<nb_clusters; ++ci)
+      if (!frozen_clusters[ci])
+        clusters[ci] = QEMClusterData<GT>();
     for ( Vertex_descriptor v : vertices( pmesh ) ) {
       typename GT::FT v_weight = get(vertex_weight_pmap, v);
       Matrix4x4 v_qem = get (vertex_quadric_pmap, v);
       int cluster_id = get(vertex_cluster_pmap, v );
-      if ( cluster_id != -1 )
+      if ( cluster_id != -1 && !frozen_clusters[cluster_id])
         clusters[ cluster_id ].add_vertex( get(vpm, v), v_weight, v_qem);
     }
+
+     for (int ci=0; ci<nb_clusters; ++ci)
+        if (clusters[ci].nb_vertices==0) throw std::runtime_error("empty_cluster " + std::to_string(ci));
 
     int nb_iterations = -1;
     nb_disconnected = 0;
@@ -650,8 +659,18 @@ std::pair<
             clusters_edges_new.push(hd);
         };
 
+
+
+
         int c1 = get(vertex_cluster_pmap, v1);
         int c2 = get(vertex_cluster_pmap, v2);
+
+        if ( (c1!=-1 && frozen_clusters[c1]) || (c2!=-1 && frozen_clusters[c2]) )
+        {
+          clusters_edges_new.push(hi);
+          continue;
+        }
+
         if (c1==c2) continue;
 
         if (c1 == -1)
@@ -696,7 +715,6 @@ std::pair<
               h=next(h, pmesh);
 
               int ci = get(vertex_cluster_pmap, target(h,pmesh));
-              ss << "  " << target(h, pmesh) << " in cluster " << ci << "\n";
               if (in_cluster)
               {
                 if (ci!=cluster_id) in_cluster=false;
@@ -881,16 +899,16 @@ std::pair<
   } while (nb_disconnected > 0 || nb_loops < 3 );
 
   /// Construct new Mesh
-  std::vector<int> valid_cluster_map(nb_clusters, -1);
+  std::vector<std::size_t> valid_cluster_map(nb_clusters, -1);
   std::vector<typename GT::Point_3> points;
 
-  std::vector<std::vector<int>> polygons;
+  std::vector<std::array<std::size_t, 3>> polygons;
   TriangleMesh simplified_mesh;
 
 
   for (int i = 0; i < nb_clusters; ++i)
   {
-    if (clusters[i].weight_sum > 0)
+    // if (clusters[i].weight_sum > 0)
     {
       valid_cluster_map[i] = points.size();
       points.push_back(clusters[i].representative_point(qem_energy_minimization));
@@ -991,17 +1009,16 @@ std::pair<
 
         points.push_back(vb_p);
 
-        int cb = points.size() - 1;
+        std::size_t cb = points.size() - 1;
 
         if (cb_first == -1)
           cb_first = cb;
 
-        int ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
+        std::size_t ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
 
-        if (ct_mapped != -1 && cs_mapped != -1)
+        if (ct_mapped != std::size_t(-1) && cs_mapped != std::size_t(-1))
         {
-          std::vector<int>
-          polygon = {ct_mapped, cb, cs_mapped};
+          std::array<std::size_t, 3> polygon = {ct_mapped, cb, cs_mapped};
           polygons.push_back(polygon);
 
           // after the loop, the last cb+1 should be modified to the first cb
@@ -1030,21 +1047,157 @@ std::pair<
 
     if (c1 != c2 && c1 != c3 && c2 != c3)
     {
-      int c1_mapped = valid_cluster_map[c1], c2_mapped = valid_cluster_map[c2], c3_mapped = valid_cluster_map[c3];
-      if (c1_mapped != -1 && c2_mapped != -1 && c3_mapped != -1)
+      std::size_t c1_mapped = valid_cluster_map[c1], c2_mapped = valid_cluster_map[c2], c3_mapped = valid_cluster_map[c3];
+      if (c1_mapped !=  std::size_t(-1) && c2_mapped !=  std::size_t(-1) && c3_mapped !=  std::size_t(-1))
       {
-        std::vector<int> polygon = {c1_mapped, c2_mapped, c3_mapped};
+        std::array<std::size_t,3> polygon = {c1_mapped, c2_mapped, c3_mapped};
         polygons.push_back(polygon);
       }
     }
   }
 
-  //dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/debug.ply");
-  //CGAL::IO::write_polygon_soup("/tmp/debug.off", points, polygons);
+static int kkk=-1;
+CGAL::IO::write_polygon_soup("/tmp/soup_"+std::to_string(++kkk)+".off", points, polygons);
+dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::to_string(kkk)+".ply");
 
-  orient_polygon_soup(points, polygons);
+  std::vector<std::unordered_map<std::size_t, std::size_t> > edge_map(points.size());
+  for (const std::array<std::size_t, 3> & p : polygons)
+  {
+    for (int i=0; i<3; ++i)
+    {
+      std::pair<std::size_t, std::size_t> edge = make_sorted_pair(p[i], p[(i+1)%3]);
+      edge_map[edge.first].emplace(edge.second,0).first->second+=1;
+    }
+  }
 
-  return std::make_pair(points, polygons);
+  std::vector<std::size_t> nm_clusters;
+  for (std::size_t i=0; i<points.size(); ++i)
+  {
+    for ( auto [j, size] : edge_map[i] )
+      if (size>2)
+      {
+        std::cout << "non-manifold edge : " << i << " " << j << "\n";
+        nm_clusters.push_back(i);
+        nm_clusters.push_back(j);
+      }
+  }
+
+
+  // detect isolated graph edges
+  for (Edge_descriptor ed : edges(pmesh))
+  {
+    int c1 = get(vertex_cluster_pmap, source(ed, pmesh));
+    int c2 = get(vertex_cluster_pmap, target(ed, pmesh));
+    if (c1==-1 || c2 ==-1) throw std::runtime_error("non assigned vertex");
+
+    if (c1==c2) continue;
+    if (c2<c1) std::swap(c1, c2);
+
+    if (edge_map[c1].emplace(c2,0).second)
+    {
+      std::cout << "isolated edge " << c1 << " " << c2 << "\n";
+      std::cout << "   " << kkk << " " <<  points[c1] << " " << points[c2] << "\n";
+      nm_clusters.push_back(c1);
+      nm_clusters.push_back(c2);
+    }
+  }
+
+  std::sort(nm_clusters.begin(), nm_clusters.end());
+  nm_clusters.erase(std::unique(nm_clusters.begin(), nm_clusters.end()), nm_clusters.end());
+
+  // detect non-manifold vertices
+  std::vector< std::vector< std::pair<std::size_t, std::size_t> > > link_edges(points.size());
+  for (const std::array<std::size_t, 3> & p : polygons)
+  {
+    for (int i=0; i<3; ++i)
+      //TODO: skip if in nm_clusters
+      link_edges[p[i]].emplace_back(p[(i+1)%3], p[(i+2)%3]);
+  }
+
+  using Graph =  boost::adjacency_list <boost::setS, // this avoids parallel edges
+                                        boost::vecS,
+                                        boost::undirectedS
+                                        /*  , Graph_vertex_descriptor,
+                                         Graph_edge_descriptor */>;
+  for (std::size_t i=0; i< points.size(); ++i)
+  {
+    if (std::binary_search(nm_clusters.begin(), nm_clusters.end(), i)) continue;
+    std::vector<Graph::vertex_descriptor> descriptors(points.size(), Graph::null_vertex());
+
+
+    Graph graph;
+    for (const auto& p : link_edges[i])
+    {
+      if (descriptors[p.first] == Graph::null_vertex()) descriptors[p.first] = add_vertex(graph);
+      if (descriptors[p.second] == Graph::null_vertex()) descriptors[p.second] = add_vertex(graph);
+      add_edge(descriptors[p.first], descriptors[p.second], graph);
+    }
+
+    std::map<typename Graph::vertex_descriptor, int> the_map;
+
+    if (boost::connected_components(graph, boost::make_assoc_property_map(the_map)) > 1)
+    {
+      std::cout << "non-manifold vertex " << i << "\n";
+      nm_clusters.push_back(i);
+    }
+  }
+
+  if (nm_clusters.empty())
+  {
+    //dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/debug.ply");
+    //CGAL::IO::write_polygon_soup("/tmp/soup.off", points, polygons);
+
+    // orient_polygon_soup(points, polygons);
+
+    return std::make_pair(points, polygons);
+  }
+
+
+  std::vector<std::size_t> one_ring;
+  for (std::size_t nmi : nm_clusters)
+  {
+    for ( auto [n, s] : edge_map[nmi] )
+      one_ring.push_back(n);
+  }
+  //~ nm_clusters.insert(nm_clusters.end(), one_ring.begin(), one_ring.end());
+  //~ std::sort(nm_clusters.begin(), nm_clusters.end());
+  //~ nm_clusters.erase(std::unique(nm_clusters.begin(), nm_clusters.end()), nm_clusters.end());
+
+
+  std::set<std::size_t> nm_clusters_picked; // TODO: use cluster data instead?
+
+  for (Vertex_descriptor v : vertices(pmesh))
+  {
+    int c = get(vertex_cluster_pmap, v);
+    if (std::binary_search(nm_clusters.begin(), nm_clusters.end(), c))
+    {
+      if (!nm_clusters_picked.insert(c).second) continue;
+
+      if (clusters[c].nb_vertices==1) continue;
+
+
+      std::cout << "putting " << v << " from " << c << " to " << clusters.size() <<  "(" << clusters[c].nb_vertices << ")" << "\n";
+      put(vertex_cluster_pmap, v, clusters.size());
+      if (get(vertex_cluster_pmap, v) !=  clusters.size()) throw std::runtime_error("BOOM");
+      clusters.emplace_back();
+    }
+
+    if (nm_clusters_picked.size()==nm_clusters.size()) break;
+  }
+
+  //~ if (kkk==0)
+  frozen_clusters = std::vector<bool>(nb_clusters, true);
+  for (std::size_t nmi : nm_clusters)
+    frozen_clusters[nmi]=false;
+  for (std::size_t nmi : one_ring)
+    frozen_clusters[nmi]=false;
+
+  nb_clusters=clusters.size();
+  frozen_clusters.resize(nb_clusters, false);
+  nb_loops=0;
+  qem_energy_minimization=false;
+
+  } while(true);
 }
 
 
