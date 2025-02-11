@@ -1,5 +1,7 @@
 #define  PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/snap_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
@@ -13,6 +15,7 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Cartesian<double> Cartesian;
 typedef Kernel::Point_3                                     Point;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -40,7 +43,12 @@ int main(int argc, char** argv)
   PMP::snap_polygon_soup(input_points, input_triangles, CGAL::parameters::erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
   t.stop();
   std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
-  CGAL::IO::write_polygon_soup("rounded_soup.off", input_points, input_triangles, CGAL::parameters::stream_precision(17));
+  
+  std::vector<Cartesian::Point_3> output_points;
+  for(auto &p: input_points)
+    output_points.emplace_back(CGAL::to_double(p.x()),CGAL::to_double(p.y()),CGAL::to_double(p.z()));
+  CGAL::IO::write_polygon_soup("rounded_soup.off", output_points, input_triangles, CGAL::parameters::stream_precision(17));
+  // CGAL::IO::write_polygon_soup("rounded_soup.off", input_points, input_triangles, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

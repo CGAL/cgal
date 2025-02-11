@@ -12,16 +12,57 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+
+#include <CGAL/Fraction_traits.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Gmpq.h>
 
 namespace CGAL
 {
 
 namespace Polygon_mesh_processing
 {
+
+
+namespace internal
+{
+
+template <class NT> double ceil(Lazy_exact_nt< NT > x);
+template <typename NT> double ceil(NT x);
+
+template <class NT>
+double ceil(Lazy_exact_nt< NT > x){
+  double ceil_left=std::ceil(to_interval(x).first);
+  if(ceil_left==std::ceil(to_interval(x).second))
+    return ceil_left;
+  x.exact();
+  ceil_left=std::ceil(to_interval(x).first);
+  if(ceil_left==std::ceil(to_interval(x).second))
+    return ceil_left;
+  return ceil( x.exact());
+};
+
+template <typename NT>
+double ceil(NT x){
+  typedef Fraction_traits<NT> FT;
+  if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
+    typename FT::Numerator_type num, r, e;
+    typename FT::Denominator_type denom;
+    typename FT::Decompose()(x,num,denom);
+    div_mod(num, denom, r, e);
+    return to_double(r);
+  } else {
+    return std::ceil(to_double(x));
+  }
+};
+}
 
 /**
 * 
@@ -135,10 +176,9 @@ bool snap_polygon_soup(PointRange &points,
   std::cout << "Scaling: " << scale[0] << " " << scale[1] << " " << scale[2] << std::endl;
 #endif
 
-  // If EPECK, use exact TODO
   auto snap = [](typename Kernel::FT x, double scale)
   {
-    return std::ceil(CGAL::to_double(x * scale) + 0.5) / scale;
+    return internal::ceil((x * scale) + 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
   {
@@ -183,7 +223,7 @@ bool snap_polygon_soup(PointRange &points,
     //Get all the snap version of the points of the vertices of the intersecting triangles
     //Note: points will not be modified here, they will be modified in the next for loop
 
-#if 1
+#if 0
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
 
@@ -246,9 +286,9 @@ bool snap_polygon_soup(PointRange &points,
       if(v.size()>1){
         std::array<double, 3> a{0,0,0};
         for(auto i: v){
-          a[0]+=points[i].x();
-          a[1]+=points[i].y();
-          a[2]+=points[i].z();
+          a[0]+=to_double(points[i].x());
+          a[1]+=to_double(points[i].y());
+          a[2]+=to_double(points[i].z());
         }
         a[0]/=v.size();
         a[1]/=v.size();
