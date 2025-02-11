@@ -591,6 +591,14 @@ std::pair<
         Vertex_descriptor v1 = source(hi, pmesh);
         Vertex_descriptor v2 = target(hi, pmesh);
 
+        // add all halfedges around v1 except hi to the queue
+        auto push_vertex_edge_ring_to_queue = [&](Vertex_descriptor v)
+        {
+          for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
+            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
+            clusters_edges_new.push(hd);
+        };
+
         int c1 = get(vertex_cluster_pmap, v1);
         int c2 = get(vertex_cluster_pmap, v2);
         if ( ( clusters[ c1 ].last_modification_iteration < nb_iterations - 1 ) &&
@@ -609,11 +617,7 @@ std::pair<
           typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
           clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
           clusters[c2].last_modification_iteration = nb_iterations;
-
-          // add all halfedges around v1 except hi to the queue
-          for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
-            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
-            clusters_edges_new.push(hd);
+          push_vertex_edge_ring_to_queue(v1);
           ++nb_modifications;
         }
         else if (c2 == -1)
@@ -624,11 +628,7 @@ std::pair<
           typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
           clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
           clusters[c1].last_modification_iteration = nb_iterations;
-
-          // add all halfedges around v2 except hi to the queue
-          for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
-            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
-            clusters_edges_new.push(hd);
+          push_vertex_edge_ring_to_queue(v2);
           ++nb_modifications;
         }
         else if ( c1 != c2 )
@@ -720,10 +720,7 @@ std::pair<
             put(vertex_cluster_pmap, v2, c1);
             clusters[c1] = cluster1_v2_to_c1;
             clusters[c2] = cluster2_v2_to_c1;
-            // add all halfedges around v2 except hi to the queue
-            for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
-              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
-              clusters_edges_new.push(hd);
+            push_vertex_edge_ring_to_queue(v2);
             ++nb_modifications;
           }
           else if (e_v1_to_c2 < e_no_change) // > 2 as 1 vertex was added to c1
@@ -732,10 +729,7 @@ std::pair<
             put(vertex_cluster_pmap, v1, c2);
             clusters[c1] = cluster1_v1_to_c2;
             clusters[c2] = cluster2_v1_to_c2;
-            // add all halfedges around v1 except hi to the queue
-            for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
-              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
-              clusters_edges_new.push(hd);
+            push_vertex_edge_ring_to_queue(v1);
             ++nb_modifications;
           }
           else
