@@ -13,20 +13,6 @@ include(CGAL_TBB_support)
 
 include_directories(BEFORE "include")
 
-include(FetchContent)
-
-FetchContent_Declare(
-  tl-expected
-  DOWNLOAD_EXTRACT_TIMESTAMP NO
-  GIT_REPOSITORY https://github.com/TartanLlama/expected.git
-  GIT_TAG        292eff8bd8ee230a7df1d6a1c00c4ea0eb2f0362 # https://github.com/TartanLlama/expected/releases/tag/v1.1.0
-  FIND_PACKAGE_ARGS CONFIG
-)
-
-set(EXPECTED_ENABLE_TESTS FALSE CACHE BOOL "Disable tests for tl::expected")
-
-FetchContent_MakeAvailable(tl-expected)
-
 create_single_source_cgal_program("test_delaunay_3.cpp")
 create_single_source_cgal_program("test_delaunay_hierarchy_3.cpp")
 create_single_source_cgal_program("test_delaunay_hierarchy_3_old.cpp")
@@ -50,8 +36,8 @@ create_single_source_cgal_program("test_Triangulation_with_transform_iterator.cp
 create_single_source_cgal_program("test_Triangulation_with_zip_iterator.cpp")
 create_single_source_cgal_program("debug_segment_traverser_in_2D.cpp")
 
- # CDT_3: C++20 for structured bindings
-
+include(CGAL_setup_tl-excepted)
+# CDT_3: C++20 for structured bindings
 add_library(CDT_3_dependencies INTERFACE)
 target_compile_features(CDT_3_dependencies INTERFACE cxx_std_20)
 target_link_libraries(CDT_3_dependencies INTERFACE CGAL::CGAL CGAL::Data CGAL::Eigen3_support tl::expected)
