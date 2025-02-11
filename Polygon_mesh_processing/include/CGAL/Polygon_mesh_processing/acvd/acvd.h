@@ -51,6 +51,36 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
+template <class TriangleMesh, class ClusterMap>
+void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, std::string fname)
+{
+  std::vector<CGAL::IO::Color> palette {{ CGAL::IO::red(),
+                                          CGAL::IO::green(),
+                                          CGAL::IO::blue(),
+                                          CGAL::IO::purple(),
+                                          CGAL::IO::orange(),
+                                          CGAL::IO::deep_blue(),
+                                          CGAL::IO::yellow(),
+                                          CGAL::IO::black(),
+                                          CGAL::IO::violet(),
+                                          CGAL::IO::gray(),
+                                          CGAL::IO::white() }};
+
+  auto vcm = pmesh.template add_property_map<typename TriangleMesh::Vertex_index, CGAL::IO::Color>("f:color").first;
+
+  for (auto v : vertices(pmesh))
+    put(vcm, v, palette[ get(cluster_map, v) % palette.size() ]);
+
+
+
+  std::ofstream out(fname);
+  CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::use_binary_mode(false)
+                                                   .stream_precision(17)
+                                                   .vertex_color_map(vcm));
+
+}
+
+
 template <typename GT>
 void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3, Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
 {
@@ -536,7 +566,7 @@ std::pair<
   }
 
   // randomly initialize clusters
-  //TODO: std::lower_bound with vertex_weight_pmap
+  //TODO: std::lower_bound with vertex_weight_pmap for better sampling
   for (int ci = 0; ci < nb_clusters; ++ci)
   {
     int vi;
@@ -601,13 +631,7 @@ std::pair<
 
         int c1 = get(vertex_cluster_pmap, v1);
         int c2 = get(vertex_cluster_pmap, v2);
-        if ( ( clusters[ c1 ].last_modification_iteration < nb_iterations - 1 ) &&
-          ( clusters[ c2 ].last_modification_iteration < nb_iterations - 1 ) )
-          {
-            clusters_edges_new.push(hi);
-            continue;
-
-          }
+        if (c1==c2) continue;
 
         if (c1 == -1)
         {
@@ -631,15 +655,21 @@ std::pair<
           push_vertex_edge_ring_to_queue(v2);
           ++nb_modifications;
         }
-        else if ( c1 != c2 )
+        else
         {
+          if ( ( clusters[ c1 ].last_modification_iteration < nb_iterations - 1 ) &&
+               ( clusters[ c2 ].last_modification_iteration < nb_iterations - 1 ) )
+          {
+            clusters_edges_new.push(hi);
+            continue;
+          }
+
           // topological test to avoid creating disconnected clusters
           auto is_topologically_valid_merge = [&](Halfedge_descriptor hv, int cluster_id)
           {
-            return true;
             // TODO : result seems buggy with this ON
             std::stringstream ss;
-            ss << target(hv, pmesh) << " in cluster " << cluster_id <<  "(" << get(vertex_cluster_pmap,source(hv, pmesh)) << ")\n";
+            ss << pmesh.point(target(hv, pmesh)) << " on " << target(hv, pmesh) << " in cluster " << cluster_id <<  " (" << get(vertex_cluster_pmap,source(hv, pmesh)) << ")\n";
 
             CGAL_assertion(get(vertex_cluster_pmap,target(hv, pmesh))==cluster_id);
             Halfedge_descriptor h=hv;
@@ -660,8 +690,8 @@ std::pair<
                 {
                   in_cluster=true;
                   if (++nb_cc_cluster>1) {
-                    std::cout << "BOOM\n";
-                    std::cout << ss.str();
+//                    std::cout << "BOOM\n";
+//                    std::cout << ss.str();
                     return false;
                   }
                 }
@@ -697,7 +727,7 @@ std::pair<
           typename GT::FT e_v1_to_c2 = (std::numeric_limits< double >::max)();
           typename GT::FT e_v2_to_c1 = (std::numeric_limits< double >::max)();
 
-          if ( ( clusters[ c1 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(opposite(hi, pmesh), c1) ) )
+          if ( ( clusters[ c1 ].nb_vertices > 1 ) && ( !qem_energy_minimization || nb_loops<2 || is_topologically_valid_merge(opposite(hi, pmesh), c1) ) )
           {
             cluster1_v1_to_c2.remove_vertex(vpv1, v1_weight, v1_qem);
             cluster2_v1_to_c2.add_vertex(vpv1, v1_weight, v1_qem);
@@ -705,7 +735,7 @@ std::pair<
                          cluster2_v1_to_c2.compute_energy(qem_energy_minimization);
           }
 
-          if ( ( clusters[ c2 ].nb_vertices > 1 ) && ( !qem_energy_minimization || is_topologically_valid_merge(hi, c2) ) )
+          if ( ( clusters[ c2 ].nb_vertices > 1 ) && ( !qem_energy_minimization || nb_loops<2 || is_topologically_valid_merge(hi, c2) ) )
           {
             cluster1_v2_to_c1.add_vertex(vpv2, v2_weight, v2_qem);
             cluster2_v2_to_c1.remove_vertex(vpv2, v2_weight, v2_qem);
@@ -754,7 +784,7 @@ std::pair<
     // the goal is to delete clusters with multiple connected components and only keep the largest connected component of each cluster
     // For each cluster, do a BFS from a vertex in the cluster
 
-    std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
+    std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters);
     std::queue<Vertex_descriptor> vertex_queue;
 
     // loop over vertices to compute cluster components
@@ -765,8 +795,7 @@ std::pair<
       int c = get(vertex_cluster_pmap, vd);
       if (c != -1)
       {
-        cluster_components[c].push_back(std::vector<Vertex_descriptor>());
-        int component_i = cluster_components[c].size() - 1;
+        cluster_components[c].emplace_back();
 
         vertex_queue.push(vd);
         put(vertex_visited_pmap, vd, true);
@@ -774,7 +803,7 @@ std::pair<
         {
           Vertex_descriptor v = vertex_queue.front();
           vertex_queue.pop();
-          cluster_components[c][component_i].push_back(v);
+          cluster_components[c].back().push_back(v);
 
           for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
           {
@@ -831,12 +860,12 @@ std::pair<
       }
     }
 
-
+    // dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/clusters_loop_"+std::to_string(nb_loops)+".ply");
 
     std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
     ++nb_loops;
 
-  } while (nb_disconnected > 0 || nb_loops < 2 );
+  } while (nb_disconnected > 0 || nb_loops < 3 );
 
   /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
@@ -996,6 +1025,9 @@ std::pair<
       }
     }
   }
+
+  //dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/debug.ply");
+  //CGAL::IO::write_polygon_soup("/tmp/debug.off", points, polygons);
 
   orient_polygon_soup(points, polygons);
 
