@@ -67,7 +67,7 @@ protected:
   };
 
   using Constraint_hierarchy =
-      Polyline_constraint_hierarchy_2<Vertex_handle, Compare_vertex_handle, const Point&>;
+      Polyline_constraint_hierarchy_2<Vertex_handle, Compare_vertex_handle, Point>;
 public:
   using Constraint_id = typename Constraint_hierarchy::Constraint_id;
 
@@ -114,10 +114,9 @@ protected:
               }
             }
             auto [contexts_begin, contexts_end] =
-              self->constraint_hierarchy.contexts_range(v1, v2);
+              self->constraint_hierarchy.contexts(v1, v2);
             if(contexts_begin != contexts_end) {
-              self->add_to_subconstraints_to_conform(v1, v2,
-                                                    contexts_begin->id());
+              self->add_to_subconstraints_to_conform(v1, v2, contexts_begin->id());
             }
           }
     }
@@ -285,7 +284,7 @@ protected:
     if(lt == T_3::EDGE) {
       v1 = c->vertex(li);
       v2 = c->vertex(lj);
-      if(constraint_hierarchy.is_subconstrained_edge(v1, v2)) {
+      if(constraint_hierarchy.is_subconstraint(v1, v2)) {
         split_constrained_edge = true;
       }
     }
@@ -436,11 +435,10 @@ public:
   using T_3::is_edge;
 
   bool is_conforming() const {
-    return std::all_of(constraint_hierarchy.sc_begin(),
-                       constraint_hierarchy.sc_end(),
+    return std::all_of(constraint_hierarchy.subconstraints_begin(),
+                       constraint_hierarchy.subconstraints_end(),
                        [this](const auto &sc) {
-                         const auto va = sc.first.first;
-                         const auto vb = sc.first.second;
+                         const auto [va, vb] = sc;
                          const auto is_edge = this->is_edge(va, vb);
 #if CGAL_DEBUG_CDT_3 & 128 && CGAL_CAN_USE_CXX20_FORMAT
                          std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
@@ -528,11 +526,10 @@ public:
   bool write_missing_segments_file(std::ostream &out) {
     bool any_missing_segment = false;
     std::for_each(
-        constraint_hierarchy.sc_begin(), constraint_hierarchy.sc_end(),
+        constraint_hierarchy.subconstraints_begin(), constraint_hierarchy.subconstraints_end(),
         [this, &out, &any_missing_segment](const auto &sc) {
-          if (!this->is_edge(sc.first.first, sc.first.second)) {
-            const auto v0 = sc.first.first;
-            const auto v1 = sc.first.second;
+          const auto [v0, v1] = sc;
+          if (!this->is_edge(v0, v1)) {
             out << "2 " << this->tr().point(v0) << " " << this->tr().point(v1)
                 << '\n';
             any_missing_segment = true;
@@ -543,10 +540,9 @@ public:
 
   void write_all_segments_file(std::ostream &out) {
     std::for_each(
-        constraint_hierarchy.sc_begin(), constraint_hierarchy.sc_end(),
+        constraint_hierarchy.subconstraints_begin(), constraint_hierarchy.subconstraints_end(),
         [this, &out](const auto &sc) {
-          const auto v0 = sc.first.first;
-          const auto v1 = sc.first.second;
+          const auto [v0, v1] = sc;
           out << "2 " << this->tr().point(v0) << " " << this->tr().point(v1) << '\n';
         });
   }
@@ -582,7 +578,7 @@ protected:
       const auto [subconstraint, constraint_id] = subconstraints_to_conform.top();
       subconstraints_to_conform.pop();
       const auto [va, vb] = subconstraint;
-      if(!constraint_hierarchy.is_subconstrained_edge(va, vb)) {
+      if(!constraint_hierarchy.is_subconstraint(va, vb)) {
         continue;
       }
 #if CGAL_DEBUG_CDT_3 & 32
@@ -663,8 +659,8 @@ protected:
   }
 
   auto constraint_extremities(Constraint_id c_id) const {
-      CGAL_assertion(std::find(this->constraint_hierarchy.c_begin(),
-                               this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
+      CGAL_assertion(std::find(this->constraint_hierarchy.constraints_begin(),
+                               this->constraint_hierarchy.constraints_end(), c_id) != this->constraint_hierarchy.constraints_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
 #if CGAL_DEBUG_CDT_3 & 8
@@ -696,7 +692,7 @@ protected:
       boost::container::small_vector<Vertex_handle, 64> adj_vertices;
       this->finite_adjacent_vertices(va, std::back_inserter(adj_vertices));
       for(auto other_v: adj_vertices) {
-        for(auto context: this->constraint_hierarchy.contexts_range(va, other_v)) {
+        for(auto context: this->constraint_hierarchy.contexts(va, other_v)) {
           const Constraint_id c_id = context.id();
           if(constraint_id_goes_to_vb(c_id)) return c_id;
         }

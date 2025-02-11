@@ -20,11 +20,11 @@ namespace CGAL {
 ///
 /// This class is a base class that can be used to add a time stamp to any class.
 /// \cgalModels{BaseWithTimeStamp}
-template <typename Base>
-class Base_with_time_stamp : public Base {
+template <typename B_w_ts_base>
+class Base_with_time_stamp : public B_w_ts_base {
   std::size_t time_stamp_ = std::size_t(-2);
 public:
-  using Base::Base;
+  using B_w_ts_base::B_w_ts_base;
 
   using Has_timestamp = CGAL::Tag_true;
 
@@ -37,7 +37,7 @@ public:
 
   template < class TDS >
   struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS>::Other Base2;
+    typedef typename B_w_ts_base::template Rebind_TDS<TDS>::Other Base2;
     typedef Base_with_time_stamp<Base2> Other;
   };
 };

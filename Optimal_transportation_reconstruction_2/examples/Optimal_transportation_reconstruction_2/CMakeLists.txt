@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Optimal_transportation_reconstruction_2_Examples)
 
 find_package(CGAL REQUIRED)

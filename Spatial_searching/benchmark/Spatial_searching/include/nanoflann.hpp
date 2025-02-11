@@ -1002,7 +1002,7 @@ namespace nanoflann
                         if(node->child1 == NULL && node->child2 == NULL)
                                 return 1;
                         else{
-                                return std::max(depth(node->child1)+1,depth(node->child2)+1);
+                                return (std::max)(depth(node->child1)+1,depth(node->child2)+1);
                         }
                 }
 
@@ -1130,8 +1130,8 @@ namespace nanoflann
                                 node->sub.divhigh = right_bbox[cutfeat].low;
 
                                 for (int i=0; i<(DIM>0 ? DIM : dim); ++i) {
-                                        bbox[i].low = std::min(left_bbox[i].low, right_bbox[i].low);
-                                        bbox[i].high = std::max(left_bbox[i].high, right_bbox[i].high);
+                                        bbox[i].low = (std::min)(left_bbox[i].low, right_bbox[i].low);
+                                        bbox[i].high = (std::max)(left_bbox[i].high, right_bbox[i].high);
                                 }
                         }
 

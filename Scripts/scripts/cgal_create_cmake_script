@@ -31,7 +31,7 @@ create_cmake_script()
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project( ${PROJECT}${TYPE} )
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
@@ -49,7 +49,7 @@ EOF
       echo "include_directories (BEFORE \"${SOURCE_DIR}include\")"
       echo
     fi
-    
+
     for file in `ls "$SOURCE_DIR"*.cc "$SOURCE_DIR"*.cp "$SOURCE_DIR"*.cxx "$SOURCE_DIR"*.cpp "$SOURCE_DIR"*.CPP "$SOURCE_DIR"*.c++ "$SOURCE_DIR"*.C 2>/dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .cc`
@@ -90,18 +90,21 @@ while [ $1 ]; do
         -h|-help|--h|--help)
             usage; exit
         ;;
-        example) 
+        example)
             if [ -z "$TYPE" ]; then TYPE=_Examples; shift; else usage; exit 1; fi
         ;;
-        demo) 
+        demo)
             if [ -z "$TYPE" ]; then TYPE=_Demo; shift; else usage; exit 1; fi
         ;;
-        test) 
+        test)
             if [ -z "$TYPE" ]; then TYPE=; shift; else usage; exit 1; fi
         ;;
+        benchmark)
+            if [ -z "$TYPE" ]; then TYPE=_Benchmarks; shift; else usage; exit 1; fi
+        ;;
         --source_dir)
-            if [ -d "$2" ]; then 
-                SOURCE_DIR=$2; 
+            if [ -d "$2" ]; then
+                SOURCE_DIR=$2;
                 shift;
                 shift;
             else
@@ -112,7 +115,7 @@ while [ $1 ]; do
                     echo "Error: \"$2\" is not a directory!"
                     echo
                 fi
-                usage; exit 1; 
+                usage; exit 1;
             fi
         ;;
         *) 

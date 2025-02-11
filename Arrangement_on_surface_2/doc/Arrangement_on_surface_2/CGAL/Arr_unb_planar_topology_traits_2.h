@@ -49,10 +49,10 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_unb_planar_topology_traits_2();
 
-  /*! Constructor from a geometry-traits object.
+  /*! constructs from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_unb_planar_topology_traits_2(const GeometryTraits_2* traits);
@@ -62,16 +62,16 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the DCEL (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the DCEL (non-const version). */
   Dcel& dcel();
 
-  /*! Obtain the unbounded face (const version). */
+  /*! obtains the unbounded face (const version). */
   const Face* unbounded_face() const;
 
-  /*! Obtain the unbounded face (non-const version). */
+  /*! obtains the unbounded face (non-const version). */
   Face* unbounded_face();
 
   /// @}

@@ -3,10 +3,30 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+### General Changes
+- The minimal supported version of Boost is now 1.74.0.
+
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
+### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
+-   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
+
+-   Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generates initial points,
+  - `initial_points` : enables the user to specify a `Range` of initial points.
+
+
+### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
+
+-  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
+   by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+   The old range type is now returned by a new function named `subconstraints_and_contexts()`.
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 

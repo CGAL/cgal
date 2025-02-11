@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
@@ -67,6 +67,7 @@ create_single_source_cgal_program("test_pmp_np_function.cpp")
 create_single_source_cgal_program("test_degenerate_pmp_clip_split_corefine.cpp")
 create_single_source_cgal_program("test_isolevel_refinement.cpp")
 create_single_source_cgal_program("test_corefinement_nm_bo.cpp")
+create_single_source_cgal_program("test_corefinement_cavities.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)

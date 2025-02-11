@@ -62,24 +62,24 @@ private:
   enum {MIN_REV_MAP_SIZE = 32};
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_vertex_index_map() :
     Base(),
     n_vertices(0),
     rev_map(MIN_REV_MAP_SIZE)
   {}
 
-  /*! Constructor with an associated arrangement. */
+  /*! constructs with an associated arrangement. */
   Arr_vertex_index_map(const Base_aos& arr) :
     Base(const_cast<Base_aos&>(arr))
   { _init(); }
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arr_vertex_index_map(const Self& other) :
     Base(const_cast<Base_aos&>(*(other.arrangement())))
   { _init(); }
 
-  /*! Assignment operator. */
+  /*! assigns. */
   Self& operator= (const Self& other) {
     if (this == &other) return (*this);
 
@@ -89,13 +89,13 @@ public:
     return (*this);
   }
 
-  /*! Get the index of a given vertex.
+  /*! obtains the index of a given vertex.
    * \param v A handle to the vertex.
    * \pre v is a valid vertex in the arrangement.
    */
   unsigned int operator[](Vertex_handle v) const { return index_map[v]; }
 
-  /*! Get the vertex given its index.
+  /*! obtains the vertex given its index.
    * \param i The index of the vertex.
    * \pre i is less than the number of vertices in the graph.
    */
@@ -107,27 +107,27 @@ public:
   /// \name Notification functions, to keep the mapping up-to-date.
   //@{
 
-  /*! Update the mapping after the arrangement has been assigned with another
+  /*! updates the mapping after the arrangement has been assigned with another
    * arrangement.
    */
   virtual void after_assign() override { _init(); }
 
-  /*! Update the mapping after the arrangement is cleared.
+  /*! updates the mapping after the arrangement is cleared.
    */
   virtual void after_clear() override { _init(); }
 
-  /*! Update the mapping after attaching to a new arrangement.
+  /*! updates the mapping after attaching to a new arrangement.
    */
   virtual void after_attach() override { _init(); }
 
-  /*! Update the mapping after detaching the arrangement.
+  /*! updates the mapping after detaching the arrangement.
    */
   virtual void after_detach() override {
     n_vertices = 0;
     index_map.clear();
   }
 
-  /*! Update the mapping after the creation of a new vertex.
+  /*! updates the mapping after the creation of a new vertex.
    * \param v A handle to the created vertex.
    */
   virtual void after_create_vertex(Vertex_handle v) override {
@@ -142,7 +142,7 @@ public:
     rev_map[n_vertices - 1] = v;
   }
 
-  /*! Update the mapping after the creation of a new boundary vertex.
+  /*! updates the mapping after the creation of a new boundary vertex.
    * \param v A handle to the created vertex.
    */
   virtual void after_create_boundary_vertex(Vertex_handle v) override {
@@ -158,7 +158,7 @@ public:
     rev_map[n_vertices - 1] = v;
   }
 
-  /*! Update the mapping before the removal of a vertex.
+  /*! updates the mapping before the removal of a vertex.
    * \param v A handle to the vertex to be removed.
    */
   virtual void before_remove_vertex(Vertex_handle v) override {
@@ -189,7 +189,7 @@ public:
   //@}
 
 private:
-  /*! Initialize the map for the given arrangement. */
+  /*! initializes the map for the given arrangement. */
   void _init() {
     // Get the number of vertices and allocate the reverse map accordingly.
     n_vertices =
@@ -215,7 +215,7 @@ private:
   }
 };
 
-/*! Get the index property-map function. Provided so that boost is able to
+/*! obtains the index property-map function. Provided so that boost is able to
  * access the Arr_vertex_index_map above.
  * \param index_map The index map.
  * \param v A vertex handle.
@@ -226,7 +226,7 @@ unsigned int get(const CGAL::Arr_vertex_index_map<Arrangement>& index_map,
                  typename Arrangement::Vertex_handle v)
 { return index_map[v]; }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

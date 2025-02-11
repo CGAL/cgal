@@ -51,10 +51,17 @@ protected:
   // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
   std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark{};
+  struct C_id {
+    void* ptr = nullptr;
+    std::size_t id = 0;
+    friend bool operator==(const C_id& lhs, const C_id& rhs) {
+      return lhs.ptr == rhs.ptr && lhs.id == rhs.id;
+    }
+  };
   union U {
     struct On_edge {
       int nb_of_incident_constraints = 0;
-      void* c_id = nullptr;
+      C_id c_id{};
     } on_edge;
     struct On_face{
       CDT_3_signed_index face_index = 0;
@@ -78,7 +85,8 @@ public:
   template <typename T>
   void set_on_constraint(T constraint_id) {
     ++u.on_edge.nb_of_incident_constraints;
-    u.on_edge.c_id = constraint_id.vl_ptr();
+    u.on_edge.c_id.ptr = constraint_id.vl_with_info_pointer();
+    u.on_edge.c_id.id = static_cast<std::size_t>(constraint_id.index());
   }
 
   int number_of_incident_constraints() const {
@@ -110,8 +118,11 @@ public:
   auto constraint_id(const Triangulation&) const {
     CGAL_assertion(m_vertex_type != CDT_3_vertex_type::STEINER_IN_FACE);
     using C_id = typename Triangulation::Constraint_id;
-    using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
-    return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
+    using size_type = typename Triangulation::size_type;
+    using Vertex_list_w_info_ptr = decltype(std::declval<C_id>().vl_with_info_pointer());
+    auto ptr = static_cast<Vertex_list_w_info_ptr>(u.on_edge.c_id.ptr);
+    auto id = static_cast<size_type>(u.on_edge.c_id.id);
+    return C_id{ptr, id};
   }
 
   void set_Steiner_vertex_in_face(CDT_3_signed_index face_index) {
