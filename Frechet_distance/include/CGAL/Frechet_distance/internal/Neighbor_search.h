@@ -117,12 +117,16 @@ private:
         const Point_d p;
         const FT distance;
         const FT distance_sqr;
+        CGAL::Interval_nt<true> idistance;
 
     public:
         QueryItem(Polyline const& curve, FT distance)
             : p(to_kd_tree_point(curve)),
               distance(distance),
-              distance_sqr(distance * distance)
+              distance_sqr(distance * distance),
+              idistance(to_interval(distance)
+
+              )
         {
         }
 
@@ -145,7 +149,7 @@ private:
                 // AF: certainly
                 // AN: yes, here we need certainly!
                 CGAL::Interval_nt<true> ip = to_interval(*pb), iq = to_interval(*qb);
-                if (certainly(CGAL::abs(ip - iq) > distance)) {
+                if (certainly(CGAL::abs(ip - iq) > idistance)) {
                     return false;
                 }
             }
@@ -157,8 +161,8 @@ private:
             typename Point_d::Cartesian_const_iterator_d pb = p.cartesian_begin();
             for (int d = 0; d < D::value; ++d, ++pb) {
                 CGAL::Interval_nt<true> irmin = to_interval(rect.min_coord(d)), ip = to_interval(*pb), irmax = to_interval(rect.max_coord(d));
-                if (certainly(  irmin> ip + distance &&
-                                irmax + distance < ip)){
+                if (certainly(  irmin> ip + idistance &&
+                                irmax + idistance < ip)){
                     return false;
                 }
             }
