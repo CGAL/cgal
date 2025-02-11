@@ -62,6 +62,7 @@
 - `CGAL::Sphere_d<Kernel>`
 - `CGAL::Iso_box_d<Kernel>`
 - `CGAL::Aff_transformation_d<Kernel>`
+- `CGAL::Bbox_d<Dimension>`
 
 \cgalCRPSection{Global %Kernel Functions}
 - `CGAL::affinely_independent()`
