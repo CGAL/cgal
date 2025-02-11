@@ -207,8 +207,7 @@ static double testFrechetDistanceNearNeighborsDS()
                 readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset +
                 ".txt");
 
-                CGAL::Frechet_distance::Neighbor_search<TestCurve, TestTraits> ds;
-                ds.insert(curves);
+                CGAL::Frechet_distance::Neighbor_search<TestCurve, TestTraits> ds(curves);
 
                 for (auto const& query: queries) {
                         auto result = ds.get_close_curves(curves[query.id],
