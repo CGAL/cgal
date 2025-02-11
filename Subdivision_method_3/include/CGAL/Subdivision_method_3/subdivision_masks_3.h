@@ -395,7 +395,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
-\cgalModels `PTQMask_3`
+\cgalModels{PTQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
