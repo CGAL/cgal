@@ -785,6 +785,7 @@ is returned.
 */
 Vertex_handle move(Vertex_handle v, const Point & p);
 
+/// @}
 
 /// \name Specialized Modifiers
 /// The following member functions offer more specialized versions of

@@ -92,10 +92,10 @@ public:
   /// \name Construction.
   //@{
 
-  /*! Construct default. */
+  /*! constructs default. */
   Arr_curve_data_traits_2() {}
 
-  /*! Construct from a base-traits class. */
+  /*! constructs from a base-traits class. */
   Arr_curve_data_traits_2(const Base_traits_2& traits) : Base_traits_2(traits) {}
   //@}
 
@@ -113,10 +113,10 @@ public:
     const Base_traits_2& m_base;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Make_x_monotone_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+    /*! subdivides a given curve into x-monotone subcurves and insert them into
      * a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its value type is a variant
@@ -152,7 +152,7 @@ public:
     }
   };
 
-  /*! Obtain a Make_x_monotone_2 functor object. */
+  /*! obtains a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(*this); }
 
@@ -161,10 +161,10 @@ public:
     const Base_traits_2& m_base;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Split_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Split a given x-monotone curve at a given point into two sub-curves.
+    /*! splits a given x-monotone curve at a given point into two sub-curves.
      * \param cv[in] The curve to split
      * \param p[in] The split point.
      * \param c1[out] The left resulting subcurve (p is its right endpoint).
@@ -183,7 +183,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 functor object. */
+  /*! obtains a Split_2 functor object. */
   Split_2 split_2_object() const { return Split_2(*this); }
 
   class Intersect_2 {
@@ -191,10 +191,10 @@ public:
     const Base_traits_2& m_base;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Intersect_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Find the intersections of the two given curves and insert them to the
+    /*! finds the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
      * \param cv1 The first curve.
@@ -240,7 +240,7 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an `Intersect_2` functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
@@ -288,10 +288,10 @@ public:
     }
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Are_mergeable_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given x-monotone curves.
      * \param cv1[in] The first curve.
      * \param cv2[in] The second curve.
      * \return (true) if the two curves are mergeable; (false) otherwise.
@@ -301,7 +301,7 @@ public:
     { return are_mergeable<Base_traits_2>(cv1, cv2, m_base, 0); }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object. */
+  /*! obtains an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
@@ -312,7 +312,7 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Generate a helper class template to find out whether the base geometry
+    /*! generates a helper class template to find out whether the base geometry
      * traits has a nested type named Merge_2.
      */
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_merge_2, Are_mergeable_2, false)
@@ -348,10 +348,10 @@ public:
     { CGAL_error_msg("Merging curves is not supported."); }
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Merge_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Merge two given x-monotone curves into a single curve (segment).
+    /*! merges two given x-monotone curves into a single curve (segment).
      * \param[in] cv1 The first curve.
      * \param[in] cv2 The second curve.
      * \param[out] c The merged curve.
@@ -363,7 +363,7 @@ public:
     { merge<Base_traits_2>(cv1, cv2, c); }
   };
 
-  /*! Obtain a Merge_2 functor object. */
+  /*! obtains a `Merge_2` functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
 
   //@}
@@ -373,10 +373,10 @@ public:
     const Base_traits_2& m_base;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Construct_x_monotone_curve_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Obtain an x-monotone curve connecting the two given endpoints.
+    /*! obtains an x-monotone curve connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
@@ -390,7 +390,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
+  /*! obtains a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
 
@@ -398,7 +398,7 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Generate a helper class template to find out whether the base geometry
+    /*! generates a helper class template to find out whether the base geometry
      * traits has a nested type named Construct_opposite_2.
      */
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_construct_opposite_2,
@@ -431,10 +431,10 @@ public:
     }
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Construct_opposite_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Construct an opposite x-monotone (with swapped source and target).
+    /*! constructs an opposite x-monotone (with swapped source and target).
      * \param cv The curve.
      * \return The opposite curve.
      */
@@ -442,7 +442,7 @@ public:
     { return construct_opposite<Base_traits_2>(cv); }
   };
 
-  /*! Obtain a Construct_opposite_2 functor object. */
+  /*! obtains a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(*this); }
   //@}

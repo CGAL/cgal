@@ -973,7 +973,7 @@ private:
     typedef typename  Vertex_map_iterator_first::reference  pointer;
     typedef typename iterator_adaptor_::reference           reference;
 
-    Vertex_map_iterator_first_dereference() : Self::iterator_adaptor_() { }
+    Vertex_map_iterator_first_dereference() = default;
 
     template < typename Iterator >
     Vertex_map_iterator_first_dereference(Iterator i)

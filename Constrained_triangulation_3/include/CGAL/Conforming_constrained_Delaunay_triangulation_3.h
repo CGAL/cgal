@@ -77,6 +77,7 @@ auto segment_soup_to_polylines_point_type_aux(const Range_of_segments& segment_s
   for(auto [a, b]: segment_soup) {
     return a;
   }
+  CGAL_unreachable();
 }
 
 template <typename Range_of_segments>
@@ -776,7 +777,6 @@ public:
 
     auto point_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map),
                                                    CGAL::Identity_property_map<PointRange_value_type>{});
-    auto geom_traits = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{});
     auto face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
                                                        boost::identity_property_map{});
     using Vertex_handle = typename Triangulation::Vertex_handle;
@@ -1921,6 +1921,12 @@ private:
 
     auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
            facets_of_upper_cavity, facets_of_lower_cavity] = outputs;
+
+    // to avoid "warning: captured structured bindings are a C++20 extension [-Wc++20-extensions]""
+    auto& intersecting_edges_ = intersecting_edges;
+    auto& vertices_of_upper_cavity_ = vertices_of_upper_cavity;
+    auto& vertices_of_lower_cavity_ = vertices_of_lower_cavity;
+
     std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
     // marker for already visited elements
@@ -2113,6 +2119,7 @@ private:
       auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
                            [[maybe_unused]] int expected) {
         auto value_returned = [this](bool b) {
+          CGAL_USE(this);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
           if(this->debug_regions()) {
             std::cerr << cdt_3_format("   return {}\n", b);
@@ -2143,7 +2150,7 @@ private:
           if(v0v1_intersects_region < 0) {
             std::swap(index_v0, index_v1);
           }
-          intersecting_edges.emplace_back(cell, index_v0, index_v1);
+          intersecting_edges_.emplace_back(cell, index_v0, index_v1);
           cached_value_it->second = true;
           return value_returned(true);
         } else {
@@ -2395,10 +2402,10 @@ private:
                   std::swap(v1, v2);
                 } // here v1 is marked and v2 is not
                 if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY_ABOVE)) {
-                  vertices_of_upper_cavity.push_back(v2);
+                  vertices_of_upper_cavity_.push_back(v2);
                   v2->ccdt_3_data().set_mark(Vertex_marker::CAVITY_ABOVE);
                 } else if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY_BELOW)) {
-                  vertices_of_lower_cavity.push_back(v2);
+                  vertices_of_lower_cavity_.push_back(v2);
                   v2->ccdt_3_data().set_mark(Vertex_marker::CAVITY_BELOW);
                 }
               }
@@ -2743,6 +2750,7 @@ private:
                                  map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
                                  interior_constrained_faces_upper, cells_of_upper_cavity] =
         triangulate_cavity(original_intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
+    const auto& upper_cavity_triangulation_ = upper_cavity_triangulation;
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
     if(this->debug_copy_triangulation_into_hole()) {
@@ -2752,6 +2760,7 @@ private:
                                  map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
                                  interior_constrained_faces_lower, cells_of_lower_cavity] =
         triangulate_cavity(original_intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
+    const auto& lower_cavity_triangulation_ = lower_cavity_triangulation;
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
 
@@ -2764,8 +2773,8 @@ private:
         return this->vertex_triple_is_facet_of_other_triangulation(*this, v0, v1, v2, tr);
       };
 
-      const bool fail_upper = !is_fh_facet_of(upper_cavity_triangulation);
-      const bool fail_lower = !is_fh_facet_of(lower_cavity_triangulation);
+      const bool fail_upper = !is_fh_facet_of(upper_cavity_triangulation_);
+      const bool fail_lower = !is_fh_facet_of(lower_cavity_triangulation_);
       if(fail_upper || fail_lower) {
         fh->info().is_in_region = 1;
         auto display_face = [&]() {
@@ -2843,6 +2852,7 @@ private:
     auto add_to_outer_map = [this, &outer_map](typename T_3::Vertex_triple vt, Facet f,
                                                [[maybe_unused]] std::string_view extra = {}) {
       outer_map[vt] = f;
+      CGAL_USE(this);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_copy_triangulation_into_hole()) {
         CGAL_assertion(vt[0] != vt[1]);
@@ -3335,7 +3345,7 @@ private:
                               IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
                               IO::oformat(vb_3d, with_point_and_info));
     }
-    auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
+    auto&& contexts = this->constraint_hierarchy.contexts(va_3d, vb_3d);
 #if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
     if(std::next(contexts.begin()) != contexts.end()) {
       std::cerr << "ERROR: Edge is constrained by more than one constraint\n";

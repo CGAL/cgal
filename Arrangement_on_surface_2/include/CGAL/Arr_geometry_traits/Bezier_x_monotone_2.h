@@ -130,7 +130,7 @@ private:
     Rational t_min;
     Rational t_max;
 
-    /*! Get the rational bounding box of the subcurve. */
+    /*! obtains the rational bounding box of the subcurve. */
     void bbox(Rational& x_min, Rational& y_min,
               Rational& x_max, Rational& y_max) const
     {
@@ -464,7 +464,7 @@ private:
                                     const Point_2& p,
                                     Bezier_cache& cache) const;
 
-  /*! Get the range of t-value over which the subcurve is defined.
+  /*! obtains the range of t-value over which the subcurve is defined.
    * \param cache Caches the vertical tangency points and intersection points.
    * \return A pair comprised of the t-value for the source point and the
    *         t-value for the target point.
@@ -2585,6 +2585,6 @@ _exact_vertical_position(const Point_2& p,
   return EQUAL;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

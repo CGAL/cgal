@@ -1,5 +1,5 @@
 
-#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkNIFTIImageReader.h>
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/squircle.nii");
 
-  vtkImageData* vtk_image = nullptr;
+  vtkSmartPointer<vtkImageData> vtk_image = nullptr;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
   double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     if (path.has_extension()){
       fs::path stem = path.stem();
       if ((path.extension() == ".nii") || (stem.has_extension() && (stem.extension() == ".nii") && (path.extension() == ".gz"))) {
-        vtkNIFTIImageReader* reader = vtkNIFTIImageReader::New();
+        auto reader = vtkSmartPointer<vtkNIFTIImageReader>::New();
         reader->SetFileName(fname.c_str());
         reader->Update();
         vtk_image = reader->GetOutput();
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     }
   }
   else if (fs::is_directory(path)) {
-    vtkDICOMImageReader* dicom_reader = vtkDICOMImageReader::New();
+    auto dicom_reader = vtkSmartPointer<vtkDICOMImageReader>::New();
     dicom_reader->SetDirectoryName(argv[1]);
 
     vtkDemandDrivenPipeline* executive =
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
       }
 
-    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+    auto smoother = vtkSmartPointer<vtkImageGaussianSmooth>::New();
     smoother->SetStandardDeviations(1., 1., 1.);
     smoother->SetInputConnection(dicom_reader->GetOutputPort());
     smoother->Update();

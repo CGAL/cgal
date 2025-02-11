@@ -6,7 +6,7 @@
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh.h>
-
+#include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>

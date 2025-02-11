@@ -49,48 +49,48 @@ h2 {
 }
 
 .icon-namespace {
-  font-family: Arial, Helvetica;
-  font-weight: bold;
-  font-size: 12px;
-  height: 14px;
-  width: 16px;
-  display: inline-block;
-  background-color: #FF0000;
-  color: white;
-  text-align: center;
-  border-radius: 4px;
-  margin-left: 2px;
-  margin-right: 2px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 22px;
+    width: 16px;
+    display: inline-block;
+    background-color: #FF0000;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .icon-class {
-  font-family: Arial, Helvetica;
-  font-weight: bold;
-  font-size: 12px;
-  height: 14px;
-  width: 16px;
-  display: inline-block;
-  background-color: #0000FF;
-  color: white;
-  text-align: center;
-  border-radius: 4px;
-  margin-left: 2px;
-  margin-right: 2px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 22px;
+    width: 16px;
+    display: inline-block;
+    background-color: #0000FF;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .icon-concept {
-  font-family: Arial, Helvetica;
-  font-weight: bold;
-  font-size: 12px;
-  height: 14px;
-  width: 16px;
-  display: inline-block;
-  background-color: #67489A;
-  color: white;
-  text-align: center;
-  border-radius: 4px;
-  margin-left: 2px;
-  margin-right: 2px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 22px;
+    width: 16px;
+    display: inline-block;
+    background-color: #67489A;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 h1.groupheader {

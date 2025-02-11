@@ -125,7 +125,7 @@ public:
   /// @{
 #ifndef DOXYGEN_RUNNING
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
-  static inline constexpr bool supports_neighbor_search = true;// Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
+  static inline constexpr bool supports_neighbor_search = Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
 #else
   static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitsWithData` and `false` otherwise.
   static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
@@ -385,7 +385,8 @@ public:
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum number of items a node is allowed to contain.
    */
-  void refine(size_t max_depth = 10, size_t bucket_size = 20) {
+  template<typename Orthtree = Self>
+  auto refine(size_t max_depth = 10, size_t bucket_size = 20) -> std::enable_if_t<Orthtree::has_data, void> {
     refine(Orthtrees::Maximum_depth_and_maximum_contained_elements(max_depth, bucket_size));
   }
 
@@ -681,10 +682,10 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template<typename OutputIterator>
+  template<typename OutputIterator, typename Orthtree = Self>
   auto nearest_k_neighbors(const Point& query,
     std::size_t k,
-    OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    OutputIterator output) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
     CGAL_precondition(k > 0);
 
@@ -704,8 +705,8 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template<typename OutputIterator>
-  auto neighbors_within_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+  template<typename OutputIterator, typename Orthtree = Self>
+  auto neighbors_within_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     return nearest_k_neighbors_within_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
@@ -726,12 +727,12 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template <typename OutputIterator>
+  template <typename OutputIterator, typename Orthtree = Self>
   auto nearest_k_neighbors_within_radius(
     const Sphere& query,
     std::size_t k,
     OutputIterator output
-  ) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+  ) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     CGAL_precondition(k > 0);
     Sphere query_sphere = query;
 
@@ -1298,13 +1299,13 @@ private: // functions :
     return output;
   }
 
-  template <typename Result>
+  template <typename Result, typename Orthtree = Self>
   auto nearest_k_neighbors_recursive(
     Sphere& search_bounds,
     Node_index node,
     std::vector<Result>& results,
     std::size_t k,
-    FT epsilon = 0) const -> std::enable_if_t<supports_neighbor_search> {
+    FT epsilon = 0) const -> std::enable_if_t<Orthtree::supports_neighbor_search> {
 
     // Check whether the node has children
     if (is_leaf(node)) {

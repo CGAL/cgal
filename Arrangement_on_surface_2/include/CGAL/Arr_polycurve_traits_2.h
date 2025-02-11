@@ -111,10 +111,10 @@ private:
   using Self = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
 public:
-  /*! Default constructor */
+  /*! constructs default */
   Arr_polycurve_traits_2() : Base() {}
 
-  /*! Constructor with given subcurve traits
+  /*! constructs with given subcurve traits
    * \param seg_traits an already existing subcurve tarits which is passed will
    *        be used by the class.
    */
@@ -141,7 +141,7 @@ public:
     }
   };
 
-  /*! Obtain a number_of_points_2 functor object. */
+  /*! obtains a `Number_of_points_2` functor object. */
   Number_of_points_2 number_of_points_2_object() const
   { return Number_of_points_2(); }
 
@@ -163,12 +163,12 @@ public:
     const Polycurve_traits_2& m_poly_traits;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Make_x_monotone_2(const Polycurve_traits_2& traits) :
       m_poly_traits(traits)
     {}
 
-    /*! Subdivide a given curve into x-monotone sub-curves and insert them into
+    /*! subdivides a given curve into x-monotone sub-curves and insert them into
      * a given output iterator.
      *
      * \pre if `cv` is not empty then it must be continuous and well-oriented.
@@ -470,7 +470,7 @@ public:
     { return operator_impl(cv, oi, All_sides_oblivious_category()); }
   };
 
-  /*! Obtain a Make_x_monotone_2 functor object. */
+  /*! obtains a `Make_x_monotone_2` functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(*this); }
 
@@ -483,7 +483,7 @@ public:
     using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Push_back_2(const Polycurve_traits_2& traits) : Base::Push_back_2(traits) {}
 
     // Normally, the moment the compiler finds a name, it stops looking. In
@@ -493,21 +493,21 @@ public:
     // code below.
     using Base::Push_back_2::operator();
 
-    // /*! Append a subcurve to an existing x-monotone polycurve at the back.
+    // /*! appends a subcurve to an existing x-monotone polycurve at the back.
     //  */
     // void operator()(X_monotone_curve_2& xcv,
     //                 const X_monotone_subcurve_2& seg)
     //   const
     // { Base::Push_back_2::operator()(xcv, seg); }
 
-    /* Append a subcurve to an existing polycurve at the back.
+    /* appends a subcurve to an existing polycurve at the back.
      * If the polycurve is empty, the subcurve will be its only subcurve.
      */
     void operator()(Curve_2& cv, const Subcurve_2& seg) const
     { cv.push_back(seg); }
   };
 
-  /*! Obtain a Push_back_2 functor object. */
+  /*! obtains a `Push_back_2` functor object. */
   Push_back_2 push_back_2_object() const { return Push_back_2(*this); }
 
   /* Functor to augment a polycurve by either adding a vertex or a subcurve
@@ -519,7 +519,7 @@ public:
     using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Push_front_2(const Polycurve_traits_2& traits) :
       Base::Push_front_2(traits)
     {}
@@ -531,19 +531,19 @@ public:
     // code below.
     using Base::Push_front_2::operator();
 
-    // /*! Append a subcurve to an existing x-monotone polycurve at the front.
+    // /*! appends a subcurve to an existing x-monotone polycurve at the front.
     //  */
     // void operator()(X_monotone_curve_2& xcv,
     //                 const X_monotone_subcurve_2& seg)
     //   const
     // { Base::Push_front_2::operator()(xcv, seg); }
 
-    /* Append a subcurve to an existing polycurve at the front. */
+    /* appends a subcurve to an existing polycurve at the front. */
     void operator()(Curve_2& cv, const Subcurve_2& seg) const
     { cv.push_front(seg); }
   };
 
-  /*! Obtain a Push_front_2 functor object. */
+  /*! obtains a `Push_front_2` functor object. */
   Push_front_2 push_front_2_object() const { return Push_front_2(*this); }
 
   class Split_2 {
@@ -554,11 +554,11 @@ public:
     const Polycurve_traits_2& m_poly_traits;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Split_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
-    /*! Split a given x-monotone curve at a given point into two sub-curves.
+    /*! splits a given x-monotone curve at a given point into two sub-curves.
      * \param cv The curve to split
      * \param p The split point.
      * \param c1 Output: The left resulting subcurve(p is its right endpoint).
@@ -659,7 +659,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 functor object. */
+  /*! obtains a `Split_2` functor object. */
   Split_2 split_2_object() const { return Split_2(*this); }
 
   class Intersect_2 {
@@ -670,10 +670,10 @@ public:
     const Polycurve_traits_2& m_poly_traits;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Intersect_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
-    /*! Find the intersections of the two given curves and insert them into the
+    /*! finds the intersections of the two given curves and insert them into the
      * given output iterator. As two subcurves may itersect only once, only a
      * single intersection will be contained in the iterator.
      * Note: If the intersection yields an overlap then it will be oriented
@@ -996,7 +996,7 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an `Intersect_2` functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
@@ -1007,10 +1007,10 @@ public:
     const Polycurve_traits_2& m_poly_traits;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Are_mergeable_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
-    /*! Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return(true) if the two curves are mergeable, that is, they share a
@@ -1047,7 +1047,7 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object. */
+  /*! obtains an `Are_mergeable_2` functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
@@ -1065,12 +1065,12 @@ public:
     const Geometry_traits& m_poly_traits;
 
   public:
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Geometry_traits& traits) : m_poly_traits(traits) {}
 
-    /*! Merge two given x-monotone curves into a single curve(segment).
+    /*! merges two given x-monotone curves into a single curve(segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
@@ -1122,7 +1122,7 @@ public:
     }
   };
 
-  /*! Obtain a Merge_2 functor object. */
+  /*! obtains a `Merge_2` functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   ///@}
 
@@ -1137,15 +1137,15 @@ public:
     const Polycurve_traits_2& m_poly_traits;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Construct_curve_2(const Polycurve_traits_2& traits) :
       m_poly_traits(traits)
     {}
 
-    /*! Obtain a polycurve that consists of one given subcurve. */
+    /*! obtains a polycurve that consists of one given subcurve. */
     Curve_2 operator()(const Subcurve_2& seg) const { return Curve_2(seg); }
 
-    /* Construct a well-oriented polycurve from a range of either
+    /* constructs a well-oriented polycurve from a range of either
      * `SubcurveTraits::Point_2` or `SubcurveTraits::Subcurve_2`.
      */
     template <typename ForwardIterator>
@@ -1156,7 +1156,7 @@ public:
       return constructor_impl(begin, end, Is_point());
     }
 
-    /*! Construction of a polycurve from a range of points.
+    /*! constructs a polycurve from a range of points.
      * \pre The range contains at least two points
      * \pre Consecutive points are disjoint.
      * \return Well-oriented polycurve connecting the given
@@ -1186,12 +1186,12 @@ public:
     }
   };
 
-  /*! Obtain a Construct_curve_2 functor object. */
+  /*! obtains a `Construct_curve_2` functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_curve_2(*this); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

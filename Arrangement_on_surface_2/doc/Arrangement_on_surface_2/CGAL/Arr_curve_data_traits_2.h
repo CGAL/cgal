@@ -101,8 +101,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! default constructor.
-     */
+    /*! constructs default */
     Curve_2();
 
     /*! constructs curve from the given `base` curve with uninitialized
@@ -131,49 +130,49 @@ public:
 
     /// @}
 
-}; /* end Arr_curve_data_traits_2::Curve_2 */
+  }; /* end Arr_curve_data_traits_2::Curve_2 */
 
-/*! The `X_monotone_curve_2` class nested within the curve-data traits extends
- * the `Base_traits_2::X_monotone_curve_2` type with an extra data field.
- */
-class X_monotone_curve_2 : public Base_x_monotone_curve_2 {
-public:
-
-  /// \name Creation
-  /// @{
-
-  /*! default constructor.
+  /*! The `X_monotone_curve_2` class nested within the curve-data traits extends
+   * the `Base_traits_2::X_monotone_curve_2` type with an extra data field.
    */
-  X_monotone_curve_2();
+  class X_monotone_curve_2 : public Base_x_monotone_curve_2 {
+  public:
 
-  /*! constructs an \f$ x\f$-monotone curve from the given `base` curve with
-   * uninitialized data field.
-   */
-  X_monotone_curve_2(const Base_x_monotone_curve_2& base);
+    /// \name Creation
+    /// @{
 
-  /*! constructs an \f$ x\f$-monotone curve from the given `base` \f$
-   * x\f$-monotone curve with an attached `data` field.
-   */
-  X_monotone_curve_2(const Base_x_monotone_curve_2& base,
-                     const X_monotone_curve_data& data);
+    /*! constructs default */
+    X_monotone_curve_2();
 
-  /// @}
+    /*! constructs an \f$ x\f$-monotone curve from the given `base` curve with
+     * uninitialized data field.
+     */
+    X_monotone_curve_2(const Base_x_monotone_curve_2& base);
 
-  /// \name Access Functions
-  /// @{
+    /*! constructs an \f$ x\f$-monotone curve from the given `base` \f$
+     * x\f$-monotone curve with an attached `data` field.
+     */
+    X_monotone_curve_2(const Base_x_monotone_curve_2& base,
+                       const X_monotone_curve_data& data);
 
-  /*! returns the field (a non-const version, which returns a reference
-   * to the data object, is also available).
-   */
-  const X_monotone_curve_data& data() const;
+    /// @}
 
-  /*! sets the data field.
-   */
-  void set_data(const X_monotone_curve_data& data);
+    /// \name Access Functions
+    /// @{
 
-  /// @}
+    /*! returns the field (a non-const version, which returns a reference
+     * to the data object, is also available).
+     */
+    const X_monotone_curve_data& data() const;
 
-}; /* end Arr_curve_data_traits_2::X_monotone_curve_2 */
+    /*! sets the data field.
+     */
+    void set_data(const X_monotone_curve_data& data);
+
+    /// @}
+
+  }; /* end Arr_curve_data_traits_2::X_monotone_curve_2 */
 
 }; /* end Arr_curve_data_traits_2 */
+
 } /* end namespace CGAL */
