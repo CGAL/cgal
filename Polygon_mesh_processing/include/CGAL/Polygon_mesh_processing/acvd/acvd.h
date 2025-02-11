@@ -69,9 +69,12 @@ void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, s
   auto vcm = pmesh.template add_property_map<typename TriangleMesh::Vertex_index, CGAL::IO::Color>("f:color").first;
 
   for (auto v : vertices(pmesh))
-    put(vcm, v, palette[ get(cluster_map, v) % palette.size() ]);
-
-
+  {
+    int cluster_id=get(cluster_map, v);
+    if (cluster_id!=-1)
+      put(vcm, v, palette[ cluster_id % palette.size() ]);
+    else
+      put(vcm, v, CGAL::IO::black());
 
   std::ofstream out(fname);
   CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::use_binary_mode(false)
