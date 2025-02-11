@@ -345,6 +345,7 @@ std::pair<
   typedef typename Eigen::Matrix<typename GT::FT, 4, 4> Matrix4x4;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vertex_position_map;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor Edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor Face_descriptor;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
@@ -382,19 +383,67 @@ std::pair<
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.1);
-  // TODO also call split_long_edges: max edge length shall not be larger than 3 * input mean edge length
   // TODO cheese crashes
   // TODO compute less qem things if not used
   // TODO use symmetric matrices?
 
   // TODO: copy the mesh in order to not modify the original mesh
   //TriangleMesh pmesh = pmesh_org;
-  int nb_vertices = num_vertices(pmesh);
+  int nb_vertices = vertices(pmesh).size();
 
 
   // For remeshing, we might need to subdivide the mesh before clustering
   // This should always hold: nb_clusters <= nb_vertices * clusters_to_vertices_threshold_ratio
   // So do the following till the condition is met
+  // first split long edges (TODO: also for curvation based alternative?)
+  // TODO: do it all the time, even if we have enough vertices?
+  if (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
+  {
+    std::vector<typename GT::FT> lengths;
+    lengths.reserve(num_edges(pmesh));
+    typename GT::FT cum=0;
+    int nbe=0;
+    for (Edge_descriptor e : edges(pmesh))
+    {
+      lengths.push_back(std::sqrt(squared_distance(get(vpm, source(e, pmesh)), get(vpm, target(e, pmesh)))));
+      cum += lengths.back();
+      ++nbe;
+    }
+    typename GT::FT threshold = 3. * cum / nbe;
+
+    std::vector<std::pair<Edge_descriptor, double>> to_split;
+    int ei=-1;
+    for (Edge_descriptor e : edges(pmesh))
+    {
+      typename GT::FT l = lengths[++ei];
+      if (l >= threshold)
+      {
+        double nb_subsegments = std::ceil(l / threshold);
+        to_split.emplace_back(e, nb_subsegments);
+      }
+    }
+    for (auto [e, nb_subsegments] : to_split)
+    {
+      Halfedge_descriptor h = halfedge(e, pmesh);
+      typename GT::Point_3 s = get(vpm, source(h,pmesh));
+      typename GT::Point_3 t = get(vpm, target(h,pmesh));
+
+      for (double k=1; k<nb_subsegments; ++k)
+      {
+        // the new halfedge hnew pointing to the inserted vertex.
+        // The new halfedge is followed by the old halfedge, i.e., next(hnew,g) == h.
+        Halfedge_descriptor hnew = Euler::split_edge(h, pmesh);
+        if (!is_border(hnew, pmesh))
+          Euler::split_face(hnew, next(h, pmesh), pmesh);
+        if (!is_border(opposite(h, pmesh), pmesh))
+          Euler::split_face(opposite(h, pmesh), next(opposite(hnew, pmesh), pmesh), pmesh);
+        put(vpm, target(hnew, pmesh), barycenter(t, k/nb_subsegments, s));
+      }
+    }
+    nb_vertices = vertices(pmesh).size();
+  }
+
+
   while (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
   {
     typename GT::FT curr_factor = nb_clusters / (nb_vertices * clusters_to_vertices_threshold_ratio);
