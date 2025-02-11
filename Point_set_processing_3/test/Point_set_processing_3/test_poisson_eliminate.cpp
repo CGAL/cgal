@@ -10,6 +10,7 @@
 #include <CGAL/poisson_eliminate.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/Real_timer.h>
 
 template<class K>
@@ -49,16 +50,23 @@ void sampling(const std::string& filename, Check_distance_functor check_average_
 
   std::cout << " " << points.size() << " input points" << std::endl;
 
-  std::size_t target_size = points.size() / 5;
+  std::size_t target_size = points.size() / 3;
 
   bool progressive = true;
   bool weight_limiting = false;
   bool tiling = false;
   std::vector<Point_3> output;
 
+  CGAL::Real_timer timer;
+
   output.reserve(target_size);
-  CGAL::poisson_eliminate(points, target_size, std::back_inserter(output), CGAL::parameters::progressive(progressive).weight_limiting(weight_limiting).tiling(tiling));
+  timer.start();
+  CGAL::poisson_eliminate(points, target_size, std::back_inserter(output), CGAL::parameters::dimension(2).progressive(progressive).weight_limiting(weight_limiting).tiling(tiling));
+  timer.stop();
+  std::cout << timer.time() << std::endl;
   std::cout << " " << output.size() << " points after elimination" << std::endl;
+
+  CGAL::IO::write_points("radar" + std::to_string(target_size) + "_2d.xyz", output, CGAL::parameters::stream_precision(17));
 
   assert(output.size() == target_size);
 
@@ -73,11 +81,11 @@ int main(int argc, char* argv[])
   std::cout << "testing Simple_cartesian<double>" << std::endl;
   sampling<CGAL::Simple_cartesian<double>>(CGAL::data_file_path("points_3/radar.xyz"), check< CGAL::Simple_cartesian<double>>);
 
-  std::cout << std::endl << "testing Exact_predicates_inexact_constructions_kernel" << std::endl;
-  sampling<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::data_file_path("points_3/radar.xyz"), check< CGAL::Exact_predicates_inexact_constructions_kernel>);
+   std::cout << std::endl << "testing Exact_predicates_inexact_constructions_kernel" << std::endl;
+   sampling<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::data_file_path("points_3/radar.xyz"), check< CGAL::Exact_predicates_inexact_constructions_kernel>);
 
-  std::cout << std::endl << "testing Exact_predicates_exact_constructions_kernel" << std::endl;
-  sampling<CGAL::Exact_predicates_exact_constructions_kernel>(CGAL::data_file_path("points_3/radar.xyz"), no_check);
+   std::cout << std::endl << "testing Exact_predicates_exact_constructions_kernel" << std::endl;
+   sampling<CGAL::Exact_predicates_exact_constructions_kernel>(CGAL::data_file_path("points_3/radar.xyz"), no_check);
 
   return 0;
 }

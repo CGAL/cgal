@@ -141,13 +141,3 @@ if(TARGET CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some of the executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
-
-find_path(CYCODEBASE_INCLUDE "cySampleElim.h" DOC "Path to the cyCodeBase directory (https://github.com/cemyuksel/cyCodeBase)")
-
-if(NOT CYCODEBASE_INCLUDE)
-  message( STATUS "poisson_eliminate_example will be compiled without the cyCodeBase library (https://github.com/cemyuksel/cyCodeBase)")
-else()
-  message(CYCODEBASE_INCLUDE="${CYCODEBASE_INCLUDE}")
-  target_compile_definitions( poisson_eliminate_example PRIVATE CGAL_USE_CY )
-  target_include_directories( poisson_eliminate_example AFTER PRIVATE ${CYCODEBASE_INCLUDE} )
-endif()

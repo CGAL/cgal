@@ -118,11 +118,12 @@ public:
   }
 };
 
+template<class Point>
 class Weight_functor {
 public:
   Weight_functor(double r_min = 0, double alpha = 8) : r_min(CGAL::to_double(r_min)), alpha(CGAL::to_double(alpha)) {}
 
-  double operator()(double d2, double r_max) {
+  double operator()(const Point &, const Point &, double d2, double r_max) {
     double d = CGAL::sqrt(d2);
     if (d < r_min) d = r_min;
     return std::pow(double(1) - d / r_max, alpha);
@@ -197,6 +198,12 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
          \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
        \cgalParamNEnd
 
+       \cgalParamNBegin{dimension}
+         \cgalParamDescription{The sampling domain of `points`, e.g., 2 if the points have been sampled from a 2d surface.}
+         \cgalParamType{unsigned integer}
+         \cgalParamDefault{2}
+       \cgalParamNEnd
+
        \cgalParamNBegin{progressive}
          \cgalParamDescription{reorders the points in `output` in a progressive way, i.e., the first n points in `output` with n < `number_of_points` have a poisson disk distribution with a larger radius. }
          \cgalParamType{Boolean}
@@ -206,11 +213,13 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
        \cgalParamNBegin{maximum_radius}
          \cgalParamDescription{radius of the poisson disk in which the neighboring points are taken into account for elimination.}
          \cgalParamType{double}
+         \cgalParamDefault{the default is calculated from the `dimension`, the volume of the bounding box and the `number_of_points`. For more details, see \ref Point_set_processing_3PoissonElimination.}
        \cgalParamNEnd
 
-       \cgalParamNBegin{weight_functor}
-         \cgalParamDescription{a weight functor that calculates the weight of a neighbor point based on its squared distance and the `maximum_radius`.}
-         \cgalParamType{an instance of `std::function<double(double,double)>`.}
+       \cgalParamNBegin{weight_function}
+         \cgalParamDescription{a weight function that calculates the weight of a neighbor point based on its squared distance and the `maximum_radius`.}
+         \cgalParamType{an instance of `std::function<double(const Point&, const Point&, double,double)>`.}
+         \cgalParamDefault{See \ref Point_set_processing_3PoissonElimination.}
        \cgalParamNEnd
 
        \cgalParamNBegin{geom_traits}
@@ -227,8 +236,8 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
   using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
   using PointMap = typename NP_helper::Point_map;
-  using Point = typename boost::property_traits<PointMap>::value_type;
-  using GeomTraits = typename Kernel_traits<Point>::Kernel;
+  using Point = typename NP_helper::Point;
+  using GeomTraits = typename NP_helper::Geom_traits;
   using FT = typename GeomTraits::FT;
   using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
   PointMap point_map = NP_helper::get_point_map(points, np);
@@ -255,13 +264,13 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   // named parameter for tiling
   const bool tiling = parameters::choose_parameter(parameters::get_parameter(np, internal_np::tiling), false);
   const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
-  const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), ambient_dimension);
+  const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), 2);
 
   // named parameter for r_max
   double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * internal::get_maximum_radius(dimension, number_of_points, domain_size)));
   double r_min = CGAL::to_double(weight_limiting ? internal::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
 
-  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_functor), internal::Weight_functor(r_min, alpha));
+  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_function), internal::Weight_functor<Point>(r_min, alpha));
 
   std::size_t heap_size = points.size();
   std::vector<Point> tiling_points;
@@ -325,7 +334,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
         const Point p2 = get(ipm, res[n]);
         double d2 = CGAL::to_double((p - p2).squared_length());
-        weights[i] += weight_functor(d2, r_max);
+        weights[i] += weight_functor(p, p2, d2, r_max);
       }
     }
 
@@ -356,7 +365,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         const Point p2 = get(point_map, points[res[n]]);
         double d2 = CGAL::to_double((p - p2).squared_length());
 
-        weights[res[n]] -= weight_functor(d2, r_max);
+        weights[res[n]] -= weight_functor(p2, p, d2, r_max);
 
         internal::move_down(heap, heap_pos, heap_size, weights, heap_pos[res[n]]);
       }
