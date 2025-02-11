@@ -75,6 +75,7 @@ void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, s
       put(vcm, v, palette[ cluster_id % palette.size() ]);
     else
       put(vcm, v, CGAL::IO::black());
+  }
 
   std::ofstream out(fname);
   CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::use_binary_mode(false)
@@ -415,8 +416,7 @@ std::pair<
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
-  const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.1);
-  // TODO cheese crashes
+  const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.01);
   // TODO compute less qem things if not used
   // TODO use symmetric matrices?
 
@@ -427,10 +427,8 @@ std::pair<
 
   // For remeshing, we might need to subdivide the mesh before clustering
   // This should always hold: nb_clusters <= nb_vertices * clusters_to_vertices_threshold_ratio
-  // So do the following till the condition is met
-  // first split long edges (TODO: also for curvation based alternative?)
-  // TODO: do it all the time, even if we have enough vertices?
-  if (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
+  // So do the following until the condition is met
+  if (gradation_factor == 0 && nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
   {
     std::vector<typename GT::FT> lengths;
     lengths.reserve(num_edges(pmesh));
@@ -455,27 +453,42 @@ std::pair<
         to_split.emplace_back(e, nb_subsegments);
       }
     }
-    for (auto [e, nb_subsegments] : to_split)
-    {
-      Halfedge_descriptor h = halfedge(e, pmesh);
-      typename GT::Point_3 s = get(vpm, source(h,pmesh));
-      typename GT::Point_3 t = get(vpm, target(h,pmesh));
 
-      for (double k=1; k<nb_subsegments; ++k)
+    while(!to_split.empty())
+    {
+      std::vector<std::pair<Edge_descriptor, double>> to_split_new;
+      for (auto [e, nb_subsegments] : to_split)
       {
-        // the new halfedge hnew pointing to the inserted vertex.
-        // The new halfedge is followed by the old halfedge, i.e., next(hnew,g) == h.
-        Halfedge_descriptor hnew = Euler::split_edge(h, pmesh);
-        if (!is_border(hnew, pmesh))
-          Euler::split_face(hnew, next(h, pmesh), pmesh);
-        if (!is_border(opposite(h, pmesh), pmesh))
-          Euler::split_face(opposite(h, pmesh), next(opposite(hnew, pmesh), pmesh), pmesh);
-        put(vpm, target(hnew, pmesh), barycenter(t, k/nb_subsegments, s));
+        Halfedge_descriptor h = halfedge(e, pmesh);
+        typename GT::Point_3 s = get(vpm, source(h,pmesh));
+        typename GT::Point_3 t = get(vpm, target(h,pmesh));
+
+        for (double k=1; k<nb_subsegments; ++k)
+        {
+          // the new halfedge hnew pointing to the inserted vertex.
+          // The new halfedge is followed by the old halfedge, i.e., next(hnew,g) == h.
+          Halfedge_descriptor hnew = Euler::split_edge(h, pmesh);
+          put(vpm, target(hnew, pmesh), barycenter(t, k/nb_subsegments, s));
+          for (Halfedge_descriptor hhh : {hnew, opposite(h, pmesh)})
+          {
+            if (!is_border(hhh, pmesh))
+            {
+              Halfedge_descriptor hf = Euler::split_face(hhh, next(next(hhh, pmesh), pmesh), pmesh);
+              typename GT::FT l = std::sqrt(squared_distance(get(vpm, source(hf, pmesh)),
+                                                             get(vpm, target(hf, pmesh))));
+              if (l >= threshold)
+              {
+                double nb_subsegments = std::ceil(l / threshold);
+                to_split_new.emplace_back(edge(hf,pmesh), nb_subsegments);
+              }
+            }
+          }
+        }
       }
+      to_split.swap(to_split_new);
     }
     nb_vertices = vertices(pmesh).size();
   }
-
 
   while (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
   {
@@ -612,6 +625,8 @@ std::pair<
 
     int nb_iterations = -1;
     nb_disconnected = 0;
+
+    std::vector<int> edge_seen(num_edges(pmesh), -1);
     do
     {
       ++nb_iterations;
@@ -620,6 +635,9 @@ std::pair<
       while (!clusters_edges_active.empty()) {
         Halfedge_descriptor hi = clusters_edges_active.front();
         clusters_edges_active.pop();
+
+        if (edge_seen[edge(hi,pmesh)]==nb_iterations) continue;
+        edge_seen[edge(hi,pmesh)]=nb_iterations;
 
         Vertex_descriptor v1 = source(hi, pmesh);
         Vertex_descriptor v2 = target(hi, pmesh);
@@ -670,10 +688,6 @@ std::pair<
           // topological test to avoid creating disconnected clusters
           auto is_topologically_valid_merge = [&](Halfedge_descriptor hv, int cluster_id)
           {
-            // TODO : result seems buggy with this ON
-            std::stringstream ss;
-            ss << pmesh.point(target(hv, pmesh)) << " on " << target(hv, pmesh) << " in cluster " << cluster_id <<  " (" << get(vertex_cluster_pmap,source(hv, pmesh)) << ")\n";
-
             CGAL_assertion(get(vertex_cluster_pmap,target(hv, pmesh))==cluster_id);
             Halfedge_descriptor h=hv;
             bool in_cluster=false;
@@ -692,11 +706,7 @@ std::pair<
                 if (ci==cluster_id)
                 {
                   in_cluster=true;
-                  if (++nb_cc_cluster>1) {
-//                    std::cout << "BOOM\n";
-//                    std::cout << ss.str();
-                    return false;
-                  }
+                  if (++nb_cc_cluster>1) return false;
                 }
               }
               h=opposite(h, pmesh);
@@ -775,7 +785,7 @@ std::pair<
       std::cout << "# Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-      if (use_qem_metric && !qem_energy_minimization && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
+      if (use_qem_metric && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
       {
         qem_energy_minimization = true;
         break;

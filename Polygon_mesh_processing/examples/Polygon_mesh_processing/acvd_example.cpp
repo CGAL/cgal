@@ -4,6 +4,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/graph/graph_traits.hpp>
 
@@ -65,11 +66,12 @@ int main(int argc, char* argv[])
   // With QEM Energy Minimization
 
   std::cout << "Uniform QEM ACVD ...." << std::endl;
-
+CGAL::Real_timer timer; timer.start();
   auto acvd_mesh_qem = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, params::use_qem_metric(true));
+timer.stop();
   CGAL::IO::write_polygon_mesh( stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 
-  std::cout << "Completed" << std::endl;
+  std::cout << "Completed in " << timer.time() << "s\n";
 
   /// Adaptive Isotropic ACVD
 
