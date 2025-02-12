@@ -1,4 +1,4 @@
-// Copyright (c) 2024 GeometryFactory (France).
+// Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,11 +14,6 @@
 #define CGAL_POISSON_ELIMINATE_H
 
 #include <CGAL/license/Point_set_processing_3.h>
-
-#ifdef CGAL_USE_CY
-#include <cyVector.h>
-#include <cySampleElim.h>
-#endif
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Kd_tree.h>

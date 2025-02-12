@@ -24,4 +24,5 @@
 \example Point_set_processing_3/structuring_example.cpp
 \example Point_set_processing_3/callback_example.cpp
 \example Point_set_processing_3/poisson_eliminate_example.cpp
+\example Point_set_processing_3/poisson_eliminate_from_mesh_example.cpp
 */

@@ -50,7 +50,8 @@ foreach(
   structuring_example
   read_ply_points_with_colors_example
   write_ply_points_example
-  poisson_eliminate_example)
+  poisson_eliminate_example
+  poisson_eliminate_from_mesh_example)
   create_single_source_cgal_program("${target}.cpp")
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()

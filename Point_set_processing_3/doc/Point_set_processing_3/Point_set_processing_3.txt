@@ -791,6 +791,12 @@ The following example reads a point cloud, applies poisson elimination to reduce
 
 \cgalExample{Point_set_processing_3/poisson_eliminate_example.cpp}
 
+\subsubsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination from Mesh Example
+
+The following example first samples a point cloud from a surface mesh and then uses poisson elimination to provide an evenly sampled point cloud.
+
+\cgalExample{Point_set_processing_3/poisson_eliminate_from_mesh_example.cpp}
+
 \section Point_set_processing_3Smoothing Smoothing
 
 Two smoothing functions are devised to smooth an input point set.
@@ -1044,7 +1050,7 @@ as well as the normal and feature edge estimation functions based on it.
 Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 Started from GSoC'2019, Necip Fazil Yildiran with the help of Nicolas Mellado and Simon Giraudot introduced the wrappers for OpenGR and PointMatcher
 libraries that perform registration on two point sets.
-
+Poisson sample elimination is a reimplementation by Sven Oesau based on \cgalCite{cgal:y-sefpdss}. The original source code <a href="https://github.com/cemyuksel/cyCodeBase/">cyCodeBase</a> was used as a reference.
 
 */
 } /* namespace CGAL */
