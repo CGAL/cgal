@@ -8,6 +8,8 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 
+static_assert(CGAL::is_nothrow_movable_v<CDT>);
+
 int main(int argc, char* argv[])
 {
   CGAL::Surface_mesh<K::Point_3> mesh;

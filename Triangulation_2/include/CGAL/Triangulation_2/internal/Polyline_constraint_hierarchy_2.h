@@ -526,10 +526,10 @@ private:
 #endif
     {}
 
-    Compare               comp;
-    Sc_to_c_map           sc_to_c_map;
-    std::queue<size_type> free_ids;
-    Constraints_set       constraints_set;
+    Compare comp;
+    Sc_to_c_map sc_to_c_map;
+    std::stack<size_type, std::vector<size_type>> free_ids;
+    Constraints_set constraints_set;
   } priv;
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
@@ -650,7 +650,7 @@ private:
     if(priv.free_ids.empty()) {
       id = priv.constraints_set.size();
     } else {
-      id = priv.free_ids.front();
+      id = priv.free_ids.top();
       priv.free_ids.pop();
     }
     Constraint_id cid{new Vertex_list_with_info{this}, id};
