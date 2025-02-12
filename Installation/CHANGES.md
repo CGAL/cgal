@@ -35,6 +35,9 @@
 
 -   Add a the non-zero rule, as well as functions to compute the conservative inner and outer hull of similar polygons.
 
+### Triangulations
+-   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
