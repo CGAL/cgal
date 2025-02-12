@@ -143,9 +143,10 @@ public:
   }
 
   // endpoints of constraints are unremovable
-  // vertices which are not endpoint and have != 2 incident constrained edges are unremovable
+  // vertices which have more than 1 constraint passing through are unremovable
   void initialize_unremovable()
   {
+    std::unordered_map<Vertex_handle, int> degrees;
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
     for(; cit!=e; ++cit){
       Constraint_id cid = *cit;
@@ -154,6 +155,8 @@ public:
       (*it)->set_removable(false);
       ++it;
       for(; it != ite; ++it){
+        Vertex_handle vh = *it;
+        ++degrees[vh];
         if((boost::next(it) != ite) && (boost::prior(it)== boost::next(it))){
           (*it)->set_removable(false);
         }
@@ -162,19 +165,8 @@ public:
       (*it)->set_removable(false);
     }
 
-    std::unordered_map<Vertex_handle, int> degrees;
-    for (Constrained_edges_iterator it = pct.constrained_edges_begin(); it != pct.constrained_edges_end(); ++it) {
-      Edge e = *it;
-      Face_handle fh = e.first;
-      int ei = e.second;
-      Vertex_handle vh = fh->vertex(pct.cw(ei));
-      ++degrees[vh];
-      vh = fh->vertex(pct.ccw(ei));
-      ++degrees[vh];
-    }
-
     for(Finite_vertices_iterator it = pct.finite_vertices_begin(); it != pct.finite_vertices_end(); ++it){
-      if( it->is_removable() && (degrees[it] != 2) ){
+      if( it->is_removable() && (degrees[it] > 1) ){
         it->set_removable(false);
       }
     }
