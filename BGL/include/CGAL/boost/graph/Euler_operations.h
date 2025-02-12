@@ -136,7 +136,7 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   CGAL_assertion( halfedge(v_to_remove, v, g).first == h );
 
   halfedge_around_vertex_iterator ieb, iee;
-  for(boost::tie(ieb, iee) = halfedges_around_target(hop, g); ieb != iee; ++ieb) {
+  for(std::tie(ieb, iee) = halfedges_around_target(hop, g); ieb != iee; ++ieb) {
     CGAL_assertion( target(*ieb,g) == v_to_remove);
     set_target(*ieb ,v , g);
   }
@@ -615,7 +615,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   for(std::size_t i=0; i < N; ++i){
     halfedge_descriptor hd;
     bool found;
-    boost::tie(hd,found) = halfedge(face[i],face[i+1],sm);
+    std::tie(hd,found) = halfedge(face[i],face[i+1],sm);
     if(found && (! is_border(hd,sm))){
       return false;
     }
@@ -1149,7 +1149,7 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   face_descriptor fd = face(h, g);
   halfedge_around_face_iterator hafib, hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(h, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(h, g);
       hafib != hafie;
       ++hafib){
     CGAL_assertion(! is_border(opposite(*hafib,g),g));
@@ -1361,7 +1361,7 @@ add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_desc
   internal::set_border(he2,g);
 
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(ohe1, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(ohe1, g);
       hafib != hafie;
       ++hafib){
     set_face(*hafib, f, g);
@@ -1421,7 +1421,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   internal::set_border(newhop, g);
 
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(newh, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(newh, g);
       hafib != hafie;
       ++hafib){
     set_face(*hafib, f, g);
@@ -1458,7 +1458,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   //
-  for ( boost::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
+  for ( std::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
   {
     halfedge_descriptor v0_k = *eb1;
 
@@ -1466,7 +1466,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
     {
       vertex_descriptor k = target(v0_k,g);
 
-      for ( boost::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
+      for ( std::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
       {
         halfedge_descriptor k_v1 = *eb2;
 

@@ -701,7 +701,7 @@ public Q_SLOTS:
           begin != selection_item->selected_edges.end(); ++begin)
       {
         fg_vertex_descriptor source = target(opposite(halfedge(*begin,*poly),*poly),*poly);
-        boost::tie(it_find, insert_OK)
+        std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
         if (insert_OK)
         {
@@ -711,7 +711,7 @@ public Q_SLOTS:
         Edge_graph::vertex_descriptor src=it_find->second;
 
         fg_vertex_descriptor targ = target(halfedge(*begin,*poly),*poly);
-        boost::tie(it_find, insert_OK)
+        std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(targ, Edge_graph::vertex_descriptor()));
         if (insert_OK)
         {

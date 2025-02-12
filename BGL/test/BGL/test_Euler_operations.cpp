@@ -97,7 +97,7 @@ join_face_test()
 
   bool found;
   halfedge_descriptor e;
-  boost::tie(e, found) = halfedge(f.w, f.v, f.m);
+  std::tie(e, found) = halfedge(f.w, f.v, f.m);
   assert(found);
   // manually set the halfedge of f.f1 to the edge that is to be
   // removed to provoke a special case
@@ -108,7 +108,7 @@ join_face_test()
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
 
   CGAL::Halfedge_around_face_iterator<T> begin, end;
-  boost::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
+  std::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
   assert(std::distance(begin, end) == 4);
   for(; begin != end; ++begin)
   {
@@ -119,7 +119,7 @@ join_face_test()
   }
 
   face_iterator fit, fend;
-  for(boost::tie(fit, fend) = faces(f.m); fit != fend; ++fit) {
+  for(std::tie(fit, fend) = faces(f.m); fit != fend; ++fit) {
     assert(*fit == f.f1 || *fit == f.f3);
   }
 
@@ -141,7 +141,7 @@ remove_face_test_1()
   // find the edge between x and y
   bool found;
   halfedge_descriptor e;
-  boost::tie(e, found) = halfedge(f.x, f.y, f.m);
+  std::tie(e, found) = halfedge(f.x, f.y, f.m);
   assert(found);
   assert(face(e, f.m) == f.f3);
 
@@ -156,7 +156,7 @@ remove_face_test_1()
   assert_EQUAL(CGAL::internal::exact_num_vertices(f.m) == 4);
   halfedge_iterator eb, ee;
   int count = 0;
-  for(boost::tie(eb, ee) = halfedges(f.m); eb != ee; ++eb) {
+  for(std::tie(eb, ee) = halfedges(f.m); eb != ee; ++eb) {
     if(face(*eb,f.m) == boost::graph_traits<T>::null_face())
       ++count;
   }
@@ -177,9 +177,9 @@ remove_face_test_2()
   bool found;
   halfedge_descriptor e;
 
-  boost::tie(e, found) = halfedge(f.x, f.w, f.m);
+  std::tie(e, found) = halfedge(f.x, f.w, f.m);
   assert(found);
-  boost::tie(e, found) = halfedge(f.x, f.v, f.m);
+  std::tie(e, found) = halfedge(f.x, f.v, f.m);
   assert(found);
   assert(face(e, f.m) == f.f1);
   CGAL::Euler::remove_face(e,f.m);
@@ -189,7 +189,7 @@ remove_face_test_2()
   assert(CGAL::internal::exact_num_edges(f.m) == 7);
   assert(CGAL::internal::exact_num_vertices(f.m) == 5);
 
-  boost::tie(e, found) = halfedge(f.x, f.w, f.m);
+  std::tie(e, found) = halfedge(f.x, f.w, f.m);
   assert(found);
   assert(face(e,f.m) == boost::graph_traits<T>::null_face());
 
@@ -266,7 +266,7 @@ join_vertex_interior_test()
   halfedge_descriptor e;
 
   bool found;
-  boost::tie(e, found) = halfedge(f.w, f.x, f.m);
+  std::tie(e, found) = halfedge(f.w, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(e,f.m);
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
@@ -289,7 +289,7 @@ join_vertex_exterior_test()
     Surface_fixture_3<T> f;
     halfedge_descriptor e;
     bool found;
-    boost::tie(e, found) = halfedge(f.w, f.y, f.m);
+    std::tie(e, found) = halfedge(f.w, f.y, f.m);
     assert(source(e,f.m) == f.w);
     assert(target(e,f.m) == f.y);
     assert(found);
@@ -307,7 +307,7 @@ join_vertex_exterior_test()
     Surface_fixture_3<T> f;
     halfedge_descriptor e;
     bool found;
-    boost::tie(e, found) = halfedge(f.y, f.w, f.m);
+    std::tie(e, found) = halfedge(f.y, f.w, f.m);
 
     assert(source(e,f.m) == f.y);
     assert(target(e,f.m) == f.w);
@@ -335,9 +335,9 @@ split_vertex()
   Surface_fixture_3<T> f;
   halfedge_descriptor h1, h2;
   bool found;
-  boost::tie(h1, found) = halfedge(f.w, f.y, f.m);
+  std::tie(h1, found) = halfedge(f.w, f.y, f.m);
   assert(found);
-  boost::tie(h2, found) = halfedge(f.z, f.y, f.m);
+  std::tie(h2, found) = halfedge(f.z, f.y, f.m);
   assert(found);
   assert(face(h2, f.m) == Traits::null_face());
 
@@ -358,13 +358,13 @@ split_join_vertex_inverse()
   Surface_fixture_3<T> f;
   halfedge_descriptor h, h1, h2;
   bool found;
-  boost::tie(h, found) = halfedge(f.w, f.x, f.m);
+  std::tie(h, found) = halfedge(f.w, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(h,f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
-  boost::tie(h1, found) = halfedge(f.z, f.x, f.m);
+  std::tie(h1, found) = halfedge(f.z, f.x, f.m);
   assert(found);
-  boost::tie(h2, found) = halfedge(f.v, f.x, f.m);
+  std::tie(h2, found) = halfedge(f.v, f.x, f.m);
   assert(found);
   CGAL::Euler::join_vertex(CGAL::Euler::split_vertex(h1, h2,f.m),f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
