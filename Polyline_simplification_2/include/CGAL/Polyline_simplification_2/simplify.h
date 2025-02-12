@@ -154,8 +154,8 @@ public:
       (*it)->set_removable(false);
       ++it;
       for(; it != ite; ++it){
-        if(boost::next(it) != ite){
-          Vertex_handle vp = *boost::prior(it), vn = *boost::next(it);
+        if(std::next(it) != ite){
+          Vertex_handle vp = *std::prev(it), vn = *std::next(it);
           if(vp == vn){
             (*it)->set_removable(false);
           }
