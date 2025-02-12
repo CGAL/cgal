@@ -394,13 +394,6 @@ public:
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *
- *   \cgalParamNBegin{concurrency_tag}
- *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
- *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
- *     \cgalParamDefault{`CGAL::Sequential_tag`}
- *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{delta}
  *     \cgalParamDescription{the value of \f$ \delta \f$}
  *     \cgalParamType{double}
@@ -413,12 +406,21 @@ public:
  *     \cgalParamDefault{200.}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
- *
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `DelaunayTriangulationTraits_3`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the value type of `PointRange`, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
-template <class Traits = Default,
-          class NamedParameters = parameters::Default_named_parameters,
+template <class NamedParameters = parameters::Default_named_parameters,
           class PointRange,
           class TripleIndexRange>
 void ball_merge_surface_reconstruction_local(const PointRange& points,
@@ -426,7 +428,8 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
                                              const NamedParameters& np = parameters::default_values())
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
-  using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using Traits_ = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t, NamedParameters,
+                                                               typename Kernel_traits<Point_3>::type>::type;
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
 
   Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
@@ -438,7 +441,6 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *
  * creates two watertight meshes approximating the surface, and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
  *
- * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -460,11 +462,16 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `DelaunayTriangulationTraits_3`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the value type of `PointRange`, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
-template <class Traits = Default,
-          class NamedParameters = parameters::Default_named_parameters,
+template <class NamedParameters = parameters::Default_named_parameters,
           class PointRange,
           class TripleIndexRange>
 void ball_merge_surface_reconstruction_global(const PointRange& points,
@@ -473,7 +480,8 @@ void ball_merge_surface_reconstruction_global(const PointRange& points,
                                               const NamedParameters& np = parameters::default_values())
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
-  using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using Traits_ = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t, NamedParameters,
+                                                               typename Kernel_traits<Point_3>::type>::type;
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
 
   Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
