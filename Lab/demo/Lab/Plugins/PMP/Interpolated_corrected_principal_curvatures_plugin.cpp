@@ -84,7 +84,8 @@ void compute(SMesh* sMesh,
   for (Vertex_descriptor v : vertices(*sMesh))
   {
     const PMP::Principal_curvatures_and_directions<Epic_kernel> pc = principal_curvatures_and_directions_map[v];
-    max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(pc.min_curvature), abs(pc.max_curvature)));
+    max_curvature_magnitude_on_mesh =
+        (std::max)(max_curvature_magnitude_on_mesh, (std::max)(abs(pc.min_curvature), abs(pc.max_curvature)));
   }
 
   for(Vertex_descriptor v : vertices(*sMesh))

@@ -3,6 +3,9 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+### General Changes
+- The minimal supported version of Boost is now 1.74.0.
+
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
@@ -18,6 +21,12 @@
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
 
+
+### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
+
+-  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
+   by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+   The old range type is now returned by a new function named `subconstraints_and_contexts()`.
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 

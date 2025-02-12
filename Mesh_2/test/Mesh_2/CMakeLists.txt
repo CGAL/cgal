@@ -14,3 +14,7 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+  target_compile_features(test_mesh_terrain PRIVATE cxx_std_20)
+endif()

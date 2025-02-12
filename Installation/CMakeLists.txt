@@ -826,36 +826,44 @@ if(NOT TARGET ALL_CGAL_TARGETS)
   add_custom_target(ALL_CGAL_TARGETS)
 endif()
 
-macro(add_programs subdir target ON_OFF)
+function(CGAL_add_subdirectories subdir name ON_OFF)
+  cmake_minimum_required(VERSION 3.14)
+  # CMake>=3.14 for `if(DEFINED CACHE{...})`
+  #   see https://cmake.org/cmake/help/v3.31/command/if.html#defined
 
   cache_set(CGAL_EXECUTABLE_TARGETS "")
 
-  add_custom_target(${target})
-  add_dependencies(ALL_CGAL_TARGETS ${target})
+  add_custom_target(${name})
+  add_dependencies(ALL_CGAL_TARGETS ${name})
 
-  option(WITH_${target} "Select ${target}" ${ON_OFF})
-  if(WITH_${target})
-    add_subdirectory(${subdir} EXCLUDE_FROM_ALL)
+  if(DEFINED CACHE{WITH_${name}} AND "${WITH_${name}}" AND CMAKE_PROJECT_NAME STREQUAL "CGAL")
+    set(ON_OFF ON)
+  endif()
+  option(CGAL_WITH_${name} "Compile CGAL ${name}" ${ON_OFF})
+
+  if(CGAL_WITH_${name})
+    CGAL_handle_subdirectories(${subdir} ${name})
   endif()
 
   cache_get(CGAL_EXECUTABLE_TARGETS)
 
   foreach(CGAL_EXECUTABLE_TARGET ${CGAL_EXECUTABLE_TARGETS})
-    add_dependencies(${target} ${CGAL_EXECUTABLE_TARGET})
+    add_dependencies(${name} ${CGAL_EXECUTABLE_TARGET})
   endforeach()
 
-endmacro()
+endfunction()
 
 # This allows programs to locate CGALConfig.cmake
 set(CGAL_DIR ${CGAL_BINARY_DIR})
 
 if(NOT RUNNING_CGAL_AUTO_TEST)
 
-  add_programs(examples examples OFF)
-  add_programs(demo demos OFF)
+  CGAL_add_subdirectories(examples examples OFF)
+  CGAL_add_subdirectories(demo demos OFF)
   if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
-    add_programs(test tests OFF)
+    CGAL_add_subdirectories(test tests OFF)
   endif()
+  CGAL_add_subdirectories(benchmark benchmarks OFF)
 endif()
 
 message("== Setting paths ==")
