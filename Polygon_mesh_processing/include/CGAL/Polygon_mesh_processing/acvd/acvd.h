@@ -610,6 +610,7 @@ std::pair<
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
   int nb_loops = 0;
+  int nb_vertices_to_consider_for_early_stop = nb_vertices;
 
   QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
   std::vector<bool> frozen_clusters(nb_clusters, false);
@@ -803,7 +804,7 @@ std::pair<
       std::cout << "# Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-      if (use_qem_metric && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
+      if (use_qem_metric && nb_modifications <= nb_vertices_to_consider_for_early_stop * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
       {
         qem_energy_minimization = true;
         break;
@@ -1186,9 +1187,12 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
   }
 
   //~ if (kkk==0)
+  nb_vertices_to_consider_for_early_stop = 0;
   frozen_clusters = std::vector<bool>(nb_clusters, true);
-  for (std::size_t nmi : nm_clusters)
+  for (std::size_t nmi : nm_clusters) {
     frozen_clusters[nmi]=false;
+    nb_vertices_to_consider_for_early_stop += clusters[ nmi ].nb_vertices;
+  }
   for (std::size_t nmi : one_ring)
     frozen_clusters[nmi]=false;
 
