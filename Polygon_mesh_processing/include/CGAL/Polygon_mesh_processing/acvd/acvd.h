@@ -407,9 +407,9 @@ std::pair<
       Default_principal_map());
 
   // using QEM ?
-  bool postprocessing_qem = choose_parameter(get_parameter(np, internal_np::postprocessing_qem), false);
+  bool use_postprocessing_qem = choose_parameter(get_parameter(np, internal_np::use_postprocessing_qem), false);
   const bool use_qem_metric = choose_parameter(get_parameter(np, internal_np::use_qem_metric), false);
-  if (use_qem_metric) postprocessing_qem = false;
+  if (use_qem_metric) use_postprocessing_qem = false;
 
   // if adaptive clustering
   if (gradation_factor > 0 &&
@@ -418,7 +418,7 @@ std::pair<
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
-  const double clusters_to_vertices_threshold_ratio = choose_parameter(get_parameter(np, internal_np::clusters_to_vertices_threshold_ratio), 0.01);
+  const double vertex_count_ratio = choose_parameter(get_parameter(np, internal_np::vertex_count_ratio), 0.05);
   // TODO compute less qem things if not used
   // TODO use symmetric matrices?
 
@@ -428,9 +428,9 @@ std::pair<
 
 
   // For remeshing, we might need to subdivide the mesh before clustering
-  // This should always hold: nb_clusters <= nb_vertices * clusters_to_vertices_threshold_ratio
+  // This should always hold: nb_clusters <= nb_vertices * vertex_count_ratio
   // So do the following until the condition is met
-  if (gradation_factor == 0 && nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
+  if (gradation_factor == 0 && nb_clusters > nb_vertices * vertex_count_ratio)
   {
     std::vector<typename GT::FT> lengths;
     lengths.reserve(num_edges(pmesh));
@@ -492,9 +492,9 @@ std::pair<
     nb_vertices = vertices(pmesh).size();
   }
 
-  while (nb_clusters > nb_vertices * clusters_to_vertices_threshold_ratio)
+  while (nb_clusters > nb_vertices * vertex_count_ratio)
   {
-    typename GT::FT curr_factor = nb_clusters / (nb_vertices * clusters_to_vertices_threshold_ratio);
+    typename GT::FT curr_factor = nb_clusters / (nb_vertices * vertex_count_ratio);
     int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
@@ -610,7 +610,6 @@ std::pair<
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
   int nb_loops = 0;
-  int nb_vertices_to_consider_for_early_stop = nb_vertices;
 
   QEMClusterData<GT> cluster1_v1_to_c2, cluster2_v1_to_c2, cluster1_v2_to_c1, cluster2_v2_to_c1;
   std::vector<bool> frozen_clusters(nb_clusters, false);
@@ -804,7 +803,7 @@ std::pair<
       std::cout << "# Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-      if (use_qem_metric && nb_modifications <= nb_vertices_to_consider_for_early_stop * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
+      if (use_qem_metric && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
       {
         qem_energy_minimization = true;
         break;
@@ -916,7 +915,7 @@ std::pair<
     }
   }
 
-  if (postprocessing_qem){
+  if (use_postprocessing_qem){
     // create a point for each cluster
     std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
 
@@ -1185,12 +1184,9 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
     if (nm_clusters_picked.size()==nm_clusters.size()) break;
   }
 
-  nb_vertices_to_consider_for_early_stop = 0;
   frozen_clusters = std::vector<bool>(nb_clusters, true);
-  for (std::size_t nmi : nm_clusters) {
+  for (std::size_t nmi : nm_clusters)
     frozen_clusters[nmi]=false;
-    nb_vertices_to_consider_for_early_stop += clusters[ nmi ].nb_vertices;
-  }
   for (std::size_t nmi : one_ring)
     frozen_clusters[nmi]=false;
 
@@ -1239,7 +1235,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{postprocessing_qem}
+*   \cgalParamNBegin{use_postprocessing_qem}
 *     \cgalParamDescription{indicates if a project step using quadratic error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in visual issues or even self-intersections.}
@@ -1249,18 +1245,19 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *
 *   \cgalParamNBegin{use_qem_metric}
 *     \cgalParamDescription{indicates if quadratic error metric should be applied during the minimization algorithm in order for example to recover sharp features.
-*                           This is a slower than when using `postprocessing_qem(true)` but is more accurate.}
+*                           This is a slower than when using `use_postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
-*     \cgalParamExtra{If this parameter is `true` then postprocessing_qem will automatically set to `false`.}
+*     \cgalParamExtra{If this parameter is `true` then use_postprocessing_qem will automatically set to `false`.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{clusters_to_vertices_threshold_ratio}
-*     \cgalParamDescription{a ratio used to subdivide the input mesh so that the mesh used as input for the clustering has enough vertices.
-*                           More precisely, the number of vertices of the subdivided mesh should at least be the ratio times `nb_vertices`.}
+*   \cgalParamNBegin{vertex_count_ratio}
+*     \cgalParamDescription{a ratio used to control the subdivision of the input mesh in case it does not have enough vertices compared to `nb_vertices`.
+*                           More precisely, the number of vertices of the input mesh should at least be the ratio times `nb_vertices`.
+*                           If not it will be internally subdivided until the aforementioned criterium is met.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{0.1}
-*     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be.}
+*     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be, but it .}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
