@@ -35,30 +35,37 @@ namespace internal
 {
 
 template <class NT> double ceil(Lazy_exact_nt< NT > x);
-template <typename NT> double ceil(NT x);
+template <class NT> double ceil(NT x);
 
 template <class NT>
 double ceil(Lazy_exact_nt< NT > x){
+  // If both sides are in the same ceil, return this ceil
   double ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
     return ceil_left;
+  // If not refine interval by contracting the DAG and try again
   x.exact();
   ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
     return ceil_left;
+  // If not return the ceil of the exact value
   return ceil( x.exact());
 };
 
-template <typename NT>
+template <class NT>
 double ceil(NT x){
   typedef Fraction_traits<NT> FT;
   if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
+    // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
     typename FT::Numerator_type num, r, e;
     typename FT::Denominator_type denom;
     typename FT::Decompose()(x,num,denom);
     div_mod(num, denom, r, e);
+    if((r<0) && e!=0) //If the result is negative, the ceil value is one below
+      return to_double(r-1);
     return to_double(r);
   } else {
+    // Return the ceil of the approximation
     return std::ceil(to_double(x));
   }
 };
@@ -67,7 +74,7 @@ double ceil(NT x){
 /**
 * 
 *
-* rounds the coordinates of the points so that they fit in doubles while keeping the model intersection free.
+* Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles. 
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
 * between the input and the output bounded by M*2^-gs*k where M is the maximum absolute coordinate in the model, gs the snap_grid_size (see below) and k the number of iteration
 * performed by the algorithm.
@@ -144,7 +151,7 @@ bool snap_polygon_soup(PointRange &points,
   using Point_3 = std::remove_cv_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Kernel = typename Kernel_traits<Point_3>::Kernel;
 
-  //Get the grid size from the named parameter, the grid size could not be greater than 52
+  // Get the grid size from the named parameter, the grid size could not be greater than 52
   const unsigned int grid_size = (std::min)(52,choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23));
   const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 20);
 
@@ -152,22 +159,23 @@ bool snap_polygon_soup(PointRange &points,
   std::cout << "Compute the scaling of the coordinates" << std::endl;
 #endif
 
-  //
   auto exp = [](const double v)
   {
     int n;
     frexp(v, &n);
     return n;
   };
-
-  auto pow_2 = [](const int k){
-      return (k>=0)?std::pow(2,k):1/std::pow(2,-k);
+  auto pow_2 = [](const int k)
+  {
+      return (k>=0)?std::pow(2,k):1./std::pow(2,-k);
   };
 
+  // Get max absolute value of each dimension
   Bbox_3 bb = bbox_3(points.begin(), points.end());
   std::array<double, 3> max_abs{(std::max)(-bb.xmin(), bb.xmax()),
                                 (std::max)(-bb.ymin(), bb.ymax()),
                                 (std::max)(-bb.zmin(), bb.zmax())};
+  // Compute scale so that the exponent of max absolute value are 52-1.
   std::array<double, 3> scale{pow_2(grid_size - exp(max_abs[0]) - 1),
                               pow_2(grid_size - exp(max_abs[1]) - 1),
                               pow_2(grid_size - exp(max_abs[2]) - 1)};
@@ -178,11 +186,12 @@ bool snap_polygon_soup(PointRange &points,
 
   auto snap = [](typename Kernel::FT x, double scale)
   {
+    // Scale the coordinate, round to nearest integer and scale back
     return internal::ceil((x * scale) + 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
   {
-    return Point_3(snap(p.x(),scale[0]),
+    return Point_3( snap(p.x(),scale[0]),
                     snap(p.y(),scale[1]),
                     snap(p.z(),scale[2]) );
   };
@@ -201,6 +210,7 @@ bool snap_polygon_soup(PointRange &points,
       p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
     repair_polygon_soup(points, triangles, np);
 
+    // Get all intersecting triangles
     std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
     triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles));
 
@@ -220,10 +230,13 @@ bool snap_polygon_soup(PointRange &points,
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
 #endif
-    //Get all the snap version of the points of the vertices of the intersecting triangles
-    //Note: points will not be modified here, they will be modified in the next for loop
 
 #if 0
+    // Version where points are rounded to the center of their voxel.
+
+    // Get all the snap version of the points of the vertices of the intersecting triangles
+    // Note: points will not be modified here, they will be modified in the next for loop
+
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
 
@@ -243,7 +256,7 @@ bool snap_polygon_soup(PointRange &points,
     std::sort(snap_points.begin(), snap_points.end());
     snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
 
-    //If the snapped version of a point correspond to one of the previous point, we snap it too
+    // If the snapped version of a point correspond to one of the previous point, we snap it
     for (Point_3 &p : points)
     {
       Point_3 p_snap = snap_p(p);
@@ -251,6 +264,9 @@ bool snap_polygon_soup(PointRange &points,
         p = p_snap;
     }
 #else
+    // Version where points in a voxel are rounded to their barycenter.
+
+    // Group the points of the vertices of the intersecting triangles by their voxel
     std::map<Point_3, size_t> snap_points;
     std::size_t index=0;
     for (auto &pair : pairs_of_intersecting_triangles)
@@ -269,10 +285,7 @@ bool snap_polygon_soup(PointRange &points,
       }
     }
 
-    //TODO: TBB version of this for loop
-
     std::vector<std::vector<size_t>> identical_points(index);
-    //If the snapped version of a point correspond to one of the previous point, we snap it too
     for (size_t i=0; i!=points.size(); ++i)
     {
       Point_3 p_snap = snap_p(points[i]);
@@ -282,6 +295,7 @@ bool snap_polygon_soup(PointRange &points,
       }
     }
 
+    // Replace all points in a voxel by their barycenter
     for(const auto &v: identical_points){
       if(v.size()>1){
         std::array<double, 3> a{0,0,0};
