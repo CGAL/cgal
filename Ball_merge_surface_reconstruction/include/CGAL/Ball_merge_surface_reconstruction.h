@@ -61,11 +61,21 @@
 
 namespace CGAL {
 
-namespace internal{
-
+/*!
+ *
+ * \ingroup PkgBallMergeRef
+ *
+ * Class that can be used for running the ball merge surface reconstruction algorithms. Once input points passed,
+ * it is possible to run a reconstruction algorithm with different parameters without rebuilding the internal Delaunay Triangulation.
+ *
+ * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ */
 template <typename Traits, typename ConcurrencyTag>
-class Ball_merge_surface_reconstruction {
-
+class Ball_merge_surface_reconstruction
+{
+#ifndef DOXYGEN_RUNNING
   typedef CGAL::Triangulation_vertex_base_with_info_3<std::size_t, Traits> Vb;
   typedef CGAL::Triangulation_cell_base_with_info_3<unsigned int, Traits, CGAL::Delaunay_triangulation_cell_base_3<Traits>> Cb;
   typedef CGAL::Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag> Tds;
@@ -76,13 +86,9 @@ class Ball_merge_surface_reconstruction {
   double par, bbdiaglen;
   Bbox_3 bbox;
   std::vector<int> cell_groups;
-
-public:
   int secondgroup;
   int option = 0,eta=0;
   Delaunay dt3;
-
-private:
 
   double distance(const Point& p1, const Point& p2) const
   { return std::sqrt(typename Traits::Compute_squared_distance_3()(p1,p2)); }
@@ -131,58 +137,12 @@ private:
 
 public:
 
-  template <class PointRange>
-  void operator()(const PointRange& points, double par_, double eta_)
+
+  void set_parameters(double par_, double eta_, int option)
   {
-    dt3.clear();
     par = par_;
     eta = eta_;
-    bbox = bbox_3(points.begin(), points.end());
-
-    bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
-
-    std::vector<std::size_t> vids(points.size());
-    std::iota(vids.begin(), vids.end(), 0);
-
-    if constexpr (std::is_same<ConcurrencyTag, Parallel_tag>::value) {
-      typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
-      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
-                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())),
-                 &locking_ds);
-    } else {
-      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
-                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())));//Sequential Delaunay computation
-    }
-    unsigned int cell_id=0;
-    for (Cell_handle ch : dt3.all_cell_handles())
-    {
-      ch->info()=cell_id++;
-    }
-
-    cell_groups.assign(dt3.number_of_cells(), 0);
-    if (option == 1){//If the user opted for global algorithm
-      for (Cell_handle cell : dt3.finite_cell_handles())
-      {
-        if (cell_groups[cell->info()] == 0){//If the cell label is not altered
-          cell_groups[cell->info()] = group;//Assign a label
-          regroup(dt3, cell);//Group all the mergeable cells
-          if (maxg < gcount){
-            //Remember the largest group - based on the number of tetrahedra in the group
-            max1 = maxg;
-            secondgroup = maingroup;//To remember the second largest group
-            maxg = gcount;
-            maingroup = group;
-          }
-          else if (max1 < gcount && gcount != maxg){
-            max1 = gcount;
-            secondgroup = group;//To remember the second largest group
-          }
-          gcount = 0;
-          ++group;//Update the label for next cell
-        }
-      }
-    }
-
+    option = option;
   }
 
 // void flood_from_infinity(std::vector<bool> &outside, int group) const
@@ -266,21 +226,165 @@ public:
         }
     }
   }
+#endif
+public:
+  /*!
+   * sets the input points for the triangulation, and (build the internal triangulation.
+   * If called several times, only the last point range will be considered for the reconstructions.
+   *
+   * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
+   * \param points is the input points
+   */
+  template <class PointRange>
+  void build_triangulation(const PointRange& points)
+  {
+    dt3.clear();
+
+    bbox = bbox_3(points.begin(), points.end());
+
+    bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
+
+    std::vector<std::size_t> vids(points.size());
+    std::iota(vids.begin(), vids.end(), 0);
+
+    if constexpr (std::is_same<ConcurrencyTag, Parallel_tag>::value) {
+      typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
+      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())),
+                 &locking_ds);
+    } else {
+      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())));//Sequential Delaunay computation
+    }
+    unsigned int cell_id=0;
+    for (Cell_handle ch : dt3.all_cell_handles())
+    {
+      ch->info()=cell_id++;
+    }
+
+    cell_groups.assign(dt3.number_of_cells(), 0);
+    if (option == 1){//If the user opted for global algorithm
+      for (Cell_handle cell : dt3.finite_cell_handles())
+      {
+        if (cell_groups[cell->info()] == 0){//If the cell label is not altered
+          cell_groups[cell->info()] = group;//Assign a label
+          regroup(dt3, cell);//Group all the mergeable cells
+          if (maxg < gcount){
+            //Remember the largest group - based on the number of tetrahedra in the group
+            max1 = maxg;
+            secondgroup = maingroup;//To remember the second largest group
+            maxg = gcount;
+            maingroup = group;
+          }
+          else if (max1 < gcount && gcount != maxg){
+            max1 = gcount;
+            secondgroup = group;//To remember the second largest group
+          }
+          gcount = 0;
+          ++group;//Update the label for next cell
+        }
+      }
+    }
+  }
+
+  /*!
+   *
+   * creates a triangle soup approximating the surface with sample points passed to `build_triangulation()`,
+   * and puts the resulting triangule faces in `out_triangles`.
+   *
+   * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
+   *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
+   *                          being constructible from `std::size_t`.
+   *
+   * \param out_triangles is the output parameter storing triangles approximating the surface
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *
+   *   \cgalParamNBegin{delta}
+   *     \cgalParamDescription{the value of \f$ \delta \f$}
+   *     \cgalParamType{double}
+   *     \cgalParamDefault{1.7}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{eta}
+   *     \cgalParamDescription{the value of \f$ \eta \f$}
+   *     \cgalParamType{double}
+   *     \cgalParamDefault{200.}
+   *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+   *   \cgalParamNEnd
+   *
+   * \cgalNamedParamsEnd
+   *
+   */
+  template <class NamedParameters = parameters::Default_named_parameters,
+            class TripleIndexRange>
+  void local_reconstruction(TripleIndexRange& out_triangles,
+                            const NamedParameters& np = parameters::default_values())
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    if (dt3.dimension()!=3) return;
+
+    const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+    const double eta = choose_parameter(get_parameter(np, internal_np::eta), 200.);
+
+    set_parameters(delta, eta, 0);
+    set_triangle_indices_hull1(out_triangles);
+  }
+
+  /*!
+   *
+   * creates two watertight meshes approximating the surface with sample points passed to `build_triangulation()`,
+   * and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
+   *
+   * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
+   *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
+   *                          being constructible from `std::size_t`.
+   *
+   * \param out_triangles1 is the output parameter storing the first resulting mesh
+   * \param out_triangles2 is the output parameter storing the second resulting mesh
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{delta}
+   *     \cgalParamDescription{the value of \f$ \delta \f$}
+   *     \cgalParamType{double}
+   *     \cgalParamDefault{1.7}
+   *   \cgalParamNEnd
+   *
+   * \cgalNamedParamsEnd
+   *
+   */
+  template <class NamedParameters = parameters::Default_named_parameters,
+            class TripleIndexRange>
+  void global_reconstruction(TripleIndexRange& out_triangles1,
+                             TripleIndexRange& out_triangles2,
+                             const NamedParameters& np = parameters::default_values())
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    if (dt3.dimension()!=3) return;
+
+    const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+
+    set_parameters(delta, 0, 1);
+    set_triangle_indices_hull1(out_triangles1);
+    set_triangle_indices_hull2(out_triangles2);
+  }
 
 };
-
-} // end of internal namespace
-
 
 /*!
  *
  * \ingroup PkgBallMergeRef
  *
- * creates a triangle soup approximating the surface.
- * After creation, resulting triangular faces will be stored in `out_triangles`, allowing us to use it independently for further processing.
+ * creates a triangle soup approximating the surface, and puts the resulting triangule faces in `out_triangles`.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
- * \tparam PointRange a model of `RandomAccessContainer`
+ * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
  *                          being constructible from `std::size_t`.
@@ -296,6 +400,7 @@ public:
  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
  *     \cgalParamDefault{`CGAL::Sequential_tag`}
  *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{delta}
  *     \cgalParamDescription{the value of \f$ \delta \f$}
  *     \cgalParamType{double}
@@ -324,25 +429,17 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
 
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
-  const double eta = choose_parameter(get_parameter(np, internal_np::eta), 200.);
-
-  CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
-  bmsr.option=0;
-  bmsr(points, delta, eta);
-  bmsr.set_triangle_indices_hull1(out_triangles);
+  Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
+  bmsr.build_triangulation(points);
+  bmsr.local_reconstruction(out_triangles, np);
 }
 
 /*! \ingroup PkgBallMergeRef
  *
- * creates a watertight mesh approximating the surface.
- * After creation, resulting meshes will be stored in `out_triangles1` and `out_triangles2`, allowing us to use it independently for further processing.
+ * creates two watertight meshes approximating the surface, and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
- * @tparam PointRange a model of the concepts `RandomAccessContainer`
+ * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
  *                          being constructible from `std::size_t`.
@@ -379,16 +476,9 @@ void ball_merge_surface_reconstruction_global(const PointRange& points,
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
 
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
-  const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
-
-  bmsr.option=1;
-  bmsr(points, delta, 0);
-  bmsr.set_triangle_indices_hull1(out_triangles1);
-  bmsr.set_triangle_indices_hull2(out_triangles2);
+  Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
+  bmsr.build_triangulation(points);
+  bmsr.global_reconstruction(out_triangles1, out_triangles2, np);
 }
 
 

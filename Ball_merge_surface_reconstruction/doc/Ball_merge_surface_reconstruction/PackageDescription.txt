@@ -1,10 +1,4 @@
 /// \defgroup PkgBallMergeRef Ball Merge Surface Reconstruction Reference
-/// \defgroup PkgBallMergeConcepts Concepts
-/// \ingroup PkgBallMergeRef
-
-/// \defgroup PkgBallMergeTraitsClasses Traits Classes
-/// \ingroup PkgBallMergeRef
-
 
 /*!
 \addtogroup PkgBallMergeRef
@@ -34,4 +28,8 @@ and large areas of missing data.}
 \cgalCRPSection{Functions}
 - `CGAL::ball_merge_surface_reconstruction_local()`
 - `CGAL::ball_merge_surface_reconstruction_global()`
+
+\cgalCRPSection{Class}
+- `CGAL::Ball_merge_surface_reconstruction`
+
 */
