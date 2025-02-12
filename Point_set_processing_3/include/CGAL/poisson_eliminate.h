@@ -213,13 +213,13 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
        \cgalParamNBegin{maximum_radius}
          \cgalParamDescription{radius of the poisson disk in which the neighboring points are taken into account for elimination.}
          \cgalParamType{double}
-         \cgalParamDefault{the default is calculated from the `dimension`, the volume of the bounding box and the `number_of_points`. For more details, see \ref Point_set_processing_3PoissonElimination.}
+         \cgalParamDefault{the default is calculated from the `dimension`, the volume of the bounding box and the `number_of_points`. For more details, see parameter section in \ref Point_set_processing_3PoissonElimination.}
        \cgalParamNEnd
 
        \cgalParamNBegin{weight_function}
          \cgalParamDescription{a weight function that calculates the weight of a neighbor point based on its squared distance and the `maximum_radius`.}
          \cgalParamType{an instance of `std::function<double(const Point&, const Point&, double,double)>`.}
-         \cgalParamDefault{See \ref Point_set_processing_3PoissonElimination.}
+         \cgalParamDefault{See parameter section in \ref Point_set_processing_3PoissonElimination.}
        \cgalParamNEnd
 
        \cgalParamNBegin{geom_traits}

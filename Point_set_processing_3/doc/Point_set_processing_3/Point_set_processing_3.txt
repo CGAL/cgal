@@ -769,13 +769,13 @@ The poisson sample elimination has the following parameters:
 double(*func)(const Point &p, const Point &n, double squared_distance, double r_max)
 \endcode
 The default weight is \f$\left(1 - \frac{d_{p,n}}{2r_{max}}\right)^8\f$ with \f$d_{p,n}\f$ being the distance between the point p and its neighbor n.
-- \f$r_{max}\f$: The \f$r_{max}\f$ parameter specifies the radius of the neighborhood, i.e., the neighboring points that are used to calculate the weight of a point. r_max has to be provided if a custom *weight_function* is used. Only points within a distance of \f$r_{max}\f$ is used to calculate the weight of a point. A large value can thus cause a large running time. The default is calculated based in the bounding volume \f$V\f$ of the input points, the *dimensions* parameter and the number of input points \f$N\f$:
+- \f$r_{max}\f$: The \f$r_{max}\f$ parameter specifies the radius of the neighborhood, i.e., the neighboring points that are used to calculate the weight of a point. r_max has to be provided if a custom *weight_function* is used. Only points within a distance of \f$r_{max}\f$ are used to calculate the weight of a point. A large value can thus cause a large running time. The default is calculated based in the bounding volume \f$V\f$ of the input points, the *dimensions* parameter and the number of input points \f$N\f$:
 
 \f$dimensions = 2:\qquad\f$ \f$r_{max} = \sqrt{\frac{V}{2\sqrt{3}N}}\f$
 
 \f$dimensions = 3:\qquad\f$ \f$r_{max} = \sqrt{\frac{V}{4\sqrt{2}N}}\f$
 
-- *progressive*: The output points of the function can be reordered to be progressive. A progressive ordering will increase the running time by at most 2 as the function is internally applied several times on increasingly smaller subsets. The default value is false.
+- *progressive*: The output points of the function can be reordered to be progressive. A progressive ordering will increase the running time by a factor of at most 2 as the function is internally applied several times on increasingly smaller subsets. The default value is false.
 
 \cgalFigureAnchor{Point_set_processing_3figPoisson_elimination}
 <center>
@@ -785,7 +785,7 @@ The default weight is \f$\left(1 - \frac{d_{p,n}}{2r_{max}}\right)^8\f$ with \f$
 Poisson elimination on point cloud with 21k points and results with \f$\frac{1}{2}\f$, \f$\frac{1}{4}\f$ and \f$\frac{1}{8}\f$ of the input size.
 \cgalFigureCaptionEnd
 
-\subsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination Example
+\subsubsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination Example
 
 The following example reads a point cloud, applies poisson elimination to reduce the point cloud to \f$\frac{1}{5}\f$ of its size and saves it into a file.
 
