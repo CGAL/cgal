@@ -185,6 +185,11 @@ to use the quadratic error metrics to either move output vertices (fast but can 
 of to use the quadratic error metrics directly in the energy formulation of each cluster (slower but produce
 better quality triangles). It is also possible to use an adaptive remeshing based on the curvature.
 
+\cgalFigureBegin{acvd_remeshing, acvd_remeshing.png}
+ACVD remeshing.
+From left to right: Input; with default parameters; using adaptative option; using QEM based energy.
+\cgalFigureEnd
+
 \paragraph decimate Remeshing of (Almost) Planar Patches
 When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
 in this region to use few elements, or even a single large polygonal face when the region makes up a simply connected patch.
