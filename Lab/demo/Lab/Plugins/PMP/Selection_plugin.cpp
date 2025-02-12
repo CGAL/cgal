@@ -1026,12 +1026,18 @@ public Q_SLOTS:
     //Add vertex and face to border
     case 9:
     {
+      QPixmap pm(":/cgal/Lab/resources/euler_deg2.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    case 10:
+    {
       QPixmap pm(":/cgal/Lab/resources/add_facet1.png");
       ui_widget.docImage_Label->setPixmap(pm);
       break;
     }
     //add facet to border
-    case 10:
+    case 11:
     {
       QPixmap pm(":/cgal/Lab/resources/add_facet2.png");
       ui_widget.docImage_Label->setPixmap(pm);

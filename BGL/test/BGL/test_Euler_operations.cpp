@@ -1,12 +1,15 @@
 
 #include "test_Prefix.h"
-#include <boost/range/distance.hpp>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/generators.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
+
+#include <boost/range/distance.hpp>
 
 template <typename T>
 void
@@ -450,6 +453,67 @@ remove_center_vertex_test()
 
 template <typename T>
 void
+remove_degree_2_vertex_test()
+{
+  CGAL_GRAPH_TRAITS_MEMBERS(T);
+
+  // vertex at .first should be removable, and after removal,
+  // there should .second[0] nv, .second[1] ne, and .second[2] nf
+  // anything not in the map should not be removable
+  std::map<std::size_t, std::array<std::size_t, 3> > removable;
+  removable[0] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[13] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[14] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[16] = CGAL::make_array<std::size_t>(28, 90, 18);
+  removable[17] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[18] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[21] = CGAL::make_array<std::size_t>(28, 92, 19);
+  removable[26] = CGAL::make_array<std::size_t>(28, 90, 18);
+
+  auto test = [&removable](const std::size_t hi) // intentional copy of 'm'
+  {
+    T m;
+    const bool ok = CGAL::IO::read_polygon_mesh("data/degree_2_collection.off", m);
+    assert(ok);
+    assert(CGAL::is_valid_polygon_mesh(m));
+
+    auto vim = CGAL::get_initialized_vertex_index_map(m);
+
+    const halfedge_descriptor h = *(std::next(halfedges(m).begin(), hi));
+    const vertex_descriptor v = target(h,  m);
+    auto vid = get(vim, v);
+    if(degree(v, m) != 2)
+    {
+      assert(removable.count(vid) == 0);
+      return;
+    }
+
+    const halfedge_descriptor res = CGAL::Euler::remove_degree_2_vertex(h, m);
+    assert(res != boost::graph_traits<T>::null_halfedge());
+
+    const std::array<std::size_t, 3>& ns = removable.at(vid);
+
+    assert(ns[0] == vertices(m).size());
+    assert(ns[1] == halfedges(m).size());
+    assert(ns[2] == faces(m).size());
+  };
+
+  T m;
+  const bool ok = CGAL::IO::read_polygon_mesh("data/degree_2_collection.off", m);
+  assert(ok);
+  assert(CGAL::is_valid_polygon_mesh(m));
+
+  std::size_t nv = num_vertices(m);
+  std::size_t nh = num_halfedges(m);
+  std::size_t nf = num_faces(m);
+  assert(nv == 29 && nh == 94 && nf == 19);
+
+  for(std::size_t hi=0; hi<num_halfedges(m); ++hi)
+    test(hi);
+}
+
+template <typename T>
+void
 join_split_inverse()
 {
 
@@ -670,6 +734,8 @@ template <typename Graph>
 void
 test_Euler_operations()
 {
+  std::cout << "== Test with Graph: " << typeid(Graph).name() << std::endl;
+
   test_copy_face_graph_nm_umbrella<Graph>();
   test_copy_face_graph_isolated_vertices<Graph>();
   join_face_test<Graph>();
@@ -684,6 +750,7 @@ test_Euler_operations()
   split_face_test<Graph>();
   make_hole_test<Graph>();
   remove_center_vertex_test<Graph>();
+  remove_degree_2_vertex_test<Graph>();
   join_split_inverse<Graph>();
   does_satisfy_link_condition<Graph>();
   test_swap_edges<Graph>();

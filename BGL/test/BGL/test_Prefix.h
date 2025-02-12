@@ -521,8 +521,6 @@ struct Surface_fixture_8 {
 
   Graph m;
   typename boost::graph_traits<Graph>::halfedge_descriptor h1, h2, h3;
-
 };
-
 
 #endif /* CGAL_TEST_PREFIX_H */
