@@ -53,8 +53,6 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
-- \ref PMPACVD : methods to remesh a polygon mesh using approximated centroidal Voronoi diagrams
-  as described in \cgalCite{cgal:vcp-grtmmdvd-08} and preceeding work.
 
 \subsection PMPIO Reading and Writing Polygon Meshes
 
@@ -168,6 +166,24 @@ and one-dimensional features sampling.
 An example of how to remesh a given triangulated surface mesh with the Delaunay refinement
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
+
+\paragraph Approximated Centroidal Voronoi Diagram (ACVD) remeshing
+This method is a vertex-clustering-based remeshing algorithm. It is based on
+\cgalCite{cgal:vc-acvdupmc-04} and extended in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
+The algorithm selects the requested number of output vertices as init
+
+The function `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` takes as input a triangle mesh and
+the expected number of the target vertices, and it updates the mesh with the remeshed version.
+The number of vertices in the output mesh might be larger than the input parameters if the input is not closed
+or if the budget of points provided is too low to generate a manifold output mesh.
+Note that providing an initial low number of vertices will affect the uniformity of the output triangles
+in case some extra points are added to make the output manifold. The algorithm is similar to Lloyd's algorithm
+(or k-means) where some random input vertices are picked to initialized cluster of vertices, and then clusters
+are grown to minimize a particular energy, until convergence. Upon convergence, output vertices are computed
+from the vertices of each cluster. If the input mesh contains some sharp features or corner, it is possible
+to use the quadratic error metrics to either move output vertices (fast but can produce bad looking triangles),
+of to use the quadratic error metrics directly in the energy formulation of each cluster (slower but produce
+better quality triangles). It is also possible to use an adaptive remeshing based on the curvature.
 
 \paragraph Decimate Remeshing of (Almost) Planar Patches
 When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
@@ -1312,46 +1328,6 @@ The second example shows how to use the class template `Face_filtered_graph`
 which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
-
-\section PMPACVD ACVD Remeshing
-
-The Approximated Centroidal Voronoi Diagram (ACVD) package is a set of vertex-clustering-based tools to
-remesh a triangle mesh. It is based on the method introduced in \cgalCite{cgal:vc-acvdupmc-04} and extended
-in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
-
-\subsection ACVDBackground Brief Background
-
-WIP
-
-\subsection ACVDAPI API
-
-The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`, `Polyhedron_3` and
-other triangle mesh structures based on the concept `FaceGraph`.
-
-The main function is `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()`. It takes as input a triangle mesh and
-a lower bound on the target number of vertices and returns a remeshed version. The number of vertices in the output mesh
-might be larger than the input parameters if the input is not closed or if the budget of points provided is too low
-to generate a manifold output mesh. Note that providing a initial low number of vertices will affect the uniformity
-of the output triangles in case some extra points are added to make the output manifold.
-
-To enable Adaptive Remeshing, the named parameter `gradation_factor` can be used. It controls the sensitivity of the
-clustering algorithm to curvature.  Moreover, the named parameter
-`vertex_principal_curvatures_and_directions_map` can be used to provide a user-defined principal curvature map.
-
-For Clustering based on QEM, the function `CGAL::Polygon_mesh_processing::acvd_qem_simplification()` and
-`CGAL::Polygon_mesh_processing::acvd_qem_simplification_polygon_soup()` can be used. THIS IS NOT 100% WORKING YET.
-
-
-\subsection ACVDResults Results
-
-WIP
-
-\subsection ACVDExample Usage Example
-
-The example below shows the usage of the `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` function
-and how the extra named parameters can be passed.
-
-\cgalExample{Polygon_mesh_processing/acvd_example.cpp}
 
 \section PMPDistance Hausdorff Distance
 
