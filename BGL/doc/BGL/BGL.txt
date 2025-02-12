@@ -88,7 +88,7 @@ boost::graph_traits<Graph>::edge_iterator ei;
 Algorithms obtain incidence information in graphs with the help of global
 functions such as:
 - `std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` to obtain an iterator range providing access to all the vertices, or
-- `int num_vertices(const Graph&);` to obtain the number of vertices of a graph, or
+- `vertices_size_type num_vertices(const Graph&);` to obtain the number of vertices of a graph, or
 - `vertex_descriptor source(edge_descriptor, const Graph&);` to obtain the source vertex of an edge.
 
 Note, that the way we have written the types is a simplification; in reality,

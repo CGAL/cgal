@@ -38,6 +38,6 @@ halfedges(const HalfedgeListGraph& g);
   This is the case for implementations only marking halfedges deleted in the halfedge container.
  */
 template <typename HalfedgeListGraph>
-boost::graph_traits<HalfedgeListGraph>::halfedge_size_type
+boost::graph_traits<HalfedgeListGraph>::halfedges_size_type
 num_halfedges(const HalfedgeListGraph& g);
 
