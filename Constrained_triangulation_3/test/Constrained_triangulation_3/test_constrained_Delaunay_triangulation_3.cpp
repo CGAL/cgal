@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
   assert(tr.number_of_vertices() == cdt2.triangulation().number_of_vertices());
 
   auto nb = 0u;
-  for(auto _ : cdt2.constrained_facets()) {
+  for([[maybe_unused]] auto _ : cdt2.constrained_facets()) {
     ++nb;
   }
   assert(nb == nb_cstr_facets);
