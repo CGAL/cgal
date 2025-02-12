@@ -54,7 +54,7 @@ double ceil(Lazy_exact_nt< NT > x){
 
 template <class NT>
 double ceil(NT x){
-  typedef Fraction_traits<NT> FT;
+  using FT = Fraction_traits<NT>;
   if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
     // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
     typename FT::Numerator_type num, r, e;
@@ -131,8 +131,8 @@ bool snap_polygon_soup(PointRange &points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
-  typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
+  using GT=typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type;
+  using Point_map=typename GetPointMap<PointRange, NamedParameters>::const_type;
   Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
 
   typedef typename internal_np::Lookup_named_param_def <
@@ -141,7 +141,8 @@ bool snap_polygon_soup(PointRange &points,
     Sequential_tag
   > ::type Concurrency_tag;
 
-  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+  // constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+  constexpr bool parallel_execution = false;
 
 #ifndef CGAL_LINKED_WITH_TBB
   static_assert (!parallel_execution,
@@ -206,20 +207,32 @@ bool snap_polygon_soup(PointRange &points,
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Round all coordinates on doubles" << std::endl;
 #endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if(parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
+                      [&](const tbb::blocked_range<size_t>& r){
+                        for(size_t pi = r.begin(); pi != r.end(); ++pi)
+                          points[pi] = Point_3(to_double(points[pi].x()), to_double(points[pi].y()), to_double(points[pi].z()));
+                      }
+                      );
+  } else
+#endif
     for (Point_3 &p : points)
       p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
     repair_polygon_soup(points, triangles, np);
 
     // Get all intersecting triangles
     std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
-    triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles));
+    triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles), np);
 
     if (pairs_of_intersecting_triangles.empty())
     {
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "End of the snapping" << std::endl;
 #endif
-      CGAL_assertion(!does_triangle_soup_self_intersect(points, triangles));
+      CGAL_assertion(!does_triangle_soup_self_intersect(points, triangles, np));
       return true;
     }
 
@@ -231,11 +244,13 @@ bool snap_polygon_soup(PointRange &points,
     std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
 #endif
 
-#if 0
+#if 1
     // Version where points are rounded to the center of their voxel.
 
     // Get all the snap version of the points of the vertices of the intersecting triangles
     // Note: points will not be modified here, they will be modified in the next for loop
+
+    //TODO: TBB version of this for loop
 
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
@@ -251,18 +266,32 @@ bool snap_polygon_soup(PointRange &points,
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Snap the coordinates of the vertices close-by the previous ones" << std::endl;
 #endif
-    //TODO: TBB version of this for loop
 
     std::sort(snap_points.begin(), snap_points.end());
     snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
 
     // If the snapped version of a point correspond to one of the previous point, we snap it
+#ifdef CGAL_LINKED_WITH_TBB
+  if(parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
+                      [&](const tbb::blocked_range<size_t>& r){
+                        for(size_t pi = r.begin(); pi != r.end(); ++pi){
+                          Point_3 p_snap=snap_p(points[pi]);
+                          if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
+                            points[pi] = p_snap;
+                        }
+                      }
+                      );
+  } else
+#endif
     for (Point_3 &p : points)
     {
       Point_3 p_snap = snap_p(p);
       if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
         p = p_snap;
     }
+
 #else
     // Version where points in a voxel are rounded to their barycenter.
 
