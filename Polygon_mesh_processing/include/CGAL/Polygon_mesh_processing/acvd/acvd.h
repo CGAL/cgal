@@ -295,15 +295,11 @@ struct QEMClusterData {
   }
 };
 
-template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
-void upsample_subdivision_property(TriangleMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+template <class TriangleMesh, class VPCDM, class NamedParameters>
+void upsample_subdivision_property(TriangleMesh& pmesh, VPCDM vpcd_map, const NamedParameters& np) {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
-  typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
-    NamedParameters,
-    Default_principal_map>::type VPCDM;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -313,15 +309,8 @@ void upsample_subdivision_property(TriangleMesh& pmesh, const NamedParameters& n
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  // get curvature related parameters
-  const VPCDM vpcd_map =
-    choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
-      Default_principal_map());
-
   // unordered_set of old vertices
   std::unordered_set<Vertex_descriptor> old_vertices;
-
-  bool curvatures_available = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   Upsample_mask_3<TriangleMesh,VPM> mask(&pmesh, vpm);
@@ -332,35 +321,32 @@ void upsample_subdivision_property(TriangleMesh& pmesh, const NamedParameters& n
 
     Subdivision_method_3::internal::PTQ_1step(pmesh, vpm, mask);
     // interpolate curvature values
-    if (curvatures_available)
+    for (Vertex_descriptor vd : vertices(pmesh))
     {
-      for (Vertex_descriptor vd : vertices(pmesh))
+      if (old_vertices.find(vd) == old_vertices.end())
       {
-        if (old_vertices.find(vd) == old_vertices.end())
+        Principal_curvatures_and_directions<GT> pcd;
+        pcd.min_curvature = 0;
+        pcd.max_curvature = 0;
+        pcd.min_direction = typename GT::Vector_3(0, 0, 0);
+        pcd.max_direction = typename GT::Vector_3(0, 0, 0);
+        for (Halfedge_descriptor hd : halfedges_around_target(vd, pmesh))
         {
-          Principal_curvatures_and_directions<GT> pcd;
-          pcd.min_curvature = 0;
-          pcd.max_curvature = 0;
-          pcd.min_direction = typename GT::Vector_3(0, 0, 0);
-          pcd.max_direction = typename GT::Vector_3(0, 0, 0);
-          for (Halfedge_descriptor hd : halfedges_around_target(vd, pmesh))
+          Vertex_descriptor v1 = source(hd, pmesh);
+          if (old_vertices.find(v1) != old_vertices.end())
           {
-            Vertex_descriptor v1 = source(hd, pmesh);
-            if (old_vertices.find(v1) != old_vertices.end())
-            {
-              Principal_curvatures_and_directions<GT> pcd1 = get(vpcd_map, v1);
-              pcd.min_curvature += pcd1.min_curvature;
-              pcd.max_curvature += pcd1.max_curvature;
-              pcd.min_direction += pcd1.min_direction;
-              pcd.max_direction += pcd1.max_direction;
-            }
+            Principal_curvatures_and_directions<GT> pcd1 = get(vpcd_map, v1);
+            pcd.min_curvature += pcd1.min_curvature;
+            pcd.max_curvature += pcd1.max_curvature;
+            pcd.min_direction += pcd1.min_direction;
+            pcd.max_direction += pcd1.max_direction;
           }
-          pcd.min_curvature = pcd.min_curvature / 2;
-          pcd.max_curvature = pcd.max_curvature / 2;
-          pcd.min_direction = pcd.min_direction / sqrt(pcd.min_direction.squared_length());
-          pcd.max_direction = pcd.max_direction / sqrt(pcd.max_direction.squared_length());
-          put(vpcd_map, vd, pcd);
         }
+        pcd.min_curvature = pcd.min_curvature / 2;
+        pcd.max_curvature = pcd.max_curvature / 2;
+        pcd.min_direction = pcd.min_direction / sqrt(pcd.min_direction.squared_length());
+        pcd.max_direction = pcd.max_direction / sqrt(pcd.max_direction.squared_length());
+        put(vpcd_map, vd, pcd);
       }
     }
   }
@@ -388,7 +374,7 @@ std::pair<
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Matrix4x4> >::type VertexQuadricMap;
-  typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>> >::type Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
     NamedParameters,
     Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
@@ -402,9 +388,7 @@ std::pair<
 
   // get curvature related parameters
   const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
-  const Vertex_principal_curvatures_and_directions_map vpcd_map =
-    choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
-      Default_principal_map());
+  Vertex_principal_curvatures_and_directions_map vpcd_map;
 
   // using QEM ?
   bool use_postprocessing_qem = choose_parameter(get_parameter(np, internal_np::use_postprocessing_qem), false);
@@ -412,13 +396,20 @@ std::pair<
   if (use_qem_based_energy) use_postprocessing_qem = false;
 
   // if adaptive clustering
-  if (gradation_factor > 0 &&
-    is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
-    interpolated_corrected_curvatures(pmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
+  if (gradation_factor > 0)
+  {
+    if constexpr (is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
+    {
+      vpcd_map = get(CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>>(), pmesh);
+      interpolated_corrected_curvatures(pmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
+    }
+    else
+      vpcd_map = get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map);
+  }
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
-  const double vertex_count_ratio = choose_parameter(get_parameter(np, internal_np::vertex_count_ratio), 0.05);
+  const double vertex_count_ratio = choose_parameter(get_parameter(np, internal_np::vertex_count_ratio), 0.1);
   // TODO compute less qem things if not used
   // TODO use symmetric matrices?
 
@@ -506,7 +497,7 @@ std::pair<
         );
       else // adaptive clustering
         upsample_subdivision_property(
-          pmesh,
+          pmesh, vpcd_map,
           CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
         );
       vpm = get_property_map(CGAL::vertex_point, pmesh);

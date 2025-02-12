@@ -90,7 +90,7 @@ public Q_SLOTS:
 
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    FaceGraph remeshed *graph;
+    FaceGraph remeshed = *graph;
 
     // TODO add post-processing
 
