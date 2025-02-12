@@ -510,7 +510,7 @@ public:
 
   auto min_distance_and_vertex_between_constraint_and_encroaching_vertex(Vertex_handle va, Vertex_handle vb) const {
     struct Result {
-      typename T_3::Geom_traits::FT min_dist = std::numeric_limits<double>::max();
+      typename T_3::Geom_traits::FT min_dist = (std::numeric_limits<double>::max)();
       Vertex_handle v = {};
     } result;
     const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);

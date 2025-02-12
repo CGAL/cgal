@@ -551,7 +551,7 @@ public:
   /** \name Constructors
   @{
 
-  \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either 
+  \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either
   a polygon soup or a polygon mesh.
 
   ## Input Data
