@@ -550,7 +550,7 @@ int go(Mesh mesh, CDT_options options) {
   start_time = std::chrono::high_resolution_clock::now();
   CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
   {
-    auto [min_sq_distance, min_edge] = std::ranges::min(
+    auto [min_sq_distance, min_edge] = (std::ranges::min)(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
     auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
     auto vertices_of_min_edge = cdt.vertices(min_edge);
@@ -566,7 +566,7 @@ int go(Mesh mesh, CDT_options options) {
     }
   }
   {
-    double min_distance = std::numeric_limits<double>::max();
+    double min_distance = (std::numeric_limits<double>::max)();
     CDT::Vertex_handle min_va, min_vb, min_vertex;
     if(options.merge_facets) {
       for(int i = 0; i < nb_patches; ++i) {

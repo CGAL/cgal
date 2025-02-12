@@ -987,7 +987,7 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& base_color)
 Geom_traits::Plane_3 Scene_triangulation_3_item::plane(CGAL::qglviewer::Vec offset) const
 {
   if (!d->is_intersection_enabled())
-    return Geom_traits::Plane_3(1.0, 0.0, 0.0, std::numeric_limits<float>::max());
+    return Geom_traits::Plane_3(1.0, 0.0, 0.0, (std::numeric_limits<float>::max)());
   const CGAL::qglviewer::Vec& pos = d->frame->position() - offset;
   const CGAL::qglviewer::Vec& n =
     d->frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
