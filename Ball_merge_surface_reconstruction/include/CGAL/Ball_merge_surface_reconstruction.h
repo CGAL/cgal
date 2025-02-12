@@ -338,6 +338,7 @@ public:
    *
    * creates two watertight meshes approximating the surface with sample points passed to `build_triangulation()`,
    * and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
+   * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
    *
    * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
    *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -440,6 +441,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
 /*! \ingroup PkgBallMergeRef
  *
  * creates two watertight meshes approximating the surface, and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
+ * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
