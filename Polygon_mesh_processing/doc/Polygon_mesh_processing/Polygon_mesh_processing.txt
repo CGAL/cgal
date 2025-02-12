@@ -107,7 +107,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
-\paragraph Local Isotropic Incremental Remeshing
+\paragraph isorem Local Isotropic Incremental Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -148,7 +148,7 @@ Sizing fields in isotropic remeshing.
 (b) Curvature-based adaptive sizing field.
 \cgalFigureEnd
 
-\paragraph Delaunay-Based Surface Remeshing
+\paragraph mesh3rem Delaunay-Based Surface Remeshing
 The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given triangulated surface mesh.
 The algorithm, based on Delaunay refinement of a restricted Delaunay triangulation,
 generates a triangle surface mesh that provably has the required properties on simplices size,
@@ -167,7 +167,7 @@ An example of how to remesh a given triangulated surface mesh with the Delaunay 
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
-\paragraph Approximated Centroidal Voronoi Diagram (ACVD) remeshing
+\paragraph acvdrem Approximated Centroidal Voronoi Diagram (ACVD) remeshing
 This method is a vertex-clustering-based remeshing algorithm. It is based on
 \cgalCite{cgal:vc-acvdupmc-04} and extended in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
 The algorithm selects the requested number of output vertices as init
@@ -185,7 +185,7 @@ to use the quadratic error metrics to either move output vertices (fast but can 
 of to use the quadratic error metrics directly in the energy formulation of each cluster (slower but produce
 better quality triangles). It is also possible to use an adaptive remeshing based on the curvature.
 
-\paragraph Decimate Remeshing of (Almost) Planar Patches
+\paragraph decimate Remeshing of (Almost) Planar Patches
 When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
 in this region to use few elements, or even a single large polygonal face when the region makes up a simply connected patch.
 This can be achieved using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
