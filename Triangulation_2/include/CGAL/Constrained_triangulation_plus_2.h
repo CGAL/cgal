@@ -73,6 +73,7 @@ public:
   using Self = Constrained_triangulation_plus_2<Tr_>;
   using Base = Tr_;
   using Constraint_hierarchy = Ctp_2_hierarchy_type<Tr_>;
+  static_assert(CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
 protected:
   const auto& hierarchy() const { return static_cast<const Constraint_hierarchy&>(*this); }
   auto& hierarchy() { return static_cast<Constraint_hierarchy&>(*this); }
