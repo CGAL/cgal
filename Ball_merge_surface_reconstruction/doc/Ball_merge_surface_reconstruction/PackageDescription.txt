@@ -13,8 +13,8 @@
 \cgalPkgPicture{pkgBMR-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari}
-\cgalPkgDesc{The package provides a Delaunay triangulation based surface reconstruction algorithm from an unorganised point set. The reconstructed surface consists of the interface between Voronoi balls, which
-approximate the interior and exterior medial balls. This package cintains two variants of the algorithm (local and global),
+\cgalPkgDesc{The package provides a Delaunay triangulation based surface reconstruction algorithm from an unorganized point set. The reconstructed surface consists of the interface between Voronoi balls, which
+approximate the interior and exterior medial balls. This package contains two variants of the algorithm (local and global),
 which are carefully designed to target two different reconstruction scenarios for watertight surfaces from accurate or noisy samples, as well as real-world scanned data sets, exhibiting noise, outliers,
 and large areas of missing data.}
 \cgalPkgManuals{Chapter_Ball_merge_surface_reconstruction,PkgBallMergeRef}
