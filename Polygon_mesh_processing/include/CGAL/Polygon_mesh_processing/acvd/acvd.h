@@ -424,7 +424,7 @@ std::pair<
 
   // TODO: copy the mesh in order to not modify the original mesh
   //TriangleMesh pmesh = pmesh_org;
-  int nb_vertices = vertices(pmesh).size();
+  std::size_t nb_vertices = vertices(pmesh).size();
 
 
   // For remeshing, we might need to subdivide the mesh before clustering
@@ -1176,7 +1176,6 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 
       if (clusters[c].nb_vertices==1) continue;
 
-
       std::cout << "putting " << v << " from " << c << " to " << clusters.size() <<  "(" << clusters[c].nb_vertices << ")" << "\n";
       put(vertex_cluster_pmap, v, clusters.size());
       if (get(vertex_cluster_pmap, v) !=  clusters.size()) throw std::runtime_error("BOOM");
@@ -1186,7 +1185,6 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
     if (nm_clusters_picked.size()==nm_clusters.size()) break;
   }
 
-  //~ if (kkk==0)
   nb_vertices_to_consider_for_early_stop = 0;
   frozen_clusters = std::vector<bool>(nb_clusters, true);
   for (std::size_t nmi : nm_clusters) {
@@ -1210,9 +1208,9 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 /**
 * \ingroup PMP_acvd_grp
 *
-* performs isotropic centroidal voronoi diagram remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
+* performs isotropic Approximated Centroidal Voronoi Diagrams remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 *
-* @tparam TriangleMesh a model of `FaceListGraph`
+* @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param tmesh input triangle mesh
@@ -1220,7 +1218,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *                    In the case the mesh is not closed or if the number of points is too low
 *                    and no manifold mesh could be produced with that budget of points, extra points
 *                    are added to get a manifold output.
-* @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
@@ -1231,7 +1229,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
 *     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is provided, an internal property map
-*                     will be created and curvature values will be computed using the function `interpolated_corrected_curvatures()` will be called to initialize it.}
+*                     will be created and curvature values will be computed using the function `interpolated_corrected_curvatures()`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{gradation_factor}
@@ -1242,7 +1240,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{postprocessing_qem}
-*     \cgalParamDescription{indicates if a project step using QEM should be applied to cluster centers at the end of the minimization,
+*     \cgalParamDescription{indicates if a project step using quadratic error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in visual issues or even self-intersections.}
 *     \cgalParamType{bool}
@@ -1250,7 +1248,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_qem_metric}
-*     \cgalParamDescription{indicates if QEM should be applied during the minimization algorithm in order for example to recover sharp features.
+*     \cgalParamDescription{indicates if quadratic error metric should be applied during the minimization algorithm in order for example to recover sharp features.
 *                           This is a slower than when using `postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
@@ -1284,26 +1282,27 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *
 * \cgalNamedParamsEnd
 *
-* @return the simplified mesh as a TriangleMesh
+* @return `true` if `nb_vertices` was sufficiently large for remeshing the input, and `false` if more points were used
 *
-* @todo implement manifold version
-* @todo how to handle output vertex point map
 */
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
-TriangleMesh acvd_isotropic_remeshing(
+bool acvd_isotropic_remeshing(
     TriangleMesh& tmesh,
-    const int& nb_vertices,
+    std::size_t nb_vertices,
     const NamedParameters& np = parameters::default_values()
   )
 {
   auto ps = internal::acvd_impl(tmesh, nb_vertices, np);
-
   CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
 
-  TriangleMesh simplified_mesh;
-  polygon_soup_to_polygon_mesh(ps.first, ps.second, simplified_mesh);
-  return simplified_mesh;
+  auto vpm = parameters::choose_parameter(
+                parameters::get_parameter(np, CGAL::vertex_point),
+                get_property_map(CGAL::vertex_point, tmesh));
+
+  remove_all_elements(tmesh);
+  polygon_soup_to_polygon_mesh(ps.first, ps.second, tmesh, parameters::vertex_point_map(vpm));
+  return ps.first.size()==nb_vertices;
 }
 
 } // namespace Polygon_mesh_processing

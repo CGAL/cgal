@@ -72,7 +72,7 @@ public Q_SLOTS:
     Scene_facegraph_item* item = getSelectedItem<Scene_facegraph_item>();
     if(!item) { return; }
     // set default number of clusters to 5% of the number of vertices
-    ui.nb_clusters_spin_box->setValue(max(item->face_graph()->number_of_faces() / 20, (unsigned int)10));
+    ui.nb_clusters_spin_box->setValue((std::max)(item->face_graph()->number_of_faces() / 20, (unsigned int)10));
 
     int i = dialog.exec();
     if (i == QDialog::Rejected)
@@ -90,16 +90,16 @@ public Q_SLOTS:
 
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    FaceGraph remeshed;
+    FaceGraph remeshed *graph;
 
     // TODO add post-processing
 
     if (ui.IsotropicClustering->isChecked())
-      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value());
+      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value());
     else if (ui.QEMClustering->isChecked())
-      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_metric(true));
+      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_metric(true));
     else
-      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
+      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
 
     // update the scene
     CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));

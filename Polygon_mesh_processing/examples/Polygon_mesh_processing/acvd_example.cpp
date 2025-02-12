@@ -14,15 +14,14 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
-typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
-typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::property_map<Surface_Mesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
+typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  Surface_Mesh smesh;
+  Mesh smesh;
   //CGAL::get_default_random() = CGAL::Random( 1739197120 ); //connexity constraint issue + infinite loop with cheese
   //CGAL::get_default_random() = CGAL::Random( 1739199762 ); //one small edge
   //CGAL::get_default_random() = CGAL::Random( 1739264620 ); //one very small edge
@@ -48,7 +47,8 @@ int main(int argc, char* argv[])
   ///// Uniform Isotropic ACVD
 #if 0
   std::cout << "Uniform Isotropic ACVD ...." << std::endl;
-  auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
+  Mesh acvd_mesh = smesh
+  PMP::acvd_isotropic_remeshing(acvd_mesh, nb_clusters);
   CGAL::IO::write_polygon_mesh(stem+"_acvd_"+nbc+extension, acvd_mesh);
 
   std::cout << "Completed" << std::endl;
@@ -58,8 +58,9 @@ int main(int argc, char* argv[])
 #if 0
   std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
-  auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::postprocessing_qem(true));
-  CGAL::IO::write_polygon_mesh(stem+"_acvd_qem-pp_"+nbc+extension, acvd_mesh_qem_pp);
+  Mesh acvd_mesh_qem_pp = smesh
+  PMP::acvd_isotropic_remeshing(acvd_mesh_qem_pp, nb_clusters, CGAL::parameters::postprocessing_qem(true));
+  CGAL::IO::write_polygon_mesh( stem +"_acvd_qem-pp_"+nbc+extension, acvd_mesh_qem_pp);
 
   std::cout << "Completed" << std::endl;
 #endif
@@ -67,12 +68,11 @@ int main(int argc, char* argv[])
   // With QEM Energy Minimization
 
   std::cout << "Uniform QEM ACVD ...." << std::endl;
-CGAL::Real_timer timer; timer.start();
-  auto acvd_mesh_qem = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, params::use_qem_metric(true));
-timer.stop();
+  auto acvd_mesh_qem = smesh;
+  PMP::acvd_isotropic_remeshing(acvd_mesh_qem, nb_clusters, params::use_qem_metric(true));
   CGAL::IO::write_polygon_mesh( stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 
-  std::cout << "Completed in " << timer.time() << "s\n";
+  std::cout << "Completed\n";
 
   /// Adaptive Isotropic ACVD
 
