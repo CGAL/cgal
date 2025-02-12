@@ -408,8 +408,8 @@ std::pair<
 
   // using QEM ?
   bool use_postprocessing_qem = choose_parameter(get_parameter(np, internal_np::use_postprocessing_qem), false);
-  const bool use_qem_metric = choose_parameter(get_parameter(np, internal_np::use_qem_metric), false);
-  if (use_qem_metric) use_postprocessing_qem = false;
+  const bool use_qem_based_energy = choose_parameter(get_parameter(np, internal_np::use_qem_based_energy), false);
+  if (use_qem_based_energy) use_postprocessing_qem = false;
 
   // if adaptive clustering
   if (gradation_factor > 0 &&
@@ -543,7 +543,7 @@ std::pair<
 
     // compute quadric for the face
     Matrix4x4 face_quadric;
-    if (use_qem_metric)
+    if (use_qem_based_energy)
       compute_qem_face<GT>(vp1, vp2, vp3, face_quadric);
 
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
@@ -563,7 +563,7 @@ std::pair<
       weight_avg += vertex_weight;
       put(vertex_weight_pmap, vd, vertex_weight);
 
-      if (use_qem_metric)
+      if (use_qem_based_energy)
       {
         Matrix4x4 vertex_quadric = get(vertex_quadric_pmap, vd);
         vertex_quadric += face_quadric;
@@ -803,7 +803,7 @@ std::pair<
       std::cout << "# Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-      if (use_qem_metric && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
+      if (use_qem_based_energy && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
       {
         qem_energy_minimization = true;
         break;
@@ -1243,7 +1243,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{use_qem_metric}
+*   \cgalParamNBegin{use_qem_based_energy}
 *     \cgalParamDescription{indicates if quadratic error metric should be applied during the minimization algorithm in order for example to recover sharp features.
 *                           This is a slower than when using `use_postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}

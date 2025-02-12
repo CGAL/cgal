@@ -103,7 +103,7 @@ CGAL_add_named_parameter(vertex_principal_curvatures_and_directions_t, vertex_pr
 CGAL_add_named_parameter(ball_radius_t, ball_radius, ball_radius)
 CGAL_add_named_parameter(gradation_factor_t, gradation_factor, gradation_factor)
 CGAL_add_named_parameter(use_postprocessing_qem_t, use_postprocessing_qem, use_postprocessing_qem)
-CGAL_add_named_parameter(use_qem_metric_t, use_qem_metric, use_qem_metric)
+CGAL_add_named_parameter(use_qem_based_energy_t, use_qem_based_energy, use_qem_based_energy)
 CGAL_add_named_parameter(vertex_count_ratio_t, vertex_count_ratio, vertex_count_ratio)
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
