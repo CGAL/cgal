@@ -12,6 +12,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 
+namespace params = CGAL::parameters;
+CGAL::Parallel_if_available_tag ctag;
+
 void test1()
 {
   std::string inFilename=CGAL::data_file_path("points_3/half.xyz"); //Test input file
@@ -19,7 +22,7 @@ void test1()
   CGAL::IO::read_points(inFilename, std::back_inserter(points)); //Reading the input points
 
   std::vector<std::array<int,3>> meshFaceIndices1, meshFaceIndices2; //For saving the results
-  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7); //Calling global BallMerge with parameter=1.7
+  CGAL::ball_merge_surface_reconstruction_global(points, meshFaceIndices1, meshFaceIndices2, params::concurrency_tag(ctag)); //Calling global BallMerge with parameter=1.7
   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1); //The first resulting mesh
   CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2); //The second resulting mesh
 }
@@ -36,23 +39,9 @@ void test2()
   CGAL::IO::read_points(inFilename, std::back_inserter(points));
 
   std::vector<std::array<int,3>> meshFaceIndices1, meshFaceIndices2;
-    CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+    CGAL::ball_merge_surface_reconstruction_global(points, meshFaceIndices1, meshFaceIndices2, params::concurrency_tag(ctag));
     CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1);
     CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2);
-
-  // if (option == 0)
-  // {
-  //   double eta = (argc >= 5) ? atof(argv[4]) : 200.;
-  //   std::vector<std::array<int,3>> meshFaceIndices;
-  //   CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, par, eta);
-  //   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices);
-  // }
-  // else{
-  //   std::vector<std::array<int,3>> meshFaceIndices1, meshFaceIndices2;
-  //   CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, par);
-  //   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1);
-  //   CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2);
-  // }
 }
 
 void test_containers()
@@ -65,13 +54,13 @@ void test_containers()
 
   {
   std::vector<std::vector<std::size_t>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
-  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
-  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  CGAL::ball_merge_surface_reconstruction_local(points, meshFaceIndices, params::concurrency_tag(ctag));
+  CGAL::ball_merge_surface_reconstruction_global(points, meshFaceIndices1, meshFaceIndices2, params::concurrency_tag(ctag));
   }
   {
   std::list<boost::container::small_vector<std::size_t,3>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
-  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
-  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  CGAL::ball_merge_surface_reconstruction_local(points, meshFaceIndices, params::concurrency_tag(ctag));
+  CGAL::ball_merge_surface_reconstruction_global(points, meshFaceIndices1, meshFaceIndices2, params::concurrency_tag(ctag));
   }
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -79,8 +68,8 @@ void test_containers()
   tbb::concurrent_vector<Point> points;
   CGAL::IO::read_points(inFilename, std::back_inserter(points));
   tbb::concurrent_vector<tbb::concurrent_vector<std::size_t>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
-  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
-  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  CGAL::ball_merge_surface_reconstruction_local(points, meshFaceIndices, params::concurrency_tag(ctag));
+  CGAL::ball_merge_surface_reconstruction_global(points, meshFaceIndices1, meshFaceIndices2, params::concurrency_tag(ctag));
   }
 #endif
 }

@@ -29,8 +29,10 @@ int main(int argc, char **argv)
   std::vector<std::array<int,3>> meshFaceIndices;
 
   // run the reconstruction with the given parameters
-  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(
-    points, meshFaceIndices, params::delta(delta).eta(eta));
+  CGAL::ball_merge_surface_reconstruction_local(
+    points, meshFaceIndices, params::delta(delta)
+                                    .eta(eta)
+                                    .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   // write output triangle soups
   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices);

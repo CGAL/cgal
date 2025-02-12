@@ -279,8 +279,6 @@ public:
  * creates a triangle soup approximating the surface.
  * After creation, resulting triangular faces will be stored in `out_triangles`, allowing us to use it independently for further processing.
  *
- * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam PointRange a model of `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
@@ -292,6 +290,12 @@ public:
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{delta}
  *     \cgalParamDescription{the value of \f$ \delta \f$}
  *     \cgalParamType{double}
@@ -308,8 +312,7 @@ public:
  * \cgalNamedParamsEnd
  *
  */
-template <class Concurrency_tag = Sequential_tag,
-          class Traits = Default,
+template <class Traits = Default,
           class NamedParameters = parameters::Default_named_parameters,
           class PointRange,
           class TripleIndexRange>
@@ -319,6 +322,8 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -336,8 +341,6 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  * creates a watertight mesh approximating the surface.
  * After creation, resulting meshes will be stored in `out_triangles1` and `out_triangles2`, allowing us to use it independently for further processing.
  *
- * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
@@ -355,12 +358,15 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *     \cgalParamType{double}
  *     \cgalParamDefault{1.7}
  *   \cgalParamNEnd
- *
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
-template <class Concurrency_tag= Sequential_tag,
-          class Traits = Default,
+template <class Traits = Default,
           class NamedParameters = parameters::Default_named_parameters,
           class PointRange,
           class TripleIndexRange>
@@ -371,6 +377,8 @@ void ball_merge_surface_reconstruction_global(const PointRange& points,
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Sequential_tag>::type;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
