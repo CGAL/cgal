@@ -28,6 +28,10 @@
    by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
    The old range type is now returned by a new function named `subconstraints_and_contexts()`.
 
+### [Polygon Repair](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonRepair)
+
+-   Add a the non-zero rule, as well as functions to compute the conservative inner and outer hull of similar polygons.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
