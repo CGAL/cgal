@@ -633,6 +633,8 @@ bool SimpleStraightSkel::run() {
         CGAL::FT offset = 0;
         CGAL::FT offset_prev = 0;
 
+        CGAL_assertion_code(const bool is_emptiness_expected = save_offsets_.empty();)
+
         db::_3d::OBJFile::save("results/init_post.obj", polyhedron, false /*do not triangulate*/);
 
         PQ queue;
@@ -827,6 +829,8 @@ bool SimpleStraightSkel::run() {
 
 
         DEBUG_PRINT("== Straight Skeleton 3D finished ==");
+
+        CGAL_assertion(!is_emptiness_expected || polyhedron->empty());
 
 #ifdef CGAL_SS3_RUN_TIMERS
         timer.stop();
