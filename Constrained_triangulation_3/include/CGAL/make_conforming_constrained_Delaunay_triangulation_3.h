@@ -72,7 +72,6 @@ namespace CGAL {
 /*!
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
- * \relates CGAL::Conforming_constrained_Delaunay_triangulation_3
  *
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \include{doc} CDT_3_common_template_parameters.dox-frag
@@ -132,7 +131,6 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
 /*!
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
  *
- * \relates CGAL::Conforming_constrained_Delaunay_triangulation_3
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  *         of the polygon soup
