@@ -18,6 +18,7 @@
 
 #include <CGAL/basic.h>
 #include <utility>
+#include <stack>
 #include <map>
 #include <set>
 #include <list>
