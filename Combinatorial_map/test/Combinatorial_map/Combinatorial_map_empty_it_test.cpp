@@ -8,12 +8,12 @@ struct Map_3_dart_items_3: public CGAL::Generic_map_min_items
 };
 
 using Map3=CGAL::Combinatorial_map<3, Map_3_dart_items_3>;
+Map3 m;
 
 template<typename Range>
-bool test_empty_it(Range& r, const std::string& txt)
+bool test_empty_it(const Range& r, const std::string& txt)
 {
   bool res=true;
-  Map3 m;
   if(r.size()!=0)
   {
     std::cout<<"[ERROR "<<txt<<"] non zero size with range: "<<r.size()<<std::endl;
@@ -32,5 +32,22 @@ bool test_empty_it(Range& r, const std::string& txt)
 }
 int main()
 {
+  bool res=true;
 
+  res=res && test_empty_it<Map3::Dart_range>(m.darts(), "Dart_range");
+  res=res && test_empty_it<Map3::Dart_const_range>
+    (const_cast<const Map3&>(m).darts(), "Dart_const_range");
+
+  res=res && test_empty_it<Map3::One_dart_per_cell_range<3>>
+    (m.one_dart_per_cell<3>(), "One_dart_per_cell_range<0>");
+
+  res=res && test_empty_it<Map3::One_dart_per_cell_const_range<3>>
+    (const_cast<const Map3&>(m).one_dart_per_cell<3>(),
+     "One_dart_per_cell_const_range<0>");
+
+  if(!res)
+  { return(EXIT_FAILURE); }
+
+  std::cout<<"ALL SUCCESS."<<std::endl;
+  return EXIT_SUCCESS;
 }
