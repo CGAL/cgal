@@ -171,7 +171,7 @@ is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 This method is a vertex clustering based remeshing algorithm. It is based on
 \cgalCite{cgal:vc-acvdupmc-04} and extended in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
 
-The function `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` takes as input a triangle mesh and
+The function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()` takes as input a triangle mesh and
 the expected number of output vertices, and it updates the mesh with the remeshed version.
 The number of vertices in the output mesh might be larger than the input parameters if the input is not closed
 or if the budget of points provided is too low to generate a manifold output mesh.

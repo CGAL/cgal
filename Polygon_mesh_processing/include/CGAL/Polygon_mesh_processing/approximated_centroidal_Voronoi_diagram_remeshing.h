@@ -1276,7 +1276,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 */
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
-bool acvd_isotropic_remeshing(
+bool approximated_centroidal_Voronoi_diagram_remeshing(
     TriangleMesh& tmesh,
     std::size_t nb_vertices,
     const NamedParameters& np = parameters::default_values()

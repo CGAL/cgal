@@ -10,7 +10,7 @@
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 
 #include <CGAL/iterator.h>
-#include <CGAL/Polygon_mesh_processing/acvd/acvd.h>
+#include <CGAL/Polygon_mesh_processing/approximated_centroidal_Voronoi_diagram_remeshing.h>
 
 #include <QElapsedTimer>
 #include <QRadioButton>
@@ -95,11 +95,11 @@ public Q_SLOTS:
     // TODO add post-processing
 
     if (ui.IsotropicClustering->isChecked())
-      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value());
+      PMP::approximated_centroidal_Voronoi_diagram_remeshing(remeshed, ui.nb_clusters_spin_box->value());
     else if (ui.QEMClustering->isChecked())
-      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_based_energy(true));
+      PMP::approximated_centroidal_Voronoi_diagram_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_based_energy(true));
     else
-      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
+      PMP::approximated_centroidal_Voronoi_diagram_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
 
     // update the scene
     CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
