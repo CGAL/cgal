@@ -1,9 +1,4 @@
 #include <vector>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <string>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/poisson_eliminate.h>
 #include <CGAL/IO/write_points.h>

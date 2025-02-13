@@ -1,13 +1,10 @@
+#include <CGAL/poisson_eliminate.h>
+
 #include <vector>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <string>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/poisson_eliminate.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_points.h>

@@ -1,9 +1,4 @@
 #include <vector>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <string>
-
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/poisson_eliminate.h>

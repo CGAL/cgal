@@ -99,7 +99,7 @@ public:
   reference operator[](key_type k) const {
     CGAL_assertion(k < (range.size() + tiling_points.size()));
     if (range.size() > k)
-      return get(point_map, range[k]);
+      return get(point_map, *(range.begin() + k));
     else
       return tiling_points[k - range.size()];
   }
@@ -107,7 +107,7 @@ public:
   friend reference get(const Indexed_extended_point_map& ppmap, key_type k) {
     CGAL_assertion(k < (ppmap.range.size() + ppmap.tiling_points.size()));
     if ((k < ppmap.range.size()))
-      return get(ppmap.point_map, ppmap.range[k]);
+      return get(ppmap.point_map, *(ppmap.range.begin() + k));
     else
       return ppmap.tiling_points[k - ppmap.range.size()];
   }
@@ -229,9 +229,12 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  if (points.size() == 0)
+    return;
+
   using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
   using PointMap = typename NP_helper::Point_map;
-  using Point = typename NP_helper::Point;
+  using Point = typename boost::property_traits<PointMap>::value_type;
   using GeomTraits = typename NP_helper::Geom_traits;
   using FT = typename GeomTraits::FT;
   using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
@@ -241,12 +244,6 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   using Splitter = CGAL::Sliding_midpoint<Search_traits>;
   using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
   using Tree = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
-
-  // Needs a multi-dimension solution
-  Bbox_3 bb = bbox_3(make_transform_iterator_from_property_map(points.begin(), point_map),
-    make_transform_iterator_from_property_map(points.end(), point_map));
-
-  double domain_size = (bb.xmax() - bb.xmin()) * (bb.ymax() - bb.ymin()) * (bb.zmax() - bb.zmin());
 
   // named parameters for alpha, beta and gamma
   const double alpha = 8;
@@ -261,6 +258,25 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
   const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), 2);
 
+  // Needs a multi-dimension solution
+  std::array<FT, ambient_dimension> lower, upper;
+  const Point &first = get(point_map, *(points.begin()));
+  for (unsigned int i = 0; i < ambient_dimension; i++)
+    lower[i] = upper[i] = first[i];
+
+  for (const auto &pt : points) {
+    const Point& p = get(point_map, pt);
+    for (unsigned int i = 0; i < ambient_dimension; i++) {
+      lower[i] = (p[i] < lower[i]) ? p[i] : lower[i];
+      upper[i] = (p[i] > upper[i]) ? p[i] : upper[i];
+    }
+  }
+
+  double domain_size = 1;
+
+  for (std::size_t i = 0; i < ambient_dimension; i++)
+    domain_size *= CGAL::to_double(upper[i] - lower[i]);
+
   // named parameter for r_max
   double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * internal::get_maximum_radius(dimension, number_of_points, domain_size)));
   double r_min = CGAL::to_double(weight_limiting ? internal::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
@@ -272,12 +288,12 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
   IPM ipm(points, tiling_points, point_map);
 
-  auto tile_point = [&tiling_points, &bb, &r_max, &ambient_dimension](const Point& p, std::size_t dim = 0) {
-    auto do_tiling = [&tiling_points, &bb, &r_max, &ambient_dimension](const auto& self, const Point& p, std::size_t dim) -> void {
+  auto tile_point = [&tiling_points, &lower, &upper, &r_max, ambient_dimension](const Point& p, std::size_t dim = 0) {
+    auto do_tiling = [&tiling_points, &lower, &upper, &r_max, ambient_dimension](const auto& self, const Point& p, std::size_t dim) -> void {
       auto it = p.cartesian_begin();
 
-      if (bb.min_coord(int(dim)) > (*(it + dim) - r_max)) {
-        FT v = 2 * bb.min_coord(int(dim)) - (*(it + dim));
+      if (lower[int(dim)] > (*(it + dim) - r_max)) {
+        FT v = 2 * lower[int(dim)] - (*(it + dim));
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
@@ -285,8 +301,8 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
           self(self, tiling_points.back(), dim + 1);
       }
 
-      if (bb.max_coord(int(dim)) < (*(it + dim) + r_max)) {
-        FT v = 2 * bb.max_coord(int(dim)) - (*(it + dim));
+      if (upper[int(dim)] < (*(it + dim) + r_max)) {
+        FT v = 2 * upper[int(dim)]- (*(it + dim));
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
@@ -302,7 +318,7 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
   if (tiling) {
     for (std::size_t i = 0;i<points.size();i++)
-      tile_point(get(point_map, points[i]));
+      tile_point(get(point_map, *(points.begin() + i)));
   }
 
   // Tiling requires either to copy the point range or to use a special Index_property_map with a second array of points to keep the input range const.
@@ -350,14 +366,14 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
 
       // Adjust weights of neighbors
       res.clear();
-      const Point& p = get(point_map, points[i]);
+      const Point& p = get(point_map, *(points.begin() + i));
       tree.search(std::back_inserter(res), Fuzzy_sphere(p, r_max, 0, Search_traits(ipm)));
 
       for (std::size_t n = 0; n < res.size(); n++) {
         if (i == res[n] || res[n] >= points.size() || heap_pos[res[n]] >= heap_size)
           continue;
 
-        const Point p2 = get(point_map, points[res[n]]);
+        const Point p2 = get(point_map, *(points.begin() + res[n]));
         double d2 = CGAL::to_double((p - p2).squared_length());
 
         weights[res[n]] -= weight_functor(p2, p, d2, r_max);
