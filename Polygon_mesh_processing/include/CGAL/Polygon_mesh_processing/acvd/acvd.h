@@ -26,6 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
