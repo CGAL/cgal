@@ -1240,7 +1240,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *                           This is a slower than when using `use_postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
-*     \cgalParamExtra{If this parameter is `true` then use_postprocessing_qem will automatically set to `false`.}
+*     \cgalParamExtra{If this parameter is `true` then `use_postprocessing_qem` will automatically set to `false`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_count_ratio}
