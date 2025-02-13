@@ -871,7 +871,7 @@ int main(int argc, char* argv[]) {
 
   auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
   auto result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
-  
+
   if (!result.polygon_mesh)
   {
     std::cerr << "Not a valid input file." << std::endl;
