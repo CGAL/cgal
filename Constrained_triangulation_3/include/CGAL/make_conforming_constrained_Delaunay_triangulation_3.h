@@ -54,7 +54,7 @@ namespace CGAL {
 
   For both functions, the template parameter `Triangulation` defines the type of the triangulation that is created
   and returned by the function.
-  
+
     - If `Triangulation` is `CGAL::Default`, the geometric traits class type is deduced from the input data and
       the named parameters. If the named parameter `geom_traits` is provided, the traits class is deduced from it.
       Otherwise, the point type of the input data is used to deduce the traits class. Let's call it `Traits`.
@@ -73,7 +73,7 @@ namespace CGAL {
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
  * \relates CGAL::Conforming_constrained_Delaunay_triangulation_3
- * 
+ *
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \include{doc} CDT_3_common_template_parameters.dox-frag
  *
@@ -98,10 +98,14 @@ namespace CGAL {
  *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered a separate patch.}
  *   \cgalParamExtra{Otherwise, faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
- * 
- *   \include{doc} CDT_3_common_named_parameters.dox-frag
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{`Traits` as defined above in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type}
+ *     \cgalParamDefault{the default constructed traits object `Traits{}`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- * 
+ *
  * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon mesh, of a type
  *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
@@ -155,11 +159,15 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *   \cgalParamExtra{If this parameter is omitted, each face of the polygon soup is considered a separate patch.}
  *   \cgalParamExtra{Otherwise faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
- * 
- *   \include{doc} CDT_3_common_named_parameters.dox-frag
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{`Traits` as defined above in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type}
+ *     \cgalParamDefault{the default constructed traits object `Traits{}`}
+ *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
- * 
+ *
  * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon soup, of a type
  *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
