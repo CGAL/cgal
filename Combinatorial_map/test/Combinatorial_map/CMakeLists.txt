@@ -12,6 +12,8 @@ set(hfiles Combinatorial_map_2_test.h Combinatorial_map_3_test.h
 # create a target per cppfile
 create_single_source_cgal_program(Combinatorial_map_test.cpp ${hfiles})
 create_single_source_cgal_program(Combinatorial_map_copy_test.cpp ${hfiles})
+create_single_source_cgal_program(cmap_test_split_attribute.cpp)
+create_single_source_cgal_program(Combinatorial_map_empty_it_test.cpp)
 
 # Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
 add_executable(Combinatorial_map_test_index  Combinatorial_map_test.cpp ${hfiles})
@@ -24,7 +26,9 @@ target_compile_definitions(Combinatorial_map_copy_test_index PRIVATE USE_COMPACT
 target_link_libraries(Combinatorial_map_copy_test_index PRIVATE CGAL::CGAL CGAL::Data)
 cgal_add_compilation_test(Combinatorial_map_copy_test_index)
 
-create_single_source_cgal_program(cmap_test_split_attribute.cpp)
+add_executable(Combinatorial_map_empty_it_test_index Combinatorial_map_empty_it_test.cpp)
+target_compile_definitions(Combinatorial_map_empty_it_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+cgal_add_compilation_test(Combinatorial_map_empty_it_test_index)
 
 # Link with OpenMesh if possible
 find_package(OpenMesh QUIET)
