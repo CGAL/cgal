@@ -52,8 +52,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
-#include <optional>
-#include <boost/tuple/tuple.hpp>
+
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -62,10 +61,12 @@
 #include <fstream>
 #include <iterator>
 #include <list>
+#include <optional>
 #include <sstream>
 #include <set>
 #include <stack>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -393,7 +394,7 @@ private:
                       const Curve_index& curve_index, const CGAL::Orientation orientation) const
   {
     Bare_point pa, pb;
-    boost::tie(pa, pb) = get_positions(va, vb, curve_index, orientation);
+    std::tie(pa, pb) = get_positions(va, vb, curve_index, orientation);
     return compute_distance(pa, pb);
   }
 
@@ -511,11 +512,11 @@ private:
                                                                            const Vertex_handle v2,
                                                                            const Curve_index& curve_index) const;
 
-  boost::tuple<Bare_point, Bare_point, Bare_point> get_positions(const Vertex_handle v1,
-                                                                 const Vertex_handle v2,
-                                                                 const Vertex_handle v3,
-                                                                 const Curve_index& curve_index,
-                                                                 const CGAL::Orientation orientation) const;
+  std::tuple<Bare_point, Bare_point, Bare_point> get_positions(const Vertex_handle v1,
+                                                               const Vertex_handle v2,
+                                                               const Vertex_handle v3,
+                                                               const Curve_index& curve_index,
+                                                               const CGAL::Orientation orientation) const;
 
 private:
   C3T3& c3t3_;
@@ -953,9 +954,9 @@ get_positions_with_unknown_orientation(const Vertex_handle v1,
 
 
 template <typename C3T3, typename MD, typename Sf>
-boost::tuple<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
-             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
-             typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
+std::tuple<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+           typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point,
+           typename Protect_edges_sizing_field<C3T3, MD, Sf>::Bare_point>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 get_positions(const Vertex_handle v1,
               const Vertex_handle v2,
@@ -965,11 +966,11 @@ get_positions(const Vertex_handle v1,
 {
   Bare_point p1, p2_check, p2, p3;
 
-  boost::tie(p1, p2) = get_positions(v1, v2, curve_index, orientation);
-  boost::tie(p2_check, p3) = get_positions(v2, v3, curve_index, orientation);
+  std::tie(p1, p2) = get_positions(v1, v2, curve_index, orientation);
+  std::tie(p2_check, p3) = get_positions(v2, v3, curve_index, orientation);
   CGAL_assertion(p2_check == p2);
 
-  return boost::make_tuple(p1, p2, p3);
+  return std::make_tuple(p1, p2, p3);
 }
 
 
@@ -1674,7 +1675,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
   Vertex_handle nearest_vh;
   FT sq_d;
-  boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+  std::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
   CGAL_assertion(nearest_vh != Vertex_handle());
   CGAL_assertion(tr.point(nearest_vh) != cwp(tr.canonicalize_point(p)));
 
@@ -1710,7 +1711,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
     // Iterate
     ch = tr.locate(wp0, lt, li, lj, nearest_vh);
-    boost::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
+    std::tie(nearest_vh, sq_d) = tr.nearest_power_vertex_with_sq_distance(p, ch);
     CGAL_assertion(nearest_vh != Vertex_handle());
   }
 
@@ -2000,7 +2001,7 @@ insert_balls(const Vertex_handle& vp,
 {
   // Get size of p & q
   Bare_point vpp, vqp;
-  boost::tie(vpp, vqp) = get_positions(vp, vq, curve_index, orientation);
+  std::tie(vpp, vqp) = get_positions(vp, vq, curve_index, orientation);
 
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
@@ -2049,7 +2050,7 @@ insert_balls(const Vertex_handle& vp,
   CGAL_precondition(sp <= sq);
 
   Bare_point vpp, vqp;
-  boost::tie(vpp, vqp) = get_positions(vp, vq, curve_index, d_sign);
+  std::tie(vpp, vqp) = get_positions(vp, vq, curve_index, d_sign);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
   if(sp <= 0)
@@ -2749,7 +2750,7 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
                  curve_index == domain_.curve_index(v2->index()));
 
   Bare_point v1p, v2p;
-  boost::tie(v1p, v2p) = get_positions(v1, v2, curve_index, orientation);
+  std::tie(v1p, v2p) = get_positions(v1, v2, curve_index, orientation);
 
   FT arc_length = domain_.curve_segment_length(v1p,
                                                v2p,
@@ -2816,7 +2817,7 @@ orientation_of_walk(const Vertex_handle& start,
 #endif
 
   Bare_point start_p, next_p;
-  boost::tie(start_p, next_p) = get_positions_with_unknown_orientation(start, next, curve_index);
+  std::tie(start_p, next_p) = get_positions_with_unknown_orientation(start, next, curve_index);
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
   std::cerr << "positions to determine orientation: " << start_p << " " << next_p << std::endl;
 #endif
@@ -3091,7 +3092,7 @@ is_sizing_field_correct(const Vertex_handle& v1,
   FT s3 = get_radius(v3);
 
   Bare_point p1, p2, p3;
-  boost::tie(p1, p2, p3) = get_positions(v1, v2, v3, curve_index, orientation);
+  std::tie(p1, p2, p3) = get_positions(v1, v2, v3, curve_index, orientation);
 
   FT D = domain_.curve_segment_length(p1, p3, curve_index, orientation);
   FT d = domain_.curve_segment_length(p1, p2, curve_index, orientation);

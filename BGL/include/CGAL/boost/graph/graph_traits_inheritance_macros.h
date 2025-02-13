@@ -72,16 +72,16 @@ struct property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP>
 namespace CGAL { \
 template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP>\
 typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::type \
-get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g) \
+get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
 { \
-  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g)); \
+  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
 } \
 \
 template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP>\
 typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::const_type \
-get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g) \
+get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
 { \
-  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g)); \
+  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
 }\
 } //CGAL namespace
 
@@ -131,16 +131,16 @@ struct property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP>
 namespace CGAL { \
 template <typename CGAL_XX_YATP>\
 typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::type \
-get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g) \
+get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
 { \
-  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g)); \
+  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
 } \
 \
 template <typename CGAL_XX_YATP>\
 typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::const_type \
-get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g) \
+get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
 { \
-  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g)); \
+  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
 }\
 } //CGAL namespace
 

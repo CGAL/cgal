@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Triangulation_2_Demo)
 
 set(CMAKE_AUTOMOC ON)
@@ -17,7 +17,7 @@ if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
   return()
 endif()
 
-add_definitions(-DQT_NO_KEYWORDS)
+add_compile_definitions(QT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #--------------------------------

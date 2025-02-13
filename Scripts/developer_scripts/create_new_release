@@ -4,14 +4,6 @@
 #
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
-# TODO :
-# - Cleanup the public/internal separation:
-#   - have CGAL_VERSION_NR be not affected by the internal version
-#   - have CGAL_REVISION be the revision (replacing the internal number)
-# - The public release case should pass the info to create_internal_release.
-#   [new] : create_internal_release should not know about internal/public mode.
-# - Merge [some parts] into ./create_internal_release ?
-
 DO_PUBLIC=""             # Also build the public versions
 DO_IT=""                 # Real mode (copy to HTTP server), versus local testing
 DO_NOT_TAG=""            # If set, do not call tag
@@ -301,10 +293,10 @@ if [ -n "$DO_PUBLIC" ]; then
         public_release_version="${public_release_version}-beta${BETA}"
     fi
     if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
-	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+        public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
         public_release_version=${public_release_name#CGAL-}
     else
-	public_release_name="CGAL-${public_release_version}"
+        public_release_name="CGAL-${public_release_version}"
     fi
     if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
         eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)

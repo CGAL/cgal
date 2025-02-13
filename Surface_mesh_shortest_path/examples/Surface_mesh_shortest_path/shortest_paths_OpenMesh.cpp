@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   // into a file readable using the CGAL Tmesh demo
   std::ofstream output("shortest_paths_OpenMesh.polylines.txt");
   vertex_iterator vit, vit_end;
-  for ( boost::tie(vit, vit_end) = vertices(tmesh);
+  for ( std::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)
   {
     std::vector<Traits::Point_3> points;

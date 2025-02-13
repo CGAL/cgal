@@ -2396,8 +2396,12 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    CGAL::qglviewer::Vec min(static_cast<float>(bbox.xmin())+viewer->offset().x, static_cast<float>(bbox.ymin())+viewer->offset().y, static_cast<float>(bbox.zmin())+viewer->offset().z),
-        max(static_cast<float>(bbox.xmax())+viewer->offset().x, static_cast<float>(bbox.ymax())+viewer->offset().y, static_cast<float>(bbox.zmax())+viewer->offset().z);
+    CGAL::qglviewer::Vec min{static_cast<float>(bbox.xmin()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymin()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmin()) + viewer->offset().z};
+    CGAL::qglviewer::Vec max{static_cast<float>(bbox.xmax()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymax()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmax()) + viewer->offset().z};
     viewer->setSceneBoundingBox(min, max);
     viewerShow(static_cast<float>(min.x), static_cast<float>(min.y), static_cast<float>(min.z),
                static_cast<float>(max.x), static_cast<float>(max.y), static_cast<float>(max.z));

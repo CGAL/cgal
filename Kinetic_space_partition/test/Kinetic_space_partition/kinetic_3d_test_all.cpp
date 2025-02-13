@@ -33,6 +33,7 @@ bool run_test(
     input_file_ply.close();
   else {
     std::cerr << "ERROR: can't read the OFF/PLY file " << filename << "!" << std::endl;
+    different++;
     return false;
   }
 
@@ -278,7 +279,7 @@ void run_all_tests() {
 
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   if (different != 0) {
-    std::cout << std::endl << kernel_name << different << " TESTS differ from typical values!" << std::endl << std::endl;
+    std::cout << std::endl << kernel_name << " " << different << " TESTS differ from typical values!" << std::endl << std::endl;
   }
   std::cout << std::endl << kernel_name << " TESTS SUCCESS!" << std::endl << std::endl;
 }

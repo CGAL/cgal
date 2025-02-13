@@ -24,14 +24,14 @@ namespace CGAL {
 /*! \ingroup PkgPolygon2Ref
  *
  * The class `Multipolygon_with_holes_2` models the concept `MultipolygonWithHoles_2`.
- * It is parameterized with two types (`Kernel` and `Container`) that are used to instantiate
- * the types `Polygon_2<Kernel,Container>` and `Polygon_with_holes_2<Kernel,Container>`.
+ * It is parameterized with two types (`Kernel` and `Container_`) that are used to instantiate
+ * the types `Polygon_2<Kernel,Container_>` and `Polygon_with_holes_2<Kernel,Container_>`.
  * The latter is used to represent each polygon with holes. The former is converted to the latter.
  *
  * \cgalModels{MultipolygonWithHoles_2}
  */
 template <class Kernel,
-          class Container = std::vector<typename Kernel::Point_2>>
+          class Container_ = std::vector<typename Kernel::Point_2>>
 class Multipolygon_with_holes_2 {
 public:
   /// \name Definition
@@ -39,13 +39,15 @@ public:
   /// @{
 
   /// polygon type
-  using Polygon_2 = CGAL::Polygon_2<Kernel, Container>;
+  using Polygon_2 = CGAL::Polygon_2<Kernel, Container_>;
 
   /// polygon with holes type
-  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container_>;
 
   /// @}
 
+  using Traits = Kernel;
+  using Container = Container_;
   using value_type = Polygon_with_holes_2;
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
@@ -182,10 +184,10 @@ order.
 
 \relates Multipolygon_with_holes_2
 */
-template <class Kernel, class Container>
+template <class Kernel, class Container_>
 std::ostream& operator<<(std::ostream& os,
-                         const Multipolygon_with_holes_2<Kernel, Container>& mp) {
-  typename Multipolygon_with_holes_2<Kernel, Container>::Polygon_with_holes_const_iterator i;
+                         const Multipolygon_with_holes_2<Kernel, Container_>& mp) {
+  typename Multipolygon_with_holes_2<Kernel, Container_>::Polygon_with_holes_const_iterator i;
 
   switch(IO::get_mode(os)) {
     case IO::ASCII :
@@ -213,11 +215,11 @@ std::ostream& operator<<(std::ostream& os,
   }
 }
 
-template <class Transformation, class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> transform(const Transformation& t,
-                                                       const Multipolygon_with_holes_2<Kernel, Container>& mp)
+template <class Transformation, class Kernel, class Container_>
+Multipolygon_with_holes_2<Kernel, Container_> transform(const Transformation& t,
+                                                       const Multipolygon_with_holes_2<Kernel, Container_>& mp)
   {
-    Multipolygon_with_holes_2<Kernel, Container> result;
+    Multipolygon_with_holes_2<Kernel, Container_> result;
     for(const auto& pwh : mp.polygons_with_holes()){
       result.add_polygon_with_holes(transform(t, pwh));
     }

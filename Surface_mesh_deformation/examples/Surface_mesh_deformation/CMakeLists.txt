@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_mesh_deformation_Examples)
 
 find_package(CGAL REQUIRED)
@@ -28,7 +28,7 @@ if(TARGET CGAL::Eigen3_support)
     k_ring_roi_translate_rotate_example
     k_ring_roi_translate_rotate_Surface_mesh
     deform_mesh_for_botsch08_format_sre_arap)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 
   find_package(OpenMesh QUIET)
