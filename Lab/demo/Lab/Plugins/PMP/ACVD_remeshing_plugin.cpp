@@ -97,7 +97,7 @@ public Q_SLOTS:
     if (ui.IsotropicClustering->isChecked())
       PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value());
     else if (ui.QEMClustering->isChecked())
-      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_metric(true));
+      PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::use_qem_based_energy(true));
     else
       PMP::acvd_isotropic_remeshing(remeshed, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
 
