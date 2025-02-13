@@ -167,23 +167,22 @@ An example of how to remesh a given triangulated surface mesh with the Delaunay 
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
-\paragraph acvdrem Approximated Centroidal Voronoi Diagram (ACVD) remeshing
-This method is a vertex-clustering-based remeshing algorithm. It is based on
+\paragraph acvdrem Approximated Discrete Centroidal Voronoi Diagram (ACVD) Remeshing
+This method is a vertex clustering based remeshing algorithm. It is based on
 \cgalCite{cgal:vc-acvdupmc-04} and extended in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
-The algorithm selects the requested number of output vertices as init
 
 The function `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` takes as input a triangle mesh and
-the expected number of the target vertices, and it updates the mesh with the remeshed version.
+the expected number of output vertices, and it updates the mesh with the remeshed version.
 The number of vertices in the output mesh might be larger than the input parameters if the input is not closed
 or if the budget of points provided is too low to generate a manifold output mesh.
 Note that providing an initial low number of vertices will affect the uniformity of the output triangles
 in case some extra points are added to make the output manifold. The algorithm is similar to Lloyd's algorithm
-(or k-means) where some random input vertices are picked to initialized cluster of vertices, and then clusters
+(or k-means) where some random input vertices are picked to initialize clusters of vertices, and then clusters
 are grown to minimize a particular energy, until convergence. Upon convergence, output vertices are computed
-from the vertices of each cluster. If the input mesh contains some sharp features or corner, it is possible
-to use the quadratic error metrics to either move output vertices (fast but can produce bad looking triangles),
-of to use the quadratic error metrics directly in the energy formulation of each cluster (slower but produce
-better quality triangles). It is also possible to use an adaptive remeshing based on the curvature.
+from the vertices of each cluster. If the input mesh contains some sharp features or corners, it is possible
+to use the quadric error metrics to either move output vertices (fast but can produce bad looking triangles),
+of to use the quadric error metrics directly in the energy formulation of each cluster (slower but produces
+better quality triangles). It is also possible to use an adaptive remeshing based on curvature.
 
 \cgalFigureBegin{acvd_remeshing, acvd_remeshing.png}
 ACVD remeshing.
@@ -1473,8 +1472,9 @@ used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
-The ACVD Simplification and Remeshing methods were implemented during GSoC 2023. This was implemented by Hossam Saeed and under
-supervision of Sébastien Valette and Sébastien Loriot. The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
+The implementation of the ACVD Remeshing method was started during GSoC 2023 by Hossam Saeed, under
+supervision of Sébastien Valette and Sébastien Loriot, that both took over the finalisation.
+The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceeding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
 

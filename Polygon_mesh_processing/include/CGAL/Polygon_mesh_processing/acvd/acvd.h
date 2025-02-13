@@ -1228,7 +1228,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_postprocessing_qem}
-*     \cgalParamDescription{indicates if a project step using quadratic error metric should be applied to cluster centers at the end of the minimization,
+*     \cgalParamDescription{indicates if a project step using quadric error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in visual issues or even self-intersections.}
 *     \cgalParamType{bool}
@@ -1236,7 +1236,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_qem_based_energy}
-*     \cgalParamDescription{indicates if quadratic error metric should be applied during the minimization algorithm in order for example to recover sharp features.
+*     \cgalParamDescription{indicates if quadric error metric should be applied during the minimization algorithm in order for example to recover sharp features.
 *                           This is a slower than when using `use_postprocessing_qem(true)` but is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
