@@ -17,7 +17,6 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau}
 \cgalPkgDesc{This package allows to build and handle 3D constrained Delaunay triangulations.}
-\todo Add more description.
 \cgalPkgManuals{Chapter_CT_3,PkgCT_3Ref}
 \cgalPkgSummaryEnd
 
@@ -27,9 +26,12 @@
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \noop \cgalPkgDemo{DEMO 2,demo2.zip}
-\todo Add a demo
 
 \cgalPkgShortInfoEnd
+
+\todo Add more description in cgalPkgDesc.
+\todo Add a demo
+
 
 \cgalPkgDescriptionEnd
 
