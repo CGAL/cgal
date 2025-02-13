@@ -68,6 +68,7 @@ public:
 
     bool isConsistent() const;
     void clear();
+    bool empty();
 
     int getID() const;
     void setID(int id);

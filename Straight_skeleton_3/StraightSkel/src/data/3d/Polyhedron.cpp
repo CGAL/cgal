@@ -523,6 +523,10 @@ void Polyhedron::clear() {
     }
 }
 
+bool Polyhedron::empty() {
+  return vertices_.empty() && edges_.empty() && facets_.empty();
+}
+
 int Polyhedron::getID() const {
     return this->id_;
 }
