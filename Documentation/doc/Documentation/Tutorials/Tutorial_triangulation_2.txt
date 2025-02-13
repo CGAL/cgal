@@ -1,0 +1,51 @@
+namespace CGAL {
+/*!
+\example Triangulation_2/Tutorial_Triangulation_2.cpp
+*/
+
+/*!
+
+\page Tutorial_Triangulation_2 2D Triangulations
+\cgalAutoToc
+
+\author Andreas Fabri
+
+A 2D triangulation is a decomposition of the 2D plane in vertices and triangular faces.
+
+In the example of this tutorial we use a <em>Delaunay triangulation</em> and a kernel
+that provides exact predicates. The <em>kernel</em> provides types for points,
+segments or triangles, as well as <em>predicates</em>, for example the incircle
+test needed for the Delaunay property, also called empty circle property.
+So we start with some `#include` and some `typedef`.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
+
+For a set of input points we obtain a set of finite vertices and the decomposition of
+the convex hull of the points in finite faces.
+Additionally, we obtain infinite faces incident to the edges of the convex hull
+having all as third vertex the infinite vertex. When we draw the triangulation
+we only draw finite vertices and faces.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-construction
+
+FIGURE
+
+When we inserted an individual point we obtained a <em>vertex handle</em> `vh`.
+A handle is a pointer to a vertex object, and no surprise when we insert
+ `v->point()` into `std::cout` we will see `1 1` on the console.
+
+Just like the standard containers, the triangulation provides iterators to enumerate
+its elements, that is all or only finite vertices and faces.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-traversal
+
+From a vertex we can obtain one incident face calling `vh->face()`.
+We next enumerate the faces incident to vertex handle `vh`. As there is no
+begin and end the function call `dt.incident_faces(vh)` returns a `Circulator`
+which we use in a `do`-loop.
+While a vertex can have an arbitrary number of incident faces, a face has
+always three incident vertices, which we access in the nested `for`-loop.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-incident
+
+} // namespace CGAL
