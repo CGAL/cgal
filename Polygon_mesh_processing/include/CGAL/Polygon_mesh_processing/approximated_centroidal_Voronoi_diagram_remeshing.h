@@ -28,8 +28,9 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/utility.h>
 
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
-
+#endif
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Random.h>
 
@@ -296,6 +297,7 @@ struct QEMClusterData {
   }
 };
 
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
 template <class TriangleMesh, class VPCDM, class NamedParameters>
 void upsample_subdivision_property(TriangleMesh& pmesh, VPCDM vpcd_map, const NamedParameters& np) {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
@@ -352,6 +354,7 @@ void upsample_subdivision_property(TriangleMesh& pmesh, VPCDM vpcd_map, const Na
     }
   }
 }
+#endif
 
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
@@ -375,11 +378,12 @@ std::pair<
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Matrix4x4> >::type VertexQuadricMap;
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>> >::type Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
     NamedParameters,
     Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
-
+#endif
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
@@ -388,13 +392,18 @@ std::pair<
                                              get_property_map(CGAL::vertex_point, pmesh));
 
   // get curvature related parameters
+#ifdef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
+  static_assert(is_default_parameter<NamedParameters, internal_np::gradation_factor_t>::value, "gradation_factor option is disabled");
+#endif
   const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
-  Vertex_principal_curvatures_and_directions_map vpcd_map;
 
   // using QEM ?
   bool use_postprocessing_qem = choose_parameter(get_parameter(np, internal_np::use_postprocessing_qem), false);
   const bool use_qem_based_energy = choose_parameter(get_parameter(np, internal_np::use_qem_based_energy), false);
   if (use_qem_based_energy) use_postprocessing_qem = false;
+
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
+  Vertex_principal_curvatures_and_directions_map vpcd_map;
 
   // if adaptive clustering
   if (gradation_factor > 0)
@@ -407,6 +416,7 @@ std::pair<
     else
       vpcd_map = get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map);
   }
+#endif
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
@@ -496,11 +506,13 @@ std::pair<
           pmesh,
           CGAL::parameters::number_of_iterations(subdivide_steps)
         );
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering
         upsample_subdivision_property(
           pmesh, vpcd_map,
           CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
         );
+#endif
       vpm = get_property_map(CGAL::vertex_point, pmesh);
       nb_vertices = num_vertices(pmesh);
     }
@@ -544,6 +556,7 @@ std::pair<
 
       if (gradation_factor == 0) // no adaptive clustering
         vertex_weight += weight;
+#ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering
       {
         typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
@@ -551,7 +564,7 @@ std::pair<
         typename GT::FT k_sq = (k1 * k1 + k2 * k2);
         vertex_weight += weight * pow(k_sq, gradation_factor / 2.0);  // /2.0 because k_sq is squared
       }
-
+#endif
       weight_avg += vertex_weight;
       put(vertex_weight_pmap, vd, vertex_weight);
 
@@ -1228,7 +1241,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_postprocessing_qem}
-*     \cgalParamDescription{indicates if a project step using quadric error metric should be applied to cluster centers at the end of the minimization,
+*     \cgalParamDescription{indicates if a projection step using quadric error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in visual issues or even self-intersections.}
 *     \cgalParamType{bool}

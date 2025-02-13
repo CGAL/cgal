@@ -3,8 +3,6 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
-#include <CGAL/Real_timer.h>
 
 #include <boost/graph/graph_traits.hpp>
 
