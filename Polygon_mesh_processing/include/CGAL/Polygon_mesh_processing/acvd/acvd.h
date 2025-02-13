@@ -1193,7 +1193,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 } // namespace internal
 
 /**
-* \ingroup PMP_acvd_grp
+* \ingroup PkgPolygonMeshProcessingRef
 *
 * performs isotropic Approximated Centroidal Voronoi Diagrams remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 *
