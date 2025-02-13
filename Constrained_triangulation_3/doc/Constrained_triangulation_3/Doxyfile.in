@@ -3,3 +3,5 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Constrained Triangulations"
 
 EXAMPLE_PATH += ${CGAL_PACKAGE_DOC_DIR}/doc_fragments
 QUIET = YES
+
+EXTENSION_MAPPING += dox-frag=md
