@@ -1216,7 +1216,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *
 * @param tmesh input triangle mesh
 * @param nb_vertices lower bound on the number of target vertices in the output mesh.
-*                    In the case the mesh is not closed or if the number of points is too low
+*                    In case the mesh is not closed or if the number of points is too low
 *                    and no manifold mesh could be produced with that budget of points, extra points
 *                    are added to get a manifold output.
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
@@ -1234,7 +1234,9 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{gradation_factor}
-*     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.}
+*     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.
+*                           The larger the value is, the more the curvature will impact the distribution of output vertices
+*                           on the surface. The original paper recommended the value `1.5`.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{0}
 *     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
@@ -1243,14 +1245,14 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNBegin{use_postprocessing_qem}
 *     \cgalParamDescription{indicates if a projection step using quadric error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
-*                           This is a fast method but can result in visual issues or even self-intersections.}
+*                           This is a fast method but can result in badly shaped triangles and even self-intersections.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_qem_based_energy}
 *     \cgalParamDescription{indicates if quadric error metric should be applied during the minimization algorithm in order for example to recover sharp features.
-*                           This is a slower than when using `use_postprocessing_qem(true)` but is more accurate.}
+*                           This is slower than when using `use_postprocessing_qem(true)` but it is more accurate.}
 *     \cgalParamType{bool}
 *     \cgalParamDefault{false}
 *     \cgalParamExtra{If this parameter is `true` then `use_postprocessing_qem` will automatically set to `false`.}
