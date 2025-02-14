@@ -114,11 +114,11 @@ public:
     bool operator()(const AbstractEventSPtr& eventA,
                     const AbstractEventSPtr& eventB) const
     {
-        // save and const events are handled outside of the queue, and in generic
-        // position, all events have their own offsets
-        // std::cout << eventA->toString() << "\n" << eventB->toString() << std::endl;
-        CGAL_warning(eventA->getOffset() != eventB->getOffset());
-        return (eventA->getOffset() < eventB->getOffset());
+      if (eventA->getOffset() == eventB->getOffset()) {
+          return (eventA->getType() > eventB->getType());
+      }
+
+      return (eventA->getOffset() < eventB->getOffset());
     }
 };
 
