@@ -782,7 +782,7 @@ The default weight is \f$\left(1 - \frac{d_{p,n}}{2r_{max}}\right)^8\f$ with \f$
 <img src="poisson_elimination.png" style="max-width:80%;"/>
 </center>
 \cgalFigureCaptionBegin{Point_set_processing_3figPoisson_elimination}
-Poisson elimination on point cloud with 21k points and results with \f$\frac{1}{2}\f$, \f$\frac{1}{4}\f$ and \f$\frac{1}{8}\f$ of the input size.
+Poisson elimination on point cloud randomly sampled from a mesh with 20k points showing results with \f$\frac{1}{2}\f$, \f$\frac{1}{4}\f$ and \f$\frac{1}{8}\f$ of the input size.
 \cgalFigureCaptionEnd
 
 \subsubsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination Example
