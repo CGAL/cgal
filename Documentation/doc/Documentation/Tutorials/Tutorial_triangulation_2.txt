@@ -78,9 +78,24 @@ face opposite to `vh`. And symmetrically, we now obtain the index of
 
 FIGURE
 
+We saw a lot of `auto` instead of real types. Depending on your
+programming style you may like them or you may prefer writing
+some more `using` statemenmts.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-using
+
+and then use them like this
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-no-auto
+
 In a triangulation we also have edges. However they are just a `std::pair`
 of a face handle and an index. No surprise that the index is the one
-of the opposite vertex and neighboring face.
+of the opposite vertex and neighboring face. The `mirror()` function
+is there for convenience. Note that an edge and its mirror edge are
+not equal.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-edge
+
 
 
 */

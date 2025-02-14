@@ -8,6 +8,11 @@ using Point = Delaunay::Point;
 using Delaunay = CGAL::Delaunay_triangulation_2<Kernel>;
 //! [TutoT2-include]
 
+/! [TutoT2-using]
+using Vertex_handle = Delaunay::Vertex_handle;
+using Face_handle = Delaunay::Face_handle;
+/! [TutoT2-using]
+
 int main ()
 {
   //! [TutoT2-construction]
@@ -39,13 +44,13 @@ int main ()
 
   //! [TutoT2-incident]
   auto fh = vh->face();
-  auto fc = dt.incident_faces(vh), done(vc);
+  auto fc = dt.incident_faces(vh), done(fc);
   do {
     for(int i = 0; i < 3; ++i){
       if(vh == fc->vertex(i))
         std::cout << "vh has index " << i  " in the face" << std::endl;
     }
-  }while(++vc != done);
+  }while(++fc != done);
   //! [TutoT2-incident]
 
 
@@ -59,9 +64,23 @@ int main ()
   //! [TutoT2-index]
   auto nh = fh->neighbor(ind);
   int nind = nh->index(fh);
-  auto vh = nh->vertex(nind);
+  auto nvh = nh->vertex(nind);
   //! [TutoT2-index]
 
+
+  //! [TutoT2-auto]
+  {
+    Face_handle nh = fh->neighbor(ind);
+    int nind = nh->index(fh);
+    Vertex_handle nvh = nh->vertex(nind);
+  }
+  //! [TutoT2-auto]
+
+  //! [TutoT2-edge]
+  Delaunay::Edge e(fh, ind);
+  Delaunay::Edge me =dt.mirror_edge(e);
+  assert(me.first.vertex(me.second) == nvh);
+  //! [TutoT2-edge]
 
   return 0;
 }
