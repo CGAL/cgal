@@ -47,7 +47,6 @@ int main ()
     }
   }while(++vc != done);
   //! [TutoT2-incident]
-  }
 
   return 0;
 }

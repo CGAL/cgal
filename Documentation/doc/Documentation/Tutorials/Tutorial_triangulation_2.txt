@@ -48,4 +48,6 @@ always three incident vertices, which we access in the nested `for`-loop.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-incident
 
+*/
+
 } // namespace CGAL
