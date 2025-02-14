@@ -128,7 +128,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
 {
   typedef Eigen::Matrix<typename GT::FT, 3, 3> Matrix3d;
 
-  int MaxNumberOfUsedSingularValues = 3;
+  int max_nb_of_singular_values_used = 3;
   Matrix3d A;
   A(0, 0) = quadric(0, 0);
   A(0, 1) = A(1, 0) = quadric(0, 1);
@@ -175,7 +175,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
     }
 
     if ((AbsolutesEigenValues[IndexMax] * invmaxW > 1e-3)
-      && (MaxNumberOfUsedSingularValues > 0))
+      && (max_nb_of_singular_values_used > 0))
     {
       // If this is true, then w[i] != 0, so this division is ok.
       double Inv = 1.0 / w[IndexMax];
@@ -193,7 +193,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
 
     // set the eigenvalu to -2 to remove it from subsequent tests
     AbsolutesEigenValues[IndexMax] = -2;
-    MaxNumberOfUsedSingularValues--;
+    --max_nb_of_singular_values_used;
   }
 
   tempMatrix2 = V * tempMatrix;
@@ -425,7 +425,6 @@ std::pair<
   // TODO compute less qem things if not used
   // TODO use symmetric matrices?
 
-  // TODO: copy the mesh in order to not modify the original mesh
   //TriangleMesh pmesh = pmesh_org;
   std::size_t nb_vertices = vertices(pmesh).size();
 
@@ -589,6 +588,10 @@ std::pair<
       put(vertex_weight_pmap, vd, 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
   }
 
+  Random rnd = is_default_parameter<NamedParameters, internal_np::random_seed_t>::value
+             ? get_default_random()
+             : CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
+
   // randomly initialize clusters
   //TODO: std::lower_bound with vertex_weight_pmap for better sampling
   for (int ci = 0; ci < nb_clusters; ++ci)
@@ -596,7 +599,7 @@ std::pair<
     int vi;
     Vertex_descriptor vd;
     do {
-      vi = CGAL::get_default_random().get_int(0, num_vertices(pmesh));
+      vi = rnd.get_int(0, num_vertices(pmesh));
       vd = *(vertices(pmesh).begin() + vi); // TODO: bad with Polyhedron
     } while (get(vertex_cluster_pmap, vd) != -1);
 
@@ -635,8 +638,8 @@ std::pair<
         clusters[ cluster_id ].add_vertex( get(vpm, v), v_weight, v_qem);
     }
 
-     for (int ci=0; ci<nb_clusters; ++ci)
-        if (clusters[ci].nb_vertices==0) throw std::runtime_error("empty_cluster " + std::to_string(ci));
+     CGAL_assertion_code(for (int ci=0; ci<nb_clusters; ++ci))
+    CGAL_assertion(clusters[ci].nb_vertices!=0);
 
     int nb_iterations = -1;
     nb_disconnected = 0;
@@ -909,9 +912,6 @@ std::pair<
   std::vector<typename GT::Point_3> points;
 
   std::vector<std::array<std::size_t, 3>> polygons;
-  TriangleMesh simplified_mesh;
-
-
   for (int i = 0; i < nb_clusters; ++i)
   {
     // if (clusters[i].weight_sum > 0)
@@ -1181,9 +1181,8 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 
       if (clusters[c].nb_vertices==1) continue;
 
-      std::cout << "putting " << v << " from " << c << " to " << clusters.size() <<  "(" << clusters[c].nb_vertices << ")" << "\n";
       put(vertex_cluster_pmap, v, clusters.size());
-      if (get(vertex_cluster_pmap, v) !=  clusters.size()) throw std::runtime_error("BOOM");
+      CGAL_assertion(get(vertex_cluster_pmap, v) ==  clusters.size());
       clusters.emplace_back();
     }
 
@@ -1217,9 +1216,9 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *
 * @param tmesh triangle mesh to be remeshed
 * @param nb_vertices lower bound on the number of target vertices in the output mesh.
-*                    In case the mesh is not closed or if the number of points is too low
-*                    and no manifold mesh could be produced with that budget of points, extra points
-*                    are added to get a manifold output.
+*                    The requested number of vertices in the output will be respected except if the input mesh is not closed
+*                    (extra vertices will be used on the boundary), or if the number of points is too low
+*                    and no manifold mesh can be produced with that budget of points (extra points are added to get a manifold output).
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
@@ -1265,12 +1264,12 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *                           If not, the mesh will first be subdivided until the aforementioned criterium is met.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{0.1}
-*     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be, but it .}
+*     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be, but it will increase the runtime.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
 *       \cgalParamDescription{a property map associating points to the vertices of `tmesh`.}
-*       \cgalParamType{a class model of `ReadablePropertyMap` with
+*       \cgalParamType{a class model of `ReadWritePropertyMap` with
 *                      `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                      as key type and `GT::Point_3` as value type.}
 *       \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`.}
@@ -1278,9 +1277,15 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *                       `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{random_seed}
+*     \cgalParamDescription{a value to seed the random number generator}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{a value generated with `std::time()`}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{geom_traits}
 *      \cgalParamDescription{an instance of a geometric traits class.}
-*      \cgalParamType{a class model of `Kernel`}
+*      \cgalParamType{a class model of `Kernel`, with `GT::FT` being either `float` or `double`.}
 *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
 *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
