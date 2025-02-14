@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   std::cout << "Uniform QEM ACVD ...." << std::endl;
   auto acvd_mesh_qem = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(acvd_mesh_qem, nb_clusters, params::use_qem_based_energy(true));
-  CGAL::IO::write_polygon_mesh( stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
+  CGAL::IO::write_polygon_mesh(stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 #endif
 
 #if 0
@@ -77,7 +77,8 @@ int main(int argc, char* argv[])
   const double gradation_factor = 2;
   Mesh adaptive_acvd_mesh = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(adaptive_acvd_mesh, nb_clusters, params::gradation_factor(gradation_factor));
-  CGAL::IO::write_OFF("fandisk_acvd_adaptive_3000.off", adaptive_acvd_mesh);
+
+  CGAL::IO::write_OFF(stem +"_acvd_adaptative_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem, adaptive_acvd_mesh);
 #endif
 
   std::cout << "Completed" << std::endl;
