@@ -1145,7 +1145,7 @@ protected:
     {
       const auto point = self->point(v_Steiner);
       if(!self->cdt_2_are_initialized) return;
-      for(const auto [_, poly_id] : CGAL::make_range(self->constraint_to_faces.equal_range(constraint))) {
+      for(const auto& [_, poly_id] : CGAL::make_range(self->constraint_to_faces.equal_range(constraint))) {
         auto& non_const_cdt_2 = self->face_cdt_2[poly_id];
         const auto& cdt_2 = non_const_cdt_2;
 
