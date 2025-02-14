@@ -140,6 +140,10 @@ CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-reduced)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv-reduced)
 CGAL_add_cdt3_from_local_off_test(mpi-part)
+
+OPTION(CGAL_CDT_TEST_USE_THINGI OFF "Internal switch to test Thingi10k data set")
+
+if (CGAL_CDT_TEST_USE_THINGI)
 CGAL_add_cdt3_from_local_off_test(thingi-1036467-selection3)
 CGAL_add_cdt3_from_local_off_test(243014-min2)
 CGAL_add_cdt3_from_local_off_test(243014-min3)
@@ -152,6 +156,7 @@ CGAL_add_cdt3_from_local_off_test(1514904-min8)
 CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
 
 include(./Thingi10k-CDT.cmake)
+endif()
 
 if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
   add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
