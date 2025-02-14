@@ -23,7 +23,9 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#ifdef CGAL_DEBUG_ACVD
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#endif
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/utility.h>
@@ -56,7 +58,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 namespace internal {
-
+#ifdef CGAL_DEBUG_ACVD
 template <class TriangleMesh, class ClusterMap>
 void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, std::string fname)
 {
@@ -88,7 +90,7 @@ void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, s
                                                    .vertex_color_map(vcm));
 
 }
-
+#endif
 
 template <typename GT>
 void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3, Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
@@ -809,7 +811,9 @@ std::pair<
             }
           }
         }
+#ifdef CGAL_DEBUG_ACVD
         std::cout << "# Modifications: " << nb_modifications << "\n";
+#endif
 
         clusters_edges_active.swap(clusters_edges_new);
         if (use_qem_based_energy && nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD && nb_loops<2)
@@ -900,9 +904,9 @@ std::pair<
         }
       }
 
-      // dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/clusters_loop_"+std::to_string(nb_loops)+".ply");
-
+#ifdef CGAL_DEBUG_ACVD
       std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
+#endif
       ++nb_loops;
 
     } while (nb_disconnected > 0 || nb_loops < 3 );
@@ -1062,9 +1066,11 @@ std::pair<
       }
     }
 
-  static int kkk=-1;
-  CGAL::IO::write_polygon_soup("/tmp/soup_"+std::to_string(++kkk)+".off", points, polygons);
-  dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::to_string(kkk)+".ply");
+#ifdef CGAL_DEBUG_ACVD
+    static int kkk=-1;
+    CGAL::IO::write_polygon_soup("/tmp/soup_"+std::to_string(++kkk)+".off", points, polygons);
+    dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::to_string(kkk)+".ply");
+#endif
 
     std::vector<std::unordered_map<std::size_t, std::size_t> > edge_map(points.size());
     for (const std::array<std::size_t, 3> & p : polygons)
@@ -1082,7 +1088,9 @@ std::pair<
       for ( auto [j, size] : edge_map[i] )
         if (size>2)
         {
+#ifdef CGAL_DEBUG_ACVD
           std::cout << "non-manifold edge : " << i << " " << j << "\n";
+#endif
           nm_clusters.push_back(i);
           nm_clusters.push_back(j);
         }
@@ -1101,8 +1109,10 @@ std::pair<
 
       if (edge_map[c1].emplace(c2,0).second)
       {
+#ifdef CGAL_DEBUG_ACVD
         std::cout << "isolated edge " << c1 << " " << c2 << "\n";
         std::cout << "   " << kkk << " " <<  points[c1] << " " << points[c2] << "\n";
+#endif
         nm_clusters.push_back(c1);
         nm_clusters.push_back(c2);
       }
@@ -1143,7 +1153,9 @@ std::pair<
 
       if (boost::connected_components(graph, boost::make_assoc_property_map(the_map)) > 1)
       {
+#ifdef CGAL_DEBUG_ACVD
         std::cout << "non-manifold vertex " << i << "\n";
+#endif
         nm_clusters.push_back(i);
       }
     }
