@@ -95,9 +95,11 @@ void dump_mesh_with_cluster_colors(TriangleMesh pmesh, ClusterMap cluster_map, s
 template <typename GT>
 void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3, Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
 {
-  typename GT::Vector_3 crossX1X2 = CGAL::cross_product(p1, p2);
-  typename GT::Vector_3 crossX2X3 = CGAL::cross_product(p2, p3);
-  typename GT::Vector_3 crossX3X1 = CGAL::cross_product(p3, p1);
+  typename GT::Construct_cross_product_vector_3 cross_product;
+
+  typename GT::Vector_3 crossX1X2 = cross_product(p1, p2);
+  typename GT::Vector_3 crossX2X3 = cross_product(p2, p3);
+  typename GT::Vector_3 crossX3X1 = cross_product(p3, p1);
   typename GT::FT determinantABC = CGAL::determinant(p1, p2, p3);
 
   typename GT::FT n[4] = {
