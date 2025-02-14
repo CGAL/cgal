@@ -1472,8 +1472,8 @@ used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
-The implementation of the ACVD Remeshing method was started during GSoC 2023 by Hossam Saeed, under
-supervision of Sébastien Valette and Sébastien Loriot, that both took over the finalisation.
+The implementation of the ACVD Remeshing method was initiated by Hossam Saeed during GSoC 2023, under
+supervision of Sébastien Valette and Sébastien Loriot, who later finalized the work.
 The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceeding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
