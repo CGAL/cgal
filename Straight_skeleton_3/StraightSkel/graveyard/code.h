@@ -4563,7 +4563,27 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
 
 
 
+edge merge handling
+#if 0 // using EPECK for now so we are exact
+    if (crashAt(edge_1, edge_b).first || crashAt(edge_b, edge_1).first) {
+        // crashAt(...) should be commutative,
+        // but because of rounding errors it's not in certain cases.
+        // TODO: this may need an improvement
+        // fix coordinates because point is exactly on merged edge
+        DEBUG_VAL("Fixing coordinates of " << vertex->toString());
+        Point3SPtr p = vertex->getPoint();
+        Vector3SPtr dir = KernelWrapper::normalize(arc->getDirection());
+        Point3SPtr p_fixed = KernelFactory::createPoint3((*p) + (*dir)*0.0001);
+        event->getNode()->setPoint(p_fixed);
+        vertex->setPoint(p_fixed);
+    }
+#endif
 
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
 
