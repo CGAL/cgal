@@ -791,7 +791,7 @@ The following example reads a point cloud, applies Poisson elimination to reduce
 
 \cgalExample{Point_set_processing_3/poisson_eliminate_example.cpp}
 
-\subsubsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination from Mesh Example
+\subsubsection Point_set_processing_3Example_poisson_elimination_on_mesh Poisson Sample Elimination from Mesh Example
 
 The following example first samples a point cloud from a surface mesh and then uses Poisson elimination to provide an evenly sampled point cloud.
 
