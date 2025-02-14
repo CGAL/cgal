@@ -120,7 +120,7 @@ std::string FlipVertexEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "FlipVertexEvent\n";
-    sstr << "\t(ID=" << getID() << ")\n";
+    sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(vertex A=" << vertex_1->getID() << "; vertex B=" << vertex_2->getID() << ")\n";
     sstr << "\t(facet A=" << facet_1->getID() << "; facet B=" << facet_2->getID() << ")";

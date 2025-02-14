@@ -38,6 +38,9 @@ public:
     int getID() const;
     void setID(int id);
 
+    int getStepID() const;
+    void setStepID(int id);
+
     virtual void setHighlight(bool highlight);
     virtual CGAL::FT getOffset() const = 0; // abstract
 
@@ -97,7 +100,8 @@ protected:
     StraightSkeletonWPtr skel_;
     std::list<AbstractEventSPtr>::iterator list_it_;
     int type_;
-    int id_;
+    int id_; // id of the event
+    int step_id_ = -1; // id of the *step* at which the event was created
 
 private:
     static int next_id_;

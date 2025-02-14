@@ -118,7 +118,7 @@ std::string SplitMergeEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "SplitMergeEvent\n";
-    sstr << "\t(ID=" << getID() << ")\n";
+    sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertex1=" << vertex_1->getID() << ")\n";

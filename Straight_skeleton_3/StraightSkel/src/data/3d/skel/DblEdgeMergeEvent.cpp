@@ -192,7 +192,7 @@ std::string DblEdgeMergeEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "DblEdgeMergeEvent\n";
-    sstr << "\t(ID=" << getID() << ")\n";
+    sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     for (unsigned int i = 0; i < 4; i++) {

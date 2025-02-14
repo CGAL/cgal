@@ -38,11 +38,22 @@ public:
     CGAL::FT getSpeed() const;
     void setSpeed(CGAL::FT speed);
 
+    int getStepID() const;
+    void setStepID(int id);
+
 protected:
     SkelFacetData();
     FacetWPtr offset_facet_;
     FacetWPtr facet_origin_;
     CGAL::FT speed_;
+
+    // This is the ID of the last event that was processed (popped from the queue)
+    // which impacted this facet.
+    // The point is that we pop the queue, we can compare the step ID of the facet involved
+    // in the handling of the event to the step contained in the event.
+    // If the step of the event is *smaller* than the step of the facet, it means the facet
+    // has been modified after the event was created, so we ignore the event.
+    int step_id_ = -1;
 };
 
 } } }

@@ -82,7 +82,7 @@ std::string EdgeEvent::toString() const {
     std::stringstream sstr;
     sstr.precision(17);
     sstr << "EdgeEvent\n";
-    sstr << "\t(ID=" << getID() << ")\n";
+    sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "

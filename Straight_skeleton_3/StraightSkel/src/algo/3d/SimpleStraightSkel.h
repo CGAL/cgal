@@ -177,6 +177,17 @@ public:
     static CGAL::FT offsetDist(FacetSPtr facet, Point3SPtr point);
 
     /**
+     * Collects the facets that are affected by the event.
+     */
+    static std::list<FacetSPtr> eventFacets(AbstractEventSPtr event);
+
+    /**
+     * Returns `true` if the event has facets that have a "step_id" that is
+     * greater than the event's "step_id".
+     */
+    static bool isEventPotentiallyObsolete(AbstractEventSPtr event);
+
+    /**
      * Vanish events.
      */
     void collectVanishEvents(PolyhedronSPtr polyhedron,
@@ -353,10 +364,28 @@ public:
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
-     void collectPierceEvents(PolyhedronSPtr polyhedron,
+    void collectPierceEvents(PolyhedronSPtr polyhedron,
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
+
+    void printQueue(const PQ& queue);
+
+    /**
+     * Checks if the queue updated with local events is displaying the same events
+     * as if it had been built from scratch.
+     */
+    bool checkQueueCorrectness(const PQ& queue,
+                               PolyhedronSPtr polyhedron,
+                               const CGAL::FT current_offset);
+
+    /**
+     * Collect all events for the polyhedron
+     */
+    void collectLocalEvents(const std::set<FacetSPtr>& facets,
+                            PolyhedronSPtr polyhedron,
+                            const CGAL::FT current_offset,
+                            PQ& queue);
 
     /**
      * Collect all events for the polyhedron
@@ -380,6 +409,8 @@ public:
                                              const std::vector<std::vector<std::size_t> >& triangles,
                                              const std::vector<Plane3SPtr>& planes,
                                              const std::vector<CGAL::FT>& speeds);
+
+    void tagFacetsWithStepID(const std::set<FacetSPtr>& facets);
 
     void handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr polyhedron);
     void handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron);
@@ -408,15 +439,22 @@ protected:
     static FacetSPtr getFacetDst(EdgeSPtr edge);
 
     PolyhedronSPtr polyhedron_;
+
     ControllerSPtr controller_;
+
     std::list<CGAL::FT> save_offsets_;
     std::filesystem::path save_path_;
     bool use_fast_vertex_splitter_;
     AbstractVertexSplitterSPtr vertex_splitter_;
     int edge_event_;
+
     StraightSkeletonSPtr skel_result_;
 
+
     std::vector<Plane3SPtr> basePlanes_;
+
+    int step_id_;
+    std::set<FacetSPtr> post_op_facets_; // @tmp here just to simplify my life
 
 #ifndef CGAL_SS3_NO_CACHING
     std::unordered_map<std::array<std::size_t, 4>,

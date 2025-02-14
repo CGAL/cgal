@@ -70,6 +70,14 @@ void AbstractEvent::setID(int id) {
     this->id_ = id;
 }
 
+int AbstractEvent::getStepID() const {
+    return this->step_id_;
+}
+
+void AbstractEvent::setStepID(int step_id) {
+    this->step_id_ = step_id;
+}
+
 void AbstractEvent::setHighlight(bool highlight) {
     // to be implemented by inherited class
 }

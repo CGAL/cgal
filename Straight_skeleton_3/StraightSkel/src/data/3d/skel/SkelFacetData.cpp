@@ -70,4 +70,12 @@ void SkelFacetData::setSpeed(CGAL::FT speed) {
     speed_ = speed;
 }
 
+int SkelFacetData::getStepID() const {
+  return this->step_id_;
+}
+
+void SkelFacetData::setStepID(int step_id) {
+  this->step_id_ = step_id;
+}
+
 } } }
