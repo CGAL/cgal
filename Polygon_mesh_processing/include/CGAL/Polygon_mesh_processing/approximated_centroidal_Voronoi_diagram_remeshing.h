@@ -40,11 +40,12 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include <fstream>
+#include <iostream>
 #include <numeric>
-#include <vector>
 #include <queue>
 #include <unordered_set>
-#include <iostream>
+#include <vector>
 
 
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
@@ -1209,12 +1210,12 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 /**
 * \ingroup PkgPolygonMeshProcessingRef
 *
-* performs isotropic Approximated Centroidal Voronoi Diagrams remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
+* performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
-* @param tmesh input triangle mesh
+* @param tmesh triangle mesh to be remeshed
 * @param nb_vertices lower bound on the number of target vertices in the output mesh.
 *                    In case the mesh is not closed or if the number of points is too low
 *                    and no manifold mesh could be produced with that budget of points, extra points
@@ -1236,7 +1237,7 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *   \cgalParamNBegin{gradation_factor}
 *     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.
 *                           The larger the value is, the more the curvature will impact the distribution of output vertices
-*                           on the surface. The original paper recommended the value `1.5`.}
+*                           on the surface. The original paper recommends the value `1.5`.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{0}
 *     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
@@ -1246,22 +1247,22 @@ dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::t
 *     \cgalParamDescription{indicates if a projection step using quadric error metric should be applied to cluster centers at the end of the minimization,
 *                           in order for example to recover sharp features.
 *                           This is a fast method but can result in badly shaped triangles and even self-intersections.}
-*     \cgalParamType{bool}
+*     \cgalParamType{Boolean}
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{use_qem_based_energy}
 *     \cgalParamDescription{indicates if quadric error metric should be applied during the minimization algorithm in order for example to recover sharp features.
-*                           This is slower than when using `use_postprocessing_qem(true)` but it is more accurate.}
-*     \cgalParamType{bool}
+*                           This is slower than using `use_postprocessing_qem(true)`, but it is more accurate.}
+*     \cgalParamType{Boolean}
 *     \cgalParamDefault{false}
-*     \cgalParamExtra{If this parameter is `true` then `use_postprocessing_qem` will automatically set to `false`.}
+*     \cgalParamExtra{If this parameter is `true` then `use_postprocessing_qem` will be automatically set to `false`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_count_ratio}
 *     \cgalParamDescription{a ratio used to control the subdivision of the input mesh in case it does not have enough vertices compared to `nb_vertices`.
 *                           More precisely, the number of vertices of the input mesh should at least be the ratio times `nb_vertices`.
-*                           If not it will be internally subdivided until the aforementioned criterium is met.}
+*                           If not, the mesh will first be subdivided until the aforementioned criterium is met.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{0.1}
 *     \cgalParamExtra{A value between 0.1 and 0.01 is recommended, the smaller the better the approximation will be, but it .}
