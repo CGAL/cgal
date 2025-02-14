@@ -12,41 +12,76 @@ namespace CGAL {
 
 A 2D triangulation is a decomposition of the 2D plane in vertices and triangular faces.
 
-In the example of this tutorial we use a <em>Delaunay triangulation</em> and a kernel
-that provides exact predicates. The <em>kernel</em> provides types for points,
-segments or triangles, as well as <em>predicates</em>, for example the incircle
-test needed for the Delaunay property, also called empty circle property.
-So we start with some `#include` and some `typedef`.
+In the example of this tutorial we use a <em>Delaunay triangulation</em> and a <em>kernel</em>
+which provides types for points, segments or triangles, as well as <em>predicates</em>,
+for example the incircle test needed for the Delaunay property, also called empty circle property.
+So we start with some `#include` and some `using` statements to define types.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
 
-For a set of input points we obtain a set of finite vertices and the decomposition of
-the convex hull of the points in finite faces.
-Additionally, we obtain infinite faces incident to the edges of the convex hull
-having all as third vertex the infinite vertex. When we draw the triangulation
+When we insert a set of points in the triangulation it stores a set of finite
+vertices corresponding to the points, and the decomposition of the convex hull
+of the points in finite faces.
+Additionally, the triangulation stores infinite faces, which are incident to the edges of the convex hull
+and which hav as third vertex a single infinite vertex. When we draw the triangulation
 we only draw finite vertices and faces.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-construction
 
 FIGURE
 
+We inserted a range of points from a `std::array` but the insert functions
+can take any range type, e.g., a `std::vector` or `std::list`.
 When we inserted an individual point we obtained a <em>vertex handle</em> `vh`.
-A handle is a pointer to a vertex object, and no surprise when we insert
- `v->point()` into `std::cout` we will see `1 1` on the console.
+A handle is a pointer to a vertex object, and no surprise when we write
+`v->point()` into `std::cout` we will see `1 1` on the console.
 
 Just like the standard containers, the triangulation provides iterators to enumerate
-its elements, that is all or only finite vertices and faces.
+its elements, that is either all or only the finite vertices and faces.
+When we iterate over all elements we offen have to check whether they
+are finite.   It makes no sense to access the point of the infinite
+vertex, or to to compute the area of an infinite face.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-traversal
 
-From a vertex we can obtain one incident face calling `vh->face()`.
+We next see how to navigate between vertices and faces.
+For vertex `vh` we can obtain one incident face calling `vh->face()`.
 We next enumerate the faces incident to vertex handle `vh`. As there is no
-begin and end the function call `dt.incident_faces(vh)` returns a `Circulator`
-which we use in a `do`-loop.
+natural begin and end of incident faces the function call `dt.incident_faces(vh)`
+returns a <em>circulator</em>. Just like an iterator you can increment and dereference.
+While for an iterator you test for being past-the-end,
+for a circulator you test if you are again where you started
+using a `do`-loop.
+
 While a vertex can have an arbitrary number of incident faces, a face has
 always three incident vertices, which we access in the nested `for`-loop.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-incident
+
+The call `dt.incident_vertices()` returns a circulator over the one-ring
+of a vertex. If you pass it a vertex on the convex hull, the infinite
+vertex is in the one-ring.  If you pass it the infinite vertex,
+you will circulate over the vertices on the convex hull.
+
+Let's return to our vertex `vh` and its incident face `fh` and determine
+the index of `vh` in `fh`. The index is either 0, 1, or 2, in counterclockwise
+order. The triangulation class has static functions `cw()` and `ccw()`
+for computing the index of the clockwise and counterclockwise neighbor vertex.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-cw
+
+With the `neighbor()` function we can obtain the
+face opposite to `vh`. And symmetrically, we now obtain the index of
+`fh` in `nh`, and finally the vertex opposite to `fh`.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-index
+
+FIGURE
+
+In a triangulation we also have edges. However they are just a `std::pair`
+of a face handle and an index. No surprise that the index is the one
+of the opposite vertex and neighboring face.
+
 
 */
 

@@ -39,7 +39,7 @@ int main ()
 
   //! [TutoT2-incident]
   auto fh = vh->face();
-  auto fc = t.incident_faces(vh), done(vc);
+  auto fc = dt.incident_faces(vh), done(vc);
   do {
     for(int i = 0; i < 3; ++i){
       if(vh == fc->vertex(i))
@@ -47,6 +47,21 @@ int main ()
     }
   }while(++vc != done);
   //! [TutoT2-incident]
+
+
+  //! [TutoT2-cw]
+  int ind =  fh->index(vh);
+  auto cwv = fh->vertex(Delaunay::cw(ind));
+  auto ccwv = fh->vertex(Delaunay::ccw(ind));
+  //! [TutoT2-cw]
+
+
+  //! [TutoT2-index]
+  auto nh = fh->neighbor(ind);
+  int nind = nh->index(fh);
+  auto vh = nh->vertex(nind);
+  //! [TutoT2-index]
+
 
   return 0;
 }
