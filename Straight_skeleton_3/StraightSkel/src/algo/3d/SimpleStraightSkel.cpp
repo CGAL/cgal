@@ -1320,6 +1320,8 @@ SimpleStraightSkel::intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
 #endif // CGAL_SS3_NO_CACHING
 }
 
+// @speed how about a first filter before Point&Time computation: IsEdgeGrowing
+// if not, then there is definitely no intersection
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
                                                                const CGAL::FT offset_past_bound,
                                                                const CGAL::FT offset_future_bound)
@@ -1946,7 +1948,7 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
                                            CGAL::FT& offset_of_nearest_event,
                                            PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Edge Events");
+    DEBUG_PRINT(">>> Collect Edge Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2163,7 +2165,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Edge Merge Events");
+    DEBUG_PRINT(">>> Collect Edge Merge Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2214,7 +2216,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
         EdgeSPtr edge_1 = EdgeSPtr();
         EdgeSPtr edge_2 = EdgeSPtr();
 
-        // @todo do we need to test these other combinations if a previous one matched?
+        // @todo do we still need to test other combinations if a previous one matched?
         EdgeSPtr edge_prev = edge->prev(facet_l);
         edge_next = edge->next(facet_l)->next(facet_l);
         if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
@@ -2323,7 +2325,7 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
                                                CGAL::FT& offset_of_nearest_event,
                                                PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Triangle Event");
+    DEBUG_PRINT(">>> Collect Triangle Event [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2350,7 +2352,7 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
         }
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-        // for canonicity, only investigate this event if we are in the smallest edge of the face
+        // for canonicity, only investigate this event if we are at the smallest edge of the face
         if (edge->getID() > edge->prev(facet)->getID() ||
             edge->getID() > edge->next(facet)->getID()) {
             continue;
@@ -2439,13 +2441,13 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& ed
                                                    CGAL::FT& offset_of_nearest_event,
                                                    PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Dbl Edge Merge Events");
+    DEBUG_PRINT(">>> Collect Dbl Edge Merge Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
-        EdgeSPtr edge = *it_e++;
+        const EdgeSPtr edge = *it_e++;
 
         if (!isReflex(edge)) {
             continue;
@@ -2568,7 +2570,7 @@ void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edg
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Dbl Triangle Events");
+    DEBUG_PRINT(">>> Collect Dbl Triangle Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2648,7 +2650,7 @@ void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edg
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Tetrahedron Events");
+    DEBUG_PRINT(">>> Collect Tetrahedron Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2671,7 +2673,8 @@ void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edg
             }
 
             // edge is the smallest within the face
-            if (edge->getID() > edge->next(facet)->getID() || edge->getID() > edge->prev(facet)->getID()) {
+            if (edge->getID() > edge->next(facet)->getID() ||
+                edge->getID() > edge->prev(facet)->getID()) {
                 continue;
             }
 #endif
@@ -2737,7 +2740,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Vertex Events");
+    DEBUG_PRINT(">>> Collect Vertex Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2904,9 +2907,6 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
 
             queue.push(event);
 
-            std::cout << "Accepted vertex event: " << event->toString() << std::endl;
-            std::cout << "point at zero x ? " << is_zero(point->x()) << std::endl;
-
 #ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
             offset_of_nearest_event = offset_event;
 #endif
@@ -2929,7 +2929,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Flip Vertex Events");
+    DEBUG_PRINT(">>> Collect Flip Vertex Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -2940,6 +2940,8 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             continue;
         }
 
+        // @speed seems like this could be rewritten in a much cheaper manner (and storing
+        // the convexity property). But currently, it's a cheap collect().
         std::set<VertexSPtr> vertices_2;
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
@@ -3122,7 +3124,7 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                                               CGAL::FT& offset_of_nearest_event,
                                               PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Surface Events");
+    DEBUG_PRINT(">>> Collect Surface Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3351,7 +3353,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(const std::list<EdgeSPtr>&
                                                       CGAL::FT& offset_of_nearest_event,
                                                       PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Polyhedron Split Events");
+    DEBUG_PRINT(">>> Collect Polyhedron Split Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3461,7 +3463,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Split Merge Events");
+    DEBUG_PRINT(">>> Collect Split Merge Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
     ReadLock l(polyhedron->mutex());
 
@@ -3650,7 +3652,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Edge Split Events");
+    DEBUG_PRINT(">>> Collect Edge Split Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     unsigned int filtered_candidates = 0;
@@ -3704,7 +3706,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
         b1 += offset_e1->source().bbox();
         b1 += offset_e1->target().bbox();
 
-        // @speed avoid again e1-e2 and e2-e1
+        // @speed avoid again collecting both e1-e2 and e2-e1
         std::list<EdgeSPtr>::iterator it_e2 = edges_reflex_2.begin();
         while (it_e2 != edges_reflex_2.end()) {
             EdgeSPtr edge_2 = *it_e2++;
@@ -3744,16 +3746,10 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                 continue;
             }
 
-            // Filter if edges are too far
-
-            // @speed the best filtering could be to first have a loop over all combinations
-            // to tighten the bound, and only then compute the crashAt, but below is
-            // to get an easy speed-up
-
-            // build 2 pairs of quads from each edge + shifted edge and check intersections
-            //
-            // a very important point is that the shifted edge could definitely be different due
-            // to other events... but then another event will come first to modify the shifted edge!
+            // Build 2 pairs of quads from each edge + shifted edge and check intersections.
+            // - The quad is planar because a shifting edge moves on a plane
+            // - The shifted edge could be different due to other events... but then this other event
+            //   will be treated first and the event will be invalid
 
             // let's just check if bboxes overlap first
             Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift);
@@ -3868,7 +3864,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
 {
-    DEBUG_PRINT(">>> Collect Pierce Events");
+    DEBUG_PRINT(">>> Collect Pierce Events [" << current_offset << "; " << offset_of_nearest_event << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3919,7 +3915,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     EdgeWPtr edge_wptr = *it_e++;
                     if (!edge_wptr.expired()) {
                         EdgeSPtr edge(edge_wptr);
-                        // @todo checking both because we don't know if vertex is the src or the dst of the edge?
+                        // @todo we should not need to check both extremities since we know !contains_vertex
                         FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
                         FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
                         if (facet == facet_src || facet == facet_dst) {
@@ -4359,11 +4355,14 @@ void SimpleStraightSkel::collectLocalEvents(const std::set<FacetSPtr>& base_face
     checkQueueCorrectness(queue, polyhedron, current_offset);
 }
 
+// @speed can we associate a Boolean value to elements that say: "there is an event associated"
 // to this element, and not look further for other events for this element?
 void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
                                        const CGAL::FT current_offset,
                                        PQ& queue)
 {
+    std::cout << "collectEvents(" << current_offset << ")" << std::endl;
+
     AbstractEventSPtr result = AbstractEventSPtr();
     if (!polyhedron || polyhedron->facets().size() == 0) {
         return;
