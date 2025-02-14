@@ -15,11 +15,12 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
-#include <CGAL/Bbox_3.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Fuzzy_sphere.h>
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_d.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -166,6 +167,48 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
   move_down(heap, heap_pos, heap_size, weights, 0);
 }
 
+template<class Point, int d = CGAL::Ambient_dimension<Point>::value>
+struct Compute_squared_distance {
+  using GeomTraits = typename CGAL::Kernel_traits<Point>::Kernel;
+  using FT = typename GeomTraits::FT;
+
+  FT operator()(const Point& a, const Point& b) {
+    return GeomTraits().squared_distance_d_object()(a, b);
+  }
+};
+
+template<class Point>
+struct Compute_squared_distance<Point, 2> {
+  using GeomTraits = typename CGAL::Kernel_traits<Point>::Kernel;
+  using FT = typename GeomTraits::FT;
+
+  FT operator()(const Point& a, const Point& b) {
+    return GeomTraits().compute_squared_distance_2_object()(a, b);
+  }
+};
+
+template<class Point>
+struct Compute_squared_distance<Point, 3> {
+  using GeomTraits = typename CGAL::Kernel_traits<Point>::Kernel;
+  using FT = typename GeomTraits::FT;
+
+  FT operator()(const Point& a, const Point& b) {
+    return GeomTraits().compute_squared_distance_3_object()(a, b);
+  }
+};
+
+template<class Point, int d = CGAL::Ambient_dimension<Point>::value>
+struct Search_traits : public CGAL::Search_traits_d<typename CGAL::Kernel_traits<Point>::Kernel>{
+};
+
+template<class Point>
+struct Search_traits<Point, 2> : public CGAL::Search_traits_2<typename CGAL::Kernel_traits<Point>::Kernel> {
+};
+
+template<class Point>
+struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Kernel_traits<Point>::Kernel> {
+};
+
 }
 
 /**
@@ -225,7 +268,7 @@ void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos
      \cgalNamedParamsEnd
 */
 template<class PointRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIterator output, const NamedParameters& np = parameters::default_values()) {
+void poisson_eliminate(PointRange &points, std::size_t number_of_points, OutputIterator output, const NamedParameters& np = parameters::default_values()) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -240,23 +283,30 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
   using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
   PointMap point_map = NP_helper::get_point_map(points, np);
 
-  using Search_traits = CGAL::Search_traits_adapter<std::size_t, IPM, CGAL::Search_traits_3<GeomTraits>>;
+  const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
+
+  using Search_base = internal::Search_traits<Point>;
+
+  using Search_traits = CGAL::Search_traits_adapter<std::size_t, IPM, Search_base>;
   using Splitter = CGAL::Sliding_midpoint<Search_traits>;
   using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
   using Tree = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
 
-  // named parameters for alpha, beta and gamma
+  internal::Compute_squared_distance<Point> squared_distance;
+
+  // hard coded parameters alpha, beta and gamma with values proposed in publication
   const double alpha = 8;
-  const double beta = 0.65;
-  const double gamma = 1.5;
-  // named parameters for weight limiting
+  const double beta = 0.65; // not used currently
+  const double gamma = 1.5; // not used currently
+  // named parameters for weight limiting, currently not used as the performance gain seems small and there is a high risk to get a defective output
   const bool weight_limiting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_limiting), false);
   // named parameter for progressive
   const bool progressive = parameters::choose_parameter(parameters::get_parameter(np, internal_np::progressive), false);
   // named parameter for tiling
   const bool tiling = parameters::choose_parameter(parameters::get_parameter(np, internal_np::tiling), false);
-  const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
   const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), 2);
+
+  CGAL_assertion(ambient_dimension >= dimension);
 
   // Needs a multi-dimension solution
   std::array<FT, ambient_dimension> lower, upper;
@@ -343,8 +393,8 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         if (i == res[n] || res[n] >= heap_pos.size() || heap_pos[res[n]] >= heap_size)
           continue;
 
-        const Point p2 = get(ipm, res[n]);
-        double d2 = CGAL::to_double((p - p2).squared_length());
+        const Point &p2 = get(ipm, res[n]);
+        double d2 = CGAL::to_double(squared_distance(p, p2));
         weights[i] += weight_functor(p, p2, d2, r_max);
       }
     }
@@ -373,8 +423,8 @@ void poisson_eliminate(PointRange points, std::size_t number_of_points, OutputIt
         if (i == res[n] || res[n] >= points.size() || heap_pos[res[n]] >= heap_size)
           continue;
 
-        const Point p2 = get(point_map, *(points.begin() + res[n]));
-        double d2 = CGAL::to_double((p - p2).squared_length());
+        const Point &p2 = get(point_map, *(points.begin() + res[n]));
+        double d2 = CGAL::to_double(squared_distance(p, p2));
 
         weights[res[n]] -= weight_functor(p2, p, d2, r_max);
 
