@@ -1,3 +1,7 @@
+#if defined(CGAL_DEBUG_CDT_3) && !__has_include(<format>)
+#undef CGAL_DEBUG_CDT_3
+#endif
+
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #define NO_TRY_CATCH 1
 // #define CGAL_DEBUG_CDT_3 1
