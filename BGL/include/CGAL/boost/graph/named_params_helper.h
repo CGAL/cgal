@@ -19,6 +19,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Dimension.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
