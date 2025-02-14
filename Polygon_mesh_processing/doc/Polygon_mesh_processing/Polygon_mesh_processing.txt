@@ -179,7 +179,10 @@ Note that providing an initial low number of vertices will affect the uniformity
 in case some extra points are added to make the output manifold. The algorithm is similar to Lloyd's algorithm
 (or k-means) where some random input vertices are picked to initialize clusters of vertices, and then clusters
 are grown to minimize a particular energy, until convergence. Upon convergence, output vertices are computed
-from the vertices of each cluster. If the input mesh contains some sharp features or corners, it is possible
+from the vertices of each cluster.
+Note that there is no guarantee that the output mesh will have the same topology as the input. For example, if
+a small handle is entirely contained in a cluster then this handle will not be part of the output.
+If the input mesh contains some sharp features or corners, it is possible
 to use the quadric error metrics to either move output vertices (fast but can produce bad looking triangles),
 of to use the quadric error metrics directly in the energy formulation of each cluster (slower but produces
 better quality triangles). It is also possible to use an adaptive remeshing based on curvature.

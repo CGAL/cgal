@@ -1222,6 +1222,7 @@ std::pair<
 * \ingroup PkgPolygonMeshProcessingRef
 *
 * performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
+* Note that there is no guarantee that the output mesh will have the same topology as the input.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
