@@ -763,13 +763,13 @@ Parallel WLOP speed-up, compared to the sequential version of the algorithm.
 The Poisson sample elimination is a greedy downsampling method that calculates a weight for each input point based on the density of its local neighborhood. Subsequently, the point with the highest weight is removed and the weights of the remaining points around it are updated until the target size is reached. A custom function to calculate the weight of a point can be provided.
 
 The Poisson sample elimination has the following parameters:
-- *dimensions*: The dimensions parameter specifies the dimension of the sampling domain of the point cloud, e.g., 2 if the point cloud is sampled from a surface, while the ambient dimension is typically 3. The default value is 2.
-- *weight_function*: A custom *weight_function* can be provided to calculate the weight between two points. The type of the functor is as follows:
+- *dimension*: The dimension of the sampling domain of the point cloud, e.g., 2 if the point cloud is sampled from a surface, while the ambient dimension is typically 3. The default value is 2.
+- *weight_function*: A custom function can be provided to calculate the weight between two points. The type of the functor is as follows:
 \code{.cpp}
 double(*func)(const Point &p, const Point &n, double squared_distance, double r_max)
 \endcode
 The default weight is \f$\left(1 - \frac{d_{p,n}}{2r_{max}}\right)^8\f$ with \f$d_{p,n}\f$ being the distance between the point p and its neighbor n.
-- \f$r_{max}\f$: The \f$r_{max}\f$ parameter specifies the radius of the neighborhood, i.e., the neighboring points that are used to calculate the weight of a point. r_max has to be provided if a custom *weight_function* is used. Only points within a distance of \f$r_{max}\f$ are used to calculate the weight of a point. A large value can thus cause a large running time. The default is calculated based in the bounding volume \f$V\f$ of the input points, the *dimensions* parameter and the number of input points \f$N\f$:
+- \f$r_{max}\f$: The \f$r_{max}\f$ parameter specifies the radius of the neighborhood, i.e., the neighboring points that are used to calculate the weight of a point. \f$r_{max}\f$ has to be provided if a custom *weight_function* is used. Only points within a distance of \f$r_{max}\f$ are used to calculate the weight of a point. A large value can thus cause a large running time. The default is calculated based in the bounding volume \f$V\f$ of the input points, the *dimensions* parameter and the number of input points \f$N\f$:
 
 \f$dimensions = 2:\qquad\f$ \f$r_{max} = \sqrt{\frac{V}{2\sqrt{3}N}}\f$
 
