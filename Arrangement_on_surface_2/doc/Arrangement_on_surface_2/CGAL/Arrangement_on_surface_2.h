@@ -973,6 +973,7 @@ public:
    * u_1\f$ to \f$ u_2\f$.
    * \pre `e1` and `e2` share a common end-vertex, such that the two other
    * end-vertices of the two edges are associated with `c`'s endpoints.
+   * \pre `e1` and `e2` have the same direction.
    */
   Halfedge_handle merge_edge(Halfedge_handle e1,
                              Halfedge_handle e2,
