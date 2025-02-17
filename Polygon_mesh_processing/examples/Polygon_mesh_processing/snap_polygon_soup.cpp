@@ -15,8 +15,6 @@
 
 #include <iostream>
 
-#include <CGAL/Polygon_mesh_processing/internal/snap_polygon_soup.h>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Cartesian<double> Cartesian;
 typedef Kernel::Point_3                                     Point;

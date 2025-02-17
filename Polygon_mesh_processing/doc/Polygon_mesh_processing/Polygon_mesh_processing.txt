@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud, Sylvain Lazard, Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Léo Valque and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -889,8 +889,10 @@ would then also includes overlaps of duplicated points.
 The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
 using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
 merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
-might be introduced due to rounding issues of points coordinates.
-To guarantee that the triangle soup is free from self-intersections, a kernel with exact constructions must be used.
+might be introduced due to rounding issues of points coordinates. The `do_snap` option can be used to resolve this issue.
+When set to `true`, it ensures the coordinates are rounded to fit in `double` with potential additional subdivisions,
+preventing any self-intersections from occurring.
+
 
 \subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
 Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
@@ -1438,6 +1440,8 @@ supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. 
 used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
+
+The `do_snap` option for autorefinement were implemented during 2025. This was implemented by Léo Valque and Sylvain Lazard. The implementation is based on \cgalCite{lazard:hal-04907149}.
 
 */
 } /* namespace CGAL */

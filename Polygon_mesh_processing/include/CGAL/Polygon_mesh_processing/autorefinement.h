@@ -1090,7 +1090,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   if(do_snap)
   {
     CGAL_PMP_AUTOREFINE_VERBOSE("Snap polygon soup");
-    return internal::snap_polygon_soup(soup_points, soup_triangles, parameters::point_map(pm).snap_grid_size(grid_size).number_of_iterations(nb_of_iteration).erase_all_duplicates(ead).concurrency_tag(Concurrency_tag()));
+    return internal::snap_polygon_soup(soup_points, soup_triangles, parameters::point_map(pm).visitor(visitor).snap_grid_size(grid_size).number_of_iterations(nb_of_iteration).erase_all_duplicates(ead).concurrency_tag(Concurrency_tag()));
   }
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
@@ -1759,5 +1759,7 @@ autorefine(      TriangleMesh& tm,
 #undef TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
 #endif
 #endif
+
+#include <CGAL/Polygon_mesh_processing/internal/snap_polygon_soup.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H
