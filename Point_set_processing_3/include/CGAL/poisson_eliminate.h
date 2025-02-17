@@ -213,7 +213,7 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   Performs poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
+   performs poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
    neighborhood of each point and eliminates points until the output size is reached.
 
    For more details, please refer to \cgalCite{cgal:y-sefpdss}.
@@ -268,7 +268,7 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
      \cgalNamedParamsEnd
 */
 template<class PointRange, class OutputIterator, class NamedParameters = parameters::Default_named_parameters>
-void poisson_eliminate(PointRange &points, std::size_t number_of_points, OutputIterator output, const NamedParameters& np = parameters::default_values()) {
+void poisson_eliminate(const PointRange &points, std::size_t number_of_points, OutputIterator output, const NamedParameters& np = parameters::default_values()) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -276,12 +276,12 @@ void poisson_eliminate(PointRange &points, std::size_t number_of_points, OutputI
     return;
 
   using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
-  using PointMap = typename NP_helper::Point_map;
+  using PointMap = typename NP_helper::Const_point_map;
   using Point = typename boost::property_traits<PointMap>::value_type;
   using GeomTraits = typename NP_helper::Geom_traits;
   using FT = typename GeomTraits::FT;
   using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
-  PointMap point_map = NP_helper::get_point_map(points, np);
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
 
   const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
 
