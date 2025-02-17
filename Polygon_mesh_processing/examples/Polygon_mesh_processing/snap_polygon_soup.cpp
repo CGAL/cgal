@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
   t.stop();
   std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
- 
+
   std::vector<Cartesian::Point_3> output_points;
   std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect(input_points, input_triangles) << std::endl;
   for(auto &p: input_points)
