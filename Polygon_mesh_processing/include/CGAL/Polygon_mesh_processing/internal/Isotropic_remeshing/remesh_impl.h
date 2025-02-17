@@ -871,7 +871,7 @@ namespace internal {
         if (!is_flip_allowed(e))
           continue;
         //add geometric test to avoid axe cuts
-        if (!internal::should_flip(e, mesh_, vpmap_, gt_))
+        if (!internal::should_flip(e, mesh_, vpmap_, gt_, -0.939692621)) // TODO: should it be a named parameter?
           continue;
 
         halfedge_descriptor he = halfedge(e, mesh_);
