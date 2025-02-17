@@ -48,7 +48,7 @@ We next see how to navigate between vertices and faces.
 For vertex `vh` we can obtain one incident face calling `vh->face()`.
 We next enumerate the faces incident to vertex handle `vh`. As there is no
 natural begin and end of incident faces the function call `dt.incident_faces(vh)`
-returns a <em>circulator</em>. Just like an iterator you can increment and dereference.
+returns a <em>circulator</em>. Just like an iterator you can increment and dereference a circulator.
 While for an iterator you test for being past-the-end,
 for a circulator you test if you are again where you started
 using a `do`-loop.
@@ -84,19 +84,44 @@ some more `using` statemenmts.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-using
 
-and then use them like this
+and then use them like this, so that when reading the code it is
+absolutely clear of what type a variable is.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-no-auto
 
 In a triangulation we also have edges. However they are just a `std::pair`
-of a face handle and an index. No surprise that the index is the one
-of the opposite vertex and neighboring face. The `mirror()` function
+and hold a face handle and an index. No surprise that the index is the one
+of the vertex opposite to the edge. The `mirror()` function,
+which for an edge returns the edge seen from the other side,
 is there for convenience. Note that an edge and its mirror edge are
 not equal.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-edge
 
+No surprise the triangulation offers iterators to enumerate all edges
+and circulators to enumerate the edges incident to a vertex.
 
+We will next turn to <em>point location</em>, that is given a 2D point `p`
+we want to determine where in the triangulation it is. The function
+returns a face handle. As the point may be on a
+vertex, on an edge inside a finite face, or outside the convex hull
+the function writes this information in the non-const parameter `lt` of type `Locate_type`.
+And it additionally writes into the non-const parameter `li`, the locate index,
+the index of the vertex or edge, in case `lt == Delaunay::VERTEX`  or
+`lt == Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
+the locate index has no meaning.
+
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-locate
+
+The function `Delaunay::locate()` has another optional parameter, namely a face
+from where to start the point location. Let's explain how  point location works
+to understand why the hint is important. Without the hint the algorithm starts
+at an arbitrary vertex, and traverses faces in the direction of the query point.
+So when you have query points which have some spatial coherence you better pass
+the result of a previous point location query as hint where to start for the next one.
+You might have a look at the function `hilbert_sort()` to learn more about what
+we mean with spatial coherence.
 
 */
 

@@ -68,19 +68,24 @@ int main ()
   //! [TutoT2-index]
 
 
-  //! [TutoT2-auto]
+  //! [TutoT2-no-auto]
   {
     Face_handle nh = fh->neighbor(ind);
     int nind = nh->index(fh);
     Vertex_handle nvh = nh->vertex(nind);
   }
-  //! [TutoT2-auto]
+  //! [TutoT2-no-auto]
 
   //! [TutoT2-edge]
   Delaunay::Edge e(fh, ind);
   Delaunay::Edge me =dt.mirror_edge(e);
   assert(me.first.vertex(me.second) == nvh);
   //! [TutoT2-edge]
+
+
+  //! [TutoT2-locate]
+  auto loc = dt.locate(Point(1, 1));
+  //! [TutoT2-locate]
 
   return 0;
 }
