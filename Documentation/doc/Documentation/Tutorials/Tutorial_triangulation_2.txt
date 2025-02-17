@@ -87,7 +87,7 @@ some more `using` statemenmts.
 and then use them like this, so that when reading the code it is
 absolutely clear of what type a variable is.
 
-\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-no-auto
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-noauto
 
 In a triangulation we also have edges. However they are just a `std::pair`
 and hold a face handle and an index. No surprise that the index is the one

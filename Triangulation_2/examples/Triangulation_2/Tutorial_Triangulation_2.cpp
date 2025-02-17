@@ -68,13 +68,13 @@ int main ()
   //! [TutoT2-index]
 
 
-  //! [TutoT2-no-auto]
+  //! [TutoT2-noauto]
   {
     Face_handle nh = fh->neighbor(ind);
     int nind = nh->index(fh);
     Vertex_handle nvh = nh->vertex(nind);
   }
-  //! [TutoT2-no-auto]
+  //! [TutoT2-noauto]
 
   //! [TutoT2-edge]
   Delaunay::Edge e(fh, ind);
