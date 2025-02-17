@@ -889,7 +889,7 @@ would then also includes overlaps of duplicated points.
 The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
 using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
 merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
-might be introduced due to rounding issues of points coordinates. The `do_snap` option can be used to resolve this issue.
+might be introduced due to rounding issues of points coordinates. The `apply_iterative_snap_rounding` option can be used to resolve this issue.
 When set to `true`, it ensures the coordinates are rounded to fit in `double` with potential additional subdivisions,
 preventing any self-intersections from occurring.
 
@@ -1441,7 +1441,7 @@ used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
-The `do_snap` option for autorefinement were implemented during 2025. This was implemented by Léo Valque and Sylvain Lazard. The implementation is based on \cgalCite{lazard:hal-04907149}.
+The `apply_iterative_snap_rounding` option for autorefinement were implemented during 2025. This was implemented by Léo Valque and Sylvain Lazard. The implementation is based on \cgalCite{lazard:hal-04907149}.
 
 */
 } /* namespace CGAL */

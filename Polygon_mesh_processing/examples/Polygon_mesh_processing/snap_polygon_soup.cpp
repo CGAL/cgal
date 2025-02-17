@@ -1,5 +1,5 @@
-#define  PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
-#define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
+#define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+// #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -41,10 +41,10 @@ int main(int argc, char** argv)
 
   CGAL::Real_timer t;
   t.start();
-  PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::do_snap(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
+  PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
   t.stop();
   std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
-  
+ 
   std::vector<Cartesian::Point_3> output_points;
   std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect(input_points, input_triangles) << std::endl;
   for(auto &p: input_points)

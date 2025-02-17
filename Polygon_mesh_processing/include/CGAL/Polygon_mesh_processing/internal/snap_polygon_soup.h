@@ -70,9 +70,9 @@ double ceil(NT x){
 };
 
 /**
-* 
 *
-* Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles. 
+*
+* Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles.
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
 * between the input and the output bounded by M*2^-gs*k where M is the maximum absolute coordinate in the model, gs the snap_grid_size (see below) and k the number of iteration
 * performed by the algorithm.
@@ -118,7 +118,7 @@ double ceil(NT x){
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not 
+* \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not
 * able to provide such a triangle soup within the number of iterations.
 */
 template <typename PointRange, typename PolygonRange, class NamedParameters>

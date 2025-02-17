@@ -994,7 +994,7 @@ bool snap_polygon_soup(PointRange &points,
 * `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
 * Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
-* If the do_snap parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
+* If the `apply_iterative_snap_rounding` parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
 * while preserving the model free of intersections. Note that this option does not guarantee an intersection-free output; however,
 * the returned boolean will be true if the output is free of self-intersections. The snap_grid_size parameter limits the drift of the snapped vertices.
 * A smaller value is more likely to output an intersection free output and perform more vertex collapses, but it may increase the Hausdorff distance from the input.
@@ -1033,19 +1033,19 @@ bool snap_polygon_soup(PointRange &points,
 *     \cgalParamDefault{`Autorefinement::Default_visitor`}
 *     \cgalParamExtra{The visitor will be copied.}
 *   \cgalParamNEnd
-*   \cgalParamNBegin{do_snap}
+*   \cgalParamNBegin{apply_iterative_snap_rounding}
 *     \cgalParamDescription{Enable the rounding of the coordinates so that they fit in doubles.}
 *     \cgalParamType{boolean}
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
-*     \cgalParamDescription{Scale the points to [-2^gs, 2^gs] where gs is the snap_grid_size before to round them on integer. Use only if do_snap is true.}
+*     \cgalParamDescription{Scale the points to [-2^gs, 2^gs] where gs is the snap_grid_size before to round them on integer. Use only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{numbers_of_iteration}
-*     \cgalParamDescription{Maximum number of iteration performed by the snap algorithm. Use only if do_snap is true.}
+*     \cgalParamDescription{Maximum number of iteration performed by the snap algorithm. Use only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{15}
 *   \cgalParamNEnd
@@ -1081,8 +1081,8 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   > ::type Visitor;
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
-  //TODO just modify do_snap instead of getting np one by one
-  const bool do_snap = choose_parameter(get_parameter(np, internal_np::do_snap), false);
+  //TODO just modify apply_iterative_snap_rounding instead of getting np one by one
+  const bool do_snap = choose_parameter(get_parameter(np, internal_np::apply_iterative_snap_rounding), false);
   const int grid_size = choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23);
   const unsigned int nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 15);
   const bool ead = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
