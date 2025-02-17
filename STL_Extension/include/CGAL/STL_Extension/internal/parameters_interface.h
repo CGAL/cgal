@@ -220,6 +220,7 @@ CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
 CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
 CGAL_add_named_parameter(min_points_per_cell_t, min_points_per_cell, min_points_per_cell)
 CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
+CGAL_add_named_parameter(do_snap_t, do_snap, do_snap)
 CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters used in Surface_mesh_approximation package

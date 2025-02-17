@@ -33,7 +33,6 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
-
 #ifdef CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
 #define CGAL_PMP_AUTOREFINE_VERBOSE(X) std::cout << X << "\n";
 #endif
@@ -975,6 +974,15 @@ void generate_subtriangles(std::size_t ti,
 } // end of autorefine_impl
 #endif
 
+namespace internal{
+// Forward declaration
+template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
+bool snap_polygon_soup(PointRange &points,
+                       PolygonRange &triangles,
+                       const NamedParameters& np = parameters::default_values());
+}
+
+
 /**
 * \ingroup PMP_corefinement_grp
 *
@@ -986,6 +994,10 @@ void generate_subtriangles(std::size_t ti,
 * `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
 * Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
+* If the do_snap parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
+* while preserving the model free of intersections. Note that this option does not guarantee an intersection-free output; however,
+* the returned boolean will be true if the output is free of self-intersections. The snap_grid_size parameter limits the drift of the snapped vertices.
+* A smaller value is more likely to output an intersection free output and perform more vertex collapses, but it may increase the Hausdorff distance from the input.
 *
 * @tparam PointRange a model of the concept `RandomAccessContainer`
 * whose value type is the point type
@@ -1021,13 +1033,32 @@ void generate_subtriangles(std::size_t ti,
 *     \cgalParamDefault{`Autorefinement::Default_visitor`}
 *     \cgalParamExtra{The visitor will be copied.}
 *   \cgalParamNEnd
+*   \cgalParamNBegin{do_snap}
+*     \cgalParamDescription{Enable the rounding of the coordinates so that they fit in doubles.}
+*     \cgalParamType{boolean}
+*     \cgalParamDefault{false}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{snap_grid_size}
+*     \cgalParamDescription{Scale the points to [-2^gs, 2^gs] where gs is the snap_grid_size before to round them on integer. Use only if do_snap is true.}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{23}
+*     \cgalParamExtra{Must be lower than 52.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{numbers_of_iteration}
+*     \cgalParamDescription{Maximum number of iteration performed by the snap algorithm. Use only if do_snap is true.}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{15}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not
+* able to provide such a triangle soup within the number of iterations.
 */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void autorefine_triangle_soup(PointRange& soup_points,
+bool autorefine_triangle_soup(PointRange& soup_points,
                               TriangleRange& soup_triangles,
                               const NamedParameters& np = parameters::default_values())
+
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1050,6 +1081,17 @@ void autorefine_triangle_soup(PointRange& soup_points,
   > ::type Visitor;
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
+  //TODO just modify do_snap instead of getting np one by one
+  const bool do_snap = choose_parameter(get_parameter(np, internal_np::do_snap), false);
+  const int grid_size = choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23);
+  const unsigned int nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 15);
+  const bool ead = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
+
+  if(do_snap)
+  {
+    CGAL_PMP_AUTOREFINE_VERBOSE("Snap polygon soup");
+    return internal::snap_polygon_soup(soup_points, soup_triangles, parameters::point_map(pm).snap_grid_size(grid_size).number_of_iterations(nb_of_iteration).erase_all_duplicates(ead).concurrency_tag(Concurrency_tag()));
+  }
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
@@ -1077,7 +1119,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
       for(std::size_t i=0; i<soup_triangles.size(); ++i)
         visitor.verbatim_triangle_copy(i, i);
     }
-    return;
+    return true;
   }
 
   // mark degenerate faces so that we can ignore them
@@ -1642,6 +1684,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   swap(soup_triangles, soup_triangles_out);
 
   CGAL_PMP_AUTOREFINE_VERBOSE("done");
+  return true;
 }
 
 /**

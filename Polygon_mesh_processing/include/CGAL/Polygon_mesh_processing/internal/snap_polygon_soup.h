@@ -7,17 +7,17 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Léo Valque
+// Author(s)     : Léo Valque, Sylvain Lazard
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
-#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
+#define CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
-#include <CGAL/Polygon_mesh_processing/autorefinement.h>
+// #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Fraction_traits.h>
@@ -29,7 +29,6 @@ namespace CGAL
 
 namespace Polygon_mesh_processing
 {
-
 
 namespace internal
 {
@@ -69,7 +68,6 @@ double ceil(NT x){
     return std::ceil(to_double(x));
   }
 };
-}
 
 /**
 * 
@@ -116,17 +114,21 @@ double ceil(NT x){
 *   \cgalParamNBegin{numbers_of_iteration}
 *     \cgalParamDescription{Maximum number of iteration performed by the algorithm.}
 *     \cgalParamType{unsigned int}
-*     \cgalParamDefault{20}
+*     \cgalParamDefault{15}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not 
 * able to provide such a triangle soup within the number of iterations.
 */
-template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
+template <typename PointRange, typename PolygonRange, class NamedParameters>
 bool snap_polygon_soup(PointRange &points,
                        PolygonRange &triangles,
-                       const NamedParameters& np = parameters::default_values())
+                       const NamedParameters& np)
+// template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
+// bool snap_polygon_soup(PointRange &points,
+                      //  PolygonRange &triangles,
+                      //  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -141,8 +143,8 @@ bool snap_polygon_soup(PointRange &points,
     Sequential_tag
   > ::type Concurrency_tag;
 
-  // constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
-  constexpr bool parallel_execution = false;
+  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+  // constexpr bool parallel_execution = false;
 
 #ifndef CGAL_LINKED_WITH_TBB
   static_assert (!parallel_execution,
@@ -154,10 +156,11 @@ bool snap_polygon_soup(PointRange &points,
 
   // Get the grid size from the named parameter, the grid size could not be greater than 52
   const unsigned int grid_size = (std::min)(52,choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23));
-  const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 20);
+  const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 15);
 
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
   std::cout << "Compute the scaling of the coordinates" << std::endl;
+  std::cout << grid_size << std::endl;
 #endif
 
   auto exp = [](const double v)
@@ -345,7 +348,6 @@ bool snap_polygon_soup(PointRange &points,
 
 
     repair_polygon_soup(points, triangles, np);
-    //TODO do not pass all triangles
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Model size: " << points.size() << " " << triangles.size() << std::endl;
     std::cout << "Autorefine the soup" << std::endl;
@@ -355,6 +357,6 @@ bool snap_polygon_soup(PointRange &points,
   return false;
 }
 
-} } //end of CGAL::Polygon_mesh_processing namespace
+} } } //end of CGAL::Polygon_mesh_processing::internal namespace
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_ROUNDING_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
