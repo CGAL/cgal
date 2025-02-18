@@ -82,10 +82,19 @@ int main ()
   assert(me.first.vertex(me.second) == nvh);
   //! [TutoT2-edge]
 
-
   //! [TutoT2-locate]
   fh = dt.locate(Point(1, 1));
   //! [TutoT2-locate]
+
+
+  //! [TutoT2-linewalk]
+  auto lfc = dt.line_walk(Point(0.5, 0.5), Point(1.5, 0.5)), lfcdone(lfc);
+  do{
+    if(! dt.is_infinite(lfc))
+      std::cout << "." ;
+  }while(lfc != lfcdone);
+  std::cout << std::endl;
+  //! [TutoT2-linewalk]
 
   return 0;
 }

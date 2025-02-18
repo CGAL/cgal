@@ -12,9 +12,21 @@ namespace CGAL {
 
 A 2D triangulation is a decomposition of the 2D plane in vertices and triangular faces.
 
-In the example of this tutorial we use a <em>Delaunay triangulation</em> and a <em>kernel</em>
-which provides types for points, segments or triangles, as well as <em>predicates</em>,
-for example the incircle test needed for the Delaunay property, also called empty circle property.
+In the first section we will walk you through the API of a class representing a Delaunay
+which operates on a set of points,
+followed by a section covering the API of a class representing a constrained Delaunay triangulation
+which operates on a set of points and segments.
+
+Note that this tutorial is not about computational geometry, so we assume you are familiar
+with Delaunay triangulation with and without constraints.
+
+\section Tutorial_Delaunay_2 Delaunay Triangulation
+
+In the example code of this section we use a class template `Delaunay triangulation_2`
+together with a <em>kernel</em> which provides types for points, segments or triangles, as well as
+<em>predicates</em>, for example the incircle test needed for the empty circle property
+of this type of triangulations.
+
 So we start with some `#include` and some `using` statements to define types.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
@@ -101,6 +113,7 @@ not equal.
 The triangulation offers iterators to enumerate all edges,
 and circulators to enumerate the edges incident to a vertex.
 
+
 We will next turn to <em>point location</em>, that is given a 2D point `p`
 we want to determine where in the triangulation it is. The function
 returns a face handle we store in `fh`. The point may be on a
@@ -108,7 +121,7 @@ vertex of `fh`, on an edge of `fh`, inside `fh` in case it is a finite face,
 or it may be outside the convex hull.
 The function writes this information in the non-const parameter `lt` of type `Locate_type`.
 And it additionally writes into the non-const parameter `li`, the locate index,
-the index of the vertex or edge in face `fh, in case `lt`is `Delaunay::VERTEX`  or
+the index of the vertex or edge in face `fh, in case `lt` is `Delaunay::VERTEX`  or
 `Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
 the locate index has no meaning.
 
@@ -123,6 +136,33 @@ So when you have query points which have some spatial coherence you better pass
 the result of a previous point location query as hint where to start for the current one.
 You might have a look at the function `hilbert_sort()` to learn more about what
 we mean with spatial coherence.
+
+
+Concerning the traversal of a triangulation we finish with the
+<em>line face circulator</em>.   This circulator enables to traverse all faces
+that are intersected by a line defined by two points `p0` and `p1`, and is
+obtained by the call `dt.line_walk(p0,p1)`. The traversal starts where `p0` is
+located. It is a circulator as the traversal  wraps around where the line intersects
+the convex hull. Note that the points, and even the line may be outside of the convex hull.
+We refer to the Reference Manual for explaining in detail which faces are traversed
+in case the line passes through a vertex. Again a hint can be given for the point
+location of the first point. You may think that the `line_walk()` function gets used
+to get from `p0` to `p1`, but that is not the case.  Instead a "zigag" walk is performed
+that makes less geometric tests.
+
+\snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-linewalk
+
+We invite you to have a look at the examples in the User Manual which
+show how to enrich vertices and faces with information, how to operate
+on 3D points when the triangulation is 2.5D and represents a terrain, and more.
+
+\section Tutorial_Constrained_Delaunay_2 Constrained Delaunay Triangulation
+
+In case the input is not just points but also segments in the plane, a constrained
+triangulation has edges that do not cross constraints. A constraint may be a
+single edge or split into several edges in case constraints intersect or in case
+an input pout lies on a constraint.
+
 
 */
 
