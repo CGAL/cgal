@@ -338,8 +338,8 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
 
   IPM ipm(points, tiling_points, point_map);
 
-  auto tile_point = [&tiling_points, &lower, &upper, &r_max, ambient_dimension](const Point& p, std::size_t dim = 0) {
-    auto do_tiling = [&tiling_points, &lower, &upper, &r_max, ambient_dimension](const auto& self, const Point& p, std::size_t dim) -> void {
+  auto tile_point = [&tiling_points, &lower, &upper, &r_max](const Point& p, std::size_t dim = 0) {
+    auto do_tiling = [&tiling_points, &lower, &upper, &r_max](const auto& self, const Point& p, std::size_t dim) -> void {
       auto it = p.cartesian_begin();
 
       if (lower[int(dim)] > (*(it + dim) - r_max)) {
@@ -347,7 +347,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < ambient_dimension)
+        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
       }
 
@@ -356,11 +356,11 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
         Point p2;
         internal::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
-        if (dim + 1 < ambient_dimension)
+        if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
       }
 
-      if (dim + 1 < ambient_dimension)
+      if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
         self(self, p, dim + 1);
       };
     do_tiling(do_tiling, p, dim);
