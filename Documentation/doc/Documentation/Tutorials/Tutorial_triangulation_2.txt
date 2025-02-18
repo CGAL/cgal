@@ -19,11 +19,11 @@ So we start with some `#include` and some `using` statements to define types.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-include
 
-When we insert a set of points in the triangulation it stores a set of finite
+When we insert a set of points in the triangulation, it generates a set of finite
 vertices corresponding to the points, and the decomposition of the convex hull
-of the points in finite faces.
-Additionally, the triangulation stores infinite faces, which are incident to the edges of the convex hull
-and which hav as third vertex a single infinite vertex. When we draw the triangulation
+of the points in finite triangular faces.
+Additionally, the triangulation generates infinite faces, which are incident to the edges of the convex hull
+and which have as third vertex a single infinite vertex. When we draw the triangulation
 we only draw finite vertices and faces.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-construction
@@ -32,15 +32,15 @@ FIGURE
 
 We inserted a range of points from a `std::array` but the insert functions
 can take any range type, e.g., a `std::vector` or `std::list`.
-When we inserted an individual point we obtained a <em>vertex handle</em> `vh`.
+When we insert an individual point we obtained a <em>vertex handle</em> `vh`.
 A handle is a pointer to a vertex object, and no surprise when we write
 `v->point()` into `std::cout` we will see `1 1` on the console.
 
 Just like the standard containers, the triangulation provides iterators to enumerate
 its elements, that is either all or only the finite vertices and faces.
-When we iterate over all elements we offen have to check whether they
+When we iterate over all elements we often have to check whether they
 are finite.   It makes no sense to access the point of the infinite
-vertex, or to to compute the area of an infinite face.
+vertex, or to compute the area of an infinite face.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-traversal
 
@@ -61,7 +61,7 @@ always three incident vertices, which we access in the nested `for`-loop.
 The call `dt.incident_vertices()` returns a circulator over the one-ring
 of a vertex. If you pass it a vertex on the convex hull, the infinite
 vertex is in the one-ring.  If you pass it the infinite vertex,
-you will circulate over the vertices on the convex hull.
+you will circulate over the vertices of the convex hull.
 
 Let's return to our vertex `vh` and its incident face `fh` and determine
 the index of `vh` in `fh`. The index is either 0, 1, or 2, in counterclockwise
@@ -89,7 +89,7 @@ absolutely clear of what type a variable is.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-noauto
 
-In a triangulation we also have edges. However they are just a `std::pair`
+In a triangulation we also have <em>edges</em>. However, they are just a `std::pair`
 and hold a face handle and an index. No surprise that the index is the one
 of the vertex opposite to the edge. The `mirror()` function,
 which for an edge returns the edge seen from the other side,
@@ -98,28 +98,29 @@ not equal.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-edge
 
-The triangulation offers iterators to enumerate all edges
+The triangulation offers iterators to enumerate all edges,
 and circulators to enumerate the edges incident to a vertex.
 
 We will next turn to <em>point location</em>, that is given a 2D point `p`
 we want to determine where in the triangulation it is. The function
-returns a face handle. As the point may be on a
-vertex, on an edge inside a finite face, or outside the convex hull
-the function writes this information in the non-const parameter `lt` of type `Locate_type`.
+returns a face handle we store in `fh`. The point may be on a
+vertex of `fh`, on an edge of `fh`, inside `fh` in case it is a finite face,
+or it may be outside the convex hull.
+The function writes this information in the non-const parameter `lt` of type `Locate_type`.
 And it additionally writes into the non-const parameter `li`, the locate index,
-the index of the vertex or edge in face `fh, in case `lt == Delaunay::VERTEX`  or
-`lt == Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
+the index of the vertex or edge in face `fh, in case `lt`is `Delaunay::VERTEX`  or
+`Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
 the locate index has no meaning.
 
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-locate
 
 The function `Delaunay::locate()` has another optional parameter, namely a face
-from where to start the point location. Let's explain how  point location works
+from where to start the point location. Let's explain how point location works
 to understand why the hint is important. Without the hint the algorithm starts
 at an arbitrary vertex, and traverses faces in the direction of the query point.
 So when you have query points which have some spatial coherence you better pass
-the result of a previous point location query as hint where to start for the next one.
+the result of a previous point location query as hint where to start for the current one.
 You might have a look at the function `hilbert_sort()` to learn more about what
 we mean with spatial coherence.
 

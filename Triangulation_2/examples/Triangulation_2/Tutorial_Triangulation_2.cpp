@@ -84,7 +84,7 @@ int main ()
 
 
   //! [TutoT2-locate]
-  auto loc = dt.locate(Point(1, 1));
+  fh = dt.locate(Point(1, 1));
   //! [TutoT2-locate]
 
   return 0;
