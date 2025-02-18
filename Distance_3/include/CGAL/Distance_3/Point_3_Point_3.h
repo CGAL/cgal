@@ -32,6 +32,17 @@ squared_distance(const typename K::Point_3& pt1,
   return k.compute_squared_distance_3_object()(pt1, pt2);
 }
 
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt1,
+                         const typename K::Point_3& pt2,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare(k.compute_squared_distance_3_object()(pt1, pt2), d2);
+}
+
 } // namespace internal
 
 template <class K>

@@ -87,6 +87,40 @@ squared_distance(const typename K::Ray_3& ray,
   return squared_distance(pt, ray, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt,
+                         const typename K::Ray_3& ray,
+                         const K& k,
+                         const typename K::FT &d2)
+{
+  typedef typename K::Vector_3 Vector_3;
+
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+
+  const Vector_3 dir = ray.direction().vector();
+  const Vector_3 diff = vector(ray.source(), pt);
+
+  const typename K::Comparison_result res_pl = compare_squared_distance_to_line(dir, diff, k, d2);
+  if(res_pl==LARGER)
+    return LARGER;
+
+  if(!is_acute_angle(dir, diff, k))
+    return compare(diff*diff, d2);
+
+  return res_pl;
+}
+
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Ray_3& ray,
+                         const typename K::Point_3& pt,
+                         const K& k,
+                         const typename K::FT &d2)
+{
+  return compare_squared_distance(pt, ray, k, d2);
+}
+
 } // namespace internal
 
 template <class K>
@@ -106,6 +140,27 @@ squared_distance(const Ray_3<K>& ray,
 {
   return K().compute_squared_distance_3_object()(ray, pt);
 }
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const Point_3<K>& pt,
+                         const Ray_3<K>& ray,
+                         const typename K::FT& d2)
+{
+  return K().compare_squared_distance_3_object()(pt, ray, d2);
+}
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const Ray_3<K>& ray,
+                         const Point_3<K>& pt,
+                         const typename K::FT& d2)
+{
+  return K().compare_squared_distance_3_object()(ray, pt, d2);
+}
+
 
 } // namespace CGAL
 

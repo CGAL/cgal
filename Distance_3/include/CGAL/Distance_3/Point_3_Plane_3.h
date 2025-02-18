@@ -48,6 +48,26 @@ squared_distance(const typename K::Plane_3& plane,
   return squared_distance(pt, plane, k);
 }
 
+template <class K>
+inline typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt,
+                         const typename K::Plane_3& plane,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare(squared_distance(pt, plane, k), d2);
+}
+
+template <class K>
+inline typename K::Comparison_result
+compare_squared_distance(const typename K::Plane_3& plane,
+                         const typename K::Point_3& pt,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare_squared_distance(pt, plane, k, d2);
+}
+
 } // namespace internal
 
 template <class K>
@@ -67,6 +87,27 @@ squared_distance(const Plane_3<K>& plane,
 {
   return K().compute_squared_distance_3_object()(plane, pt);
 }
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const Point_3<K>& pt,
+                         const Plane_3<K>& pl,
+                         const typename K::FT& d2)
+{
+  return K().compare_squared_distance_3_object()(pt, pl, d2);
+}
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const Plane_3<K>& pl,
+                         const Point_3<K>& pt,
+                         const typename K::FT& d2)
+{
+  return K().compare_squared_distance_3_object()(pl, pt, d2);
+}
+
 
 } // namespace CGAL
 

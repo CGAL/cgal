@@ -145,8 +145,8 @@ template <typename K>
 typename K::Comparison_result
 compare_squared_distance(const typename K::Segment_3& s1,
                          const typename K::Segment_3& s2,
-                         const typename K::FT& dist,
-                         const K& k)
+                         const K& k,
+                         const typename K::FT& d2)
 {
   typedef typename K::FT                                                  FT;
   typedef typename K::Point_3                                             Point_3;
@@ -164,21 +164,21 @@ compare_squared_distance(const typename K::Segment_3& s1,
   const Vector_3 v1 = cv(p1, q1), v2 = cv(p2, q2);
   const Vector_3 p1p2 = cv(p1, p2);
 
-  //If degenerate segment, compare distance point segment
+  //If degenerate segment, compare distance between the point and the other segment
   if(p1 == q1)
     if(p2 == q2)
-      return compare_square_distance(p1,p2,dist,k);
+      return compare_square_distance(p1,p2,k,d2);
     else
-      return compare_square_distance(p1,s2,dist,k);
+      return compare_square_distance(p1,s2,k,d2);
   else if(p2 == q2)
-    return compare_square_distance(s1,p2,dist,k);
+    return compare_square_distance(s1,p2,k,d2);
 
   //Compare distance between the lines
   const Vector_3 normal = wcross(v1, v2, k);
   const Vector_3 diff = p1p2;
 
   //If the lines are at distance more than d, the segment do not be at distance less than d
-  typename K::Comparison_result res_ll=compare_squared_distance(v1.supporting_line(), v2.supporting_line(), dist, k);
+  typename K::Comparison_result res_ll=compare_squared_distance(v1.supporting_line(), v2.supporting_line(), k, d2);
   if(res_ll==LARGER)
     return LARGER; //Early exit
 
@@ -207,7 +207,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   {
     // res_y = 0;
     res_x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
-    return compare(sq_dist(p1+res_x*v1,p2), dist);
+    return compare(sq_dist(p1+res_x*v1,p2), d2);
   }
   else // y >= 0
   {
@@ -216,12 +216,12 @@ compare_squared_distance(const typename K::Segment_3& s1,
     {
       // res_y = 1;
       res_x = boost::algorithm::clamp<FT>((e + c) / a, 0, 1); // (e + y*c) / a
-      return compare(sq_dist(p1+res_x*v1,p2), dist);
+      return compare(sq_dist(p1+res_x*v1,p2), d2);
     }
     else if(res_x==0 || res_x==1) // 0 <= y <= 1
     {
       FT res_y = n / d;
-      return compare(sq_dist(p1 + res_x*v1, p2 + res_y*v2), dist);
+      return compare(sq_dist(p1 + res_x*v1, p2 + res_y*v2), d2);
     }
     else
     {

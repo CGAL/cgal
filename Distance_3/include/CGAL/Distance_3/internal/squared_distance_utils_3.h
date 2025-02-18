@@ -222,6 +222,16 @@ squared_distance_to_line(const typename K::Vector_3& dir,
 }
 
 template <class K>
+typename K::Comparison_result
+compare_squared_distance_to_line(const typename K::Vector_3& dir,
+                                 const typename K::Vector_3& diff,
+                                 const K& k,
+                                 const typename K::FT &d2)
+{
+  return compare(squared_distance_to_line(dir,diff,k),d2);
+}
+
+template <class K>
 inline
 bool
 same_direction_tag(const typename K::Vector_3 &u,
