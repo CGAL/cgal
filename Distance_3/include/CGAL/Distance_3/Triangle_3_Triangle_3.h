@@ -207,7 +207,7 @@ squared_distance(const typename K::Triangle_3& tr1,
   FT sqd_q2 = CGAL::squared_distance(vertex(tr2, 1), tr1);
   FT sqd_r2 = CGAL::squared_distance(vertex(tr2, 2), tr1);
 
-  const FT m = std::min({sqd_p1, sqd_q1, sqd_r1, sqd_p2, sqd_q2, sqd_r2});
+  const FT m = (std::min)({sqd_p1, sqd_q1, sqd_r1, sqd_p2, sqd_q2, sqd_r2});
 
   return m;
 #endif

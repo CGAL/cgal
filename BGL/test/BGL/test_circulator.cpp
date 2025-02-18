@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   {
     halfedge_around_target_iterator vit, end;
     vertex_descriptor vd = target(hd,P);
-    boost::tie(vit,end) = halfedges_around_target(hd,P);
+    std::tie(vit,end) = halfedges_around_target(hd,P);
     while(vit!= end) {
       halfedge_descriptor hd = *vit;
       assert(target(hd,P) == vd);
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
    {
     halfedge_around_face_iterator vit, end;
-    boost::tie(vit,end) = halfedges_around_face(hd,P);
+    std::tie(vit,end) = halfedges_around_face(hd,P);
 
     while(vit!= end) {
       halfedge_descriptor hd = *vit;
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 
   {
     out_edge_iterator ohi, end;
-    for(boost::tie(ohi,end) = out_edges(target(hd,P),P); ohi != end; ++ohi){
+    for(std::tie(ohi,end) = out_edges(target(hd,P),P); ohi != end; ++ohi){
       edge_descriptor ed = *ohi;
       halfedge_descriptor hd2 = halfedge(ed,P);
       std::cout << get(CGAL::vertex_point, P, target(hd2,P)) << std::endl;

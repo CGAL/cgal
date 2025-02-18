@@ -965,22 +965,14 @@ namespace CommonKernelFunctors {
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
 
-     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+     double product = to_double(approximate_sqrt(scalar_product(u,u) * scalar_product(v,v)));
 
      if(product == 0)
        return 0;
 
      // cosine
      double dot = to_double(scalar_product(u,v));
-     double cosine = dot / product;
-
-     if(cosine > 1.){
-       cosine = 1.;
-     }
-     if(cosine < -1.){
-       cosine = -1.;
-     }
-
+     double cosine = std::clamp(dot / product, -1., 1.);
      return std::acos(cosine) * 180./CGAL_PI;
    }
 
