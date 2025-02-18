@@ -98,7 +98,7 @@ not equal.
 
 \snippet Triangulation_2/Tutorial_Triangulation_2.cpp TutoT2-edge
 
-No surprise the triangulation offers iterators to enumerate all edges
+The triangulation offers iterators to enumerate all edges
 and circulators to enumerate the edges incident to a vertex.
 
 We will next turn to <em>point location</em>, that is given a 2D point `p`
@@ -107,7 +107,7 @@ returns a face handle. As the point may be on a
 vertex, on an edge inside a finite face, or outside the convex hull
 the function writes this information in the non-const parameter `lt` of type `Locate_type`.
 And it additionally writes into the non-const parameter `li`, the locate index,
-the index of the vertex or edge, in case `lt == Delaunay::VERTEX`  or
+the index of the vertex or edge in face `fh, in case `lt == Delaunay::VERTEX`  or
 `lt == Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
 the locate index has no meaning.
 
