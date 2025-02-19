@@ -3,7 +3,6 @@
 /// \ingroup PkgSnapRounding2Ref
 /*!
 \addtogroup PkgSnapRounding2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
