@@ -499,6 +499,12 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
+    if(s.back() == '\r') { // Windows EOL if the file was written without the ios_base::binary flag.
+      is.setstate(std::ios_base::failbit);
+      std::cerr << "load_binary_file:"
+                << "\n  Unexpected char : '\\r'. The file's content was probably written without the ios_base::binary flag." << std::endl;
+      return false;
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_CDT_3>()()) {
       std::cerr << "load_binary_file:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_CDT_3>()()
@@ -507,7 +513,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
     }
   }
   if(binary) CGAL::IO::set_binary_mode(is);
-  if(c3t3.triangulation().file_input<
+  if(c3t3.file_input<
        Fake_CDT_3,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
        Update_cell_from_CDT_3>(is))
@@ -582,6 +588,12 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
+    if(s.back() == '\r') { // Windows EOL if the file was written without the ios_base::binary flag.
+      is.setstate(std::ios_base::failbit);
+      std::cerr << "Polyhedron_demo_c3t3_binary_io_plugin::try_load_other_binary_format:"
+                << "\n  Unexpected char : '\\r'. The file's content was probably written without the ios_base::binary flag." << std::endl;
+      return false;
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_c3t3>()()) {
       std::cerr << "CGAL_Lab_c3t3_binary_io_plugin::try_load_other_binary_format:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_c3t3>()()
@@ -591,7 +603,7 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   if(binary) CGAL::IO::set_binary_mode(is);
   else CGAL::IO::set_ascii_mode(is);
-  std::istream& f_is = c3t3.triangulation().file_input<
+  std::istream& f_is = c3t3.file_input<
                          Fake_c3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
                          Update_cell>(is);
