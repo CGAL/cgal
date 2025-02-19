@@ -293,7 +293,7 @@ squared_distance(const typename K::Triangle_3& t,
 }
 
 template <class K>
-inline typename K::Comparison_result
+typename K::Comparison_result
 compare_squared_distance_to_triangle(const typename K::Point_3& pt,
                              const typename K::Point_3& t0,
                              const typename K::Point_3& t1,
