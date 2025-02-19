@@ -66,7 +66,7 @@
 
 #include <boost/cstdint.hpp>
 
-#ifdef _MSC_VER
+#ifdef _MSC_VER && (! defined(__clang__))
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward64)
 #pragma intrinsic(_BitScanReverse64)
@@ -190,7 +190,7 @@ template <class T, class = void> struct no_pool {
 
 // Only used with an argument known not to be 0.
 inline int ctz (std::uint64_t x) {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (! defined(__clang__))
   unsigned long ret;
   _BitScanForward64(&ret, x);
   return (int)ret;
@@ -202,7 +202,7 @@ inline int ctz (std::uint64_t x) {
 #endif
 }
 inline int clz (std::uint64_t x) {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (! defined(__clang__))
   unsigned long ret;
   _BitScanReverse64(&ret, x);
   return 63 - (int)ret;
