@@ -50,7 +50,18 @@
 #include <vector>
 
 
+
+// Early convergence ratio which is used for the first two minimization steps.
+// The final convergence is carried out entirely i.e. convergence is reached only when no more optimization can be performed.
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
+// Used to clamp curvature values:
+//  - regions with zero curvature (although this is not really a degenerate case....)
+//  - regions with too high computed curvature (sometimes due to numerical issues in curvature computation)
+// Clamping happens this way ;
+//  -The average weight weight_avg is computed
+//      weights higher than CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg are set to this value
+//      weights lower than 1/( CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg ) are set to this value
+//
 #define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
 namespace CGAL {
