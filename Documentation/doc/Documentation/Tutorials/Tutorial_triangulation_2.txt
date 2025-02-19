@@ -13,7 +13,7 @@ namespace CGAL {
 A 2D triangulation is a decomposition of the 2D plane in vertices and triangular faces.
 
 In the first section we will walk you through the API of a class representing a Delaunay
-which operates on a set of points,
+triangulation which operates on a set of points,
 followed by a section covering the API of a class representing a constrained Delaunay triangulation
 which operates on a set of points and segments.
 
@@ -22,7 +22,7 @@ with Delaunay triangulation with and without constraints.
 
 \section Tutorial_Delaunay_2 Delaunay Triangulation
 
-In the example code of this section we use a class template `Delaunay triangulation_2`
+In the example code of this section we use a class template `Delaunay_triangulation_2`
 together with a <em>kernel</em> which provides types for points, segments or triangles, as well as
 <em>predicates</em>, for example the incircle test needed for the empty circle property
 of this type of triangulations.
@@ -158,10 +158,18 @@ on 3D points when the triangulation is 2.5D and represents a terrain, and more.
 
 \section Tutorial_Constrained_Delaunay_2 Constrained Delaunay Triangulation
 
+Only jump into this section if you are familiar with iterators, circulators,
+the notion of `Edge`, locate type and locate index explained in the previous section.
+
 In case the input is not just points but also segments in the plane, a constrained
 triangulation has edges that do not cross constraints. A constraint may be a
 single edge or split into several edges in case constraints intersect or in case
 an input pout lies on a constraint.
+
+In this section we first explain the API of the class template `Constrained_Delaunay_triangulation_2`,
+and then `Constrained_triangulation_plus_2`, admittedly a strange name.
+
+
 
 
 */
