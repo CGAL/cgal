@@ -348,7 +348,6 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Traits:: FT                                            FT;
   typedef typename boost::property_traits<VPM>::reference                 Point_ref;
 
   CGAL_precondition(!is_border(e, tmesh));
@@ -356,6 +355,7 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
   const halfedge_descriptor h = halfedge(e, tmesh);
 
 #if 1
+  CGAL_USE(gt);
   const Point_ref p0 = get(vpm, target(h, tmesh));
   const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
   const Point_ref p2 = get(vpm, source(h, tmesh));
@@ -393,6 +393,7 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
   return !is_worse_cap(p0, p1, p3) && !is_worse_cap(p3, p1, p2);
 
 #else
+  typedef typename Traits:: FT                                            FT;
   typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
   const Point_ref p0 = get(vpm, target(h, tmesh));
   const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
