@@ -437,10 +437,9 @@ std::pair<
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   const double vertex_count_ratio = choose_parameter(get_parameter(np, internal_np::vertex_count_ratio), 0.1);
-  // TODO compute less qem things if not used
-  // TODO use symmetric matrices?
+  // TODO: (possible optimization to save memory) if qem is not used use std::conditionnal to store and compute less things in QEMClusterData
+  // TODO: (possible optimization to save memort) use a std::array to store quadrics and assemble the Eigen matric only at the end
 
-  //TriangleMesh pmesh = pmesh_org;
   std::size_t nb_vertices = vertices(pmesh).size();
 
 
@@ -608,14 +607,15 @@ std::pair<
              : CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
 
   // randomly initialize clusters
-  //TODO: std::lower_bound with vertex_weight_pmap for better sampling
+  //TODO: (possible optimization) use std::lower_bound with vertex_weight_pmap for better sampling
+  //      moreover with non-random access iterators, the complexity will be bad
   for (int ci = 0; ci < nb_clusters; ++ci)
   {
     int vi;
     Vertex_descriptor vd;
     do {
       vi = rnd.get_int(0, num_vertices(pmesh));
-      vd = *(vertices(pmesh).begin() + vi); // TODO: bad with Polyhedron
+      vd = *(vertices(pmesh).begin() + vi);
     } while (get(vertex_cluster_pmap, vd) != -1);
 
     put(vertex_cluster_pmap, vd, ci);
@@ -653,13 +653,13 @@ std::pair<
           clusters[ cluster_id ].add_vertex( get(vpm, v), v_weight, v_qem);
       }
 
-       CGAL_assertion_code(for (int ci=0; ci<nb_clusters; ++ci))
+      CGAL_assertion_code(for (int ci=0; ci<nb_clusters; ++ci))
       CGAL_assertion(clusters[ci].nb_vertices!=0);
 
       int nb_iterations = -1;
       nb_disconnected = 0;
 
-      std::vector<int> edge_seen(num_edges(pmesh), -1);
+      auto edge_seen = get(CGAL::dynamic_edge_property_t<int>(), pmesh, -1);
       do
       {
         ++nb_iterations;
@@ -669,8 +669,8 @@ std::pair<
           Halfedge_descriptor hi = clusters_edges_active.front();
           clusters_edges_active.pop();
 
-          if (edge_seen[edge(hi,pmesh)]==nb_iterations) continue;
-          edge_seen[edge(hi,pmesh)]=nb_iterations;
+          if (get(edge_seen, edge(hi,pmesh))==nb_iterations) continue;
+          put(edge_seen, edge(hi,pmesh), nb_iterations);
 
           Vertex_descriptor v1 = source(hi, pmesh);
           Vertex_descriptor v2 = target(hi, pmesh);
@@ -679,11 +679,8 @@ std::pair<
           auto push_vertex_edge_ring_to_queue = [&](Vertex_descriptor v)
           {
             for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
-              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
           };
-
-
 
 
           int c1 = get(vertex_cluster_pmap, v1);
@@ -924,18 +921,16 @@ std::pair<
 
     } while (nb_disconnected > 0 || nb_loops < 3 );
 
-    /// Construct new Mesh
+    // Construct new Mesh
     std::vector<std::size_t> valid_cluster_map(nb_clusters, -1);
     std::vector<typename GT::Point_3> points;
 
     std::vector<std::array<std::size_t, 3>> polygons;
     for (int i = 0; i < nb_clusters; ++i)
     {
-      // if (clusters[i].weight_sum > 0)
-      {
-        valid_cluster_map[i] = points.size();
-        points.push_back(clusters[i].representative_point(qem_energy_minimization));
-      }
+      CGAL_assertion(clusters[i].weight_sum > 0);
+      valid_cluster_map[i] = points.size();
+      points.push_back(clusters[i].representative_point(qem_energy_minimization));
     }
 
     if (use_postprocessing_qem){
@@ -1085,6 +1080,7 @@ std::pair<
     dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/cluster_"+std::to_string(kkk)+".ply");
 #endif
 
+    // detect non-manifol edges in the output
     std::vector<std::unordered_map<std::size_t, std::size_t> > edge_map(points.size());
     for (const std::array<std::size_t, 3> & p : polygons)
     {
@@ -1115,7 +1111,9 @@ std::pair<
     {
       int c1 = get(vertex_cluster_pmap, source(ed, pmesh));
       int c2 = get(vertex_cluster_pmap, target(ed, pmesh));
+#ifdef CGAL_DEBUG_ACVD
       if (c1==-1 || c2 ==-1) throw std::runtime_error("non assigned vertex");
+#endif
 
       if (c1==c2) continue;
       if (c2<c1) std::swap(c1, c2);
@@ -1139,15 +1137,10 @@ std::pair<
     for (const std::array<std::size_t, 3> & p : polygons)
     {
       for (int i=0; i<3; ++i)
-        //TODO: skip if in nm_clusters
         link_edges[p[i]].emplace_back(p[(i+1)%3], p[(i+2)%3]);
     }
 
-    using Graph =  boost::adjacency_list <boost::setS, // this avoids parallel edges
-                                          boost::vecS,
-                                          boost::undirectedS
-                                          /*  , Graph_vertex_descriptor,
-                                           Graph_edge_descriptor */>;
+    using Graph =  boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS>;
     for (std::size_t i=0; i< points.size(); ++i)
     {
       if (std::binary_search(nm_clusters.begin(), nm_clusters.end(), i)) continue;
@@ -1162,6 +1155,7 @@ std::pair<
         add_edge(descriptors[p.first], descriptors[p.second], graph);
       }
 
+      // TODO: (possible optimisation) add an id to vertices in Graph and use a random acccess pmap
       std::map<typename Graph::vertex_descriptor, int> the_map;
 
       if (boost::connected_components(graph, boost::make_assoc_property_map(the_map)) > 1)
@@ -1178,8 +1172,6 @@ std::pair<
       //dump_mesh_with_cluster_colors(pmesh, vertex_cluster_pmap, "/tmp/debug.ply");
       //CGAL::IO::write_polygon_soup("/tmp/soup.off", points, polygons);
 
-      // orient_polygon_soup(points, polygons);
-
       return std::make_pair(points, polygons);
     }
 
@@ -1190,12 +1182,8 @@ std::pair<
       for ( auto [n, s] : edge_map[nmi] )
         one_ring.push_back(n);
     }
-    //~ nm_clusters.insert(nm_clusters.end(), one_ring.begin(), one_ring.end());
-    //~ std::sort(nm_clusters.begin(), nm_clusters.end());
-    //~ nm_clusters.erase(std::unique(nm_clusters.begin(), nm_clusters.end()), nm_clusters.end());
 
-
-    std::set<std::size_t> nm_clusters_picked; // TODO: use cluster data instead?
+    std::set<std::size_t> nm_clusters_picked; // TODO: (possible optimization) use cluster data instead of the set
 
     for (Vertex_descriptor v : vertices(pmesh))
     {
@@ -1207,7 +1195,7 @@ std::pair<
         if (clusters[c].nb_vertices==1) continue;
 
         put(vertex_cluster_pmap, v, clusters.size());
-        CGAL_assertion(get(vertex_cluster_pmap, v) ==  clusters.size());
+        CGAL_assertion(get(vertex_cluster_pmap, v) ==  (int) clusters.size());
         clusters.emplace_back();
       }
 
