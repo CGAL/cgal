@@ -9,8 +9,8 @@
 //
 // Author(s)     : Léo Valque, Sylvain Lazard
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
-#define CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
+#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
@@ -70,7 +70,7 @@ double ceil(NT x){
 };
 
 /**
-*
+* DEPRECATED SINCE INTERNAL
 *
 * Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles.
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
@@ -111,7 +111,7 @@ double ceil(NT x){
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
-*   \cgalParamNBegin{numbers_of_iteration}
+*   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{Maximum number of iteration performed by the algorithm.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{15}
@@ -122,20 +122,12 @@ double ceil(NT x){
 * able to provide such a triangle soup within the number of iterations.
 */
 template <typename PointRange, typename PolygonRange, class NamedParameters>
-bool snap_polygon_soup(PointRange &points,
+bool polygon_soup_snap_rounding(PointRange &points,
                        PolygonRange &triangles,
                        const NamedParameters& np)
-// template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
-// bool snap_polygon_soup(PointRange &points,
-                      //  PolygonRange &triangles,
-                      //  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-
-  using GT=typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type;
-  using Point_map=typename GetPointMap<PointRange, NamedParameters>::const_type;
-  Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -144,7 +136,6 @@ bool snap_polygon_soup(PointRange &points,
   > ::type Concurrency_tag;
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
-  // constexpr bool parallel_execution = false;
 
 #ifndef CGAL_LINKED_WITH_TBB
   static_assert (!parallel_execution,
@@ -359,4 +350,4 @@ bool snap_polygon_soup(PointRange &points,
 
 } } } //end of CGAL::Polygon_mesh_processing::internal namespace
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_SNAP_POLYGON_SOUP_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H

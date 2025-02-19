@@ -977,9 +977,9 @@ void generate_subtriangles(std::size_t ti,
 namespace internal{
 // Forward declaration
 template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
-bool snap_polygon_soup(PointRange &points,
-                       PolygonRange &triangles,
-                       const NamedParameters& np = parameters::default_values());
+bool polygon_soup_snap_rounding(PointRange &points,
+                                PolygonRange &triangles,
+                                const NamedParameters& np = parameters::default_values());
 }
 
 
@@ -1044,7 +1044,7 @@ bool snap_polygon_soup(PointRange &points,
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
-*   \cgalParamNBegin{numbers_of_iteration}
+*   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{Maximum number of iteration performed by the snap algorithm. Use only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{15}
@@ -1090,7 +1090,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   if(do_snap)
   {
     CGAL_PMP_AUTOREFINE_VERBOSE("Snap polygon soup");
-    return internal::snap_polygon_soup(soup_points, soup_triangles, parameters::point_map(pm).visitor(visitor).snap_grid_size(grid_size).number_of_iterations(nb_of_iteration).erase_all_duplicates(ead).concurrency_tag(Concurrency_tag()));
+    return internal::polygon_soup_snap_rounding(soup_points, soup_triangles, parameters::point_map(pm).visitor(visitor).snap_grid_size(grid_size).number_of_iterations(nb_of_iteration).erase_all_duplicates(ead).concurrency_tag(Concurrency_tag()));
   }
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
@@ -1760,6 +1760,6 @@ autorefine(      TriangleMesh& tm,
 #endif
 #endif
 
-#include <CGAL/Polygon_mesh_processing/internal/snap_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/internal/triangle_soup_snap_rounding.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H

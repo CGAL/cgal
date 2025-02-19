@@ -26,7 +26,7 @@ int main(int argc, char** argv)
   const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
                                          : std::string(argv[1]);
 
-  const int grid_size = argc == 2 ? 23
+  const int grid_size = argc <= 2 ? 23
                                   : std::stoi(std::string(argv[2]));
 
   std::vector<Point> input_points;
