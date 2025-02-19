@@ -16,25 +16,25 @@
 
 #include <CGAL/license/Polygon_mesh_processing/acvd.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/property_map.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
-#ifdef CGAL_DEBUG_ACVD
-#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#endif
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/utility.h>
-
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 #endif
-#include <CGAL/subdivision_method_3.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#ifdef CGAL_DEBUG_ACVD
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/IO/Color.h>
+#endif
+
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/subdivision_method_3.h>
+#include <CGAL/utility.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
@@ -42,18 +42,23 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include <array>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <numeric>
 #include <queue>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-
 
 // Early convergence ratio which is used for the first two minimization steps.
 // The final convergence is carried out entirely i.e. convergence is reached only when no more optimization can be performed.
 #define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
+
 // Used to clamp curvature values:
 //  - regions with zero curvature (although this is not really a degenerate case....)
 //  - regions with too high computed curvature (sometimes due to numerical issues in curvature computation)
