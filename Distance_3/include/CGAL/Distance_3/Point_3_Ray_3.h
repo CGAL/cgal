@@ -101,6 +101,7 @@ compare_squared_distance(const typename K::Point_3& pt,
   const Vector_3 dir = ray.direction().vector();
   const Vector_3 diff = vector(ray.source(), pt);
 
+  //Compare first the distance to the line, if larger we can exit early
   const typename K::Comparison_result res_pl = compare_squared_distance_to_line(dir, diff, k, d2);
   if(res_pl==LARGER)
     return LARGER;
@@ -122,45 +123,6 @@ compare_squared_distance(const typename K::Ray_3& ray,
 }
 
 } // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K>& pt,
-                 const Ray_3<K>& ray)
-{
-  return K().compute_squared_distance_3_object()(pt, ray);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Ray_3<K>& ray,
-                 const Point_3<K>& pt)
-{
-  return K().compute_squared_distance_3_object()(ray, pt);
-}
-
-template <class K>
-inline
-typename K::Comparison_result
-compare_squared_distance(const Point_3<K>& pt,
-                         const Ray_3<K>& ray,
-                         const typename K::FT& d2)
-{
-  return K().compare_squared_distance_3_object()(pt, ray, d2);
-}
-
-template <class K>
-inline
-typename K::Comparison_result
-compare_squared_distance(const Ray_3<K>& ray,
-                         const Point_3<K>& pt,
-                         const typename K::FT& d2)
-{
-  return K().compare_squared_distance_3_object()(ray, pt, d2);
-}
-
 
 } // namespace CGAL
 

@@ -85,48 +85,10 @@ compare_squared_distance(const typename K::Line_3& line,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(pt, line, k), d2);
+  return compare_squared_distance(pt, line, k, d2);
 }
 
 } // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K>& pt,
-                 const Line_3<K>& line)
-{
-  return K().compute_squared_distance_3_object()(pt, line);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Line_3<K>& line,
-                 const Point_3<K>& pt)
-{
-  return K().compute_squared_distance_3_object()(line, pt);
-}
-
-template <class K>
-inline
-typename K::Comparison_result
-compare_squared_distance(const Point_3<K>& pt,
-                         const Line_3<K>& line,
-                         const typename K::FT& d2)
-{
-  return K().compare_squared_distance_3_object()(pt, line, d2);
-}
-
-template <class K>
-inline
-typename K::Comparison_result
-compare_squared_distance(const Line_3<K>& line,
-                         const Point_3<K>& pt,
-                         const typename K::FT& d2)
-{
-  return K().compare_squared_distance_3_object()(line, pt, d2);
-}
 
 } // namespace CGAL
 

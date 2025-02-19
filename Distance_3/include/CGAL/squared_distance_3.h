@@ -45,4 +45,6 @@
 
 #include <CGAL/Distance_3/Plane_3_Plane_3.h>
 
+#include <CGAL/global_functions_distance_3.h>
+
 #endif // CGAL_DISTANCE_3_H

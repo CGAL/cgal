@@ -45,15 +45,6 @@ compare_squared_distance(const typename K::Point_3& pt1,
 
 } // namespace internal
 
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K>& pt1,
-                 const Point_3<K>& pt2)
-{
-  return internal::squared_distance(pt1, pt2, K());
-}
-
 } // namespace CGAL
 
 #endif // CGAL_DISTANCE_3_POINT_3_POINT_3_H

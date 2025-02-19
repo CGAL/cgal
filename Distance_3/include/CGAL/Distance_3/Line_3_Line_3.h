@@ -57,26 +57,6 @@ compare_squared_distance(const typename K::Line_3& line1,
 
 } // namespace internal
 
-template <class K>
-inline
-typename K::FT
-squared_distance(const Line_3<K>& line1,
-                 const Line_3<K>& line2)
-{
-  return K().compute_squared_distance_3_object()(line1, line2);
-}
-
-template <class K>
-inline
-typename K::Comparison_result
-compare_squared_distance(const Line_3<K>& line1,
-                         const Line_3<K>& line2,
-                         const typename K::FT& d2)
-{
-  return K().compare_squared_distance_3_object()(line1,line2,d2);
-}
-
-
 } // namespace CGAL
 
 #endif // CGAL_DISTANCE_3_LINE_3_LINE_3_H

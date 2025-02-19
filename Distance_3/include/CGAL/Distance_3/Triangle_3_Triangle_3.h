@@ -217,8 +217,8 @@ template <typename K>
 typename K::Comparison_result
 compare_squared_distance(const typename K::Triangle_3& tr1,
                          const typename K::Triangle_3& tr2,
-                         const typename K::FT& d,
-                         const K& k)
+                         const K& k,
+                         const typename K::FT& d2)
 {
   typedef typename K::FT                                                  FT;
 
@@ -237,15 +237,15 @@ compare_squared_distance(const typename K::Triangle_3& tr1,
   {
     for(int j=0; j<3; ++j)
     {
-      if(CGAL::possibly(CGAL::compare_squared_distance(Line_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Line_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d)!=CGAL::LARGER))
+      if(CGAL::possibly(CGAL::compare_squared_distance(Line_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Line_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2)!=CGAL::LARGER))
       {
-        typename K::comparison_result res_seg_seg= CGAL::compare_squared_distance(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d);
+        typename K::comparison_result res_seg_seg= CGAL::compare_squared_distance(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
         if(is_certain(res_seg_seg) && res_seg_seg==CGAL::SMALLER)
           return CGAL::SMALLER;
       }
     }
 
-    typename K::comparison_result res_v_pl= CGAL::compare_squared_distance(vertex(tr1, i), tr2.supporting_plane(),d);
+    typename K::comparison_result res_v_pl= CGAL::compare_squared_distance(vertex(tr1, i), tr2.supporting_plane(),d2);
     if(tr_contains_proj_p(tr2, vertex(tr1, i)))
 			if(res_v_pl==CGAL::SMALLER)
 				return CGAL::SMALLER;

@@ -39,16 +39,17 @@ squared_distance(const typename K::Plane_3& plane1,
     return sq_dist(plane1.point(), plane2);
 }
 
-} // namespace internal
-
 template <class K>
-inline
-typename K::FT
-squared_distance(const Plane_3<K>& plane1,
-                 const Plane_3<K>& plane2)
+inline typename K::Comparison_result
+compare_squared_distance(const typename K::Plane_3& plane1,
+                         const typename K::Plane_3& plane2,
+                         const K& k,
+                         const typename K::FT& d2)
 {
-  return K().compute_squared_distance_3_object()(plane1, plane2);
+    return compare(squared_distance(plane1,plane2,k), d2);
 }
+
+} // namespace internal
 
 } // namespace CGAL
 
