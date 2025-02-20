@@ -25,7 +25,7 @@ subdivision methods.
 `Polyhedron_3` and `Surface_mesh`, as they are models of the concept
 `MutableFaceGraph`, and it aims to be easy to use and to extend.
 `Subdivision_method_3` is not a class, but a namespace
-which contains four popular subdivision methods and their refinement
+which contains popular subdivision methods and their refinement
 functions. These include Catmull-Clark, Loop, Doo-Sabin and
 \f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily
 extended by substituting the geometry computation of the refinement
@@ -512,11 +512,13 @@ The source codes of `CatmullClark_mask_3`, `Loop_mask_3`,
 `DooSabin_mask_3`, and `Sqrt3_mask_3` are
 the best sources of learning these stencil interfaces.
 
-\section Subdivision_method_3The The Four Subdivision Methods
+\section Subdivision_method_3The Subdivision Methods
 
 `Subdivision_method_3` supports Catmull-Clark, Loop,
 Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions by specializing
 their respective refinement hosts.
+In addition, a linear subdivision host is provided which
+enable the user to perform an upsampling of a triangle mesh.
 They are designed to work on any model of a `MutableFaceGraph`
 such as `Polyhedron_3` and `Surface_mesh`. If your application
 uses a polygon mesh with a specialized geometry kernel, you need to
@@ -537,6 +539,11 @@ namespace Subdivision_method_3 {
   }
 
   template <class PolygonMesh, class NamedParameters>
+  void linear_subdivision(PolygonMesh& pmesh, NamedParameters np) {
+    PTQ(pmesh, Linear_mask_3<PolygonMesh>(pmesh), np);
+  }
+
+  template <class PolygonMesh, class NamedParameters>
   void DooSabin_subdivision(PolygonMesh& pmesh, NamedParameters np) {
     DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh), np);
   }
@@ -552,8 +559,8 @@ namespace Subdivision_method_3 {
 
 \section Subdivision_method_3Other Example: Customizing a Subdivision Method
 
-`Subdivision_method_3` supports four practical subdivision methods on a
-`Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported
+`Subdivision_method_3` supports four practical subdivision methods on a polyhedral mesh
+with points with %Cartesian coordinates. More subdivision methods can be supported
 through the specialization of refinement hosts with custom geometry masks.
 The following example develops a subdivision method
 generating an improved Loop subdivision surface.

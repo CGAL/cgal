@@ -201,10 +201,10 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters
 
 /*!
  *
- * applies Upsample subdivision several times on the control mesh `pmesh`.
- * The geometry of the refined mesh is computed by the geometry policy mask `Upsample_mask_3`.
- * Which is similar to Loop subdivision but does not change the shape of the mesh (only the connectivity).
- * The new vertices are trivially computed as the average of the incident vertices (midpoint of edge).
+ * applies an  subdivision several times on the control mesh `pmesh`.
+ * The geometry of the refined mesh is computed by the geometry policy mask `Linear_mask_3`,
+ * which is similar to Loop subdivision but does not change the shape of the mesh (only the connectivity).
+ * The new vertices are trivially computed as the average of the incident vertices (e.g., midpoint of an edge).
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -233,7 +233,7 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters
  * \pre `pmesh` must be a triangle mesh.
  **/
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
-void Upsample_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+void linear_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -242,11 +242,12 @@ void Upsample_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parame
                          get_property_map(CGAL::vertex_point, pmesh));
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  Upsample_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
+  Linear_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
 
   for(unsigned int i = 0; i < step; i++)
     internal::PTQ_1step(pmesh, vpm, mask);
 }
+
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
