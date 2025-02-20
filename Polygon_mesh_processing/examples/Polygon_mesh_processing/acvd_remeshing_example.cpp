@@ -39,17 +39,15 @@ int main(int argc, char* argv[])
   }
 
   ///// Uniform Isotropic ACVD
-#if 0
   std::cout << "Uniform Isotropic ACVD ...." << std::endl;
   Mesh acvd_mesh = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(acvd_mesh, nb_clusters);
   CGAL::IO::write_polygon_mesh(stem+"_acvd_"+nbc+extension, acvd_mesh);
 
   std::cout << "Completed" << std::endl;
-#endif
+
 
   //// With Post-Processing QEM Optimization
-#if 0
   std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
   Mesh acvd_mesh_qem_pp = smesh;
@@ -57,25 +55,20 @@ int main(int argc, char* argv[])
   CGAL::IO::write_polygon_mesh( stem +"_acvd_qem-pp_"+nbc+extension, acvd_mesh_qem_pp);
 
   std::cout << "Completed" << std::endl;
-#endif
 
-#if 1
   // With QEM Energy Minimization
   std::cout << "Uniform QEM ACVD ...." << std::endl;
   auto acvd_mesh_qem = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(acvd_mesh_qem, nb_clusters, params::use_qem_based_energy(true));
   CGAL::IO::write_polygon_mesh(stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
-#endif
 
-#if 0
   /// Adaptive Isotropic ACVD
   std::cout << "Adaptive Isotropic ACVD ...." << std::endl;
   const double gradation_factor = 2;
   Mesh adaptive_acvd_mesh = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(adaptive_acvd_mesh, nb_clusters, params::gradation_factor(gradation_factor));
 
-  CGAL::IO::write_OFF(stem +"_acvd_adaptative_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem, adaptive_acvd_mesh);
-#endif
+  CGAL::IO::write_polygon_mesh(stem +"_acvd_adaptative_"+ std::to_string(nb_clusters) + extension, adaptive_acvd_mesh);
 
   std::cout << "Completed" << std::endl;
 

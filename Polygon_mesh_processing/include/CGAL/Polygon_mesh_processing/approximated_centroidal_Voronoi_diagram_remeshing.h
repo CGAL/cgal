@@ -990,42 +990,33 @@ acvd_impl(TriangleMesh& tmesh,
       for (int i = 0; i < nb_clusters; ++i)
         cluster_quadrics[i].setZero();
 
-      // for storing the vertex_descriptor of each face
-      std::vector<vertex_descriptor> face_vertices;
-
       for (face_descriptor fd : faces(tmesh))
       {
+        std::array<typename GT::Vector_3,3> vecs;
+        std::array<int,3> cids;
+        int i=0;
         // get Vs for fd
         // compute qem from Vs->"vector_3"s
         // add to the 3 indices of the cluster
         halfedge_descriptor hd = halfedge(fd, tmesh);
         do {
           vertex_descriptor vd = target(hd, tmesh);
-          face_vertices.push_back(vd);
+          cids[i]=get(vertex_cluster_pmap, vd);
+          if (cids[i]==-1)
+            break;
+          const typename GT::Point_3& p_i=get(vpm, vd);
+          vecs[i++]=p_i - ORIGIN;
           hd = next(hd, tmesh);
         } while (hd != halfedge(fd, tmesh));
 
-        auto p_i = get(vpm, face_vertices[0]);
-        typename GT::Vector_3 vec_1 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
-        p_i = get(vpm, face_vertices[1]);
-        typename GT::Vector_3 vec_2 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
-        p_i = get(vpm, face_vertices[2]);
-        typename GT::Vector_3 vec_3 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
+        if (i!=3)
+          continue;
 
-        int c_1 = get(vertex_cluster_pmap, face_vertices[0]);
-        int c_2 = get(vertex_cluster_pmap, face_vertices[1]);
-        int c_3 = get(vertex_cluster_pmap, face_vertices[2]);
-
-        if (c_1 != -1 && c_2 != -1 && c_3 != -1)
-        {
-          Eigen::Matrix<typename GT::FT, 4, 4> q;
-          compute_qem_face<GT>(vec_1, vec_2, vec_3, q);
-          cluster_quadrics[c_1] += q;
-          cluster_quadrics[c_2] += q;
-          cluster_quadrics[c_3] += q;
-        }
-
-        face_vertices.clear();
+        Eigen::Matrix<typename GT::FT, 4, 4> q;
+        compute_qem_face<GT>(vecs[0], vecs[1], vecs[2], q);
+        cluster_quadrics[cids[0]] += q;
+        cluster_quadrics[cids[1]] += q;
+        cluster_quadrics[cids[2]] += q;
       }
 
       int valid_index = 0;
