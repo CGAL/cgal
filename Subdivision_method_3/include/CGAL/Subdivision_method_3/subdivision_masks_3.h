@@ -117,8 +117,9 @@ public:
     pt = get(this->vpmap, vertex);
   }
 
-  void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
-   edge_node(edge, ept);
+  void border_node(halfedge_descriptor edge, Point& ept, Point& vtp){
+    edge_node(edge, ept);
+    vertex_node(target(edge, *(this->pmesh)), vtp);
   }
 };
 
