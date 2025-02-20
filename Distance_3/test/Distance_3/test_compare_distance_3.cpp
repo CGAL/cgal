@@ -7,6 +7,8 @@
 
 #include <CGAL/squared_distance_3.h>
 
+#include <CGAL/Cartesian_converter.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
@@ -143,15 +145,35 @@ private:
     // const FT res_o1o2 = K().compare_squared_distance_3_object()(o1, o2, expected_result);
     // const FT res_o2o1 = K().compare_squared_distance_3_object()(o2, o1, expected_result);
 
+    // std::cout << std::endl << "Test" << std::endl;
+
+    // std::cout << o1 << std::endl << o2 << std::endl;
+    // std::cout << CGAL::squared_distance(o1, o2) << std::endl;
+    // std::cout << CGAL::squared_distance( CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o1) , 
+    //                                      CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o2)) << std::endl;
+
+    // if constexpr(std::is_same<O1, S>()){
+    //   if(expected_result != 0){
+    //     std::cout << CGAL::squared_distance(o1.supporting_line(), o2.supporting_line()) << std::endl;
+    //     std::cout << CGAL::squared_distance( CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o1.supporting_line()) , 
+    //                                      CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o2.supporting_line())) << std::endl;
+    //   }
+    // }
+    // std::cout << CGAL::SMALLER << CGAL::EQUAL << CGAL::LARGER << std::endl;
+
     const bool res_e_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result) == CGAL::EQUAL);
     const bool res_e_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result) == CGAL::EQUAL);
-    const bool res_s_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result+1) == CGAL::SMALLER);
-    const bool res_s_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result+1) == CGAL::SMALLER);
-    const bool res_l_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result-1) == CGAL::LARGER);
-    const bool res_l_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result-1) == CGAL::LARGER);
+    const bool res_s_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result*(1+epsilon)+1) == CGAL::SMALLER);
+    const bool res_s_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result*(1+epsilon)+1) == CGAL::SMALLER);
+    const bool res_l_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result*(1-epsilon)-1) == CGAL::LARGER);
+    const bool res_l_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result*(1-epsilon)-1) == CGAL::LARGER);
 
-    assert(res_e_o1o2);
-    assert(res_e_o2o1);
+    // The equal result is guaranted only on exact construction kernel
+    if(epsilon==0)
+    {
+      assert(res_e_o1o2);
+      assert(res_e_o2o1);
+    }
     assert(res_s_o1o2);
     assert(res_s_o2o1);
     assert(res_l_o1o2);
@@ -164,8 +186,10 @@ private:
     // const FT res_o1o2 = K().compare_squared_distance_3_object()(o1, o2, expected_result);
     // const FT res_o2o1 = K().compare_squared_distance_3_object()(o2, o1, expected_result);
 
-    const bool res_o1o2 = (CGAL::compare_squared_distance(o1, o2, upper_bound) == CGAL::SMALLER);
-    const bool res_o2o1 = (CGAL::compare_squared_distance(o2, o1, upper_bound) == CGAL::SMALLER);
+    const FT up = upper_bound * (1 + epsilon) + std::numeric_limits<FT>::epsilon();
+
+    const bool res_o1o2 = (CGAL::compare_squared_distance(o1, o2, up) == CGAL::SMALLER);
+    const bool res_o2o1 = (CGAL::compare_squared_distance(o2, o1, up) == CGAL::SMALLER);
 
     assert(res_o1o2);
     assert(res_o2o1);
@@ -188,61 +212,61 @@ private:
     check_compare_squared_distance(p(6, 1, 2), S{p( 2, 0, 0), p( 3, 0, 0)}, 14);
   }
 
-//   void P_T()
-//   {
-//     std::cout << "Point - Triangle" << std::endl;
-//     check_compare_squared_distance(p(0, 1, 2), T{p(0, 0, 0), p(2, 0, 0), p(0, 2, 0)}, 4);
+  void P_T()
+  {
+    std::cout << "Point - Triangle" << std::endl;
+    check_compare_squared_distance(p(0, 1, 2), T{p(0, 0, 0), p(2, 0, 0), p(0, 2, 0)}, 4);
 
-//     T t(p(0,0,0), p(3,0,0), p(3,3,0));
-//     check_compare_squared_distance (p(-1, -1, 0), t, 2);
-//     check_compare_squared_distance (p(-1,  0, 0), t, 1);
-//     check_compare_squared_distance (p(0, 0, 0), t, 0);
-//     check_compare_squared_distance (p(1, 0, 0), t, 0);
-//     check_compare_squared_distance (p(4, 0, 0), t, 1);
-//     check_compare_squared_distance (p(1, -1, 0), t, 1);
-//     check_compare_squared_distance (p(1, 1, 1), t, 1);
-//     check_compare_squared_distance (p(1, 0, 1), t, 1);
-//     check_compare_squared_distance (p(0, 0, 1), t, 1);
+    T t(p(0,0,0), p(3,0,0), p(3,3,0));
+    check_compare_squared_distance (p(-1, -1, 0), t, 2);
+    check_compare_squared_distance (p(-1,  0, 0), t, 1);
+    check_compare_squared_distance (p(0, 0, 0), t, 0);
+    check_compare_squared_distance (p(1, 0, 0), t, 0);
+    check_compare_squared_distance (p(4, 0, 0), t, 1);
+    check_compare_squared_distance (p(1, -1, 0), t, 1);
+    check_compare_squared_distance (p(1, 1, 1), t, 1);
+    check_compare_squared_distance (p(1, 0, 1), t, 1);
+    check_compare_squared_distance (p(0, 0, 1), t, 1);
 
-//     // Degenerate
-//     check_compare_squared_distance (p(1, 2, 3), T(p(4,3,2), p(4,3,2), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
-//     check_compare_squared_distance (p(1, 2, 3), T(p(4,3,2), p(10,12,3), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
-//     check_compare_squared_distance (p(0, 0, 0), T(p(4,3,2), p(4,-3,-2), p(4,3,2)), squared_distance(p(0, 0, 0), p(4,0,0)));
+    // // Degenerate
+    check_compare_squared_distance (p(1, 2, 3), T(p(4,3,2), p(4,3,2), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
+    check_compare_squared_distance (p(1, 2, 3), T(p(4,3,2), p(10,12,3), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
+    check_compare_squared_distance (p(0, 0, 0), T(p(4,3,2), p(4,-3,-2), p(4,3,2)), squared_distance(p(0, 0, 0), p(4,0,0)));
 
-//     // On the triangle
-//     check_compare_squared_distance (p(7, 1, -5), T(p(2,9,8), p(-4,-3,-5), p(7, 1, -5)), 0); // vertex
-//     check_compare_squared_distance (p(7, 1, -5), T(p(14,2,-10), p(-7,-1,5), p(8, 3, -1)), 0); // edge
-//     check_compare_squared_distance (p(1, 4, -3), T(p(0,-8,-3), p(-5,14,-3), p(10, 1, -3)), 0); // face
+    // On the triangle
+    check_compare_squared_distance (p(7, 1, -5), T(p(2,9,8), p(-4,-3,-5), p(7, 1, -5)), 0); // vertex
+    check_compare_squared_distance (p(7, 1, -5), T(p(14,2,-10), p(-7,-1,5), p(8, 3, -1)), 0); // edge
+    check_compare_squared_distance (p(1, 4, -3), T(p(0,-8,-3), p(-5,14,-3), p(10, 1, -3)), 0); // face
 
-//     // General
-//     check_compare_squared_distance (p(-15, 1, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 25);
-//     check_compare_squared_distance (p(-5, 0, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(-5, 0, 0), S(p(-10, 1, 0), p(0,0,0))));
-//     check_compare_squared_distance (p(0, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 9);
-//     check_compare_squared_distance (p(3, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(3, -3, 0), S(p(0,0,0), p(10,0,0))));
-//     check_compare_squared_distance (p(16, 1, 1), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 38);
-//     check_compare_squared_distance (p(5, 5, 2), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(5, 5, 2), S(p(10,0,0), p(-10,1,0))));
+    // General
+    check_compare_squared_distance (p(-15, 1, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 25);
+    check_compare_squared_distance (p(-5, 0, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(-5, 0, 0), S(p(-10, 1, 0), p(0,0,0))));
+    check_compare_squared_distance (p(0, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 9);
+    check_compare_squared_distance (p(3, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(3, -3, 0), S(p(0,0,0), p(10,0,0))));
+    check_compare_squared_distance (p(16, 1, 1), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 38);
+    check_compare_squared_distance (p(5, 5, 2), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(5, 5, 2), S(p(10,0,0), p(-10,1,0))));
 
-//     for(int i=0; i<N; ++i)
-//     {
-//       P p0 = random_point();
-//       P p1 = random_point();
-//       P p2 = random_point();
-//       P q = random_point();
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point();
+      P p1 = random_point();
+      P p2 = random_point();
+      P q = random_point();
 
-//       check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p0, p1)));
-//       check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p1, p2)));
-//       check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p2, p0)));
-//     }
-//   }
+      check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p0, p1)));
+      check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p1, p2)));
+      check_compare_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p2, p0)));
+    }
+  }
 
-//   void P_Tet()
-//   {
-//     std::cout << "Point - Tetrahedron\n";
-//     check_compare_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
-//     check_compare_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
-//     check_compare_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
-//     check_compare_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
-//   }
+  // void P_Tet()
+  // {
+  //   std::cout << "Point - Tetrahedron\n";
+  //   check_compare_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
+  //   check_compare_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+  //   check_compare_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+  //   check_compare_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
+  // }
 
   void S_S()
   {
@@ -416,6 +440,28 @@ private:
 
       check_compare_squared_distance_with_bound(s01, s23, upper_bound);
     }
+
+    // Test exact predicate with Epick
+    for(int i=0; i<10; ++i)
+    {
+      FT xy0(r.get_double(0, 5));
+      FT xy1(r.get_double(5, 10));
+      FT xy2(r.get_double(10, 15));
+      FT xy3(r.get_double(15, 20));
+
+      P p0(xy0, xy0, r.get_double(5, 10));
+      P p1(xy3, xy3, r.get_double(10, 15));
+      P p2(xy1-1, xy1+1, r.get_double(15, 20));
+      P p3(xy2-1, xy2+1, r.get_double(0, 5));
+
+      //By construction the segments are at squared_distance 2
+      S s01{p0, p1};
+      S s23{p2, p3};
+
+      // std::cout << CGAL::squared_distance(s01, s23) << std::endl;
+      // assert(CGAL::compare_squared_distance(s01, s23, 2)==CGAL::EQUAL);
+    }
+
   }
 
   void P_R()
@@ -670,7 +716,7 @@ public:
     P_S();
     P_R();
     P_L();
-    // P_T();
+    P_T();
     P_Pl();
     // P_Tet();
 
@@ -699,7 +745,8 @@ int main()
 
   std::cout << "3D Distance tests" << std::endl;
 
-  CGAL::Random r;
+  CGAL::Random r(1740056029);
+  // CGAL::Random r;
   std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // @todo Some tests are too difficult for these kernels

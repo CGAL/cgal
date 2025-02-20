@@ -26,6 +26,16 @@
 namespace CGAL {
 namespace internal {
 
+template <typename K_Comparison_result>
+K_Comparison_result smaller_of(const K_Comparison_result a, const K_Comparison_result b)
+{
+  if((a==SMALLER) || (b==SMALLER))
+    return SMALLER;
+  if((a==EQUAL) || (b==EQUAL))
+    return EQUAL;
+  return LARGER;
+}
+
 template <class K>
 bool is_null(const typename K::Vector_3 &v, const K&)
 {
@@ -39,7 +49,10 @@ wdot(const typename K::Vector_3 &u,
      const typename K::Vector_3 &v,
      const K&)
 {
-  return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
+  if constexpr(std::is_same<typename K::RT, double>())
+    return std::fma(u.hx(), v.hx(), std::fma(u.hy(), v.hy(), u.hz()*v.hz()));
+  else
+    return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
 template <class K>
@@ -84,6 +97,24 @@ wdot(const typename K::Point_3 &p,
   return wdot_tag(p, q, r, k, tag);
 }
 
+static double diff_of_products(const double a, const double b, const double c, const double d)
+{
+#if 1
+  double w = d * c;
+  double e = std::fma(c, -d, w);
+  double f = std::fma(a, b, -w);
+  return f + e;
+#else
+  return std::fma(a, b, -c*d);
+#endif
+}
+
+template <typename OFT>
+static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
+{
+  return a*b - c*d;
+}
+
 template <class K>
 typename K::Vector_3
 wcross(const typename K::Vector_3 &u,
@@ -91,10 +122,14 @@ wcross(const typename K::Vector_3 &u,
        const K&)
 {
   typedef typename K::Vector_3 Vector_3;
+  // return Vector_3(
+  //       u.hy()*v.hz() - u.hz()*v.hy(),
+  //       u.hz()*v.hx() - u.hx()*v.hz(),
+  //       u.hx()*v.hy() - u.hy()*v.hx());
   return Vector_3(
-        u.hy()*v.hz() - u.hz()*v.hy(),
-        u.hz()*v.hx() - u.hx()*v.hz(),
-        u.hx()*v.hy() - u.hy()*v.hx());
+        diff_of_products(u.hy(),v.hz(),u.hz(),v.hy()),
+        diff_of_products(u.hz(),v.hx(),u.hx(),v.hz()),
+        diff_of_products(u.hx(),v.hy(),u.hy(),v.hx()));
 }
 
 template <class K>

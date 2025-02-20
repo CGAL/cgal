@@ -127,7 +127,11 @@ compare_squared_distance(const typename K::Point_3& pt,
   const Vector_3 diff = vector(seg.source(), pt);
   const Vector_3 segvec = vector(seg.source(), seg.target());
 
-  //Compare first the distance to the line, if larger we can exit early
+  // If the segment is degen
+  if(seg.source()==seg.target())
+    return csq_dist(pt, seg.source(), d2);
+
+  // Compare first the distance to the line, if larger we can exit early
   const typename K::Comparison_result res_pl= compare_squared_distance_to_line(segvec, diff, k, d2);
   if(res_pl==LARGER)
     return LARGER;

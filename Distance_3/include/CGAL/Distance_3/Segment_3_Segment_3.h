@@ -198,6 +198,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   typedef typename K::FT                                                  FT;
   typedef typename K::Point_3                                             Point_3;
   typedef typename K::Vector_3                                            Vector_3;
+  typedef typename K::Line_3                                              Line_3;
 
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Construct_vector_3 cv = k.construct_vector_3_object();
@@ -262,7 +263,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
     {
       // res_y = 1;
       res_x = boost::algorithm::clamp<FT>((e + c) / a, 0, 1); // (e + y*c) / a
-      return compare(sq_dist(p1+res_x*v1,p2), d2);
+      return compare(sq_dist(p1+res_x*v1,p2+v2), d2);
     }
     else if(res_x==0 || res_x==1) // 0 <= y <= 1
     {
