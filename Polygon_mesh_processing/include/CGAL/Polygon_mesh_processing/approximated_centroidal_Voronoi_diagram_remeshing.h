@@ -33,6 +33,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/determinant.h>
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/utility.h>
 
