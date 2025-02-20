@@ -474,7 +474,7 @@ acvd_impl(TriangleMesh& tmesh,
     int nbe = 0;
     for (edge_descriptor e : edges(tmesh))
     {
-      lengths.push_back(edge_length(halfedge(e, tmesh), tmesh, parameters::vertex_point_map(vpm)));
+      lengths.push_back(edge_length(halfedge(e, tmesh), tmesh, parameters::vertex_point_map(vpm).geom_traits(gt)));
       cum += lengths.back();
       ++nbe;
     }
@@ -512,7 +512,7 @@ acvd_impl(TriangleMesh& tmesh,
             if (!is_border(hhh, tmesh))
             {
               halfedge_descriptor hf = Euler::split_face(hhh, next(next(hhh, tmesh), tmesh), tmesh);
-              FT l = edge_length(hf, tmesh, parameters::vertex_point_map(vpm));
+              FT l = edge_length(hf, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
               if (l >= threshold)
               {
                 double nb_subsegments = std::ceil(l / threshold);
