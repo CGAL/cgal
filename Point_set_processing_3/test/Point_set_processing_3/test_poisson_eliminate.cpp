@@ -29,7 +29,7 @@ void check(const std::vector<typename K::Point_3> &input, const std::vector<type
   }
 }
 
-void no_check(const std::vector<CGAL::Exact_predicates_exact_constructions_kernel::Point_3>& input, const std::vector<CGAL::Exact_predicates_exact_constructions_kernel::Point_3>& output, bool progressive) {
+void no_check(const std::vector<CGAL::Exact_predicates_exact_constructions_kernel::Point_3>&, const std::vector<CGAL::Exact_predicates_exact_constructions_kernel::Point_3>&, bool) {
 }
 
 template<class K, class Check_distance_functor>
@@ -73,7 +73,7 @@ void sampling(const std::string& filename, Check_distance_functor check_average_
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
   std::cout << "testing Simple_cartesian<double>" << std::endl;
   sampling<CGAL::Simple_cartesian<double>>(CGAL::data_file_path("points_3/radar.xyz"), check< CGAL::Simple_cartesian<double>>);
