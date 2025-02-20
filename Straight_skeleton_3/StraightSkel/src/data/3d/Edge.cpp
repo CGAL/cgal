@@ -131,6 +131,26 @@ void Edge::setFacetRListIt(std::list<EdgeSPtr>::iterator list_it) {
     this->facet_r_list_it_ = list_it;
 }
 
+FacetSPtr Edge::getFacetSrc() const {
+  FacetSPtr result = FacetSPtr();
+  VertexSPtr vertex_src = getVertexSrc();
+  if (vertex_src->degree() == 3) {
+      result = getFacetL()->next(vertex_src);
+  }
+  DEBUG_SPTR(result);
+  return result;
+}
+
+FacetSPtr Edge::getFacetDst() const {
+  FacetSPtr result = FacetSPtr();
+  VertexSPtr vertex_dst = getVertexDst();
+  if (vertex_dst->degree() == 3) {
+      result = getFacetR()->next(vertex_dst);
+  }
+  DEBUG_SPTR(result);
+  return result;
+}
+
 PolyhedronSPtr Edge::getPolyhedron() const {
     // DEBUG_WPTR(this->polyhedron_);
     if (this->polyhedron_.expired())

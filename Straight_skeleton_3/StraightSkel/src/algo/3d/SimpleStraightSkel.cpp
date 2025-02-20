@@ -267,8 +267,8 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
     if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
         FacetSPtr facet_l = edge->getFacetL();
         FacetSPtr facet_r = edge->getFacetR();
-        FacetSPtr facet_src = getFacetSrc(edge);
-        FacetSPtr facet_dst = getFacetDst(edge);
+        FacetSPtr facet_src = edge->getFacetSrc();
+        FacetSPtr facet_dst = edge->getFacetDst();
 
         // std::cout << "Facet L = " << facet_l->getID() << std::endl;
         // std::cout << "Facet R = " << facet_r->getID() << std::endl;
@@ -369,8 +369,8 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
     if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
         FacetSPtr facet_l = edge->getFacetL();
         FacetSPtr facet_r = edge->getFacetR();
-        FacetSPtr facet_src = getFacetSrc(edge);
-        FacetSPtr facet_dst = getFacetDst(edge);
+        FacetSPtr facet_src = edge->getFacetSrc();
+        FacetSPtr facet_dst = edge->getFacetDst();
         CGAL::FT speed_l = 1.0;
         if (facet_l->hasData()) {
             speed_l = std::dynamic_pointer_cast<SkelFacetData>(
@@ -408,27 +408,6 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
     } else {
         result = edge->line();
     }
-    return result;
-}
-
-
-FacetSPtr SimpleStraightSkel::getFacetSrc(EdgeSPtr edge) {
-    FacetSPtr result = FacetSPtr();
-    VertexSPtr vertex_src = edge->getVertexSrc();
-    if (vertex_src->degree() == 3) {
-        result = edge->getFacetL()->next(vertex_src);
-    }
-    DEBUG_SPTR(result);
-    return result;
-}
-
-FacetSPtr SimpleStraightSkel::getFacetDst(EdgeSPtr edge) {
-    FacetSPtr result = FacetSPtr();
-    VertexSPtr vertex_dst = edge->getVertexDst();
-    if (vertex_dst->degree() == 3) {
-        result = edge->getFacetR()->next(vertex_dst);
-    }
-    DEBUG_SPTR(result);
     return result;
 }
 
@@ -1559,10 +1538,10 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 #endif
 
     // Check that the point is inside bounds
-    FacetSPtr facet_1_src = getFacetSrc(edge_1);
-    FacetSPtr facet_1_dst = getFacetDst(edge_1);
-    FacetSPtr facet_2_src = getFacetSrc(edge_2);
-    FacetSPtr facet_2_dst = getFacetDst(edge_2);
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
+    FacetSPtr facet_2_src = edge_2->getFacetSrc();
+    FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
 #ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "Facet 1 SRC = " << facet_1_src->getID() << std::endl;
@@ -1805,8 +1784,8 @@ std::list<FacetSPtr> SimpleStraightSkel::eventFacets(AbstractEventSPtr event)
         DEBUG_SPTR(edge);
         result.push_back(edge->getFacetR());
         result.push_back(edge->getFacetL());
-        result.push_back(getFacetSrc(edge));
-        result.push_back(getFacetDst(edge));
+        result.push_back(edge->getFacetSrc());
+        result.push_back(edge->getFacetDst());
         CGAL_postcondition(std::distance(result.begin(), std::unique(result.begin(), result.end())) == 4);
     } else if (event->getType() == AbstractEvent::EDGE_MERGE_EVENT) {
         EdgeMergeEventSPtr edge_merge_event = std::dynamic_pointer_cast<EdgeMergeEvent>(event);
@@ -1814,17 +1793,18 @@ std::list<FacetSPtr> SimpleStraightSkel::eventFacets(AbstractEventSPtr event)
         DEBUG_SPTR(edge);
         result.push_back(edge->getFacetR());
         result.push_back(edge->getFacetL());
-        result.push_back(getFacetSrc(edge));
-        result.push_back(getFacetDst(edge));
+        result.push_back(edge->getFacetSrc());
+        result.push_back(edge->getFacetDst());
+        CGAL_postcondition(std::distance(result.begin(), std::unique(result.begin(), result.end())) == 4);
     } else if (event->getType() == AbstractEvent::TRIANGLE_EVENT) {
         TriangleEventSPtr triangle_event = std::dynamic_pointer_cast<TriangleEvent>(event);
         EdgeSPtr edge = triangle_event->getEdgeBegin();
         DEBUG_SPTR(edge);
         result.push_back(edge->getFacetR());
         result.push_back(edge->getFacetL());
-        result.push_back(getFacetSrc(edge));
-        result.push_back(getFacetDst(edge));
-        // CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
+        result.push_back(edge->getFacetSrc());
+        result.push_back(edge->getFacetDst());
+        CGAL_postcondition(std::distance(result.begin(), std::unique(result.begin(), result.end())) == 4);
     } else if (event->getType() == AbstractEvent::DBL_EDGE_MERGE_EVENT) {
         DblEdgeMergeEventSPtr dbl_edge_merge_event = std::dynamic_pointer_cast<DblEdgeMergeEvent>(event);
         // could be a L-R-Src-Dst too, of e.g. Edge11->next(Edge11->getFacetL)
@@ -1832,23 +1812,23 @@ std::list<FacetSPtr> SimpleStraightSkel::eventFacets(AbstractEventSPtr event)
         result.push_back(dbl_edge_merge_event->getEdge11()->getFacetR());
         result.push_back(dbl_edge_merge_event->getEdge22()->getFacetL());
         result.push_back(dbl_edge_merge_event->getEdge22()->getFacetR());
-        // CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
+        CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
     } else if (event->getType() == AbstractEvent::DBL_TRIANGLE_EVENT) {
         DblTriangleEventSPtr dlb_triangle_event = std::dynamic_pointer_cast<DblTriangleEvent>(event);
         EdgeSPtr edge = dlb_triangle_event->getEdge();
         result.push_back(edge->getFacetR());
         result.push_back(edge->getFacetL());
-        result.push_back(getFacetSrc(edge));
-        result.push_back(getFacetDst(edge));
-        // CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
+        result.push_back(edge->getFacetSrc());
+        result.push_back(edge->getFacetDst());
+        CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
     } else if (event->getType() == AbstractEvent::TETRAHEDRON_EVENT) {
         TetrahedronEventSPtr tetrahedron_event = std::dynamic_pointer_cast<TetrahedronEvent>(event);
         EdgeSPtr edge = tetrahedron_event->getEdgeBegin();
         result.push_back(edge->getFacetL());
         result.push_back(edge->getFacetR());
-        result.push_back(getFacetSrc(edge));
-        result.push_back(getFacetDst(edge));
-        // CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
+        result.push_back(edge->getFacetSrc());
+        result.push_back(edge->getFacetDst());
+        CGAL_postcondition(std::set<FacetSPtr>(result.begin(), result.end()).size() == 4);
     } else if (event->getType() == AbstractEvent::VERTEX_EVENT) {
         VertexEventSPtr vertex_event = std::dynamic_pointer_cast<VertexEvent>(event);
         for (FacetWPtr wf : vertex_event->getVertex1()->facets()) {
@@ -1978,8 +1958,8 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 
         CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
-        FacetSPtr facet_src = getFacetSrc(edge);
-        FacetSPtr facet_dst = getFacetDst(edge);
+        FacetSPtr facet_src = edge->getFacetSrc();
+        FacetSPtr facet_dst = edge->getFacetDst();
 
         // This does not work when there is more than one edge between both facets.
         // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
@@ -2029,8 +2009,8 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 
             FacetSPtr facet_l2 = edge_2->getFacetL();
             FacetSPtr facet_r2 = edge_2->getFacetR();
-            FacetSPtr facet_2_src = getFacetSrc(edge_2);
-            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            FacetSPtr facet_2_src = edge_2->getFacetSrc();
+            FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
             Plane3SPtr plane_l2 = facet_l2->plane();
             Plane3SPtr plane_r2 = facet_r2->plane();
@@ -3142,8 +3122,8 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
     while (it_e1 != edges.end()) {
         EdgeSPtr edge_1 = *it_e1++;
 
-        FacetSPtr facet_1_src = getFacetSrc(edge_1);
-        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+        FacetSPtr facet_1_src = edge_1->getFacetSrc();
+        FacetSPtr facet_1_dst = edge_1->getFacetDst();
         std::list<EdgeSPtr> edges_2;
         edges_2.insert(edges_2.end(),
                 facet_1_src->edges().begin(), facet_1_src->edges().end());
@@ -3195,8 +3175,8 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                 // no surface event
                 continue;
             }
-            FacetSPtr facet_2_src = getFacetSrc(edge_2);
-            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            FacetSPtr facet_2_src = edge_2->getFacetSrc();
+            FacetSPtr facet_2_dst = edge_2->getFacetDst();
             if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
                     (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
                     (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
@@ -3232,8 +3212,8 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                 if (edge == edge_1) {
                     continue;
                 }
-                FacetSPtr facet_src = getFacetSrc(edge);
-                FacetSPtr facet_dst = getFacetDst(edge);
+                FacetSPtr facet_src = edge->getFacetSrc();
+                FacetSPtr facet_dst = edge->getFacetDst();
                 if (facet_1_src == edge_2->getFacetL() ||
                         facet_1_dst == edge_2->getFacetL()) {
                     if (facet_src == edge_2->getFacetR() ||
@@ -3364,8 +3344,8 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(const std::list<EdgeSPtr>&
             continue;
         }
 
-        FacetSPtr facet_1_src = getFacetSrc(edge_1);
-        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+        FacetSPtr facet_1_src = edge_1->getFacetSrc();
+        FacetSPtr facet_1_dst = edge_1->getFacetDst();
         CGAL_assertion(facet_1_src && facet_1_dst);
         std::list<EdgeSPtr>::iterator it_e2 = facet_1_src->edges().begin();
         while (it_e2 != facet_1_src->edges().end()) {
@@ -3697,8 +3677,8 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex_1.begin();
     while (it_e1 != edges_reflex_1.end()) {
         EdgeSPtr edge_1 = *it_e1++;
-        FacetSPtr facet_1_src = getFacetSrc(edge_1);
-        FacetSPtr facet_1_dst = getFacetDst(edge_1);
+        FacetSPtr facet_1_src = edge_1->getFacetSrc();
+        FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
         Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift);
         CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
@@ -3729,8 +3709,8 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                 // polyhedron split event
                 continue;
             }
-            FacetSPtr facet_2_src = getFacetSrc(edge_2);
-            FacetSPtr facet_2_dst = getFacetDst(edge_2);
+            FacetSPtr facet_2_src = edge_2->getFacetSrc();
+            FacetSPtr facet_2_dst = edge_2->getFacetDst();
             if ((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
                     (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
                     (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
@@ -5633,8 +5613,8 @@ void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSP
             event->getEdge2()->getData());
     EdgeSPtr edge_2 = data_2->getOffsetEdge();
 
-    FacetSPtr facet_1_src = getFacetSrc(edge_1);
-    FacetSPtr facet_1_dst = getFacetDst(edge_1);
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
     VertexSPtr vertex;
     EdgeSPtr edge_b1;
@@ -5762,8 +5742,8 @@ void SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr eve
             event->getEdge2()->getData());
     EdgeSPtr edge_2 = data_2->getOffsetEdge();
 
-    FacetSPtr facet_1_src = getFacetSrc(edge_1);
-    FacetSPtr facet_1_dst = getFacetDst(edge_1);
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
     VertexSPtr vertex_l;
     VertexSPtr vertex_r;

@@ -51,6 +51,9 @@ public:
     std::list<EdgeSPtr>::iterator getFacetRListIt() const;
     void setFacetRListIt(std::list<EdgeSPtr>::iterator list_it);
 
+    FacetSPtr getFacetSrc() const;
+    FacetSPtr getFacetDst() const;
+
     PolyhedronSPtr getPolyhedron() const;
     void setPolyhedron(PolyhedronSPtr polyhedron);
     std::list<EdgeSPtr>::iterator getPolyhedronListIt() const;

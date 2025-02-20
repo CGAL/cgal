@@ -435,9 +435,6 @@ protected:
                        const std::list<CGAL::FT>& save_offsets,
                        const std::filesystem::path& save_path);
 
-    static FacetSPtr getFacetSrc(EdgeSPtr edge);
-    static FacetSPtr getFacetDst(EdgeSPtr edge);
-
     PolyhedronSPtr polyhedron_;
 
     ControllerSPtr controller_;
