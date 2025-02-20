@@ -1278,12 +1278,12 @@ acvd_impl(TriangleMesh& tmesh,
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param tmesh triangle mesh to be remeshed
-* @param nb_vertices lower bound on the number of target vertices in the output mesh.
+* @param nb_vertices lower bound on the target number of vertices in the output mesh.
 *                    The requested number of vertices in the output will be respected except if the input mesh is not closed
 *                    (extra vertices will be used on the boundary), or if the number of points is too low
 *                    and no manifold mesh can be produced with that budget of points (extra points are added to get a manifold output).
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
+*        `GT` stands for the type of the traits object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
 *
@@ -1340,17 +1340,17 @@ acvd_impl(TriangleMesh& tmesh,
 *                       `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{geom_traits}
+*      \cgalParamDescription{an instance of a geometric traits class.}
+*      \cgalParamType{a class model of `Kernel`, with `GT::FT` being either `float` or `double`.}
+*      \cgalParamDefault{a \cgal Kernel deduced from the vertex point type, using `CGAL::Kernel_traits`.}
+*      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{random_seed}
 *     \cgalParamDescription{a value to seed the random number generator}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{a value generated with `std::time()`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*      \cgalParamDescription{an instance of a geometric traits class.}
-*      \cgalParamType{a class model of `Kernel`, with `GT::FT` being either `float` or `double`.}
-*      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
