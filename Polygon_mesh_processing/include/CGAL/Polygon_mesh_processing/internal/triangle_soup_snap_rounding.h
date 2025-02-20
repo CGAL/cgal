@@ -203,6 +203,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
     std::cout << "Round all coordinates on doubles" << std::endl;
 #endif
 
+#ifdef CGAL_LINKED_WITH_TBB
     if constexpr(parallel_execution)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
@@ -211,10 +212,11 @@ bool polygon_soup_snap_rounding(PointRange &points,
                             points[pi] = Point_3(to_double(points[pi].x()), to_double(points[pi].y()), to_double(points[pi].z()));
                         }
                         );
-    } else {
-      for (Point_3 &p : points)
-        p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
-    }
+    } else
+#else
+    for (Point_3 &p : points)
+      p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
+#endif
     repair_polygon_soup(points, triangles, np);
 
     // Get all intersecting triangles
@@ -265,7 +267,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
     snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
 
     // If the snapped version of a point correspond to one of the previous point, we snap it
-
+#ifdef CGAL_LINKED_WITH_TBB
     if constexpr(parallel_execution)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
@@ -277,14 +279,15 @@ bool polygon_soup_snap_rounding(PointRange &points,
                           }
                         }
                         );
-    } else {
-      for (Point_3 &p : points)
-      {
-        Point_3 p_snap = snap_p(p);
-        if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
-          p = p_snap;
-      }
+    } else
+#else
+    for (Point_3 &p : points)
+    {
+      Point_3 p_snap = snap_p(p);
+      if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
+        p = p_snap;
     }
+#endif
 
 #else
     // Version where points in a voxel are rounded to their barycenter.
