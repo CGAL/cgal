@@ -343,7 +343,7 @@ void upsample_subdivision_property(TriangleMesh& tmesh,
   std::unordered_set<vertex_descriptor> old_vertices;
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  Upsample_mask_3<TriangleMesh,VPM> mask(&tmesh, vpm);
+  Linear_mask_3<TriangleMesh,VPM> mask(&tmesh, vpm);
 
   for (unsigned int i = 0; i < step; ++i)
   {
@@ -536,9 +536,9 @@ acvd_impl(TriangleMesh& tmesh,
     {
       if (gradation_factor == 0) // no adaptive clustering
       {
-        Subdivision_method_3::Upsample_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps)
-                                                                           .vertex_point_map(vpm)
-                                                                           .geom_traits(gt));
+        Subdivision_method_3::linear_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps)
+                                                                         .vertex_point_map(vpm)
+                                                                         .geom_traits(gt));
       }
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering
