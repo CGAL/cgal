@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   // With QEM Energy Minimization
   std::cout << "Uniform QEM ACVD ...." << std::endl;
-  auto acvd_mesh_qem = smesh;
+  Mesh acvd_mesh_qem = smesh;
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(acvd_mesh_qem, nb_clusters, params::use_qem_based_energy(true));
   CGAL::IO::write_polygon_mesh(stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 
