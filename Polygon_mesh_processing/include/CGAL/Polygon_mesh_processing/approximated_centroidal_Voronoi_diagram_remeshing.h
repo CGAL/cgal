@@ -109,9 +109,10 @@ void dump_mesh_with_cluster_colors(TriangleMesh tmesh, ClusterMap cluster_map, s
 
 template <typename GT>
 void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3,
-                      Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
+                      Eigen::Matrix<typename GT::FT, 4, 4>& quadric,
+                      const GT& gt)
 {
-  typename GT::Construct_cross_product_vector_3 cross_product;
+  auto cross_product = gt.construct_cross_product_vector_3_object();
 
   typename GT::Vector_3 crossX1X2 = cross_product(p1, p2);
   typename GT::Vector_3 crossX2X3 = cross_product(p2, p3);
@@ -131,21 +132,7 @@ void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector
 }
 
 template <typename GT>
-void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3> > cluster_tris,
-                        Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
-{
-  quadric.setZero();
-
-  for (int i = 0; i < cluster_tris.size(); ++i)
-  {
-    Eigen::Matrix<typename GT::FT, 4, 4> q;
-    compute_qem_face<GT>(cluster_tris[i][0], cluster_tris[i][1], cluster_tris[i][2], q);
-    quadric = quadric + q;
-  }
-}
-
-template <typename GT>
-typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric,
+typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric,
                                            const typename GT::Point_3& p,
                                            int& rank_deficiency)
 {
@@ -259,7 +246,7 @@ struct QEMClusterData
     quadric_sum.setZero();
   }
 
-  void add_vertex(const typename GT::Vector_3 vertex_position,
+  void add_vertex(const typename GT::Vector_3& vertex_position,
                   const typename GT::FT weight,
                   const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
   {
@@ -270,14 +257,14 @@ struct QEMClusterData
     this->modified = true;
   }
 
-  void add_vertex(const typename GT::Point_3 vertex_position,
+  void add_vertex(const typename GT::Point_3& vertex_position,
                   const typename GT::FT weight,
                   const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
   {
     add_vertex(vertex_position - ORIGIN, weight, quadric);
   }
 
-  void remove_vertex(const typename GT::Vector_3 vertex_position,
+  void remove_vertex(const typename GT::Vector_3& vertex_position,
                      const typename GT::FT weight,
                      const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
   {
@@ -406,8 +393,11 @@ acvd_impl(TriangleMesh& tmesh,
           const NamedParameters& np = parameters::default_values())
 {
   using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Vector_3 = typename GT::Vector_3;
 
-  using Matrix4x4 = typename Eigen::Matrix<typename GT::FT, 4, 4>;
+  using Matrix4x4 = typename Eigen::Matrix<FT, 4, 4>;
 
   using Vertex_position_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
 
@@ -418,7 +408,7 @@ acvd_impl(TriangleMesh& tmesh,
 
   using VertexClusterMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::type;
   using VertexVisitedMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type;
-  using VertexWeightMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type;
+  using VertexWeightMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<FT> >::type;
   using VertexQuadricMap = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Matrix4x4> >::type;
 
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
@@ -432,6 +422,7 @@ acvd_impl(TriangleMesh& tmesh,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
                                              get_property_map(CGAL::vertex_point, tmesh));
 
@@ -439,7 +430,7 @@ acvd_impl(TriangleMesh& tmesh,
 #ifdef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
   static_assert(is_default_parameter<NamedParameters, internal_np::gradation_factor_t>::value, "gradation_factor option is disabled");
 #endif
-  const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
+  const FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
 
   // using QEM ?
   bool use_postprocessing_qem = choose_parameter(get_parameter(np, internal_np::use_postprocessing_qem), false);
@@ -456,7 +447,8 @@ acvd_impl(TriangleMesh& tmesh,
     if constexpr (is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
     {
       vpcd_map = get(CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>>(), tmesh);
-      interpolated_corrected_curvatures(tmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
+      interpolated_corrected_curvatures(tmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map)
+                                                          .vertex_point_map(vpm).geom_traits(gt));
     }
     else
       vpcd_map = get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map);
@@ -476,9 +468,9 @@ acvd_impl(TriangleMesh& tmesh,
   // So do the following until the condition is met
   if (gradation_factor == 0 && nb_clusters > nb_vertices * vertex_count_ratio)
   {
-    std::vector<typename GT::FT> lengths;
+    std::vector<FT> lengths;
     lengths.reserve(num_edges(tmesh));
-    typename GT::FT cum = 0;
+    FT cum = 0;
     int nbe = 0;
     for (edge_descriptor e : edges(tmesh))
     {
@@ -486,13 +478,13 @@ acvd_impl(TriangleMesh& tmesh,
       cum += lengths.back();
       ++nbe;
     }
-    typename GT::FT threshold = 3. * cum / nbe;
+    FT threshold = 3. * cum / nbe;
 
     std::vector<std::pair<edge_descriptor, double>> to_split;
     int ei = -1;
     for (edge_descriptor e : edges(tmesh))
     {
-      typename GT::FT l = lengths[++ei];
+      FT l = lengths[++ei];
       if (l >= threshold)
       {
         double nb_subsegments = std::ceil(l / threshold);
@@ -506,8 +498,8 @@ acvd_impl(TriangleMesh& tmesh,
       for (auto [e, nb_subsegments] : to_split)
       {
         halfedge_descriptor h = halfedge(e, tmesh);
-        typename GT::Point_3 s = get(vpm, source(h,tmesh));
-        typename GT::Point_3 t = get(vpm, target(h,tmesh));
+        Point_3 s = get(vpm, source(h,tmesh));
+        Point_3 t = get(vpm, target(h,tmesh));
 
         for (double k=1; k<nb_subsegments; ++k)
         {
@@ -520,7 +512,7 @@ acvd_impl(TriangleMesh& tmesh,
             if (!is_border(hhh, tmesh))
             {
               halfedge_descriptor hf = Euler::split_face(hhh, next(next(hhh, tmesh), tmesh), tmesh);
-              typename GT::FT l = edge_length(hf, tmesh, parameters::vertex_point_map(vpm));
+              FT l = edge_length(hf, tmesh, parameters::vertex_point_map(vpm));
               if (l >= threshold)
               {
                 double nb_subsegments = std::ceil(l / threshold);
@@ -537,31 +529,35 @@ acvd_impl(TriangleMesh& tmesh,
 
   while (nb_clusters > nb_vertices * vertex_count_ratio)
   {
-    typename GT::FT curr_factor = nb_clusters / (nb_vertices * vertex_count_ratio);
+    FT curr_factor = nb_clusters / (nb_vertices * vertex_count_ratio);
     int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
     {
       if (gradation_factor == 0) // no adaptive clustering
       {
-        Subdivision_method_3::Upsample_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps));
+        Subdivision_method_3::Upsample_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps)
+                                                                           .vertex_point_map(vpm)
+                                                                           .geom_traits(gt));
       }
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering
       {
         upsample_subdivision_property(tmesh, vpcd_map,
                                       CGAL::parameters::number_of_iterations(subdivide_steps)
-                                                       .vertex_principal_curvatures_and_directions_map(vpcd_map));
+                                                       .vertex_principal_curvatures_and_directions_map(vpcd_map)
+                                                       .vertex_point_map(vpm)
+                                                       .geom_traits(gt));
       }
 #endif
       vpm = get_property_map(CGAL::vertex_point, tmesh);
-      nb_vertices = num_vertices(tmesh);
+      nb_vertices = vertices(tmesh).size();
     }
   }
 
   // creating needed property maps
   VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), tmesh, -1);
-  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), tmesh, typename GT::FT(0));
+  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<FT>(), tmesh, FT(0));
   Matrix4x4 zero_mat;
   zero_mat.setZero();
   VertexQuadricMap vertex_quadric_pmap = get(CGAL::dynamic_vertex_property_t<Matrix4x4>(), tmesh, zero_mat);
@@ -571,39 +567,40 @@ acvd_impl(TriangleMesh& tmesh,
   std::queue<halfedge_descriptor> clusters_edges_new;
 
   // compute vertex weights (dual area), and quadrics
-  typename GT::FT weight_avg = 0;
+  FT weight_avg = 0;
   for (face_descriptor fd : faces(tmesh))
   {
-    typename GT::FT weight = abs(CGAL::Polygon_mesh_processing::face_area(fd, tmesh)) / 3;
+    FT weight = abs(face_area(fd, tmesh, parameters::vertex_point_map(vpm)
+                                                    .geom_traits(gt))) / 3;
 
     // get points of the face
     halfedge_descriptor hd = halfedge(fd, tmesh);
-    typename GT::Point_3 pi = get(vpm, source(hd, tmesh));
-    typename GT::Vector_3 vp1(pi.x(), pi.y(), pi.z());
+    Point_3 pi = get(vpm, source(hd, tmesh));
+    Vector_3 vp1(pi.x(), pi.y(), pi.z());
     hd = next(hd, tmesh);
-    typename GT::Point_3 pj = get(vpm, source(hd, tmesh));
-    typename GT::Vector_3 vp2(pj.x(), pj.y(), pj.z());
+    Point_3 pj = get(vpm, source(hd, tmesh));
+    Vector_3 vp2(pj.x(), pj.y(), pj.z());
     hd = next(hd, tmesh);
-    typename GT::Point_3 pk = get(vpm, source(hd, tmesh));
-    typename GT::Vector_3 vp3(pk.x(), pk.y(), pk.z());
+    Point_3 pk = get(vpm, source(hd, tmesh));
+    Vector_3 vp3 = pk - ORIGIN;
 
     // compute quadric for the face
     Matrix4x4 face_quadric;
     if (use_qem_based_energy)
-      compute_qem_face<GT>(vp1, vp2, vp3, face_quadric);
+      compute_qem_face<GT>(vp1, vp2, vp3, face_quadric, gt);
 
     for (vertex_descriptor vd : vertices_around_face(halfedge(fd, tmesh), tmesh))
     {
-      typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+      FT vertex_weight = get(vertex_weight_pmap, vd);
 
       if (gradation_factor == 0) // no adaptive clustering
         vertex_weight += weight;
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering
       {
-        typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
-        typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
-        typename GT::FT k_sq = (k1 * k1 + k2 * k2);
+        FT k1 = get(vpcd_map, vd).min_curvature;
+        FT k2 = get(vpcd_map, vd).max_curvature;
+        FT k_sq = (k1 * k1 + k2 * k2);
         vertex_weight += weight * pow(k_sq, gradation_factor / 2.0);  // /2.0 because k_sq is squared
       }
 #endif
@@ -623,7 +620,7 @@ acvd_impl(TriangleMesh& tmesh,
   // clamp the weights up and below by a ratio (like 10,000) * avg_weights
   for (vertex_descriptor vd : vertices(tmesh))
   {
-    typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+    FT vertex_weight = get(vertex_weight_pmap, vd);
     if (vertex_weight > CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
       put(vertex_weight_pmap, vd, CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
     else if (vertex_weight < 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
@@ -642,13 +639,13 @@ acvd_impl(TriangleMesh& tmesh,
     int vi;
     vertex_descriptor vd;
     do {
-      vi = rnd.get_int(0, num_vertices(tmesh));
+      vi = rnd.get_int(0, nb_vertices);
       vd = *(vertices(tmesh).begin() + vi);
     } while (get(vertex_cluster_pmap, vd) != -1);
 
     put(vertex_cluster_pmap, vd, ci);
-    typename GT::Point_3 vp = get(vpm, vd);
-    typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+    Point_3 vp = get(vpm, vd);
+    Vector_3 vpv = vp - ORIGIN;
     clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_quadric_pmap, vd));
 
     for (halfedge_descriptor hd : halfedges_around_source(vd, tmesh))
@@ -676,7 +673,7 @@ acvd_impl(TriangleMesh& tmesh,
 
       for (vertex_descriptor v : vertices(tmesh))
       {
-        typename GT::FT v_weight = get(vertex_weight_pmap, v);
+        FT v_weight = get(vertex_weight_pmap, v);
         Matrix4x4 v_qem = get(vertex_quadric_pmap, v);
         int cluster_id = get(vertex_cluster_pmap, v );
         if (cluster_id != -1 && !frozen_clusters[cluster_id])
@@ -730,8 +727,8 @@ acvd_impl(TriangleMesh& tmesh,
           {
             // expand cluster c2 (add v1 to c2)
             put(vertex_cluster_pmap, v1, c2);
-            typename GT::Point_3 vp1 = get(vpm, v1);
-            typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
+            Point_3 vp1 = get(vpm, v1);
+            Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
             clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
             clusters[c2].last_modification_iteration = nb_iterations;
             push_vertex_edge_ring_to_queue(v1);
@@ -741,8 +738,8 @@ acvd_impl(TriangleMesh& tmesh,
           {
             // expand cluster c1 (add v2 to c1)
             put(vertex_cluster_pmap, v2, c1);
-            typename GT::Point_3 vp2 = get(vpm, v2);
-            typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
+            Point_3 vp2 = get(vpm, v2);
+            Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
             clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
             clusters[c1].last_modification_iteration = nb_iterations;
             push_vertex_edge_ring_to_queue(v2);
@@ -792,12 +789,12 @@ acvd_impl(TriangleMesh& tmesh,
             };
 
             // compare the energy of the 3 cases
-            typename GT::Point_3 vp1 = get(vpm, v1);
-            typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
-            typename GT::Point_3 vp2 = get(vpm, v2);
-            typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
-            typename GT::FT v1_weight = get(vertex_weight_pmap, v1);
-            typename GT::FT v2_weight = get(vertex_weight_pmap, v2);
+            Point_3 vp1 = get(vpm, v1);
+            Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
+            Point_3 vp2 = get(vpm, v2);
+            Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
+            FT v1_weight = get(vertex_weight_pmap, v1);
+            FT v2_weight = get(vertex_weight_pmap, v2);
             Matrix4x4 v1_qem = get (vertex_quadric_pmap, v1);
             Matrix4x4 v2_qem = get (vertex_quadric_pmap, v2);
 
@@ -810,10 +807,10 @@ acvd_impl(TriangleMesh& tmesh,
             cluster1_v1_to_c2.last_modification_iteration = nb_iterations;
             cluster2_v1_to_c2.last_modification_iteration = nb_iterations;
 
-            typename GT::FT e_no_change = clusters[c1].compute_energy(qem_energy_minimization) +
-                                          clusters[c2].compute_energy(qem_energy_minimization);
-            typename GT::FT e_v1_to_c2 = (std::numeric_limits< double >::max)();
-            typename GT::FT e_v2_to_c1 = (std::numeric_limits< double >::max)();
+            FT e_no_change = clusters[c1].compute_energy(qem_energy_minimization) +
+                             clusters[c2].compute_energy(qem_energy_minimization);
+            FT e_v1_to_c2 = (std::numeric_limits< double >::max)();
+            FT e_v2_to_c1 = (std::numeric_limits< double >::max)();
 
             if ( ( clusters[ c1 ].nb_vertices > 1 ) &&
                  ( !qem_energy_minimization || nb_loops < 2 ||
@@ -944,8 +941,8 @@ acvd_impl(TriangleMesh& tmesh,
             {
               put(vertex_cluster_pmap, vd, -1);
               // remove vd from cluster c
-              typename GT::Point_3 vp = get(vpm, vd);
-              typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+              Point_3 vp = get(vpm, vd);
+              Vector_3 vpv(vp.x(), vp.y(), vp.z());
               clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_quadric_pmap, vd));
               // add all halfedges around v except hi to the queue
               for (halfedge_descriptor hd : halfedges_around_source(vd, tmesh))
@@ -969,8 +966,10 @@ acvd_impl(TriangleMesh& tmesh,
     } while (nb_disconnected > 0 || nb_loops < 3 );
 
     // Construct new Mesh
-    std::vector<typename GT::Point_3> points;
+    std::vector<Point_3> points;
+    points.reserve(clusters.size());
     std::vector<std::array<std::size_t, 3>> polygons;
+    polygons.reserve(2*clusters.size()-2); // upper bound
 
     std::vector<std::size_t> valid_cluster_map(nb_clusters, -1);
     for (int i = 0; i < nb_clusters; ++i)
@@ -983,7 +982,7 @@ acvd_impl(TriangleMesh& tmesh,
     if (use_postprocessing_qem)
     {
       // create a point for each cluster
-      std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
+      std::vector<Eigen::Matrix<FT, 4, 4>> cluster_quadrics(clusters.size());
 
       // initialize quadrics
       for (int i = 0; i < nb_clusters; ++i)
@@ -991,7 +990,7 @@ acvd_impl(TriangleMesh& tmesh,
 
       for (face_descriptor fd : faces(tmesh))
       {
-        std::array<typename GT::Vector_3,3> vecs;
+        std::array<Vector_3,3> vecs;
         std::array<int,3> cids;
         int i=0;
         // get Vs for fd
@@ -1003,7 +1002,7 @@ acvd_impl(TriangleMesh& tmesh,
           cids[i]=get(vertex_cluster_pmap, vd);
           if (cids[i]==-1)
             break;
-          const typename GT::Point_3& p_i=get(vpm, vd);
+          const Point_3& p_i=get(vpm, vd);
           vecs[i++]=p_i - ORIGIN;
           hd = next(hd, tmesh);
         } while (hd != halfedge(fd, tmesh));
@@ -1011,8 +1010,8 @@ acvd_impl(TriangleMesh& tmesh,
         if (i!=3)
           continue;
 
-        Eigen::Matrix<typename GT::FT, 4, 4> q;
-        compute_qem_face<GT>(vecs[0], vecs[1], vecs[2], q);
+        Eigen::Matrix<FT, 4, 4> q;
+        compute_qem_face(vecs[0], vecs[1], vecs[2], q, gt);
         cluster_quadrics[cids[0]] += q;
         cluster_quadrics[cids[1]] += q;
         cluster_quadrics[cids[2]] += q;
@@ -1057,13 +1056,13 @@ acvd_impl(TriangleMesh& tmesh,
 
         if (ct != cs)
         {
-          typename GT::Point_3 vt_p = get(vpm, vt);
-          typename GT::Point_3 vs_p = get(vpm, vs);
-          typename GT::Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
-          typename GT::Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
+          Point_3 vt_p = get(vpm, vt);
+          Point_3 vs_p = get(vpm, vs);
+          Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
+          Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
 
-          typename GT::Vector_3 vb_v = (vt_v + vs_v) / 2;
-          typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
+          Vector_3 vb_v = (vt_v + vs_v) / 2;
+          Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
 
           points.push_back(vb_p);
 
@@ -1273,6 +1272,7 @@ acvd_impl(TriangleMesh& tmesh,
 *
 * performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 * Note that there is no guarantee that the output mesh will have the same topology as the input.
+* See \ref acvdrem for more details on the algorithm.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
@@ -1292,8 +1292,8 @@ acvd_impl(TriangleMesh& tmesh,
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with
 *                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
-*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is provided, an internal property map
-*                     will be created and curvature values will be computed using the function `interpolated_corrected_curvatures()`.}
+*     \cgalParamDefault{If this parameter is omitted, but `gradation_factor` is provided, an internal property map
+*                       will be created and curvature values will be computed using the function `interpolated_corrected_curvatures()`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{gradation_factor}
