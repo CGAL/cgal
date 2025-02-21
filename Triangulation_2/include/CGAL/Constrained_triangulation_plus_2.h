@@ -427,7 +427,7 @@ public:
     //   cid is [B, P, C]
     //   head is null or [A...B]
     //   tail is null or [C...D]
-    // Let create insert [C,D] and conditionnaly concatenate head and tail,
+    // Let create insert [C,D] and conditionally concatenate head and tail,
     // and return the iterator to C
 
     Vertex_handle b = *std::prev(pos);
