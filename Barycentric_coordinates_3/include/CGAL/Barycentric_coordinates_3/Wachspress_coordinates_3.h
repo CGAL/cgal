@@ -271,58 +271,47 @@ namespace Barycentric_coordinates {
     }
 
     // Compute wp coordinates for a given vertex v and a query q
+    // cf. Wachspress and mean value coordinates by Michael S. Floater Pages 17~18
     template<typename Vertex>
     FT compute_wp_vertex_query(const Vertex& vertex, const Point_3& query){
 
       // Map vertex descriptor to point_3
       const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
-
-      // Circulator of faces around the vertex
-      CGAL::Face_around_target_circulator<Polygon_mesh>
-      face_circulator(halfedge(vertex, m_polygon_mesh), m_polygon_mesh);
-
-      CGAL::Face_around_target_circulator<Polygon_mesh>
-      done(face_circulator);
-      done--; done --;
-
       // Vector connecting query point to vertex;
       const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
 
-      // First face. p_1 is negated because the order of the circulator is reversed
-      const Vector_3 face_normal_1 = internal::get_face_normal(
-        *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
-      const FT dist_perp_1 = m_dot_3(query_vertex, face_normal_1);
-      CGAL_assertion(dist_perp_1 != FT(0));
-      const Vector_3 p_1 = -face_normal_1/dist_perp_1;
-      face_circulator++;
+      // Loop on the faces around the vertex
+      using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+      halfedge_descriptor first_h = halfedge(vertex, m_polygon_mesh);
 
+      auto compute_pf_i = [&](halfedge_descriptor h)
+      {
+        const Vector_3 nf = internal::get_face_normal(
+          face(h, m_polygon_mesh), m_vertex_to_point_map, m_polygon_mesh, m_traits);
+        const FT hfx = m_dot_3(query_vertex, nf);
+        CGAL_assertion(hfx != FT(0));
+        return nf/hfx;
+      };
+
+      // First face.
+      const Vector_3 pf_1 = compute_pf_i(first_h);
+      halfedge_descriptor h_i=prev(opposite(first_h, m_polygon_mesh), m_polygon_mesh);
+      Vector_3 pf_i=compute_pf_i(h_i);
       // Compute weight w_v
       FT weight = FT(0);
-
-      // Iterate using the circulator
       do{
-
-        // Calculate normals of faces
-        const Vector_3 face_normal_i = internal::get_face_normal(
-          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
-        face_circulator++;
-        const Vector_3 face_normal_i_1 = internal::get_face_normal(
-          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
-
-        // Distance of query to face
-        const FT perp_dist_i = m_dot_3(query_vertex, face_normal_i);
-        CGAL_assertion(perp_dist_i != 0);
-        const FT perp_dist_i_1 = m_dot_3(query_vertex, face_normal_i_1);
-        CGAL_assertion(perp_dist_i_1 != 0);
-
-        // pf vector
-        const Vector_3 p_i = face_normal_i/perp_dist_i;
-        const Vector_3 p_i_1 = face_normal_i_1/perp_dist_i_1;
+        halfedge_descriptor h_i_p_1=prev(opposite(h_i, m_polygon_mesh), m_polygon_mesh);
+        if (h_i_p_1==first_h)
+          break;
+        const Vector_3 pf_i_p_1=compute_pf_i(h_i_p_1);
 
         // Sum partial result to weight
-        weight += m_det_3(p_1, p_i, p_i_1);
+        weight += m_det_3(pf_1, pf_i, pf_i_p_1);
+        h_i=h_i_p_1;
+        pf_i = pf_i_p_1;
+      }while(true);
 
-      }while(face_circulator!=done);
+      CGAL_assertion(weight > 0);
 
       return weight;
     }
