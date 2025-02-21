@@ -24,7 +24,7 @@
 #include <CGAL/convexity_check_3.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 namespace CGAL{
@@ -182,10 +182,6 @@ enum class Edge_case {
     using Plane_3 = typename GeomTraits::Plane_3;
     using Point_2 = typename GeomTraits::Point_2;
 
-    using Wachspress = CGAL::Barycentric_coordinates::Wachspress_2<GeomTraits>;
-    using Wachspress_coordinates = CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Wachspress, GeomTraits>;
-    using Triangle_coordinates = CGAL::Barycentric_coordinates::Triangle_coordinates_2<GeomTraits>;
-
     const FT tol = get_tolerance<FT>();
     const std::size_t num_sides_face = vertices_face.size();
 
@@ -220,15 +216,11 @@ enum class Edge_case {
 
     // Use wp_2 or triangle coordinates
     if(use_wp_flag){
-
-      Wachspress_coordinates wachspress_coordinates(polygon.begin(), polygon.end());
-      wachspress_coordinates(query_2, std::back_inserter(bar_coords_2));
+      wachspress_coordinates_2(polygon, query_2, std::back_inserter(bar_coords_2));
     }
     else{
-
       CGAL_assertion(polygon.size() == 3);
-      Triangle_coordinates triangle_coordinates(polygon[0], polygon[1], polygon[2]);
-      triangle_coordinates(query_2, std::back_inserter(bar_coords_2));
+      triangle_coordinates_2(polygon[0], polygon[1], polygon[2], query_2, std::back_inserter(bar_coords_2));
     }
 
     // Fill coordinates

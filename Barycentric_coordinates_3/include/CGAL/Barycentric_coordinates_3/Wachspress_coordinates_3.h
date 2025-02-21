@@ -280,7 +280,7 @@ namespace Barycentric_coordinates {
       // Vector connecting query point to vertex;
       const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
 
-      // Loop on the faces around the vertex
+      // Loop on the faces the vertex
       using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
       halfedge_descriptor first_h = halfedge(vertex, m_polygon_mesh);
 
@@ -299,6 +299,8 @@ namespace Barycentric_coordinates {
       Vector_3 pf_i=compute_pf_i(h_i);
       // Compute weight w_v
       FT weight = FT(0);
+
+      // Iterate using the circulator
       do{
         halfedge_descriptor h_i_p_1=prev(opposite(h_i, m_polygon_mesh), m_polygon_mesh);
         if (h_i_p_1==first_h)

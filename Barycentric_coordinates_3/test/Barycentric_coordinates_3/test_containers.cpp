@@ -46,7 +46,6 @@ void test_containers() {
 
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
-  namespace PMP = CGAL::Polygon_mesh_processing;
 
   using Polyhedron = CGAL::Polyhedron_3<Kernel>;
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
