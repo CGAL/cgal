@@ -265,6 +265,30 @@ void test_Subdivision_surface_3_SM_NP() {
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
+  // test linear subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::linear_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                                                .number_of_iterations(TEST_DEPTH));
+    assert(CGAL::is_valid_polygon_mesh(P));
+  }
+
+  // test linear subdivision on 'opened' tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::linear_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                                                .number_of_iterations(TEST_DEPTH));
+    assert(CGAL::is_valid_polygon_mesh(P));
+  }
+
   // test Doo-Sabin subdivision on 'opened' tri mesh
   {
     ifstream mesh(TESTMESH_TRI_OPEN);
