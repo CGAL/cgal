@@ -387,23 +387,18 @@ private:
         else {
             // Otherwise, all the coordinates are zero apart from those for the chosen edge with the index = `index`.
             for(int i = 0; i < index; ++i) {
-                *output = FT(0);
-                ++output;
+                *output++ = FT(0);
             }
 
             // Compute segment coordinates along the chosen edge with the index = `index`.
-            Segment_coordinates_2<Traits> segment_coordinates(vertex[index], vertex[index+1]);
-            std::optional<OutputIterator> success = segment_coordinates(query_point, output);
-            ++output;
+            output = segment_coordinates_2(vertex[index], vertex[index+1], query_point, output);
 
             for(int i = index + 1; i < last; ++i) {
-                *output = FT(0);
-                ++output;
+                *output++ = FT(0);
             }
 
             // Return coordinates.
-            if(success) return std::optional<OutputIterator>(output);
-            else return std::optional<OutputIterator>();
+            return output;
         }
 
         // Pointer cannot be here. Something went wrong.
@@ -429,31 +424,24 @@ private:
         else {
             // Otherwise, all the coordinates are zeros apart from those for the edge with the query point.
             int index;
-            bool status = false;
             for(index = 0; index < last; ++index) {
                 if(collinear_2(vertex[index], vertex[index+1], query_point) && collinear_are_ordered_along_line_2(vertex[index], query_point, vertex[index+1])) {
 
                     // Compute segment coordinates along the edge with the query point.
-                    Segment_coordinates_2<Traits> segment_coordinates(vertex[index], vertex[index+1]);
-                    std::optional<OutputIterator> success = segment_coordinates(query_point, output);
-                    if(success) status = true;
-                    ++output;
+                    output = segment_coordinates_2(vertex[index], vertex[index+1], query_point, output);
                     break;
 
                 } else {
-                    *output = FT(0);
-                    ++output;
+                    *output++ = FT(0);
                 }
             }
 
             for(int i = index + 1; i < last; ++i) {
-                *output = FT(0);
-                ++output;
+                *output++ = FT(0);
             }
 
             // Return coordinates.
-            if(status == true) return std::optional<OutputIterator>(output);
-            else return std::optional<OutputIterator>();
+            return output;
         }
 
         // Pointer cannot be here. Something went wrong.
@@ -478,22 +466,18 @@ private:
 
         // Compute segment coordinates along the last edge of the polygon.
         Segment_coordinates_2<Traits> segment_coordinates(vertex[last], vertex[0]);
-        std::optional<Vector_insert_iterator> success = segment_coordinates(query_point, std::back_inserter(coordinate));
+        segment_coordinates_2(vertex[last], vertex[0], query_point, std::back_inserter(coordinate));
 
         // Store all the coordinate values.
         // All the values are zeros apart from those corresponding to the first and the last vertices of the polygon.
-        *output = coordinate[1];
-        ++output;
+        *output++ = coordinate[1];
         for(int i = 1; i < last; ++i) {
-            *output = FT(0);
-            ++output;
+            *output++ = FT(0);
         }
-        *output = coordinate[0];
-        ++output;
+        *output++ = coordinate[0];
 
         // Return computed coordinates.
-        if(success) return std::optional<OutputIterator>(output);
-        else return std::optional<OutputIterator>();
+        return output;
     }
 
     // COORDINATES AT VERTEX.
