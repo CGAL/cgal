@@ -144,7 +144,6 @@ squared_distance(const typename K::Tetrahedron_3& tet,
 }
 
 template <class K>
-inline
 typename K::Comparison_result
 compare_squared_distance(const typename K::Point_3& pt,
                          const typename K::Tetrahedron_3& tet,
@@ -192,7 +191,7 @@ compare_squared_distance(const typename K::Point_3& pt,
   {
     on_bounded_side = false;
     const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t0, t3, t1, k, d2, inside_or_far_to_the_plane);
-    if(inside_or_far_to_the_plane || res==SMALLER)
+    if(inside_or_far_to_the_plane || temp_res==SMALLER)
       return temp_res;
     res = smaller_of(res, temp_res);
   }
@@ -201,7 +200,7 @@ compare_squared_distance(const typename K::Point_3& pt,
   {
     on_bounded_side = false;
     const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t1, t3, t2, k, d2, inside_or_far_to_the_plane);
-    if(inside_or_far_to_the_plane || res==SMALLER)
+    if(inside_or_far_to_the_plane || temp_res==SMALLER)
       return temp_res;
     res = smaller_of(res, temp_res);
   }
@@ -210,7 +209,7 @@ compare_squared_distance(const typename K::Point_3& pt,
   {
     on_bounded_side = false;
     const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t2, t3, t0, k, d2, inside_or_far_to_the_plane);
-    if(inside_or_far_to_the_plane || res==SMALLER)
+    if(inside_or_far_to_the_plane || temp_res==SMALLER)
       return temp_res;
     res = smaller_of(res, temp_res);
   }
@@ -219,6 +218,17 @@ compare_squared_distance(const typename K::Point_3& pt,
     return compare(typename K::FT(0),d2);
 
   return res;
+}
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const typename K::Tetrahedron_3& tet,
+                         const typename K::Point_3& pt,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare_squared_distance(pt, tet, k, d2);
 }
 
 } // namespace internal

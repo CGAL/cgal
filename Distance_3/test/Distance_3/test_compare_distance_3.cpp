@@ -188,8 +188,8 @@ private:
 
     const FT up = upper_bound * (1 + epsilon) + std::numeric_limits<FT>::epsilon();
 
-    const bool res_o1o2 = (CGAL::compare_squared_distance(o1, o2, up) == CGAL::SMALLER);
-    const bool res_o2o1 = (CGAL::compare_squared_distance(o2, o1, up) == CGAL::SMALLER);
+    const bool res_o1o2 = (CGAL::compare_squared_distance(o1, o2, up) != CGAL::LARGER);
+    const bool res_o2o1 = (CGAL::compare_squared_distance(o2, o1, up) != CGAL::LARGER);
 
     assert(res_o1o2);
     assert(res_o2o1);
@@ -744,7 +744,7 @@ public:
     P_L();
     P_T();
     P_Pl();
-    // P_Tet();
+    P_Tet();
 
     S_S();
     // S_R();
@@ -771,8 +771,8 @@ int main()
 
   std::cout << "3D Distance tests" << std::endl;
 
-  // CGAL::Random r(1740056029);
-  CGAL::Random r;
+  CGAL::Random r(1740152576);
+  // CGAL::Random r;
   std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // @todo Some tests are too difficult for these kernels

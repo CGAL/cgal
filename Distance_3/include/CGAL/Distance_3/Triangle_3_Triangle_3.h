@@ -218,53 +218,41 @@ typename K::Comparison_result
 compare_squared_distance(const typename K::Triangle_3& tr1,
                          const typename K::Triangle_3& tr2,
                          const K& k,
-                         const typename K::FT& d2)
+                         const typename K::FT& d2,
+                         bool are_triangles_known_to_be_disjoint)
 {
   typedef typename K::FT                                                  FT;
 
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
 
-	bool tr_contains_proj_p=[](const typename K::Triangle_3& tr, const typename K::Point_3 &p)
-	{
-		typename K::Point_3 p_proj= tr.supporting_plane().projection(p);
-		return tr.has_on(p_proj);
-	};
+	typename K::Comparison_result res(LARGER);
 
-	typename K::Comparison_result temp_res(CGAL::LARGER);
-
-  std::pair<Distance_3::internal::Segment_3_Segment_3_Result<K>, bool> ss_res;
   for(int i=0; i<3; ++i)
   {
     for(int j=0; j<3; ++j)
     {
-      if(CGAL::possibly(CGAL::compare_squared_distance(Line_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Line_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2)!=CGAL::LARGER))
-      {
-        typename K::comparison_result res_seg_seg= CGAL::compare_squared_distance(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
-        if(is_certain(res_seg_seg) && res_seg_seg==CGAL::SMALLER)
-          return CGAL::SMALLER;
-      }
+      typename K::Comparison_result temp_res_ss=csq_dist(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
+      if(temp_res_ss==SMALLER)
+        return SMALLER;
+      smaller_of(res, temp_res_ss);
     }
 
-    typename K::comparison_result res_v_pl= CGAL::compare_squared_distance(vertex(tr1, i), tr2.supporting_plane(),d2);
-    if(tr_contains_proj_p(tr2, vertex(tr1, i)))
-			if(res_v_pl==CGAL::SMALLER)
-				return CGAL::SMALLER;
+    typename K::comparison_result temp_res_v_pl= csq_dist(vertex(tr1, i), tr2,d2);
+    if(temp_res_v_pl==SMALLER)
+				return SMALLER;
+    smaller_of(res, temp_res_v_pl);
 
   }
+
+  if(!are_triangles_known_to_be_disjoint){
+    //TODO check are disjoint
+  }
+  return res;
 
 }
 
 } // namespace internal
-
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Triangle_3<K>& tr1,
-                 const Triangle_3<K>& tr2)
-{
-  return K().compute_squared_distance_3_object()(tr1, tr2);
-}
 
 } // namespace CGAL
 
