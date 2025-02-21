@@ -295,12 +295,12 @@ squared_distance(const typename K::Triangle_3& t,
 template <class K>
 typename K::Comparison_result
 compare_squared_distance_to_triangle(const typename K::Point_3& pt,
-                             const typename K::Point_3& t0,
-                             const typename K::Point_3& t1,
-                             const typename K::Point_3& t2,
-                             const K& k,
-                             const typename K::FT &d2,
-                             bool& inside)
+                                     const typename K::Point_3& t0,
+                                     const typename K::Point_3& t1,
+                                     const typename K::Point_3& t2,
+                                     const K& k,
+                                     const typename K::FT &d2,
+                                     bool& inside_or_far_to_the_plane)
 {
   typedef typename K::Vector_3 Vector_3;
 
@@ -332,7 +332,10 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
   // Compare first the distance to the plane, if larger we can exit early
   typename K::Comparison_result res_p_pl = compare(squared_distance_to_plane(normal, vector(t0, pt), k), d2);
   if(is_certain(res_p_pl) && res_p_pl==LARGER)
+  {
+    inside_or_far_to_the_plane=true;
     return LARGER;
+  }
 
   //If we are smaller when compare to a segment, we can exit early
   if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
@@ -384,7 +387,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
       }
       else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
       {
-        inside = true;
+        inside_or_far_to_the_plane = true;
         return res_p_pl;
       }
     }
@@ -400,14 +403,14 @@ compare_squared_distance(const typename K::Point_3& pt,
 {
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
 
-  bool unused_inside = false;
+  bool unused_inside_or_far_to_the_plane = false;
   return compare_squared_distance_to_triangle(pt,
                                       vertex(t, 0),
                                       vertex(t, 1),
                                       vertex(t, 2),
                                       k,
                                       d2,
-                                      unused_inside);
+                                      unused_inside_or_far_to_the_plane);
 }
 
 template <class K>

@@ -43,10 +43,28 @@ squared_distance(const typename K::Point_3& pt,
   const Point_3& t2 = vertex(tet, 2);
   const Point_3& t3 = vertex(tet, 3);
 
-  bool dmin_initialized = false;
+  Orientation ori_tet = orientation(t0,t1,t2,t3);
+
+  if(ori_tet==COPLANAR){
+    //Degen Tetrahedron
+    //Get the minimum of three triangles (no need to test the fourth)
+    bool inside = false;
+    typename K::FT dmin = squared_distance_to_triangle(pt, t0, t1, t2, k, inside);
+    if(inside)
+      return dmin;
+    typename K::FT d = squared_distance_to_triangle(pt, t0, t1, t3, k, inside);
+    if(inside)
+      return d;
+    dmin=(std::min)(d,dmin);
+    d = squared_distance_to_triangle(pt, t0, t2, t3, k, inside);
+    return (std::min)(d,dmin);
+  }
+
+  bool dmin_initialized = false; //dmin_initialized and !on_bounded_side have always the samed value
   typename K::FT dmin;
   bool inside = false;
-  if(orientation(t0,t1,t2, pt) == NEGATIVE)
+
+  if(orientation(pt, t0,t1,t2) == ori_tet)
   {
     on_bounded_side = false;
     dmin = squared_distance_to_triangle(pt, t0, t1, t2, k, inside);
@@ -55,7 +73,7 @@ squared_distance(const typename K::Point_3& pt,
       return dmin;
   }
 
-  if(orientation(t0,t3,t1, pt) == NEGATIVE)
+  if(orientation(pt, t0,t3,t1) == ori_tet)
   {
     on_bounded_side = false;
     const typename K::FT d = squared_distance_to_triangle(pt, t0, t3, t1, k, inside);
@@ -73,7 +91,7 @@ squared_distance(const typename K::Point_3& pt,
     }
   }
 
-  if(orientation(t1,t3,t2, pt) == NEGATIVE)
+  if(orientation(pt, t1,t3,t2) == ori_tet)
   {
     on_bounded_side = false;
     const typename K::FT d = squared_distance_to_triangle(pt, t1, t3, t2, k, inside);
@@ -91,7 +109,7 @@ squared_distance(const typename K::Point_3& pt,
     }
   }
 
-  if(orientation(t2,t3,t0, pt) == NEGATIVE)
+  if(orientation(pt, t2,t3,t0) == ori_tet)
   {
     on_bounded_side = false;
     const typename K::FT d = squared_distance_to_triangle(pt, t2, t3, t0, k, inside);
@@ -125,23 +143,85 @@ squared_distance(const typename K::Tetrahedron_3& tet,
   return squared_distance(pt, tet, k);
 }
 
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt,
+                         const typename K::Tetrahedron_3& tet,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  typedef typename K::Point_3 Point_3;
+
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Orientation_3 orientation = k.orientation_3_object();
+
+  bool on_bounded_side = true;
+  bool inside_or_far_to_the_plane = false;
+  const Point_3& t0 = vertex(tet, 0);
+  const Point_3& t1 = vertex(tet, 1);
+  const Point_3& t2 = vertex(tet, 2);
+  const Point_3& t3 = vertex(tet, 3);
+
+  Orientation ori_tet = orientation(t0,t1,t2,t3);
+
+  if(ori_tet==COPLANAR){
+    //Degen Tetrahedron
+    //Get the minimum of three triangles (no need to test the fourth)
+    typename K::Comparison_result res = compare_squared_distance_to_triangle(pt, t0, t1, t2, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane)
+      return res;
+    typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t0, t1, t3, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane)
+      return temp_res;
+    res=smaller_of(res,temp_res);
+    temp_res = compare_squared_distance_to_triangle(pt, t0, t2, t3, k, d2, inside_or_far_to_the_plane);
+    return smaller_of(res,temp_res);
+  }
+
+  typename K::Comparison_result res=LARGER;
+  if(orientation(pt, t0,t1,t2) == ori_tet)
+  {
+    on_bounded_side = false;
+    res = compare_squared_distance_to_triangle(pt, t0, t1, t2, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane || res==SMALLER)
+      return res;
+  }
+
+  if(orientation(pt, t0,t3,t1) == ori_tet)
+  {
+    on_bounded_side = false;
+    const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t0, t3, t1, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane || res==SMALLER)
+      return temp_res;
+    res = smaller_of(res, temp_res);
+  }
+
+  if(orientation(pt, t1,t3,t2) == ori_tet)
+  {
+    on_bounded_side = false;
+    const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t1, t3, t2, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane || res==SMALLER)
+      return temp_res;
+    res = smaller_of(res, temp_res);
+  }
+
+  if(orientation(pt, t2,t3,t0) == ori_tet)
+  {
+    on_bounded_side = false;
+    const typename K::Comparison_result temp_res = compare_squared_distance_to_triangle(pt, t2, t3, t0, k, d2, inside_or_far_to_the_plane);
+    if(inside_or_far_to_the_plane || res==SMALLER)
+      return temp_res;
+    res = smaller_of(res, temp_res);
+  }
+
+  if(on_bounded_side)
+    return compare(typename K::FT(0),d2);
+
+  return res;
+}
+
 } // namespace internal
-
-template <class K>
-typename K::FT
-squared_distance(const Tetrahedron_3<K>& tet,
-                 const Point_3<K>& pt)
-{
-  return K().compute_squared_distance_3_object()(tet, pt);
-}
-
-template <class K>
-typename K::FT
-squared_distance(const Point_3<K>& pt,
-                 const Tetrahedron_3<K>& tet)
-{
-  return K().compute_squared_distance_3_object()(pt, tet);
-}
 
 } // namespace CGAL
 

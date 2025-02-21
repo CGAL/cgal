@@ -231,6 +231,35 @@ squared_distance_to_plane(const typename K::Vector_3& normal,
 
 template <class K>
 void
+signed_squared_distance_to_plane_RT(const typename K::Vector_3& normal,
+                             const typename K::Vector_3& diff,
+                             typename K::RT& num,
+                             typename K::RT& den,
+                             const K& k)
+{
+  typedef typename K::RT RT;
+  RT dot, squared_length;
+  dot = wdot(normal, diff, k);
+  squared_length = wdot(normal, normal, k);
+  num = dot<0?-square(dot):square(dot);
+  den = wmult((K*)0, squared_length, diff.hw(), diff.hw());
+}
+
+template <class K>
+typename K::FT
+signed_squared_distance_to_plane(const typename K::Vector_3& normal,
+                          const typename K::Vector_3& diff,
+                          const K& k)
+{
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  RT num, den;
+  signed_squared_distance_to_plane_RT(normal, diff, num, den, k);
+  return Rational_traits<FT>().make_rational(num, den);
+}
+
+template <class K>
+void
 squared_distance_to_line_RT(const typename K::Vector_3& dir,
                             const typename K::Vector_3& diff,
                             typename K::RT& num,

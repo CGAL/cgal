@@ -259,14 +259,40 @@ private:
     }
   }
 
-  // void P_Tet()
-  // {
-  //   std::cout << "Point - Tetrahedron\n";
-  //   check_compare_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
-  //   check_compare_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
-  //   check_compare_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
-  //   check_compare_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
-  // }
+  void P_Tet()
+  {
+    std::cout << "Point - Tetrahedron\n";
+    //Degenerate Tetrahedron
+    check_compare_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 1);
+    check_compare_squared_distance (p(1.5, 1.5, 0), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 0);
+    check_compare_squared_distance (p(4, 4, 0), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 2);
+
+    //Inside Tetrahedron
+    check_compare_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 0, 0, 3)), 0);
+    check_compare_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 0, 3), p( 0, 3, 0)), 0);
+    check_compare_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
+
+    //General
+    check_compare_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_compare_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_compare_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
+    check_compare_squared_distance (p(1, 1, -1), Tet(p(0, 0, 1), p( 0, 0, 0), p( 4, 0, 0), p( 0, 4, 0)), 1);
+    check_compare_squared_distance (p(1, 1, -1), Tet(p(0, 0, 1), p( 0, 0, 0), p( 0, 4, 0), p( 4, 0, 0)), 1);
+
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point();
+      P p1 = random_point();
+      P p2 = random_point();
+      P p3 = random_point();
+      P q = random_point();
+
+      check_compare_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p1, p2)));
+      check_compare_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p1, p2, p3)));
+      check_compare_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p3, p2)));
+      check_compare_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p3, p1)));
+    }
+  }
 
   void S_S()
   {
@@ -745,8 +771,8 @@ int main()
 
   std::cout << "3D Distance tests" << std::endl;
 
-  CGAL::Random r(1740056029);
-  // CGAL::Random r;
+  // CGAL::Random r(1740056029);
+  CGAL::Random r;
   std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // @todo Some tests are too difficult for these kernels
