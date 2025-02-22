@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : test/Subdivision_method_3/test_Subdivision_method_3.C
+// file          : test/Subdivision_method_3/test_Subdivision_method_3.cpp
 // package       : Subdivision_method_3
 // chapter       : Subdivision Method
 //
@@ -23,11 +23,11 @@
 // Test subdivision methods
 // ============================================================================
 
+#include <CGAL/subdivision_method_3.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-
-#include <CGAL/subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>
