@@ -19,7 +19,8 @@ int main(int argc, char* argv[])
     target_size = std::atoi(argv[2]);
     sampling_size = std::atoi(argv[3]);
     if (sampling_size < target_size) {
-      std::cout << "usage: poisson_eliminate_from_mesh_example input_mesh target_size sampling_size" << std::endl << "with sampling_size > target_size, e.g. by a factor of 2" << std::endl;
+      std::cout << "usage: poisson_eliminate_from_mesh_example input_mesh target_size sampling_size"
+                << std::endl << "with sampling_size > target_size, e.g., by a factor of 2" << std::endl;
       return -1;
     }
   }
@@ -36,7 +37,8 @@ int main(int argc, char* argv[])
 
   if (mesh.number_of_faces() == 0) {
     std::cout << "mesh could not be loaded" << std::endl;
-    std::cout << "usage: poisson_eliminate_from_mesh_example input_mesh target_size sampling_size" << std::endl << "with sampling_size > target_size, e.g. by a factor of 2" << std::endl;
+    std::cout << "usage: poisson_eliminate_from_mesh_example input_mesh target_size sampling_size"
+              << std::endl << "with sampling_size > target_size, e.g., by a factor of 2" << std::endl;
     return -1;
   }
 

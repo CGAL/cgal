@@ -213,7 +213,7 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   performs poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
+   performs Poisson disk elimination with a desired output size. A greedy method that calculates a weight based on the
    neighborhood of each point and eliminates points until the output size is reached.
 
    For more details, please refer to \cgalCite{cgal:y-sefpdss}.
@@ -249,7 +249,7 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
        \cgalParamNEnd
 
        \cgalParamNBegin{maximum_radius}
-         \cgalParamDescription{radius of the poisson disk in which the neighboring points are taken into account for elimination.}
+         \cgalParamDescription{radius of the Poisson disk in which the neighboring points are taken into account for elimination.}
          \cgalParamType{double}
          \cgalParamDefault{the default is calculated from the `dimension`, the volume of the bounding box and the `number_of_points`. For more details, see parameter section in \ref Point_set_processing_3PoissonElimination.}
        \cgalParamNEnd

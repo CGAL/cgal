@@ -9,7 +9,8 @@ typedef K::Point_3 Point_3;
 
 void sampling(const std::string& filename, double size_factor = 0.2) {
   if (size_factor >= 1.0) {
-    std::cout << "usage poisson_eliminate_example filename size_factor" << std::endl << "0 < size_factor < 1" << std::endl;
+    std::cout << "usage poisson_eliminate_example filename size_factor" << std::endl
+              << "0 < size_factor < 1" << std::endl;
     return;
   }
   std::vector<Point_3> points;
