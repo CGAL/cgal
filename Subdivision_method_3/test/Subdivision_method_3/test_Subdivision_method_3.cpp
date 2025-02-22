@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : test/Subdivision_method_3/test_Subdivision_method_3.C
+// file          : test/Subdivision_method_3/test_Subdivision_method_3.cpp
 // package       : Subdivision_method_3
 // chapter       : Subdivision Method
 //
@@ -23,11 +23,11 @@
 // Test subdivision methods
 // ============================================================================
 
+#include <CGAL/subdivision_method_3.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-
-#include <CGAL/subdivision_method_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -262,6 +262,30 @@ void test_Subdivision_surface_3_SM_NP() {
 
     Subdivision_method_3::Loop_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
                                            .number_of_iterations(TEST_DEPTH));
+    assert(CGAL::is_valid_polygon_mesh(P));
+  }
+
+  // test linear subdivision on tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::linear_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                                                .number_of_iterations(TEST_DEPTH));
+    assert(CGAL::is_valid_polygon_mesh(P));
+  }
+
+  // test linear subdivision on 'opened' tri mesh
+  {
+    ifstream mesh(TESTMESH_TRI_OPEN);
+
+    Polyhedron P;
+    mesh >> P;
+
+    Subdivision_method_3::linear_subdivision(P,Subdivision_method_3::parameters::vertex_point_map(get(vertex_point, P))
+                                                                                .number_of_iterations(TEST_DEPTH));
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
