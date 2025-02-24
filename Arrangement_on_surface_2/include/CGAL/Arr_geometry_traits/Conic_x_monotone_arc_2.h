@@ -1078,7 +1078,7 @@ private:
   }
 
 public:
-  /*! obtains the i'th order derivative by x of the conic at the point p=(x,y).
+  /*! obtains the i-th order derivative by x of the conic at the point p=(x,y).
    * \param p The point where we derive.
    * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
@@ -1187,7 +1187,7 @@ public:
     CGAL_error();
   }
 
-  /*! obtains the i'th order derivative by y of the conic at the point p=(x,y).
+  /*! obtains the i-th order derivative by y of the conic at the point p=(x,y).
    * \param p The point where we derive.
    * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
