@@ -73,7 +73,7 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
 
       # If there is no .cpp files, ignore the sub-directory
       if(files)
-        process_cgal_subdirectory("${entry}" ${subdir_name} ${singular_name})
+        process_CGAL_subdirectory("${entry}" ${subdir_name} ${singular_name})
       endif()
 
     endif()
