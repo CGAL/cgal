@@ -1185,6 +1185,14 @@ namespace INTERN_INTERVAL_NT {
 
   template <bool Protected>
   inline
+  double
+  ceil (const Interval_nt<Protected> & d)
+  {
+    return std::ceil(d.sup());
+  }
+
+  template <bool Protected>
+  inline
   Interval_nt<Protected>
   abs (const Interval_nt<Protected> & d)
   {
@@ -1324,6 +1332,14 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
         std::pair<double, double> operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_interval( x );
         }
+    };
+
+    class Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+    public:
+      double operator()( const Type& x ) const {
+        return INTERN_INTERVAL_NT::ceil( x );
+      }
     };
 
     class Is_finite

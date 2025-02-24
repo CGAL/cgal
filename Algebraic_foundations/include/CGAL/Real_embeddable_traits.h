@@ -53,6 +53,7 @@ public:
   typedef Null_functor Compare;
   typedef Null_functor To_double;
   typedef Null_functor To_interval;
+  typedef Null_functor Ceil;
 };
 
 template< class Type_ >
@@ -149,6 +150,13 @@ public:
       return static_cast<double>(x);
     }
   };
+
+  class Ceil : public CGAL::cpp98::unary_function< Type, double > {
+    public:
+      double operator()( const Type& x ) const {
+        return std::ceil(to_double(x));
+      }
+    };
 
   class To_interval
     : public CGAL::cpp98::unary_function< Type, std::pair<double,double> > {

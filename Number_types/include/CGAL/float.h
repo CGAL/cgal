@@ -121,6 +121,12 @@ public:
         }
     };
 
+    struct Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+     public:
+       double operator()( int x ) const
+       { return x; }
+    };
 };
 
 } //namespace CGAL

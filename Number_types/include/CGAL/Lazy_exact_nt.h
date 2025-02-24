@@ -1112,6 +1112,24 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
         }
     };
 
+    class Ceil
+      : public CGAL::cpp98::unary_function< Type, double > {
+      public:
+        double operator()( const Type& a ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            // If both sides are in the same ceil, return this ceil
+            double ceil_left=std::ceil(to_interval(x).first);
+            if(ceil_left==std::ceil(to_interval(x).second))
+              return ceil_left;
+            // If not refine interval by contracting the DAG and try again
+            x.exact();
+            ceil_left=std::ceil(to_interval(x).first);
+            if(ceil_left==std::ceil(to_interval(x).second))
+              return ceil_left;
+            // If not return the ceil of the exact value
+            return ceil( x.exact());
+        }
+    };
     class Is_finite
       : public CGAL::cpp98::unary_function< Type, bool > {
       public:

@@ -96,6 +96,15 @@ sqrt( const AS& x ) {
     return sqrt( x );
 }
 
+
+template< class AS >
+inline
+typename Real_embeddable_traits< AS >::Ceil::result_type
+ceil( const AS& x ) {
+    typename Real_embeddable_traits< AS >::Ceil ceil;
+    return ceil( x );
+}
+
 // AST-Functor adapting functions BINARY
 
 template< class A, class B >

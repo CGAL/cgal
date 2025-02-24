@@ -170,6 +170,13 @@ template <> class Real_embeddable_traits< double >
 #endif
       }
     };
+
+    struct Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+     public:
+       double operator()( int x ) const
+       { return x; }
+    };
 };
 
 inline

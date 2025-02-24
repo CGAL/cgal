@@ -39,6 +39,7 @@ namespace CGAL {
    - Sqrt
    - Div
    - Gcd
+   - Ceil
    - To_double
    - To_interval
 */
@@ -69,6 +70,9 @@ template < class NT >
 struct Gcd : Algebraic_structure_traits<NT>::Gcd{};
 template < class NT >
 struct Is_one : Algebraic_structure_traits<NT>::Is_one {};
+template < class NT >
+struct Ceil : Real_embeddable_traits<NT>::Ceil {};
+
 
 // This is due to the fact that Is_zero may be provided by
 // Algebraic_structure_traits as well as Real_embeddable_traits

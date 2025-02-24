@@ -694,6 +694,23 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         }
     };
 
+
+    class Ceil
+      : public CGAL::cpp98::unary_function< Type, double > {
+      public:
+        double operator()( const Type& x ) const {
+          // If NT is a fraction, the ceil value is the result of the Euclidian division of the numerator and the denominator.
+          using FT = Fraction_traits<Type>;
+          typename FT::Numerator_type num, r, e;
+          typename FT::Denominator_type denom;
+          typename FT::Decompose()(x,num,denom);
+          div_mod(num, denom, r, e);
+          if((r<0) && e!=0) //If the result is negative, the ceil value is one below
+            return to_double(r-1);
+          return to_double(r);
+        }
+    };
+
     class To_interval
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:

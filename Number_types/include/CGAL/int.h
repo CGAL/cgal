@@ -59,6 +59,13 @@ template<> class Algebraic_structure_traits< int >
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
+
+       struct Ceil
+       : public CGAL::cpp98::unary_function< Type, double > {
+        public:
+          double operator()( int x ) const
+          { return x; }
+       };
 };
 
 template <> class Real_embeddable_traits< int >
@@ -106,6 +113,13 @@ template<> class Algebraic_structure_traits< long int >
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
+
+       struct Ceil
+       : public CGAL::cpp98::unary_function< Type, double > {
+        public:
+          double operator()( int x ) const
+          { return x; }
+       };
 };
 
 template <> class Real_embeddable_traits< long int >
@@ -256,6 +270,13 @@ template<> class Algebraic_structure_traits< short int >
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
+
+       struct Ceil
+       : public CGAL::cpp98::unary_function< Type, double > {
+        public:
+          double operator()( int x ) const
+          { return x; }
+       };
 };
 
 template <> class Real_embeddable_traits< short int >

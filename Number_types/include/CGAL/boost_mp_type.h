@@ -406,6 +406,65 @@ namespace Boost_MP_internal {
 
 } // Boost_MP_internal
 
+// Fraction_traits
+
+template <class T, class = boost::mpl::int_<boost::multiprecision::number_category<T>::value> >
+struct FT_boost_mp {
+  typedef T Type;
+  typedef Tag_false Is_fraction;
+  typedef Null_tag Numerator_type;
+  typedef Null_tag Denominator_type;
+  typedef Null_functor Common_factor;
+  typedef Null_functor Decompose;
+  typedef Null_functor Compose;
+};
+
+template <class NT>
+struct FT_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> > {
+    typedef NT Type;
+
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef typename boost::multiprecision::component_type<NT>::type Numerator_type;
+    typedef Numerator_type Denominator_type;
+
+    typedef typename Algebraic_structure_traits< Numerator_type >::Gcd Common_factor;
+
+    class Decompose {
+    public:
+        typedef Type first_argument_type;
+        typedef Numerator_type& second_argument_type;
+        typedef Denominator_type& third_argument_type;
+        void operator () (
+                const Type& rat,
+                Numerator_type& num,
+                Denominator_type& den) {
+            num = numerator(rat);
+            den = denominator(rat);
+        }
+    };
+
+    class Compose {
+    public:
+        typedef Numerator_type first_argument_type;
+        typedef Denominator_type second_argument_type;
+        typedef Type result_type;
+        Type operator ()(
+                const Numerator_type& num ,
+                const Denominator_type& den ) {
+            return Type(num, den);
+        }
+    };
+};
+
+template <class Backend, boost::multiprecision::expression_template_option Eto>
+struct Fraction_traits<boost::multiprecision::number<Backend, Eto> >
+: FT_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
+template <class T1,class T2,class T3,class T4,class T5>
+struct Fraction_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Fraction_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
+
+
+
 template <class NT>
 struct RET_boost_mp_base
     : public INTERN_RET::Real_embeddable_traits_base< NT , CGAL::Tag_true > {
@@ -454,6 +513,21 @@ struct RET_boost_mp_base
         : public CGAL::cpp98::unary_function<Type, double> {
         double operator()(const Type& x) const {
             return x.template convert_to<double>();
+        }
+    };
+
+    struct Ceil
+      : public CGAL::cpp98::unary_function< Type, double > {
+        double operator()( const Type& x ) const {
+          // If NT is a fraction, the ceil value is the result of the Euclidian division of the numerator and the denominator.
+          using FT = Fraction_traits<Type>;
+          typename FT::Numerator_type num, r, e;
+          typename FT::Denominator_type denom;
+          typename FT::Decompose()(x,num,denom);
+          div_mod(num, denom, r, e);
+          if((r<0) && e!=0) //If the result is negative, the ceil value is one below
+            return to_double(r-1);
+          return to_double(r);
         }
     };
 
@@ -681,62 +755,6 @@ struct Split_double<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
 : Split_double<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
 
 
-// Fraction_traits
-
-template <class T, class = boost::mpl::int_<boost::multiprecision::number_category<T>::value> >
-struct FT_boost_mp {
-  typedef T Type;
-  typedef Tag_false Is_fraction;
-  typedef Null_tag Numerator_type;
-  typedef Null_tag Denominator_type;
-  typedef Null_functor Common_factor;
-  typedef Null_functor Decompose;
-  typedef Null_functor Compose;
-};
-
-template <class NT>
-struct FT_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> > {
-    typedef NT Type;
-
-    typedef ::CGAL::Tag_true Is_fraction;
-    typedef typename boost::multiprecision::component_type<NT>::type Numerator_type;
-    typedef Numerator_type Denominator_type;
-
-    typedef typename Algebraic_structure_traits< Numerator_type >::Gcd Common_factor;
-
-    class Decompose {
-    public:
-        typedef Type first_argument_type;
-        typedef Numerator_type& second_argument_type;
-        typedef Denominator_type& third_argument_type;
-        void operator () (
-                const Type& rat,
-                Numerator_type& num,
-                Denominator_type& den) {
-            num = numerator(rat);
-            den = denominator(rat);
-        }
-    };
-
-    class Compose {
-    public:
-        typedef Numerator_type first_argument_type;
-        typedef Denominator_type second_argument_type;
-        typedef Type result_type;
-        Type operator ()(
-                const Numerator_type& num ,
-                const Denominator_type& den ) {
-            return Type(num, den);
-        }
-    };
-};
-
-template <class Backend, boost::multiprecision::expression_template_option Eto>
-struct Fraction_traits<boost::multiprecision::number<Backend, Eto> >
-: FT_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
-template <class T1,class T2,class T3,class T4,class T5>
-struct Fraction_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
-: Fraction_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
 
 
 // Coercions

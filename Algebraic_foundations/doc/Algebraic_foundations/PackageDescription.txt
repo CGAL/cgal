@@ -49,6 +49,7 @@
 - `AlgebraicStructureTraits_::Mod`
 - `AlgebraicStructureTraits_::Inverse`
 - `AlgebraicStructureTraits_::Sqrt`
+- `AlgebraicStructureTraits_::Ceil`
 - `AlgebraicStructureTraits_::IsSquare`
 - `AlgebraicStructureTraits_::KthRoot`
 - `AlgebraicStructureTraits_::RootOf`
@@ -78,6 +79,7 @@
 - `CGAL::mod()`
 - `CGAL::inverse()`
 - `CGAL::sqrt()`
+- `CGAL::ceil()`
 - `CGAL::kth_root()`
 - `CGAL::root_of()`
 
