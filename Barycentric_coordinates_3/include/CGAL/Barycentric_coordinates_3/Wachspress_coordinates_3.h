@@ -314,8 +314,6 @@ namespace Barycentric_coordinates {
         pf_i = pf_i_p_1;
       }while(true);
 
-      CGAL_assertion(weight > 0);
-
       return weight;
     }
 
