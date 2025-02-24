@@ -112,7 +112,8 @@ std::string PierceEvent::toString() const {
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(vertex=" << vertex->getID() << ", face=" << facet->getID() << ")";
+    sstr << "\t(vertex=" << vertex->toString() << ")\n";
+    sstr << "\t(face=" << facet->getID() << ")";
     return sstr.str();
 }
 

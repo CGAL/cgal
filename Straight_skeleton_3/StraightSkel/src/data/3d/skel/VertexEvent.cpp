@@ -124,9 +124,9 @@ std::string VertexEvent::toString() const {
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(facet A=" << facet_1->getID()
-         << "; vertex A=" << vertex_1->getID() << ")\n";
+         << "; vertex A=" << vertex_1->toString() << ")\n";
     sstr << "\t(facet B=" << facet_2->getID()
-         << "; vertex B2=" << vertex_2->getID() << ")";
+         << "; vertex B2=" << vertex_2->toString() << ")";
     return sstr.str();
 }
 

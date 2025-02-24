@@ -124,11 +124,11 @@ std::string EdgeMergeEvent::toString() const {
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(facet=" << facet->getID() << "\n";
+    sstr << "\t(facet=" << facet->getID() << ")\n";
     sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
                                                        << edge1->getVertexDst()->toString() << "])\n";
     sstr << "\t(edgeB=" << edge2->getID() << "\n\t\t[" << edge2->getVertexSrc()->toString() << "\n\t\t "
-                                                       << edge2->getVertexDst()->toString() << "])\n";
+                                                       << edge2->getVertexDst()->toString() << "])";
     return sstr.str();
 }
 
