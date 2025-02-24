@@ -2138,6 +2138,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
 void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                                 PolyhedronSPtr polyhedron,
+                                                const bool use_canonical_event_reps,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
@@ -2203,18 +2204,20 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
         }
 
 #ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-        // @fixme not sure about that macro:
-        // this is essentially the same as above but if 'edge' were 'edge->prev(facet_l)'
-        // so when we pass by again with this edge, then we will meet it in the check just above.
-        // BUT: the dbl edge merge event filter above applies only to 'edge' so we might filter
-        // for edge->prev(facet_l) which we wouldn't have filtered when seeing it from 'edge'?
+        if (use_canonical_event_reps) {
+            // @fixme not sure about all of this...
+            // this is essentially the same as above but if 'edge' were 'edge->prev(facet_l)'
+            // so when we pass by again with this edge, then we will meet it in the check just above.
+            // BUT: the dbl edge merge event filter above applies only to 'edge' so we might filter
+            // for edge->prev(facet_l) which we wouldn't have filtered when seeing it from 'edge'?
 
-        edge_prev = edge->prev(facet_l)->prev(facet_l);
-        edge_next = edge->next(facet_l);
-        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-            facet = facet_l;
-            edge_1 = edge_prev;
-            edge_2 = edge_next;
+            edge_prev = edge->prev(facet_l)->prev(facet_l);
+            edge_next = edge->next(facet_l);
+            if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+                facet = facet_l;
+                edge_1 = edge_prev;
+                edge_2 = edge_next;
+            }
         }
 #endif
         edge_prev = edge->prev(facet_r);
@@ -2225,13 +2228,15 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
             edge_2 = edge_next;
         }
 #ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-        // @fixme not sure about that macro: see above
-        edge_prev = edge->prev(facet_r)->prev(facet_r);
-        edge_next = edge->next(facet_r);
-        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-            facet = facet_r;
-            edge_1 = edge_prev;
-            edge_2 = edge_next;
+        // @fixme not sure about this - see above
+        if (use_canonical_event_reps) {
+            edge_prev = edge->prev(facet_r)->prev(facet_r);
+            edge_next = edge->next(facet_r);
+            if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+                facet = facet_r;
+                edge_1 = edge_prev;
+                edge_2 = edge_next;
+            }
         }
 #endif
 
@@ -2292,12 +2297,13 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
 {
-    return collectEdgeMergeEvents(polyhedron->edges(), polyhedron,
+    return collectEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*canonical reps*/,
                                   current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
                                                PolyhedronSPtr polyhedron,
+                                               const bool use_canonical_event_reps,
                                                const CGAL::FT current_offset,
                                                CGAL::FT& offset_of_nearest_event,
                                                PQ& queue)
@@ -2329,10 +2335,12 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
         }
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-        // for canonicity, only investigate this event if we are at the smallest edge of the face
-        if (edge->getID() > edge->prev(facet)->getID() ||
-            edge->getID() > edge->next(facet)->getID()) {
-            continue;
+        if (use_canonical_event_reps) {
+            // rep canonicity: only check event existence when at the smallest edge of the face
+            if (edge->getID() > edge->prev(facet)->getID() ||
+                edge->getID() > edge->next(facet)->getID()) {
+                continue;
+            }
         }
 #endif
 
@@ -2408,12 +2416,13 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
                                                CGAL::FT& offset_of_nearest_event,
                                                PQ& queue)
 {
-    return collectTriangleEvents(polyhedron->edges(), polyhedron,
+    return collectTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
                                  current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                                    PolyhedronSPtr polyhedron,
+                                                   const bool use_canonical_event_reps,
                                                    const CGAL::FT current_offset,
                                                    CGAL::FT& offset_of_nearest_event,
                                                    PQ& queue)
@@ -2537,12 +2546,15 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                    CGAL::FT& offset_of_nearest_event,
                                                    PQ& queue)
 {
-    return collectDblEdgeMergeEvents(polyhedron->edges(), polyhedron,
+    return collectDblEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
                                      current_offset, offset_of_nearest_event, queue);
 }
 
+// contrary to all the other vanish events, this event is not detected from all
+// of the edges it involves, but only from the main, "ridge", edge...
 void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
                                                   PolyhedronSPtr polyhedron,
+                                                  const bool /*use_canonical_event_reps*/,
                                                   const CGAL::FT current_offset,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
@@ -2562,6 +2574,11 @@ void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edg
         if (!facet_l || !facet_r) {
             continue;
         }
+
+        // use_canonical_event_reps
+        // rep canonicity: this event is already only seen from its ridge edge
+        // because of this check
+        // @fixme which is something that is in fact bad in fact if we are updating the queue
         if (!(isTriangle(facet_l, edge) &&
                 isTriangle(facet_r, edge))) {
             continue;
@@ -2617,12 +2634,13 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
 {
-    return collectDblTriangleEvents(polyhedron->edges(), polyhedron,
+    return collectDblTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
                                     current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
                                                   PolyhedronSPtr polyhedron,
+                                                  const bool use_canonical_event_reps,
                                                   const CGAL::FT current_offset,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
@@ -2637,22 +2655,24 @@ void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edg
         if (isTetrahedron(edge)) {
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            // for canonicity, only investigate this event if we are in the smallest edge
-            // of the smallest face of the tetrahedron
-            FacetSPtr facet = (edge->getFacetL()->getID() < edge->getFacetR()->getID()) ? edge->getFacetL()
-                                                                                        : edge->getFacetR();
+            if (use_canonical_event_reps) {
+                  // rep canonicity: only investigate this event if we are in the smallest edge
+                  // of the smallest face of the tetrahedron
+                  FacetSPtr facet = (edge->getFacetL()->getID() < edge->getFacetR()->getID()) ? edge->getFacetL()
+                                                                                              : edge->getFacetR();
 
-            // smallest incident face is the smallest of the tetrahedron
-            if (facet->getID() > edge->prev(facet)->other(facet)->getID() ||
-                facet->getID() > edge->other(facet)->getID() ||
-                facet->getID() > edge->next(facet)->other(facet)->getID()) {
-                continue;
-            }
+                  // smallest incident face is the smallest of the tetrahedron
+                  if (facet->getID() > edge->prev(facet)->other(facet)->getID() ||
+                      facet->getID() > edge->other(facet)->getID() ||
+                      facet->getID() > edge->next(facet)->other(facet)->getID()) {
+                      continue;
+                  }
 
-            // edge is the smallest within the face
-            if (edge->getID() > edge->next(facet)->getID() ||
-                edge->getID() > edge->prev(facet)->getID()) {
-                continue;
+                  // edge is the smallest within the face
+                  if (edge->getID() > edge->next(facet)->getID() ||
+                      edge->getID() > edge->prev(facet)->getID()) {
+                      continue;
+                  }
             }
 #endif
 
@@ -2707,12 +2727,13 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                                                   CGAL::FT& offset_of_nearest_event,
                                                   PQ& queue)
 {
-    return collectTetrahedronEvents(polyhedron->edges(), polyhedron,
+    return collectTetrahedronEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
                                     current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertices,
                                              PolyhedronSPtr polyhedron,
+                                             const bool use_canonical_event_reps,
                                              const CGAL::FT current_offset,
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
@@ -2744,9 +2765,12 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
                 continue;
             }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            CGAL_assertion(vertex_1->getID() != std::size_t(-1) && vertex_2->getID() != std::size_t(-1));
-            if (vertex_1->getID() > vertex_2->getID()) {
-                continue;
+            if (use_canonical_event_reps) {
+                CGAL_assertion(vertex_1->getID() != std::size_t(-1) &&
+                               vertex_2->getID() != std::size_t(-1));
+                if (vertex_1->getID() > vertex_2->getID()) {
+                    continue;
+                }
             }
 #endif
             if (vertex_1->getPoint() == vertex_2->getPoint()) {
@@ -2896,12 +2920,13 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
                                              CGAL::FT& offset_of_nearest_event,
                                              PQ& queue)
 {
-    return collectVertexEvents(polyhedron->vertices(), polyhedron,
+    return collectVertexEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
                                current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
                                                  PolyhedronSPtr polyhedron,
+                                                 const bool use_canonical_event_reps,
                                                  const CGAL::FT current_offset,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
@@ -2935,8 +2960,10 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
                 continue;
             }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            if (vertex_1->getID() > vertex_2->getID()) {
-                continue;
+            if (use_canonical_event_reps) {
+                if (vertex_1->getID() > vertex_2->getID()) {
+                    continue;
+                }
             }
 #endif
             if (vertex_1->getPoint() == vertex_2->getPoint()) {
@@ -2975,8 +3002,10 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
                 continue;
             }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            if (facet_1->getID() > facet_2->getID()) {
-                continue;
+            if (use_canonical_event_reps) {
+                if (facet_1->getID() > facet_2->getID()) {
+                    continue;
+                }
             }
 #endif
             if (facet_1->next(vertex_1) != facet_2) {
@@ -3091,7 +3120,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
 {
-    return collectFlipVertexEvents(polyhedron->vertices(), polyhedron,
+    return collectFlipVertexEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
                                    current_offset, offset_of_nearest_event, queue);
 }
 
@@ -3144,12 +3173,6 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                 continue;
             }
 
-// #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-//             // @fixme? it's not symmetric due to the convex check, but maybe it can be sometimes?
-//             if (edge_1->getID() > edge_2->getID()) {
-//                 continue;
-//             }
-// #endif
             if (edge_1->getFacetL() == edge_2->getFacetL() ||
                     edge_1->getFacetL() == edge_2->getFacetR() ||
                     edge_1->getFacetR() == edge_2->getFacetL() ||
@@ -3436,6 +3459,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
 
 void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
                                                  PolyhedronSPtr polyhedron,
+                                                 const bool use_canonical_event_reps,
                                                  const CGAL::FT current_offset,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
@@ -3467,8 +3491,10 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
                 continue;
             }
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            if (vertex_1->getID() > vertex_2->getID()) {
-                continue;
+            if (use_canonical_event_reps) {
+                if (vertex_1->getID() > vertex_2->getID()) {
+                    continue;
+                }
             }
 #endif
             if (vertex_1->getPoint() == vertex_2->getPoint()) {
@@ -3618,13 +3644,14 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
                                                  CGAL::FT& offset_of_nearest_event,
                                                  PQ& queue)
 {
-    return collectSplitMergeEvents(polyhedron->vertices(), polyhedron,
+    return collectSplitMergeEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
                                    current_offset, offset_of_nearest_event, queue);
 }
 
 void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges_1,
                                                 const std::list<EdgeSPtr>& edges_2,
                                                 PolyhedronSPtr polyhedron,
+                                                const bool use_canonical_event_reps,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
@@ -3683,10 +3710,17 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
         b1 += offset_e1->source().bbox();
         b1 += offset_e1->target().bbox();
 
-        // @speed avoid again collecting both e1-e2 and e2-e1
         std::list<EdgeSPtr>::iterator it_e2 = edges_reflex_2.begin();
         while (it_e2 != edges_reflex_2.end()) {
             EdgeSPtr edge_2 = *it_e2++;
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+            if (use_canonical_event_reps) {
+                if (edge_1->getID() > edge_2->getID()) {
+                    continue;
+                }
+            }
+#endif
+
             if (edge_1->getFacetL() == edge_2->getFacetL() ||
                     edge_1->getFacetL() == edge_2->getFacetR() ||
                     edge_1->getFacetR() == edge_2->getFacetL() ||
@@ -3759,18 +3793,20 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                 continue;
             }
 
-            // @fixme below needs to be double checked
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-            shift = offset_event - current_offset;
-            Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
-            if (e1o->is_degenerate()) {
-                // polyhedron split
-                continue;
-            }
-            Segment3SPtr e2o = PolyhedronTransformation::shiftEdge(edge_2, shift);
-            if (e2o->is_degenerate()) {
-                // polyhedron split
-                continue;
+            // @fixme below needs to be double checked
+            if (use_canonical_event_reps) {
+                shift = offset_event - current_offset;
+                Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
+                if (e1o->is_degenerate()) {
+                    // polyhedron split
+                    continue;
+                }
+                Segment3SPtr e2o = PolyhedronTransformation::shiftEdge(edge_2, shift);
+                if (e2o->is_degenerate()) {
+                    // polyhedron split
+                    continue;
+                }
             }
 #endif
 
@@ -3830,7 +3866,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
                                                 CGAL::FT& offset_of_nearest_event,
                                                 PQ& queue)
 {
-    return collectEdgeSplitEvents(polyhedron->edges(), polyhedron->edges(), polyhedron,
+    return collectEdgeSplitEvents(polyhedron->edges(), polyhedron->edges(), polyhedron, true /*use canonical reps*/,
                                   current_offset, offset_of_nearest_event, queue);
 }
 

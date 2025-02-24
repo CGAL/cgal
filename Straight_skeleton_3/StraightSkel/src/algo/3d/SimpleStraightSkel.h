@@ -213,6 +213,7 @@ public:
      */
     void collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                 PolyhedronSPtr polyhedron,
+                                const bool use_canonical_event_reps,
                                 const CGAL::FT current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
@@ -226,6 +227,7 @@ public:
      */
     void collectTriangleEvents(const std::list<EdgeSPtr>& edges,
                                PolyhedronSPtr polyhedron,
+                               const bool use_canonical_event_reps,
                                const CGAL::FT current_offset,
                                CGAL::FT& offset_of_nearest_event,
                                PQ& queue);
@@ -239,6 +241,7 @@ public:
      */
      void collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                     PolyhedronSPtr polyhedron,
+                                    const bool use_canonical_event_reps,
                                     const CGAL::FT current_offset,
                                     CGAL::FT& offset_of_nearest_event,
                                     PQ& queue);
@@ -252,6 +255,7 @@ public:
      */
     void collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
                                   PolyhedronSPtr polyhedron,
+                                  const bool use_canonical_event_reps,
                                   const CGAL::FT current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
@@ -265,6 +269,7 @@ public:
      */
     void collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
                                   PolyhedronSPtr polyhedron,
+                                  const bool use_canonical_event_reps,
                                   const CGAL::FT current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
@@ -278,6 +283,7 @@ public:
      */
     void collectVertexEvents(const std::list<VertexSPtr>& vertices,
                              PolyhedronSPtr polyhedron,
+                             const bool use_canonical_event_reps,
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
@@ -291,6 +297,7 @@ public:
      */
     void collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
                                  PolyhedronSPtr polyhedron,
+                                 const bool use_canonical_event_reps,
                                  const CGAL::FT current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
@@ -332,6 +339,7 @@ public:
      */
      void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
                                   PolyhedronSPtr polyhedron,
+                                  const bool use_canonical_event_reps,
                                   const CGAL::FT current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
@@ -347,6 +355,7 @@ public:
     void collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges_1,
                                 const std::list<EdgeSPtr>& edges_2,
                                 PolyhedronSPtr polyhedron,
+                                const bool use_canonical_event_reps,
                                 const CGAL::FT current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
