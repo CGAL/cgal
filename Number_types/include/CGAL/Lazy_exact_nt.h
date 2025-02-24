@@ -1115,7 +1115,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     class Ceil
       : public CGAL::cpp98::unary_function< Type, double > {
       public:
-        double operator()( const Type& a ) const {
+        double operator()( const Type& x ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             // If both sides are in the same ceil, return this ceil
             double ceil_left=std::ceil(to_interval(x).first);
