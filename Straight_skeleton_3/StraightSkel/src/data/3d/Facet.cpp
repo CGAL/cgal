@@ -692,7 +692,7 @@ void Facet::perturbPlaneCoefficients()
     // code should behave well enough for now.
     auto nudge = [](const CGAL::FT& v) {
         static std::random_device rd;
-        auto s = rd();
+        unsigned int s = 0; // rd()
         // std::cout << "seed = " << s << std::endl;
         static std::mt19937 gen(s);
 
