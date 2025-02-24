@@ -519,15 +519,6 @@ bool SimpleStraightSkel::run() {
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
 
-    basePlanes_.reserve(polyhedron->facets().size());
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-    while (it_f != polyhedron->facets().end()) {
-        FacetSPtr facet = *it_f++;
-        CGAL_assertion(bool(facet->getPlane()));
-        facet->setBasePlaneID(basePlanes_.size());
-        basePlanes_.push_back(facet->getPlane());
-    }
-
     db::_3d::OBJFile::save("results/init_pre.obj", polyhedron, false /*do not triangulate*/);
 
 // #define CGAL_SS3_ACUTE_WEIGHTS
@@ -555,7 +546,7 @@ bool SimpleStraightSkel::run() {
 # endif
 
     std::size_t fi = 0;
-    it_f = polyhedron->facets().begin();
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
         CGAL::FT speed = other_speed;
@@ -1159,17 +1150,23 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     }
 #endif
 
+    polyhedron->initializeAllIDs();
+
+    basePlanes_.reserve(polyhedron->facets().size());
+
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
         if (!facet->hasData()) {
             SkelFacetData::create(facet);
         }
+        CGAL_assertion(bool(facet->getPlane()));
+        facet->setBasePlaneID(basePlanes_.size());
+        basePlanes_.push_back(facet->getPlane());
     }
 
     CGAL_postcondition(skel_result_->isConsistent());
 
-    polyhedron->initializeAllIDs();
 
     return result;
 }
