@@ -286,8 +286,9 @@ namespace Barycentric_coordinates {
 
       auto compute_pf_i = [&](halfedge_descriptor h)
       {
-        const Vector_3 nf = internal::get_face_normal(
+        Vector_3 nf = internal::get_face_normal(
           face(h, m_polygon_mesh), m_vertex_to_point_map, m_polygon_mesh, m_traits);
+        nf = nf / approximate_sqrt(nf.squared_length());
         const FT hfx = m_dot_3(query_vertex, nf);
         CGAL_assertion(hfx != FT(0));
         return nf/hfx;

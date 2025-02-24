@@ -109,7 +109,6 @@ enum class Edge_case {
     using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     const auto cross_3 = traits.construct_cross_product_vector_3_object();
-    const auto dot_3 = traits.compute_scalar_product_3_object();
 
     const auto hedge = halfedge(face, triangle_mesh);
     const auto vertices = vertices_around_face(hedge, triangle_mesh);
@@ -123,7 +122,6 @@ enum class Edge_case {
     const Vector_3 u = point2 - point1;
     const Vector_3 v = point3 - point1;
     Vector_3 face_normal = cross_3(u, v);
-    face_normal /= approximate_sqrt(dot_3(face_normal, face_normal));
 
     return face_normal;
   }
