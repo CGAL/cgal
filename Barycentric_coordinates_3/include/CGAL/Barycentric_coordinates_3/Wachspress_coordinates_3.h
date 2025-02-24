@@ -19,6 +19,7 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
