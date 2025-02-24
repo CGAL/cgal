@@ -3929,60 +3929,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 #endif
                 }
 
-                Point3SPtr point;
-                CGAL::FT offset_event;
-
-// #define CGAL_SS3_OLD_CODE_PIERCE_EVENT
-#ifdef CGAL_SS3_OLD_CODE_PIERCE_EVENT
-                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-                ArcSPtr arc = data->getArc();
-
-                // @fixme this filter seems overly restrictive?
-                // Could not we have an intersection between the OFFSET face
-                // and the arc's supporting line (but we don't know at what offset yet)?
-                if (!IsLineInFacet(facet, arc->line())) {
-                    continue;
-                }
-
-                FacetSPtr facet_vertex = FacetSPtr(vertex->facets().front());
-                CGAL::FT facet_speed_vertex = 1.0;
-                if (facet_vertex->hasData()) {
-                    facet_speed_vertex = std::dynamic_pointer_cast<SkelFacetData>(
-                            facet_vertex->getData())->getSpeed();
-                }
-                Plane3SPtr plane_vertex_offset = KernelWrapper::offsetPlane(facet_vertex->plane(), -facet_speed_vertex);
-                Point3SPtr point_vertex_offset = KernelWrapper::intersection(plane_vertex_offset, arc->line());
-                CGAL::FT speed_vertex = KernelWrapper::distance(vertex->getPoint(), point_vertex_offset);
-
-                Point3SPtr point_facet = KernelWrapper::intersection(facet->plane(), arc->line());
-                CGAL::FT facet_speed = 1.0;
-                if (facet->hasData()) {
-                    facet_speed = std::dynamic_pointer_cast<SkelFacetData>(
-                            facet->getData())->getSpeed();
-                }
-                Plane3SPtr plane_facet_offset = KernelWrapper::offsetPlane(facet->plane(), -facet_speed);
-                Point3SPtr point_facet_offset = KernelWrapper::intersection(plane_facet_offset, arc->line());
-                CGAL::FT speed_facet = KernelWrapper::distance(point_facet, point_facet_offset);
-
-                CGAL::FT distance = KernelWrapper::distance(vertex->getPoint(), point_facet);
-                CGAL::FT dist_vertex = (distance * speed_vertex) / (speed_vertex + speed_facet);
-                if (KernelWrapper::comparePoints(arc->getDirection(),
-                        point_facet, point_facet_offset) < 0) {
-                    // for weighted straight skeleton
-                    // reflex vertex and facet move into same direction
-                    if (speed_facet < speed_vertex) {
-                        // facet too slow
-                        continue;
-                    }
-                    dist_vertex = (distance * speed_vertex) / (speed_facet - speed_vertex);
-                }
-
-                offset_event = -dist_vertex / speed_vertex;
-                point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
-                // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
-#else
                 CGAL_assertion(vertex->facets().size() >= 3);
-
                 FacetSPtr fs[3];
                 for (int i = 0; i < 3; ++i) {
                     FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
@@ -3990,85 +3937,84 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     fs[i] = wf.lock();
                 }
 
+                Point3SPtr point;
+                CGAL::FT offset_event;
                 std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet, fs[0], fs[1], fs[2], current_offset, offset_of_nearest_event);
                 if (!point) {
                     continue;
                 }
 
                 CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
-#endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
 
-                // @todo this check can be removed when the old code above is removed
-                if (offset_event < current_offset && offset_event >= offset_of_nearest_event) {
-                    // Filter if the event point is on an edge (and a fortiori on a vertex)
-                    // as it will be a different kind of event
-                    FacetSPtr facet_offset = facet->clone();
+                // Filter if the event point is on an edge (and a fortiori on a vertex)
+                // as it will be a different kind of event
+                FacetSPtr facet_offset = facet->clone();
 
-                    CGAL::FT shift = offset_event - current_offset;
-                    const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-                    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), shift*speed);
-                    facet_offset->setPlane(offset_plane);
+                CGAL::FT shift = offset_event - current_offset;
+                const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), shift*speed);
+                facet_offset->setPlane(offset_plane);
 
-                    // abusing the fact that vertices will have the same order in both facets
-                    std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-                    std::list<VertexSPtr>::iterator it_v_offset = facet_offset->vertices().begin();
-                    while (it_v != facet->vertices().end()) {
-                        VertexSPtr vertex = *it_v++;
-                        VertexSPtr offset_vertex = *it_v_offset++;
-                        Point3SPtr point_offset = PolyhedronTransformation::shiftPoint(vertex, shift);
-                        offset_vertex->setPoint(point_offset);
-                    }
+                // abusing the fact that vertices will have the same order in both facets
+                std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+                std::list<VertexSPtr>::iterator it_v_offset = facet_offset->vertices().begin();
+                while (it_v != facet->vertices().end()) {
+                    VertexSPtr vertex = *it_v++;
+                    VertexSPtr offset_vertex = *it_v_offset++;
+                    Point3SPtr point_offset = PolyhedronTransformation::shiftPoint(vertex, shift);
+                    offset_vertex->setPoint(point_offset);
+                }
 
-                    // Note that this result could be meaningless if the offset face
-                    // is not a simple polygon. However, if it's not simple, then some event
-                    // has happened before the pierce, and the pierce event - if whitelisted -
-                    // would be checked again later, thus it's safe to call.
-                    if (!SelfIntersection::isInsideWithRayShooting(point, facet_offset)) {
-                        // std::cout << "isInsideWithRayShooting rejects" << std::endl;
+                // Note that this result could be meaningless if the offset face
+                // is not a simple polygon. However, if it's not simple, then some event
+                // has happened before the pierce, and the pierce event - if whitelisted -
+                // would be checked again later, thus it's safe to call.
+                if (!SelfIntersection::isInsideWithRayShooting(point, facet_offset)) {
+                    // std::cout << "isInsideWithRayShooting rejects" << std::endl;
+                    continue;
+                }
+
+
+                // @todo would be good if it could be merged with the function above...
+                bool boundary_rejection = false;
+                std::list<EdgeSPtr>::iterator it_fe = facet_offset->edges().begin();
+                while (it_fe != facet_offset->edges().end()) {
+                    EdgeSPtr edge = *it_fe++;
+                    Segment3SPtr seg = KernelFactory::createSegment3(edge->getVertexSrc()->getPoint(),
+                                                                      edge->getVertexDst()->getPoint());
+                    if (!seg || seg->is_degenerate()) {
                         continue;
                     }
 
-                    // @todo would be good if it could be merged with the function above...
-                    bool boundary_rejection = false;
-                    std::list<EdgeSPtr>::iterator it_fe = facet_offset->edges().begin();
-                    while (it_fe != facet_offset->edges().end()) {
-                        EdgeSPtr edge = *it_fe++;
-                        Segment3SPtr seg = KernelFactory::createSegment3(edge->getVertexSrc()->getPoint(),
-                                                                         edge->getVertexDst()->getPoint());
-                        if (!seg || seg->is_degenerate()) {
-                            continue;
-                        }
-
-                        if (seg->has_on(*point)) {
-                            boundary_rejection = true;
-                            break;
-                        }
+                    if (seg->has_on(*point)) {
+                        boundary_rejection = true;
+                        break;
                     }
+                }
 
-                    if (boundary_rejection) {
-                        // DEBUG_PRINT("Pierce event on boundary --> rejected");
-                        continue;
-                    }
+                if (boundary_rejection) {
+                    // DEBUG_PRINT("Pierce event on boundary --> rejected");
+                    continue;
+                }
 
-                    NodeSPtr node = Node::create();
-                    PierceEventSPtr event = PierceEvent::create();
-                    event->setStepID(step_id_);
-                    event->setNode(node);
-                    node->clear();
+                NodeSPtr node = Node::create();
+                PierceEventSPtr event = PierceEvent::create();
+                event->setStepID(step_id_);
+                event->setNode(node);
+                node->clear();
 #ifndef CGAL_SS3_NO_SKELETON_DS
-                    node->addArc(arc);
+                node->addArc(arc);
 #endif
-                    node->setOffset(offset_event);
-                    node->setPoint(point);
-                    event->setFacet(facet);
-                    event->setVertex(vertex);
+                node->setOffset(offset_event);
+                node->setPoint(point);
+                event->setFacet(facet);
+                event->setVertex(vertex);
 
-                    queue.push(event);
+                queue.push(event);
 
 #ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-                    offset_of_nearest_event = offset_event;
+                offset_of_nearest_event = offset_event;
 #endif
-                }
             }
         }
     }
