@@ -5,7 +5,6 @@
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/basic.h>
 #include <CGAL/draw_arrangement_2.h>
 
 #include "arr_conics.h"

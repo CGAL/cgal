@@ -13,7 +13,6 @@ int main() {
 
 #else
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 
 #include "arr_Bezier.h"

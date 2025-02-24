@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/edge_manipulation_curve_history.cpp
 // Removing curves and manipulating edges in an arrangement with history.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
