@@ -52,9 +52,22 @@ public:
     : curves(polylines.begin(), polylines.end())
     {
       kd_tree.insert(curves);
-      kd_tree.build();
+      kd_tree.build<Sequential_tag>();
     }
 
+/*!
+ * constructs a neighbor search data structure for `polylines`
+ * \tparam PolylineRange must be a model of `RandomAccessRange` with value type `PointRange`
+ * \tparam ConcurrencyTag enables sequential versus parallel construction.
+ * Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+*/
+    template <typename PolylineRange, typename ConcurrencyTag>
+    Neighbor_search(const PolylineRange& polylines, ConcurrencyTag)
+    : curves(polylines.begin(), polylines.end())
+    {
+      kd_tree.insert(curves);
+      kd_tree.build<ConcurrencyTag>();
+    }
 #ifdef DOXYGEN_RUNNING
     using Point = Traits::Point_d;
 #endif
