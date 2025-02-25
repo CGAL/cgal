@@ -3216,15 +3216,19 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
         edges_2.insert(edges_2.end(),
                 facet_1_dst->edges().begin(), facet_1_dst->edges().end());
 
-        // upper bound on the maximum interesting shift
-        // @todo use an "is_initialized?" flag or something?
-        CGAL::FT shift = offset_of_nearest_event - current_offset;
+        // not outside of the loop just because maybe one day this will be called
+        // as the first collect function with an initial bound that gets updated...
+        const bool use_bbox_filtering = (offset_of_nearest_event != - std::numeric_limits<CGAL::FT>::max());
+        CGAL::FT max_relevant_shift = offset_of_nearest_event - current_offset;
 
-        Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift);
-        CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
-        b1 += edge_1->getVertexDst()->getPoint()->bbox();
-        b1 += offset_e1->source().bbox();
-        b1 += offset_e1->target().bbox();
+        CGAL::Bbox_3 b1;
+        if (use_bbox_filtering) {
+            Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, max_relevant_shift);
+            b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+            b1 += edge_1->getVertexDst()->getPoint()->bbox();
+            b1 += offset_e1->source().bbox();
+            b1 += offset_e1->target().bbox();
+        }
 
         std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
         while (it_e2 != edges_2.end()) {
@@ -3316,26 +3320,28 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
             }
 
             // let's just check if bboxes overlap first
-            Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift);
-            CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
-            b2 += edge_2->getVertexDst()->getPoint()->bbox();
-            b2 += offset_e2->source().bbox();
-            b2 += offset_e2->target().bbox();
-            if (!CGAL::do_overlap(b1, b2)) {
+            if (use_bbox_filtering) {
+                Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, max_relevant_shift);
+                CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+                b2 += edge_2->getVertexDst()->getPoint()->bbox();
+                b2 += offset_e2->source().bbox();
+                b2 += offset_e2->target().bbox();
+                if (!CGAL::do_overlap(b1, b2)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                ++filtered_candidates;
+                    ++filtered_candidates;
 #endif
-                // std::cout << "Filtered possible surface event candidates\n\t"
-                //           << edge_1->toString() << "\n\t"
-                //           << edge_2->toString() << std::endl;
-                continue;
-            } else {
+                    // std::cout << "Filtered possible surface event candidates\n\t"
+                    //           << edge_1->toString() << "\n\t"
+                    //           << edge_2->toString() << std::endl;
+                    continue;
+                } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                ++tested_candidates;
+                    ++tested_candidates;
 #endif
-                // std::cout << "Checking possible surface event event\n\t"
-                //           << edge_1->toString() << "\n\t"
-                //           << edge_2->toString() << std::endl;
+                    // std::cout << "Checking possible surface event event\n\t"
+                    //           << edge_1->toString() << "\n\t"
+                    //           << edge_2->toString() << std::endl;
+                }
             }
 
             // calculate intersection point
@@ -3764,21 +3770,25 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 
 #endif
 
-    // upper bound on the maximum interesting shift
-    // @todo use an "is_initialized?" flag or something to avoid the case where it is max()?
-    CGAL::FT shift = offset_of_nearest_event - current_offset;
-
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex_1.begin();
     while (it_e1 != edges_reflex_1.end()) {
         EdgeSPtr edge_1 = *it_e1++;
         FacetSPtr facet_1_src = edge_1->getFacetSrc();
         FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
-        Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift);
-        CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
-        b1 += edge_1->getVertexDst()->getPoint()->bbox();
-        b1 += offset_e1->source().bbox();
-        b1 += offset_e1->target().bbox();
+        // not outside of the loop just because maybe one day this will be called
+        // as the first collect function with an initial bound that gets updated...
+        const bool use_bbox_filtering = (offset_of_nearest_event != - std::numeric_limits<CGAL::FT>::max());
+        const CGAL::FT max_relevant_shift = offset_of_nearest_event - current_offset;
+
+        CGAL::Bbox_3 b1;
+        if (use_bbox_filtering) {
+            Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, max_relevant_shift);
+            b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+            b1 += edge_1->getVertexDst()->getPoint()->bbox();
+            b1 += offset_e1->source().bbox();
+            b1 += offset_e1->target().bbox();
+        }
 
         std::list<EdgeSPtr>::iterator it_e2 = edges_reflex_2.begin();
         while (it_e2 != edges_reflex_2.end()) {
@@ -3832,27 +3842,33 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
             // - The shifted edge could be different due to other events... but then this other event
             //   will be treated first and the event will be invalid
 
-            // let's just check if bboxes overlap first
-            Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift);
-            CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
-            b2 += edge_2->getVertexDst()->getPoint()->bbox();
-            b2 += offset_e2->source().bbox();
-            b2 += offset_e2->target().bbox();
-            if (!CGAL::do_overlap(b1, b2)) {
+            if (use_bbox_filtering) {
+                // let's just check if bboxes overlap first
+                Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, max_relevant_shift);
+                CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+                b2 += edge_2->getVertexDst()->getPoint()->bbox();
+                b2 += offset_e2->source().bbox();
+                b2 += offset_e2->target().bbox();
+                if (!CGAL::do_overlap(b1, b2)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                ++filtered_candidates;
+                    ++filtered_candidates;
 #endif
-                // std::cout << "Filtered edge split candidates\n\t"
-                //           << edge_1->toString() << "\n\t"
-                //           << edge_2->toString() << std::endl;
-                continue;
-            } else {
+                    // std::cout << "Filtered edge split candidates\n\t"
+                    //           << edge_1->toString() << "\n\t"
+                    //           << edge_2->toString() << "\n\t"
+                    //           << b1 << "\n\t"
+                    //           << b2 << std::endl;
+                    continue;
+                } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                ++tested_candidates;
+                    ++tested_candidates;
 #endif
-                // std::cout << "Checking possible edge split event\n\t"
-                //           << edge_1->toString() << "\n\t"
-                //           << edge_2->toString() << std::endl;
+                    // std::cout << "Checking possible edge split event\n\t"
+                    //           << edge_1->toString() << "\n\t"
+                    //           << edge_2->toString() << "\n\t"
+                    //           << b1 << "\n\t"
+                    //           << b2 << std::endl;
+                }
             }
 
             // calculate intersection point
@@ -3866,7 +3882,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
             // @fixme below needs to be double checked
             if (use_canonical_event_reps) {
-                shift = offset_event - current_offset;
+                CGAL::FT shift = offset_event - current_offset;
                 Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
                 if (e1o->is_degenerate()) {
                     // polyhedron split
@@ -3972,9 +3988,6 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
             ++pierce_vertex_counter;
 #endif
 
-            const CGAL::FT shift = offset_of_nearest_event - current_offset;
-            Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, shift);
-
             std::list<FacetSPtr>::const_iterator it_f = facets.begin();
             while (it_f != facets.end()) {
                 FacetSPtr facet = *it_f++;
@@ -4016,20 +4029,30 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     continue;
                 }
 
-                // if the face is so far that even when shifting point and plane by the current
+                // If the face is so far that even when shifting point and plane by the current
                 // best lower bound on offset delta, the vertex has not crossed it yet, then we are done
-                Plane3SPtr shifted_plane = PolyhedronTransformation::shiftPlane(facet, shift);
-                if (KernelWrapper::side(shifted_plane, shifted_pt) < 0) {
-                    // std::cerr << "Filtering " << facet->getID() << " & " << *(vertex->getPoint()) << std::endl;
-                    // std::cerr << "shift: " << shift << std::endl;
+
+                // not outside of the loop just because maybe one day this will be called
+                // as the first collect function with an initial bound that gets updated...
+                const bool use_bbox_filtering = (offset_of_nearest_event != - std::numeric_limits<CGAL::FT>::max());
+
+                if (use_bbox_filtering) {
+                    CGAL::FT max_relevant_shift = offset_of_nearest_event - current_offset;
+
+                    Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, max_relevant_shift);
+                    Plane3SPtr shifted_plane = PolyhedronTransformation::shiftPlane(facet, max_relevant_shift);
+                    if (KernelWrapper::side(shifted_plane, shifted_pt) < 0) {
+                        // std::cerr << "Filtering " << facet->getID() << " & " << *(vertex->getPoint()) << std::endl;
+                        // std::cerr << "shift: " << shift << std::endl;
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                    ++filtered_candidates;
+                        ++filtered_candidates;
 #endif
-                    continue;
-                } else {
+                        continue;
+                    } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                    ++tested_candidates;
+                        ++tested_candidates;
 #endif
+                    }
                 }
 
                 CGAL_assertion(vertex->facets().size() >= 3);
