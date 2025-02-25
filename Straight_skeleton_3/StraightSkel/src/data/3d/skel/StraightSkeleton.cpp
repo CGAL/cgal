@@ -354,6 +354,7 @@ std::string StraightSkeleton::toString() const {
     sstr << "    ConstOffsetEvents:     " << countEvents(AbstractEvent::CONST_OFFSET_EVENT) << std::endl;
     sstr << "    SaveOffsetEvents:      " << countEvents(AbstractEvent::SAVE_OFFSET_EVENT) << std::endl;
     sstr << "  VanishEvents:" << std::endl;
+    sstr << "    Generic VanishEvents:  " << countEvents(AbstractEvent::VANISH_EVENT) << std::endl;
     sstr << "    EdgeEvents:            " << countEvents(AbstractEvent::EDGE_EVENT) << std::endl;
     sstr << "    EdgeMergeEvents:       " << countEvents(AbstractEvent::EDGE_MERGE_EVENT) << std::endl;
     sstr << "    TriangleEvents:        " << countEvents(AbstractEvent::TRIANGLE_EVENT) << std::endl;

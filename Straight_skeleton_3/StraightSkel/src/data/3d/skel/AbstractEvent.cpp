@@ -95,6 +95,9 @@ std::string AbstractEvent::toString() const {
         case SAVE_OFFSET_EVENT:
             sstr << "SaveOffsetEvent";
             break;
+        case VANISH_EVENT:
+            sstr << "VanishEvent";
+            break;
         case EDGE_EVENT:
             sstr << "EdgeEvent";
             break;

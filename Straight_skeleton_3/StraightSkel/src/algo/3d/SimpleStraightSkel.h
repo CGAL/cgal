@@ -190,10 +190,15 @@ public:
     /**
      * Vanish events.
      */
-    void collectVanishEvents(PolyhedronSPtr polyhedron,
+    void collectVanishEvents(const std::list<EdgeSPtr>& edges,
+                             PolyhedronSPtr polyhedron,
                              const CGAL::FT current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
+     void collectVanishEvents(PolyhedronSPtr polyhedron,
+                              const CGAL::FT current_offset,
+                              CGAL::FT& offset_of_nearest_event,
+                              PQ& queue);
 
     /**
      * Edge flip event.

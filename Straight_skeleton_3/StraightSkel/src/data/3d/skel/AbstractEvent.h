@@ -48,6 +48,9 @@ public:
 
     static const int CONST_OFFSET_EVENT = 1;
 
+    /** generic vanish event */
+    static const int VANISH_EVENT = -1;
+
     /** 1 edge vanish event */
     static const int EDGE_EVENT = 2;
 

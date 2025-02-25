@@ -91,6 +91,7 @@
 #include "data/3d/skel/AbstractEvent.h"
 #include "data/3d/skel/ConstOffsetEvent.h"
 #include "data/3d/skel/SaveOffsetEvent.h"
+#include "data/3d/skel/VanishEvent.h"
 #include "data/3d/skel/EdgeEvent.h"
 #include "data/3d/skel/EdgeMergeEvent.h"
 #include "data/3d/skel/TriangleEvent.h"
@@ -1915,6 +1916,65 @@ bool SimpleStraightSkel::isEventPotentiallyObsolete(AbstractEventSPtr event)
     }
 
     return false;
+}
+
+void SimpleStraightSkel::collectVanishEvents(const std::list<EdgeSPtr>& edges,
+                                             PolyhedronSPtr polyhedron,
+                                             const CGAL::FT current_offset,
+                                             CGAL::FT& offset_of_nearest_event,
+                                             PQ& queue)
+{
+    DEBUG_PRINT(">>> Collect Vanish Events [" << current_offset << "; " << offset_of_nearest_event << "]");
+
+    ReadLock l(polyhedron->mutex());
+
+    std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
+    while (it_e != edges.end()) {
+        EdgeSPtr edge = *it_e++;
+
+        VertexSPtr vertex_src = edge->getVertexSrc();
+        VertexSPtr vertex_dst = edge->getVertexDst();
+        if (vertex_src->getPoint() == vertex_dst->getPoint()) {
+            continue;
+        }
+
+        Point3SPtr point = Point3SPtr();
+        CGAL::FT offset_event;
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset, offset_of_nearest_event);
+        if (!point) {
+            continue;
+        }
+
+        CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
+
+        NodeSPtr node = Node::create();
+        VanishEventSPtr event = VanishEvent::create();
+        event->setStepID(step_id_);
+        event->setNode(node);
+        node->clear();
+        node->setOffset(offset_event);
+        node->setPoint(point);
+        event->setEdge(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+# error "todo"
+#endif
+
+        queue.push(event);
+
+#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
+        offset_of_nearest_event = offset_event;
+#endif
+    }
+}
+
+
+void SimpleStraightSkel::collectVanishEvents(PolyhedronSPtr polyhedron,
+                                             const CGAL::FT current_offset,
+                                             CGAL::FT& offset_of_nearest_event,
+                                             PQ& queue)
+{
+    return collectVanishEvents(polyhedron->edges(), polyhedron, current_offset, offset_of_nearest_event, queue);
 }
 
 // @speed can we associate shiftPoint(v, max_offset) to all points as to create bounding boxes
@@ -4537,9 +4597,430 @@ void SimpleStraightSkel::tagFacetsWithStepID(const std::set<FacetSPtr>& facets)
     }
 }
 
-void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr polyhedron) {
-    WriteLock l(skel_result_->mutex());
+// This 'handle' is in fact more akin to a collect, but the interesting point
+// is that it happens after pop time.
+// This function does NOT shift the polyhedron, it is for the "real" handler
+// to deal with it.
+// This function might not do anything, for example if the vanish event is in fact
+// escalated as a contact event.
+SimpleStraightSkel::EventStatus
+SimpleStraightSkel::handleVanishEvent(const CGAL::FT current_offset,
+                                      VanishEventSPtr event,
+                                      PolyhedronSPtr polyhedron)
+{
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("########  Handle Vanish Event  #########");
+    DEBUG_PRINT("########################################");
 
+    NodeSPtr node = event->getNode();
+    EdgeSPtr edge = event->getEdge();
+    Point3SPtr point = node->getPoint();
+    DEBUG_PRINT(edge->toString());
+
+    // @todo would nice:
+    // - to avoid redundant checks (e.g. isTriangle multiple times)
+    // - to avoid code duplication with collectXYZEvents()
+    //
+    // To avoid redundant code, it could be re-ordered by descending amount of collapsing edges (6 --> 1)?
+    // Might not speed things up if majority of events are a small number of edge collapses.
+    // Anyway, vanish events are cheap to collect, and cheap to process.
+
+    // The fake infinite loops are only there to enable 'break's such that the code
+    // is identical to that of the respective collectXYZEvent() functions
+
+    // Edge Event
+    for(;;)
+    {
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
+            // triangle event
+            std::cout << "Not an Edge Event (one incident face is a triangle)" << std::endl;
+            break;
+        }
+
+        FacetSPtr facet_src = edge->getFacetSrc();
+        FacetSPtr facet_dst = edge->getFacetDst();
+
+        // This does not work when there is more than one edge between both facets.
+        // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
+        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check also happen in other events?...
+
+        bool split_event = false;
+        std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
+        while (it_e2 != edges_2.end()) {
+            EdgeSPtr edge_2 = *it_e2++;
+
+            bool split_event_current_1_b = true;
+            bool split_event_current_2_b = true;
+            bool split_event_current_3_b = true;
+
+            FacetSPtr facet_l2 = edge_2->getFacetL();
+            FacetSPtr facet_r2 = edge_2->getFacetR();
+            FacetSPtr facet_2_src = edge_2->getFacetSrc();
+            FacetSPtr facet_2_dst = edge_2->getFacetDst();
+
+            Plane3SPtr plane_l2 = facet_l2->plane();
+            Plane3SPtr plane_r2 = facet_r2->plane();
+            CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+            CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+
+            CGAL::FT l2a = plane_l2->a();
+            CGAL::FT l2b = plane_l2->b();
+            CGAL::FT l2c = plane_l2->c();
+            CGAL::FT l2d = plane_l2->d();
+            CGAL::FT r2a = plane_r2->a();
+            CGAL::FT r2b = plane_r2->b();
+            CGAL::FT r2c = plane_r2->c();
+            CGAL::FT r2d = plane_r2->d();
+
+            CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+            CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;
+            CGAL_assertion(lt2 == rt2);
+
+            if ((lt2 > 0) || (rt2 > 0)) {
+                // can 'break' directly because it's the same value for all 'edge_2's
+                break;
+            }
+
+            // @fixme another geometric check
+            if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
+                continue;
+            }
+
+            if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
+                continue;
+            }
+
+            const bool split_event_current_b = (split_event_current_1_b &&
+                                                split_event_current_2_b &&
+                                                split_event_current_3_b);
+            if (split_event_current_b) {
+                split_event = true;
+                break;
+            }
+        }
+
+        if (split_event) {
+            std::cout << "Not an Edge Event (Split)" << std::endl;
+            break;
+        }
+
+        // edge merge event
+        EdgeSPtr edge_prev = edge->prev(facet_l);
+        EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            std::cout << "Not an Edge Event (Edge Merge #1)" << std::endl;
+            break;
+        }
+        edge_prev = edge->prev(facet_l)->prev(facet_l);
+        edge_next = edge->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            std::cout << "Not an Edge Event (Edge Merge #2)" << std::endl;
+            break;
+        }
+        edge_prev = edge->prev(facet_r);
+        edge_next = edge->next(facet_r)->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            std::cout << "Not an Edge Event (Edge Merge #3)" << std::endl;
+            break;
+        }
+        edge_prev = edge->prev(facet_r)->prev(facet_r);
+        edge_next = edge->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next)) {
+            std::cout << "Not an Edge Event (Edge Merge #4)" << std::endl;
+            break;
+        }
+
+        // if here, it's an edge event
+        EdgeEventSPtr edge_event = EdgeEvent::create();
+        edge_event->setStepID(step_id_);
+        edge_event->setNode(node);
+        edge_event->setEdge(edge);
+
+        return handleEdgeEvent(current_offset, edge_event, polyhedron);
+    }
+
+    // EdgeMergeEvent
+    for(;;)
+    {
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
+            // triangle event
+            std::cout << "Not an EdgeMerge Event (one incident face is a triangle)" << std::endl;
+            break;
+        }
+
+        FacetSPtr facet_other = edge->getFacetL();
+        EdgeSPtr edge_next = edge->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        if (edge_next == edge) {
+            // dbl edge merge event
+            std::cout << "Not an EdgeMerge Event (Dbl #1)" << std::endl;
+            break;
+        }
+
+        facet_other = edge->getFacetR();
+        edge_next = edge->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        if (edge_next == edge) {
+            // dbl edge merge event
+            std::cout << "Not an EdgeMerge Event (Dbl #2)" << std::endl;
+            break;
+        }
+
+        FacetSPtr facet = FacetSPtr();
+        EdgeSPtr edge_1 = EdgeSPtr();
+        EdgeSPtr edge_2 = EdgeSPtr();
+
+        // @todo do we still need to test other combinations if a previous one matched?
+        EdgeSPtr edge_prev = edge->prev(facet_l);
+        edge_next = edge->next(facet_l)->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_l;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+
+        edge_prev = edge->prev(facet_l)->prev(facet_l);
+        edge_next = edge->next(facet_l);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_l;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+
+        edge_prev = edge->prev(facet_r);
+        edge_next = edge->next(facet_r)->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_r;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+
+        edge_prev = edge->prev(facet_r)->prev(facet_r);
+        edge_next = edge->next(facet_r);
+        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
+            facet = facet_r;
+            edge_1 = edge_prev;
+            edge_2 = edge_next;
+        }
+
+        if (!(facet && edge_1 && edge_2)) {
+            std::cout << "Not an EdgeMerge Event (Neighborhood)" << std::endl;
+            break;
+        }
+
+        // if here, it's an edge merge event
+        EdgeMergeEventSPtr edge_merge_event = EdgeMergeEvent::create();
+        edge_merge_event->setStepID(step_id_);
+        edge_merge_event->setNode(node);
+        edge_merge_event->setFacet(facet);
+        edge_merge_event->setEdge1(edge_1);
+        edge_merge_event->setEdge2(edge_2);
+
+        return handleEdgeMergeEvent(current_offset, edge_merge_event, polyhedron);
+    }
+
+    // TriangleEvent
+    for(;;)
+    {
+        if (isTetrahedron(edge)) {
+            // tetrahedron event
+            std::cout << "Not a Triangle Event (Tetrahedron)" << std::endl;
+            break;
+        }
+
+        FacetSPtr facet;
+        if (isTriangle(edge->getFacetL(), edge)) {
+            facet = edge->getFacetL();
+        } else if (isTriangle(edge->getFacetR(), edge)) {
+            facet = edge->getFacetR();
+        } else {
+            std::cout << "Not a Triangle Event (not triangle)" << std::endl;
+            break;
+        }
+
+        bool dbl_triangle_event = false;
+        EdgeSPtr edge_tmp = edge;
+        for (unsigned int i = 0; i < 3; i++) {
+            FacetSPtr facet_tmp_l = edge_tmp->getFacetL();
+            FacetSPtr facet_tmp_r = edge_tmp->getFacetR();
+            if (facet_tmp_l && facet_tmp_r) {
+                if (isTriangle(facet_tmp_l, edge_tmp) &&
+                        isTriangle(facet_tmp_r, edge_tmp)) {
+                    dbl_triangle_event = true;
+                    break;
+                }
+            }
+            edge_tmp = edge_tmp->next(facet);
+        }
+        if (dbl_triangle_event) {
+            std::cout << "Not a Triangle Event (2 triangles)" << std::endl;
+            break;
+        }
+
+        // if here, it's a triangle event
+        TriangleEventSPtr triangle_event = TriangleEvent::create();
+        triangle_event->setStepID(step_id_);
+        triangle_event->setNode(node);
+        triangle_event->setFacet(facet);
+        triangle_event->setEdgeBegin(edge);
+
+        return handleTriangleEvent(current_offset, triangle_event, polyhedron);
+    }
+
+    // DblEdgeMergeEvent
+    for(;;)
+    {
+        // At pop time, edge is degenerate, but by default isReflex() does a symbolic
+        // shift into the future. However, here we want to know if the edge was reflex
+        // BEFORE it became degenerate.
+        if (!isReflex(edge, false /*shift into the past*/)) {
+            std::cout << "Not a DblEdgeMerge Event (not reflex)" << std::endl;
+            break;
+        }
+
+        bool is_dbl_edge_merge_event = false;
+        FacetSPtr facet_1;
+        EdgeSPtr edge_11;
+        EdgeSPtr edge_12;
+        FacetSPtr facet_2;
+        EdgeSPtr edge_21;
+        EdgeSPtr edge_22;
+        FacetSPtr facet_other = edge->getFacetL();
+        EdgeSPtr edge_next = edge->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        if (edge_next == edge) {
+            is_dbl_edge_merge_event = true;
+            facet_1 = edge->getFacetL();
+            edge_11 = edge->prev(facet_1);
+            edge_12 = edge->next(facet_1)->next(facet_1);
+            facet_2 = edge->getFacetR();
+            edge_21 = edge->prev(facet_2);
+            edge_22 = edge->next(facet_2)->next(facet_2);
+        }
+
+        facet_other = edge->getFacetR();
+        edge_next = edge->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->prev(facet_other);
+        facet_other = edge_next->other(facet_other);
+        edge_next = edge_next->next(facet_other);
+        if (edge_next == edge) {
+            is_dbl_edge_merge_event = true;
+            facet_1 = edge->getFacetR();
+            edge_11 = edge->prev(facet_1)->prev(facet_1);
+            edge_12 = edge->next(facet_1);
+            facet_2 = edge->getFacetL();
+            edge_21 = edge->prev(facet_2)->prev(facet_2);
+            edge_22 = edge->next(facet_2);
+        }
+
+        if (edge_11 == edge_12 || edge_21 == edge_22) {
+            // double triangle event
+            std::cout << "Not a DblEdgeMerge Event (DblTriangle)" << std::endl;
+            break;
+        }
+
+        if (!is_dbl_edge_merge_event) {
+            std::cout << "Not a DblEdgeMerge Event" << std::endl;
+            break;
+        }
+
+        // if here, it's a double edge merge event
+        DblEdgeMergeEventSPtr dbl_edge_merge_event = DblEdgeMergeEvent::create();
+        dbl_edge_merge_event->setStepID(step_id_);
+        dbl_edge_merge_event->setNode(node);
+        dbl_edge_merge_event->setFacet1(facet_1);
+        dbl_edge_merge_event->setEdge11(edge_11);
+        dbl_edge_merge_event->setEdge12(edge_12);
+        dbl_edge_merge_event->setFacet2(facet_2);
+        dbl_edge_merge_event->setEdge21(edge_21);
+        dbl_edge_merge_event->setEdge22(edge_22);
+
+        return handleDblEdgeMergeEvent(current_offset, dbl_edge_merge_event, polyhedron);
+    }
+
+    // DblTriangleEvent
+    for(;;)
+    {
+        if (isTetrahedron(edge)) {
+            std::cout << "Not a DblTriangleMerge Event (Tetrahedron)" << std::endl;
+            break;
+        }
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        if (!facet_l || !facet_r) {
+            std::cout << "Not a DblTriangleMerge Event (neighborhood)" << std::endl;
+            break;
+        }
+        if (!(isTriangle(facet_l, edge) &&
+                isTriangle(facet_r, edge))) {
+            std::cout << "Not a DblTriangleMerge Event (not triangles)" << std::endl;
+            break;
+        }
+
+        // if here, it's a double triangle event
+        DblTriangleEventSPtr dbl_triangle_event = DblTriangleEvent::create();
+        dbl_triangle_event->setStepID(step_id_);
+        dbl_triangle_event->setNode(node);
+        dbl_triangle_event->setEdge(edge);
+
+        return handleDblTriangleEvent(current_offset, dbl_triangle_event, polyhedron);
+    }
+
+    // TetrahedronEvent
+    for(;;)
+    {
+        if (!isTetrahedron(edge)) {
+            std::cout << "Not a Tetrahedron Event" << std::endl;
+            break;
+        }
+
+        // if here, it's a tetrahedron event
+        TetrahedronEventSPtr tetrahedron_event = TetrahedronEvent::create();
+        tetrahedron_event->setStepID(step_id_);
+        tetrahedron_event->setNode(node);
+        tetrahedron_event->setEdgeBegin(edge);
+
+        return handleTetrahedronEvent(current_offset, tetrahedron_event, polyhedron);
+    }
+
+    return EventStatus::NON_EVENT;
+}
+
+SimpleStraightSkel::EventStatus
+SimpleStraightSkel::handleEdgeEvent(const CGAL::FT current_offset,
+                                    EdgeEventSPtr event,
+                                    PolyhedronSPtr polyhedron)
+{
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#########  Handle Edge Event  ##########");
+    DEBUG_PRINT("########################################");
+
+    const CGAL::FT event_offset = event->getOffset();
+    polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
+
+    WriteLock l(skel_result_->mutex());
     NodeSPtr node = event->getNode();
     appendEventNode(node);
 
