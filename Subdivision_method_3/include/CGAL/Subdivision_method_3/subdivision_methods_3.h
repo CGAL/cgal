@@ -201,7 +201,7 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters
 
 /*!
  *
- * applies an  subdivision several times on the control mesh `pmesh`.
+ * applies a subdivision several times on the control mesh `pmesh`.
  * The geometry of the refined mesh is computed by the geometry policy mask `Linear_mask_3`,
  * which is similar to Loop subdivision but does not change the shape of the mesh (only the connectivity).
  * The new vertices are trivially computed as the average of the incident vertices (e.g., midpoint of an edge).
