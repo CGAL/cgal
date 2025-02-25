@@ -544,6 +544,8 @@ CGAL_Kernel_cons(Intersect_2,
                  intersect_2_object)
 CGAL_Kernel_cons(Intersect_3,
                  intersect_3_object)
+CGAL_Kernel_cons(Intersect_offset_planes_3,
+                 intersect_offset_planes_3_object)
 CGAL_Kernel_cons(Intersect_point_3_for_polyhedral_envelope,
                  intersect_point_3_for_polyhedral_envelope_object)
 CGAL_Kernel_pred(Is_degenerate_2,

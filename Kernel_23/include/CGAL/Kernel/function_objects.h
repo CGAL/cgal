@@ -37,8 +37,6 @@ namespace CGAL {
 
 namespace CommonKernelFunctors {
 
-
-
   template <typename K>
   class Non_zero_coordinate_index_3
   {
