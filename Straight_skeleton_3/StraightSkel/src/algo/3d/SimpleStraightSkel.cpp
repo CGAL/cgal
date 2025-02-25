@@ -3799,6 +3799,10 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                     continue;
                 }
             }
+#else
+            if (edge_1 == edge_2) {
+                continue;
+            }
 #endif
 
             if (edge_1->getFacetL() == edge_2->getFacetL() ||
