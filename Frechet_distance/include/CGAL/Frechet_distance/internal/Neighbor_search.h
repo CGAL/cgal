@@ -97,9 +97,13 @@ class FrechetKdTree
 public:
     FrechetKdTree() = default;
 
-    void insert(Polylines const& curves);  // TODO: also add other methods of
-                                           // inserting points
-    void build();
+    void insert(Polylines const& curves);  // TODO: also add other methods of inserting points
+           
+    template <typename ConcurrencyTag>
+    void build()
+    {        
+    kd_tree.build<ConcurrencyTag>();
+    }
     PolylineIDs search(Polyline const& curve, FT distance);
 
 private:
@@ -256,11 +260,7 @@ void FrechetKdTree<Traits>::insert(Polylines const& curves)
     }
 }
 
-template <class Traits>
-void FrechetKdTree<Traits>::build()
-{
-    kd_tree.build();
-}
+
 
 template <class Traits>
 auto FrechetKdTree<Traits>::search(Polyline const& curve, FT distance)
