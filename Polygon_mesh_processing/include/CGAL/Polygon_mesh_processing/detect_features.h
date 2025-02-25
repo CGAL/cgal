@@ -11,9 +11,6 @@
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Maxime Gimeno
 //
 
-
-
-
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H
 
