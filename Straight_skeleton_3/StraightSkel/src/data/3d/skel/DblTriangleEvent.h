@@ -38,6 +38,7 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     DblTriangleEvent();
     NodeSPtr node_;

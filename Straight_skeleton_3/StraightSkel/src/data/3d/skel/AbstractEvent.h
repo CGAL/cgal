@@ -17,10 +17,15 @@
 #ifndef DATA_3D_SKEL_ABSTRACTEVENT_H
 #define DATA_3D_SKEL_ABSTRACTEVENT_H
 
-#include <list>
-#include <string>
+#include "debug.h"
 #include "data/3d/ptrs.h"
 #include "data/3d/skel/ptrs.h"
+#include "data/3d/Vertex.h"
+#include "data/3d/Edge.h"
+#include "data/3d/Facet.h"
+
+#include <list>
+#include <string>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -96,6 +101,8 @@ public:
 
     virtual bool isValid() const;
 
+    virtual bool isObsolete() const;
+
 protected:
     AbstractEvent();
 
@@ -123,6 +130,84 @@ public:
 
       return (eventA->getOffset() < eventB->getOffset());
     }
+};
+
+struct VertexFacetNeighborhood
+{
+    VertexFacetNeighborhood() {}
+    VertexFacetNeighborhood(const VertexSPtr v)
+        : incident_facets_(VertexFacetNeighborhood::collectIncidentFacets(v))
+    { }
+
+    static std::array<int, 3> collectIncidentFacets(const VertexSPtr vertex)
+    {
+        DEBUG_SPTR(vertex);
+        std::array<int, 3> result;
+        const std::list<FacetWPtr>& ifs = vertex->facets();
+        CGAL_assertion(ifs.size() == 3);
+        std::list<FacetWPtr>::const_iterator it = ifs.begin();
+        for (int i = 0; i < 3; ++i, ++it) {
+            if (FacetSPtr f = it->lock()) {
+                result[i] = f->getBasePlaneID();
+            } else {
+                CGAL_assertion(false);
+                result[i] = -1;
+            }
+        }
+        return result;
+    }
+
+    bool checkNeighborhoodConsistency(const VertexSPtr other) const
+    {
+        DEBUG_SPTR(other);
+        const std::array<int, 3>& other_ifs = collectIncidentFacets(other);
+        const bool result = (incident_facets_ == other_ifs);
+        std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
+        std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
+        std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
+        if (!result) {
+        }
+        return result;
+    }
+
+private:
+    std::array<int, 3> incident_facets_;
+};
+
+struct EdgeFacetNeighborhood
+{
+    EdgeFacetNeighborhood() {}
+    EdgeFacetNeighborhood(const EdgeSPtr edge)
+        : incident_facets_(collectIncidentFacets(edge))
+    { }
+
+    static std::array<int, 4> collectIncidentFacets(const EdgeSPtr& edge)
+    {
+        DEBUG_SPTR(edge);
+        std::array<int, 4> result = {{ edge->getFacetL()->getBasePlaneID(),
+                                       edge->getFacetR()->getBasePlaneID(),
+                                       edge->getFacetSrc()->getBasePlaneID(),
+                                       edge->getFacetDst()->getBasePlaneID() }};
+        return result;
+    }
+
+    bool checkNeighborhoodConsistency(const EdgeSPtr other) const
+    {
+        DEBUG_SPTR(other);
+
+        const std::array<int, 4>& other_ifs = collectIncidentFacets(other);
+        const bool result = (incident_facets_ == other_ifs);
+        if (!result) {
+            std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
+            std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
+            std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
+            std::cout << "  Compare: " << incident_facets_[3] << " (old) " << other_ifs[3] << " (new)" << std::endl;
+        }
+        return result;
+    }
+
+private:
+    std::array<int, 4> incident_facets_;
 };
 
 } } }

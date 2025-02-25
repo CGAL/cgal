@@ -68,7 +68,7 @@ public:
     void initVertexSplitter();
     void initEdgeEvent();
 
-    static bool isReflex(EdgeSPtr edge);
+    static bool isReflex(EdgeSPtr edge, const bool future_facing = true);
     static bool isReflex(VertexSPtr vertex);
     static bool isConvex(VertexSPtr vertex);
 
@@ -186,6 +186,11 @@ public:
      * greater than the event's "step_id".
      */
     static bool isEventPotentiallyObsolete(AbstractEventSPtr event);
+
+    /**
+     * Returns `true` if the neighborhood of an event has changed.
+     */
+    static bool isEventObsolete(AbstractEventSPtr event);
 
     /**
      * Vanish events.
@@ -394,10 +399,9 @@ public:
                                const CGAL::FT current_offset);
 
     /**
-     * Collect all events for the polyhedron
+     * Collect all events for a subset of the polyhedron
      */
-    void collectLocalEvents(const std::set<FacetSPtr>& facets,
-                            PolyhedronSPtr polyhedron,
+    void collectLocalEvents(PolyhedronSPtr polyhedron,
                             const CGAL::FT current_offset,
                             PQ& queue);
 
@@ -426,19 +430,67 @@ public:
 
     void tagFacetsWithStepID(const std::set<FacetSPtr>& facets);
 
-    void handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleTriangleEvent(TriangleEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleDblTriangleEvent(DblTriangleEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleTetrahedronEvent(TetrahedronEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleVertexEvent(VertexEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleFlipVertexEvent(FlipVertexEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSPtr polyhedron);
-    void handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleSplitMergeEvent(SplitMergeEventSPtr event, PolyhedronSPtr polyhedron);
-    void handleEdgeSplitEvent(EdgeSplitEventSPtr event, PolyhedronSPtr polyhedron);
-    void handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr polyhedron);
+    PolyhedronSPtr shiftToEventOffset(PolyhedronSPtr polyhedron,
+                                      const CGAL::FT start_offset,
+                                      const CGAL::FT target_offset);
+
+    enum class EventStatus {
+      NON_EVENT = 0,
+      EVENT_HANDLED,
+      EVENT_NOT_HANDLED
+    };
+
+    EventStatus handleSaveOffsetEvent(const CGAL::FT current_offset,
+                                      SaveOffsetEventSPtr event,
+                                      PolyhedronSPtr polyhedron);
+    EventStatus handleConstOffsetEvent(const CGAL::FT current_offset,
+                                       ConstOffsetEventSPtr event,
+                                       PolyhedronSPtr polyhedron);
+    EventStatus handleVanishEvent(const CGAL::FT current_offset,
+                                  VanishEventSPtr event,
+                                  PolyhedronSPtr polyhedron);
+    EventStatus handleEdgeEvent(const CGAL::FT current_offset,
+                                EdgeEventSPtr event,
+                                PolyhedronSPtr polyhedron);
+    EventStatus handleEdgeMergeEvent(const CGAL::FT current_offset,
+                                     EdgeMergeEventSPtr event,
+                                     PolyhedronSPtr polyhedron);
+    EventStatus handleTriangleEvent(const CGAL::FT current_offset,
+                                    TriangleEventSPtr event,
+                                    PolyhedronSPtr polyhedron);
+    EventStatus handleDblEdgeMergeEvent(const CGAL::FT current_offset,
+                                        DblEdgeMergeEventSPtr event,
+                                        PolyhedronSPtr polyhedron);
+    EventStatus handleDblTriangleEvent(const CGAL::FT current_offset,
+                                       DblTriangleEventSPtr event,
+                                       PolyhedronSPtr polyhedron);
+    EventStatus handleTetrahedronEvent(const CGAL::FT current_offset,
+                                       TetrahedronEventSPtr event,
+                                       PolyhedronSPtr polyhedron);
+    EventStatus handleVertexEvent(const CGAL::FT current_offset,
+                                  VertexEventSPtr event,
+                                  PolyhedronSPtr polyhedron);
+    EventStatus handleFlipVertexEvent(const CGAL::FT current_offset,
+                                      FlipVertexEventSPtr event,
+                                      PolyhedronSPtr polyhedron);
+    EventStatus handleSurfaceEvent(const CGAL::FT current_offset,
+                                   SurfaceEventSPtr event,
+                                   PolyhedronSPtr polyhedron);
+    EventStatus handlePolyhedronSplitEvent(const CGAL::FT current_offset,
+                                           PolyhedronSplitEventSPtr event,
+                                           PolyhedronSPtr polyhedron);
+    EventStatus handleSplitMergeEvent(const CGAL::FT current_offset,
+                                      SplitMergeEventSPtr event,
+                                      PolyhedronSPtr polyhedron);
+    EventStatus handleEdgeSplitEvent(const CGAL::FT current_offset,
+                                     EdgeSplitEventSPtr event,
+                                     PolyhedronSPtr polyhedron);
+    EventStatus handlePierceEvent(const CGAL::FT current_offset,
+                                  PierceEventSPtr event,
+                                  PolyhedronSPtr polyhedron);
+    EventStatus handleEvent(const CGAL::FT current_offset,
+                            AbstractEventSPtr event,
+                            PolyhedronSPtr polyhedron);
 
     StraightSkeletonSPtr getResult() const;
 
@@ -465,7 +517,13 @@ protected:
     std::vector<Plane3SPtr> basePlanes_;
 
     int step_id_;
-    std::set<FacetSPtr> post_op_facets_; // @tmp here just to simplify my life
+
+    std::set<VertexSPtr> post_op_vertices_;
+    std::set<EdgeSPtr> post_op_edges_;
+    std::set<FacetSPtr> post_op_facets_;
+
+    std::set<VertexSPtr> post_op_vertices_pierce_;
+    std::set<EdgeSPtr> post_op_edges_edgesplit_;
 
 #ifndef CGAL_SS3_NO_CACHING
     std::unordered_map<std::array<std::size_t, 4>,

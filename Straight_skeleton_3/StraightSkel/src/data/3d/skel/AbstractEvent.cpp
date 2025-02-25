@@ -148,4 +148,8 @@ bool AbstractEvent::isValid() const {
     return true;
 }
 
+bool AbstractEvent::isObsolete() const {
+    return false;
+}
+
 } } }

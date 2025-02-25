@@ -134,4 +134,10 @@ bool DblTriangleEvent::isValid() const {
     return node_ && !edge_.expired();
 }
 
+bool DblTriangleEvent::isObsolete() const {
+    CGAL_warning_msg(false, "NYI");
+    return false;
+}
+
+
 } } }

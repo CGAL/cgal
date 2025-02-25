@@ -136,4 +136,9 @@ bool EdgeMergeEvent::isValid() const {
     return node_ && !facet_.expired() && !edge1_.expired() && !edge2_.expired();
 }
 
+bool EdgeMergeEvent::isObsolete() const {
+    CGAL_warning_msg(false, "NYI");
+    return false;
+}
+
 } } }

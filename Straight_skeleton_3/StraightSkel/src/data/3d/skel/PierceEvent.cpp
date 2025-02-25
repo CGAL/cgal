@@ -78,6 +78,7 @@ VertexSPtr PierceEvent::getVertex() const {
 
 void PierceEvent::setVertex(VertexSPtr vertex) {
     this->vertex_ = vertex;
+    this->neighborhood_ = VertexFacetNeighborhood(vertex);
 }
 
 void PierceEvent::setHighlight(bool highlight) {
@@ -119,6 +120,15 @@ std::string PierceEvent::toString() const {
 
 bool PierceEvent::isValid() const {
     return node_ && !facet_.expired() && !vertex_.expired();
+}
+
+bool PierceEvent::isObsolete() const {
+  if (VertexSPtr vertex = getVertex()) {
+      // std::cout << "isObsolete(v" << vertex->getID() << ")?" << std::endl;
+      return ! neighborhood_.checkNeighborhoodConsistency(vertex);
+  }
+
+  return false;
 }
 
 } } }

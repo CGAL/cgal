@@ -67,6 +67,7 @@ EdgeSPtr EdgeSplitEvent::getEdge1() const {
 
 void EdgeSplitEvent::setEdge1(EdgeSPtr edge1) {
     this->edge1_ = edge1;
+    this->neighborhood1_ = EdgeFacetNeighborhood(edge1);
 }
 
 EdgeSPtr EdgeSplitEvent::getEdge2() const {
@@ -76,6 +77,7 @@ EdgeSPtr EdgeSplitEvent::getEdge2() const {
 
 void EdgeSplitEvent::setEdge2(EdgeSPtr edge2) {
     this->edge2_ = edge2;
+    this->neighborhood2_ = EdgeFacetNeighborhood(edge2);
 }
 
 int EdgeSplitEvent::getEdgeOrientation() const {
@@ -119,6 +121,24 @@ std::string EdgeSplitEvent::toString() const {
 
 bool EdgeSplitEvent::isValid() const {
     return node_ && !edge1_.expired() && !edge2_.expired();
+}
+
+bool EdgeSplitEvent::isObsolete() const {
+    if (EdgeSPtr edge_1 = getEdge1()) {
+        // std::cout << "isObsolete(e " << edge_1->getID() << ")?" << std::endl;
+        if (!neighborhood1_.checkNeighborhoodConsistency(edge_1)) {
+            return true;
+        }
+    }
+
+    if (EdgeSPtr edge_2 = getEdge2()) {
+        // std::cout << "isObsolete(e " << edge_2->getID() << ")?" << std::endl;
+        if (!neighborhood2_.checkNeighborhoodConsistency(edge_2)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } } }

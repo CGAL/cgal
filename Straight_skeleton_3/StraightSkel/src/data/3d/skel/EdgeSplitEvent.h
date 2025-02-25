@@ -41,12 +41,15 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     EdgeSplitEvent();
     NodeSPtr node_;
     EdgeWPtr edge1_;
     EdgeWPtr edge2_;
     int edge_orientation_;
+    EdgeFacetNeighborhood neighborhood1_;
+    EdgeFacetNeighborhood neighborhood2_;
 };
 
 } } }

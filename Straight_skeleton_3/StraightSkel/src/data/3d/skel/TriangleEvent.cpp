@@ -76,6 +76,7 @@ EdgeSPtr TriangleEvent::getEdgeBegin() const {
 
 void TriangleEvent::setEdgeBegin(EdgeSPtr edge_begin) {
     this->edge_begin_ = edge_begin;
+    this->neighborhood_ = EdgeFacetNeighborhood(edge_begin);
 }
 
 void TriangleEvent::getVertices(VertexSPtr out[3]) const {
@@ -136,6 +137,14 @@ std::string TriangleEvent::toString() const {
 
 bool TriangleEvent::isValid() const {
     return node_ && !facet_.expired() && !edge_begin_.expired();
+}
+
+bool TriangleEvent::isObsolete() const {
+    if (EdgeSPtr edge = getEdgeBegin()) {
+        return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    }
+
+    return false;
 }
 
 } } }

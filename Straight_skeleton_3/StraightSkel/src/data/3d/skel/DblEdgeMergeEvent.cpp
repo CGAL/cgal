@@ -209,4 +209,9 @@ bool DblEdgeMergeEvent::isValid() const {
     return node_ && !facet_1_.expired() && !edge_11_.expired() && !edge_12_.expired() && !facet_2_.expired() && !edge_21_.expired() && !edge_22_.expired();
 }
 
+bool DblEdgeMergeEvent::isObsolete() const {
+    // CGAL_warning_msg(false, "NYI");
+    return false;
+}
+
 } } }

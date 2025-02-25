@@ -37,6 +37,7 @@ namespace data { namespace _3d {
 
 Facet::Facet() {
     this->id_ = -1;
+    this->basePlaneId_ = -1;
 }
 
 Facet::~Facet() {
@@ -537,13 +538,13 @@ void Facet::setID(int id) {
     this->id_ = id;
 }
 
-std::size_t Facet::getBasePlaneID() const {
-    return this->basePlane_;
+int Facet::getBasePlaneID() const {
+    return this->basePlaneId_;
 }
 
 // @todo proper names (with 'id')
-void Facet::setBasePlaneID(std::size_t plane) {
-    this->basePlane_ = plane;
+void Facet::setBasePlaneID(int planeId) {
+    this->basePlaneId_ = planeId;
 }
 
 Plane3SPtr Facet::getPlane() const {

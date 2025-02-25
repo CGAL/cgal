@@ -68,6 +68,7 @@ VertexSPtr VertexEvent::getVertex1() const {
 
 void VertexEvent::setVertex1(VertexSPtr vertex_1) {
     this->vertex_1_ = vertex_1;
+    this->neighborhood_1_ = VertexFacetNeighborhood(vertex_1);
 }
 
 VertexSPtr VertexEvent::getVertex2() const {
@@ -77,6 +78,7 @@ VertexSPtr VertexEvent::getVertex2() const {
 
 void VertexEvent::setVertex2(VertexSPtr vertex_2) {
     this->vertex_2_ = vertex_2;
+    this->neighborhood_2_ = VertexFacetNeighborhood(vertex_2);
 }
 
 FacetSPtr VertexEvent::getFacet1() const {
@@ -132,6 +134,24 @@ std::string VertexEvent::toString() const {
 
 bool VertexEvent::isValid() const {
     return node_ && !vertex_1_.expired() && !vertex_2_.expired() && !facet_1_.expired() && !facet_2_.expired();
+}
+
+bool VertexEvent::isObsolete() const {
+    if (VertexSPtr vertex_1 = getVertex1()) {
+        // std::cout << "isObsolete(v" << vertex_1->getID() << ")?" << std::endl;
+        if (!neighborhood_1_.checkNeighborhoodConsistency(vertex_1)) {
+            return true;
+        }
+    }
+
+    if (VertexSPtr vertex_2 = getVertex2()) {
+        // std::cout << "isObsolete(v" << vertex_2->getID() << ")?" << std::endl;
+        if (!neighborhood_2_.checkNeighborhoodConsistency(vertex_2)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } } }

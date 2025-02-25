@@ -67,6 +67,7 @@ EdgeSPtr PolyhedronSplitEvent::getEdge1() const {
 
 void PolyhedronSplitEvent::setEdge1(EdgeSPtr edge1) {
     this->edge1_ = edge1;
+    this->neighborhood1_ = EdgeFacetNeighborhood(edge1);
 }
 
 EdgeSPtr PolyhedronSplitEvent::getEdge2() const {
@@ -76,6 +77,7 @@ EdgeSPtr PolyhedronSplitEvent::getEdge2() const {
 
 void PolyhedronSplitEvent::setEdge2(EdgeSPtr edge2) {
     this->edge2_ = edge2;
+    this->neighborhood2_ = EdgeFacetNeighborhood(edge2);
 }
 
 void PolyhedronSplitEvent::setHighlight(bool highlight) {
@@ -111,6 +113,24 @@ std::string PolyhedronSplitEvent::toString() const {
 
 bool PolyhedronSplitEvent::isValid() const {
     return node_ && !edge1_.expired() && !edge2_.expired();
+}
+
+bool PolyhedronSplitEvent::isObsolete() const {
+    if (EdgeSPtr edge_1 = getEdge1()) {
+        // std::cout << "isObsolete(e" << edge_1->getID() << ")?" << std::endl;
+        if (!neighborhood1_.checkNeighborhoodConsistency(edge_1)) {
+            return true;
+        }
+    }
+
+    if (EdgeSPtr edge_2 = getEdge2()) {
+        // std::cout << "isObsolete(e" << edge_2->getID() << ")?" << std::endl;
+        if (!neighborhood2_.checkNeighborhoodConsistency(edge_2)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } } }

@@ -41,11 +41,13 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     TriangleEvent();
     NodeSPtr node_;
-    FacetWPtr facet_;
+    FacetWPtr facet_; // @todo shouldn't be needed, edge_begin_->getFacetL is enough
     EdgeWPtr edge_begin_;
+    EdgeFacetNeighborhood neighborhood_; // this covers the four faces involved in the triangle event
 };
 
 } } }

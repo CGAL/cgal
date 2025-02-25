@@ -66,6 +66,7 @@ EdgeSPtr EdgeEvent::getEdge() const {
 
 void EdgeEvent::setEdge(EdgeSPtr edge) {
     this->edge_ = edge;
+    this->neighborhood_ = EdgeFacetNeighborhood(edge);
 }
 
 void EdgeEvent::setHighlight(bool highlight) {
@@ -93,5 +94,15 @@ std::string EdgeEvent::toString() const {
 bool EdgeEvent::isValid() const {
     return node_ && !edge_.expired();
 }
+
+bool EdgeEvent::isObsolete() const {
+    if (EdgeSPtr edge = getEdge()) {
+        // std::cout << "isObsolete(e " << edge->getID() << ")?" << std::endl;
+        return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    }
+
+    return false;
+}
+
 
 } } }

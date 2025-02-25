@@ -47,12 +47,7 @@ protected:
     FacetWPtr facet_origin_;
     CGAL::FT speed_;
 
-    // This is the ID of the last event that was processed (popped from the queue)
-    // which impacted this facet.
-    // The point is that we pop the queue, we can compare the step ID of the facet involved
-    // in the handling of the event to the step contained in the event.
-    // If the step of the event is *smaller* than the step of the facet, it means the facet
-    // has been modified after the event was created, so we ignore the event.
+    // This is the last iteration ID at which we have modified this facet
     int step_id_ = -1;
 };
 

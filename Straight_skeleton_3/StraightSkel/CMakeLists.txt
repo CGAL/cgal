@@ -128,6 +128,7 @@ set(data_3d_SOURCES
         src/data/3d/skel/AbstractEvent.cpp
         src/data/3d/skel/ConstOffsetEvent.cpp
         src/data/3d/skel/SaveOffsetEvent.cpp
+        src/data/3d/skel/VanishEvent.cpp
         src/data/3d/skel/EdgeEvent.cpp
         src/data/3d/skel/EdgeMergeEvent.cpp
         src/data/3d/skel/TriangleEvent.cpp

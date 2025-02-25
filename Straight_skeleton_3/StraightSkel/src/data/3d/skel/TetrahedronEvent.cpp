@@ -67,6 +67,7 @@ EdgeSPtr TetrahedronEvent::getEdgeBegin() const {
 
 void TetrahedronEvent::setEdgeBegin(EdgeSPtr edge_begin) {
     this->edge_begin_ = edge_begin;
+    this->neighborhood_ = EdgeFacetNeighborhood(edge_begin);
 }
 
 void TetrahedronEvent::getVertices(VertexSPtr out[4]) const {
@@ -155,6 +156,14 @@ std::string TetrahedronEvent::toString() const {
 
 bool TetrahedronEvent::isValid() const {
     return node_ && !edge_begin_.expired();
+}
+
+bool TetrahedronEvent::isObsolete() const {
+    if (EdgeSPtr edge = getEdgeBegin()) {
+        return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    }
+
+    return false;
 }
 
 } } }

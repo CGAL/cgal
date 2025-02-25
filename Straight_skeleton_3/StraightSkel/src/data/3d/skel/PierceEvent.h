@@ -39,11 +39,13 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     PierceEvent();
     NodeSPtr node_;
     FacetWPtr facet_;
     VertexWPtr vertex_;
+    VertexFacetNeighborhood neighborhood_;
 };
 
 } } }

@@ -41,6 +41,7 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     FlipVertexEvent();
     NodeSPtr node_;
@@ -48,6 +49,8 @@ protected:
     VertexWPtr vertex_2_;
     FacetWPtr facet_1_;
     FacetWPtr facet_2_;
+    VertexFacetNeighborhood neighborhood_1_;
+    VertexFacetNeighborhood neighborhood_2_;
 };
 
 } } }

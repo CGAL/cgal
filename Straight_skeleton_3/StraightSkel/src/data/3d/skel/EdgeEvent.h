@@ -37,11 +37,13 @@ public:
     void setHighlight(bool highlight) override;
     std::string toString() const override;
     bool isValid() const override;
+    bool isObsolete() const override;
 protected:
     EdgeEvent();
 
     NodeSPtr node_;
     EdgeWPtr edge_;
+    EdgeFacetNeighborhood neighborhood_;
 };
 
 } } }
