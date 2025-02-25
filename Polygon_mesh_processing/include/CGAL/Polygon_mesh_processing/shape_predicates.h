@@ -155,6 +155,29 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
   return degenerate_edges(edges(tm), tm, out, np);
 }
 
+template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
+                                 const TriangleMesh& tm,
+                                 const NamedParameters& np = parameters::default_values())
+{
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(h, tm));
+  CGAL_precondition(CGAL::is_triangle(h, tm));
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, tm));
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+
+  return traits.collinear_3_object()(get(vpmap, source(h, tm)),
+                                     get(vpmap, target(h, tm)),
+                                     get(vpmap, target(next(h, tm), tm)));
+}
+
 /// \ingroup PMP_predicates_grp
 ///
 /// checks whether a triangle face is degenerate.
@@ -192,24 +215,8 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                  const TriangleMesh& tm,
                                  const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
   CGAL_precondition(is_valid_face_descriptor(f, tm));
-  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(vertex_point, tm));
-
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
-
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
-
-  return traits.collinear_3_object()(get(vpmap, source(h, tm)),
-                                     get(vpmap, target(h, tm)),
-                                     get(vpmap, target(next(h, tm), tm)));
+  return is_degenerate_triangle_face(halfedge(f, tm), tm, np);
 }
 
 /// \ingroup PMP_predicates_grp

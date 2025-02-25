@@ -246,6 +246,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_mean_curvatures()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::squared_edge_length()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::minmax_edge_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::squared_face_area()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
@@ -253,6 +254,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::longest_border()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::minmax_dihedral_angle()` \endlink
 
 \cgalCRPSection{Feature Detection Functions}
 - `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
