@@ -183,7 +183,9 @@ bool polygon_soup_snap_rounding(PointRange &points,
   auto snap = [](typename Kernel::FT x, double scale)
   {
     // Scale the coordinate, round to nearest integer and scale back
-    return internal::ceil((x * scale) + 0.5) / scale;
+    // TODO replace this ceil by the one of Algebraic_fondation when it will be add to master
+    return internal::ceil((x * scale) - 0.5) / scale;
+    // return ceil((x * scale) - 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
   {
