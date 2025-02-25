@@ -1,4 +1,5 @@
-/*! \ingroup PkgArrangementOnSurface2ConceptsTraits \cgalConcept
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
+ * \cgalConcept
  *
  * The concept `AosTraits_2` allows the construction of arrangement of
  * <I>general</I> planar curves. Models of this concept are used by the free
