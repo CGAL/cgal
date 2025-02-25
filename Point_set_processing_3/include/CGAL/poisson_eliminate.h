@@ -30,16 +30,16 @@ namespace CGAL {
 
 namespace internal {
 
-double get_maximum_radius(std::size_t dimensions, std::size_t sample_size, double domain_size) {
+double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
   double sampleArea = domain_size / double(sample_size);
   double r_max;
-  switch (dimensions) {
+  switch (dimension) {
   case 2: r_max = CGAL::sqrt(sampleArea / (2.0 * CGAL::sqrt(3.0))); break;
   case 3: r_max = std::pow(sampleArea / (4.0 * CGAL::sqrt(2.0)), 1.0 / 3.0); break;
   default:
     double c;
     std::size_t d_start;
-    if ((dimensions & 1)) {
+    if ((dimension & 1)) {
       c = 2.0;
       d_start = 3;
     }
@@ -47,10 +47,10 @@ double get_maximum_radius(std::size_t dimensions, std::size_t sample_size, doubl
       c = CGAL_PI;
       d_start = 4;
     }
-    for (std::size_t d = d_start; d <= dimensions; d += 2)
+    for (std::size_t d = d_start; d <= dimension; d += 2)
       c *= 2.0 * CGAL_PI / double(d);
 
-    r_max = std::pow(sampleArea / c, 1.0 / double(dimensions));
+    r_max = std::pow(sampleArea / c, 1.0 / double(dimension));
     break;
   }
   return r_max;

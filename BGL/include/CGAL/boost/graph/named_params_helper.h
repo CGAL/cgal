@@ -359,17 +359,17 @@ struct GetPolygonSoupGeomTraits
 
 namespace internal {
 template <class Point, int d = CGAL::Ambient_dimension<Point>::value>
-struct Vector {
+struct Vector_matching_point {
   typedef typename Kernel_traits<Point>::Kernel::Vector_d type;
 };
 
 template <class Point>
-struct Vector<Point, 2> {
+struct Vector_matching_point<Point, 2> {
   typedef typename Kernel_traits<Point>::Kernel::Vector_2 type;
 };
 
 template <class Point>
-struct Vector<Point, 3> {
+struct Vector_matching_point<Point, 3> {
   typedef typename Kernel_traits<Point>::Kernel::Vector_3 type;
 };
 }
@@ -397,7 +397,7 @@ struct Point_set_processing_3_np_helper
 
   typedef typename Geom_traits::FT FT; // public
 
-  typedef Constant_property_map<Value_type, typename internal::Vector<Point>::type> DummyNormalMap;
+  typedef Constant_property_map<Value_type, typename internal::Vector_matching_point<Point>::type> DummyNormalMap;
   typedef typename Default::Get<NormalMap, DummyNormalMap>::type DefaultNMap;
 
   typedef typename internal_np::Lookup_named_param_def<
