@@ -20,10 +20,10 @@
 
 /*! \file The non-caching segment traits-class for the arrangement package.
  * This traits class handles general segments. It is a model of the
- * ArrangementTraits_2 concept, a refinement of the ArrangementBasicTraits_2
+ * AosTraits_2 concept, a refinement of the AosBasicTraits_2
  * concept. The class is templated by a kernel and inherits from the
  * Arr_non_caching_segment_basic_traits_2 class instantiated with the kernel -
- * a model of the ArrangementBasicTraits_2 concept. It defined a few additional
+ * a model of the AosBasicTraits_2 concept. It defined a few additional
  * functors required by the concept it models.
  */
 
@@ -38,7 +38,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementTraits_2 concept that handles general
+ * A model of the AosTraits_2 concept that handles general
  * line segments.
  */
 template <typename Kernel_T = Exact_predicates_exact_constructions_kernel>
