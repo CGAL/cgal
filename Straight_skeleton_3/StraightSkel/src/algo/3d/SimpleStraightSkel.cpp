@@ -403,7 +403,7 @@ bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
     while (it_e != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (!edge_wptr.expired()) {
+        if (!edge_wptr.expired()) { // @fixme fix all these expired checks that should be lock() tries
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
             if (!isReflex(edge)) {
                 result = false;
@@ -2262,7 +2262,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
-        EdgeSPtr edge = *it_e++;
+        const EdgeSPtr edge = *it_e++;
 
         VertexSPtr vertex_src = edge->getVertexSrc();
         VertexSPtr vertex_dst = edge->getVertexDst();
@@ -3048,6 +3048,8 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
 
     ReadLock l(polyhedron->mutex());
 
+    // @speed seems like this could be rewritten in a much cheaper manner (and storing
+    // the convexity property). But currently, it's a cheap collect().
     std::list<VertexSPtr>::const_iterator it_v1 = vertices.begin();
     while (it_v1 != vertices.end()) {
         VertexSPtr vertex_1 = *it_v1++;
@@ -3055,8 +3057,6 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             continue;
         }
 
-        // @speed seems like this could be rewritten in a much cheaper manner (and storing
-        // the convexity property). But currently, it's a cheap collect().
         std::set<VertexSPtr> vertices_2;
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
@@ -3576,6 +3576,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
                                         current_offset, offset_of_nearest_event, queue);
 }
 
+// @todo large amount of code duplicated between VertexEvent, FlipVertexEvent and SplitMergeEvent
 void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
                                                  PolyhedronSPtr polyhedron,
                                                  const bool use_canonical_event_reps,
@@ -3872,6 +3873,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                 // share a vertex
                 continue;
             }
+
             if (((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() == facet_1_dst) ||
                     (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() == facet_1_src))) {
                 // polyhedron split event
@@ -4013,6 +4015,9 @@ void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
                                   current_offset, offset_of_nearest_event, queue);
 }
 
+// @speed should keep a (sorted) list of vertex ---> face of known contact events
+// to filter how far we need to look and also avoid checking again multiple times
+// something like SLS2
 void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertices,
                                              const std::list<FacetSPtr>& facets,
                                              PolyhedronSPtr polyhedron,
@@ -4049,6 +4054,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
             while (it_f != facets.end()) {
                 FacetSPtr facet = *it_f++;
 
+                // @todo contains_vertex is redundant with has_edge_to_facet?
                 bool contains_vertex = false;
                 std::list<VertexSPtr>::iterator it_v2 = facet->vertices().begin();
                 while (it_v2 != facet->vertices().end()) {
@@ -4068,9 +4074,8 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     EdgeWPtr edge_wptr = *it_e++;
                     if (!edge_wptr.expired()) {
                         EdgeSPtr edge(edge_wptr);
-                        // @todo we should not need to check both extremities since we know !contains_vertex
-                        FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
-                        FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
+                        FacetSPtr facet_src = edge->getFacetSrc();
+                        FacetSPtr facet_dst = edge->getFacetDst();
                         if (facet == facet_src || facet == facet_dst) {
                             has_edge_to_facet = true;
                             break;

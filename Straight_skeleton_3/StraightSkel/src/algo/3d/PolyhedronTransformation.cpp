@@ -321,8 +321,6 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,
                                                      const bool recompute_positions)
 {
-    DEBUG_PRINT("~~~~ Shift by " << offset);
-
     std::ofstream shift_out("results/last_shift.polylines.txt");
     shift_out.precision(17);
 

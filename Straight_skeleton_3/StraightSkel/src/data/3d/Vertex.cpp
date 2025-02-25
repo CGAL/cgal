@@ -602,6 +602,7 @@ std::string Vertex::toString() const {
             FacetWPtr facet_wptr = *it++;
             if (!facet_wptr.expired()) {
                 result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
+                result += " (" + std::to_string(FacetSPtr(facet_wptr)->getBasePlaneID()) + ")";
             }
         }
         result += " }";

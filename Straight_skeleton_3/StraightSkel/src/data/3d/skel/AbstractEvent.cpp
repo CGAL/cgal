@@ -18,6 +18,7 @@
 
 #include "debug.h"
 #include "util/StringFactory.h"
+
 #include <sstream>
 
 namespace data { namespace _3d { namespace skel {

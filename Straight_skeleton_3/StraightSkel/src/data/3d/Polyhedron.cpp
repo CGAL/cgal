@@ -14,6 +14,7 @@
  * @date   2011-11-26
  */
 
+#include "data/3d/ptrs.h"
 #include "data/3d/Polyhedron.h"
 
 #include "debug.h"
@@ -362,12 +363,12 @@ bool Polyhedron::isConsistent() const {
                     break;
                 }
 
-                if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
-                {
-                    std::cerr << "- Degenerate edge!" << std::endl;
-                    std::cerr << edge->getVertexSrc()->toString() << std::endl;
-                    std::cerr << edge->getVertexDst()->toString() << std::endl;
-                }
+                // if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
+                // {
+                //     std::cerr << "- Degenerate edge!" << std::endl;
+                //     std::cerr << edge->getVertexSrc()->toString() << std::endl;
+                //     std::cerr << edge->getVertexDst()->toString() << std::endl;
+                // }
 
                 ++vne;
             }
