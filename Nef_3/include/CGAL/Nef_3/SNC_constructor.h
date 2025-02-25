@@ -436,8 +436,6 @@ public:
 
   Vertex_handle create_for_infibox_overlay(Vertex_const_handle vin) const {
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
-
     Vertex_handle v = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*v);
     SM_const_decorator E(&*vin);
@@ -468,7 +466,9 @@ public:
       CGAL_NEF_TRACEN("edge is not isolated");
       SHalfedge_handle se;
       SFace_handle sf;
-
+      CGAL_assertion_code(std::vector<SHalfedge_handle> index_check);
+      typedef std::vector<Mark> Marks;
+      Marks mark_of_right_sface;
       SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
       CGAL_For_all(ec,ee) {
         Sphere_segment seg(ec->source()->point(),
@@ -476,15 +476,18 @@ public:
                            ec->circle());
         se = D.new_shalfedge_pair(v1, v2);
         se->mark() = se->twin()->mark() = ec->mark();
-        mark_of_right_sface[se] = ec->incident_sface()->mark();
+        CGAL_assertion_code(index_check.push_back(se));
+        mark_of_right_sface.push_back(ec->incident_sface()->mark());
         se->circle() = ec->circle();
         se->twin()->circle() = se->circle().opposite();
       }
 
+      typename Marks::size_type mark_index=0;
       SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
       CGAL_For_all(ec2,ee2) {
         sf = D.new_sface();
-        sf->mark() = mark_of_right_sface[ec2];
+        CGAL_assertion(mark_index<index_check.size() && index_check[mark_index] == ec2);
+        sf->mark() = mark_of_right_sface[mark_index++];
         D.link_as_face_cycle(SHalfedge_handle(ec2),sf);
       }
     }
@@ -770,8 +773,6 @@ public:
 
     CGAL_NEF_TRACEN("edge facet overlay " << p);
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
-
     SM_decorator D(&*this->sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
     SM_const_decorator E(&*e->source());
 
@@ -823,7 +824,9 @@ public:
       SHalfedge_handle se2;
       SFace_handle sf;
       Sphere_circle c(f->plane());
-
+      CGAL_assertion_code(std::vector<SHalfedge_handle> index_check);
+      typedef std::vector<Mark> Marks;
+      Marks mark_of_right_sface;
       SHalfedge_handle next_edge;
       SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
       CGAL_For_all(ec,ee) {
@@ -845,11 +848,13 @@ public:
         next_edge = se2->twin();
         se1->mark() = se1->twin()->mark() = BOP(ec->mark(), faces_p->incident_volume()->mark(), inv);
         se2->mark() = se2->twin()->mark() = BOP(ec->mark(), faces_p->twin()->incident_volume()->mark(), inv);
-        mark_of_right_sface[se1] = ec->incident_sface()->mark();
+        CGAL_assertion_code(index_check.push_back(se1));
+        mark_of_right_sface.push_back(ec->incident_sface()->mark());
         se1->circle() = se2->circle() = ec->circle();
         se1->twin()->circle() = se2->twin()->circle() = se1->circle().opposite();
       }
 
+      typename Marks::size_type mark_index=0;
       SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
       CGAL_For_all(ec2,ee2) {
         SHalfedge_around_svertex_circulator en(ec2);
@@ -859,13 +864,15 @@ public:
                         " -> " << en->twin()->source()->vector());
         se1->circle() = Sphere_circle(faces_p->plane());
         se1->twin()->circle() = se1->circle().opposite();
-        se1->mark() = se1->twin()->mark() = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
+        CGAL_assertion(mark_index<index_check.size() && index_check[mark_index] == ec2);
+        Mark m = mark_of_right_sface[mark_index++];
+        se1->mark() = se1->twin()->mark() = BOP(m, faces_p->mark(), inv);
 
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->incident_volume()->mark(), inv);
+        sf->mark() = BOP(m, faces_p->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1,sf);
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->twin()->incident_volume()->mark(), inv);
+        sf->mark() = BOP(m, faces_p->twin()->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1->twin(),sf);
       }
     }
@@ -1995,8 +2002,6 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     CGAL_NEF_TRACEN("edge facet overlay " << p);
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
-
     SM_decorator D(&*this->sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
     SM_const_decorator E(&*e->source());
 
@@ -2054,7 +2059,9 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
       SHalfedge_handle se2;
       SFace_handle sf;
       Sphere_circle c(CGAL::ORIGIN,f->plane());
-
+      CGAL_assertion_code(std::vector<SHalfedge_handle> index_check);
+      typedef std::vector<Mark> Marks;
+      Marks mark_of_right_sface;
       SHalfedge_handle next_edge;
       SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
       CGAL_For_all(ec,ee) {
@@ -2088,7 +2095,8 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         next_edge = se2->twin();
         se1->mark() = se1->twin()->mark() = BOP(ec->mark(), faces_p->incident_volume()->mark(), inv);
         se2->mark() = se2->twin()->mark() = BOP(ec->mark(), faces_p->twin()->incident_volume()->mark(), inv);
-        mark_of_right_sface[se1] = ec->incident_sface()->mark();
+        CGAL_assertion_code(index_check.push_back(se1));
+        mark_of_right_sface.push_back(ec->incident_sface()->mark());
         se1->circle() = se2->circle() = ec->circle();
         se1->twin()->circle() = se2->twin()->circle() = se1->circle().opposite();
         se1->set_index(ec->get_index());
@@ -2097,6 +2105,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         se2->twin()->set_index(ec->twin()->get_index());
       }
 
+      typename Marks::size_type mark_index=0;
       SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
       CGAL_For_all(ec2,ee2) {
         SHalfedge_around_svertex_circulator en(ec2);
@@ -2106,7 +2115,9 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
                         " -> " << en->twin()->source()->vector());
         se1->circle() = Sphere_circle(CGAL::ORIGIN,faces_p->plane());
         se1->twin()->circle() = se1->circle().opposite();
-        se1->mark() = se1->twin()->mark() = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
+        CGAL_assertion(mark_index<index_check.size() && index_check[mark_index] == ec2);
+        Mark m = mark_of_right_sface[mark_index++];
+        se1->mark() = se1->twin()->mark() = BOP(m, faces_p->mark(), inv);
 
         Halffacet_cycle_const_iterator fci = faces_p->facet_cycles_begin();
         SHalfedge_around_facet_const_circulator sea(fci);
@@ -2114,10 +2125,10 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         se1->twin()->set_index(sea->get_index());
 
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->incident_volume()->mark(), inv);
+        sf->mark() = BOP(m, faces_p->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1,sf);
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->twin()->incident_volume()->mark(), inv);
+        sf->mark() = BOP(m, faces_p->twin()->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1->twin(),sf);
       }
     }
