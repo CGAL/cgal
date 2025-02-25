@@ -4587,6 +4587,428 @@ edge merge handling
 
 
 
+void SimpleStraightSkel::collectLocalEvents(const std::set<FacetSPtr>& base_facet_set,
+  PolyhedronSPtr polyhedron,
+  const CGAL::FT current_offset,
+  PQ& queue)
+{
+std::cout << "collectLocalEvents(" << base_facet_set.size() << "," << current_offset << ")" << std::endl;
+
+// return collectEvents(polyhedron, current_offset, queue);
+
+#ifdef CGAL_SS3_RUN_TIMERS
+CGAL::Real_timer timer;
+timer.start();
+#endif
+
+std::set<VertexSPtr> vertex_set;
+std::set<EdgeSPtr> edge_set;
+std::set<FacetSPtr> facet_set;
+
+// @todo this is for the Surface Event: the edge might be in the tagged zone, but we also need
+// to grab edges of facets that are incident to extremities of edges of the tagged zone.
+// @speed event-specific local sets...?
+std::set<FacetSPtr> ring_1_facet_set;
+for (FacetSPtr facet : base_facet_set) {
+for (VertexSPtr vertex : facet->vertices()) {
+for (FacetWPtr extra_wf : vertex->facets()) {
+if (FacetSPtr extra_f = extra_wf.lock()) {
+ring_1_facet_set.insert(extra_f);
+}
+}
+}
+}
+
+// in case the event modifies a face incident to a face that is incident to edge2 of Surface event...
+std::set<FacetSPtr> ring_2_facet_set;
+for (FacetSPtr facet : ring_1_facet_set) {
+for (VertexSPtr vertex : facet->vertices()) {
+for (FacetWPtr extra_wf : vertex->facets()) {
+if (FacetSPtr extra_f = extra_wf.lock()) {
+ring_2_facet_set.insert(extra_f);
+}
+}
+}
+}
+
+facet_set.insert(base_facet_set.begin(), base_facet_set.end());
+facet_set.insert(ring_2_facet_set.begin(), ring_2_facet_set.end());
+
+for (FacetSPtr facet : facet_set) {
+for (VertexSPtr vertex : facet->vertices()) {
+vertex_set.insert(vertex);
+}
+for (EdgeSPtr edge : facet->edges()) {
+edge_set.insert(edge);
+}
+}
+
+// @todo template the collectors or something
+#if 1
+std::list<VertexSPtr> local_vertices(vertex_set.begin(), vertex_set.end());
+std::list<EdgeSPtr> local_edges(edge_set.begin(), edge_set.end());
+std::list<FacetSPtr> local_facets(facet_set.begin(), facet_set.end());
+#else
+// just to check if other mechanisms are OK
+std::list<VertexSPtr> local_vertices = polyhedron->vertices();
+std::list<EdgeSPtr> local_edges = polyhedron->edges();
+std::list<FacetSPtr> local_facets = polyhedron->facets();
+#endif
+
+std::cout << "Base Facets [" << base_facet_set.size() << "]:\t";
+for(FacetSPtr f : base_facet_set) {
+std::cout << " " << f->getID();
+}
+std::cout << "\nVertices [" << local_vertices.size() << "]:\t";
+for(VertexSPtr v : local_vertices) {
+std::cout << " " << v->getID();
+}
+std::cout << "\nEdges [" << local_edges.size() << "]:\t";
+for(EdgeSPtr e : local_edges) {
+std::cout << " " << e->getID();
+}
+std::cout << "\nFacets [" << local_facets.size() << "]:\t";
+for(FacetSPtr f : local_facets) {
+std::cout << " " << f->getID();
+}
+std::cout << std::endl;
+
+// two types of useless events:
+// - events that are in the past:
+//     offset > current_offset <--- values are negative and decreasing!
+// - events that are stricly later than the current next tentative offset:
+//     offset < curr_earliest_next_offset
+CGAL::FT offset_of_nearest_event = - std::numeric_limits<double>::max();
+
+// if we stop immediately after the last save event, there is no point registering events
+// that are farther away
+if (!save_offsets_.empty()) {
+util::ConfigurationSPtr config = util::Configuration::getInstance();
+if (config->isLoaded()) {
+if ((config->contains("main", "stop_after_last_save_event") &&
+config->getBool("main", "stop_after_last_save_event"))) {
+offset_of_nearest_event = (std::max)(offset_of_nearest_event, save_offsets_.back());
+}
+}
+}
+
+DEBUG_PRINT("Past bound = " << current_offset);
+DEBUG_PRINT("Initial future bound = " << offset_of_nearest_event);
+
+#ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
+collectVanishEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+#else
+collectEdgeEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectEdgeMergeEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectTriangleEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectDblEdgeMergeEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectDblTriangleEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectTetrahedronEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+#endif
+
+collectVertexEvents(local_vertices, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectFlipVertexEvents(local_vertices, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectPolyhedronSplitEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectSplitMergeEvents(local_vertices, polyhedron, current_offset, offset_of_nearest_event, queue);
+
+collectSurfaceEvents(local_edges, polyhedron, current_offset, offset_of_nearest_event, queue);
+collectEdgeSplitEvents(local_edges, polyhedron->edges(), polyhedron, current_offset, offset_of_nearest_event, queue);
+
+// currently need to do it both ways because if the facet is part of the modified zone,
+// and the concave vertex is not, the event is still marked as obsolete.
+// obviously it would be best not to have to do it both ways...
+collectPierceEvents(local_vertices, polyhedron->facets(), polyhedron, current_offset, offset_of_nearest_event, queue);
+collectPierceEvents(polyhedron->vertices(), local_facets, polyhedron, current_offset, offset_of_nearest_event, queue);
+
+#ifdef CGAL_SS3_RUN_TIMERS
+timer.stop();
+std::cout << "Sought All Local Events in: " << timer.time() << std::endl;
+#endif
+
+#ifdef CGAL_SS3_DEBUG_PRINT_QUEUE
+printQueue(queue);
+#endif
+
+// checkQueueCorrectness(queue, polyhedron, current_offset);
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+// #define CGAL_SS3_OLD_CODE_PIERCE_EVENT
+#ifdef CGAL_SS3_OLD_CODE_PIERCE_EVENT
+                SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+                ArcSPtr arc = data->getArc();
+
+                this branch is bad because of the code below which is overly restrictive:
+                the line might not intersect the face yet at T=t0 the current offset,
+                but might at T=t1 the offset of intersection
+                // Could not we have an intersection between the OFFSET face
+                // and the arc's supporting line (but we don't know at what offset yet)?
+                if (!IsLineInFacet(facet, arc->line())) {
+                    continue;
+                }
+
+                FacetSPtr facet_vertex = FacetSPtr(vertex->facets().front());
+                CGAL::FT facet_speed_vertex = 1.0;
+                if (facet_vertex->hasData()) {
+                    facet_speed_vertex = std::dynamic_pointer_cast<SkelFacetData>(
+                            facet_vertex->getData())->getSpeed();
+                }
+                Plane3SPtr plane_vertex_offset = KernelWrapper::offsetPlane(facet_vertex->plane(), -facet_speed_vertex);
+                Point3SPtr point_vertex_offset = KernelWrapper::intersection(plane_vertex_offset, arc->line());
+                CGAL::FT speed_vertex = KernelWrapper::distance(vertex->getPoint(), point_vertex_offset);
+
+                Point3SPtr point_facet = KernelWrapper::intersection(facet->plane(), arc->line());
+                CGAL::FT facet_speed = 1.0;
+                if (facet->hasData()) {
+                    facet_speed = std::dynamic_pointer_cast<SkelFacetData>(
+                            facet->getData())->getSpeed();
+                }
+                Plane3SPtr plane_facet_offset = KernelWrapper::offsetPlane(facet->plane(), -facet_speed);
+                Point3SPtr point_facet_offset = KernelWrapper::intersection(plane_facet_offset, arc->line());
+                CGAL::FT speed_facet = KernelWrapper::distance(point_facet, point_facet_offset);
+
+                CGAL::FT distance = KernelWrapper::distance(vertex->getPoint(), point_facet);
+                CGAL::FT dist_vertex = (distance * speed_vertex) / (speed_vertex + speed_facet);
+                if (KernelWrapper::comparePoints(arc->getDirection(),
+                        point_facet, point_facet_offset) < 0) {
+                    // for weighted straight skeleton
+                    // reflex vertex and facet move into same direction
+                    if (speed_facet < speed_vertex) {
+                        // facet too slow
+                        continue;
+                    }
+                    dist_vertex = (distance * speed_vertex) / (speed_facet - speed_vertex);
+                }
+
+                offset_event = -dist_vertex / speed_vertex;
+                point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
+                // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
+#else
+                CGAL_assertion(vertex->facets().size() >= 3);
+
+                FacetSPtr fs[3];
+                for (int i = 0; i < 3; ++i) {
+                    FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
+                    CGAL_assertion(!wf.expired());
+                    fs[i] = wf.lock();
+                }
+
+                std::tie(point, offset_event) = intersectionPointAndTimeOffsetPlanes(facet, fs[0], fs[1], fs[2], current_offset, offset_of_nearest_event);
+                if (!point) {
+                    continue;
+                }
+
+                // std::cout << "  Filter E" << std::endl;
+
+                CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
+#endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+void Polyhedron::rebuild(const std::list<FacetSPtr>& facets) {
+  std::map<VertexWPtr, VertexSPtr, std::owner_less<VertexWPtr> > old_to_new_vertex;
+  std::map<EdgeWPtr, EdgeSPtr, std::owner_less<EdgeWPtr> > old_to_new_edge;
+  std::map<FacetWPtr, FacetSPtr, std::owner_less<FacetWPtr> > old_to_new_facet;
+
+  // First pass: create new elements and build replacement maps
+  // Create new elements for input facets
+  for(const FacetSPtr& f : facets) {
+      FacetSPtr new_f = Facet::create();
+      new_f->setID(f->getID());
+      new_f->setPlane(f->getPlane());
+      new_f->setBasePlaneID(f->getBasePlaneID());
+      new_f->cachedPlane_ = f->cachedPlane_;
+      new_f->cachedSpeed_ = f->cachedSpeed_;
+      if(f->hasData())
+          new_f->setData(f->getData());
+
+      old_to_new_facet[f] = new_f;
+  }
+
+  for(const FacetSPtr& f : facets) {
+      FacetSPtr new_f = old_to_new_facet[f];
+
+      // Process vertices
+      for(const VertexSPtr& v : f->vertices()) {
+          VertexSPtr new_v;
+
+          auto it = old_to_new_vertex.find(v);
+          if(it == old_to_new_vertex.end()) {
+              new_v = Vertex::create(v->getPoint());
+              new_v->setID(v->getID());
+              if(v->hasData())
+                  new_v->setData(v->getData());
+
+              old_to_new_vertex[v] = new_v;
+              addVertex(new_v);
+          } else {
+              new_v = it->second;
+          }
+
+          new_f->addVertex(new_v);
+      }
+
+      // Process edges
+      for(const EdgeSPtr& e : f->edges()) {
+          EdgeSPtr new_e;
+
+          auto it = old_to_new_edge.find(e);
+          if(it == old_to_new_edge.end()) {
+              new_e = Edge::create(old_to_new_vertex[e->getVertexSrc()],
+                                   old_to_new_vertex[e->getVertexDst()]);
+              new_e->setID(e->getID());
+              if(e->hasData())
+                  new_e->setData(e->getData());
+
+              old_to_new_edge[e] = new_e;
+              addEdge(new_e);
+          } else {
+              new_e = it->second;
+          }
+
+          if(e->getFacetL() == f) {
+              new_e->setFacetL(new_f);
+          }
+          if(e->getFacetR() == f) {
+              new_e->setFacetR(new_f);
+          }
+          new_f->addEdge(new_e);
+      }
+
+      addFacet(new_f);
+  }
+
+  std::cout << "Invalided the following elements:" << std::endl;
+  std::cout << "Vertices:";
+  for(const auto& [old_v, new_v] : old_to_new_vertex) {
+      if(!old_v.expired()) {
+        std::cout << " " << old_v.lock()->getID();
+      }
+  }
+  std::cout << std::endl;
+  std::cout << "Edges:";
+  for(const auto& [old_e, new_e] : old_to_new_edge) {
+      if(!old_e.expired()) {
+        std::cout << " " << old_e.lock()->getID();
+      }
+  }
+  std::cout << std::endl;
+  std::cout << "Facets:";
+  for(const auto& [old_f, new_f] : old_to_new_facet) {
+      if(!old_f.expired()) {
+        std::cout << " " << old_f.lock()->getID();
+      }
+  }
+  std::cout << std::endl;
+
+  // Update references in non-replaced elements
+  for(const auto& [old_v, new_v] : old_to_new_vertex) {
+      if(VertexSPtr v = old_v.lock()) {
+          // Look at incident facets to find those that need updates
+          for(const FacetWPtr& fw : v->facets()) {
+              if(!fw.expired()) {
+                  FacetSPtr f = FacetSPtr(fw);
+                  if(old_to_new_facet.find(f) == old_to_new_facet.end()) {
+                      // This facet is kept but might need vertex and edge updates
+                      std::list<VertexSPtr> new_vertices;
+                      std::list<EdgeSPtr> new_edges;
+
+                      // Update vertices
+                      for(const VertexSPtr& v : f->vertices()) {
+                          auto it = old_to_new_vertex.find(v);
+                          new_vertices.push_back(it != old_to_new_vertex.end() ? it->second : v);
+                      }
+
+                      // Update edges
+                      for(const EdgeSPtr& e : f->edges()) {
+                          auto it = old_to_new_edge.find(e);
+                          if(it != old_to_new_edge.end()) {
+                              new_edges.push_back(it->second);
+                              if(e->getFacetL() == f)
+                                  it->second->setFacetL(f);
+                              if(e->getFacetR() == f)
+                                  it->second->setFacetR(f);
+                          }
+                          else {
+                              new_edges.push_back(e);
+                              // Update vertices of kept edges
+                              auto src_it = old_to_new_vertex.find(e->getVertexSrc());
+                              if(src_it != old_to_new_vertex.end())
+                                  e->replaceVertexSrc(src_it->second);
+
+                              auto dst_it = old_to_new_vertex.find(e->getVertexDst());
+                              if(dst_it != old_to_new_vertex.end())
+                                  e->replaceVertexDst(dst_it->second);
+                          }
+                      }
+
+                      // Replace the lists
+                      f->vertices_.clear();
+                      f->edges_.clear();
+                      for(const auto& v : new_vertices) {
+                          f->addVertex(v);
+                      }
+                      for(const auto& e : new_edges) {
+                          f->addEdge(e);
+                      }
+                  }
+              }
+          }
+
+          // Update edges not in replaced facets
+          for(const EdgeWPtr& ew : v->edges()) {
+              if(!ew.expired()) {
+                  EdgeSPtr e = EdgeSPtr(ew);
+                  if(old_to_new_edge.find(e) == old_to_new_edge.end()) {
+                      auto src_it = old_to_new_vertex.find(e->getVertexSrc());
+                      if(src_it != old_to_new_vertex.end())
+                          e->replaceVertexSrc(src_it->second);
+
+                      auto dst_it = old_to_new_vertex.find(e->getVertexDst());
+                      if(dst_it != old_to_new_vertex.end())
+                          e->replaceVertexDst(dst_it->second);
+                  }
+              }
+          }
+      }
+  }
+
+  // Remove old elements
+  for(const auto& [old_v, _] : old_to_new_vertex) {
+      CGAL_assertion(!old_v.expired());
+      vertices_.erase(old_v.lock()->getPolyhedronListIt());
+  }
+  for(const auto& [old_e, _] : old_to_new_edge) {
+      CGAL_assertion(!old_e.expired());
+      edges_.erase(old_e.lock()->getPolyhedronListIt());
+  }
+  for(const auto& f : facets) {
+      facets_.erase(f->getPolyhedronListIt());
+  }
+
+  // Verify expiration
+  for(const auto& [old_v, _] : old_to_new_vertex)
+      CGAL_assertion(!old_v.expired());
+  for(const auto& [old_e, _] : old_to_new_edge)
+      CGAL_assertion(!old_e.expired());
+  for(const auto& [old_f, _] : old_to_new_facet)
+      CGAL_assertion(!old_f.expired());
+
+  std::cout << "Rebuilt finished" << std::endl;
+  CGAL_postcondition(isConsistent());
+}
 
 
 
