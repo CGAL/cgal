@@ -125,7 +125,7 @@ public:
     : public CGAL::cpp98::unary_function< Type, double > {
      public:
        double operator()( int x ) const
-       { return x; }
+       { return std::ceil(x); }
     };
 };
 

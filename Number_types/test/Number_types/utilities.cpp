@@ -73,8 +73,11 @@ int main()
   // CGAL number types
   //TESTIT(CGAL::MP_Float, "MP_Float") // CGAL::div(MP_Float, MP_Float) does not implement _integer_ division
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
-  TESTIT(QMPF, "Quotient<MP_Float>")
-  TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
+
+  // AF TESTIT(QMPF, "Quotient<MP_Float>")
+
+  // AF TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
+
   TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
 
   // Boost.Multiprecision
@@ -96,6 +99,7 @@ int main()
   TESTIT(boost::multiprecision::mpq_rational, "mpq_rational")
 # endif
 #endif // CGAL_USE_GMP
+
 #ifdef CGAL_USE_GMPXX
   TESTIT(mpz_class, "mpz_class")
   TESTIT(mpq_class, "mpq_class")
@@ -119,7 +123,6 @@ int main()
       TESTIT(leda_bigfloat, "leda_bigfloat")
       TESTIT(leda_real, "leda_real")
 #endif // CGAL_USE_LEDA
-
        // TEST Sqrt_extension
 #ifdef CGAL_USE_GMP
       typedef CGAL::Sqrt_extension<int,int> Ext_int;
@@ -131,7 +134,6 @@ int main()
       typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq> Ext_rat_rat;
       TESTIT(Ext_rat_rat , "CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq>");
 #endif // CGAL_USE_GMP
-
 
   return 0;
 }

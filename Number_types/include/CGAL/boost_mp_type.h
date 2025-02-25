@@ -519,6 +519,11 @@ struct RET_boost_mp_base
     struct Ceil
       : public CGAL::cpp98::unary_function< Type, double > {
         double operator()( const Type& x ) const {
+
+          #if 0 //  AF: why does that no cumpile?
+          Type c = boost::multiprecision::ceil(x);
+          return c.template convert_to<double>();
+          #else
           // If NT is a fraction, the ceil value is the result of the Euclidian division of the numerator and the denominator.
           using FT = Fraction_traits<Type>;
           typename FT::Numerator_type num, r, e;
@@ -528,6 +533,7 @@ struct RET_boost_mp_base
           if((r<0) && e!=0) //If the result is negative, the ceil value is one below
             return to_double(r-1);
           return to_double(r);
+          #endif
         }
     };
 
@@ -586,7 +592,17 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_int
           return Boost_MP_internal::to_interval(x);
         }
     };
-};
+
+    class Ceil
+        : public CGAL::cpp98::unary_function<Type, double> {
+        public:
+        double operator()(const Type& x) const {
+            return x.template convert_to<double>();
+        }
+      };
+
+    };
+
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
@@ -608,6 +624,14 @@ template <>
 struct RET_boost_mp <boost::multiprecision::mpz_int>
     : RET_boost_mp_base <boost::multiprecision::mpz_int> {
     typedef boost::multiprecision::mpz_int Type;
+
+    struct Ceil
+        : public CGAL::cpp98::unary_function<Type, double> {
+        double operator()(const Type& x) const {
+            return x.template convert_to<double>();
+        }
+      };
+
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
@@ -943,6 +967,7 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
           return Boost_MP_internal::to_interval<Type>(x.num, x.den);
         }
     };
+
 };
 
 #endif // CGAL_USE_BOOST_MP

@@ -117,6 +117,13 @@ public:
         }
     };
 
+    class Ceil
+       : public CGAL::cpp98::unary_function< Type, double > {
+    public:
+          double operator()( const Type& x ) const
+          { return std::ceil(x.to_double()); }
+    };
+
     class To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
     public:

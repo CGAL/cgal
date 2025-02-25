@@ -59,22 +59,23 @@ template<> class Algebraic_structure_traits< int >
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
-
-       struct Ceil
-       : public CGAL::cpp98::unary_function< Type, double > {
-        public:
-          double operator()( int x ) const
-          { return x; }
-       };
 };
 
 template <> class Real_embeddable_traits< int >
-  : public INTERN_RET::Real_embeddable_traits_base< int , CGAL::Tag_true > {};
+  : public INTERN_RET::Real_embeddable_traits_base< int , CGAL::Tag_true > {
+    public:
+
+    struct Ceil
+       : public CGAL::cpp98::unary_function< int, double > {
+          double operator()( int x ) const
+          { return x; }
+       };
+  };
 
 /*! \ingroup CGAL_Modular_traits_spec
-  \brief Specialization of CGAL::Modular_traits for \c int.
+  \brief Specialization of `CGAL::Modular_traits` for \c int.
 
-  A model of concept ModularTraits, supports \c int.
+  A model of concept `ModularTraits`, supports \c int.
 */
   template <typename T>
   class Modular_traits;
@@ -133,13 +134,20 @@ public:
           return Interval_nt<true>(x).pair();
         }
     };
+    public:
+
+    struct Ceil
+       : public CGAL::cpp98::unary_function< int, double > {
+          double operator()( int x ) const
+          { return x; }
+       };
 };
 
 
 /*! \ingroup CGAL_Modular_traits_spec
-  \brief Specialization of CGAL::Modular_traits for \c long.
+  \brief Specialization of `CGAL::Modular_traits` for \c long.
 
-  A model of concept ModularTraits, supports \c long.
+  A model of concept `ModularTraits`, supports \c long.
 */
 template<>
 class Modular_traits<long>{
@@ -280,12 +288,26 @@ template<> class Algebraic_structure_traits< short int >
 };
 
 template <> class Real_embeddable_traits< short int >
-  : public INTERN_RET::Real_embeddable_traits_base< short int , CGAL::Tag_true > {};
+  : public INTERN_RET::Real_embeddable_traits_base< short int , CGAL::Tag_true > {
+    public:
+    struct Ceil
+       : public CGAL::cpp98::unary_function< int, double > {
+          double operator()( int x ) const
+          { return x; }
+       };
+};
 
 // unsigned int
 
 template <> class Real_embeddable_traits< unsigned int >
-   : public INTERN_RET::Real_embeddable_traits_base< unsigned int , CGAL::Tag_true > {};
+   : public INTERN_RET::Real_embeddable_traits_base< unsigned int , CGAL::Tag_true > {
+    public:
+    struct Ceil
+       : public CGAL::cpp98::unary_function< int, double > {
+          double operator()( int x ) const
+          { return x; }
+       };
+};
 
 // unsigned long
 
@@ -299,6 +321,12 @@ public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
         }
+    };
+
+    struct Ceil
+       : public CGAL::cpp98::unary_function< int, double > {
+          double operator()( int x ) const
+          { return x; }
     };
 };
 

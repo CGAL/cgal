@@ -694,7 +694,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         }
     };
 
-
     class Ceil
       : public CGAL::cpp98::unary_function< Type, double > {
       public:
