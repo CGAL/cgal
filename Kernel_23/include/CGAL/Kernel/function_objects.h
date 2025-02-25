@@ -284,6 +284,40 @@ namespace CommonKernelFunctors {
                                 * sq_length(ba)*sq_length(bc));
       }
     }
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2,
+               const FT& cosine) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+      typename K::Construct_normal_3 normal = K().construct_normal_3_object();
+
+      Vector_3 n1 = normal(a1,b1,c1);
+      Vector_3 n2 = normal(a2,b2,c2);
+
+      typename K::FT sc_prod = scalar_product(n1, n2);
+
+      if (sc_prod >= 0)
+      {
+        if (cosine >= 0)
+          return CGAL::compare(CGAL::square(cosine)
+                                * sq_length(n1)*sq_length(n2),
+                               CGAL::square(sc_prod));
+        else
+          return SMALLER;
+      }
+      else
+      {
+        if (cosine >= 0)
+          return LARGER;
+        else
+          return CGAL::compare(CGAL::square(sc_prod),
+                               CGAL::square(cosine)
+                                * sq_length(n1)*sq_length(n2));
+      }
+    }
   };
 
   template <typename K>
@@ -930,6 +964,9 @@ namespace CommonKernelFunctors {
   class Compare_squared_distance_3
   {
     typedef typename K::FT                 FT;
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::Plane_3            Plane_3;
+    typename K::Construct_plane_3 construct_plane;
   public:
     typedef typename K::Comparison_result  result_type;
 
@@ -946,6 +983,14 @@ namespace CommonKernelFunctors {
     {
       return CGAL::compare(internal::squared_distance(p, q, K()),
                            internal::squared_distance(r, s, K()));
+    }
+
+
+    Needs_FT<result_type>
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& query, const FT& sqd) const
+    {
+      Plane_3 plane = construct_plane(p,q,r);
+      return this->operator()(plane, query, sqd);
     }
   };
 
