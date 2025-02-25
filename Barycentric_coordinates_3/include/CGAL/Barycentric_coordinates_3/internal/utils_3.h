@@ -25,7 +25,6 @@
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 namespace CGAL{
 namespace Barycentric_coordinates{
