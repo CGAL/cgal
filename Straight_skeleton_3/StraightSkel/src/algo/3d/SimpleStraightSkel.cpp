@@ -3676,12 +3676,22 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
       std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
       while (it_e != edges.end()) {
             EdgeSPtr edge = *it_e++;
+            // @speed cache reflexness (constant as long as the combinatorics do not change)
             if (isReflex(edge)) {
               edges_reflex.push_back(edge);
             }
         }
     };
+
     fill_reflex_edges(edges_1, edges_reflex_1);
+    if (edges_reflex_1.empty()) {
+#ifdef CGAL_SS3_RUN_TIMERS
+        timer.stop();
+        std::cout << "Sought Edge Split Events in: " << timer.time() << std::endl;
+#endif
+          return;
+    }
+
     fill_reflex_edges(edges_2, edges_reflex_2);
 
 #ifdef CGAL_SS3_RUN_TIMERS
