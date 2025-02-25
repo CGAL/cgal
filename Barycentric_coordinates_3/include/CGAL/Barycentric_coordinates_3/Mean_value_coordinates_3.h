@@ -19,8 +19,8 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/boost/graph/property_maps.h>
 
-#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
@@ -45,14 +45,12 @@ namespace Barycentric_coordinates {
 
     \tparam VertexToPointMap
     a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
-    key type and Point_3 as value type. The default is `property_map_selector<TriangleMesh,
-    CGAL::vertex_point_t>`.
+    key type and `GeomTraits::Point_3` as value type.
   */
   template<
   typename TriangleMesh,
   typename GeomTraits,
-  typename VertexToPointMap = typename property_map_selector<TriangleMesh,
-    CGAL::vertex_point_t>::const_type>
+  typename VertexToPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
   class Mean_value_coordinates_3 {
 
   public:
