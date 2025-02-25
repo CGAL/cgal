@@ -380,8 +380,7 @@ namespace CGAL {
       typedef typename CircularKernel::Circular_arc_point_2
                                                   Circular_arc_point_2;
 
-    public :
-
+    public:
       typedef Circular_arc_point_2  result_type;
       //typedef const result_type&       qualified_result_type;
 
@@ -395,14 +394,13 @@ namespace CGAL {
       }
     };
 
-
     template <class CircularKernel, class Arc1, class Arc2>
     class Construct_max_vertex_2//: public Has_qrt
     {
       typedef typename CircularKernel::Circular_arc_point_2      Point_2;
+
     public:
-      /*!
-       * Get the right endpoint of the x-monotone curve (segment).
+      /*! obtains the right endpoint of the x-monotone curve (segment).
        * \param cv The curve.
        * \return The right endpoint.
        */
@@ -418,10 +416,10 @@ namespace CGAL {
       }
     };
 
-      template <class CircularKernel>
+    template <class CircularKernel>
     class Variant_Is_vertical_2
     {
-    public :
+    public:
 
       template < typename T >
       bool
@@ -449,7 +447,7 @@ namespace CGAL {
 
   // an empty class used to have different types between Curve_2 and X_monotone_curve_2
   // in Arr_circular_line_arc_traits_2.
-  namespace internal_Argt_traits{
+  namespace internal_Argt_traits {
     struct Not_X_Monotone{};
     inline std::ostream& operator << (std::ostream& os, const Not_X_Monotone&)
     {return os;}
@@ -520,45 +518,42 @@ namespace CGAL {
     typedef VariantFunctors::Intersect_2<CircularKernel, Arc1, Arc2>
                                                   Intersect_2;
 
+    Compare_x_2 compare_x_2_object() const
+    { return ck.compare_x_2_object(); }
 
- Compare_x_2 compare_x_2_object() const
-  { return ck.compare_x_2_object(); }
+    Compare_xy_2 compare_xy_2_object() const
+    { return ck.compare_xy_2_object(); }
 
-  Compare_xy_2 compare_xy_2_object() const
-  { return ck.compare_xy_2_object(); }
+    Compare_y_at_x_2 compare_y_at_x_2_object() const
+    { return Compare_y_at_x_2(); }
 
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(); }
+    Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
+    { return Compare_y_at_x_right_2(); }
 
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(); }
+    Equal_2 equal_2_object() const
+    { return Equal_2(); }
 
-  Equal_2 equal_2_object() const
-  { return Equal_2(); }
+    Make_x_monotone_2 make_x_monotone_2_object() const
+    { return Make_x_monotone_2(); }
 
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(); }
+    Split_2 split_2_object() const
+    { return Split_2(); }
 
-  Split_2 split_2_object() const
-  { return Split_2(); }
-
-  Intersect_2 intersect_2_object() const
+    Intersect_2 intersect_2_object() const
     { return Intersect_2(); }
 
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
+    Construct_min_vertex_2 construct_min_vertex_2_object() const
     { return Construct_min_vertex_2(); }
 
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
+    Construct_max_vertex_2 construct_max_vertex_2_object() const
     { return Construct_max_vertex_2(); }
 
-  Is_vertical_2 is_vertical_2_object() const
+    Is_vertical_2 is_vertical_2_object() const
     { return Is_vertical_2();}
-
-
 };
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H
+#endif

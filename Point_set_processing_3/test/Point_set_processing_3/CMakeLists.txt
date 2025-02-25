@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Point_set_processing_3_Tests)
 
 # Find CGAL
@@ -38,8 +38,8 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
   find_package(LASLIB QUIET)
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
-    target_link_libraries(test_read_write_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
-    target_link_libraries(test_deprecated_io_point_set PUBLIC ${CGAL_libs} CGAL::LASLIB_support)
+    target_link_libraries(test_read_write_point_set PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+    target_link_libraries(test_deprecated_io_point_set PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
   else()
     message(STATUS "NOTICE: the LAS reader test requires LASlib and will not be compiled.")
   endif()
@@ -53,25 +53,25 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen
   create_single_source_cgal_program( "normal_estimation_test.cpp" )
-  target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(normal_estimation_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("hierarchy_simplification_test.cpp")
-  target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(hierarchy_simplification_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("smoothing_test.cpp")
-  target_link_libraries(smoothing_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(smoothing_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("vcm_plane_test.cpp")
-  target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(vcm_plane_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("vcm_all_test.cpp")
-  target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(vcm_all_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("jet_pointer_as_property_map.cpp")
-  target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(jet_pointer_as_property_map PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("psp_jet_includes.cpp")
-  target_link_libraries(psp_jet_includes PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(psp_jet_includes PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
@@ -85,7 +85,7 @@ if(TARGET CGAL::TBB_support)
     wlop_simplify_and_regularize_test edge_aware_upsample_test
     normal_estimation_test)
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()
   endforeach()
 else()

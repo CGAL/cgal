@@ -190,7 +190,7 @@ Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPoin
 /*!
 defines the <I>weights</I> of the contour last entered through `enter_contour()`.
 
-\tparam InputPointIterator must be a model `InputIterator` whose `value_type` is `FT`.
+\tparam WeightIterator must be a model `InputIterator` whose `value_type` is `FT`.
 
 \pre `std::distance(aBegin,aEnd)` must be equal to the number of vertices of the contour last entered.
 \pre Weights are (strictly) positive.

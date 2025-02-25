@@ -19,7 +19,7 @@ protected:
 //   typedef typename boost::property_traits<VertexPropertyMap>::value_type vpm_value_type;
 //   typedef typename boost::property_traits<VertexPropertyMap>::key_type vpm_key_type;
 
-  //vertex indices are initialised to -1
+  //vertex indices are initialized to -1
   static void reset_ring_indices(std::vector < Vertex * >&vces,
                                  VertexPropertyMap& vpm);
 

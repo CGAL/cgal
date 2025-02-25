@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Periodic_2_triangulation_2_Demo)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
@@ -8,7 +8,7 @@ include_directories(BEFORE ./include)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 
