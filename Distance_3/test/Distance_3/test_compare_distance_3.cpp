@@ -148,18 +148,9 @@ private:
     // std::cout << std::endl << "Test" << std::endl;
 
     // std::cout << o1 << std::endl << o2 << std::endl;
-    // std::cout << CGAL::squared_distance(o1, o2) << std::endl;
-    // std::cout << CGAL::squared_distance( CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o1) , 
-    //                                      CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o2)) << std::endl;
-
-    // if constexpr(std::is_same<O1, S>()){
-    //   if(expected_result != 0){
-    //     std::cout << CGAL::squared_distance(o1.supporting_line(), o2.supporting_line()) << std::endl;
-    //     std::cout << CGAL::squared_distance( CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o1.supporting_line()) , 
-    //                                      CGAL::Cartesian_converter<K,CGAL::Exact_predicates_exact_constructions_kernel>()(o2.supporting_line())) << std::endl;
-    //   }
-    // }
+    // std::cout << CGAL::squared_distance(o1, o2) << " " << expected_result << std::endl;
     // std::cout << CGAL::SMALLER << CGAL::EQUAL << CGAL::LARGER << std::endl;
+    // std::cout <<  CGAL::compare_squared_distance(o1, o2, expected_result) << std::endl;
 
     const bool res_e_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result) == CGAL::EQUAL);
     const bool res_e_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result) == CGAL::EQUAL);
@@ -497,31 +488,31 @@ private:
     check_compare_squared_distance_with_bound(p( -8, -7,  0), R{p(23, -27, 2), p( -17, 16, 2)}, 86.368512613);
   }
 
-//   void R_R()
-//   {
-//     // Note : the values are not verified by hand
-//     std::cout << "Ray - Ray" << std::endl;
-//     check_compare_squared_distance_with_bound(R{p( 0, 0, 30), p(  0, 30, 30)}, R{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
-//     check_compare_squared_distance(R{p( 1, 0,  0), p(  0,  0,  0)}, R{p(  1,    3, 3), p(   0,  0, 3)}, 9);
-//     check_compare_squared_distance(R{p( 0, 0,  0), p(  1,  0,  0)}, R{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
-//   }
+  void R_R()
+  {
+    // Note : the values are not verified by hand
+    std::cout << "Ray - Ray" << std::endl;
+    check_compare_squared_distance_with_bound(R{p( 0, 0, 30), p(  0, 30, 30)}, R{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
+    check_compare_squared_distance(R{p( 1, 0,  0), p(  0,  0,  0)}, R{p(  1,    3, 3), p(   0,  0, 3)}, 9);
+    check_compare_squared_distance(R{p( 0, 0,  0), p(  1,  0,  0)}, R{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
+  }
 
-//   void S_R()
-//   {
-//     // Note : the values are not verified by hand
-//     std::cout << "Segment - Ray" << std::endl;
-//     check_compare_squared_distance_with_bound(S{p( 0, 0, 30), p(  0, 30, 30)}, R{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
-//   }
+  void S_R()
+  {
+    // Note : the values are not verified by hand
+    std::cout << "Segment - Ray" << std::endl;
+    check_compare_squared_distance_with_bound(S{p( 0, 0, 30), p(  0, 30, 30)}, R{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
+  }
 
-//   void R_L()
-//   {
-//     // Note : the values are not verified by hand
-//     std::cout << "Ray - Line" << std::endl;
-//     check_compare_squared_distance_with_bound(R{p( 0, 0, 30), p(  0, 30, 30)}, L{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
-//     check_compare_squared_distance(R{p(10, 0,  0), p( 20,  0,  0)}, L{p(  0,    0, 3), p(   0,  3, 3)}, 109);
-//     check_compare_squared_distance(R{p( 1, 0,  0), p(  0,  0,  0)}, L{p(  1,    3, 3), p(   0,  0, 3)}, 9);
-//     check_compare_squared_distance(R{p( 0, 0,  0), p(  1,  0,  0)}, L{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
-//   }
+  void R_L()
+  {
+    // Note : the values are not verified by hand
+    std::cout << "Ray - Line" << std::endl;
+    check_compare_squared_distance_with_bound(R{p( 0, 0, 30), p(  0, 30, 30)}, L{p(100, -100, 0), p( 200,  1, 0)}, 20899.504975002);
+    check_compare_squared_distance(R{p(10, 0,  0), p( 20,  0,  0)}, L{p(  0,    0, 3), p(   0,  3, 3)}, 109);
+    check_compare_squared_distance(R{p( 1, 0,  0), p(  0,  0,  0)}, L{p(  1,    3, 3), p(   0,  0, 3)}, 9);
+    check_compare_squared_distance(R{p( 0, 0,  0), p(  1,  0,  0)}, L{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
+  }
 
   void P_L()
   {
@@ -530,14 +521,14 @@ private:
     check_compare_squared_distance(p(  0,  0,  2), L{p(  0,    0, 0), p(   1,  2, 0)}, 4);
   }
 
-//   void S_L()
-//   {
-//     // Note : the values are not verified by hand
-//     std::cout << "Segment - Line" << std::endl;
-//     check_compare_squared_distance(S{p( 1, 0,  0), p(  0,  0,  0)}, L{p(  1,    3, 3), p(   0,  0, 3)}, 9);
-//     check_compare_squared_distance(S{p(-90, 0,  0), p(-10,  0,  0)}, L{p(  0,    0, 3), p(   0,  3, 3)}, 109);
-//     check_compare_squared_distance(S{p(  0, 0,  0), p(  1,  0,  0)}, L{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
-//   }
+  void S_L()
+  {
+    // Note : the values are not verified by hand
+    std::cout << "Segment - Line" << std::endl;
+    check_compare_squared_distance(S{p( 1, 0,  0), p(  0,  0,  0)}, L{p(  1,    3, 3), p(   0,  0, 3)}, 9);
+    check_compare_squared_distance(S{p(-90, 0,  0), p(-10,  0,  0)}, L{p(  0,    0, 3), p(   0,  3, 3)}, 109);
+    check_compare_squared_distance(S{p(  0, 0,  0), p(  1,  0,  0)}, L{p(  0,    0, 2), p(  -1,  0, 2)}, 4);
+  }
 
   void L_L()
   {
@@ -554,19 +545,19 @@ private:
     check_compare_squared_distance(p(2, 5,  3), Pl(0, 1, 0, 0), 25);
   }
 
-//   void S_Pl()
-//   {
-//     std::cout << "Segment - Plane" << std::endl;
-//     check_compare_squared_distance(S{p(2, -3,  3), p( 3,-7, 4)}, pl(0, 1, 0, 0), 9);
-//   }
+  void S_Pl()
+  {
+    std::cout << "Segment - Plane" << std::endl;
+    check_compare_squared_distance(S{p(2, -3,  3), p( 3,-7, 4)}, pl(0, 1, 0, 0), 9);
+  }
 
-//   void R_Pl()
-//   {
-//     std::cout << "Ray - Plane" << std::endl;
-//     check_compare_squared_distance(R{p(2, -4,  3), p( 3,-4, 4)}, Pl(0, 1, 0, 0), 16);
-//     check_compare_squared_distance(R{p(2, -4,  3), p( 3, 4, 4)}, Pl(0, 1, 0, 0), 0);
-//     check_compare_squared_distance(R{p(2, -4,  3), p( 3,-8, 4)}, Pl(0, 1, 0, 0), 16);
-//   }
+  void R_Pl()
+  {
+    std::cout << "Ray - Plane" << std::endl;
+    check_compare_squared_distance(R{p(2, -4,  3), p( 3,-4, 4)}, Pl(0, 1, 0, 0), 16);
+    check_compare_squared_distance(R{p(2, -4,  3), p( 3, 4, 4)}, Pl(0, 1, 0, 0), 0);
+    check_compare_squared_distance(R{p(2, -4,  3), p( 3,-8, 4)}, Pl(0, 1, 0, 0), 16);
+  }
 
   void L_Pl()
   {
@@ -587,151 +578,153 @@ private:
     check_compare_squared_distance(Pl(-2, 1, 1, 0), Pl(2, 1, 3, 0), 0);
   }
 
-//   void T_T()
-//   {
-//     std::cout << "Triangle - Triangle" << std::endl;
+  void T_T()
+  {
+    std::cout << "Triangle - Triangle" << std::endl;
 
-//     // min between vertices (hardcoded)
-//     check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(0,0,2), p(-1,0,2), p(0,-1,2)}, 4);
-//     check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(-1,0,2), p(0,0,2), p(0,-1,2)}, 4);
+    // min between vertices (hardcoded)
+    check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(0,0,2), p(-1,0,2), p(0,-1,2)}, 4);
+    check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(-1,0,2), p(0,0,2), p(0,-1,2)}, 4);
 
-//     check_compare_squared_distance(T{p(1,2,3), P{FT(4.2),FT(5.3),-6}, p(7,-8,9)},
-//                            T{P{FT(10.1), 12, -10}, p(15, 14, -12), p(19, 45, -20)},
-//                            CGAL::squared_distance(P{FT(4.2),FT(5.3),-6}, P{FT(10.1), 12, -10}));
+    check_compare_squared_distance(T{p(1,2,3), P{FT(4.2),FT(5.3),-6}, p(7,-8,9)},
+                           T{P{FT(10.1), 12, -10}, p(15, 14, -12), p(19, 45, -20)},
+                           CGAL::squared_distance(P{FT(4.2),FT(5.3),-6}, P{FT(10.1), 12, -10}));
 
-//     // min vertex-edge (hardcoded)
-//     check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(1,1,0), p(2,1,0), p(1,2,0)}, 0.5);
-//     check_compare_squared_distance(T{p(0,0,0), p(2,0,0), p(0,2,0)}, T{p(0,-1,1), p(2,0,1), p(2,-1,1)}, 1);
+    // min vertex-edge (hardcoded)
+    check_compare_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(1,1,0), p(2,1,0), p(1,2,0)}, 0.5);
+    check_compare_squared_distance(T{p(0,0,0), p(2,0,0), p(0,2,0)}, T{p(0,-1,1), p(2,0,1), p(2,-1,1)}, 1);
 
-//     for(int i=0; i<N; ++i)
-//     {
-//       P p0 = random_point();
-//       P p1 = random_point();
-//       P p2 = random_point();
-//       P p3 = random_point();
-//       P p4 = random_point();
-//       P p5 = random_point();
+    std::cout << "Test" << std::endl;
 
-//       // these are still exact with EPECK
-//       p0 = CGAL::midpoint(p0, p1);
-//       p1 = p0 + FT(0.1) * V{p1 - p0};
-//       p2 = p2 + V{p2 - p0} / FT(CGAL_PI);
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point();
+      P p1 = random_point();
+      P p2 = random_point();
+      P p3 = random_point();
+      P p4 = random_point();
+      P p5 = random_point();
 
-//       // this is still exact with EPECK_with_sqrt
-//       p4 = p4 + V{p4 - CGAL::ORIGIN} / CGAL::approximate_sqrt(CGAL::square(p4.x()) + CGAL::square(p4.y()) + CGAL::square(p4.z()) + 3);
+      // these are still exact with EPECK
+      p0 = CGAL::midpoint(p0, p1);
+      p1 = p0 + FT(0.1) * V{p1 - p0};
+      p2 = p2 + V{p2 - p0} / FT(CGAL_PI);
 
-//       p5 = p5 + V{p5 - CGAL::ORIGIN} * FT(std::cos(1.3));
+      // this is still exact with EPECK_with_sqrt
+      p4 = p4 + V{p4 - CGAL::ORIGIN} / CGAL::approximate_sqrt(CGAL::square(p4.x()) + CGAL::square(p4.y()) + CGAL::square(p4.z()) + 3);
 
-//       // degenerate inputs
-//       check_compare_squared_distance(T{p3, p3, p3}, T{p3, p3, p3}, 0); // both degen
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p3, p3, p3}, CGAL::squared_distance(p0, p3)); // both degen
+      p5 = p5 + V{p5 - CGAL::ORIGIN} * FT(std::cos(1.3));
 
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p0, p0, p3}, 0); // single degen and common edge
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p3, p0, p0}, 0);
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p0, p3, p0}, 0);
+      // degenerate inputs
+      check_compare_squared_distance(T{p3, p3, p3}, T{p3, p3, p3}, 0); // both degen
+      check_compare_squared_distance(T{p0, p0, p0}, T{p3, p3, p3}, CGAL::squared_distance(p0, p3)); // both degen
 
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p0, p3, p4}, 0); // single degen and common vertex
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p3, p0, p4}, 0);
-//       check_compare_squared_distance(T{p0, p0, p0}, T{p3, p4, p0}, 0);
+      check_compare_squared_distance(T{p0, p0, p0}, T{p0, p0, p3}, 0); // single degen and common edge
+      check_compare_squared_distance(T{p0, p0, p0}, T{p3, p0, p0}, 0);
+      check_compare_squared_distance(T{p0, p0, p0}, T{p0, p3, p0}, 0);
 
-//       // degen into point & degen into segment
-//       check_compare_squared_distance(T{p1, p1, p1}, T{p4, p3, p3}, CGAL::squared_distance(p1, S{p3, p4}));
-//       check_compare_squared_distance(T{p5, p5, p5}, T{p3, p3, p4}, CGAL::squared_distance(p5, S{p3, p4}));
+      check_compare_squared_distance(T{p0, p0, p0}, T{p0, p3, p4}, 0); // single degen and common vertex
+      check_compare_squared_distance(T{p0, p0, p0}, T{p3, p0, p4}, 0);
+      check_compare_squared_distance(T{p0, p0, p0}, T{p3, p4, p0}, 0);
 
-//       // both degen into segment
-//       check_compare_squared_distance(T{p0, p1, p0}, T{p3, p3, p4}, CGAL::squared_distance(S{p0, p1}, S{p3, p4}));
-//       check_compare_squared_distance(T{p5, p5, p4}, T{p4, p3, p3}, CGAL::squared_distance(S{p5, p4}, S{p3, p4}));
+      // degen into point & degen into segment
+      check_compare_squared_distance(T{p1, p1, p1}, T{p4, p3, p3}, CGAL::squared_distance(p1, S{p3, p4}));
+      check_compare_squared_distance(T{p5, p5, p5}, T{p3, p3, p4}, CGAL::squared_distance(p5, S{p3, p4}));
 
-//       // common vertex
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p3, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p3, p0, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p0}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p3, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p3, p1, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p3, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p3, p2, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p2}, 0);
+      // both degen into segment
+      check_compare_squared_distance(T{p0, p1, p0}, T{p3, p3, p4}, CGAL::squared_distance(S{p0, p1}, S{p3, p4}));
+      check_compare_squared_distance(T{p5, p5, p4}, T{p4, p3, p3}, CGAL::squared_distance(S{p5, p4}, S{p3, p4}));
 
-//       // common edge
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p1, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p0, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p0, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p1, p0}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p4, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p4, p2}, 0);
+      // common vertex
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p3, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p3, p0, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p3, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p3, p1, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p3, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p3, p2, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p3, p2}, 0);
 
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p1, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p2, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p2, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p1, p2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p4, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p4, p2}, 0);
+      // common edge
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p1, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p0, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p0, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p1, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p4, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p4, p2}, 0);
 
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p2, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p0, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p0, p2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, p2, p0}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p4, p2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p4, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p1, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p2, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p2, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p1, p2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p4, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p4, p2}, 0);
 
-//       // same triangle
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p1, p2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p2, p0}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p0, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p2, p1, p0}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p0, p2, p1}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p1, p0, p2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p2, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p0, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p0, p2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, p2, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p4, p2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p4, p0}, 0);
 
-//       // vertex on triangle
-//       double lambda = r.get_double(0, 1);
-//       double mu = r.get_double(0, 1 - lambda);
-//       const P bp = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp, p3, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p3, bp, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p3, p4, bp}, 0);
+      // same triangle
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p1, p2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p2, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p0, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p2, p1, p0}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p0, p2, p1}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p1, p0, p2}, 0);
 
-//       // edge on triangle
-//       lambda = r.get_double(0, 1);
-//       mu = r.get_double(0, 1 - lambda);
-//       P bp2 = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp, bp2, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp2, bp, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp, p4, bp2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp2, p4, bp}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp, bp2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp2, bp}, 0);
+      // vertex on triangle
+      double lambda = r.get_double(0, 1);
+      double mu = r.get_double(0, 1 - lambda);
+      const P bp = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp, p3, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p3, bp, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p3, p4, bp}, 0);
 
-//       // part of the edge crossing the triangle
-//       lambda = r.get_double(-1, 1);
-//       mu = r.get_double(-1, 1);
-//       bp2 = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp, bp2, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp2, bp, p4}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp, p4, bp2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{bp2, p4, bp}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp, bp2}, 0);
-//       check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp2, bp}, 0);
+      // edge on triangle
+      lambda = r.get_double(0, 1);
+      mu = r.get_double(0, 1 - lambda);
+      P bp2 = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp, bp2, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp2, bp, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp, p4, bp2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp2, p4, bp}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp, bp2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp2, bp}, 0);
 
-//       // generic triangles
-//       T tr1{p0, p1, p2}, tr2{p3, p4, p5};
-//       do_intersect_check(tr1, tr2);
+      // part of the edge crossing the triangle
+      lambda = r.get_double(-1, 1);
+      mu = r.get_double(-1, 1);
+      bp2 = CGAL::barycenter(p0, lambda, p1, mu, p2, 1 - lambda - mu);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp, bp2, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp2, bp, p4}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp, p4, bp2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{bp2, p4, bp}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp, bp2}, 0);
+      check_compare_squared_distance(T{p0, p1, p2}, T{p4, bp2, bp}, 0);
 
-// #ifdef CGAL_USE_GTE_AS_SANITY_CHECK
-//       gte::DCPQuery<FT, gte::Triangle3<FT>, gte::Triangle3<FT> > GTE_TT_checker;
-//       gte::Triangle3<FT> gte_tr1{{p0.x(), p0.y(), p0.z()}, {p1.x(), p1.y(), p1.z()}, {p2.x(), p2.y(), p2.z()}};
-//       gte::Triangle3<FT> gte_tr2{{p3.x(), p3.y(), p3.z()}, {p4.x(), p4.y(), p4.z()}, {p5.x(), p5.y(), p5.z()}};
-//       auto gte_res = GTE_TT_checker(gte_tr1, gte_tr2);
+      // generic triangles
+      T tr1{p0, p1, p2}, tr2{p3, p4, p5};
+      do_intersect_check(tr1, tr2);
 
-//       std::cout << "dist (CGAL) : " << CGAL::squared_distance(tr1, tr2) << std::endl;
-//       std::cout << "dist (GTE) : " << gte_res.sqrDistance << std::endl;
-//       std::cout << "diff CGAL GTE : " << (gte_res.sqrDistance - CGAL::squared_distance(tr1, tr2)) << std::endl;
+#ifdef CGAL_USE_GTE_AS_SANITY_CHECK
+      gte::DCPQuery<FT, gte::Triangle3<FT>, gte::Triangle3<FT> > GTE_TT_checker;
+      gte::Triangle3<FT> gte_tr1{{p0.x(), p0.y(), p0.z()}, {p1.x(), p1.y(), p1.z()}, {p2.x(), p2.y(), p2.z()}};
+      gte::Triangle3<FT> gte_tr2{{p3.x(), p3.y(), p3.z()}, {p4.x(), p4.y(), p4.z()}, {p5.x(), p5.y(), p5.z()}};
+      auto gte_res = GTE_TT_checker(gte_tr1, gte_tr2);
 
-//       // don't assert on purpose, GTE has slightly (10^-30 different results, even with an exact NT)
-//       are_equal(CGAL::squared_distance(tr1, tr2), gte_res.sqrDistance);
-// #endif
-//     }
-//   }
+      std::cout << "dist (CGAL) : " << CGAL::squared_distance(tr1, tr2) << std::endl;
+      std::cout << "dist (GTE) : " << gte_res.sqrDistance << std::endl;
+      std::cout << "diff CGAL GTE : " << (gte_res.sqrDistance - CGAL::squared_distance(tr1, tr2)) << std::endl;
+
+      // don't assert on purpose, GTE has slightly (10^-30 different results, even with an exact NT)
+      are_equal(CGAL::squared_distance(tr1, tr2), gte_res.sqrDistance);
+#endif
+    }
+  }
 
 public:
   void run()
@@ -747,18 +740,18 @@ public:
     P_Tet();
 
     S_S();
-    // S_R();
-    // S_L();
-    // S_Pl();
+    S_R();
+    S_L();
+    S_Pl();
 
-    // R_R();
-    // R_L();
-    // R_Pl();
+    R_R();
+    R_L();
+    R_Pl();
 
     L_L();
     L_Pl();
 
-    // T_T();
+    T_T();
 
     Pl_Pl();
   }

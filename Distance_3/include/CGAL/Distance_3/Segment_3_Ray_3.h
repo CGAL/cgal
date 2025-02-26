@@ -170,104 +170,22 @@ squared_distance(const typename K::Ray_3& ray,
 
 template <class K>
 typename K::Comparison_result
+compare_squared_distance(const typename K::Ray_3& ray,
+                         const typename K::Segment_3& seg,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare(squared_distance(ray, seg, k), d2);
+}
+
+template <class K>
+typename K::Comparison_result
 compare_squared_distance(const typename K::Segment_3& seg,
                          const typename K::Ray_3& ray,
                          const K& k,
                          const typename K::FT& d2)
 {
-  typedef typename K::RT RT;
-  typedef typename K::FT FT;
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
-
-  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
-
-  const Point_3& ss = seg.source();
-  const Point_3& se = seg.target();
-
-  if(ss == se)
-    return sq_dist(ss, ray);
-
-  const Vector_3 raydir = ray.direction().vector();
-  const Vector_3 segdir = seg.direction().vector();
-  const Vector_3 normal = wcross(segdir, raydir, k);
-
-  if(is_null(normal, k))
-    return squared_distance_parallel(seg, ray, k);
-
-  bool crossing1, crossing2;
-
-  const Vector_3 perpend2seg = wcross(segdir, normal, k);
-  const Vector_3 perpend2ray = wcross(raydir, normal, k);
-  const Vector_3 ss_min_rs = vector(ray.source(), ss);
-  const Vector_3 se_min_rs = vector(ray.source(), se);
-  const RT sdm_ss2r = wdot(perpend2ray, ss_min_rs, k);
-  const RT sdm_se2r = wdot(perpend2ray, se_min_rs, k);
-
-  if(sdm_ss2r < RT(0))
-  {
-    crossing1 = (sdm_se2r >= RT(0));
-  }
-  else
-  {
-    if(sdm_se2r <= RT(0))
-      crossing1 = true;
-    else
-      crossing1 = (sdm_ss2r == RT(0));
-  }
-
-  const RT sdm_rs2s = - wdot(perpend2seg, ss_min_rs, k);
-  const RT sdm_re2s = wdot(perpend2seg, raydir, k);
-  if(sdm_rs2s < RT(0))
-  {
-    crossing2 = (sdm_re2s >= RT(0));
-  } else
-  {
-    if(sdm_re2s <= RT(0))
-      crossing2 = true;
-    else
-      crossing2 = (sdm_rs2s == RT(0));
-  }
-
-  if(crossing1)
-  {
-    if(crossing2)
-      return squared_distance_to_plane(normal, ss_min_rs, k);
-
-    return sq_dist(ray.source(), seg);
-  }
-  else
-  {
-    if(crossing2)
-    {
-      const RT dm = distance_measure_sub(sdm_ss2r, sdm_se2r, ss_min_rs, se_min_rs, k);
-      if(dm < RT(0))
-      {
-        return sq_dist(ss, ray);
-      }
-      else
-      {
-        if(dm > RT(0))
-          return sq_dist(se, ray);
-        else
-          // parallel, should not happen (no crossing)
-          return squared_distance_parallel(seg, ray, k);
-      }
-    }
-    else
-    {
-      const RT dm = distance_measure_sub(sdm_ss2r, sdm_se2r, ss_min_rs, se_min_rs, k);
-      if(dm == RT(0))
-        return squared_distance_parallel(seg, ray, k);
-
-      const FT min1 = (dm < RT(0)) ? sq_dist(ss, ray)
-                                   : sq_dist(se, ray);
-      const FT min2 = sq_dist(ray.source(), seg);
-
-      return (min1 < min2) ? min1 : min2;
-    }
-  }
+  return compare_squared_distance(ray, seg, k, d2);
 }
 
 } // namespace internal

@@ -215,13 +215,13 @@ squared_distance(const typename K::Triangle_3& tr1,
 
 template <typename K>
 typename K::Comparison_result
-compare_squared_distance(const typename K::Triangle_3& tr1,
-                         const typename K::Triangle_3& tr2,
-                         const K& k,
-                         const typename K::FT& d2,
-                         bool are_triangles_known_to_be_disjoint)
+compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
+                                  const typename K::Triangle_3& tr2,
+                                  const K& k,
+                                  const typename K::FT& d2)
 {
   typedef typename K::FT                                                  FT;
+  typedef typename K::Segment_3                                           Segment_3;
 
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
@@ -235,21 +235,30 @@ compare_squared_distance(const typename K::Triangle_3& tr1,
       typename K::Comparison_result temp_res_ss=csq_dist(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
       if(temp_res_ss==SMALLER)
         return SMALLER;
-      smaller_of(res, temp_res_ss);
+      res=smaller_of(res, temp_res_ss);
     }
 
-    typename K::comparison_result temp_res_v_pl= csq_dist(vertex(tr1, i), tr2,d2);
+    typename K::Comparison_result temp_res_v_pl= csq_dist(vertex(tr1, i), tr2,d2);
     if(temp_res_v_pl==SMALLER)
-				return SMALLER;
-    smaller_of(res, temp_res_v_pl);
+			return SMALLER;
+    res=smaller_of(res, temp_res_v_pl);
 
-  }
-
-  if(!are_triangles_known_to_be_disjoint){
-    //TODO check are disjoint
   }
   return res;
 
+}
+
+template <typename K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Triangle_3& tr1,
+                         const typename K::Triangle_3& tr2,
+                         const K& k,
+                         const typename K::FT& d2){
+    if(tr1.is_degenerate() || tr2.is_degenerate())
+      return compare(squared_distance(tr1,tr2, k), d2);
+    if(do_intersect(tr1, tr2))
+      return compare(typename K::FT(0), d2);
+    return compare_squared_distance_disjoint(tr1, tr2, k, d2);
 }
 
 } // namespace internal
