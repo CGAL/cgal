@@ -10,16 +10,16 @@ using Point = Kernel::Point_2;
 
 int main(int argc, char* argv[])
 {
-    std::vector<Point> A, B;
+    std::vector<Point> polylineA, polylineB;
     {
       std::ifstream in((argc > 1) ? argv[1] : CGAL::data_file_path("wkt/LetterA.wkt"));
-      CGAL::IO::read_linestring_WKT(in, A);
+      CGAL::IO::read_linestring_WKT(in, polylineA);
     }
     {
       std::ifstream in((argc > 1) ? argv[2] : CGAL::data_file_path("wkt/LetterAbis.wkt"));
-      CGAL::IO::read_linestring_WKT(in, B);
+      CGAL::IO::read_linestring_WKT(in, polylineB);
     }
-    bool res = CGAL::is_Frechet_distance_larger(A, B, 0.001);
+    bool res = CGAL::is_Frechet_distance_larger(polylineA, polylineB, 0.001);
     std::cout << std::boolalpha << res << std::endl;
     return 0;
 }
