@@ -33,14 +33,13 @@ The Fréchet distance is a metric. This implies that two polylines have distance
 
 \section secFrechetDistanceAPI API
 
-The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is larger than a given bound.
+The main entry points are the following functions and classes:
+- The function `bounded_error_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
+  It returns an interval that contains the true distance.
+- The function `is_Frechet_distance_larger()` decides if the Fréchet distance between two polylines is larger than a given bound.
+- The class `Frechet_distance::Neighbor_search` stores a set of polylines and offers a query functions to find polylines closer to a query curve than a given bound.
 
-The function `bounded_error_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
-It returns an interval that contains the true distance.
-The function `is_Frechet_distance_larger()` decides if the Fréchet distance
-between two polylines is larger than a given bound.
-
-Both functions have as template parameter a traits class defining the dimension and the point type.
+Both functions and the class have as template parameter a traits class defining the dimension and the point type.
 The traits classes have as template parameter a kernel, model of the concept `Kernel`.
 In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
 combine interval arithmetic with a fallback to exact computing in case comparisons of intervals
@@ -55,7 +54,7 @@ as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both f
 The algorithms in this package are an adaption of the implementation devised by Bringmann et al. (\cgalCite{cgal:bkn-wdfp-19}
 and \cgalCite{cgal:bkn-wdfp-21}). In particular, the implementation can decide non-difficult cases very
 fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet
-distance algorithm by Alt and Godau cgalCite{ag-cfdbt-95}. This is achieved by using fast bounding
+distance algorithm by Alt and Godau \cgalCite{ag-cfdbt-95}. This is achieved by using fast bounding
 box filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
 
 
@@ -93,7 +92,7 @@ polylines in 4-dimensional Euclidean space using `bounded_error_Frechet_distance
 \subsection subsecFrechetDistanceDSExample Searching Close Curves
 
 The following example shows how to store many curves in a data structure and to find all curves
-closed than a distance bound for a query curve.
+closer than a distance bound to a query curve.
 
 \cgalExample{Frechet_distance/Frechet_DS_3.cpp}
 
