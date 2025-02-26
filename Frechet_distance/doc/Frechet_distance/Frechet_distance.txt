@@ -53,8 +53,8 @@ as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both f
 
 \section secFrechetDistanceImplementation Implementation
 
-The algorithms in this package are an adaption of the implementation of \cgalCite{cgal:bkn-wdfp-19}
-and \cgalCite{cgal:bkn-wdfp-21}. In particular, the implementation can decide non-difficult cases very
+The algorithms in this package are an adaption of the implementation devised by Bringmann et al. (\cgalCite{cgal:bkn-wdfp-19}
+and \cgalCite{cgal:bkn-wdfp-21}). In particular, the implementation can decide non-difficult cases very
 fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet
 distance algorithm by Alt and Godau cgalCite{ag-cfdbt-95}. This is achieved by using fast bounding
 box filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
@@ -67,8 +67,8 @@ can be used with either inexact or exact kernels.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
-The following example shows how we can use `is_Frechet_distance_larger()` to decide whether the Fréchet
-distance between two polylines in the Euclidean plane is at most a given value.
+The following example shows how we can use `is_Frechet_distance_larger()`
+to determines if the Frechet distance between two polylines is larger than a given distance bound.
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
