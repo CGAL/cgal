@@ -1205,20 +1205,18 @@ template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
 
         template<class V,class W>
         result_type operator()(V const&a, V const&b, W const&c)const{   //  Point, Point. FT
-#if 0
-                CI c(this->kernel());
+                CI ci(this->kernel());
 
-
-                auto a_begin=c(a,Begin_tag());
-                auto b_begin=c(b,Begin_tag());
-                auto a_end=c(a,End_tag());
+                auto a_begin=ci(a,Begin_tag());
+                auto b_begin=ci(b,Begin_tag());
+                auto a_end=ci(a,End_tag());
                 result_type res;
                 // can't we do slightly better for Uncertain<*> ?
                 // after res=...; if(is_uncertain(res))return indeterminate<result_type>();
                 do res=CGAL_NTS compare(*a_begin++,*b_begin++);
                 while(a_begin!=a_end && res==EQUAL);
                 return res;
-#endif
+
            return EQUAL;
         }
 };

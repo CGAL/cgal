@@ -212,7 +212,7 @@ template<>
 class Bbox_d<Dynamic_dimension_tag> : public Impl::Bbox<std::vector<double>, Bbox_d<Dynamic_dimension_tag>>
 {
 public:
-    inline int dimension() const { return this->min_values.size(); }
+    inline int dimension() const { return static_cast<int>(this->min_values.size()); }
     Bbox_d(int d = 0          ) { init_values(d); this->init(d       ); }
     Bbox_d(int d, double range) { init_values(d); this->init(d, range); }
     template <typename I>

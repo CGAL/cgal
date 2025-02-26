@@ -52,7 +52,7 @@ public:
     : curves(polylines.begin(), polylines.end())
     {
       kd_tree.insert(curves);
-      kd_tree.build<Sequential_tag>();
+      kd_tree.template build<Sequential_tag>();
     }
 
 /*!
@@ -66,7 +66,7 @@ public:
     : curves(polylines.begin(), polylines.end())
     {
       kd_tree.insert(curves);
-      kd_tree.build<ConcurrencyTag>();
+      kd_tree.template build<ConcurrencyTag>();
     }
 #ifdef DOXYGEN_RUNNING
     using Point = Traits::Point_d;
