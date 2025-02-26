@@ -143,14 +143,14 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
 /**
  * \ingroup PkgFrechetDistanceFunctions
  * returns an estimate of the Fréchet distance between the two polylines that is at most `error_bound`
- * away from the actual Fréchet distance between the two polylines.
+ * away from the exact Fréchet distance between the two polylines.
  *
  * \tparam PointRange  a model of the concept `RandomAccessContainer` whose value type is a `Point_d`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param polyline1 the first polyline, defined by a sequence of consecutive points
  * \param polyline2 the second polyline, defined by a sequence of consecutive points
- * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the actual Fréchet distance
+ * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the exact Fréchet distance
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" containing the one listed below:
  *
  * \cgalNamedParamsBegin
