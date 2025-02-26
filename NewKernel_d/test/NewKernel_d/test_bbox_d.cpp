@@ -9,7 +9,7 @@ int main()
   //Dimension d
   typedef CGAL::Bbox_d<CGAL::Dimension_tag<2>> BBox2;
   typedef CGAL::Bbox_d<CGAL::Dimension_tag<3>> BBox3;
-  BBox3 bb3(3), bb3a(3,1.0);
+  BBox3 bb3, bb3a(1.0);
   assert(bb3.dimension() == 3);
   assert(bb3 != bb3a);
   bb3 = bb3a;
@@ -17,7 +17,7 @@ int main()
 
   std::array<std::pair<double,double>,3> coord = { std::make_pair(0.0, 0.0), std::make_pair(1.0, 1.1), std::make_pair(1.0, 20.0)};
 
-  BBox3 bb3b(3,coord.begin(), coord.end());
+  BBox3 bb3b(coord.begin(), coord.end());
 
   bb3b = bb3b + bb3b;
   bb3b += bb3;
