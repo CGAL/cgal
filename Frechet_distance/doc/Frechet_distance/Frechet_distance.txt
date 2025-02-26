@@ -12,7 +12,7 @@ namespace CGAL {
 <img src="FrechetTeaser.png" style="max-width:30%;"/>
 </center>
 
-This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
+This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.
 
 \section secFrechetDistanceIntroduction Introduction
 
@@ -33,7 +33,7 @@ The Fréchet distance is a metric. This implies that two polylines have distance
 
 \section secFrechetDistanceAPI API
 
-The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is at most a given value.
+The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is larger than a given bound.
 
 The function `bounded_error_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
 It returns an interval that contains the true distance.
@@ -47,7 +47,6 @@ combine interval arithmetic with a fallback to exact computing in case compariso
 are uncertain.  This means for `Simple_cartesian<double>` that there are no guarantees, for
 `Simple_cartesian<Exact_rational>` that all computations are performed with exact rationals,
 and for kernels such as `Exact_predicates_inexact_constructions_kernel`,  `Exact_predicates_exact_constructions_kernel`,
-`Exact_predicates_exact_constructions_kernel_with_sqrt`,
 as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both fast and guaranteed to be correct.
 
 

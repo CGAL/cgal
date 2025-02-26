@@ -14,7 +14,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
-\cgalPkgDesc{This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.}
+\cgalPkgDesc{This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.}
 \cgalPkgManuals{Chapter_dD_Frechet_distance,PkgFrechetDistanceRef}
 \cgalPkgSummaryEnd
 
@@ -26,7 +26,7 @@
 
 \cgalPkgDescriptionEnd
 
-This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
+This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.
 
 \cgalClassifedRefPages
 
