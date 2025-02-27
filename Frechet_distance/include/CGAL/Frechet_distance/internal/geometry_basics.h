@@ -621,8 +621,6 @@ struct CInterval {
     {
     }
 
-    CInterval(CInterval const& other) = default;
-
     CInterval(CPoint<C> const& begin, CPoint<C> const& end) : begin(begin), end(end)
     {
     }
