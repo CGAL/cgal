@@ -447,8 +447,8 @@ public:
            cit != c3t3_item->c3t3().triangulation().finite_cells_end();
            ++cit)
       {
-        CGAL_assertion(cit->info() >= 0);
-        c3t3_item->c3t3().add_to_complex(cit, cit->info());
+        if(cit->info() != 0)
+          c3t3_item->c3t3().add_to_complex(cit, cit->info());
         for(int i=0; i < 4; ++i)
         {
           if(cit->surface_patch_index(i)>0)
