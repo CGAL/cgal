@@ -132,7 +132,7 @@ The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poin
 
 \section Visualization_Triangulation_lift Visualization of a Triangulation
 
-The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` enables to visualize a triangulation by computing a lift of every triangle in the hyperbolic plane, it is illustrated in the demo and illustrated in \cgalFigureRef{THS2-demo-output}.
+The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes the lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}). This package contains a demo (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which can be used to display triangulations.
 
 \cgalFigureAnchor{THS2-demo-output}
 <center>
