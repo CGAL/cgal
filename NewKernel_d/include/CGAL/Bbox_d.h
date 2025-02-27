@@ -44,8 +44,8 @@ public:
         if(min_values.size() == 0){
             *this =  bbox;
         }
-        int dim = bbox.min_values.size();
-        for(int i=0; i<dim; ++i)
+        std::size_t dim = bbox.min_values.size();
+        for(std::size_t i=0; i<dim; ++i)
         {
             if(min_values[i] > bbox.min_values[i]) min_values[i] = bbox.min_values[i];
             if(max_values[i] < bbox.max_values[i]) max_values[i] = bbox.max_values[i];

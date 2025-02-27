@@ -585,7 +585,7 @@ struct CInterval {
     CPoint<C> end;
 
     const CInterval* reach_parent = nullptr;
-  CPoint<C> fixed = CPoint<C>((std::numeric_limits<typename PointID::IDType>::max)(), 0.);
+  CPoint<C> fixed = CPoint<C>((std::numeric_limits<typename PointID::IDType>::max)(), 0);
     CurveID fixed_curve = -1;
 
     CPosition<C> getLowerRightPos() const
@@ -616,8 +616,8 @@ struct CInterval {
     }
 
     CInterval()
-      : begin((std::numeric_limits<typename PointID::IDType>::max)(), 0.),
-          end(std::numeric_limits<typename PointID::IDType>::lowest(), 0.)
+      : begin((std::numeric_limits<typename PointID::IDType>::max)(), 0),
+          end(std::numeric_limits<typename PointID::IDType>::lowest(), 0)
     {
     }
 
@@ -633,7 +633,7 @@ struct CInterval {
     {
     }
 
-    CInterval(PointID begin, PointID end) : begin(begin, 0.), end(end, 0.) {}
+    CInterval(PointID begin, PointID end) : begin(begin, 0), end(end, 0) {}
 
     bool operator<(CInterval const& other) const
     {
