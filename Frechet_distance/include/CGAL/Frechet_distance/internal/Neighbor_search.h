@@ -98,11 +98,11 @@ public:
     FrechetKdTree() = default;
 
     void insert(Polylines const& curves);  // TODO: also add other methods of inserting points
-           
+
     template <typename ConcurrencyTag>
     void build()
-    {        
-    kd_tree.build<ConcurrencyTag>();
+    {
+    kd_tree. template build<ConcurrencyTag>();
     }
     PolylineIDs search(Polyline const& curve, FT distance);
 

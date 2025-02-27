@@ -1197,6 +1197,7 @@ namespace CartesianDKernelFunctors {
 template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Compare_squared_distance)
         typedef R_ R;
+        typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename Get_type<R, Comparison_result_tag>::type result_type;
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
@@ -1210,14 +1211,16 @@ template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
                 auto a_begin=ci(a,Begin_tag());
                 auto b_begin=ci(b,Begin_tag());
                 auto a_end=ci(a,End_tag());
+                RT sqdist(0);
                 result_type res;
                 // can't we do slightly better for Uncertain<*> ?
                 // after res=...; if(is_uncertain(res))return indeterminate<result_type>();
-                do res=CGAL_NTS compare(*a_begin++,*b_begin++);
-                while(a_begin!=a_end && res==EQUAL);
+                do{
+                  RT d = (*a_begin++ - *b_begin++);
+                  sqdist += d*d;
+                }while(a_begin!=a_end);
+                res=CGAL_NTS compare(sqdist,c);
                 return res;
-
-           return EQUAL;
         }
 };
 }

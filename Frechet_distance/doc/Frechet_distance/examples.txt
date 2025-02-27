@@ -2,5 +2,8 @@
 \example Frechet_distance/Frechet_distance_2.cpp
 \example Frechet_distance/Frechet_distance_3.cpp
 \example Frechet_distance/Frechet_distance_d.cpp
+\example Frechet_distance/Frechet_DS_2.cpp
+\example Frechet_distance/parallel_Frechet_DS_2.cpp
 \example Frechet_distance/Frechet_DS_3.cpp
+\example Frechet_distance/Frechet_DS_d.cpp
 */

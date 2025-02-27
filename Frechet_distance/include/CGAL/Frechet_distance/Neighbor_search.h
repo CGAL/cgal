@@ -24,6 +24,11 @@
 #include <iterator>
 #include <vector>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#endif
+
 namespace CGAL {
 namespace Frechet_distance {
 
@@ -99,7 +104,9 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
         return  is_Frechet_distance_larger(
             curve, curves[id], distance, parameters::geom_traits(Traits()));
     };
-    std::cout << result.size() << " curves returned from tree" << std::endl;
+ #ifdef CGAL_FRECHET_VERBOSE
+    /std::cout << result.size() << " curves returned from tree" << std::endl;
+#endif
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);
     result.erase(new_end, result.end());
 
