@@ -250,7 +250,7 @@ public:
       if(!c3t3_item || extension != "vtu")
         return false;
 
-      std::ofstream os(output_filename.data());
+      std::ofstream os(output_filename.data(), std::ios::binary);
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
