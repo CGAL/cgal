@@ -243,6 +243,10 @@ compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
 			return SMALLER;
     res=smaller_of(res, temp_res_v_pl);
 
+    temp_res_v_pl= csq_dist(vertex(tr2, i), tr1,d2);
+    if(temp_res_v_pl==SMALLER)
+			return SMALLER;
+    res=smaller_of(res, temp_res_v_pl);
   }
   return res;
 
