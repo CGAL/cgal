@@ -164,10 +164,11 @@ int main(int argc, char** argv)
   }
   average_length/=(3*input_triangles.size());
 
+  // Equivalent to EPECK since there are only predicates
   // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, 100*max/input_points.size());
-  std::cout << "EPICK" << std::endl;
-  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, average_length*average_length/256);
-  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, min_sq_length*4);
+  // std::cout << "EPICK" << std::endl;
+  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, average_length*average_length/256);
+  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, min_sq_length*4);
 
   std::cout << "EPECK" << std::endl;
   Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, average_length*average_length/256);
