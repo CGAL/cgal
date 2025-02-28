@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 
   std::cout << "3D Distance bench" << std::endl;
 
-  std::vector<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> input_points;
+  std::vector<CGAL::Simple_cartesian<double>::Point_3> input_points;
   std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
 
   if (!CGAL::IO::read_polygon_soup(filename, input_points, input_triangles))
@@ -126,13 +126,24 @@ int main(int argc, char** argv)
 
   // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, max*max);
   // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, 10*max*max/input_points.size());
-  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, 100*max/input_points.size());
-  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, max/input_points.size());
-  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, max/(100*input_points.size()));
 
-  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, 100*max/input_points.size());
-  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, max/input_points.size());
-  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, max/(100*input_points.size()));
+  double average_length=0;
+  double min_sq_length=CGAL::squared_distance(input_points[input_triangles[0][0]],input_points[input_triangles[0][1]]);
+  for(auto &tr: input_triangles){
+    for(int i=0; i<3; ++i){
+      double l=CGAL::squared_distance(input_points[tr[i]], input_points[tr[(i+1)%3]]);
+      min_sq_length=(std::min)(min_sq_length, l);
+      average_length+=std::sqrt(l);
+    }
+  }
+  average_length/=(3*input_triangles.size());
+
+  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, 100*max/input_points.size());
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, average_length*average_length/256);
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, min_sq_length*4);
+
+  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, average_length*average_length/256);
+  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run(filename, min_sq_length*4);
 
   std::cout << "Done!" << std::endl;
 

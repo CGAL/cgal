@@ -266,9 +266,6 @@ private:
       P p3 = random_point();
       P q = random_point();
 
-      // Failed on seed (1740146243) with an inexact kernel without the bound increasing
-      // The failed is due of the minimum realized by an edge and the computation is slightly different
-      // between the distance compute between the two triangles
       check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p1, p2))*(1 + 1e-10));
       check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p1, p3, p2))*(1 + 1e-10));
       check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p3, p2))*(1 + 1e-10));

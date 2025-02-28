@@ -116,6 +116,7 @@ compare_squared_distance(const typename K::Point_3& pt,
                          const K& k,
                          const typename K::FT& d2)
 {
+  //Doing an early exit was slower.
   return compare(squared_distance(pt, seg, k), d2);
 }
 

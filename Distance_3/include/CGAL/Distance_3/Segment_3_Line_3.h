@@ -62,27 +62,8 @@ squared_distance(const typename K::Segment_3& seg,
   const RT sdm_ss2l = wdot(perpend2line, start_min_lp, k);
   const RT sdm_se2l = wdot(perpend2line, end_min_lp, k);
 
-  // if(sdm_ss2l < RT(0)) {
-  //   crossing = (sdm_se2l >= RT(0));
-  // } else {
-  //   if(sdm_se2l <= RT(0)) {
-  //     crossing = true;
-  //   } else {
-  //     crossing = (sdm_ss2l == RT(0));
-  //   }
-  // }
   crossing = (sdm_ss2l*sdm_se2l) <= RT(0);
 
-  // if(crossing) {
-  //   return squared_distance_to_plane(normal, start_min_lp, k);
-  // } else {
-  //   const RT dm = distance_measure_sub(sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp, k);
-  //   if(dm <= RT(0)) {
-  //     return squared_distance_to_line(linedir, start_min_lp, k);
-  //   } else {
-  //     return squared_distance_to_line(linedir, end_min_lp, k);
-  //   }
-  // }
   if(crossing)
     return squared_distance_to_plane(normal, start_min_lp, k);
   else
@@ -105,55 +86,7 @@ compare_squared_distance(const typename K::Segment_3& seg,
                          const K& k,
                          const typename K::FT& d2)
 {
-  // typedef typename K::RT RT;
-  // typedef typename K::Point_3 Point_3;
-  // typedef typename K::Vector_3 Vector_3;
-
-  // typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-  // typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
-
-  // const Point_3& linepoint = line.point();
-  // const Point_3& start = seg.source();
-  // const Point_3& end = seg.target();
-
-  // if(start == end)
-  //   return csq_dist(start, line, d2);
-
-  // const Vector_3 linedir = line.direction().vector();
-  // const Vector_3 segdir = seg.direction().vector();
-  // const Vector_3 normal = wcross(segdir, linedir, k);
-
-  // if(is_null(normal, k))
-  //   return compare(squared_distance_to_line(linedir, vector(linepoint,start), k), d2);
-
-  // bool crossing;
-
-  // const Vector_3 perpend2line = wcross(linedir, normal, k);
-  // const Vector_3 start_min_lp = vector(linepoint, start);
-  // const Vector_3 end_min_lp = vector(linepoint, end);
-  // const RT sdm_ss2l = wdot(perpend2line, start_min_lp, k);
-  // const RT sdm_se2l = wdot(perpend2line, end_min_lp, k);
-
-  // if(sdm_ss2l < RT(0)) {
-  //   crossing = (sdm_se2l >= RT(0));
-  // } else {
-  //   if(sdm_se2l <= RT(0)) {
-  //     crossing = true;
-  //   } else {
-  //     crossing = (sdm_ss2l == RT(0));
-  //   }
-  // }
-
-  // if(crossing) {
-  //   return squared_distance_to_plane(normal, start_min_lp, k);
-  // } else {
-  //   const RT dm = distance_measure_sub(sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp, k);
-  //   if(dm <= RT(0)) {
-  //     return squared_distance_to_line(linedir, start_min_lp, k);
-  //   } else {
-  //     return squared_distance_to_line(linedir, end_min_lp, k);
-  //   }
-  // }
+  // Perform an early exit was slower
   return compare(squared_distance(seg, line, k), d2);
 }
 

@@ -155,6 +155,10 @@ compare_squared_distance(const typename K::Point_3& pt,
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Orientation_3 orientation = k.orientation_3_object();
 
+  /* The content of this function is very similar with the one above, the difference is we can exit earlier if
+      we found a triangle closer than d or plane farther than d since we do not need the exact distance.
+      (there are also early exits in calling functions)  */
+
   bool on_bounded_side = true;
   bool inside_or_far_to_the_plane = false;
   const Point_3& t0 = vertex(tet, 0);

@@ -937,7 +937,6 @@ namespace CommonKernelFunctors {
     Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      // return CGAL::compare(internal::squared_distance(p, q, K()), d2);
       return internal::compare_squared_distance(p, q, K(), d2);
     }
 
@@ -945,10 +944,7 @@ namespace CommonKernelFunctors {
     Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      // return internal::compare_squared_distance(p, q, K(), internal::squared_distance(p, q, K()));
       return internal::compare_squared_distance(p, q, K(), internal::squared_distance(r, s, K()));
-      // return CGAL::compare(internal::squared_distance(p, q, K()),
-                          //  internal::squared_distance(r, s, K()));
     }
   };
 

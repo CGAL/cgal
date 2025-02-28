@@ -206,6 +206,10 @@ compare_squared_distance(const typename K::Segment_3& s1,
   typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
   typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
 
+  /* The content of this function is very similar with the one above, the difference is we can exit earlier if 
+     the supporting line are farther than d since we do not need the exact distance. */
+
+
   const Point_3& p1 = vertex(s1, 0);
   const Point_3& q1 = vertex(s1, 1);
   const Point_3& p2 = vertex(s2, 0);
