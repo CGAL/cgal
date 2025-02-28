@@ -1051,8 +1051,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \return `true` if the modified triangle soup is free from self-intersection, and `false` if the algorithm was not
-* able to provide such a triangle soup within the number of iterations.
+* \return `true` if the modified triangle soup is free from self-intersection, and `false` otherwise. The return value is only meaningful when the option `apply_snap_rounding()` is set to true.
 */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 bool autorefine_triangle_soup(PointRange& soup_points,
