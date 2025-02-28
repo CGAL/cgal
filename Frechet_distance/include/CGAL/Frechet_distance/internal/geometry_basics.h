@@ -449,7 +449,7 @@ class CPoint
     {
         assert(fraction >= Lambda<C>(0) && fraction <= Lambda<C>(1));
         if (CGAL::is_one(fraction)) {
-            fraction = 0.;
+            fraction = Lambda<C>(0);
             ++point;
         }
     }

@@ -34,6 +34,9 @@ public:
 
     ID(IDType id = invalid_value) : id(id) {}
 
+    ID(int sid) : id(static_cast<IDType>(sid)) { assert(sid < static_cast<int>(invalid_value)); }
+    ID(std::size_t sid) : id(static_cast<IDType>(sid)) { assert(sid < static_cast<std::size_t>(invalid_value)); }
+
     operator IDType() const { return id; }
     IDType operator+(ID<T> other) const { return id + other.id; }
     IDType operator+(int offset) const { return id + offset; }
