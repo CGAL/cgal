@@ -592,6 +592,16 @@ Intersection tests between triangle meshes and/or polylines can be done using
 Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 records all pairs of intersecting meshes in a range.
 
+\subsubsection PMPIntersectionCombinations Valid Combinations of Parameters for Intersection
+The `CGAL::Polygon_mesh_processing::intersection()` function supports the following combinations of parameters:
+- Point and Circle
+- Point and Sphere
+- Line and Plane
+- Line and Triangle
+- Segment and Triangle
+- Ray and Triangle
+- Triangle and Triangle
+
 \subsubsection PMPSelIntersections Self Intersections
 
 Self intersections within a triangle mesh can be detected by calling the function
