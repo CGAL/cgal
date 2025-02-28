@@ -701,7 +701,7 @@ public Q_SLOTS:
           begin != selection_item->selected_edges.end(); ++begin)
       {
         fg_vertex_descriptor source = target(opposite(halfedge(*begin,*poly),*poly),*poly);
-        boost::tie(it_find, insert_OK)
+        std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
         if (insert_OK)
         {
@@ -711,7 +711,7 @@ public Q_SLOTS:
         Edge_graph::vertex_descriptor src=it_find->second;
 
         fg_vertex_descriptor targ = target(halfedge(*begin,*poly),*poly);
-        boost::tie(it_find, insert_OK)
+        std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(targ, Edge_graph::vertex_descriptor()));
         if (insert_OK)
         {
@@ -1026,12 +1026,18 @@ public Q_SLOTS:
     //Add vertex and face to border
     case 9:
     {
+      QPixmap pm(":/cgal/Lab/resources/euler_deg2.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    case 10:
+    {
       QPixmap pm(":/cgal/Lab/resources/add_facet1.png");
       ui_widget.docImage_Label->setPixmap(pm);
       break;
     }
     //add facet to border
-    case 10:
+    case 11:
     {
       QPixmap pm(":/cgal/Lab/resources/add_facet2.png");
       ui_widget.docImage_Label->setPixmap(pm);

@@ -461,6 +461,11 @@ namespace CGAL {
   using cpp11::copy_n;
 } // end of the temporary compatibility with CGAL-4.14
 #endif // CGAL_NO_DEPRECATED_CODE
+
+#if __has_include(<version>)
+#  include <version>
+#endif
+
 namespace CGAL {
 
 // Typedef for the type of nullptr.
@@ -501,7 +506,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L || (__has_include(<format>) && (__cplusplus >= 202000L || _MSVC_LANG >= 202000L))
+#if __cpp_lib_format >= 201907L
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 

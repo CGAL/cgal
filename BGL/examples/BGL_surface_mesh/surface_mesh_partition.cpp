@@ -51,7 +51,7 @@ int main(int argc, char** argv)
   std::ofstream outxyz("out.xyz");
   outxyz.precision(17);
   boost::graph_traits<SM>::vertex_iterator vit, ve;
-  boost::tie(vit, ve) = vertices(sm);
+  std::tie(vit, ve) = vertices(sm);
   for(; vit!=ve; ++vit)
   {
     if(get(vertex_pid_map, *vit) == 0)

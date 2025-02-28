@@ -411,7 +411,7 @@ public:
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
     /*! operates */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
 
@@ -429,7 +429,7 @@ public:
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
     /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc)
+    Comparison_result operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
 

@@ -1450,7 +1450,7 @@ void build_AABB_tree(const TriangleMesh& tm,
                        >::value>* = 0)
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
-  boost::tie(ffirst, fbeyond) = faces(tm);
+  std::tie(ffirst, fbeyond) = faces(tm);
   outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
   outTree.build();
 }

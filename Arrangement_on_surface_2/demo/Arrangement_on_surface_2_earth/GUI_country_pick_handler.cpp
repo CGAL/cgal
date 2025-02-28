@@ -62,7 +62,7 @@ void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e) {
         auto sd = sqrt(d);
         auto t1 = (-b - sd) / (2 * a);
         auto t2 = (-b + sd) / (2 * a);
-        if (t1 > 0 && t2 > 0) ti = std::min(t1, t2);
+        if (t1 > 0 && t2 > 0) ti = (std::min)(t1, t2);
         else if (t1 > 0) ti = t1;
         else ti = t2;
       }

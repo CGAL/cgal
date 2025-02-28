@@ -5,7 +5,6 @@
 
 /*!
 \addtogroup PkgInscribedAreasRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Inscribed Areas,PkgInscribedAreas}
 \cgalPkgPicture{ler-detail.png}
 \cgalPkgSummaryBegin

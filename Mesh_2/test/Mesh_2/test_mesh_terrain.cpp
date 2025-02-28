@@ -1,3 +1,13 @@
+// Test also CGAL::Random_allocator
+#if __has_include(<version>)
+#  include <version>
+#  if __cpp_lib_format >= 201907L
+#    define CGAL_DEBUG_RANDOM_ALLOCATOR 1
+#  endif
+#endif
+#include <CGAL/Random_allocator.h>
+#define CGAL_ALLOCATOR(T) CGAL::Random_allocator<T>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -21,6 +31,9 @@ typedef K::Point_3   Point;
 
 int main()
 {
+#if CGAL_DEBUG_RANDOM_ALLOCATOR
+  std::clog << "CGAL::Random_allocator debug mode is enabled..." << std::endl;
+#endif
   Delaunay dt;
   typedef Delaunay::Vertex_handle Vertex_handle;
   Vertex_handle va = dt.insert(Point(-4,0, 0));

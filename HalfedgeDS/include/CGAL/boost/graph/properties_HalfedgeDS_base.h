@@ -70,7 +70,7 @@ public:
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
-    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
+    for(std::tie(it, end) = edges(p); it != end; ++it, ++data)
       (*map_)[*it] = data;
   }
 

@@ -3,7 +3,6 @@
 /// \ingroup PkgBoundingVolumesRef
 /*!
 \addtogroup PkgBoundingVolumesRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumes}
 \cgalPkgPicture{minCircle.png}
 \cgalPkgSummaryBegin

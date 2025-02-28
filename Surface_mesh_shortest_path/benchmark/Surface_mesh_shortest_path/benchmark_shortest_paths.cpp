@@ -192,7 +192,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
   outData.numFaces = num_faces(polyhedron);
 
   face_iterator startFace, endFace;
-  boost::tie(startFace, endFace) = faces(polyhedron);
+  std::tie(startFace, endFace) = faces(polyhedron);
 
   std::vector<face_descriptor> allFaces;
 

@@ -741,6 +741,7 @@ user might encounter.
 - `CGAL::Euler::join_vertex()`
 - `CGAL::Euler::make_hole()`
 - `CGAL::Euler::remove_center_vertex()`
+- `CGAL::Euler::remove_degree_2_vertex()`
 - `CGAL::Euler::remove_face()`
 - `CGAL::Euler::split_edge()`
 - `CGAL::Euler::split_face()`

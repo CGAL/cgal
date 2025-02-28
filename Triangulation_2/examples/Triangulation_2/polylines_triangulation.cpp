@@ -28,13 +28,14 @@ print(const CDTP& cdtp, Cid cid)
 void
 contexts(const CDTP& cdtp)
 {
-  for(auto sc : cdtp.subconstraints()){
-    Vertex_handle vp = sc.first.first, vq = sc.first.second;
+  for(const auto& sc_and_contexts : cdtp.subconstraints_and_contexts()) {
+    const auto& [subconstraint, contexts_list_ptr] = sc_and_contexts;
+    Vertex_handle vp = subconstraint.first, vq = subconstraint.second;
 
     if(cdtp.number_of_enclosing_constraints(vp, vq) == 2){
       std::cout << "subconstraint " << vp->point() << " " << vq->point()
                 << " is on constraints starting at:\n";
-      for(const CDTP::Context& c : cdtp.contexts(vp,vq)){
+      for(const CDTP::Context& c : *contexts_list_ptr) {
         std::cout << (*(c.vertices_begin()))->point() << std::endl;
       }
     }

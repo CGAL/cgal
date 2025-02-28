@@ -779,19 +779,26 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
-    //Add vertex and face to border
+    //Remove degree 2 vertex
   case 9:
-    Q_EMIT updateInstructions("Select a border edge. (1/2)");
-    //set the selection type to Edge
-    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    Q_EMIT updateInstructions("Select the vertex you want to remove."
+                              "Warning: This will clear the undo stack.");
+    //set the selection type to vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
-    //Add face to border
+    //Add vertex and face to border
   case 10:
     Q_EMIT updateInstructions("Select a border edge. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
+    //Add face to border
   case 11:
+    Q_EMIT updateInstructions("Select a border edge. (1/2)");
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+  case 12:
     Q_EMIT updateInstructions("Select a vertex. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(0));
@@ -1011,7 +1018,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
       }
       break;
     }
-    case 11:
+      //Remove degree 2 vertex
+    case 9:
+    {
+      if(degree(vh,*polyhedron()) == 2)
+      {
+        CGAL::Euler::remove_degree_2_vertex(halfedge(vh,*polyhedron()), *polyhedron());
+        polyhedron_item()->invalidateOpenGLBuffers();
+      }
+      else
+      {
+        d->tempInstructions("Vertex not selected: The vertex must have degree 2 (and not be incident to a triangle)",
+                  "Select the vertex you want to remove."
+                  "Warning: This will clear the undo stack.");
+      }
+      break;
+    }
+      //Move point
+    case 12:
       CGAL::QGLViewer* viewer = Three::mainViewer();
       const CGAL::qglviewer::Vec offset = viewer->offset();
       if(viewer->manipulatedFrame() != d->manipulated_frame)
@@ -1056,13 +1080,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
   return false;
 }
 
-//returns true if halfedge's facet's degree >= degree
-/*
-std::size_t facet_degree(fg_halfedge_descriptor h, const Face_graph& polyhedron)
-{
-  return degree(h,polyhedron);
-}
-*/
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point, *polyhedron());
@@ -1203,7 +1220,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
 
       break;
       //Add vertex and face to border
-    case 9:
+    case 10:
     {
       static fg_halfedge_descriptor t;
       if(!d->first_selected)
@@ -1255,7 +1272,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       break;
     }
       //Add face to border
-    case 10:
+    case 11:
     {
       static fg_halfedge_descriptor t;
       if(!d->first_selected)

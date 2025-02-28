@@ -82,9 +82,9 @@ void mstIpelet::protected_run(int /*fn*/)
   vertex_iterator vit, ve;
   // Associate indices to the vertices
   int index = 0;
-  // boost::tie assigns the first and second element of the std::pair
+  // std::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
-  for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
+  for(std::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor vd = *vit;
     vertex_id_map[vd] = index++;
     }

@@ -26,7 +26,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
   typedef typename boost::property_traits<NormalMap>::value_type normal;
 
   face_iterator fb, fe;
-  for(boost::tie(fb, fe) = faces(g); fb != fe; ++fb)
+  for(std::tie(fb, fe) = faces(g); fb != fe; ++fb)
   {
     halfedge_descriptor edg = halfedge(*fb, g);
     halfedge_descriptor edgb = edg;

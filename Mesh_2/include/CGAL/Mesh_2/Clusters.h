@@ -160,15 +160,14 @@ public:
   void create_clusters(Tag_true) {
     cluster_map.clear();
     Unique_hash_map<Vertex_handle,bool> created(false);
-    for(typename Tr::Subconstraint_iterator it = tr.subconstraints_begin();
-        it != tr.subconstraints_end(); ++it) {
-      Vertex_handle vh = it->first.first;
+    for(const auto& sc : tr.subconstraints()) {
+      Vertex_handle vh = sc.first;
       if(!created[vh]){
         created[vh] = true;
         create_clusters_of_vertex(vh);
       }
 
-      vh = it->first.second;
+      vh = sc.second;
       if(!created[vh]){
         created[vh] = true;
         create_clusters_of_vertex(vh);

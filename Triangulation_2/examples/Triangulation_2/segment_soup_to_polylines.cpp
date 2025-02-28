@@ -31,7 +31,8 @@ int main()
   cdtp.insert_constraint(Point(100,100), Point(200,200));
 
   // Segment soup of 8 segments as input
-  std::cout << "Input CDT+ has " << cdtp.number_of_constraints() << " constraints/subconstraints" << std::endl;
+  std::cout << "Input CDT+ has " << cdtp.number_of_constraints()
+            << " constraints/subconstraints" << std::endl;
 
   std::cout << "Splitting subconstraints graph into constraints" << std::endl;
   cdtp.split_subconstraint_graph_into_constraints();
@@ -45,6 +46,12 @@ int main()
     for (CDTP::Vertex_handle vh : cdtp.vertices_in_constraint(cid))
       std::cout << " (" << vh->point() << ")";
     std::cout << std::endl;
+  }
+
+  if(cdtp.number_of_constraints() != 5)
+  {
+    std::cerr << "Error: expected 5 constraints/subconstraints" << std::endl;
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;

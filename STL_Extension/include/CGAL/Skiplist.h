@@ -75,7 +75,7 @@ public:
       all_iterator
     , typename all_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     all_iterator() {}
@@ -91,7 +91,7 @@ public:
       skip_iterator
     , typename skip_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     skip_iterator() {}
