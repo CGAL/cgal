@@ -58,7 +58,7 @@ public:
       std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),std::back_inserter(v));
 
       if(v.size()!=0) //they have common vertices
-        return; 
+        return;
 
       bool comp = K().compare_squared_distance_3_object()(T(points[a[0]], points[a[1]], points[a[2]]),
                                                  T(points[b[0]], points[b[1]], points[b[2]]),
@@ -68,7 +68,7 @@ public:
         nb_closed_pairs++;
       }
     };
-    
+
     for(Iterator it=triangles.begin(); it!=triangles.end(); ++it)
       boxes.emplace_back(extend_bbox3(it, d2), it);
 
