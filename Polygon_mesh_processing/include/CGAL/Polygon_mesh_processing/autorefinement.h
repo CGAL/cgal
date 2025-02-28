@@ -994,9 +994,9 @@ bool polygon_soup_snap_rounding(PointRange &points,
 * `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
 * Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
-* If the `apply_iterative_snap_rounding` parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
-* while preserving the model free of intersections. Note that this option does not guarantee an intersection-free output; however,
-* the returned boolean will be true if the output is free of self-intersections. The snap_grid_size parameter limits the drift of the snapped vertices.
+* the creation of new triangles.
+* If the `apply_iterative_snap_rounding()` parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
+* while trying to make the triangle soup free of intersections. The `snap_grid_size()` parameter limits the drift of the snapped vertices.
 * A smaller value is more likely to output an intersection free output and perform more vertex collapses, but it may increase the Hausdorff distance from the input.
 *
 * @tparam PointRange a model of the concept `RandomAccessContainer`
