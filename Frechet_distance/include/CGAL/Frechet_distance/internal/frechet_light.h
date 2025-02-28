@@ -517,10 +517,10 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
             fixed_curve, fixed, curve, cur);
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
                                          ? temp_interval.begin.getFraction()
-                                         : 1., //TODO really 1. ? pure guess, should be 0.
+                                         : 1, ///@TODO Andre : really 1. ? pure guess, should be 0.
                                      temp_interval.end.getPoint() == cur
                                          ? temp_interval.end.getFraction()
-                                         : 1.);
+                                         : 1);
 
         // do previous check for fullness again, but now it is an exact decision
         if (is_zero(interval.begin) && is_one(interval.end)) {  // Uncertain (A)
@@ -705,7 +705,7 @@ void FrechetLight<C>::boxShrinkingRule(BoxData& data)
             assert(box.min1 <= box.max1);
             if (box.min1 == box.max1) {
                 box.min1 = box.max1 - 1;
-                min1_frac = 1.;
+                min1_frac = 1;
             }
 
             if (box.min1 != old_min1) {
@@ -725,7 +725,7 @@ void FrechetLight<C>::boxShrinkingRule(BoxData& data)
             assert(box.min2 <= box.max2);
             if (box.min2 == box.max2) {
                 box.min2 = box.max2 - 1;
-                min2_frac = 1.;
+                min2_frac = 1;
             }
 
             if (box.min2 != old_min2) {
