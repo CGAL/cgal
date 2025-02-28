@@ -90,7 +90,7 @@ private:
 
 template <typename K>
 GraphicsViewPolygonWithHolesInput<K>::GraphicsViewPolygonWithHolesInput(QObject *parent, QGraphicsScene* s)
-  : GraphicsViewInput(parent), scene_(s), polygon_input(false)
+  : GraphicsViewInput(parent), polygon_input(false), scene_(s)
 {
   pwhItem = new CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes>(&pwh);
   pwhItem->setBrush(::Qt::yellow);
@@ -151,7 +151,7 @@ GraphicsViewPolygonWithHolesInput<K>::processInput(CGAL::Object o)
 
 template <typename K>
 void
-GraphicsViewPolygonWithHolesInput<K>::keyPressEvent ( QKeyEvent * event )
+GraphicsViewPolygonWithHolesInput<K>::keyPressEvent ( QKeyEvent * /* event */ )
 {
 }
 

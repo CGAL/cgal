@@ -139,7 +139,7 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    // CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
     return point_in_facet_interior( p, f);
   }
 
@@ -159,7 +159,7 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    // CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
     return point_in_facet_interior( p, f);
   }
 

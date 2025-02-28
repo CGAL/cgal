@@ -61,7 +61,7 @@
     <item>
      <widget class="QTabWidget" name="selectionOrEuler">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -631,6 +631,11 @@
                <item>
                 <property name="text">
                  <string>Remove center vertex</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Remove degree 2 vertex</string>
                 </property>
                </item>
                <item>

@@ -4414,7 +4414,7 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
   queue.push_back(std::make_pair(c1,c2));
 
   while(! queue.empty()) {
-    boost::tie(c1,c2) = queue.back();
+    std::tie(c1,c2) = queue.back();
     queue.pop_back();
 
     // Precondition: c1, c2 have been registered as well as their 4 vertices.
