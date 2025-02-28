@@ -229,7 +229,7 @@ compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
   typename K::Comparison_result res(LARGER);
 
   // The tiangle are supposed to be disjoint
-  assertion(!do_intersect(tr1, tr2));
+  assert(!do_intersect(tr1, tr2));
 
   for(int i=0; i<3; ++i)
   {
