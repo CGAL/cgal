@@ -631,7 +631,7 @@ insert_corners()
     // Get weight (the ball radius is given by the 'query_size' function)
     const FT query_weight = CGAL::square(query_size(p, 0, p_index));
     FT w = use_minimal_size()
-         ? (std::min)(minimal_weight_, query_weight)
+         ? (std::max)(minimal_weight(), query_weight)
          : query_weight;
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -640,7 +640,8 @@ insert_corners()
 
     // The following lines ensure that the weight w is small enough so that
     // corners balls do not intersect
-    if(dt.number_of_vertices() >= 2)
+    if( dt.number_of_vertices() >= 2
+      && (!use_minimal_size() || w != minimal_weight()))
     {
       typename Dt::Vertex_handle vh;
       CGAL_assertion_code( bool p_found = )
@@ -657,6 +658,9 @@ insert_corners()
                                      dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));
+
+      if(use_minimal_size())
+        w = (std::max)(w, minimal_weight_);
     }
 
     // Insert corner with ball (dim is zero because p is a corner)
