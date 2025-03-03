@@ -326,7 +326,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
     // Note that in the degenerate case, at most 2 edges cover the full triangle,
     // and only two distances could be used
     typename K::Comparison_result res1 = csq_dist(pt, segment(t2, t0), d2);
-    if(is_certain(res1) && (res1 == SMALLER))
+    if(certainly(res1 == SMALLER))
       return SMALLER;
     typename K::Comparison_result res2 = csq_dist(pt, segment(t1, t2), d2);
     return smaller_of(res1,res2);
@@ -334,7 +334,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
 
   // Compare first the distance to the plane, if larger we can exit early
   typename K::Comparison_result res_p_pl = compare(squared_distance_to_plane(normal, vector(t0, pt), k), d2);
-  if(is_certain(res_p_pl) && res_p_pl==LARGER)
+  if(certainly(res_p_pl==LARGER))
   {
     inside_or_far_to_the_plane=true;
     return LARGER;
@@ -344,7 +344,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
   if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
   {
     typename K::Comparison_result res_p_s1 = csq_dist(pt, segment(t0, t1), d2);
-    if(res_p_s1==SMALLER)
+    if(certainly(res_p_s1==SMALLER))
       return SMALLER;
     if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
     {
@@ -370,7 +370,7 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
     if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
     {
       typename K::Comparison_result res_p_s2 = csq_dist(pt, segment(t1, t2), d2);
-      if(res_p_s2 == SMALLER)
+      if(certainly(res_p_s2 == SMALLER))
         return SMALLER;
       if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
       {

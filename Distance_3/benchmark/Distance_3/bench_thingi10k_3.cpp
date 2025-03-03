@@ -164,6 +164,10 @@ int main(int argc, char** argv)
   }
   average_length/=(3*input_triangles.size());
 
+  std::cout << "Simple_Cartesian<double>" << std::endl;
+  Test<CGAL::Simple_cartesian<double> >().run(filename, average_length*average_length/256);
+  Test<CGAL::Simple_cartesian<double> >().run(filename, min_sq_length*4);
+
   // Equivalent to EPECK since there are only predicates
   // Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run(filename, 100*max/input_points.size());
   // std::cout << "EPICK" << std::endl;

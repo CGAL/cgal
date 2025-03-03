@@ -73,7 +73,7 @@ squared_distance(const typename K::Segment_3& seg,
   const Point_3& ss = seg.source();
   const Point_3& se = seg.target();
 
-  //TODO Me semble vachement compliqué pour un truc si simple, est-ce que y'a pas moyen de s'inspirer de Lumelsky pour segment segment
+  //TODO This seems complicated compared to Segment_3_Segment_3.h. Consider improving by adapting Lumelsky's method for segment-segment intersection.
 
   if(ss == se)
     return sq_dist(ss, ray);

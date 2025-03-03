@@ -237,19 +237,19 @@ compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
     for(int j=0; j<3; ++j)
     {
       typename K::Comparison_result temp_res_ss=csq_dist(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
-      if(temp_res_ss==SMALLER)
+      if(certainly(temp_res_ss==SMALLER))
         return SMALLER;
       res=smaller_of(res, temp_res_ss);
     }
 
     //Compare the distance between vertices and triangles
     typename K::Comparison_result temp_res_v_pl= csq_dist(vertex(tr1, i), tr2,d2);
-    if(temp_res_v_pl==SMALLER)
+    if(certainly(temp_res_v_pl==SMALLER))
       return SMALLER;
     res=smaller_of(res, temp_res_v_pl);
 
     temp_res_v_pl= csq_dist(vertex(tr2, i), tr1,d2);
-    if(temp_res_v_pl==SMALLER)
+    if(certainly(temp_res_v_pl==SMALLER))
       return SMALLER;
     res=smaller_of(res, temp_res_v_pl);
   }

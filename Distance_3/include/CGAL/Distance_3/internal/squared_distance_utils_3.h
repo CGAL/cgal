@@ -26,14 +26,28 @@
 namespace CGAL {
 namespace internal {
 
-template <typename K_Comparison_result>
-K_Comparison_result smaller_of(const K_Comparison_result a, const K_Comparison_result b)
+inline
+Comparison_result smaller_of(const Comparison_result& a, const Comparison_result& b)
 {
-  if((a==SMALLER) || (b==SMALLER))
-    return SMALLER;
-  if((a==EQUAL) || (b==EQUAL))
-    return EQUAL;
-  return LARGER;
+  return (std::min)(a,b);
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Uncertain<Comparison_result>& a, const Uncertain<Comparison_result>& b)
+{
+  return Uncertain((std::min)(a.inf(),b.inf()), (std::min)(a.sup(),b.sup()));
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Uncertain<Comparison_result>& a, const Comparison_result& b)
+{
+  return smaller_of(a,make_uncertain(b));
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Comparison_result& a, const Uncertain<Comparison_result>& b)
+{
+  return smaller_of(make_uncertain(a),b);
 }
 
 template <class K>

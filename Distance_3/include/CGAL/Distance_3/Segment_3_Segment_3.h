@@ -104,7 +104,7 @@ squared_distance(const typename K::Segment_3& s1,
   CGAL_assertion(a > 0 && d < 0);
 
   const FT det = a*d - b*c;
-  if(det == 0)
+  if(is_zero(det))
     res.x = 0;
   else
     res.x = boost::algorithm::clamp<FT>((e*d - b*f) / det, 0, 1);
@@ -209,7 +209,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   /* The content of this function is very similar with the one above, the difference is we can exit earlier if
      the supporting line are farther than d since we do not need the exact distance. */
 
-
+#if 1
   const Point_3& p1 = vertex(s1, 0);
   const Point_3& q1 = vertex(s1, 1);
   const Point_3& p2 = vertex(s2, 0);
@@ -231,7 +231,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
 
   // Compare first the distance between the lines, if larger we can exit early
   typename K::Comparison_result res_ll=csq_dist(s1.supporting_line(), s2.supporting_line(), d2);
-  if(is_certain(res_ll) && res_ll==LARGER)
+  if(certainly(res_ll==LARGER))
     return LARGER;
 
   // Compute the distance between the segments
@@ -247,7 +247,7 @@ compare_squared_distance(const typename K::Segment_3& s1,
   CGAL_assertion(a > 0 && d < 0);
   const FT det = a*d - b*c;
   FT res_x;
-  if(det == 0)
+  if(is_zero(det))
     res_x = 0;
   else
     res_x = boost::algorithm::clamp<FT>((e*d - b*f) / det, 0, 1);
@@ -280,6 +280,10 @@ compare_squared_distance(const typename K::Segment_3& s1,
       return res_ll;
     }
   }
+#else
+  // Faster with Simple_cartesian<double>, a bit slower with EPICK or EPECK specifically if d2 is small
+  return compare(squared_distance(s1, s2 ,k), d2);
+#endif
 }
 
 } // namespace internal
