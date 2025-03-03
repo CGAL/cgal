@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.18...3.31) 
 project(Documentation NONE)
 
 # Check whether this cmake script is the top level one
@@ -23,8 +23,7 @@ else()
   endif()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
-
-cmake_minimum_required(VERSION 3.18...3.31) # for list(SORT ... COMPARE NATURAL)
+# for list(SORT ... COMPARE NATURAL)
 
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
