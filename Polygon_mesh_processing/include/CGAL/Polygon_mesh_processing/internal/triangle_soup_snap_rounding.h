@@ -113,7 +113,7 @@ double double_ceil(NT x){
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{Maximum number of iteration performed by the algorithm.}
 *     \cgalParamType{unsigned int}
-*     \cgalParamDefault{15}
+*     \cgalParamDefault{5}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -147,7 +147,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
 
   // Get the grid size from the named parameter, the grid size could not be greater than 52
   const unsigned int grid_size = (std::min)(52,choose_parameter(get_parameter(np, internal_np::snap_grid_size), 23));
-  const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 15);
+  const unsigned int max_nb_of_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 5);
 
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
   std::cout << "Compute the scaling of the coordinates" << std::endl;
