@@ -47,11 +47,20 @@ namespace internal {
 
   public:
     vertex_descriptor destination_vd;
+    std::unordered_map<vertex_descriptor, edge_descriptor>& relaxed_edges;
+
+    Stop_at_target_Dijkstra_visitor(vertex_descriptor destination_vd,
+                                    std::unordered_map<vertex_descriptor, edge_descriptor>& relaxed_edges)
+      : destination_vd(destination_vd), relaxed_edges(relaxed_edges)
+    {}
 
     void initialize_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
     void examine_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
     void examine_edge(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
-    void edge_relaxed(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+    void edge_relaxed(const edge_descriptor& e, const Graph& g) const
+    {
+      relaxed_edges[target(e, g)] = e;
+    }
     void discover_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
     void edge_not_relaxed(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
     void finish_vertex(const vertex_descriptor& vd, const Graph& /* g*/) const
@@ -75,6 +84,7 @@ namespace internal {
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * ** edge_weight_map : @todo deal with input mesh with no internal pmap.
 *                       default in boost is `get(boost::edge_weight, mesh)`
+* ** vertex_index_map : @todo deal with input mesh with no internal pmap.
 *
 */
 template<typename Graph,
@@ -102,8 +112,8 @@ OutputIterator shortest_path_between_two_vertices(
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
 
-  internal::Stop_at_target_Dijkstra_visitor<Graph> vis;
-  vis.destination_vd = vt;
+  std::unordered_map<vertex_descriptor, edge_descriptor> relaxed_edges_map;
+  internal::Stop_at_target_Dijkstra_visitor<Graph> vis(vt, relaxed_edges_map);
   try
   {
     boost::dijkstra_shortest_paths(g, vs,
@@ -146,10 +156,9 @@ OutputIterator shortest_path_between_two_vertices(
   // Display path
   for (auto path_it = path.begin(); path_it != path.end() - 1; ++path_it)
   {
-    const std::pair<halfedge_descriptor, bool>
-      h = halfedge((path_it + 1)->vertex, path_it->vertex, g);
-    if (h.second)
-      *halfedge_sequence_oit++ = h.first;
+    const auto map_it = vis.relaxed_edges.find(path_it->vertex);
+    if (map_it != vis.relaxed_edges.end())
+      *halfedge_sequence_oit++ = halfedge(map_it->second, g);
   }
   return halfedge_sequence_oit;
 }
