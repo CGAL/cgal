@@ -1045,7 +1045,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum number of iterations performed by the snap algorithm. Used only if `apply_iterative_snap_rounding` is true.}
+*     \cgalParamDescription{Maximum number of iterations performed by the snap rounding algorithm. Used only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{15}
 *   \cgalParamNEnd
