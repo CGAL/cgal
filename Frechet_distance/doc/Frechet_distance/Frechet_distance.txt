@@ -113,7 +113,7 @@ The teaser image is a visualization of two data points from the <a href="https:/
 \subsection subsecFrechetDistanceImplementation  Implementation History
 
 An initial version using floating point arithmetic was developed by the authors
-while working at the Max Planck Institute for Informatics in Saarbrücken, Germany.
+while working at the Max-Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
 the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensuring correctness of the computation.
 
