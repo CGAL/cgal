@@ -329,8 +329,8 @@ bool OBJFile::save(const std::string& filename,
                         }
                         catch(const typename PCDT::Intersection_of_constraints_exception&)
                         {
-                            std::cerr << "Error: Intersection of constraints" << std::endl;
-                            std::cerr << "While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()) << std::endl;
+                            DEBUG_PRINT("Error: Intersection of constraints");
+                            DEBUG_PRINT("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
                             DEBUG_VAR(facet->toString());
                             CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
                             do_triangulate_face = false;

@@ -162,9 +162,9 @@ struct VertexFacetNeighborhood
         DEBUG_SPTR(other);
         const std::array<int, 3>& other_ifs = collectIncidentFacets(other);
         const bool result = (incident_facets_ == other_ifs);
-        std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
-        std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
-        std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
+        // std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
+        // std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
+        // std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
         if (!result) {
         }
         return result;
@@ -198,10 +198,10 @@ struct EdgeFacetNeighborhood
         const std::array<int, 4>& other_ifs = collectIncidentFacets(other);
         const bool result = (incident_facets_ == other_ifs);
         if (!result) {
-            std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
-            std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
-            std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
-            std::cout << "  Compare: " << incident_facets_[3] << " (old) " << other_ifs[3] << " (new)" << std::endl;
+            // std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
+            // std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
+            // std::cout << "  Compare: " << incident_facets_[2] << " (old) " << other_ifs[2] << " (new)" << std::endl;
+            // std::cout << "  Compare: " << incident_facets_[3] << " (old) " << other_ifs[3] << " (new)" << std::endl;
         }
         return result;
     }

@@ -624,9 +624,9 @@ bool SimpleStraightSkel::run() {
         CGAL::FT speed = other_speed;
         const auto pl = facet->plane();
         const auto normal = KernelFactory::createVector3(pl);
-        std::cout << "SP X " << CGAL::scalar_product(*normal, Vector3(1,0,0)) << std::endl;
-        std::cout << "SP Y " << CGAL::scalar_product(*normal, Vector3(0,1,0)) << std::endl;
-        std::cout << "SP Z " << CGAL::scalar_product(*normal, Vector3(0,0,1)) << std::endl;
+        // std::cout << "SP X " << CGAL::scalar_product(*normal, Vector3(1,0,0)) << std::endl;
+        // std::cout << "SP Y " << CGAL::scalar_product(*normal, Vector3(0,1,0)) << std::endl;
+        // std::cout << "SP Z " << CGAL::scalar_product(*normal, Vector3(0,0,1)) << std::endl;
         if(CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector3(1,0,0))) - 1) < 1e-3)
           speed = x_speed;
         if(CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector3(0,1,0))) - 1) < 1e-3)
@@ -636,7 +636,7 @@ bool SimpleStraightSkel::run() {
 
         SkelFacetDataSPtr data = SkelFacetData::create(facet);
         data->setSpeed(speed);
-        std::cout << "speed to " << speed << std::endl;
+        // std::cout << "speed to " << speed << std::endl;
 
         // for visualization, use color_ply_inputs.cpp to compile it into a single colored ply file
         std::vector<CGAL::EPICK::Point_3> points;
@@ -653,14 +653,14 @@ bool SimpleStraightSkel::run() {
         std::iota(f.begin(), f.end(), 0);
         faces.push_back(f);
 
-        std::cout << points.size() << std::endl;
-        for(auto p : points)
-          std::cout << "  " << p << std::endl;
+        // std::cout << points.size() << std::endl;
+        // for(auto p : points)
+        //   std::cout << "  " << p << std::endl;
 
-        std::cout << faces.size() << std::endl;
-        std::cout << faces[0].size() << std::endl;
-        for(std::size_t i : faces[0])
-          std::cout << "  " << i << std::endl;
+        // std::cout << faces.size() << std::endl;
+        // std::cout << faces[0].size() << std::endl;
+        // for(std::size_t i : faces[0])
+        //   std::cout << "  " << i << std::endl;
 
         ++fi;
     }
@@ -686,7 +686,7 @@ bool SimpleStraightSkel::run() {
         for(;;) {
             ++step_id_;
 
-            DEBUG_PRINT("\n=========== ITERATION #" << step_id_ << " AT OFFSET " << current_offset);
+            std::cout << "\n=========== ITERATION #" << step_id_ << " AT OFFSET " << current_offset << std::endl;
             DEBUG_PRINT(polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
             // std::stringstream ss_filename;
@@ -721,21 +721,21 @@ bool SimpleStraightSkel::run() {
             AbstractEventSPtr event = nextEvent(queue, current_offset);
             CGAL_assertion(bool(event));
 
-            std::cout << "popped E" << event->getID() << " Type [" << event->getType() << "]" <<  std::endl;
+            DEBUG_PRINT("popped E" << event->getID() << " Type [" << event->getType() << "]");
 
-            std::cout << "Check event validity..." << std::endl;
+            DEBUG_PRINT("Check event validity...");
             if (!event->isValid()) {
-                std::cout << "Skipping invalid event E" << event->getID() << std::endl;
+                DEBUG_PRINT("Skipping invalid event E" << event->getID());
                 continue;
             }
 
-            std::cout << "Check if still relevant..." << std::endl;
+            DEBUG_PRINT("Check if still relevant...");
             // @fixme the current "isObsolete" is a sufficient condition: if the neighborhoods have
             // changed, then the event should be discarded.
             // But we likely need the necessary condition, i.e. "if it is not obsolete, then
             // we know it is valid. Is it just re-doing the combinatorial checks?
             if (isEventObsolete(event)) {
-              std::cout << "Skipping obsolete event E" << event->getID() << std::endl;
+              DEBUG_PRINT("Skipping obsolete event E" << event->getID());
 #ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
               CGAL_assertion(false); // should never happen since we refresh
 #endif
@@ -754,8 +754,8 @@ bool SimpleStraightSkel::run() {
                 // return false;
             }
 
-            static unsigned int event_id = 0;
-            DEBUG_PRINT("--> Event #" << event_id++ << " " << event->toString() << " --");
+            static int event_id = -1;
+            std::cout << "--> Event #" << ++event_id << " " << event->toString() << " --" << std::endl;
 
             upcoming_offset = event->getOffset();
 
@@ -779,8 +779,8 @@ bool SimpleStraightSkel::run() {
                 continue;
             }
 
-            db::_3d::OBJFile::save("results/iter_" + std::to_string(step_id_) + ".obj", polyhedron, false /*do triangulate*/);
-            db::_3d::OBJFile::save("results/iter_" + std::to_string(step_id_) + "_triangulated.obj", polyhedron);
+            db::_3d::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
+            db::_3d::OBJFile::save("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
 
             CGAL_assertion(polyhedron->isConsistent());
 #ifndef CGAL_SS3_NO_SKELETON_DS
@@ -3821,8 +3821,10 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     std::cout << edges_reflex_1.size() << " reflex edges [1]" << std::endl;
     std::cout << edges_reflex_2.size() << " reflex edges [2]" << std::endl;
-
 #endif
+
+    // maybe we will use canonical reps with non symmetrical ranges one day, but not for now
+    CGAL_warning(!use_canonical_event_reps || edges_reflex_1 == edges_reflex_2);
 
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex_1.begin();
     while (it_e1 != edges_reflex_1.end()) {
