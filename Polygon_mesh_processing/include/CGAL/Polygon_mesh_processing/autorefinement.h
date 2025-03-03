@@ -1039,19 +1039,21 @@ bool polygon_soup_snap_rounding(PointRange &points,
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
-*     \cgalParamDescription{A value `gs` used to scale the points to `[-2^gs, 2^gs]` before rounding them on integers. Used only if `apply_iterative_snap_rounding()` is set to `true`.}
+*     \cgalParamDescription{A value `gs` used to scale the points to `[-2^gs, 2^gs]` before rounding them on integers. Used only if `apply_iterative_snap_rounding()` is set to `true`}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum number of iteration performed by the snap algorithm. Use only if `apply_iterative_snap_rounding` is true.}
+*     \cgalParamDescription{Maximum number of iterations performed by the snap algorithm. Used only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{15}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \return `true` if the modified triangle soup is free from self-intersection, and `false` otherwise. The return value is only meaningful when the option `apply_snap_rounding()` is set to true.
+* \return `true` if `apply_iterative_snap_rounding` is set to `false`; otherwise, return `true` if the modified triangle soup is free from
+* self-intersection, and `false` if the algorithm was unable to provide such a triangle soup within the number of iterations.
+*
 */
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 bool autorefine_triangle_soup(PointRange& soup_points,

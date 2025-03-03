@@ -22,7 +22,6 @@
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Gmpq.h>
 
 namespace CGAL
 {
@@ -33,11 +32,11 @@ namespace Polygon_mesh_processing
 namespace internal
 {
 
-template <class NT> double ceil(Lazy_exact_nt< NT > x);
-template <class NT> double ceil(NT x);
+template <class NT> double double_ceil(Lazy_exact_nt< NT > x);
+template <class NT> double double_ceil(NT x);
 
 template <class NT>
-double ceil(Lazy_exact_nt< NT > x){
+double double_ceil(Lazy_exact_nt< NT > x){
   // If both sides are in the same ceil, return this ceil
   double ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
@@ -48,11 +47,11 @@ double ceil(Lazy_exact_nt< NT > x){
   if(ceil_left==std::ceil(to_interval(x).second))
     return ceil_left;
   // If not return the ceil of the exact value
-  return ceil( x.exact());
+  return double_ceil( x.exact());
 };
 
 template <class NT>
-double ceil(NT x){
+double double_ceil(NT x){
   using FT = Fraction_traits<NT>;
   if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
     // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
@@ -60,8 +59,8 @@ double ceil(NT x){
     typename FT::Denominator_type denom;
     typename FT::Decompose()(x,num,denom);
     div_mod(num, denom, r, e);
-    if((r<0) && e!=0) //If the result is negative, the ceil value is one below
-      return to_double(r-1);
+    if((r>=0) && e!=0) //If the result is positive, the ceil value is one above
+      return to_double(r+1);
     return to_double(r);
   } else {
     // Return the ceil of the approximation
@@ -184,7 +183,7 @@ bool polygon_soup_snap_rounding(PointRange &points,
   {
     // Scale the coordinate, round to nearest integer and scale back
     // TODO replace this ceil by the one of Algebraic_fondation when it will be add to master
-    return internal::ceil((x * scale) - 0.5) / scale;
+    return internal::double_ceil((x * scale) - 0.5) / scale;
     // return ceil((x * scale) - 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
