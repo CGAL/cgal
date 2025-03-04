@@ -404,7 +404,7 @@ struct Interval {
     Lambda<C> end;
 
   Interval()
-    : begin(1.), end(0.)
+    : begin(1), end(0)
   {}
 
   Interval(Lambda<C> const& begin, Lambda<C> const& end)
