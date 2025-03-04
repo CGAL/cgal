@@ -1,4 +1,4 @@
-// Copyright (c) 2023 GeometryFactory (France).
+// Copyright (c) 2023-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -359,8 +359,8 @@ void upsample_subdivision_property(TriangleMesh& tmesh,
         Principal_curvatures_and_directions<GT> pcd;
         pcd.min_curvature = 0;
         pcd.max_curvature = 0;
-        pcd.min_direction = typename GT::Vector_3(0, 0, 0);
-        pcd.max_direction = typename GT::Vector_3(0, 0, 0);
+        pcd.min_direction = NULL_VECTOR;
+        pcd.max_direction = NULL_VECTOR;
         for (halfedge_descriptor hd : halfedges_around_target(vd, tmesh))
         {
           vertex_descriptor v1 = source(hd, tmesh);
@@ -495,11 +495,12 @@ acvd_impl(TriangleMesh& tmesh,
     while (!to_split.empty())
     {
       std::vector<std::pair<edge_descriptor, double>> to_split_new;
+      to_split_new.reserve(2*to_split.size()); //upper bound
       for (auto [e, nb_subsegments] : to_split)
       {
         halfedge_descriptor h = halfedge(e, tmesh);
-        Point_3 s = get(vpm, source(h,tmesh));
-        Point_3 t = get(vpm, target(h,tmesh));
+        const Point_3& s = get(vpm, source(h,tmesh));
+        const Point_3& t = get(vpm, target(h,tmesh));
 
         for (double k=1; k<nb_subsegments; ++k)
         {
