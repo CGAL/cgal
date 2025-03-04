@@ -99,6 +99,7 @@ OutputIterator shortest_path_between_two_vertices(
 {
   using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<Graph>::halfedge_descriptor;
+  using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
 
   using Pred_umap = std::unordered_map<vertex_descriptor, vertex_descriptor>;
   using Pred_pmap = boost::associative_property_map<Pred_umap>;
