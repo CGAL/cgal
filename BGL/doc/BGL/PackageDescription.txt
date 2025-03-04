@@ -590,6 +590,12 @@ implementation.
 */
 
 /*!
+\addtogroup PkgBGLTraversal
+
+Methods to traverse a graph, for example to find the shortest path between two vertices.
+*/
+
+/*!
 \addtogroup PkgBGLIOFct
 
 Methods to read and write graphs.
