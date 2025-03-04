@@ -82,10 +82,23 @@ namespace internal {
 * @param halfedge_sequence_oit the output iterator holding the output sequence
 * of halfedges that form the shortest path from `vs` to `vt` on `g`
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-* ** edge_weight_map : @todo deal with input mesh with no internal pmap.
-*                       default in boost is `get(boost::edge_weight, mesh)`
-* ** vertex_index_map : @todo deal with input mesh with no internal pmap.
 *
+*  \cgalNamedParamsBegin
+*   \cgalParamNBegin{edge_weight_map}
+*    \cgalParamDescription{a property map associating to each edge in the graph its weight or ``length''.
+*                          The weights must all be non-negative.}
+*    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*                   as key type and `FT` as value type.}
+*    \cgalParamDefault{`get(boost::edge_weight, mesh)`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_index_map}
+*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
+*  \cgalNamedParamsEnd
 */
 template<typename Graph,
          typename OutputIterator,
@@ -109,6 +122,7 @@ OutputIterator shortest_path_between_two_vertices(
 
   const auto w_map = choose_parameter(get_parameter(np, internal_np::edge_weight),
                                       get(boost::edge_weight, g));
+  const auto vim = get_initialized_vertex_index_map(g, np);
 
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
@@ -121,7 +135,8 @@ OutputIterator shortest_path_between_two_vertices(
     boost::dijkstra_shortest_paths(g, vs,
       boost::predecessor_map(pred_pmap)
       .visitor(vis)
-      .weight_map(w_map));
+      .weight_map(w_map)
+      .vertex_index_map(vim));
   }
   catch (const internal::Dijkstra_end_exception& ){}
 
