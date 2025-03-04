@@ -21,8 +21,9 @@
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Rational_traits.h>
-#include <type_traits>
 #include <CGAL/wmult.h>
+
+#include <type_traits>
 
 namespace CGAL {
 namespace internal {
