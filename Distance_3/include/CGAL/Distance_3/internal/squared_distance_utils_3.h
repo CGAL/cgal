@@ -21,6 +21,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Rational_traits.h>
+#include <type_traits>
 #include <CGAL/wmult.h>
 
 namespace CGAL {
@@ -63,7 +64,7 @@ wdot(const typename K::Vector_3 &u,
      const typename K::Vector_3 &v,
      const K&)
 {
-  if constexpr(std::is_same<typename K::RT, double>())
+  if constexpr(std::is_same_v<typename K::RT, double>)
     return std::fma(u.hx(), v.hx(), std::fma(u.hy(), v.hy(), u.hz()*v.hz()));
   else
     return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
@@ -112,7 +113,7 @@ wdot(const typename K::Point_3 &p,
 }
 
 
-static double diff_of_products(const double& a, const double& b, const double& c, const double& d)
+double diff_of_products(const double a, const double b, const double c, const double d)
 {
 // Kahan method, less numerical error
 #if 1
@@ -126,7 +127,7 @@ static double diff_of_products(const double& a, const double& b, const double& c
 }
 
 template <typename OFT>
-static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
+OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d, std::enable_if_t<!std::is_same_v<double,OFT>>* = 0)
 {
   return a*b - c*d;
 }
