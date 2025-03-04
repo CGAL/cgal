@@ -111,7 +111,7 @@ int main()
   }
 
   auto vertexToPatches = mesh.add_property_map<vertex_index, std::set<size_t>>("v:patches").first;
-  auto faceToPatch = mesh.add_property_map<face_index, size_t>("f:patch", std::numeric_limits<size_t>::max()).first;
+  auto faceToPatch = mesh.add_property_map<face_index, size_t>("f:patch", (std::numeric_limits<size_t>::max)()).first;
   auto edgeToIsFeature = mesh.add_property_map<edge_index, bool>("e:is_feature", false).first;
 
   double angle_in_deg = 90;
