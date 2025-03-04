@@ -39,7 +39,7 @@ namespace internal {
   /// Visitor to stop Dijkstra's algorithm once the given target turns 'BLACK',
   /// that is when the target has been examined through all its incident edges and
   /// the shortest path is thus known.
-  template<typename Graph>
+  template<typename Graph, typename VertexEdgeMap>
   class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
   {
     using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
@@ -47,10 +47,10 @@ namespace internal {
 
   public:
     vertex_descriptor destination_vd;
-    std::unordered_map<vertex_descriptor, edge_descriptor>& relaxed_edges;
+    VertexEdgeMap& relaxed_edges;
 
     Stop_at_target_Dijkstra_visitor(vertex_descriptor destination_vd,
-                                    std::unordered_map<vertex_descriptor, edge_descriptor>& relaxed_edges)
+                                    VertexEdgeMap& relaxed_edges)
       : destination_vd(destination_vd), relaxed_edges(relaxed_edges)
     {}
 
@@ -113,8 +113,9 @@ OutputIterator shortest_path_between_two_vertices(
   Pred_umap predecessor;
   Pred_pmap pred_pmap(predecessor);
 
-  std::unordered_map<vertex_descriptor, edge_descriptor> relaxed_edges_map;
-  internal::Stop_at_target_Dijkstra_visitor<Graph> vis(vt, relaxed_edges_map);
+  using VEMap = std::unordered_map<vertex_descriptor, edge_descriptor>;
+  VEMap relaxed_edges_map;
+  internal::Stop_at_target_Dijkstra_visitor<Graph, VEMap> vis(vt, relaxed_edges_map);
   try
   {
     boost::dijkstra_shortest_paths(g, vs,
