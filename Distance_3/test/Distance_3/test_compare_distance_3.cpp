@@ -764,8 +764,7 @@ int main()
 
   std::cout << "3D Distance tests" << std::endl;
 
-  CGAL::Random r(1740152576);
-  // CGAL::Random r;
+  CGAL::Random r;
   std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // @todo Some tests are too difficult for these kernels

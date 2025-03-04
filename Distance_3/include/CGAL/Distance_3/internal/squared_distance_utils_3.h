@@ -112,7 +112,7 @@ wdot(const typename K::Point_3 &p,
 }
 
 
-static double diff_of_products(const double a, const double b, const double c, const double d)
+static double diff_of_products(const double& a, const double& b, const double& c, const double& d)
 {
 // Kahan method, less numerical error
 #if 1

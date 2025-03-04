@@ -220,7 +220,6 @@ compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
                                   const K& k,
                                   const typename K::FT& d2)
 {
-  typedef typename K::FT                                                  FT;
   typedef typename K::Segment_3                                           Segment_3;
 
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();

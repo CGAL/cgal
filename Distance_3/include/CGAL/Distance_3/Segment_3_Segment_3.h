@@ -198,7 +198,6 @@ compare_squared_distance(const typename K::Segment_3& s1,
   typedef typename K::FT                                                  FT;
   typedef typename K::Point_3                                             Point_3;
   typedef typename K::Vector_3                                            Vector_3;
-  typedef typename K::Line_3                                              Line_3;
 
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Construct_vector_3 cv = k.construct_vector_3_object();
