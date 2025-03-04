@@ -76,7 +76,10 @@ namespace internal {
 * Computes the shortest path between two vertices in a graph `g`.
 * The vertices must belong to the same connected component of `g`.
 *
-*@tparam Graph a model of the concept `HalfedgeListGraph`
+* @tparam Graph a model of the concept `HalfedgeListGraph`
+* @tparam OutputIterator an output iterator with value type `boost::graph_traits<Graph>::%halfedge_descriptor`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
 * @param vs source vertex
 * @param vt target vertex
 * @param g the graph
