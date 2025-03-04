@@ -73,7 +73,8 @@ namespace internal {
 
 /*!
 * \ingroup PkgBGLTraversal
-* Computes the shortest path between two vertices in a graph `g`
+* Computes the shortest path between two vertices in a graph `g`.
+* The vertices must belong to the same connected component of `g`.
 *
 *@tparam Graph a model of the concept `HalfedgeListGraph`
 * @param vs source vertex
