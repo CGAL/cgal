@@ -113,7 +113,7 @@ wdot(const typename K::Point_3 &p,
   return wdot_tag(p, q, r, k, tag);
 }
 
-
+inline
 double diff_of_products(const double a, const double b, const double c, const double d)
 {
 // Kahan method, less numerical error
