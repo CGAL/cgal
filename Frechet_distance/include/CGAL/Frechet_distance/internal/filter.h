@@ -139,9 +139,9 @@ void Filter<K>::increase(size_t& step) { step = std::ceil(1.5 * step); }
 template <typename K>
 void Filter<K>::decrease(size_t& step) { step /= 2; }
 
-// NOTE: all calls to cert.XXX() do nothing if CERTIFY is not defined
 // TODO: is it better to use #ifdef CERTIFY blocks here to avoid constructing
 // CPosition objects?
+// Also, calls to cert.XXX() seem to do unnecessary work right now
 
 template <typename K>
 bool Filter<K>::bichromaticFarthestDistance()
