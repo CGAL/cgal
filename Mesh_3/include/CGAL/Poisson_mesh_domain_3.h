@@ -70,7 +70,8 @@ public:
   typedef typename CGAL::Mesh_3::internal::Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
 
   // Geometric object types
-  // /// \name Types imported from the geometric traits class
+#ifdef DOXYGEN_RUNNING
+/// \name Types imported from the geometric traits class
   ///@{
   /// The point type of the geometric traits class
   typedef typename Geom_traits::Point_3 Point_3;
@@ -83,26 +84,46 @@ public:
   /// The number type (a field type) of the geometric traits class
   typedef typename Geom_traits::FT FT;
   /// The ray type of the geometric traits class
+  typedef typename Geom_traits::Ray_3 Ray_3;
+  /// The line type of the geometric traits class
+  typedef typename Geom_traits::Line_3 Line_3;
+  /// The segment type of the geometric traits class
+  typedef typename Geom_traits::Segment_3 Segment_3;
+  /// The Poisson function type
+  typedef CGAL::Poisson_reconstruction_function<Geom_traits> Function;
+  ///@}
+#else
+  /// The point type of the geometric traits class
+  typedef typename BGT::Point_3 Point_3;
+  /// The sphere type of the geometric traits class
+  typedef typename BGT::Sphere_3 Sphere_3;
+  /// The iso-cuboid type of the geometric traits class
+  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
+  /// The bounding box type
+  typedef CGAL::Bbox_3 Bbox_3;
+  /// The number type (a field type) of the geometric traits class
+  typedef typename BGT::FT FT;
+  /// The ray type of the geometric traits class
   typedef typename BGT::Ray_3 Ray_3;
   /// The line type of the geometric traits class
   typedef typename BGT::Line_3 Line_3;
   /// The segment type of the geometric traits class
   typedef typename BGT::Segment_3 Segment_3;
-  ///@}
-
-
+  /// The Poisson function type
   typedef CGAL::Poisson_reconstruction_function<BGT> Function;
+#endif
+
+
   Function poisson_function;
   /// \name Creation
 /// @{
   ///!  \brief Construction from a function, a bounding object and a relative error bound.
    //
-   // \tparam Function a type compatible with `Labeling_function`
    // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    // \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    //                         or a bounding `Iso_cuboid_3`
    //
-   // \param function the labeling function
+   // \param function the Poisson reconstruction function
    // \param bounding_object the bounding object bounding the meshable space.
    // \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    //
@@ -114,10 +135,6 @@ public:
    //      \cgalParamDefault{FT(1e-3)}
    //   \cgalParamNEnd
    // \cgalNamedParamsEnd
-   //
-   // \cgalHeading{Example}
-   // From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
-   // \snippet Mesh_3/mesh_implicit_domains_2.cpp Domain creation
    ///
   template<typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Poisson_mesh_domain_3(const Function& function,
@@ -167,13 +184,11 @@ public:
    // The method takes as argument a bounding sphere which is required to
    // circumscribe the surface and to have its center inside the domain.
    //
-   // \tparam Function a type compatible with the signature `FT(Point_3)`: it takes a point as argument,
-   //                  and returns a scalar value. That object must be model of `CopyConstructible`
    // \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    // \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    //                         or a bounding `Iso_cuboid_3`
    //
-   // \param function the implicit function
+   // \param function the Poisson reconstruction function
    // \param bounding_object object boundint the meshable domain and its center is inside the domain.
    // \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    //
@@ -184,16 +199,6 @@ public:
    //     \cgalParamDefault{FT(1e-3)}
    //   \cgalParamNEnd
    // \cgalNamedParamsEnd
-   //
-   // \cgalHeading{Examples}
-   //
-   // From the example (\ref Mesh_3/mesh_implicit_sphere.cpp):
-   //
-   // \snippet Mesh_3/mesh_implicit_sphere.cpp Domain creation
-   //
-   // From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
-   //
-   // \snippet Mesh_3/mesh_implicit_sphere_variable_size.cpp Domain creation
    //
    ///
   template<typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -314,7 +319,7 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // This should not happen...
+      // Should only happen during initial point generation.
       if(label_at_p1 == label_at_p2)
         return Intersection();
 

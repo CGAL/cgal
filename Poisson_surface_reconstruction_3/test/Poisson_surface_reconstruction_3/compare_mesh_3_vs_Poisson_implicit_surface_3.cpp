@@ -14,6 +14,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Poisson_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
@@ -61,7 +62,12 @@ typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 
 // Mesh_3
-typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<Kernel> LMesh_domain;
+typedef typename CGAL::Mesh_triangulation_3<LMesh_domain>::type LTr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<LTr> LC3t3;
+typedef CGAL::Mesh_criteria_3<LTr> LMesh_criteria;
+
+typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -290,10 +296,10 @@ int main(int argc, char * argv[])
     }
     #endif
 
+    task_timer.stop();
 
     // Prints status
     std::cerr << "Total implicit function (triangulation+refinement+solver): " << task_timer.time() << " seconds\n";
-    task_timer.reset();
 
     //***************************************
     // Surface mesh generation
@@ -331,47 +337,88 @@ int main(int argc, char * argv[])
     const double implicit_function_time = reconstruction_timer.time();
     reconstruction_timer.reset();
 
-    // MESH_3
+    // MESH_3 labeled
     {
+      // Defines generation criteria
+      LMesh_criteria criteria(CGAL::parameters::facet_angle = fangle, CGAL::parameters::facet_size = fsize,
+                             CGAL::parameters::facet_distance = fdist);
+
+      std::cout << "* Use Mesh_3 implicit *" << std::endl;
+
       CGAL::Real_timer meshing_timer;
       meshing_timer.start();
 
-      std::cout << "* Use Mesh_3 *" << std::endl;
       // Defines generation criteria
-      Mesh_criteria criteria(CGAL::parameters::facet_angle = fangle,
-                             CGAL::parameters::facet_size = fsize,
-                             CGAL::parameters::facet_distance = fdist);
 
       // Defines mesh domain
-      Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
-          CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+      LMesh_domain domain = LMesh_domain::create_implicit_mesh_domain(
+          function, bsphere, CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
       // Generates mesh with manifold option
-      C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                          CGAL::parameters::no_exude().no_perturb()
-                                          .manifold_with_boundary());
+      LC3t3 c3t3 =
+          CGAL::make_mesh_3<LC3t3>(domain, criteria, CGAL::parameters::no_exude().no_perturb().manifold_with_boundary());
       meshing_timer.stop();
 
-      const Tr& tr = c3t3.triangulation();
+      const LTr& tr = c3t3.triangulation();
       // Prints status
-      std::cerr << "Mesh_3 meshing: " << meshing_timer.time() << " seconds, "
-                                      << tr.number_of_vertices() << " output vertices"
-                                      << std::endl;
+      std::cerr << "Mesh_3 meshing: " << meshing_timer.time() << " seconds, " << tr.number_of_vertices()
+                << " output vertices" << std::endl;
 
-      if (tr.number_of_vertices() == 0)
+      if(tr.number_of_vertices() == 0)
         return EXIT_FAILURE;
 
       // Prints total reconstruction duration
-      reconstruction_timer.stop();
       std::cerr << "Total reconstruction (implicit function + meshing): "
-        << (implicit_function_time + reconstruction_timer.time()) << " seconds\n";
-      reconstruction_timer.reset();
+                << (implicit_function_time + meshing_timer.time()) << " seconds\n";
 
       // Converts to polyhedron
       Polyhedron output_mesh;
       CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
 
-      std::ofstream out(output_basename + "_mesh_3.off");
+      std::ofstream out(output_basename + "_implicit_mesh_3.off");
+      out << output_mesh;
+      out.close();
+    }
+
+    // MESH_3 poisson
+    {
+      // Defines generation criteria
+      Mesh_criteria criteria(CGAL::parameters::facet_angle = fangle, CGAL::parameters::facet_size = fsize,
+                             CGAL::parameters::facet_distance = fdist);
+      std::cout << "* Use Mesh_3 poisson *" << std::endl;
+
+      CGAL::Real_timer meshing_timer;
+      meshing_timer.start();
+
+      // Defines generation criteria
+
+      // Defines mesh domain
+      Mesh_domain domain = Mesh_domain::create_poisson_mesh_domain(
+          function, bsphere, CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+
+      // Generates mesh with manifold option
+      C3t3 c3t3 =
+          CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::no_exude().no_perturb().manifold_with_boundary());
+
+      meshing_timer.stop();
+
+      const Tr& tr = c3t3.triangulation();
+      // Prints status
+      std::cerr << "Mesh_3 meshing: " << meshing_timer.time() << " seconds, " << tr.number_of_vertices()
+                << " output vertices" << std::endl;
+
+      if(tr.number_of_vertices() == 0)
+        return EXIT_FAILURE;
+
+      // Prints total reconstruction duration
+      std::cerr << "Total reconstruction (poisson function + meshing): "
+                << (implicit_function_time + meshing_timer.time()) << " seconds\n";
+
+      // Converts to polyhedron
+      Polyhedron output_mesh;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
+
+      std::ofstream out(output_basename + "_poisson_mesh_3.off");
       out << output_mesh;
       out.close();
     }
@@ -380,7 +427,6 @@ int main(int argc, char * argv[])
     {
       CGAL::Real_timer meshing_timer;
       meshing_timer.start();
-      reconstruction_timer.start();
 
       std::cout << "\n\n* Use Surface_mesher with Poisson_implicit_surface_3 *" << std::endl;
       Surface_3 surface(function,
@@ -408,9 +454,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
 
       // Prints total reconstruction duration
-      reconstruction_timer.stop();
       std::cerr << "Total reconstruction (implicit function + meshing): "
-        << (implicit_function_time + reconstruction_timer.time()) << " seconds\n";
+                << (implicit_function_time + meshing_timer.time()) << " seconds\n";
 
       Polyhedron output_mesh;
       CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);

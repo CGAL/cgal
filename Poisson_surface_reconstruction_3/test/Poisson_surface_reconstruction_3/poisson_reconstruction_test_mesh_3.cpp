@@ -18,6 +18,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Poisson_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
@@ -57,11 +58,17 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 // Poisson implicit function
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
-// Mesh_3
+// Mesh_3 using Labeled_mesh_domain_3
 typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
+// Mesh_3 using Poisson_mesh_domain_3
+typedef CGAL::Poisson_mesh_domain_3<Kernel> Poisson_mesh_domain;
+typedef CGAL::Mesh_triangulation_3<Poisson_mesh_domain>::type Poisson_Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Poisson_Tr> Poisson_C3t3;
+typedef CGAL::Mesh_criteria_3<Poisson_Tr> Poisson_mesh_criteria;
 
 namespace params = CGAL::parameters;
 
@@ -171,7 +178,6 @@ int main(int argc, char * argv[])
                                                         << task_timer.time() << " seconds, "
                                                         << (memory>>20) << " Mb allocated"
                                                         << std::endl;
-    task_timer.reset();
 
     //***************************************
     // Checks requirements
@@ -192,13 +198,13 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
-
     //***************************************
     // Computes implicit function
     //***************************************
 
     std::cerr << "Computes Poisson implicit function...\n";
+
+    task_timer.reset();
 
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
@@ -218,9 +224,9 @@ int main(int argc, char * argv[])
       continue;
     }
 
+    double poisson_time = task_timer.time();
     // Prints status
-    std::cerr << "Total implicit function (triangulation+refinement+solver): " << task_timer.time() << " seconds\n";
-    task_timer.reset();
+    std::cerr << "Total implicit function (triangulation+refinement+solver): " << poisson_time << " seconds\n";
 
     //***************************************
     // Surface mesh generation
@@ -250,45 +256,92 @@ int main(int argc, char * argv[])
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
 
-    // Defines surface mesh generation criteria
-    Mesh_criteria criteria(params::facet_angle = sm_angle,
-                           params::facet_size = sm_radius*average_spacing,
-                           params::facet_distance = sm_distance*average_spacing);
+    {
+      task_timer.reset();
+      // Defines surface mesh generation criteria
+      Mesh_criteria criteria(params::facet_angle = sm_angle, params::facet_size = sm_radius * average_spacing,
+                             params::facet_distance = sm_distance * average_spacing);
 
-    std::cerr         << "  make_mesh_3 with  sphere center=("<<inner_point << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius<<",\n"
-                      << "                    angle="<<sm_angle << " degrees,\n"
-                      << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
-                      << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
-                      << "                    dichotomy = distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    manifold_with_boundary()\n";
+      std::cerr << "  make_mesh_3 with  sphere center=(" << inner_point << "),\n"
+                << "                    sphere radius=" << sm_sphere_radius << ",\n"
+                << "                    angle=" << sm_angle << " degrees,\n"
+                << "                    triangle size=" << sm_radius
+                << " * average spacing=" << sm_radius * average_spacing << ",\n"
+                << "                    distance=" << sm_distance
+                << " * average spacing=" << sm_distance * average_spacing << ",\n"
+                << "                    dichotomy = distance/" << sm_distance * average_spacing / sm_dichotomy_error
+                << ",\n"
+                << "                    manifold_with_boundary()\n";
 
-    // Generates surface mesh with manifold option
-    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
-        params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
-    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-        params::no_exude().no_perturb().manifold_with_boundary());
+      // Generates surface mesh with manifold option
+      Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(
+          function, bsphere, params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+      C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb().manifold_with_boundary());
 
-    // Prints status
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    const Tr& tr = c3t3.triangulation();
-    std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                     << tr.number_of_vertices() << " output vertices, "
-                                     << (memory>>20) << " Mb allocated"
-                                     << std::endl;
-    task_timer.reset();
+      // Prints status
+      /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+      const Tr& tr = c3t3.triangulation();
+      std::cerr << "Surface meshing: " << task_timer.time() << " seconds, " << tr.number_of_vertices()
+                << " output vertices, " << (memory >> 20) << " Mb allocated" << std::endl;
+      task_timer.reset();
 
-    if(tr.number_of_vertices() == 0) {
-      accumulated_fatal_err = EXIT_FAILURE;
-      continue;
+      if(tr.number_of_vertices() == 0) {
+        accumulated_fatal_err = EXIT_FAILURE;
+        continue;
+      }
+
+      // Converts to polyhedron
+      Polyhedron output_mesh;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
+
+      // Prints total reconstruction duration
+      std::cerr << "Total reconstruction using Labeled_mesh_domain_3 (implicit function + meshing): "
+                << poisson_time + task_timer.time() << " seconds\n";
     }
 
-    // Converts to polyhedron
-    Polyhedron output_mesh;
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
+    {
+      task_timer.reset();
+      // Defines surface mesh generation criteria
+      Poisson_mesh_criteria criteria(params::facet_angle = sm_angle, params::facet_size = sm_radius * average_spacing,
+                             params::facet_distance = sm_distance * average_spacing);
 
-    // Prints total reconstruction duration
-    std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
+      /*std::cerr << "  make_mesh_3 with  sphere center=(" << inner_point << "),\n"
+                << "                    sphere radius=" << sm_sphere_radius << ",\n"
+                << "                    angle=" << sm_angle << " degrees,\n"
+                << "                    triangle size=" << sm_radius
+                << " * average spacing=" << sm_radius * average_spacing << ",\n"
+                << "                    distance=" << sm_distance
+                << " * average spacing=" << sm_distance * average_spacing << ",\n"
+                << "                    dichotomy = distance/" << sm_distance * average_spacing / sm_dichotomy_error
+                << ",\n"
+                << "                    manifold_with_boundary()\n";
+
+      // Generates surface mesh with manifold option
+      Poisson_mesh_domain domain = Poisson_mesh_domain::create_poisson_mesh_domain(
+          function, bsphere, params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+      Poisson_C3t3 c3t3 =
+          CGAL::make_mesh_3<Poisson_C3t3>(domain, criteria, params::no_exude().no_perturb().manifold_with_boundary());
+
+      // Prints status
+      / *long* / memory = CGAL::Memory_sizer().virtual_size();
+      const Poisson_Tr& tr = c3t3.triangulation();
+      std::cerr << "Surface meshing: " << task_timer.time() << " seconds, " << tr.number_of_vertices()
+                << " output vertices, " << (memory >> 20) << " Mb allocated" << std::endl;
+      task_timer.reset();
+
+      if(tr.number_of_vertices() == 0) {
+        accumulated_fatal_err = EXIT_FAILURE;
+        continue;
+      }
+
+      // Converts to polyhedron
+      Polyhedron output_mesh;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);*/
+
+      // Prints total reconstruction duration
+      std::cerr << "Total reconstruction using Poisson_mesh_domain_3 (implicit function + meshing): "
+                << poisson_time + task_timer.time() << " seconds\n";
+    }
 
   } // for each input file
 

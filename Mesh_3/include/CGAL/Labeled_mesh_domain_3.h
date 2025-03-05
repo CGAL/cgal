@@ -1196,7 +1196,7 @@ public:
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // This should not happen...
+      // Should only happen during initial point generation.
       if( value_at_p1 == value_at_p2 )
       {
         return Intersection();
