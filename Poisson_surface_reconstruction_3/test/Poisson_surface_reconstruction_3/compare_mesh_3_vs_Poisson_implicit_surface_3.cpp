@@ -393,7 +393,7 @@ int main(int argc, char * argv[])
       // Defines generation criteria
 
       // Defines mesh domain
-      Mesh_domain domain = Mesh_domain::create_poisson_mesh_domain(
+      Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(
           function, bsphere, CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
       // Generates mesh with manifold option

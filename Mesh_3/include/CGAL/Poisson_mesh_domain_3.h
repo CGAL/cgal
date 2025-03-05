@@ -32,7 +32,7 @@ namespace CGAL {
 //
 // This class has a constructor taking a labeling function. It has also a static template member
 // function that acts as named constructor:
-// <ul><li>`create_poisson_mesh_domain()`, to create a domain from a `Poisson_reconstruction_function`</ ul>
+// <ul><li>`create_Poisson_mesh_domain()`, to create a domain from a `Poisson_reconstruction_function`</ ul>
 //
 //\tparam BGT is a geometric traits class that provides
 //    the basic operations to implement intersection tests and intersection computations through a bisection
@@ -202,7 +202,7 @@ public:
    //
    ///
   template<typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Poisson_mesh_domain_3 create_poisson_mesh_domain(const Function& function,
+  static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const Function& function,
                                                            const Bounding_object& bounding_object,
                                                            const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -230,14 +230,14 @@ internal_np::surface_patch_index), Null_functor());
 /// @}
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Poisson_mesh_domain_3 create_poisson_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
+  static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
   {
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value,
       "Value for required parameter not found"); static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS,
 internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
 
     using parameters::get_parameter;
-    return create_poisson_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
+    return create_Poisson_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
                                        parameters::get_parameter(np, internal_np::bounding_object_param),
                                        np);
   }
@@ -246,11 +246,11 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
-  static Poisson_mesh_domain_3 create_poisson_mesh_domain(const CGAL_NP_CLASS_1& np1,
+  static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS_1& np1,
                                                            const CGAL_NP_CLASS_2&  np2,
                                                            const NP& ... nps)
   {
-    return create_poisson_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
+    return create_Poisson_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
 #endif
 

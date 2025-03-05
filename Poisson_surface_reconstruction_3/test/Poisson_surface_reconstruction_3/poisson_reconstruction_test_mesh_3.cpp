@@ -305,7 +305,7 @@ int main(int argc, char * argv[])
       Poisson_mesh_criteria criteria(params::facet_angle = sm_angle, params::facet_size = sm_radius * average_spacing,
                              params::facet_distance = sm_distance * average_spacing);
 
-      /*std::cerr << "  make_mesh_3 with  sphere center=(" << inner_point << "),\n"
+      std::cerr << "  make_mesh_3 with  sphere center=(" << inner_point << "),\n"
                 << "                    sphere radius=" << sm_sphere_radius << ",\n"
                 << "                    angle=" << sm_angle << " degrees,\n"
                 << "                    triangle size=" << sm_radius
@@ -317,13 +317,13 @@ int main(int argc, char * argv[])
                 << "                    manifold_with_boundary()\n";
 
       // Generates surface mesh with manifold option
-      Poisson_mesh_domain domain = Poisson_mesh_domain::create_poisson_mesh_domain(
+      Poisson_mesh_domain domain = Poisson_mesh_domain::create_Poisson_mesh_domain(
           function, bsphere, params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
       Poisson_C3t3 c3t3 =
           CGAL::make_mesh_3<Poisson_C3t3>(domain, criteria, params::no_exude().no_perturb().manifold_with_boundary());
 
       // Prints status
-      / *long* / memory = CGAL::Memory_sizer().virtual_size();
+      /* long */ memory = CGAL::Memory_sizer().virtual_size();
       const Poisson_Tr& tr = c3t3.triangulation();
       std::cerr << "Surface meshing: " << task_timer.time() << " seconds, " << tr.number_of_vertices()
                 << " output vertices, " << (memory >> 20) << " Mb allocated" << std::endl;
@@ -336,7 +336,7 @@ int main(int argc, char * argv[])
 
       // Converts to polyhedron
       Polyhedron output_mesh;
-      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);*/
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
 
       // Prints total reconstruction duration
       std::cerr << "Total reconstruction using Poisson_mesh_domain_3 (implicit function + meshing): "

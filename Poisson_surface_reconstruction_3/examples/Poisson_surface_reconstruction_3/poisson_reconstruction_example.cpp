@@ -85,7 +85,7 @@ int main(void)
                            CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
     // Defines mesh domain
-    Mesh_domain domain = Mesh_domain::create_poisson_mesh_domain(function, bsphere,
+    Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(function, bsphere,
         CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
     // Generates mesh with manifold option

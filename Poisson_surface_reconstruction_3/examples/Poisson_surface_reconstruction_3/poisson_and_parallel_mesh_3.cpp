@@ -111,7 +111,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
                          params::facet_size = sm_radius * average_spacing,
                          params::facet_distance = sm_distance * average_spacing);
 
-  Mesh_domain domain = Mesh_domain::create_poisson_mesh_domain(function, bsphere,
+  Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(function, bsphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
   // Generates surface mesh with manifold option
