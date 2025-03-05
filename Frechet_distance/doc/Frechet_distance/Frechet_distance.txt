@@ -21,7 +21,7 @@ The approximation algorithm is simply a binary search that repeatedly calls the 
 The Fréchet distance is a classical dissimilarity measure between polylines.
 Its advantages over other measures are that it both considers the polylines as continuous objects and takes into account the ordering of the points.
 Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline,
-they are connected by a leash, and they are only allowed to walk forward. 
+they are connected by a leash, and they are only allowed to walk forward.
 The Fréchet distance is the shortest leash length that allows the human
 and the dog to jointly walk from start to end on their respective trajectories where they can each vary their speed arbitrarily.
 The Fréchet distance is a metric. This implies that it is symmetric and that two polylines have distance zero if and only if they are equal (after removing redundant vertices).
