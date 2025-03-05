@@ -47,7 +47,6 @@ inline void make_less_than_one(Interval_nt<false>& n)
 // <=> lambda^2 * a + lambda * 2 b + c = 0
 // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
 // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
-//TODO: use optional!
 template <class Traits, class C, class Point, class AFT>
 std::optional<bool>
 fill_lambda(const Point& circle_center,

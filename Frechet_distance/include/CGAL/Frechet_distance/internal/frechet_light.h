@@ -118,7 +118,6 @@ private:
 
     Certificate cert;
 
-  // TODO re-inline these functions!
   template <class IndexType>
   CInterval getInterval(Curve const& curve1,
                         IndexType const& center_id,
@@ -509,15 +508,13 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         }
         // from here on, regular mode -> IndexType = PointID
 
-        // TODO: re-inline using if_static
-
         // otherwise we have to compute the intersection interval:
         // TODO: bad style: stripping down information added by getInterval
         CInterval temp_interval = FrechetLight::getInterval<IndexType>(
             fixed_curve, fixed, curve, cur);
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
                                          ? temp_interval.begin.getFraction()
-                                         : 1, ///@TODO Andre : really 1. ? pure guess, should be 0.
+                                         : 1,
                                      temp_interval.end.getPoint() == cur
                                          ? temp_interval.end.getFraction()
                                          : 1);
@@ -1369,8 +1366,7 @@ bool FrechetLight<C>::isOnUpperLeft(const CPosition& pt) const
     return pt[0] == 0 || pt[1] == curve_pair[1]->size() - 1;
 }
 
-// TODO, André: I am not sure whether this is currently fine using interval arithmetic
-
+// TODO by André: I am not sure whether this is currently fine using interval arithmetic, but this only affects the certificates, which are currently not active. This needs to be checked in case certificates are used in the future.
 template <typename C>
 Certificate<C>& FrechetLight<C>::computeCertificate()
 {
