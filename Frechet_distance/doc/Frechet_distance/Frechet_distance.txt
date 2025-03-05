@@ -7,29 +7,39 @@ namespace CGAL {
 \cgalAutoToc
 \authors André Nusser, Marvin Künnemann, and Karl Bringmann
 
-
 <center>
-<img src="FrechetTeaser.png" style="max-width:30%;"/>
+<img src="teaser.png" style="max-width:30%;"/>
 </center>
 
-This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.
+This package provides the means to (approximately) compute the Fréchet distance between two polylines as well as a near neighbor data structure for polylines under the Fréchet distance, both in d-dimensional Euclidean space.
+A polyline is defined by a sequence of points where we interpolate linearly in-between each pair of consecutive points.
+In order to determine the Fréchet distance, an exact decision algorithm as well as a function that approximates the Fréchet distance arbitrarily well is included in the package.
+The approximation algorithm is simply a binary search that repeatedly calls the decision algorithm, hence, if possible, the latter should preferably be used when optimizing for performance.
 
 \section secFrechetDistanceIntroduction Introduction
 
 The Fréchet distance is a classical dissimilarity measure between polylines.
 Its advantages over other measures are that it both considers the polylines as continuous objects and takes into account the ordering of the points.
 Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline,
-they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human
-and the dog to jointly walk from start to end on their respective trajectories.
+they are connected by a leash, and they are only allowed to walk forward. 
+The Fréchet distance is the shortest leash length that allows the human
+and the dog to jointly walk from start to end on their respective trajectories where they can each vary their speed arbitrarily.
+The Fréchet distance is a metric. This implies that it is symmetric and that two polylines have distance zero if and only if they are equal (after removing redundant vertices).
 
+The applications of this distance measure are plenty, for example:
+- comparing the GPS traces of migrating animals to find the different routes that are being used
+- measuring the similarity between movement patterns recorded via motion capture
+- perform map matching to match a GPS trace to a transportation network
+
+<center>
+<img src="FrechetTeaser.png" style="max-width:30%;"/>
+</center>
 
 <!--
 \cgalFigureBegin{figRefId,pdist-pkg-small.png}
 Here you can put the caption
 \cgalFigureEnd
 -->
-
-The Fréchet distance is a metric. This implies that two polylines have distance zero if and only if they are equal (after removing redundant vertices).
 
 \section secFrechetDistanceAPI API
 
@@ -105,10 +115,21 @@ closer than a distance bound to a query curve.
 
 \cgalExample{Frechet_distance/Frechet_DS_3.cpp}
 
+In the example below, we can see a query where:
+- the query polyline is in bold green
+- the query distance is 16
+- the colorfull polylines are in distance at most 16 from the query and are therefore returned
+- the light gray polylines are filtered out early on and no significant computation is performed on them
+- the dark gray polyline is not filtered out early on but only later by our exact decision algorithm
+
+<center>
+<img src="example_2d.png" style="max-width:30%;"/>
+</center>
+
 
 \subsection subsecFrechetDistanceImageCredits  Image Credits
 
-The teaser image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
+The character image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
 \subsection subsecFrechetDistanceImplementation  Implementation History
 
