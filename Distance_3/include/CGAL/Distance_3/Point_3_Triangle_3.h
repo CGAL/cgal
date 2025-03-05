@@ -306,7 +306,6 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
 
   typename K::Construct_segment_3 segment = k.construct_segment_3_object();
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
   typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
 
   /* The content of this function is very similar with the one above, the difference is we can exit earlier if
@@ -315,7 +314,6 @@ compare_squared_distance_to_triangle(const typename K::Point_3& pt,
   const Vector_3 e1 = vector(t0, t1);
   const Vector_3 oe3 = vector(t0, t2);
   const Vector_3 normal = wcross(e1, oe3, k);
-  const Vector_3 diff = vector(pt, t0);
 
   if(normal == NULL_VECTOR)
   {

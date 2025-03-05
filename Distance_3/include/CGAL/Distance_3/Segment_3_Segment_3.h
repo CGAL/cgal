@@ -225,9 +225,6 @@ compare_squared_distance(const typename K::Segment_3& s1,
   else if(p2 == q2)
     return csq_dist(s1,p2,d2);
 
-  const Vector_3 normal = wcross(v1, v2, k);
-  const Vector_3 diff = p1p2;
-
   // Compare first the distance between the lines, if larger we can exit early
   typename K::Comparison_result res_ll=csq_dist(s1.supporting_line(), s2.supporting_line(), d2);
   if(certainly(res_ll==LARGER))
