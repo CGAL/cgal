@@ -62,7 +62,6 @@ public:
   typedef Surface_patch_index_ Surface_patch_index;
   typedef std::optional<Surface_patch_index> Surface_patch;
   typedef Subdomain_index_ Subdomain_index;
-  typedef typename Base::Index Index;
   typedef typename Base::Intersection Intersection;
 
   // Type of indexes to characterize the lowest dimensional face of the input
@@ -288,10 +287,10 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
 
   private:
     /*
-     * Returns a point in the intersection of [a,b] with the surface
-     *  `a` must be the source point, and `b` the out point. It's important
+     * Returns a point in the intersection of `[a,b]` with the surface
+     *  `a` must be the source point, and `b` the out point. It is important
      * because it drives bisection cuts.
-     * Indeed, the returned point is the first intersection from  `[a,b]`
+     * Indeed, the returned point is the first intersection of `[a,b]`
      * with a subdomain surface.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
