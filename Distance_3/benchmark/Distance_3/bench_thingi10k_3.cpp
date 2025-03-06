@@ -55,7 +55,6 @@ struct Test
 public:
    Test() : nb_closed_pairs(0){ }
 
-  template<bool optimized_version>
   void close_triangles(std::vector<P> &points, std::vector<boost::container::small_vector<std::size_t, 3> >& triangles, FT d2){
     std::vector< CBox > boxes;
     auto extend_bbox3=[&](const Iterator it, FT& d2){
@@ -75,14 +74,9 @@ public:
       if(v.size()!=0) //they have common vertices
         return;
 
-      bool comp;
       T tr1(points[a[0]], points[a[1]], points[a[2]]);
       T tr2(points[b[0]], points[b[1]], points[b[2]]);
-      if constexpr(optimized_version)
-        comp = K().compare_squared_distance_3_object()(tr1, tr2, d2)!=CGAL::LARGER;
-      else
-        comp = Old_compare_squared_distance_3<K>()(tr1, tr2, d2)!=CGAL::LARGER;
-
+      bool comp = K().compare_squared_distance_3_object()(tr1, tr2, d2)!=CGAL::LARGER;
       if(comp)
       {
         nb_closed_pairs++;
@@ -108,15 +102,9 @@ public:
     }
     CGAL::Real_timer t;
     t.start();
-    close_triangles<true>(input_points, input_triangles, d2);
+    close_triangles(input_points, input_triangles, d2);
     t.stop();
-    std::cout << "New version: #points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " has " << nb_closed_pairs << " pairs at squared distance " << d2 << " in " << t.time() << " sec." << std::endl;
-    nb_closed_pairs=0;
-    t.reset();
-    t.start();
-    close_triangles<false>(input_points, input_triangles, d2);
-    t.stop();
-    std::cout << "Old version: #points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " has " << nb_closed_pairs << " pairs at squared distance " << d2 << " in " << t.time() << " sec." << std::endl;
+    std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " has " << nb_closed_pairs << " pairs at squared distance " << d2 << " in " << t.time() << " sec." << std::endl;
   }
 };
 
