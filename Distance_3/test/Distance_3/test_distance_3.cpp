@@ -242,9 +242,9 @@ private:
   {
     std::cout << "Point - Tetrahedron\n";
     //Degenerate Tetrahedron
-    check_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 1);
-    check_squared_distance (p(1.5, 1.5, 0), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 0);
-    check_squared_distance (p(4, 4, 0), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 3, 3, 0)), 2);
+    check_squared_distance (p(2, 2, 2), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 4);
+    check_squared_distance (p(3, 3, 0), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 0);
+    check_squared_distance (p(8, 8, 0), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 8);
 
     //Inside Tetrahedron
     check_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 0, 0, 3)), 0);
