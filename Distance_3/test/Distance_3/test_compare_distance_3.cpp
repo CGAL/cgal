@@ -103,7 +103,7 @@ private:
   bool are_equal(const Type& t1, const Type& t2, const bool verbose = true)
   {
     const FT diff = CGAL::abs(t1 - t2);
-    if(diff > std::numeric_limits<FT>::epsilon() &&
+    if(diff > std::numeric_limits<double>::epsilon() &&
        diff > epsilon * (CGAL::abs(t1) + CGAL::abs(t2)))
     {
       if(verbose)
@@ -177,7 +177,7 @@ private:
     // const FT res_o1o2 = K().compare_squared_distance_3_object()(o1, o2, expected_result);
     // const FT res_o2o1 = K().compare_squared_distance_3_object()(o2, o1, expected_result);
 
-    const FT up = upper_bound * (1 + epsilon) + std::numeric_limits<FT>::epsilon();
+    const FT up = upper_bound * (1 + epsilon) + std::numeric_limits<double>::epsilon();
 
     const bool res_o1o2 = (CGAL::compare_squared_distance(o1, o2, up) != CGAL::LARGER);
     const bool res_o2o1 = (CGAL::compare_squared_distance(o2, o1, up) != CGAL::LARGER);
