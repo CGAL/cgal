@@ -235,6 +235,7 @@ private:
                      Weight w,
                      int dim,
                      const Index& index,
+                     Vertex_handle prev,
                      ErasedVeOutIt out);
 
   /// Inserts balls between the points identified by the handles `vp` and `vq`
@@ -550,7 +551,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with non-periodic triangulations
-  CGAL_assertion(!(std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  CGAL_assertion(!(std::is_same_v<typename Tr::Periodic_tag, CGAL::Tag_true>));
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl
@@ -631,7 +632,7 @@ insert_corners()
     // Get weight (the ball radius is given by the 'query_size' function)
     const FT query_weight = CGAL::square(query_size(p, 0, p_index));
     FT w = use_minimal_size()
-         ? (std::min)(minimal_weight_, query_weight)
+         ? (std::max)(minimal_weight(), query_weight)
          : query_weight;
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -640,7 +641,8 @@ insert_corners()
 
     // The following lines ensure that the weight w is small enough so that
     // corners balls do not intersect
-    if(dt.number_of_vertices() >= 2)
+    if( dt.number_of_vertices() >= 2
+      && (!use_minimal_size() || w != minimal_weight()))
     {
       typename Dt::Vertex_handle vh;
       CGAL_assertion_code( bool p_found = )
@@ -657,10 +659,13 @@ insert_corners()
                                      dt, vh, finite_incident_cells);
 
       w = (std::min)(w, nearest_sq_dist / FT(9));
+
+      if(use_minimal_size())
+        w = (std::max)(w, minimal_weight_);
     }
 
     // Insert corner with ball (dim is zero because p is a corner)
-    Vertex_handle v = smart_insert_point(p, w, 0, p_index,
+    Vertex_handle v = smart_insert_point(p, w, 0, p_index, Vertex_handle(),
                                          CGAL::Emptyset_iterator()).first;
     CGAL_assertion(v != Vertex_handle());
 
@@ -761,7 +766,7 @@ template <typename ErasedVeOutIt>
 std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::Vertex_handle,
           ErasedVeOutIt>
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
+smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, Vertex_handle prev,
                    ErasedVeOutIt out)
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
@@ -792,7 +797,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     // Check that new point will not be inside a power sphere
     typename Tr::Locate_type lt;
     int li, lj;
-    Cell_handle ch = tr.locate(wp0, lt, li, lj);
+    Cell_handle ch = tr.locate(wp0, lt, li, lj, prev);
 
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
     FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
@@ -1059,6 +1064,7 @@ insert_balls_on_edges()
                                   CGAL::square(p_size),
                                   1 /*dim*/,
                                   p_index,
+                                  Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
@@ -1248,6 +1254,7 @@ insert_balls(const Vertex_handle& vp,
                            point_weight,
                            dim,
                            index,
+                           Vertex_handle(),
                            out);
       if(forced_stop()) return out;
       const Vertex_handle new_vertex = pair.first;
@@ -1338,7 +1345,7 @@ insert_balls(const Vertex_handle& vp,
 
     // Insert point into c3t3
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
-      smart_insert_point(new_point, point_weight, dim, index, out);
+      smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
     out = pair.second;
 
