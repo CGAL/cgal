@@ -691,7 +691,7 @@ public:
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
 #else
-      Visitor visitor(*ss_ptr, vertical_weight, offset_points);
+      Visitor visitor(*ss_ptr, offset_points);
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       Offset_polygons raw_output;
