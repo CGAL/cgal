@@ -59,6 +59,10 @@ public:
   public:
     void operator()(const Point_2& p, NT pixel_size, NT &x, NT &y)
     {
+      // TODO a proper and efficient double_ceil was done for snap_rounding_polygon_soup
+#if 0
+      x = double_ceil((x / pixel_size) - 0.5) * pixel_size;
+#else
       NT x_tmp = p.x() / pixel_size;
       NT y_tmp = p.y() / pixel_size;
 
@@ -81,6 +85,7 @@ public:
 
       x = x_floor * pixel_size + pixel_size / NT(2.0);
       y = y_floor * pixel_size + pixel_size / NT(2.0);
+#endif
     }
   };
 
