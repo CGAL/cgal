@@ -243,7 +243,7 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
        \cgalParamNEnd
 
        \cgalParamNBegin{progressive}
-         \cgalParamDescription{reorders the points in `output` in a progressive way, i.e., the first n points in `output` with n < `number_of_points` have a poisson disk distribution with a larger radius. }
+         \cgalParamDescription{reorders the points in `output` in a progressive way, i.e., the first n points in `output` with n < `number_of_points` have a Poisson disk distribution with a larger radius. }
          \cgalParamType{Boolean}
          \cgalParamDefault{`false`}
        \cgalParamNEnd
