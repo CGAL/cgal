@@ -51,9 +51,10 @@ struct Test
   typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,Iterator> CBox;
 
   size_t nb_closed_pairs;
+  size_t nb_tested_pairs;
 
 public:
-   Test() : nb_closed_pairs(0){ }
+   Test() : nb_closed_pairs(0), nb_tested_pairs(0){ }
 
   void close_triangles(std::vector<P> &points, std::vector<boost::container::small_vector<std::size_t, 3> >& triangles, FT d2){
     std::vector< CBox > boxes;
@@ -72,6 +73,10 @@ public:
       std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),std::back_inserter(v));
 
       if(v.size()!=0) //they have common vertices
+        return;
+
+      nb_tested_pairs++;
+      if(nb_tested_pairs>1000000)
         return;
 
       T tr1(points[a[0]], points[a[1]], points[a[2]]);
