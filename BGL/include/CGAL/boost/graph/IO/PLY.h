@@ -44,7 +44,7 @@ class PLY_builder
   typedef typename Base::Face_container                                     Face_container;
 
 public:
-  PLY_builder(std::istream& is) : Base(is) { }
+  PLY_builder(std::istream& is, std::string& comments) : Base(is), comments(comments) { }
 
   template <typename NamedParameters>
   bool read(std::istream& is,
@@ -52,19 +52,22 @@ public:
             Face_container& faces,
             const NamedParameters& np)
   {
-    return read_PLY(is, points, faces, np);
+    return read_PLY(is, points, faces, comments, np);
   }
+
+  std::string& comments;
 };
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY_BGL(std::istream& is,
                   Graph& g,
+                  std::string& comments,
                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  internal::PLY_builder<Graph, Point> builder(is);
+  internal::PLY_builder<Graph, Point> builder(is, comments);
   return builder(g, np);
 }
 
@@ -132,14 +135,31 @@ template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Graph& g,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
-  return internal::read_PLY_BGL(is, g, np);
+  return internal::read_PLY_BGL(is, g, comments, np);
 }
+
+template <typename Graph,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& is,
+              Graph& g,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
+#endif
+              )
+{
+  std::string unused_comments;
+  return internal::read_PLY_BGL(is, g, unused_comments, np);
+}
+
+
 
 /*!
   \ingroup PkgBGLIoFuncsPLY
@@ -207,6 +227,7 @@ template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname,
               Graph& g,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
@@ -218,16 +239,29 @@ bool read_PLY(const std::string& fname,
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::IO::set_mode(is, CGAL::IO::BINARY);
-    return internal::read_PLY_BGL(is, g, np);
+    return read_PLY(is, g, comments, np);
   }
   else
   {
     std::ifstream is(fname);
     CGAL::IO::set_mode(is, CGAL::IO::ASCII);
-    return internal::read_PLY_BGL(is, g, np);
+    return read_PLY(is, g, comments, np);
   }
 }
 
+template <typename Graph,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              Graph& g,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
+#endif
+              )
+{
+  std::string unused_comment;
+  return read_PLY(fname, g, unused_comment, np);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
@@ -254,6 +288,15 @@ bool read_PLY(const std::string& fname,
       \cgalParamDescription{a property map associating points to the vertices of `g`}
       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+
+   \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
@@ -287,6 +330,10 @@ bool read_PLY(const std::string& fname,
       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
+
+\note The point and vector types of the point and normal property map must be `double`or `float`
+      in order to respect the specification of the  PLY file format.
+       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
 
  \returns `true` if writing was successful, `false` otherwise.
 */
@@ -326,6 +373,11 @@ bool write_PLY(std::ostream& os,
 
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
+  bool has_vnormal = false;
+  if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    has_vnormal = true;
+  }
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, g));
@@ -353,6 +405,7 @@ bool write_PLY(std::ostream& os,
 
   os << "element vertex " << vertices(g).size() << std::endl;
   internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+
   //if vcm is not default add v:color property
   if(has_vcolor)
   {
@@ -362,10 +415,30 @@ bool write_PLY(std::ostream& os,
        << "property uchar alpha" << std::endl;
   }
 
+  if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+    typedef decltype(vnm) Normal_map;
+    typedef typename Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
+    if(std::is_same<FloatDouble, float>::value)
+      {
+        os << "property float nx" << std::endl
+           << "property float ny" << std::endl
+           << "property float nz" << std::endl;
+      }
+      else
+      {
+        os << "property double nx" << std::endl
+           << "property double ny" << std::endl
+           << "property double nz" << std::endl;
+      }
+  }
+
   os << "element face " << faces(g).size() << std::endl;
   internal::output_property_header(
         os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                             PLY_property<std::vector<int> >("vertex_indices")));
+
   //if fcm is not default add f:color property
   if(has_fcolor)
   {
@@ -379,7 +452,15 @@ bool write_PLY(std::ostream& os,
   for(vertex_descriptor vd : vertices(g))
   {
     const Point_3& p = get(vpm, vd);
-    internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    internal::output_properties(os, &p, make_ply_point_writer (Identity_property_map<Point_3>()));
+    if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+    typedef decltype(vnm) Normal_map;
+    typedef typename Normal_map::value_type Vector_3;
+    Vector_3 vec = get(vnm,vd);
+    internal::output_properties(os, &vec, make_ply_normal_writer (Identity_property_map<Vector_3>()));
+  }
     if(has_vcolor)
     {
       const CGAL::IO::Color& c = get(vcm, vd);
@@ -455,6 +536,15 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
                       must be available in `Graph`.}
     \cgalParamNEnd
 
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+
    \cgalParamNBegin{vertex_index_map}
      \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -483,6 +573,10 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
+
+\note The point and vector types of the point and normal property map must be `double`or `float`
+      in order to respect the specification of the  PLY file format.
+       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
 
  \returns `true` if writing was successful, `false` otherwise.
 */
