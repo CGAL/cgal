@@ -1,5 +1,3 @@
-#define CGAL_MESH_3_VERBOSE 1
-#define CGAL_CONCURRENT_MESH_3_VERBOSE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/IO/output_to_vtu.h>
