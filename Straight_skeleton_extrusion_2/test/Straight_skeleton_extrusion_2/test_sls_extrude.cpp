@@ -1,6 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/extrude_skeleton.h>
@@ -12,7 +14,9 @@ namespace PMP = ::CGAL::Polygon_mesh_processing;
 
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 using EPECK_w_SQRT = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+#endif
 
 template <typename FT>
 bool are_equal(const FT t1, const FT t2,
@@ -279,7 +283,9 @@ int main(int, char**)
 
   test<EPICK>();
   test<EPECK>();
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test<EPECK_w_SQRT>();
+#endif
 
   std::cout << "OK" << std::endl;
 

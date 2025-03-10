@@ -3,7 +3,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_polygon_with_holes_2.h>
@@ -32,7 +34,9 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
+#endif
 
 namespace CGAL {
 
@@ -1078,10 +1082,12 @@ void test_offset(const char* filename,
   {
     if(vit->time() != 0)
     {
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
       // if the kernel is not exact, avoid trouble
       if(std::is_same<K, EPECK_w_sqrt>::value)
         offset_times.insert(vit->time());
       else
+#endif
         offset_times.insert(0.99 * vit->time());
     }
   }
@@ -1319,7 +1325,9 @@ int main(int, char**)
 {
   test_kernel<EPICK>();
   test_kernel<EPECK>();
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test_kernel<EPECK_w_sqrt>();
+#endif
 
   std::cout << "Done!" << std::endl;
 

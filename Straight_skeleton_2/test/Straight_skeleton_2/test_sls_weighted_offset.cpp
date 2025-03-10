@@ -3,7 +3,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 
 #include <CGAL/create_weighted_offset_polygons_2.h>
 #include <CGAL/create_weighted_offset_polygons_from_polygon_with_holes_2.h>
@@ -23,7 +25,9 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
+#endif
 
 namespace CGAL {
 
@@ -283,8 +287,9 @@ int main(int, char**)
 
   test_kernel<EPICK>();
   test_kernel<EPECK>();
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test_kernel<EPECK_w_sqrt>();
-
+#endif
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;

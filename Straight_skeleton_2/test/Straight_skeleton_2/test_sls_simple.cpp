@@ -22,7 +22,9 @@ void Straight_skeleton_traits_external_trace(std::string m)
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/create_straight_skeleton_2.h>
@@ -46,7 +48,9 @@ void Straight_skeleton_traits_external_trace(std::string m)
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
+#endif
 
 template <typename K>
 void test_API()
@@ -94,6 +98,7 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 
   std::cout << unique_vertices.size() << " unique vertices (" << ss->size_of_vertices() << ")" << std::endl;
 
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   // Can't guarantee that the embedding is correct with EPICK or EPECK (non-exact sqrt)
   if(std::is_same<K, EPECK_w_sqrt>::value)
   {
@@ -119,6 +124,7 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
         return false;
     }
   }
+#endif
 
   return true;
 }
@@ -414,7 +420,9 @@ int main(int, char**)
 
   test_kernel<EPICK>();
   test_kernel<EPECK>();
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test_kernel<EPECK_w_sqrt>();
+#endif
 
   std::cout << "Done!" << std::endl;
 

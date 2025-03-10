@@ -148,7 +148,9 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
   using IK = typename Kernel_traits<Point_2>::Kernel;
   using IFT = typename IK::FT;
 
+#ifdef CGAL_CXX17
   static_assert((std::is_same<typename std::iterator_traits<WeightIterator>::value_type, IFT>::value));
+#endif
 
   boost::shared_ptr<Straight_skeleton_2<K> > skeleton;
 

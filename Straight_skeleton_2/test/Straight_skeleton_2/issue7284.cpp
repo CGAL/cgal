@@ -3,7 +3,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#ifdef CGAL_SLS_TEST_USE_EPECK_WITH_SQRT
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>

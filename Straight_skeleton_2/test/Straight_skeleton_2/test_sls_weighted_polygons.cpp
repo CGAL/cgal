@@ -1,7 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-
+#endif
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Straight_skeleton_2/IO/print.h>
@@ -28,7 +29,9 @@ namespace SS = CGAL::CGAL_SS_i;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
+#endif
 
 template <typename K>
 void test_API()
@@ -141,7 +144,9 @@ int main(int argc, char** argv)
 
   test_kernel<EPICK>(polygon_nv, rnd);
   test_kernel<EPECK>(polygon_nv, rnd);
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test_kernel<EPECK_w_sqrt>(polygon_nv, rnd);
+#endif
 
   return EXIT_SUCCESS;
 }

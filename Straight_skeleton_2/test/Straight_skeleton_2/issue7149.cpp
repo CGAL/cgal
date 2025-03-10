@@ -41,7 +41,9 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/create_offset_polygons_2.h>
@@ -194,8 +196,9 @@ int main(int, char**)
 #ifdef CGAL_SLS_TEST_ISSUE_7149_DEBUG
   sEnableTrace = true;
 #endif
-
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
   test<CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt>(r);
+#endif
   test<CGAL::Exact_predicates_exact_constructions_kernel>(r);
   test<CGAL::Exact_predicates_inexact_constructions_kernel>(r);
 
