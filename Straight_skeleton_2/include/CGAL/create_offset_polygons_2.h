@@ -141,7 +141,7 @@ template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> >
 create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& , Tag_false )
 {
-  static_assert(!(std::is_same<OutPolygon, CGAL::Default>::value));
+  static_assert(!(std::is_same<OutPolygon, CGAL::Default>::value), "");
 
   typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ;
   typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;
@@ -167,7 +167,7 @@ template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> >
 create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& /*k*/, Tag_true )
 {
-  static_assert(!(std::is_same<OutPolygon, CGAL::Default>::value));
+  static_assert(!(std::is_same<OutPolygon, CGAL::Default>::value), "");
 
   typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ;
   typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;
