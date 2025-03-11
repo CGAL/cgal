@@ -8,7 +8,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau
 
-\section Conforming Delaunay Triangulations in 3D
+\section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
 This package implements the construction of a 3D conforming Delaunay triangulation,
 constrained to a set of faces of a surface polygon mesh.
