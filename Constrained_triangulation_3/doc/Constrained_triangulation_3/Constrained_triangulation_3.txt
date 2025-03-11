@@ -83,21 +83,29 @@ are provided to create a `Conforming_constrained_Delaunay_triangulation_3` objec
 
 \subsection CT_3_example_ccdt Build a conforming constrained Delaunay triangulation
 
-The following example shows ...
+The following example shows how to use the helper constructor function
+`make_conforming_constrained_Delaunay_triangulation_3()` to create a
+conforming constrained Delaunay triangulation from a given PLC.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
 
 \subsection CT_3_example_ccdt_soup Build a conforming constrained Delaunay triangulation from a polygon soup
 
-or from a polygon soup ...
+It is also possible to create a conforming constrained Delaunay triangulation
+from a polygon soup, i.e., a set of polygons for which the connectivity is not known a priori.
+This example shows an example of building such a triangulation.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 
 \subsection CT_3_example_remesh Remeshing a conforming constrained Delaunay triangulation
 
-remeshing...
+Once the triangulation is built, it is possible to remesh it using the
+`CGAL::tetrahedral_isotropic_remeshing()` function from the \ref PkgTetrahedralRemeshing package,
+to improve the quality of the mesh or adapt it to a given sizing field.
+
+The following example shows how to remesh a conforming constrained Delaunay triangulation.
 
 \cgalExample{Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp }
 

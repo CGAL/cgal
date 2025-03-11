@@ -40,4 +40,6 @@ int main(int argc, char* argv[])
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
   CGAL::draw(ccdt.triangulation());
+
+  return EXIT_SUCCESS;
 }

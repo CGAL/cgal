@@ -29,4 +29,6 @@ int main(int argc, char* argv[])
             << ccdt.number_of_constrained_facets() << '\n';
 
   CGAL::draw(ccdt.triangulation());
+
+  return EXIT_SUCCESS
 }
