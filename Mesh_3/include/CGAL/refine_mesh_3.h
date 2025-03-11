@@ -355,7 +355,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
                  , mesh_options.pointer_to_stop_atomic_boolean
 #endif
                  );
-  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix,
+                                          mesh_options.surface_only);
   c3t3.clear_manifold_info();
 
   dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
@@ -387,7 +388,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Perturbation
-  if ( perturb )
+  if ( perturb && !mesh_options.surface_only )
   {
     double perturb_time_limit = refine_time;
 
@@ -403,7 +404,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Exudation
-  if ( exude )
+  if ( exude  && !mesh_options.surface_only )
   {
     double exude_time_limit = refine_time;
 
