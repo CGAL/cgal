@@ -3,10 +3,24 @@ namespace CGAL {
 
 \mainpage User Manual
 \anchor Chapter_CT_3
+\anchor userchapterct3
+
 \cgalAutoToc
 \author Laurent Rineau
 
-This chapter describes the ...
+\section Conforming Delaunay Triangulations in 3D
+
+This package implements the construction of a 3D conforming Delaunay triangulation,
+constrained to a set of faces of a surface polygon mesh.
+
+For any Piecewise Linear Complex (PLC) in 3D,
+the algorithm builds a Delaunay triangulation conforming to this PLC.
+The constrained triangulation does not always exist, and it may be necessary
+to add Steiner points to the PLC to make it triangulable.
+
+The problem is described by Cohen-Steiner et al~\cgalCite{cgal:cohen2002conforming},
+and by Si~\cgalCite{cgal:si2008cdt3}.
+
 
  * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
  * Explain "conforming to the faces of a polygon mesh".
@@ -14,9 +28,47 @@ This chapter describes the ...
 
 \section CT_3_definitions Definitions
 
-Section on definitions here ...
+In this section, we define the main concepts that have to be understood to use this package.
 
-\section CT_3examples Examples
+\subsection CT_3_PLC Piecewise Linear Complex
+
+A `Piecewise Linear Complex` is the 3-dimensional generalization of a polyhedron.
+
+A PLC is built from simple geometric elements, called `simplices`
+that are topologically connected together in a structured way.
+`Simplices` (vertices, edges, and facets) are the basic elements forming the complex.
+Their geometric counterparts are points, segments, polyhedra, respectively.
+Each simplex is embedded into the geometric space via the points coordinates.
+
+The simplices must satisfy the following conditions :
+- they must be connected together by their common faces;
+- each simplex is polygonal, with at least three vertices, that must be closed and coplanar;
+- two edges can only intersect at a common vertex which is also in the PLC;
+- two facets can only intersect at a common edge or vertex which is also in the PLC;
+- two cells can only intersect at a common facet, edge or vertex which is also in the PLC.
+
+\subsection CT_3_CDT Conforming Delaunay Triangulation
+
+The goal of the algorithms developed in this package is to compute a Delaunay
+mesh containing a given set of polygonal constraints in 3D as sub-complex.
+See package \ref PkgTriangulation3 for more details on Delaunay triangulations.
+
+In 3D, constrained triangulations do not always exist. It can be shown using the
+example of the Schönhardt polyhedra, that requires the addition of Steiner points
+to be triangulable.
+
+The algorithm implemented in this package is based on the work of
+/todo add references.
+
+
+\section CT_3_api API
+
+\subsection CT_3_api_classes Classes
+
+\subsection CT_3_api_functions Functions
+
+
+\section CT_3_examples Examples
 
 \subsection myFirstExample First Example
 
@@ -27,6 +79,13 @@ The following example shows ...
 or from a polygon soup ...
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
+
+remeshing...
+
+\cgalExample{Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp }
+
+
+\section CT_3_design Design and Implementation History
 
 */
 } /* namespace CGAL */
