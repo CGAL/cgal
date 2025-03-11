@@ -18,8 +18,8 @@ the algorithm builds a Delaunay triangulation conforming to this PLC.
 The constrained triangulation does not always exist, and it may be necessary
 to add Steiner points to the PLC to make it triangulable.
 
-The problem is described by Cohen-Steiner et al~\cgalCite{cgal:cohen2002conforming},
-and by Si~\cgalCite{cgal:si2008cdt3}.
+The problem is described by Cohen-Steiner et al \cgalCite{cgal:cohen2002conforming},
+and by Si \cgalCite{cgal:si2008cdt3}.
 
 
  * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
@@ -54,31 +54,48 @@ mesh containing a given set of polygonal constraints in 3D as sub-complex.
 See package \ref PkgTriangulation3 for more details on Delaunay triangulations.
 
 In 3D, constrained triangulations do not always exist. It can be shown using the
-example of the Schönhardt polyhedra, that requires the addition of Steiner points
-to be triangulable.
+example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
+\cgalCite{bagemihl1948indecomposable}, that requires the addition of
+Steiner points to be triangulable.
 
 The algorithm implemented in this package is based on the work of
-/todo add references.
+Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
+Steiner points are added on input edges and input facets
+of the PLC to make it triangulable.
 
 
 \section CT_3_api API
 
 \subsection CT_3_api_classes Classes
 
+This package provides one main class `Conforming_constrained_Delaunay_triangulation_3`
+that represents a 3D conforming Delaunay triangulation.
+The class is templated by the geometric traits class and the underlying triangulation class.
+The other classes that are provided are secondary classes that define the
+vertex and cell types and metadata that constitute the triangulation.
+
 \subsection CT_3_api_functions Functions
 
+Some helper constructor functions, like `make_conforming_constrained_Delaunay_triangulation_3()`,
+are provided to create a `Conforming_constrained_Delaunay_triangulation_3` object.
 
 \section CT_3_examples Examples
 
-\subsection myFirstExample First Example
+\subsection CT_3_example_ccdt Build a conforming constrained Delaunay triangulation
 
 The following example shows ...
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
+
+\subsection CT_3_example_ccdt_soup Build a conforming constrained Delaunay triangulation from a polygon soup
+
 or from a polygon soup ...
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
+
+
+\subsection CT_3_example_remesh Remeshing a conforming constrained Delaunay triangulation
 
 remeshing...
 
