@@ -397,7 +397,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/"
     "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
   foreach(SUB_DIR ${DEMO_PLUGINS})
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
+    #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   endforeach()
 
   add_subdirectory(implicit_functions)
@@ -410,15 +410,15 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(CGAL_Mesh_3 PRIVATE polyhedron_demo)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3)
 
-  add_executable(CGAL_Classification Classification.cpp)
-  add_dependencies(CGAL_Classification Classification)
-  target_link_libraries(CGAL_Classification PRIVATE polyhedron_demo)
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Classification)
-
-  add_executable(CGAL_PMP PMP.cpp)
-  add_dependencies(CGAL_PMP PMP)
-  target_link_libraries(CGAL_PMP PRIVATE polyhedron_demo)
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_PMP)
+  #add_executable(CGAL_Classification Classification.cpp)
+  #add_dependencies(CGAL_Classification Classification)
+  #target_link_libraries(CGAL_Classification PRIVATE polyhedron_demo)
+  #add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Classification)
+  #
+  #add_executable(CGAL_PMP PMP.cpp)
+  #add_dependencies(CGAL_PMP PMP)
+  #target_link_libraries(CGAL_PMP PRIVATE polyhedron_demo)
+  #add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_PMP)
 
   #WS Server
   if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
