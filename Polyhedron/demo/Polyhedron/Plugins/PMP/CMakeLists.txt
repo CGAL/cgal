@@ -57,10 +57,12 @@ if(TARGET CGAL::Eigen3_support)
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         "compilation of  extrude_plugin"
+        "compilation of  remesh_planar_patches_plugin"
         "compilation of  fairing_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
       set_tests_properties(
       "compilation of  hole_filling_plugin"
+      "compilation of  remesh_planar_patches_plugin"
       "compilation of  smoothing_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
@@ -165,7 +167,6 @@ if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     "compilation of  selection_plugin"
     "compilation of  triangulate_facets_plugin"
     "compilation of  isotropic_remeshing_plugin"
-#    "compilation of  remesh_planar_patches_plugin"
     "compilation of  random_perturbation_plugin"
     "compilation of  engrave_text_plugin"
     "compilation of  degenerated_faces_plugin"
