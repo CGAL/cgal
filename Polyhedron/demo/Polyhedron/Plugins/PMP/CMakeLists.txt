@@ -49,10 +49,10 @@ if(TARGET CGAL::Eigen3_support)
       PURPOSE "Can be used as a solver in the smoothing plugin.")
     target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
 
-    #qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
-    #polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
-    #                       ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
-    #target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
+    qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
+    polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
+                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
+    target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
@@ -165,7 +165,7 @@ if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     "compilation of  selection_plugin"
     "compilation of  triangulate_facets_plugin"
     "compilation of  isotropic_remeshing_plugin"
-    "compilation of  remesh_planar_patches_plugin"
+#    "compilation of  remesh_planar_patches_plugin"
     "compilation of  random_perturbation_plugin"
     "compilation of  engrave_text_plugin"
     "compilation of  degenerated_faces_plugin"
