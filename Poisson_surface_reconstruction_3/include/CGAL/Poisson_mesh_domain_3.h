@@ -329,7 +329,7 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
           } else {
             const Surface_patch_index sp_index = r_domain_.make_surface_index(label_at_p1, label_at_p2);
             const Index index = r_domain_.index_from_surface_patch_index(sp_index);
-            return Intersection(Point(ORIGIN + ((value_at_p2 * (p1 - ORIGIN)) - (value_at_p1 * (p2 - ORIGIN))) /
+            return Intersection(Point_3(ORIGIN + ((value_at_p2 * (p1 - ORIGIN)) - (value_at_p1 * (p2 - ORIGIN))) /
                                                   (value_at_p2 - value_at_p1)), index, 2);
           }
         }
