@@ -17,11 +17,12 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
-// #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Lazy_exact_nt.h>
+
+#include <CGAL/mutex.h>
 
 namespace CGAL
 {
@@ -68,8 +69,69 @@ double double_ceil(NT x){
   }
 };
 
+CGAL_MUTEX map_mutex;
+
+template <typename Range>
+class Indexes_range{
+  typedef std::remove_cv_t<typename std::iterator_traits<typename Range::iterator>::value_type> Value_type;
+public:
+  typedef typename Range::const_iterator const_iterator;
+  typedef typename Range::iterator iterator;
+
+  Indexes_range(){}
+  Indexes_range(std::initializer_list<size_t>  l): poly(l), m_id(0), modified(true){}
+  Indexes_range(const Indexes_range<Range> &ir):poly(ir.range()), m_id(ir.id()), modified(ir.was_modified()){}
+  Indexes_range(Range &p):poly(p), modified(true){}
+  Indexes_range(Range &p, size_t id):poly(p), m_id(id),modified(false){}
+
+  void operator=(std::initializer_list<size_t>  l)
+  {
+    poly=l;
+    modified=true;
+  }
+
+  inline size_t id() const { return m_id; }
+  inline void set_id(size_t id){ m_id=id; }
+  inline bool was_modified() const { return modified; }
+
+  inline size_t size(){ return poly.size(); }
+
+  inline iterator begin(){ return poly.begin(); }
+  inline iterator end(){ return poly.end(); }
+  inline const_iterator begin() const{ return poly.begin(); }
+  inline const_iterator end() const{ return poly.end(); }
+
+  inline Value_type operator[](size_t i){ return poly[i]; }
+  inline const Value_type operator[](size_t i) const{ return poly[i]; }
+
+  inline void push_back(Value_type v){ poly.push_back(v);}
+  inline Range range(){ return poly;}
+  inline const Range range() const{ return poly;}
+private:
+  Range poly;
+  size_t m_id;
+  bool modified;
+};
+
+template <typename PolygonRange,typename Map>
+struct Wrapp_id_visitor
+{
+  Wrapp_id_visitor(PolygonRange* tr, Map* map):triangles(tr), map_newtriangles(map){}
+  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
+  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+  inline void new_subtriangle(std::size_t tgt_id, std::size_t src_id)
+  {
+    CGAL_SCOPED_LOCK(map_mutex);
+    (*map_newtriangles)[(*triangles)[src_id].id()].push_back(tgt_id);
+  }
+  inline void delete_triangle(std::size_t /*src_id*/) {}
+
+private:
+  PolygonRange* triangles;
+  Map* map_newtriangles;
+};
+
 /**
-* DEPRECATED SINCE INTERNAL
 *
 * Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles.
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
@@ -121,12 +183,16 @@ double double_ceil(NT x){
 * able to provide such a triangle soup within the number of iterations.
 */
 template <typename PointRange, typename PolygonRange, class NamedParameters>
-bool polygon_soup_snap_rounding(PointRange &points,
+bool polygon_soup_snap_rounding_(PointRange &points,
                        PolygonRange &triangles,
                        const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  // typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
+  typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
+  Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -134,8 +200,17 @@ bool polygon_soup_snap_rounding(PointRange &points,
     Sequential_tag
   > ::type Concurrency_tag;
 
+  // visitor
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Autorefinement::Default_visitor//default
+  >::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
+  constexpr bool has_visitor = !std::is_same_v<Autorefinement::Default_visitor, Visitor>;
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
+  const size_t number_of_input_triangles = triangles.size();
 
 #ifndef CGAL_LINKED_WITH_TBB
   static_assert (!parallel_execution,
@@ -184,7 +259,6 @@ bool polygon_soup_snap_rounding(PointRange &points,
     // Scale the coordinate, round to nearest integer and scale back
     // TODO replace this ceil by the one of Algebraic_fondation when it will be add to master
     return internal::double_ceil((x * scale) - 0.5) / scale;
-    // return ceil((x * scale) - 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
   {
@@ -222,14 +296,32 @@ bool polygon_soup_snap_rounding(PointRange &points,
 
     // Get all intersecting triangles
     std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
-    triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles), np);
+    triangle_soup_self_intersections<Concurrency_tag>(points, triangles, std::back_inserter(pairs_of_intersecting_triangles), np);
 
     if (pairs_of_intersecting_triangles.empty())
     {
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "End of the snapping" << std::endl;
 #endif
-      CGAL_assertion(!does_triangle_soup_self_intersect(points, triangles, np));
+      CGAL_assertion(!does_triangle_soup_self_intersect<Concurrency_tag>(points, triangles, np));
+      if constexpr(has_visitor)
+      {
+        std::vector<std::vector<size_t> > map_io(number_of_input_triangles);
+        size_t id=0;
+        for(auto &t: triangles)
+          map_io[t.id()].push_back(id++);
+
+        visitor.number_of_output_triangle(triangles.size());
+        for(size_t src_id=0; src_id!=map_io.size(); ++src_id){
+          if(map_io[src_id].size()==0)
+            visitor.delete_triangle(src_id);
+          else if(map_io[src_id].size()==1 && !triangles[map_io[src_id][0]].was_modified())
+              visitor.verbatim_triangle_copy(map_io[src_id][0],src_id);
+          else
+            for(size_t new_id: map_io[src_id])
+              visitor.new_subtriangle(new_id,src_id);
+        }
+      }
       return true;
     }
 
@@ -347,9 +439,58 @@ bool polygon_soup_snap_rounding(PointRange &points,
     std::cout << "Model size: " << points.size() << " " << triangles.size() << std::endl;
     std::cout << "Autorefine the soup" << std::endl;
 #endif
-    autorefine_triangle_soup(points, triangles, np);
+    if constexpr(has_visitor)
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      std::conditional_t<parallel_execution,
+                         tbb::concurrent_map<size_t, std::vector<size_t> >,
+                        std::map<size_t, std::vector<size_t> > > map_newtriangles;
+#else
+      std::map<size_t, std::vector<size_t> > map_newtriangles;
+#endif
+      Wrapp_id_visitor visitor(&triangles, &map_newtriangles);
+      autorefine_triangle_soup_(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()).visitor(visitor));
+      for(auto &pair: map_newtriangles)
+        for(size_t new_id: pair.second)
+          triangles[new_id].set_id(pair.first);
+    }
+    else
+    {
+      autorefine_triangle_soup_(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()));
+    }
   }
   return false;
+}
+
+template <typename PointRange, typename PolygonRange, class NamedParameters>
+bool polygon_soup_snap_rounding(PointRange &soup_points,
+                       PolygonRange &soup_triangles,
+                       const NamedParameters& np)
+{
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Autorefinement::Default_visitor//default
+  > ::type Visitor;
+  constexpr bool has_visitor = !std::is_same_v<Autorefinement::Default_visitor, Visitor>;
+  if constexpr(has_visitor)
+  {
+    using Triangle = std::remove_cv_t<typename std::iterator_traits<typename PolygonRange::iterator>::value_type>;
+    std::vector<Indexes_range<Triangle> > indexes_soup_triangles;
+    size_t id=0;
+    for(typename PolygonRange::iterator it=soup_triangles.begin(); it!=soup_triangles.end(); ++it)
+      indexes_soup_triangles.emplace_back((*it), id++);
+    std::cout << "Test 0" << std::endl;
+    bool res=polygon_soup_snap_rounding_(soup_points, indexes_soup_triangles, np);
+    soup_triangles.clear();
+    for(const Indexes_range<Triangle> &t: indexes_soup_triangles)
+      soup_triangles.push_back({t[0],t[1],t[2]});
+    return res;
+  }
+  else
+  {
+    return polygon_soup_snap_rounding_(soup_points, soup_triangles, np);
+  }
 }
 
 } } } //end of CGAL::Polygon_mesh_processing::internal namespace

@@ -22,6 +22,21 @@ typedef CGAL::Simple_cartesian<double> Cartesian;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+struct Track_visitor
+{
+  // inline void number_of_output_triangles(std::size_t nbt) { std::cout << "total number of triangles: " << nbt << std::endl;}
+  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
+
+  // inline void verbatim_triangle_copy(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " goes to " << tgt_id << std::endl;}
+  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+
+  // inline void new_subtriangle(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " subdivides to " << tgt_id << std::endl;}
+  inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+
+  // inline void delete_triangle(std::size_t src_id) { std::cout << src_id << " deleted" << std::endl;}
+  inline void delete_triangle(std::size_t /*src_id*/) {}
+};
+
 int main(int argc, char** argv)
 {
   const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
@@ -90,13 +105,18 @@ int main(int argc, char** argv)
 
     CGAL::Real_timer t;
     t.start();
+#if 0
+    Track_visitor visitor;
+    PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
+#else
     PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
+#endif
     t.stop();
     std::cout << "\nOutput:" << std::endl;
     std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
     std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect(input_points, input_triangles) << std::endl;
-    std::cout << "Is 2-manifold: " << PMP::orient_polygon_soup(input_points, input_triangles) << "\n\n"  << std::endl;
     CGAL::IO::write_polygon_soup(out_file, input_points, input_triangles, CGAL::parameters::stream_precision(17));
+    std::cout << "Is 2-manifold: " << PMP::orient_polygon_soup(input_points, input_triangles) << "\n\n"  << std::endl;
   }
   return 0;
 }
