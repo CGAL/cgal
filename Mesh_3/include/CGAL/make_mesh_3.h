@@ -494,7 +494,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *     \cgalParamDescription{If the user wants to mesh only the surface of the domain, the following named parameter
  *                           activates this option:
  *                           <UL>
- *                             <LI>\link parameters::surface_only() `parameters::surface_only()` \endlink
+ *                             <LI>`parameters::surface_only()`
  *                           </UL>
  *                           When this parameter is used, the output `C3T3` has no complex cells,
  *                           only complex facets, edges and vertices.
