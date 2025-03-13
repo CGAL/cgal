@@ -311,7 +311,7 @@ bool polygon_soup_snap_rounding_(PointRange &points,
         for(auto &t: triangles)
           map_io[t.id()].push_back(id++);
 
-        visitor.number_of_output_triangle(triangles.size());
+        visitor.number_of_output_triangles(triangles.size());
         for(size_t src_id=0; src_id!=map_io.size(); ++src_id){
           if(map_io[src_id].size()==0)
             visitor.delete_triangle(src_id);
