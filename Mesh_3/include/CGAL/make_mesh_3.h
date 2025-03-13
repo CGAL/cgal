@@ -517,7 +517,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *                           Two named parameters control this behavior:
  *                           <UL>
  *                             <LI> `parameters::no_lloyd()`
- *                             <LI> `parameters::lloyd_optimize_mesh_3()`
+ *                             <LI> `parameters::lloyd()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_lloyd()`}
  *   \cgalParamSectionEnd
