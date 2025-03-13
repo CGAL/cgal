@@ -417,8 +417,7 @@ public:
           auto segment_distance = distance(points.back(), point);
           prefix_length.push_back(prefix_length.back() + segment_distance);
       }
-  //TODO update that code
-      Construct_bbox bbox;
+      Construct_bbox bbox = traits_.construct_bbox_d_object();
 
       if (points.empty()){
         extreme_points = bbox(point);
