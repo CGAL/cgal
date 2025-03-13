@@ -490,6 +490,16 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *                           </UL>}
  *     \cgalParamDefault{`parameters::features(domain)`}
  *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Meshing surface}
+ *     \cgalParamDescription{If the user wants to mesh only the surface of the domain, the following named parameter
+ *                           activates this option:
+ *                           <UL>
+ *                             <LI>\link parameters::surface_only() `parameters::surface_only()` \endlink
+ *                           </UL>
+ *                           When this parameter is used, the output `C3T3` has no complex cells,
+ *                           only complex facets, edges and vertices.}
+ *     \cgalParamDefault{This option is not activated, the volume is meshed according to `domain`}
+ *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Topological options (manifoldness)}
  *     \cgalParamDescription{In order to drive the meshing algorithm and ensure that the output mesh follows a desired topological criterion,
  *                           three named parameters control this option:
