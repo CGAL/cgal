@@ -2,6 +2,7 @@
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
@@ -20,7 +21,8 @@ typedef Triangulation_on_hyperbolic_surface_2<Traits>                   Triangul
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
   // 1. Generate the triangulation
   Factory factory;
   Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL));

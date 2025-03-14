@@ -1,13 +1,14 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 typedef CGAL::Cartesian<CGAL::Exact_rational>                           Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>        ParentTraits;
@@ -19,33 +20,35 @@ typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
 typedef typename Traits::Complex                                        Complex;
 
-Domain build_domain(){
+Domain build_domain()
+{
   std::vector<Point> vertices;
-  vertices.push_back( Point(FT(809,10000),FT(0)) );
-  vertices.push_back( Point(FT(7359,10000),FT(1877,10000)) );
-  vertices.push_back( Point(FT(-999,2500),FT(881,1000)) );
-  vertices.push_back( Point(FT("-22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")) );
-  vertices.push_back( Point(FT(-809,10000),FT(0)) );
-  vertices.push_back( Point(FT(-7359,10000),FT(-1877,10000)) );
-  vertices.push_back( Point(FT(999,2500),FT(-881,1000)) );
-  vertices.push_back( Point(FT("22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("-9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")) );
+  vertices.push_back( Point(FT(809,10000),FT(0)));
+  vertices.push_back( Point(FT(7359,10000),FT(1877,10000)));
+  vertices.push_back( Point(FT(-999,2500),FT(881,1000)));
+  vertices.push_back( Point(FT("-22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")));
+  vertices.push_back( Point(FT(-809,10000),FT(0)));
+  vertices.push_back( Point(FT(-7359,10000),FT(-1877,10000)));
+  vertices.push_back( Point(FT(999,2500),FT(-881,1000)));
+  vertices.push_back( Point(FT("22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("-9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")));
 
   std::vector<int> pairings;
-  for (int k=0; k<8; ++k){
+  for (int k=0; k<8; ++k) {
     pairings.push_back((k+4)%8);
   }
 
   return Domain(vertices, pairings);
 }
 
-int main() {
+int main()
+{
   Domain domain = build_domain();
   Triangulation triangulation0 = Triangulation(domain);
 
-  assert( triangulation0.is_valid() );
+  assert(triangulation0.is_valid());
 
   Triangulation triangulation (triangulation0);
-  assert( triangulation.has_anchor() );
+  assert(triangulation.has_anchor());
 
   std::stringstream buffer;
   buffer << triangulation;
@@ -59,7 +62,7 @@ int main() {
 
   triangulation.make_Delaunay();
 
-  assert( triangulation.is_Delaunay() );
+  assert(triangulation.is_Delaunay());
 
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_not_centered;
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_centered;
@@ -69,9 +72,9 @@ int main() {
 
   Triangulation::Combinatorial_map_with_cross_ratios& cmap = triangulation.combinatorial_map();
   Triangulation::Anchor& anchor = triangulation.anchor();
-  assert( cmap.is_dart_used(anchor.dart) );
+  assert(cmap.is_dart_used(anchor.dart));
 
-  std::cout << "printing triangulation for test purposes : " << std::endl << triangulation;
+  std::cout << "printing triangulation for test purposes: " << std::endl << triangulation;
 
   return 0;
 }

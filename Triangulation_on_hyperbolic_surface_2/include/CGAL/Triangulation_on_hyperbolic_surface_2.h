@@ -10,20 +10,24 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Marc Pouget, Monique Teillaud
 
-// This file contains the declaration and the implementation of the class Triangulation_on_hyperbolic_surface_2
-
 #ifndef CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 #define CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
 
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
-#include <CGAL/basic.h>
 #include <CGAL/Combinatorial_map.h>
+#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 
+#include <CGAL/assertions.h>
+
+#include <fstream>
+#include <iostream>
 #include <map>
-#include <vector>
 #include <queue>
+#include <vector>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
 
 namespace CGAL {
 
@@ -34,52 +38,52 @@ It is also possible to specify an anchor for the triangulation. An anchor consis
 2) three points A,B,C in the hyperbolic plane. The points A,B,C are the three vertices in counter-clockwise order of a triangle. This triangle is a lift
 of T, and A is a lift of V.
 */
-
 template<class Traits>
-struct Combinatorial_map_with_cross_ratios_item{
-    template <class CMap>
-    struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
-        typedef std::tuple<void,Edge_attrib,void>   Attributes;
-    };
+struct Combinatorial_map_with_cross_ratios_item
+{
+  template <class CMap>
+  struct Dart_wrapper
+  {
+    typedef Cell_attribute<CMap, Complex_number<typename Traits::FT> >    Edge_attrib;
+    typedef std::tuple<void, Edge_attrib, void>                           Attributes;
   };
+};
 
-template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
+template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits> >
 class Triangulation_on_hyperbolic_surface_2
 {
 public:
+  typedef Combinatorial_map<2, Attributes> Combinatorial_map_with_cross_ratios;
 
-  typedef Combinatorial_map<2,Attributes> Combinatorial_map_with_cross_ratios;
-
-  struct Anchor{
+  struct Anchor
+  {
     typename Combinatorial_map_with_cross_ratios::Dart_descriptor dart;
     typename Traits::Hyperbolic_point_2 vertices[3];
   };
 
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                                 Dart_descriptor;
-//typedef typename Combinatorial_map_with_cross_ratios::Dart_range                                      Dart_range;
-//  typedef typename Combinatorial_map_with_cross_ratios::Dart_range::iterator                            Dart_iterator;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<0>             Vertex_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<1>             Edge_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<2>             Face_range;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                           Dart_descriptor;
+  // typedef typename Combinatorial_map_with_cross_ratios::Dart_range                               Dart_range;
+  // typedef typename Combinatorial_map_with_cross_ratios::Dart_range::iterator                     Dart_iterator;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<0>       Vertex_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<1>       Edge_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<2>       Face_range;
 
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                           Dart_const_descriptor;
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_range                                Dart_const_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<0>       Vertex_const_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<1>       Edge_const_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2>       Face_const_range;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                     Dart_const_descriptor;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_range                          Dart_const_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<0> Vertex_const_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<1> Edge_const_range;
+  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2> Face_const_range;
 
-  typedef typename Traits::FT                                                                Number;
-  typedef typename Traits::Complex                                                           Complex_number;
-  typedef typename Traits::Hyperbolic_point_2                                                Point;
-  typedef Hyperbolic_isometry_2<Traits>                                                      Isometry;
-  typedef Hyperbolic_fundamental_domain_2<Traits>                                            Domain;
+  typedef typename Traits::FT                                                                     Number;
+  typedef typename Traits::Complex                                                                Complex_number;
+  typedef typename Traits::Hyperbolic_point_2                                                     Point;
+  typedef Hyperbolic_isometry_2<Traits>                                                           Isometry;
+  typedef Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
 
   Triangulation_on_hyperbolic_surface_2() {};
   Triangulation_on_hyperbolic_surface_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
 // Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap);
   Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
-
 
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
@@ -93,12 +97,11 @@ public:
   void flip(Dart_descriptor dart);
   bool is_Delaunay() const;
   int make_Delaunay();
-  std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> lift(bool center=true) const;
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(bool center=true) const;
 
   bool is_valid() const;
 
-  //The following methods are not documented but they are non private for internal future use.
-
+  // The following methods are not documented but they are non private for internal future use.
   Dart_descriptor ccw(Dart_descriptor dart);
   Dart_descriptor cw(Dart_descriptor dart);
   Dart_descriptor opposite(Dart_descriptor dart);
@@ -108,19 +111,19 @@ public:
 
   Complex_number get_cross_ratio(Dart_const_descriptor dart) const;
 
-  // Returns the cross ratio of the points a,b,c,d
+  // returns the cross ratio of the points a,b,c,d
   Complex_number cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
-  // Returns the point d such that the cross ratio of a,b,c,d is cratio
+  // returns the point d such that the cross ratio of a,b,c,d is cratio
   Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const Complex_number& cratio) const;
 
 // Wrapper around the Cmap for iterating over vertices, edges or faces.
-Vertex_range vertices_range(){
+Vertex_range vertices_range() {
   return _combinatorial_map.template one_dart_per_cell<0>();
 }
-Edge_range edges_range(){
+Edge_range edges_range() {
   return _combinatorial_map.template one_dart_per_cell<1>();
 }
-Face_range faces_range(){
+Face_range faces_range() {
   return _combinatorial_map.template one_dart_per_cell<2>();
 }
 Vertex_const_range vertices_const_range() const {
@@ -153,22 +156,24 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyperbolic_surface_2(const Domain& domain){
+Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::
+Triangulation_on_hyperbolic_surface_2(const Domain& domain)
+{
   // (Triangulates by adding an internal edge between domain.vertex(size-1) and the other vertices)
   _combinatorial_map.clear();
   int size = domain.size();
 
   // Make the triangles
   std::vector<Dart_descriptor> dart_of_triangle(size-2);
-  for (int k=0; k<size-2; ++k){
+  for (int k=0; k<size-2; ++k) {
     dart_of_triangle[k] = _combinatorial_map.make_combinatorial_polygon(3);
   }
 
   // Sew the internal edges and set their cross ratios
   Dart_descriptor dart_1, dart_2;
-  Point p0,p1,p2,p3;
+  Point p0, p1, p2, p3;
 
-  for (int k=1; k<size-2; ++k){
+  for (int k=1; k<size-2; ++k) {
     dart_1 = dart_of_triangle[k];
     dart_2 = cw(dart_of_triangle[k-1]);
 
@@ -182,13 +187,13 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
   }
 
   // Sew the boundary edges and set their cross ratios
-  for (int k1=0; k1<size; k1++){
+  for (int k1=0; k1<size; k1++) {
     int k2 = domain.paired_side(k1);
 
     p0 = domain.vertex((k1+1)%size);
     p2 = domain.vertex(k1);
 
-    if (k1 == size-1){
+    if (k1 == size-1) {
       dart_1 = dart_of_triangle[0];
       p1 = domain.vertex(1);
     } else if (k1 == size-2) {
@@ -199,7 +204,7 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
       p1 = domain.vertex(size-1);
     }
 
-    if (k2 == size-1){
+    if (k2 == size-1) {
       dart_2 = dart_of_triangle[0];
       p3 = domain.vertex(1);
     } else if (k2 == size-2) {
@@ -212,7 +217,7 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
 
     p3 = domain.side_pairing(k1).evaluate(p3);
 
-    if (_combinatorial_map.template is_sewable<2>(dart_1, dart_2)){
+    if (_combinatorial_map.template is_sewable<2>(dart_1, dart_2)) {
       _combinatorial_map.template sew<2>(dart_1, dart_2);
       _combinatorial_map.template set_attribute<1>(dart_1, _combinatorial_map.template create_attribute<1>(cross_ratio(p0,p1,p2,p3)));
     }
@@ -227,38 +232,51 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
 }
 
 /* template<class Traits, class Attributes> */
-/*   Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap){ */
+/*   Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap) { */
 /*   copy_from(cmap); */
 /* } */
 
 template<class Traits, class Attributes>
-  Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor){
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap,
+                                      Anchor& anchor)
+{
   copy_from(cmap, anchor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::combinatorial_map(){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios&
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+combinatorial_map()
+{
   return _combinatorial_map;
 }
 
 template<class Traits, class Attributes>
-bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::has_anchor() const {
+bool
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+has_anchor() const
+{
   CGAL_precondition(is_valid());
   return _has_anchor;
 }
 
 template<class Traits, class Attributes>
 typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Anchor&
-Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::anchor()  {
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+anchor()
+{
   CGAL_precondition(is_valid() && has_anchor());
   return _anchor;
 }
 
 template<class Traits, class Attributes>
 const typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Anchor&
-Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::anchor() const {
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+anchor() const
+{
   CGAL_precondition(is_valid() && has_anchor());
   return _anchor;
 }
@@ -266,14 +284,21 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::anchor() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_Delaunay_flippable(Dart_const_descriptor dart) const{
+bool
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+is_Delaunay_flippable(Dart_const_descriptor dart) const
+{
   CGAL_precondition(is_valid());
-  return ( get_cross_ratio(dart).imag()>Number(0) );
+  return (get_cross_ratio(dart).imag() > Number(0));
 }
 
 template<class Traits, class Attributes>
-void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::flip(Dart_descriptor dart){
+void
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+flip(Dart_descriptor dart)
+{
   CGAL_precondition(is_valid());
+
   // First gather all the information needed
 
    Dart_descriptor a = opposite(dart); // Get a fresh descriptor
@@ -292,30 +317,30 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::flip(Dart_descri
 
    // Modify the anchor
 
-   if (_anchor.dart == a){
+   if (_anchor.dart == a) {
      _anchor.dart = e;
      _anchor.vertices[1] = Point(fourth_point_from_cross_ratio(_anchor.vertices[1], _anchor.vertices[2], _anchor.vertices[0], cross_ratio_AC));
-   } else if (_anchor.dart == b){
+   } else if (_anchor.dart == b) {
      _anchor.vertices[2] = Point(fourth_point_from_cross_ratio(_anchor.vertices[0], _anchor.vertices[1], _anchor.vertices[2], cross_ratio_AC));
-   } else if (_anchor.dart == c){
+   } else if (_anchor.dart == c) {
      _anchor.vertices[2] = Point(fourth_point_from_cross_ratio(_anchor.vertices[2], _anchor.vertices[0], _anchor.vertices[1], cross_ratio_AC));
-   } else if (_anchor.dart == d){
+   } else if (_anchor.dart == d) {
      _anchor.dart = b;
      _anchor.vertices[1] = Point(fourth_point_from_cross_ratio(_anchor.vertices[1], _anchor.vertices[2], _anchor.vertices[0], cross_ratio_AC));
-   } else if (_anchor.dart == e){
+   } else if (_anchor.dart == e) {
      _anchor.vertices[2] = Point(fourth_point_from_cross_ratio(_anchor.vertices[0], _anchor.vertices[1], _anchor.vertices[2], cross_ratio_AC));
-   } else if (_anchor.dart == f){
+   } else if (_anchor.dart == f) {
      _anchor.vertices[2] = Point(fourth_point_from_cross_ratio(_anchor.vertices[2], _anchor.vertices[0], _anchor.vertices[1], cross_ratio_AC));
    }
 
    // Compute the new cross ratios
 
    Complex_number one (Number(1), Number(0));
-   Complex_number cross_ratio_BD = (cross_ratio_AC) / ((cross_ratio_AC) - one) ;
-   Complex_number cross_ratio_AB_2 = one - (one - (cross_ratio_AB)) * (cross_ratio_AC) ;
-   Complex_number cross_ratio_BC_2 = one - (one - (cross_ratio_BC)) / (cross_ratio_BD) ;
-   Complex_number cross_ratio_CD_2 = one - (one - (cross_ratio_CD)) * (cross_ratio_AC) ;
-   Complex_number cross_ratio_DA_2 = one - (one - (cross_ratio_DA)) / (cross_ratio_BD) ;
+   Complex_number cross_ratio_BD = (cross_ratio_AC) / ((cross_ratio_AC) - one);
+   Complex_number cross_ratio_AB_2 = one - (one - (cross_ratio_AB)) * (cross_ratio_AC);
+   Complex_number cross_ratio_BC_2 = one - (one - (cross_ratio_BC)) / (cross_ratio_BD);
+   Complex_number cross_ratio_CD_2 = one - (one - (cross_ratio_CD)) * (cross_ratio_AC);
+   Complex_number cross_ratio_DA_2 = one - (one - (cross_ratio_DA)) / (cross_ratio_BD);
 
    // Make the topological flip
 
@@ -346,30 +371,36 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::flip(Dart_descri
 
    // Take care of the particular cases where we need to "flip again"
 
-   if (opposite(e) == b){
-     _combinatorial_map.template info<1>(e) = one - (one - cross_ratio_AB_2) * (cross_ratio_AC) ;
+   if (opposite(e) == b) {
+     _combinatorial_map.template info<1>(e) = one - (one - cross_ratio_AB_2) * (cross_ratio_AC);
    }
 
-   if (opposite(f) == c){
-     _combinatorial_map.template info<1>(f) = one - (one - cross_ratio_BC_2) / (cross_ratio_BD) ;
+   if (opposite(f) == c) {
+     _combinatorial_map.template info<1>(f) = one - (one - cross_ratio_BC_2) / (cross_ratio_BD);
    }
 }
 
 template<class Traits, class Attributes>
-bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_Delaunay() const{
-  if (! is_valid()){
+bool
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+is_Delaunay() const
+{
+  if (! is_valid()) {
     return false;
   }
   return (pick_edge_to_flip() == nullptr);
 }
 
 template<class Traits, class Attributes>
-int Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::make_Delaunay(){
+int
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+make_Delaunay()
+{
   CGAL_precondition(is_valid());
   int number_of_flips_done = 0;
 
   Dart_descriptor edge_to_flip = pick_edge_to_flip();
-  while (edge_to_flip != nullptr){
+  while (edge_to_flip != nullptr) {
     flip(edge_to_flip);
     edge_to_flip = pick_edge_to_flip();
     number_of_flips_done++;
@@ -380,19 +411,31 @@ int Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::make_Delaunay(){
 
 
 template<class Traits, class Attributes>
-std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor, typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point, typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point, typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point>> Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::lift(bool center) const{
+std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor,
+                       typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point,
+                       typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point,
+                       typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point> >
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+lift(bool center) const
+{
   CGAL_precondition(is_valid() && has_anchor());
-  std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realizations;
+
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > realizations;
 
   size_t visited_darts_mark = _combinatorial_map.get_new_mark();
   _combinatorial_map.unmark_all(visited_darts_mark);
 
-  struct Compare {
-    bool operator()(std::pair<Dart_const_descriptor,double> const & x, std::pair<Dart_const_descriptor,double> const & y) {
-        return x.second > y.second;
+  struct Compare
+  {
+    bool operator()(const std::pair<Dart_const_descriptor,double>& x,
+                    const std::pair<Dart_const_descriptor,double>& y)
+    {
+      return x.second > y.second;
     }
   };
-  std::priority_queue<std::pair<Dart_const_descriptor,double>, std::vector<std::pair<Dart_const_descriptor,double>>, Compare> queue;
+
+  std::priority_queue<std::pair<Dart_const_descriptor, double>,
+                      std::vector<std::pair<Dart_const_descriptor, double> >, Compare> queue;
 
   std::unordered_map<Dart_const_descriptor, Point> positions;
 
@@ -402,7 +445,7 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
   _combinatorial_map.mark(const_ccw(_anchor.dart), visited_darts_mark);
   _combinatorial_map.mark(const_cw(_anchor.dart), visited_darts_mark);
 
-  if (center){
+  if (center) {
     Isometry center_the_drawing = hyperbolic_translation<Traits>(_anchor.vertices[0]);
     positions[_anchor.dart] = center_the_drawing.evaluate(_anchor.vertices[0]);
     positions[const_ccw(_anchor.dart)] = center_the_drawing.evaluate(_anchor.vertices[1]);
@@ -413,12 +456,16 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
     positions[const_cw(_anchor.dart)] = _anchor.vertices[2];
   }
 
-  std::tuple<Dart_const_descriptor,Point,Point,Point> value = std::make_tuple(_anchor.dart, positions[_anchor.dart], positions[const_ccw(_anchor.dart)], positions[const_cw(_anchor.dart)]);
+  std::tuple<Dart_const_descriptor, Point, Point, Point> value =
+    std::make_tuple(_anchor.dart,
+                    positions[_anchor.dart],
+                    positions[const_ccw(_anchor.dart)],
+                    positions[const_cw(_anchor.dart)]);
   realizations.push_back(value);
 
-  Complex_number anchor_z0 (_anchor.vertices[0].x(), _anchor.vertices[0].y());
-  Complex_number anchor_z1 (_anchor.vertices[1].x(), _anchor.vertices[1].y());
-  Complex_number anchor_z2 (_anchor.vertices[2].x(), _anchor.vertices[2].y());
+  Complex_number anchor_z0(_anchor.vertices[0].x(), _anchor.vertices[0].y());
+  Complex_number anchor_z1(_anchor.vertices[1].x(), _anchor.vertices[1].y());
+  Complex_number anchor_z2(_anchor.vertices[2].x(), _anchor.vertices[2].y());
 
   double weight_of_anchor_dart = CGAL::to_double(norm(anchor_z0) + norm(anchor_z1));
   double weight_of_ccw_anchor_dart = CGAL::to_double(norm(anchor_z1) + norm(anchor_z2));
@@ -428,22 +475,20 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
   queue.push(std::make_pair(const_ccw(_anchor.dart), weight_of_ccw_anchor_dart));
   queue.push(std::make_pair(const_cw(_anchor.dart), weight_of_cw_anchor_dart));
 
-
-
-  while( ! queue.empty() ){
+  while (! queue.empty()) {
     Dart_const_descriptor invader = queue.top().first;
     queue.pop();
 
     Dart_const_descriptor invaded = const_opposite(invader);
 
-    if (!_combinatorial_map.is_marked(invaded, visited_darts_mark)){
+    if (!_combinatorial_map.is_marked(invaded, visited_darts_mark)) {
       _combinatorial_map.mark(invaded, visited_darts_mark);
       _combinatorial_map.mark(const_ccw(invaded), visited_darts_mark);
       _combinatorial_map.mark(const_cw(invaded), visited_darts_mark);
 
-      const Point &a = positions[const_ccw(invader)];
-      const Point &b = positions[const_cw(invader)];
-      const Point &c = positions[invader];
+      const Point& a = positions[const_ccw(invader)];
+      const Point& b = positions[const_cw(invader)];
+      const Point& c = positions[invader];
       Complex_number cross_ratio = get_cross_ratio(invader);
 
       positions[invaded] = a;
@@ -451,18 +496,18 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
       Point d = fourth_point_from_cross_ratio(a, b, c, cross_ratio);
       positions[const_cw(invaded)] = d;
 
-      Complex_number za (a.x(), a.y());
-      Complex_number zc (c.x(), c.y());
+      Complex_number za(a.x(), a.y());
+      Complex_number zc(c.x(), c.y());
       double invaded_distance_to_zero = CGAL::to_double(norm(za));
       double invaded_ccw_distance_to_zero = CGAL::to_double(norm(zc));
-      Complex_number znew (positions[const_cw(invaded)].x(), positions[const_cw(invaded)].y());
+      Complex_number znew(positions[const_cw(invaded)].x(), positions[const_cw(invaded)].y());
       double invaded_cw_distance_to_zero = CGAL::to_double(norm(znew));
 
       double invaded_ccw_weight = invaded_ccw_distance_to_zero + invaded_cw_distance_to_zero;
       double invaded_cw_weight = invaded_cw_distance_to_zero + invaded_distance_to_zero;
 
-      queue.push( std::make_pair(const_ccw(invaded), invaded_ccw_weight) );
-      queue.push( std::make_pair(const_cw(invaded), invaded_cw_weight) );
+      queue.push(std::make_pair(const_ccw(invaded), invaded_ccw_weight));
+      queue.push(std::make_pair(const_cw(invaded), invaded_cw_weight));
 
       value = std::make_tuple(invaded, Point(a), Point(c), Point(d));
       realizations.push_back(value);
@@ -477,33 +522,36 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_valid() const{
+bool
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+is_valid() const
+{
   // 1. Check the combinatorial map
 
   // Check that the combinatorial map is valid
-  if ( !_combinatorial_map.is_valid() ){
+  if (!_combinatorial_map.is_valid()) {
     return false;
   }
 
   // Check that the combinatorial map has no 1,2-boundary
-  for (int k=1; k<3; ++k){
-    if ( !_combinatorial_map.is_without_boundary(k) ){
+  for (int k=1; k<3; ++k) {
+    if (!_combinatorial_map.is_without_boundary(k)) {
       return false;
     }
   }
 
   // 2. Check the anchor, if any
 
-  if  (_has_anchor){
+  if (_has_anchor) {
     // Check that the dart descriptor of the anchor points to a dart of the combinatorial map
-    if ( !_combinatorial_map.is_dart_used(_anchor.dart) ){
+    if (!_combinatorial_map.is_dart_used(_anchor.dart)) {
       return false;
     }
 
     // Check that the three vertices of the anchor lie within the open unit disk
-    for (int k=0; k<3; ++k){
-      //      if (_anchor.vertices[k].get_z() >= Number(1)){
-      if ( norm(Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y())) >= Number(1)){
+    for (int k=0; k<3; ++k) {
+      // if (_anchor.vertices[k].get_z() >= Number(1)) {
+      if (norm(Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y())) >= Number(1)) {
         return false;
       }
     }
@@ -515,47 +563,54 @@ bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_valid() const
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::to_stream(std::ostream& s) const{
+void
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+to_stream(std::ostream& s) const
+{
   CGAL_precondition(is_valid() && has_anchor());
+
   // Give indices to the darts
-    std::map<Dart_const_descriptor, int> darts_indices;
-    int current_dart_index = 0;
-    for (typename Dart_const_range::const_iterator it=_combinatorial_map.darts().begin(); it!=_combinatorial_map.darts().end(); ++it){
-      darts_indices[it] = current_dart_index;
-      current_dart_index++;
-    }
+  std::map<Dart_const_descriptor, int> darts_indices;
+  int current_dart_index = 0;
+  for (typename Dart_const_range::const_iterator it=_combinatorial_map.darts().begin(); it!=_combinatorial_map.darts().end(); ++it) {
+    darts_indices[it] = current_dart_index;
+    current_dart_index++;
+  }
 
-    // Store the number of darts
-    s << current_dart_index << std::endl;
+  // Store the number of darts
+  s << current_dart_index << std::endl;
 
-    // Store the anchor, if any
-    if (_has_anchor){
-      s << "yes" << std::endl;
-      s << darts_indices[_anchor.dart] << std::endl;
-      s << _anchor.vertices[0] << std::endl;
-      s << _anchor.vertices[1] << std::endl;
-      s << _anchor.vertices[2] << std::endl;
-    } else {
-      s << "no" << std::endl;
-    }
+  // Store the anchor, if any
+  if (_has_anchor) {
+    s << "yes" << std::endl;
+    s << darts_indices[_anchor.dart] << std::endl;
+    s << _anchor.vertices[0] << std::endl;
+    s << _anchor.vertices[1] << std::endl;
+    s << _anchor.vertices[2] << std::endl;
+  } else {
+    s << "no" << std::endl;
+  }
 
-    // Store the triangles
-    for (typename Face_const_range::const_iterator it = faces_const_range().begin(); it != faces_const_range().end(); ++it){
-      s << darts_indices[it] << std::endl;
-      s << darts_indices[const_cw(it)] << std::endl;
-      s << darts_indices[const_ccw(it)] << std::endl;
-    }
+  // Store the triangles
+  for (typename Face_const_range::const_iterator it = faces_const_range().begin(); it != faces_const_range().end(); ++it) {
+    s << darts_indices[it] << std::endl;
+    s << darts_indices[const_cw(it)] << std::endl;
+    s << darts_indices[const_ccw(it)] << std::endl;
+  }
 
-    // Store the edges
-    for (typename Edge_const_range::const_iterator it = edges_const_range().begin(); it != edges_const_range().end(); ++it){
-      s << darts_indices[it] << std::endl;
-      s << darts_indices[const_opposite(it)] << std::endl;
-      s << get_cross_ratio(it);
-    }
+  // Store the edges
+  for (typename Edge_const_range::const_iterator it = edges_const_range().begin(); it != edges_const_range().end(); ++it) {
+    s << darts_indices[it] << std::endl;
+    s << darts_indices[const_opposite(it)] << std::endl;
+    s << get_cross_ratio(it);
+  }
 }
 
 template<class Traits, class Attributes>
-void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std::istream& s){
+void
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+from_stream(std::istream& s)
+{
   _combinatorial_map.clear();
 
   // Load the number of darts
@@ -566,7 +621,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   // Load the anchor
   int anchor_dart_id;
   s >> line;
-  if (!line.compare("yes")){
+  if (!line.compare("yes")) {
     _has_anchor = true;
 
     s >> line;
@@ -582,7 +637,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   // Load the triangles
   std::vector<Dart_descriptor> darts_by_id (nb_darts);
   int index1, index2, index3;
-  for (int k=0; k<nb_darts/3; ++k){
+  for (int k=0; k<nb_darts/3; ++k) {
     Dart_descriptor triangle_dart = _combinatorial_map.make_combinatorial_polygon(3);
 
     s >> line;
@@ -600,7 +655,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   // Load the edges
   Dart_descriptor dart_1, dart_2;
   Complex_number cross_ratio;
-  for (int k=0; k<nb_darts/2; ++k){
+  for (int k=0; k<nb_darts/2; ++k) {
     s >> line;
     index1 = std::stoi(line);
     s >> line;
@@ -613,7 +668,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   }
 
   // (*) here
-  if (_has_anchor){
+  if (_has_anchor) {
     _anchor.dart = darts_by_id[anchor_dart_id];
   }
 }
@@ -621,48 +676,50 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::ccw(Dart_descriptor dart){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::ccw(Dart_descriptor dart) {
   return _combinatorial_map.beta(dart, 1);
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::cw(Dart_descriptor dart){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::cw(Dart_descriptor dart) {
   return _combinatorial_map.beta(dart, 0);
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::opposite(Dart_descriptor dart){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::opposite(Dart_descriptor dart) {
   return _combinatorial_map.opposite(dart);
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_ccw(Dart_const_descriptor dart) const{
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_ccw(Dart_const_descriptor dart) const {
   return _combinatorial_map.beta(dart, 1);
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_cw(Dart_const_descriptor dart)  const{
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_cw(Dart_const_descriptor dart) const {
   return _combinatorial_map.beta(dart, 0);
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_opposite(Dart_const_descriptor dart) const{
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::const_opposite(Dart_const_descriptor dart) const {
   return _combinatorial_map.opposite(dart);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Complex_number Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::get_cross_ratio(Dart_const_descriptor dart) const{
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Complex_number Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::get_cross_ratio(Dart_const_descriptor dart) const {
   return _combinatorial_map.template info_of_attribute<1>(_combinatorial_map.template attribute<1>(dart));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 template<class Traits, class Attributes>
-  typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::pick_edge_to_flip(){
-  auto &cm=_combinatorial_map.darts();
-  for (auto it = cm.begin(); it != cm.end(); ++it){
-    if ( is_Delaunay_flippable(it) ){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+pick_edge_to_flip()
+{
+  auto& cm = _combinatorial_map.darts();
+  for (auto it=cm.begin(); it!=cm.end(); ++it) {
+    if (is_Delaunay_flippable(it)) {
       return it;
     }
   }
@@ -672,10 +729,13 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-  typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::pick_edge_to_flip() const{
-  const auto &cm=_combinatorial_map.darts();
-  for (auto it = cm.begin(); it != cm.end(); ++it){
-    if ( is_Delaunay_flippable(it) ){
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Dart_const_descriptor
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+pick_edge_to_flip() const
+{
+  const auto& cm = _combinatorial_map.darts();
+  for (auto it=cm.begin(); it!=cm.end(); ++it) {
+    if (is_Delaunay_flippable(it) ) {
       return it;
     }
   }
@@ -685,20 +745,27 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap){
+void
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+copy_from(Combinatorial_map_with_cross_ratios& cmap)
+{
   //_combinatorial_map.copy_from_const(cmap);
   _combinatorial_map.copy(cmap);
   _has_anchor = false;
 }
 
 template<class Traits, class Attributes>
-void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
+void
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+copy_from(Combinatorial_map_with_cross_ratios& cmap,
+          const Anchor& anchor)
+{
   // Because of the anchor, we must operate the copy ourself
   _combinatorial_map.clear();
 
   // Copy the triangles and fill the darts conversion table
   std::map<Dart_const_descriptor, Dart_descriptor> darts_table;
-  for (typename Face_const_range::const_iterator it=cmap.template one_dart_per_cell<2>().begin(); it!=cmap.template one_dart_per_cell<2>().end(); ++it){
+  for (typename Face_const_range::const_iterator it=cmap.template one_dart_per_cell<2>().begin(); it!=cmap.template one_dart_per_cell<2>().end(); ++it) {
     Dart_descriptor new_dart = _combinatorial_map.make_combinatorial_polygon(3);
     darts_table[it] = new_dart;
     darts_table[cmap.beta(it,0)] = _combinatorial_map.beta(new_dart,0);
@@ -706,7 +773,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combin
   }
 
   // Sew the edges and set their cross-ratios
-  for (typename Edge_const_range::const_iterator it=cmap.template one_dart_per_cell<1>().begin(); it!=cmap.template one_dart_per_cell<1>().end(); ++it){
+  for (typename Edge_const_range::const_iterator it=cmap.template one_dart_per_cell<1>().begin(); it!=cmap.template one_dart_per_cell<1>().end(); ++it) {
     Dart_descriptor dart_1 = darts_table[it];
     Dart_descriptor dart_2 = darts_table[cmap.opposite(it)];
     Complex_number cratio = cmap.template info_of_attribute<1>(cmap.template attribute<1>(it));
@@ -719,7 +786,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combin
 
   // Set the anchor
   _anchor.dart = darts_table[anchor.dart];
-  for (int k=0; k<3; ++k){
+  for (int k=0; k<3; ++k) {
     _anchor.vertices[k] = anchor.vertices[k];
   }
   _has_anchor = true;
@@ -728,7 +795,10 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combin
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Traits::Complex Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const{
+typename Traits::Complex
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const
+{
   Complex_number za (a.x(), a.y());
   Complex_number zb (b.x(), b.y());
   Complex_number zc (c.x(), c.y());
@@ -737,11 +807,15 @@ typename Traits::Complex Triangulation_on_hyperbolic_surface_2<Traits, Attribute
 }
 
 template<class Traits, class Attributes>
-typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const Complex_number& cratio) const{
+typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c,
+                              const Complex_number& cratio) const
+{
   Complex_number za (a.x(), a.y());
   Complex_number zb (b.x(), b.y());
   Complex_number zc (c.x(), c.y());
-  Complex_number result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc) );
+  Complex_number result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc));
   return Point(result.real(), result.imag());
 }
 

@@ -6,6 +6,7 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <iostream>
+#include <vector>
 
 typedef CGAL::Cartesian<CGAL::Exact_rational>                           Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>        ParentTraits;
@@ -17,8 +18,8 @@ typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
 typedef typename Traits::Complex                                        Complex;
 
-
-int main() {
+int main()
+{
   Factory factory;
   Domain domain = factory.make_hyperbolic_fundamental_domain_g2(3459);
 
@@ -40,10 +41,10 @@ int main() {
   vertices.push_back(z6);
   vertices.push_back(z7);
 
-  assert( domain.size()==8 );
-  for (std::size_t k=0; k<8; ++k){
-    assert( domain.vertex(k)==vertices[k]);
-    assert( domain.paired_side(k)==(k+4)%8 );
+  assert(domain.size()==8);
+  for (std::size_t k=0; k<8; ++k) {
+    assert(domain.vertex(k)==vertices[k]);
+    assert(domain.paired_side(k)==(k+4)%8);
   }
 
   return 0;

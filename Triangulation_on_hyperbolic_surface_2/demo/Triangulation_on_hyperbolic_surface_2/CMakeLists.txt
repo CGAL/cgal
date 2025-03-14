@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project( Triangulation_on_hyperbolic_surface_2_Demo )
 
@@ -9,35 +9,25 @@ include_directories(${CMAKE_BINARY_DIR})
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core Qt6)
-
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if ( NOT CGAL_FOUND )
-
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
-
 endif()
 
 if ( NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)
-
   message(STATUS "This project requires the Qt6 library, and will not be compiled.")
   return()
-
 endif()
 
 # Boost and its components
 find_package( Boost REQUIRED )
-
 if ( NOT Boost_FOUND )
-
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-
   return()
-
 endif()
 
 # ui files, created with Qt Designer
