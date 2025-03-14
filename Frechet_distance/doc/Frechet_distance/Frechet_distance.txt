@@ -50,7 +50,7 @@ The main entry points are the following functions and classes:
 - The class `Frechet_distance::Neighbor_search`, which stores a set of polylines and offers a query function to find polylines closer to a query curve than a given bound.
 
 Both functions and the class have as template parameter a traits class defining the dimension and the point type.
-The traits classes have as template parameter a kernel, model of the concept `Kernel`.
+The traits classes have as template parameter a kernel.
 
 The guarantees offered by the algorithms of this package follow from the kernel choice.
 In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
