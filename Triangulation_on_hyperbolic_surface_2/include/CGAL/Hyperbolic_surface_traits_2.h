@@ -10,8 +10,6 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Marc Pouget, Monique Teillaud
 
-// This file contains the declaration and the implementation of the class Hyperbolic_surface_traits_2
-
 #ifndef CGAL_HYPERBOLIC_SURFACE_TRAITS_2
 #define CGAL_HYPERBOLIC_SURFACE_TRAITS_2
 
@@ -19,16 +17,16 @@
 
 #include <CGAL/Complex_number.h>
 
-#include <iostream>
-
 namespace CGAL {
 
 template<class HyperbolicTraitsClass>
-class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {
+class Hyperbolic_surface_traits_2
+  : public HyperbolicTraitsClass
+{
 public:
   typedef typename HyperbolicTraitsClass::FT                          FT;
   typedef typename HyperbolicTraitsClass::Hyperbolic_point_2          Hyperbolic_point_2;
-  typedef Complex_number<FT>                                    Complex;
+  typedef Complex_number<FT>                                          Complex;
 };
 
 } // namespace CGAL

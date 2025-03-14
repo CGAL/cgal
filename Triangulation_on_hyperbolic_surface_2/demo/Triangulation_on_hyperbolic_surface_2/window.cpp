@@ -12,7 +12,9 @@
 
 #include "window.h"
 
-DemoWindowItem::DemoWindowItem() : CGAL::Qt::GraphicsItem(){
+DemoWindowItem::DemoWindowItem()
+  : CGAL::Qt::GraphicsItem()
+{
   // Clear
   _edges.clear();
 
@@ -28,9 +30,15 @@ DemoWindowItem::DemoWindowItem() : CGAL::Qt::GraphicsItem(){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DemoWindowItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+void DemoWindowItem::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget)
+{
   // 1. Draw the poincaré disk
-  QRectF circle_rect = QRectF(-_poincare_disk_radius_in_pixels-3, -_poincare_disk_radius_in_pixels-3, 2*_poincare_disk_radius_in_pixels+6, 2*_poincare_disk_radius_in_pixels+6);
+  QRectF circle_rect = QRectF(-_poincare_disk_radius_in_pixels-3,
+                              -_poincare_disk_radius_in_pixels-3,
+                              2*_poincare_disk_radius_in_pixels+6,
+                              2*_poincare_disk_radius_in_pixels+6);
   painter->setPen(_poincare_disk_pen);
   painter->setBrush(QBrush());
   painter->drawEllipse(circle_rect);
@@ -38,26 +46,32 @@ void DemoWindowItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
   // 2. Draw the edges
   painter->setBrush(QBrush());
   painter->setPen(_edges_pen);
-  for (int i=0; i<_edges.size(); i++){
+  for (int i=0; i<_edges.size(); i++) {
     draw_edge(painter, _edges[i].first, _edges[i].second);
   }
 }
 
-QRectF DemoWindowItem::boundingRect() const{
-  return QRectF(-_poincare_disk_radius_in_pixels-3, -_poincare_disk_radius_in_pixels-3, _poincare_disk_radius_in_pixels+6, _poincare_disk_radius_in_pixels+6);
+QRectF DemoWindowItem::boundingRect() const {
+  return QRectF(-_poincare_disk_radius_in_pixels-3,
+                -_poincare_disk_radius_in_pixels-3,
+                _poincare_disk_radius_in_pixels+6,
+                _poincare_disk_radius_in_pixels+6);
 }
 
-void DemoWindowItem::modelChanged(){} // Only used by Qt : we don't need to fill it
+void DemoWindowItem::modelChanged() {} // Only used by Qt : we don't need to fill it
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DemoWindowItem::draw_triangulation(Triangulation& triangulation){
-  typedef std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> RealizationVector;
+void DemoWindowItem::draw_triangulation(Triangulation& triangulation)
+{
+  typedef std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,
+                                 Point, Point, Point> > RealizationVector;
+
   RealizationVector realized_triangles;
   realized_triangles = triangulation.lift();
 
   Point point_1, point_2, point_3;
-  for (typename RealizationVector::iterator it = realized_triangles.begin(); it != realized_triangles.end(); ++it){
+  for (typename RealizationVector::iterator it = realized_triangles.begin(); it != realized_triangles.end(); ++it) {
     point_1 = std::get<1>(*it);
     point_2 = std::get<2>(*it);
     point_3 = std::get<3>(*it);
@@ -70,7 +84,8 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DemoWindowItem::draw_point(QPainter* painter, Point position){
+void DemoWindowItem::draw_point(QPainter* painter, Point position)
+{
   // First convert the point in doubles, well-scaled
   double point_x = _poincare_disk_radius_in_pixels * CGAL::to_double(position.x());
   double point_y = _poincare_disk_radius_in_pixels * CGAL::to_double(position.y());
@@ -78,10 +93,10 @@ void DemoWindowItem::draw_point(QPainter* painter, Point position){
   // Then draw a small circle
   QRectF circle_rect = QRectF(point_x-1, point_y-1, 3, 3);
   painter->drawEllipse(circle_rect);
-
 }
 
-void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target){
+void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
+{
   // First convert the points coordinates to doubles
 
   double src_x = CGAL::to_double(source.x());
@@ -91,18 +106,19 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target){
   double tar_y = CGAL::to_double(target.y());
 
   // 0. If src and tar are too colinear or too close from each other then draw a line
+
   double determinant = src_x*tar_y - src_y*tar_x; // determinant of the matrix whose columns are the vectors src and tar : indicates colinearity
   double distance_squared = (src_x-tar_x)*(src_x-tar_x) + (src_y-tar_y)*(src_y-tar_y);
-  if ((std::abs(determinant) < computation_treshold_squared) || (distance_squared < computation_treshold_squared)){
-      // src and tar are too colinear or too close from each other
-      draw_line(painter, src_x, src_y, tar_x, tar_y);
-      return;
+  if ((std::abs(determinant) < computation_treshold_squared) || (distance_squared < computation_treshold_squared)) {
+    // src and tar are too colinear or too close from each other
+    draw_line(painter, src_x, src_y, tar_x, tar_y);
+    return;
   }
 
   // 1. Compute the center of the circle supporting the geodesic between src and tar
 
   // 1.a Inverse src and tar with respect to the unit circle and find the euclidean midpoints of the segments between respectively
-  //       src and it's inversion, and tar and it's inversion
+  //       src and its inversion, and tar and its inversion
 
   double src_norm_2 = src_x*src_x + src_y*src_y; // Can't be too close to zero because determinant was not
   double tar_norm_2 = tar_x*tar_x + tar_y*tar_y; // Can't be too close to zero because determinant was not
@@ -118,9 +134,8 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target){
   double tar_mid_x = (tar_x + tar_inv_x) / 2;
   double tar_mid_y = (tar_y + tar_inv_y) / 2;
 
-  // 1.b Solve a system to find the intersection (center_x, center_y) of the bisectors of the two segments [src, src_inv] and [tar, tar_inv] :
+  // 1.b Solve a system to find the intersection (center_x, center_y) of the bisectors of the two segments [src, src_inv] and [tar, tar_inv]:
   //      (center_x \\ center y) = (a & b \\ c & d)^{-1} \times (u_x \\ u_y)
-
 
   // 1.b.i define the system
 
@@ -141,9 +156,10 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target){
   draw_arc(painter, src_x, src_y, tar_x, tar_y, center_x, center_y);
 }
 
-
-void DemoWindowItem::draw_line(QPainter* painter, double point_1_x, double point_1_y, double point_2_x, double point_2_y){
-
+void DemoWindowItem::draw_line(QPainter* painter,
+                               double point_1_x, double point_1_y,
+                               double point_2_x, double point_2_y)
+{
   // Convert to doubles and scale by the radius of the poincaré disk
   double src_x = _poincare_disk_radius_in_pixels * point_1_x;
   double src_y = _poincare_disk_radius_in_pixels * point_1_y;
@@ -155,9 +171,11 @@ void DemoWindowItem::draw_line(QPainter* painter, double point_1_x, double point
   painter->drawLine(line);
 }
 
-
-void DemoWindowItem::draw_arc(QPainter* painter, double point_1_x, double point_1_y,
-        double point_2_x, double point_2_y, double center_x, double center_y){
+void DemoWindowItem::draw_arc(QPainter* painter,
+                              double point_1_x, double point_1_y,
+                              double point_2_x, double point_2_y,
+                              double center_x, double center_y)
+{
   // Draws the arc supported by the circle whose center is (center_x, center_y) and whose extremities are src and tar
 
   // 1. Scale by the radius of the poincaré disk
@@ -183,7 +201,7 @@ void DemoWindowItem::draw_arc(QPainter* painter, double point_1_x, double point_
   // If the source and the target are too close from each other (less than 10 pixels) or if the circle is very big then just draw a line
   double dist_sq = (src_x-tar_x)*(src_x-tar_x) + (src_y - tar_y)*(src_y-tar_y);
   double rad_sq = (xM-xc)*(xM-xc) + (yM-yc)*(yM-yc);
-  if ( (dist_sq < 100) ||  (rad_sq > 1000 * dist_sq) ){
+  if ((dist_sq < 100) ||  (rad_sq > 1000 * dist_sq)) {
     QLineF line (src_x, src_y, tar_x, tar_y);
     painter->drawLine(line);
     return;
@@ -211,25 +229,27 @@ void DemoWindowItem::draw_arc(QPainter* painter, double point_1_x, double point_
   painter->drawArc(bbox_rect, src_angle*16, sweep_angle*16);
 }
 
-double DemoWindowItem::deg_angle(double x, double y){
-    // To avoid problems when further division by x (ok since x^2 + y^2 not too small) :
-    if (x*x <  computation_treshold_squared){
-      if (y>0) return 90;
-      return -90;
-    }
+double DemoWindowItem::deg_angle(double x, double y)
+{
+  // To avoid problems when further division by x (ok since x^2 + y^2 not too small) :
+  if (x*x <  computation_treshold_squared) {
+    if (y>0) return 90;
+    return -90;
+  }
 
-    double angle = 180. * std::atan(y / x) / M_PI;
-    if (x < 0){
-      return angle + 180.;
-    }
-    return angle;
+  double angle = 180. * std::atan(y / x) / M_PI;
+  if (x < 0) {
+    return angle + 180.;
+  }
+  return angle;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DemoWindow::DemoWindow() : DemosMainWindow(){
+DemoWindow::DemoWindow() : DemosMainWindow()
+{
   setupUi(this); // Method automatically generated by the ui file and here inherited from Ui::MainWindow. Builds the window and the contents for us...
   this->graphicsView->setScene(&_scene); // ... in particular graphicsView is already constructed : we just put our scene in it and then do things within the scene
   _scene.setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -241,7 +261,8 @@ DemoWindow::DemoWindow() : DemosMainWindow(){
   setWindowTitle("Hyperbolic surfaces triangulation 2 Demo");
 }
 
-DemoWindowItem& DemoWindow::item(){
+DemoWindowItem& DemoWindow::item()
+{
   return *_item;
 }
 
