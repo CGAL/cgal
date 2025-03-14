@@ -11,9 +11,9 @@ namespace CGAL {
 <img src="teaser.png" style="max-width:30%;"/>
 </center>
 
-This package provides the means to (approximately) compute the Fréchet distance between two polylines as well as a near neighbor data structure for polylines under the Fréchet distance, both in d-dimensional Euclidean space.
-A polyline is defined by a sequence of points where we interpolate linearly in-between each pair of consecutive points.
-In order to determine the Fréchet distance, an exact decision algorithm as well as a function that approximates the Fréchet distance arbitrarily well is included in the package.
+This package provides the means to compute an approximation of the Fréchet distance between two polylines, as well as a near neighbor data structure for polylines under the Fréchet distance, both in d-dimensional Euclidean space.
+A polyline is defined by a sequence of points where we interpolate linearly between each pair of consecutive points.
+In order to determine the Fréchet distance, an exact decision algorithm and a function that approximates the Fréchet distance arbitrarily well are included in the package.
 The approximation algorithm is simply a binary search that repeatedly calls the decision algorithm, hence, if possible, the latter should preferably be used when optimizing for performance.
 
 \section secFrechetDistanceIntroduction Introduction
@@ -44,13 +44,15 @@ Here you can put the caption
 \section secFrechetDistanceAPI API
 
 The main entry points are the following functions and classes:
-- The function `bounded_error_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
-  It returns an interval that contains the true distance.
-- The function `is_Frechet_distance_larger()` decides if the Fréchet distance between two polylines is larger than a given bound.
-- The class `Frechet_distance::Neighbor_search` stores a set of polylines and offers a query functions to find polylines closer to a query curve than a given bound.
+- The function `bounded_error_Frechet_distance()`, which computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
+  It returns an interval that contains the exact distance.
+- The function `is_Frechet_distance_larger()`, which determines if the Fréchet distance between two polylines is larger than a given bound.
+- The class `Frechet_distance::Neighbor_search`, which stores a set of polylines and offers a query function to find polylines closer to a query curve than a given bound.
 
 Both functions and the class have as template parameter a traits class defining the dimension and the point type.
 The traits classes have as template parameter a kernel, model of the concept `Kernel`.
+
+The guarantees offered by the algorithms of this package follow from the kernel choice.
 In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
 combine interval arithmetic with a fallback to exact computing in case comparisons of intervals
 are uncertain.  This means for `Simple_cartesian<double>` that there are no guarantees, for
@@ -62,30 +64,30 @@ as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both f
 \section secFrechetDistancePerformance Performance
 
 The performance of the algorithm is quadratic in the number of vertices in the worst case.
-For all kernels with filtered predicates the performance is roughly the same, the overhead of using interval arithmetic is negligible.
+Kernels with filtered predicates have roughly the same performance as others: the overhead of using interval arithmetic is negligible.
 The algorithm is not concerned by the <em>curse of dimensionality</em>.
 The running time increases when the curves are closer or when the bound for the approximation error becomes smaller.
-For a very detailed analysis in practice we refer to the journal paper entitled <em>Walking the Dog Fast in Practice: Algorithm Engineering of the Fréchet Distance</em>
+For a very detailed analysis in practice, we refer to the journal paper entitled <em>Walking the Dog Fast in Practice: Algorithm Engineering of the Fréchet Distance</em>
 \cgalCite{cgal:bkn-wdfp-21}.
 
 \section secFrechetDistanceImplementation Implementation
 
 The algorithms in this package are an adaption of the implementation devised by Bringmann et al. (\cgalCite{cgal:bkn-wdfp-19}
 and \cgalCite{cgal:bkn-wdfp-21}). In particular, the implementation can decide non-difficult cases very
-fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet
-distance algorithm by Alt and Godau \cgalCite{ag-cfdbt-95}. This is achieved by using fast bounding
-box filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
+quickly, while it still has the quadratic running time guarantee of the classical Fréchet distance algorithm
+by Alt and Godau \cgalCite{ag-cfdbt-95} for difficult cases. This is achieved by using fast bounding
+box filtering methods and a divide-and-conquer algorithm with pruning rules on the free-space diagram.
 
 
 \section secFrechetDistanceExamples Examples
 
-In the examples we use different kernels to illustrate that the functions
+In the examples, we use different kernels to illustrate that the functions
 can be used with either inexact or exact kernels.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
 The following example shows how we can use `is_Frechet_distance_larger()`
-to determines if the Frechet distance between two polylines is larger than a given distance bound.
+to determine if the Frechet distance between two polylines is larger than a given distance bound.
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
@@ -93,7 +95,7 @@ to determines if the Frechet distance between two polylines is larger than a giv
 
 The following example shows how we can compute the Fréchet distance up to a given error bound on two
 polylines in 3-dimensional Euclidean space using `bounded_error_Frechet_distance()`.
-As we use `Simple_cartesian<double>` the algorithm uses plain floating point arithmetic
+As we use `Simple_cartesian<double>`, the algorithm uses plain floating point arithmetic
 without guarantees for correctness.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
@@ -136,7 +138,7 @@ The character image is a visualization of two data points from the <a href="http
 An initial version using floating point arithmetic was developed by the authors
 while working at the Max-Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
-the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensuring correctness of the computation.
+the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensure correctness of the computation.
 
 */
 } /* namespace CGAL */
