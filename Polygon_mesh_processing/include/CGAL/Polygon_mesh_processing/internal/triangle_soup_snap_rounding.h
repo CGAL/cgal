@@ -382,6 +382,55 @@ bool polygon_soup_snap_rounding_(PointRange &points,
     }
 #endif
 
+#elif 1
+    // Version where points in a voxel are rounded to the closest point
+
+    // Group the points of the vertices of the intersecting triangles by their voxel
+    std::map<Point_3, size_t> snap_points;
+    std::size_t index=0;
+    for (auto &pair : pairs_of_intersecting_triangles)
+    {
+      for (size_t pi : triangles[pair.first])
+      {
+        auto res=snap_points.emplace(snap_p(points[pi]), index);
+        if(res.second)
+          ++index;
+      }
+      for (size_t pi : triangles[pair.second])
+      {
+        auto res=snap_points.emplace(snap_p(points[pi]), index);
+        if(res.second)
+          ++index;
+      }
+    }
+
+    std::vector<std::vector<size_t>> identical_points(index);
+    for (size_t i=0; i!=points.size(); ++i)
+    {
+      Point_3 p_snap = snap_p(points[i]);
+      auto it=snap_points.find(p_snap);
+      if (it!=snap_points.end()){
+        identical_points[it->second].push_back(i);
+      }
+    }
+
+    // Replace all points in a voxel by the closest point
+    for(const auto &v: identical_points){
+      if(v.size()>1){
+        Point_3 center = snap_p(points[v[0]]);
+        size_t argmin(0);
+        for(size_t i=1; i!=v.size(); ++i){
+          if(Kernel().compare_squared_distance_3_object()(center, points[v[i]], center, points[v[argmin]])==SMALLER)
+          {
+            argmin=i;
+          }
+        }
+        for(auto i: v){
+          points[i]=points[v[argmin]];
+        }
+      }
+    }
+
 #else
     // Version where points in a voxel are rounded to their barycenter.
 

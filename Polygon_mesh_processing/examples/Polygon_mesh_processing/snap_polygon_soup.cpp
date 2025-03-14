@@ -1,4 +1,4 @@
-// #define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+#define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
 // #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
 
 #include <CGAL/Simple_cartesian.h>
@@ -105,16 +105,19 @@ int main(int argc, char** argv)
 
     CGAL::Real_timer t;
     t.start();
-#if 0
+#if 1
     Track_visitor visitor;
-    PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
+    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
 #else
-    PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
+    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
 #endif
     t.stop();
     std::cout << "\nOutput:" << std::endl;
     std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
-    std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect(input_points, input_triangles) << std::endl;
+    if(success)
+      std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect<CGAL::Parallel_if_available_tag>(input_points, input_triangles) << std::endl;
+    else
+      std::cout << "ROUNDING FAILED" << std::endl;
     CGAL::IO::write_polygon_soup(out_file, input_points, input_triangles, CGAL::parameters::stream_precision(17));
     std::cout << "Is 2-manifold: " << PMP::orient_polygon_soup(input_points, input_triangles) << "\n\n"  << std::endl;
   }
