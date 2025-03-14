@@ -246,6 +246,21 @@ unspecified_type no_features();
 /*!
  * \ingroup PkgMesh3Parameters
  *
+ * The function `parameters::surface_only()`
+ * enables the meshing algorithm
+ * to mesh the input surface only and not take the volume into account.
+ *
+ * When this option is enabled, the ouput mesh has no complex cells, only complex facets, edges and vertices.
+ * Full-3D optimization steps such as mesh perturbation and mesh exudation are automatically disabled.
+ *
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::refine_mesh_3()`
+ */
+unspecified_type surface_only();
+
+/*!
+ * \ingroup PkgMesh3Parameters
+ *
  * The function `parameters::no_lloyd()` enables the user to tell the mesh generation functions
  * `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done.
  *
