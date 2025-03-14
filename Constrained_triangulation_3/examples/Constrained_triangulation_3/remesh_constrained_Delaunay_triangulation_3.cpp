@@ -1,5 +1,6 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
 #define CGAL_TETRAHEDRAL_REMESHING_DEBUG 1
+#define CGAL_DUMP_REMESHING_STEPS
 
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -29,17 +30,18 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   CCDT ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CCDT>(mesh);
+
   //! [move ccdt to tr]
-  Tr tr = std::move(ccdt).triangulation();
+  Tr tr = CGAL::convert_to_triangulation_3(std::move(ccdt));
   //! [move ccdt to tr]
-  std::cout << "Number of vertices in tr: "
-            << tr.number_of_vertices() << std::endl;
+  std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
+
   CGAL::tetrahedral_isotropic_remeshing(tr, 0.1,
     CGAL::parameters::number_of_iterations(3));
 
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
-  CGAL::draw(ccdt.triangulation());
+  CGAL::draw(tr);
 
   return EXIT_SUCCESS;
 }

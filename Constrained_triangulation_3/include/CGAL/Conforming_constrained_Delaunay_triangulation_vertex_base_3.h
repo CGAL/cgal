@@ -100,6 +100,33 @@ public:
     }
   }
 
+  template<typename Tr>
+  void reset_for_remeshing(const Tr& tr)
+  {
+    switch(ccdt_3_data().vertex_type())
+    {
+    case CDT_3_vertex_type::FREE:
+      set_dimension(3);
+      set_index(0);
+      break;
+    case CDT_3_vertex_type::CORNER:
+      set_dimension(0);
+      set_index(0);
+      break;
+    case CDT_3_vertex_type::STEINER_ON_EDGE:
+      set_dimension(1);
+      set_index(ccdt_3_data().constraint_id(tr).index());
+      break;
+    case CDT_3_vertex_type::STEINER_IN_FACE:
+      set_dimension(2);
+      set_index(ccdt_3_data().face_index());
+      break;
+    default:
+      CGAL_error();
+      break;
+    }
+  }
+
   // model of ConformingConstrainedDelaunayTriangulationVertexBase_3
   Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() { return ccdt_3_data_; }
   const Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() const { return ccdt_3_data_; }
