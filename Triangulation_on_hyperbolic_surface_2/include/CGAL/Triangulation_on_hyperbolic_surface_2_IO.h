@@ -38,7 +38,7 @@ std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits
 ////////////////////////////////////////////////////////////////////////////////
 template<class Traits>
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry){
-  for (int k=0; k<4; k++){
+  for (int k=0; k<4; ++k){
     s << isometry.get_coefficient(k);
   }
   return s;

@@ -80,8 +80,6 @@ public:
 // Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap);
   Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
 
-  //Triangulation_on_hyperbolic_surface_2& operator=(Triangulation_on_hyperbolic_surface_2&& other);
-  Triangulation_on_hyperbolic_surface_2& operator=(Triangulation_on_hyperbolic_surface_2 other);
 
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
@@ -162,7 +160,7 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
 
   // Make the triangles
   std::vector<Dart_descriptor> dart_of_triangle(size-2);
-  for (int k=0; k<size-2; k++){
+  for (int k=0; k<size-2; ++k){
     dart_of_triangle[k] = _combinatorial_map.make_combinatorial_polygon(3);
   }
 
@@ -170,7 +168,7 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
   Dart_descriptor dart_1, dart_2;
   Point p0,p1,p2,p3;
 
-  for (int k=1; k<size-2; k++){
+  for (int k=1; k<size-2; ++k){
     dart_1 = dart_of_triangle[k];
     dart_2 = cw(dart_of_triangle[k-1]);
 
@@ -236,20 +234,6 @@ Triangulation_on_hyperbolic_surface_2<Traits,Attributes>::Triangulation_on_hyper
 template<class Traits, class Attributes>
   Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor){
   copy_from(cmap, anchor);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits, class Attributes>
-  Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::operator=(Triangulation_on_hyperbolic_surface_2<Traits, Attributes> other){
-  CGAL_precondition(other->is_valid());
-  if (other.has_anchor()){
-    copy_from(other.combinatorial_map(), other.anchor());
-  }
-  else {
-    copy_from(other.combinatorial_map());
-  }
-  return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -502,7 +486,7 @@ bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_valid() const
   }
 
   // Check that the combinatorial map has no 1,2-boundary
-  for (int k=1; k<3; k++){
+  for (int k=1; k<3; ++k){
     if ( !_combinatorial_map.is_without_boundary(k) ){
       return false;
     }
@@ -517,7 +501,7 @@ bool Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::is_valid() const
     }
 
     // Check that the three vertices of the anchor lie within the open unit disk
-    for (int k=0; k<3; k++){
+    for (int k=0; k<3; ++k){
       //      if (_anchor.vertices[k].get_z() >= Number(1)){
       if ( norm(Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y())) >= Number(1)){
         return false;
@@ -598,7 +582,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   // Load the triangles
   std::vector<Dart_descriptor> darts_by_id (nb_darts);
   int index1, index2, index3;
-  for (int k=0; k<nb_darts/3; k++){
+  for (int k=0; k<nb_darts/3; ++k){
     Dart_descriptor triangle_dart = _combinatorial_map.make_combinatorial_polygon(3);
 
     s >> line;
@@ -616,7 +600,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::from_stream(std:
   // Load the edges
   Dart_descriptor dart_1, dart_2;
   Complex_number cross_ratio;
-  for (int k=0; k<nb_darts/2; k++){
+  for (int k=0; k<nb_darts/2; ++k){
     s >> line;
     index1 = std::stoi(line);
     s >> line;
@@ -735,7 +719,7 @@ void Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::copy_from(Combin
 
   // Set the anchor
   _anchor.dart = darts_table[anchor.dart];
-  for (int k=0; k<3; k++){
+  for (int k=0; k<3; ++k){
     _anchor.vertices[k] = anchor.vertices[k];
   }
   _has_anchor = true;

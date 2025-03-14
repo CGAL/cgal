@@ -111,11 +111,11 @@ std::ostream& Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s
 
   s << std::to_string(n) << std::endl;
 
-  for (int k=0; k<n; k++){
+  for (std::size_t k=0; k<n; ++k){
     s << paired_side(k) << std::endl;
   }
 
-  for (int k=0; k<n; k++){
+  for (std::size_t k=0; k<n; ++k){
     s << vertex(k) << std::endl;
   }
   return s;
@@ -132,12 +132,12 @@ std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream&
   _vertices.reserve(size);
   _pairings.reserve(size);
 
-  for (int k=0; k<size; k++){
+  for (std::size_t k=0; k<size; ++k){
     s >> line;
     _pairings.push_back(std::stoi(line));
   }
 
-  for (int k=0; k<size; k++){
+  for (std::size_t k=0; k<size; ++k){
     Point p;
     s >> p;
     _vertices.push_back(p);
@@ -165,10 +165,10 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
 
   // Check that the _pairings vector encodes a perfect matching of the set {0,1,\dots,n-1}
   std::vector<bool> already_paired(n);
-  for (int k=0; k<n; k++){
+  for (std::size_t k=0; k<n; ++k){
     already_paired[k] = false;
   }
-  for (int k=0; k<n; k++){
+  for (std::size_t k=0; k<n; ++k){
     std::size_t paired_side = _pairings[k];
     if ((paired_side<0) || (paired_side>=n)){
       return false;
@@ -180,7 +180,7 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
   }
 
   // Check that the vertices all lie within the open unit disk
-  for (int k=0; k<n; k++){
+  for (std::size_t k=0; k<n; ++k){
     if (norm(Complex_number(_vertices[k].x(),_vertices[k].y())) >= typename Traits::FT(1)){
    return false;
     }

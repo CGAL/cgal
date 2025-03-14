@@ -38,13 +38,13 @@ int main() {
   vertices.push_back(z7);
 
   std::vector<int> pairings;
-  for (int k=0; k<8; k++){
+  for (std::size_t k=0; k<8; ++k){
     pairings.push_back((k+4)%8);
   }
 
   Domain domain = Domain(vertices, pairings);
   assert( domain.size()==8 );
-  for (int k=0; k<8; k++){
+  for (std::size_t k=0; k<8; ++k){
     assert( domain.vertex(k)==vertices[k] );
     assert( domain.paired_side(k)==(k+4)%8 );
     assert( domain.side_pairing(k).evaluate(domain.vertex((k+4)%8))==domain.vertex((k+1)%8) );
@@ -55,7 +55,7 @@ int main() {
 
   Domain domain_prime = Domain(vertices, pairings);
   assert( domain_prime.size()==8 );
-  for (int k=0; k<8; k++){
+  for (std::size_t k=0; k<8; ++k){
     assert( domain_prime.vertex(k)==vertices[k]);
     assert( domain_prime.paired_side(k)==(k+4)%8 );
 
@@ -68,7 +68,7 @@ int main() {
   buffer << domain;
   buffer >> domain_ter;
   assert( domain_ter.size()==8 );
-  for (int k=0; k<8; k++){
+  for (std::size_t k=0; k<8; ++k){
     assert( domain_ter.vertex(k)==vertices[k]);
     assert( domain_ter.paired_side(k)==(k+4)%8 );
   }
