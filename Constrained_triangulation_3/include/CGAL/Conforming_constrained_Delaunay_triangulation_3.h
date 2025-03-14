@@ -666,6 +666,7 @@ public:
       }
       auto p = get(mesh_vp_map, v);
       auto vh = cdt_impl.insert(p, hint_ch, false);
+      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
       hint_ch = vh->cell();
       put(tr_vertex_map, v, vh);
     }
@@ -868,6 +869,43 @@ public:
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
     // static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
     static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
+    *this = Conforming_constrained_Delaunay_triangulation_3{};
+    return result;
+  }
+  /// \endcond
+  // end SKIP_IN_MANUAL for convert_for_remeshing
+
+  /// \cond SKIP_IN_MANUAL
+  Conforming_constrained_Delaunay_triangulation_3 prepare_for_tetrahedral_remeshing() &&
+  {
+    auto& tr = cdt_impl;
+    for(auto vh : tr.all_vertex_handles()) {
+      vh->reset_for_remeshing(tr);
+    }
+
+    for(auto ch : tr.all_cell_handles()) {
+      ch->set_subdomain_index(1);
+    }
+
+    std::stack<decltype(tr.infinite_cell())> stack;
+    stack.push(tr.infinite_cell());
+    while(!stack.empty()) {
+      auto ch = stack.top();
+      stack.pop();
+      ch->set_subdomain_index(0);
+      for(int i = 0; i < 4; ++i) {
+        if(ch->is_facet_on_surface(i))
+          continue;
+        auto n = ch->neighbor(i);
+        if(n->subdomain_index() == 1) {
+          stack.push(n);
+        }
+      }
+    }
+    Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
+    // static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
+    static_assert(
+        std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
     *this = Conforming_constrained_Delaunay_triangulation_3{};
     return result;
   }
@@ -1077,9 +1115,13 @@ protected:
     {
     }
   };
+
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
-  using Constraint_id = typename Constraint_hierarchy::Constraint_id;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
+public:
+  using Constraint_id = typename Constraint_hierarchy::Constraint_id;
+
+protected:
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
     const auto face_id = static_cast<std::size_t>(cell->ccdt_3_data().face_constraint_index(facet_index));
@@ -3881,6 +3923,30 @@ protected:
 };
 
 #endif // DOXYGEN_RUNNING
+
+/*!
+* \addtogroup PkgCT_3Functions
+* \brief creates a triangulation for Tetrahedral remeshing
+* \tparam Traits traits
+* \tparam Tr triangulation
+* \tparam NamedParameters named params
+*
+* \param ccdt triangulation
+* \param np named parameters
+*/
+template <typename Traits,
+          typename Tr,
+          typename NamedParameters = parameters::Default_named_parameters>
+CGAL::Triangulation_3<Traits, typename Tr::Triangulation_data_structure>
+convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
+                           const NamedParameters& np = parameters::default_values())
+{
+  using TDS = typename Tr::Triangulation_data_structure;
+  using CCDT = Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>;
+
+  CCDT tmp = std::move(ccdt).convert_for_remeshing();
+  return std::move(tmp.triangulation());
+}
 
 } // end CGAL
 

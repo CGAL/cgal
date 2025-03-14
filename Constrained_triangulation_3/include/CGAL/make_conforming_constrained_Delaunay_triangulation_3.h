@@ -123,7 +123,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
   using CDT = typename CGAL::Default::Get<Triangulation,
                                           Conforming_constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
   CDT cdt(mesh, np);
-  auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
+  auto remeshing_cdt{std::move(cdt).prepare_for_tetrahedral_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
   return remeshing_cdt;
 }
