@@ -173,7 +173,7 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_inexact_z0_
   float b = (u*(conj(z3-z1))).imag();
   float c = u.imag();
 
-  const float COMPUTATION_TRESHOLD = 0.00001;
+  const float COMPUTATION_TRESHOLD = 0.00001f;
   if (a+b+c> 0 - COMPUTATION_TRESHOLD){
     return false;
   }

@@ -90,11 +90,11 @@ public:
   }
 
   friend void operator>>(std::istream& s, _Self& z){
-    std::string line;
-    s >> line;
-    z.real(FT(line));
-    s >> line;
-    z.imag(FT(line));
+    FT ft;
+    s >> ft;
+    z.real(ft);
+    s >> ft;
+    z.imag(ft);
   }
 
 };
