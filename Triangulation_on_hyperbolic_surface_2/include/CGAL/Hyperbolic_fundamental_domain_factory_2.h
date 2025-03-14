@@ -113,7 +113,7 @@ Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<
   vertices.push_back(_Point(-exact_z3.real(), -exact_z3.imag()));
 
   std::vector<int> pairings;
-  for (int k=0; k<8; k++){
+  for (int k=0; k<8; ++k){
     pairings.push_back((k+4)%8);
   }
 

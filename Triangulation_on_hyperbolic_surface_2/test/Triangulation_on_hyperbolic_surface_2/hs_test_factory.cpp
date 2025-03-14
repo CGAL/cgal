@@ -41,7 +41,7 @@ int main() {
   vertices.push_back(z7);
 
   assert( domain.size()==8 );
-  for (int k=0; k<8; k++){
+  for (std::size_t k=0; k<8; ++k){
     assert( domain.vertex(k)==vertices[k]);
     assert( domain.paired_side(k)==(k+4)%8 );
   }
