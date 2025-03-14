@@ -10,7 +10,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
-typedef CGAL::Cartesian<CGAL::Lazy_exact_nt<CGAL::Gmpq>>                      Kernel;
+typedef CGAL::Cartesian<CGAL::Lazy_exact_nt<CGAL::Exact_rational>>            Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                         Domain;
