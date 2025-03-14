@@ -18,6 +18,7 @@
 
 #include <CGAL/basic.h>
 #include <utility>
+#include <stack>
 #include <map>
 #include <set>
 #include <list>
@@ -52,7 +53,7 @@ template <class T, class Compare, class Point>
 class Polyline_constraint_hierarchy_2
 {
   using T_point_ref = decltype(std::declval<T>()->point());
-  static_assert(std::is_same_v<Point&, T_point_ref>,
+  static_assert(std::is_same_v<CGAL::cpp20::remove_cvref_t<Point>, CGAL::cpp20::remove_cvref_t<T_point_ref>>,
                 "The point type of the vertex handle must be the same as the point type of the hierarchy.");
 public:
   using Vertex_handle = T;
@@ -213,6 +214,8 @@ public:
     }
 
     auto index() const { return id; }
+
+    Vertex_list_with_info* vl_with_info_pointer() const { return vl_with_info_ptr; }
 
     Vertex_list_ptr vl_ptr() const {
       return vl_with_info_ptr == nullptr ? nullptr : std::addressof(vl_with_info_ptr->vl);
@@ -524,10 +527,10 @@ private:
 #endif
     {}
 
-    Compare               comp;
-    Sc_to_c_map           sc_to_c_map;
-    std::queue<size_type> free_ids;
-    Constraints_set       constraints_set;
+    Compare comp;
+    Sc_to_c_map sc_to_c_map;
+    std::stack<size_type, std::vector<size_type>> free_ids;
+    Constraints_set constraints_set;
   } priv;
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
@@ -648,7 +651,7 @@ private:
     if(priv.free_ids.empty()) {
       id = priv.constraints_set.size();
     } else {
-      id = priv.free_ids.front();
+      id = priv.free_ids.top();
       priv.free_ids.pop();
     }
     Constraint_id cid{new Vertex_list_with_info{this}, id};

@@ -158,6 +158,12 @@ class RandomAccessIterator {};
 class BidirectionalIterator {};
 
 /// \cgalConcept
+/// A regular type is a type similar to `int`: it is copyable, assignable, and equality comparable.
+/// \cgalRefines{DefaultConstructible, CopyConstructible, CopyAssignable, EqualityComparable}
+/// See also the C++ concept `std::regular` at https://en.cppreference.com/w/cpp/concepts/regular
+class Regular {};
+
+/// \cgalConcept
 /// Concept from the \cpp standard.
 /// See https://en.cppreference.com/w/cpp/named_req/Swappable
 class Swappable {};

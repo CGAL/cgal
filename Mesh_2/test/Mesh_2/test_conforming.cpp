@@ -52,7 +52,7 @@ struct Tester {
 
     std::cout << "Reading fish.edg...\n";
 
-    std::ifstream edg_file("fish.edg");
+    std::ifstream edg_file(CGAL::data_file_path("2d_segments/fish.edg"));
 
     cdt.clear();
 
