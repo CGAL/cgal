@@ -16,7 +16,7 @@ main( )
 
   Polygon_2 p,q;
   int n( 1000);
-  boost::mt19937 gen(0);
+  std::mt19937 gen(0);
 
   // build random hull from n random points in a disc:
   random_convex_hull_in_disc_2(n,1.0,gen,std::back_inserter(p),K(), true);
