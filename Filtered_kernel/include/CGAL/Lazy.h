@@ -1074,10 +1074,10 @@ struct Lazy_construction_nt {
 
   template<class...L>
   auto operator()(L const&...l) const ->
-  Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>>
+  Lazy_exact_nt<CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))>>
   {
-    typedef std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>> ET;
-    typedef std::remove_cv_t<std::remove_reference_t<decltype(ac(CGAL::approx(l)...))>> AT;
+    typedef CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))> ET;
+    typedef CGAL::cpp20::remove_cvref_t<decltype(ac(CGAL::approx(l)...))> AT;
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
@@ -1440,13 +1440,13 @@ struct Lazy_construction
   decltype(auto)
   operator()(const L&... l) const
   {
-    typedef typename Type_mapper<decltype(std::declval<EC>()(std::declval<typename Type_mapper<L, LK, EK>::type>()...)),EK,EK>::type ET;
-    typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,AK>::type AT;
-    typedef Lazy<AT, ET, E2A> Handle;
+    typedef typename Type_mapper<std::invoke_result_t<AC, typename Type_mapper<L, LK, AK>::type...>, AK, AK>::type AT;
 
     // ----------------------- FT -----------------------
     if constexpr (std::is_same_v<AT, typename AK::FT>)
     {
+      typedef typename Type_mapper<std::invoke_result_t<EC,typename Type_mapper<L, LK, EK>::type...>,EK,EK>::type ET;
+
       typedef Lazy_exact_nt<CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))>> result_type;
 
       CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -1481,14 +1481,13 @@ struct Lazy_construction
     // ----------------------- CGAL::Object -----------------------
     else if constexpr (std::is_same_v<AT, CGAL::Object>)
     {
-      typedef CGAL::Object result_type;
       typedef Lazy<Object, Object, E2A> Lazy_object;
 
       CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         Protect_FPU_rounding<Protection> P;
         try {
-          Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L...>(ac, ec, l...));
+          Lazy_object lo(new Lazy_rep_n<CGAL::Object, CGAL::Object, AC, EC, E2A, false, L...>(ac, ec, l...));
 
           if(lo.approx().is_empty())
             return Object();
@@ -1531,13 +1530,15 @@ struct Lazy_construction
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-      ET eto = ec(CGAL::exact(l)...);
+      CGAL::Object eto = ec(CGAL::exact(l)...);
       return make_lazy<LK>(eto);
     }
     // std::optional<std::variant< > > (Intersection_23 result types)
     else if constexpr (is_optional_variant<AT>::value)
     {
-      typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,LK>::type result_type;
+      typedef typename Type_mapper<std::invoke_result_t<EC, typename Type_mapper<L, LK, EK>::type...>,EK,EK>::type ET;
+
+      typedef typename Type_mapper<std::invoke_result_t<AC, typename Type_mapper<L, LK, AK>::type...>, AK, LK>::type result_type;
 
       CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
@@ -1580,7 +1581,10 @@ struct Lazy_construction
     // ----------------------- GENERIC -----------------------
     else
     {
-      typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,LK>::type result_type;
+      typedef typename Type_mapper<std::invoke_result_t<EC,typename Type_mapper<L, LK, EK>::type...>,EK,EK>::type ET;
+
+      typedef Lazy<AT, ET, E2A> Handle;
+      typedef typename Type_mapper<std::invoke_result_t<AC, typename Type_mapper<L, LK, AK>::type...>, AK, LK>::type result_type;
 
       static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
 
@@ -1602,8 +1606,8 @@ struct Lazy_construction
   decltype(auto)
   operator()() const
   {
-    typedef decltype(std::declval<AC>()()) AT;
-    typedef decltype(std::declval<EC>()()) ET;
+    typedef std::invoke_result_t<AC> AT;
+    typedef std::invoke_result_t<EC> ET;
     typedef Lazy<AT, ET, E2A> Handle;
     typedef typename Type_mapper<AT, AK, LK>::type result_type;
 
