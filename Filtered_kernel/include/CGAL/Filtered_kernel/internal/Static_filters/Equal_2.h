@@ -31,18 +31,16 @@ template < typename K_base >
 class Equal_2
   : public K_base::Equal_2
 {
+  typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::FT        FT;
   typedef typename K_base::Point_2   Point_2;
   typedef typename K_base::Vector_2  Vector_2;
   typedef typename K_base::Equal_2   Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type operator()(const Point_2 &p, const Point_2& q) const
+  Boolean operator()(const Point_2& p, const Point_2& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -61,8 +59,7 @@ public:
     return Base::operator()(p, q);
   }
 
-
-  result_type operator()(const Vector_2 &p, const Vector_2& q) const
+  Boolean operator()(const Vector_2& p, const Vector_2& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
