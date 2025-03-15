@@ -2,6 +2,8 @@ include(CGALlab_macros)
 
 remove_definitions(-DQT_STATICPLUGIN)
 
+set(CMAKE_AUTOMOC ON)
+
 qt6_wrap_cpp(VOLUME_MOC_OUTFILES
              ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h)
 qt6_wrap_cpp(VOLUME_MOC_OUTFILES

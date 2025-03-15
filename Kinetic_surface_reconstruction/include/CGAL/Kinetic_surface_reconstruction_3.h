@@ -1546,7 +1546,7 @@ private:
       n = m_lcc.beta(n, 1);
     } while (n != dh);
 
-    KSP_3::internal::dump_polygon(face, fn);
+    KSP_3::internal::dump_polygon<Kernel>(face, fn);
   }
 
   void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
@@ -1707,7 +1707,7 @@ private:
     m_face_area_lcc.resize(m_faces_lcc.size(), 0);
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
-      m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
+      m_face_area_lcc[i] = m_face_area_lcc[i] * FT(2.0) * FT(m_total_inliers) / total_area;
   }
 
   FT area(typename LCC::Dart_descriptor face_dart, Plane_3 &pl, std::vector<typename Kernel::Triangle_3> *tris = nullptr) {

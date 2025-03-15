@@ -103,7 +103,7 @@ int main (int, char**)
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   Point_set::Property_map<Color> color_prop;
   bool garbage;
-  boost::tie (color_prop, garbage) = point_set.add_property_map ("color", Color());
+  std::tie (color_prop, garbage) = point_set.add_property_map ("color", Color());
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
 
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
