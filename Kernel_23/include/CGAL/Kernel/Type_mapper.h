@@ -19,62 +19,25 @@
 
 #include <CGAL/basic.h>
 
-#include <vector>
-
-#include <boost/mpl/transform.hpp>
-#include <boost/mpl/remove.hpp>
-
-#include <optional>
-#include <variant>
-
-#include <boost/preprocessor/facilities/expand.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum.hpp>
-
 namespace CGAL {
+
+template < typename T, typename K1, typename K2 >
+struct Type_mapper;
 
 namespace internal {
 
-// the default implementation is required to catch the odd one-out
-// object like Bbox
-template<typename T, typename K1, typename K2 >
+template < typename T, typename K1, typename K2, typename = void >
 struct Type_mapper_impl {
   typedef T type;
 };
 
-template < typename T, typename K1, typename K2 >
-struct Type_mapper_impl<std::vector< T >, K1, K2 > {
-  typedef std::vector< typename Type_mapper_impl<T, K1, K2>::type > type;
+template < typename K1, typename K2>
+struct Type_mapper_impl<K1, K1, K2> {
+  typedef K2 type;
 };
 
-template < typename T, typename K1, typename K2 >
-struct Type_mapper_impl<std::optional<T>, K1, K2 > {
-  typedef std::optional< typename Type_mapper_impl<T, K1, K2>::type > type;
-};
-
-
-/// The following code is equivalent to the one commented in CODE_TAG
-/// except that with this one, the variant is really variant<A,B,C> and not
-/// a internal obfuscated type
-#define CGAL_TYPEMAP_TYPEDEFS(z, n, t) typedef typename Type_mapper_impl< t##n, K1, K2 >::type A##n;
-
-#define CGAL_VARIANT_TYPEMAP(z, n, d) \
-template< typename K1, typename K2, BOOST_PP_ENUM_PARAMS(n, class T) >            \
-struct Type_mapper_impl<std::variant<BOOST_PP_ENUM_PARAMS(n, T)>, K1, K2> {                    \
-  BOOST_PP_REPEAT(n, CGAL_TYPEMAP_TYPEDEFS, T)                            \
-  typedef std::variant<BOOST_PP_ENUM_PARAMS(n, A)> type; \
-};
-
-BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
-
-#undef CGAL_TYPEMAP_TYPEDEFS
-#undef CGAL_VARIANT_TYPEMAP
-
-// Then we specialize for all kernel objects.
-// More details on why it is like that are here: https://github.com/CGAL/cgal/pull/4878#discussion_r459986501
+// 'Rep' gets a weird partial specialization because of Return_base_tag shenanigans.
+// See https://github.com/CGAL/cgal/issues/3035#issuecomment-428721414
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper_impl < typename K1::X, K1, K2 > \
@@ -89,20 +52,28 @@ template < typename K1, typename K2 >
 struct Type_mapper_impl < typename K1::FT, K1, K2 >
 { typedef typename K2::FT type; };
 
+// This matches about anything and recursively calls Type_mapper on the template parameters
+// until reaching the other cases (kernel objects, K1, FT)
+template <template <typename...> class T, typename... Params, typename K1, typename K2>
+struct Type_mapper_impl<T<Params...>, K1, K2,
+                        std::enable_if_t<
+#define CGAL_Kernel_obj(X) !std::is_same<T<Params...>, typename K1::X::Rep>::value && \
+                           !std::is_same<T<Params...>, typename K1::X>::value &&
+#include <CGAL/Kernel/interface_macros.h>
+                           !std::is_same<T<Params...>, K1>::value && // Matches K1 directly
+                           !std::is_same<T<Params...>, typename K1::FT>::value // Matches K1::FT
+                        >> {
+  typedef T<typename Type_mapper<Params, K1, K2>::type...> type;
+};
+
 } // internal
 
-// This is a tool to obtain the K2::Point_2 from K1 and K1::Point_2.
-// Similarly for other kernel types.
-
-// TODO : add more specializations ?  Use a different mechanism ?
-
+// This is a tool to obtain e.g. K2::Point_2 from K1 and K1::Point_2.
 template < typename T, typename K1, typename K2 >
-struct Type_mapper :
-    internal::Type_mapper_impl< std::remove_cv_t<
-                                  std::remove_reference_t< T >
-                                  >, K1, K2 >
+struct Type_mapper
+  : internal::Type_mapper_impl<CGAL::cpp20::remove_cvref_t<T>, K1, K2 >
 { };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_KERNEL_TYPE_MAPPER_H
