@@ -76,39 +76,11 @@ public:
   std::size_t cached_number_of_incident_facets() const { return number_of_incident_facets_; }
   std::size_t cached_number_of_components() const { return number_of_components_; }
 
-  void sync() {
-    switch(ccdt_3_data().vertex_type()) {
-      case CDT_3_vertex_type::FREE:
-        set_dimension(3);
-        set_index(0);
-        break;
-      case CDT_3_vertex_type::CORNER:
-        set_dimension(0);
-        set_index(0);
-        break;
-      case CDT_3_vertex_type::STEINER_ON_EDGE:
-        set_dimension(1);
-        set_index(0);
-        break;
-      case CDT_3_vertex_type::STEINER_IN_FACE:
-        set_dimension(2);
-        set_index(ccdt_3_data().face_index());
-        break;
-      default:
-        CGAL_error();
-        break;
-    }
-  }
-
   template<typename Tr>
-  void reset_for_remeshing(const Tr& tr)
+  void sync_vertex_type_with_dimension_and_index(const Tr& tr)
   {
     switch(ccdt_3_data().vertex_type())
     {
-    case CDT_3_vertex_type::FREE:
-      set_dimension(3);
-      set_index(0);
-      break;
     case CDT_3_vertex_type::CORNER:
       set_dimension(0);
       set_index(0);
@@ -120,6 +92,10 @@ public:
     case CDT_3_vertex_type::STEINER_IN_FACE:
       set_dimension(2);
       set_index(ccdt_3_data().face_index());
+      break;
+    case CDT_3_vertex_type::FREE:
+      set_dimension(3);
+      set_index(1);
       break;
     default:
       CGAL_error();

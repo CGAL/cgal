@@ -844,7 +844,7 @@ public:
   Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() && {
     auto& tr = cdt_impl;
     for(auto vh : tr.all_vertex_handles()) {
-      vh->sync();
+      vh->sync_vertex_type_with_dimension_and_index(tr);
     }
 
     for(auto ch : tr.all_cell_handles()) {
@@ -869,43 +869,6 @@ public:
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
     // static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
     static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
-    *this = Conforming_constrained_Delaunay_triangulation_3{};
-    return result;
-  }
-  /// \endcond
-  // end SKIP_IN_MANUAL for convert_for_remeshing
-
-  /// \cond SKIP_IN_MANUAL
-  Conforming_constrained_Delaunay_triangulation_3 prepare_for_tetrahedral_remeshing() &&
-  {
-    auto& tr = cdt_impl;
-    for(auto vh : tr.all_vertex_handles()) {
-      vh->reset_for_remeshing(tr);
-    }
-
-    for(auto ch : tr.all_cell_handles()) {
-      ch->set_subdomain_index(1);
-    }
-
-    std::stack<decltype(tr.infinite_cell())> stack;
-    stack.push(tr.infinite_cell());
-    while(!stack.empty()) {
-      auto ch = stack.top();
-      stack.pop();
-      ch->set_subdomain_index(0);
-      for(int i = 0; i < 4; ++i) {
-        if(ch->is_facet_on_surface(i))
-          continue;
-        auto n = ch->neighbor(i);
-        if(n->subdomain_index() == 1) {
-          stack.push(n);
-        }
-      }
-    }
-    Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
-    // static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
-    static_assert(
-        std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
     *this = Conforming_constrained_Delaunay_triangulation_3{};
     return result;
   }
