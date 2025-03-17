@@ -120,6 +120,11 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{`1`}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_modify_geometry}
+ *     \cgalParamDescription{if set to `true`, the geometry of the mesh will not be modified}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  **/
@@ -133,10 +138,17 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np = pa
                          get_property_map(CGAL::vertex_point, pmesh));
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  CatmullClark_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
+  bool do_not_modify_geometry = choose_parameter(get_parameter(np, internal_np::do_not_modify_geometry), false);
 
-  for(unsigned int i = 0; i < step; i++)
-    internal::PQQ_1step(pmesh, vpm, mask);
+  if (do_not_modify_geometry) {
+    Linear_mask_3<PolygonMesh, Vpm> mask(&pmesh, vpm);
+    for (unsigned int i = 0; i < step; i++)
+      internal::PQQ_1step(pmesh, vpm, mask);
+  } else {
+    CatmullClark_mask_3<PolygonMesh, Vpm> mask(&pmesh, vpm);
+    for (unsigned int i = 0; i < step; i++)
+      internal::PQQ_1step(pmesh, vpm, mask);
+  }
 }
 // -----------------------------------------------------------------------------
 
@@ -178,12 +190,18 @@ void Loop_subdivision(PolygonMesh& pmesh, int step) {
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{`1`}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{do_not_modify_geometry}
+ *     \cgalParamDescription{if set to `true`, the geometry of the mesh will not be modified}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre `pmesh` must be a triangle mesh.
  **/
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
-void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values())
+{
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -192,60 +210,17 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters
                          get_property_map(CGAL::vertex_point, pmesh));
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  Loop_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
+  bool do_not_modify_geometry = choose_parameter(get_parameter(np, internal_np::do_not_modify_geometry), false);
 
-  for(unsigned int i = 0; i < step; i++)
-    internal::PTQ_1step(pmesh, vpm, mask);
-}
-// -----------------------------------------------------------------------------
-
-/*!
- *
- * applies a subdivision several times on the control mesh `pmesh`.
- * The geometry of the refined mesh is computed by the geometry policy mask `Linear_mask_3`,
- * which is similar to Loop subdivision but does not change the shape of the mesh (only the connectivity).
- * The new vertices are trivially computed as the average of the incident vertices (e.g., midpoint of an edge).
- * This function overwrites the control mesh `pmesh` with the subdivided mesh.
-
- * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
- *
- * @param pmesh a polygon mesh
- * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
- *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
- *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `pmesh`.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{number_of_iterations}
- *     \cgalParamDescription{the number of subdivision steps}
- *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{`1`}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- *
- * \pre `pmesh` must be a triangle mesh.
- **/
-template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
-void linear_subdivision(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_property_map(CGAL::vertex_point, pmesh));
-
-  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  Linear_mask_3<PolygonMesh,Vpm> mask(&pmesh, vpm);
-
-  for(unsigned int i = 0; i < step; i++)
-    internal::PTQ_1step(pmesh, vpm, mask);
+  if (do_not_modify_geometry) {
+    Linear_mask_3<PolygonMesh, Vpm> mask(&pmesh, vpm);
+    for (unsigned int i = 0; i < step; i++)
+      internal::PTQ_1step(pmesh, vpm, mask);
+  } else {
+    Loop_mask_3<PolygonMesh, Vpm> mask(&pmesh, vpm);
+    for (unsigned int i = 0; i < step; i++)
+      internal::PTQ_1step(pmesh, vpm, mask);
+  }
 }
 
 // -----------------------------------------------------------------------------
