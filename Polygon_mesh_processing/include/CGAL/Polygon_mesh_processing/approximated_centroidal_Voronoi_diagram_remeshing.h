@@ -537,9 +537,10 @@ acvd_impl(TriangleMesh& tmesh,
     {
       if (gradation_factor == 0) // no adaptive clustering
       {
-        Subdivision_method_3::linear_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps)
-                                                                         .vertex_point_map(vpm)
-                                                                         .geom_traits(gt));
+        Subdivision_method_3::Loop_subdivision(tmesh, CGAL::parameters::number_of_iterations(subdivide_steps)
+                                                                       .do_not_modify_geometry(true)
+                                                                       .vertex_point_map(vpm)
+                                                                       .geom_traits(gt));
       }
 #ifndef CGAL_ACVD_DOES_NOT_USE_INTERPOLATED_CORRECTED_CURVATURES
       else // adaptive clustering

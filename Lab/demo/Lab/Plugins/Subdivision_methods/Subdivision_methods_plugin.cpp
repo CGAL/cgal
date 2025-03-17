@@ -107,7 +107,14 @@ void CGAL_Lab_subdivision_methods_plugin::apply_upsample(FaceGraphItem* item, in
   time.start();
   CGAL::Three::Three::information("Upsample subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Subdivision_method_3::linear_subdivision(*graph, params::number_of_iterations(nb_steps));
+
+  if (is_triangle_mesh(*graph))
+    CGAL::Subdivision_method_3::Loop_subdivision(*graph, params::number_of_iterations(nb_steps)
+                                                                .do_not_modify_geometry(true));
+  else
+    CGAL::Subdivision_method_3::CatmullClark_subdivision(*graph, params::number_of_iterations(nb_steps)
+                                                                        .do_not_modify_geometry(true));
+
   CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
