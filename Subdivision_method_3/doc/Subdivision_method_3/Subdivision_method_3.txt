@@ -29,7 +29,9 @@ which contains popular subdivision methods and their refinement
 functions. These include Catmull-Clark, Loop, Doo-Sabin and
 \f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily
 extended by substituting the geometry computation of the refinement
-host.
+host. In particular, the edge case where one wishes to subdivide
+a mesh while keeping its geometry fixed is offered, setting an optional parameter
+in Catmull-Clark and Loop subdivisions.
 
 \section secSubAlgo Subdivision Method
 
