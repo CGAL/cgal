@@ -234,7 +234,8 @@ public:
   }
 
   /// Launch mesh refinement
-  double refine_mesh(std::string dump_after_refine_surface_prefix = "");
+  double refine_mesh(std::string dump_after_refine_surface_prefix = "",
+                     const bool surface_only = false);
 
   /// Debug
   std::string debug_info() const;
@@ -417,7 +418,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 template<class C3T3, class MC, class MD>
 double
 Mesher_3<C3T3,MC,MD>::
-refine_mesh(std::string dump_after_refine_surface_prefix)
+refine_mesh(std::string dump_after_refine_surface_prefix, const bool surface_only)
 {
   CGAL::Real_timer timer;
   timer.start();
@@ -481,7 +482,12 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
 
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
 
-  if(!forced_stop())
+  if(surface_only)
+  {
+    for(auto cit = r_tr.finite_cells_begin(); cit != r_tr.finite_cells_end(); ++cit)
+      r_c3t3_.remove_from_complex(cit);
+  }
+  else if(!forced_stop())
   {
     // Then scan volume and refine it
     CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
@@ -575,42 +581,49 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
 
   facets_visitor_.activate();
 
-  std::cerr << "Start volume scan...";
-  CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
-  cells_mesher_.scan_triangulation();
-  CGAL_MESH_3_TASK_END(scan_cells_task_handle);
-  refinement_stage = REFINE_ALL;
-  std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
-  std::cerr << std::endl << std::endl;
-  elapsed_time += timer.time();
-  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
-  timer.stop(); timer.reset(); timer.start();
-
-  std::cerr << "Refining...\n";
-  std::cerr << "Legend of the following line: "
-            << "(#vertices,#steps," << cells_mesher_.debug_info_header()
-            << ")\n";
-  std::cerr << "(" << r_tr.number_of_vertices() << ","
-            << nbsteps << "," << cells_mesher_.debug_info() << ")";
-
-  CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
-  while ( ! cells_mesher_.is_algorithm_done()  &&
-          ! forced_stop() )
+  if(surface_only)
   {
-    cells_mesher_.one_step(cells_visitor_);
-    std::cerr
-        << boost::format("\r             \r"
-                     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-        % r_tr.number_of_vertices()
-        % nbsteps % cells_mesher_.debug_info()
-        % (nbsteps / timer.time());
-    ++nbsteps;
+    for(auto cit = r_tr.finite_cells_begin(); cit != r_tr.finite_cells_end(); ++cit)
+      r_c3t3_.remove_from_complex(cit);
   }
-  CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
-  std::cerr << std::endl;
+  else
+  {
+    std::cerr << "Start volume scan...";
+    CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
+    cells_mesher_.scan_triangulation();
+    CGAL_MESH_3_TASK_END(scan_cells_task_handle);
+    refinement_stage = REFINE_ALL;
+    std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
+    std::cerr << std::endl << std::endl;
+    elapsed_time += timer.time();
+    dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
+    timer.stop(); timer.reset(); timer.start();
 
-  std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
-  std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
+    std::cerr << "Refining...\n";
+    std::cerr << "Legend of the following line: "
+              << "(#vertices,#steps," << cells_mesher_.debug_info_header()
+              << ")\n";
+    std::cerr << "(" << r_tr.number_of_vertices() << ","
+              << nbsteps << "," << cells_mesher_.debug_info() << ")";
+
+    CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
+    while ( ! cells_mesher_.is_algorithm_done()  &&
+            ! forced_stop() )
+    {
+      cells_mesher_.one_step(cells_visitor_);
+      std::cerr
+          << boost::format("\r             \r"
+                       "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+          % r_tr.number_of_vertices()
+          % nbsteps % cells_mesher_.debug_info()
+          % (nbsteps / timer.time());
+      ++nbsteps;
+    }
+    CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
+    std::cerr << std::endl;
+    std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
+  }
+  std::cerr << "Total refining time: " << timer.time() + elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 
   CGAL_postcondition(r_tr.is_valid());

@@ -28,7 +28,7 @@ namespace CGAL
  *
  * Functor for generating initial points in gray images.
  * This functor is a model of the `InitialPointsGenerator_3` concept,
- * and can be passed as a parameter to `CGAL::make_mesh_3` using the
+ * and can be passed as a parameter to `CGAL::make_mesh_3()` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
  * On images that contain multiple connected components,
