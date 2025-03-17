@@ -30,5 +30,5 @@ int main(int argc, char* argv[])
 
   CGAL::draw(ccdt.triangulation());
 
-  return EXIT_SUCCESS
+  return EXIT_SUCCESS;
 }
