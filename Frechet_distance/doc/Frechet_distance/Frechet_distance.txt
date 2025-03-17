@@ -8,7 +8,7 @@ namespace CGAL {
 \authors André Nusser, Marvin Künnemann, and Karl Bringmann
 
 <center>
-<img src="teaser.png" style="max-width:30%;"/>
+<img src="FrechetTeaser.png" style="max-width:30%;"/>
 </center>
 
 This package provides the means to compute an approximation of the Fréchet distance between two polylines, as well as a near neighbor data structure for polylines under the Fréchet distance, both in d-dimensional Euclidean space.
@@ -31,15 +31,7 @@ The applications of this distance measure are plenty, for example:
 - measuring the similarity between movement patterns recorded via motion capture
 - perform map matching to match a GPS trace to a transportation network
 
-<center>
-<img src="FrechetTeaser.png" style="max-width:30%;"/>
-</center>
 
-<!--
-\cgalFigureBegin{figRefId,pdist-pkg-small.png}
-Here you can put the caption
-\cgalFigureEnd
--->
 
 \section secFrechetDistanceAPI API
 
