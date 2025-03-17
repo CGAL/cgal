@@ -122,6 +122,8 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
  *     \cgalParamDescription{if set to `true`, the geometry of the mesh will not be modified}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If `pmesh` is in fact a triangle mesh, this named parameter is also available
+ *                     in Loop subdivision and will create better shaped elements.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -192,6 +194,8 @@ void Loop_subdivision(PolygonMesh& pmesh, int step) {
  *     \cgalParamDescription{if set to `true`, the geometry of the mesh will not be modified}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{This named parameter is also available in Catmull-Clark subdivision
+ *                     for non-triangle meshes.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
