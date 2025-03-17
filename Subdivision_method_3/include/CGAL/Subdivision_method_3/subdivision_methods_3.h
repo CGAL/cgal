@@ -78,8 +78,6 @@ Catmull-Clark subdivision.
 */
 /// @{
 
-namespace parameters = CGAL::parameters;
-
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
