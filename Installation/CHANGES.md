@@ -22,6 +22,7 @@
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 -   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+-   Fixed do_intersect() of a 2D Arrangement and a curve.
 
 ### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
 
