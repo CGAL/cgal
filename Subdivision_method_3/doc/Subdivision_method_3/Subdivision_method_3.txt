@@ -143,14 +143,7 @@ subdivision function.
 This example shows how to subdivide a `Surface_mesh`
 with `Subdivision_method_3`.
 An application-defined polygon mesh might use a specialized kernel and/or
-a specialized internal container. There is one major restriction on the
-application-defined polygon mesh to work with
-`Subdivision_method_3`:
-The primitives (such as vertices, halfedges and faces)
-in the internal container are sequentially ordered (e.g.
-`std::vector` and `std::list`).
-This implies that the iterators traverse the primitives in
-the order of their creations/insertions.
+a specialized internal container.
 
 Section \ref secRefHost gives detailed explanations on this
 two restrictions.
@@ -359,14 +352,6 @@ The order of the connectivity operations plays a key role when maintaining
 stencils. By matching the order of the source submeshes to the refined
 vertices, no flag in the primitives is required to register the stencils.
 It avoids the data dependency of the refinement host on the polygon mesh class.
-To make the ordering trick work, the polygon mesh class must
-have a sequential container, such as a vector or a linked-list, as
-the internal storage.
-A sequential container guarantees that the iterators of the
-polygon mesh always traverse the primitives in the order of their
-insertions. Non-sequential structures such as
-trees or maps do not provide the required ordering, and hence
-cannot be used with `Subdivision_method_3`.
 
 Although `Subdivision_method_3` does not require flags
 to support the refinements and the stencils, it
