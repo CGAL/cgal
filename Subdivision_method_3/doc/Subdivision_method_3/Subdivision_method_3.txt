@@ -525,11 +525,6 @@ namespace Subdivision_method_3 {
   }
 
   template <class PolygonMesh, class NamedParameters>
-  void linear_subdivision(PolygonMesh& pmesh, NamedParameters np) {
-    PTQ(pmesh, Linear_mask_3<PolygonMesh>(pmesh), np);
-  }
-
-  template <class PolygonMesh, class NamedParameters>
   void DooSabin_subdivision(PolygonMesh& pmesh, NamedParameters np) {
     DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(pmesh), np);
   }
