@@ -20,7 +20,7 @@ namespace CGAL {
  * The nested `Point_2` type defined by the traits class is therefore
  * <I>different</I> than the `Kernel::Point_2` type. Its coordinates are of type
  * `CoordNT`, which an instantiation of `Sqrt_extension<NT,ROOT>` where
- * `NT` = `ROOT = `Kernel::FT`.  Moreover, the third and fourth (hidden)
+ * `NT` = `ROOT` = `Kernel::FT`.  Moreover, the third and fourth (hidden)
  * template parameters of `Sqrt_extension<NT,ROOT>` are set to `CGAL::Tag_true`,
  * which enables efficient comparison among different extensions.
  *
