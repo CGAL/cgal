@@ -19,9 +19,10 @@ struct Vertex_converter
   {
     Vertex v;
     v.set_point(Wp{src.point()});
+    v.set_dimension(src.in_dimension());
+    v.set_index(src.index());
     return v;
   }
-
   template <typename T1, typename T2> void operator()(const T1&, T2&) const {}
 };
 
@@ -62,10 +63,10 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     auto  cdt = patch_id_pmap
         ? CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
         : CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
-    const auto& cdt_tr = cdt.triangulation();
     auto triangulation_item = std::make_unique<Scene_c3t3_item>();
     auto& item_tr = triangulation_item->triangulation();
 
+    const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
     auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
     item_tr.set_infinite_vertex(inf_v);
     triangulation_item->triangulation_changed();
