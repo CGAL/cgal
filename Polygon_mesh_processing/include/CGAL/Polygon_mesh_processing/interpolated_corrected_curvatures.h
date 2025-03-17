@@ -1095,7 +1095,6 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam VertexDescriptor must be convertible to `boost::graph_traits<PolygonMesh>::%vertex_descriptor`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.
@@ -1163,10 +1162,9 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 *
 * \cgalNamedParamsEnd
 */
-template<typename VertexDescriptor,
-         typename PolygonMesh,
+template< typename PolygonMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
-void interpolated_corrected_curvatures(VertexDescriptor v,
+void interpolated_corrected_curvatures(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                                        const PolygonMesh& pmesh,
                                        const CGAL_NP_CLASS& np = parameters::default_values())
 {

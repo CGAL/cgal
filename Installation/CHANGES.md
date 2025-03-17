@@ -3,6 +3,8 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+Release date: June 2025
+
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
@@ -43,6 +45,10 @@
 
 ### Triangulations
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `minmax_dihedral_angle()` to identify the sharpest edges of a triangle mesh
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 

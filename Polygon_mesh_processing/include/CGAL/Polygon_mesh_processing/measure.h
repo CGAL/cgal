@@ -15,19 +15,23 @@
 
 #include <CGAL/license/Polygon_mesh_processing/measure.h>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
-#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/for_each.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 #include <CGAL/utils_classes.h>
 
-#include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_reduce.h>
+#include <tbb/blocked_range.h>
+#endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/container/small_vector.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -80,12 +84,16 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
   *   \cgalParamNEnd
   *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+
   * \cgalNamedParamsEnd
   *
   * @return the length of `h`. The return type `FT` is a number type either deduced
@@ -161,12 +169,15 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
   *   \cgalParamNEnd
   *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the squared length of `h`. The return type `FT` is a number type either deduced
@@ -235,6 +246,227 @@ average_edge_length(const PolygonMesh& pmesh,
 
   avg_edge_length /= static_cast<typename GT::FT>(n);
   return avg_edge_length;
+}
+
+#ifdef CGAL_LINKED_WITH_TBB
+namespace internal {
+
+template <typename EdgeRange,
+          typename PolygonMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+class MinMaxEdgeLength
+{
+  const EdgeRange& edge_range;
+  const PolygonMesh& pmesh;
+  const CGAL_NP_CLASS& np;
+
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+  static constexpr bool is_random_access =
+    std::is_convertible<typename std::iterator_traits<edge_iterator>::iterator_category,
+                        std::random_access_iterator_tag>::value;
+  std::shared_ptr<std::vector<edge_iterator> > iterators; // to store iterators, if needed
+
+public:
+  edge_descriptor min_edge, max_edge;
+  FT min_len, max_len;
+
+  MinMaxEdgeLength(const EdgeRange& edge_range,
+                    const PolygonMesh& pmesh,
+                    const CGAL_NP_CLASS& np)
+    : edge_range(edge_range), pmesh(pmesh), np(np),
+      min_len(FT(std::numeric_limits<double>::max())),
+      max_len(FT(-1))
+  {
+    if constexpr (!is_random_access)
+    {
+      // Store iterators for non-random access ranges
+      iterators = std::make_shared<std::vector<edge_iterator> >();
+      iterators->reserve(std::distance(edge_range.begin(), edge_range.end()));
+      for(edge_iterator it = edge_range.begin(); it != edge_range.end(); ++it)
+        iterators->push_back(it);
+    }
+  }
+
+  MinMaxEdgeLength(MinMaxEdgeLength& m, tbb::split)
+    : edge_range(m.edge_range), pmesh(m.pmesh), np(m.np),
+      iterators(m.iterators),
+      min_len(FT(std::numeric_limits<double>::max())),
+      max_len(FT(-1))
+  { }
+
+  void operator()(const tbb::blocked_range<std::size_t>& r) {
+    for(std::size_t i = r.begin(); i != r.end(); ++i) {
+      edge_descriptor e;
+      if constexpr (is_random_access)
+        e = *(edge_range.begin() + i);
+      else
+        e = *(iterators->at(i));
+
+      FT sq_len = squared_edge_length(e, pmesh, np);
+      if(sq_len < min_len) {
+        min_len = sq_len;
+        min_edge = e;
+      }
+      if(sq_len > max_len) {
+        max_len = sq_len;
+        max_edge = e;
+      }
+    }
+  }
+
+  void join(const MinMaxEdgeLength& other) {
+    if(other.min_len < min_len) {
+      min_len = other.min_len;
+      min_edge = other.min_edge;
+    }
+    if(other.max_len > max_len) {
+      max_len = other.max_len;
+      max_edge = other.max_edge;
+    }
+  }
+};
+
+} // namespace internal
+#endif // CGAL_LINKED_WITH_TBB
+
+/**
+  * \ingroup PMP_measure_grp
+  *
+  * returns the shortest and longest edges of a range of edges of a given polygon mesh,
+  * as well as their respective edge lengths.
+  *
+  * @tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
+  *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+  * @tparam EdgeRange a model of `Range` whose iterator type is `InputIterator` with value type
+  *                   `boost::graph_traits<PolygonMesh>::%edge_descriptor`.
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param edge_range a range of edges of `pmesh`
+  * @param pmesh the polygon mesh in which the longest edge is searched for
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{The traits class must provide the nested functor `Compute_squared_distance_3`
+  *                    to compute the distance between two points:
+  *                    `FT operator()(%Point_3 src1, %Point_3 tgt1)`,
+  *                    and a function `Compute_squared_distance_3 compute_squared_distance_3_object()`.}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return the shortest and longest edge in `pmesh`, along with their respective lengths.
+  *
+  * @warning This function involves a square root computation.
+  *
+  * @sa `edge_length()`
+  * @sa `squared_edge_length()`
+  */
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename EdgeRange,
+         typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_edge_length(const EdgeRange& edge_range,
+                   const PolygonMesh& pmesh,
+                   const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+    edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+    if(first == beyond)
+    {
+      return std::make_pair(std::make_pair(edge_descriptor(), FT(0)),
+                            std::make_pair(edge_descriptor(), FT(0)));
+    }
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  // parallel
+  if constexpr (std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  {
+    internal::MinMaxEdgeLength<EdgeRange, PolygonMesh, CGAL_NP_CLASS> reducer(edge_range, pmesh, np);
+    tbb::parallel_reduce(tbb::blocked_range<size_t>(0, edge_range.size()), reducer);
+
+    return std::make_pair(std::make_pair(reducer.min_edge, CGAL::approximate_sqrt(reducer.min_len)),
+                          std::make_pair(reducer.max_edge, CGAL::approximate_sqrt(reducer.max_len)));
+  }
+  else
+#endif
+  // sequential
+  {
+    edge_iterator low = first, high = first, eit = first;
+    FT sq_lo, sq_hi;
+    sq_lo = sq_hi = squared_edge_length(*eit++, pmesh, np);
+
+    for(; eit!=beyond; ++eit)
+    {
+      const FT sq_l = squared_edge_length(*eit, pmesh, np);
+
+      if(sq_l < sq_lo) {
+        low = eit;
+        sq_lo = sq_l;
+      }
+      if(sq_l > sq_hi) {
+        high = eit;
+        sq_hi = sq_l;
+      }
+    }
+
+    CGAL_assertion(low != beyond && high != beyond);
+    return std::make_pair(std::make_pair(*low, CGAL::approximate_sqrt(sq_lo)),
+                          std::make_pair(*high, CGAL::approximate_sqrt(sq_hi)));
+  }
+}
+
+/*!
+ * \ingroup PMP_measure_grp
+ * \brief returns the shortest and longest edges of a given polygon mesh,
+ * as well as their respective edge lengths.
+ * Equivalent to `minmax_edge_length(edges(pmesh), pmesh, np)`
+ */
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_edge_length(const PolygonMesh& pmesh,
+                   const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return minmax_edge_length<ConcurrencyTag>(edges(pmesh), pmesh, np);
 }
 
 /**
@@ -1113,9 +1345,271 @@ void match_faces(const PolygonMesh1& m1,
   }
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
+namespace internal {
+
+template <typename EdgeRange,
+          typename TriangleMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+class MinMaxDihedralAngle
+{
+  const EdgeRange& edge_range;
+  const TriangleMesh& tmesh;
+  const CGAL_NP_CLASS& np;
+
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<TriangleMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+  static constexpr bool is_random_access =
+    std::is_convertible<typename std::iterator_traits<edge_iterator>::iterator_category,
+                        std::random_access_iterator_tag>::value;
+  std::shared_ptr<std::vector<edge_iterator> > iterators; // to store iterators, if needed
+
+public:
+  edge_descriptor min_edge, max_edge;
+  FT min_angle, max_angle;
+
+  MinMaxDihedralAngle(const EdgeRange& edge_range,
+                       const TriangleMesh& tmesh,
+                       const CGAL_NP_CLASS& np)
+    : edge_range(edge_range), tmesh(tmesh), np(np),
+      min_angle(200), max_angle(-200)
+  {
+    if constexpr (!is_random_access)
+    {
+      // Store iterators for non-random access ranges
+      iterators = std::make_shared<std::vector<edge_iterator> >();
+      iterators->reserve(std::distance(edge_range.begin(), edge_range.end()));
+      for(edge_iterator it = edge_range.begin(); it != edge_range.end(); ++it)
+        iterators->push_back(it);
+    }
+  }
+
+  MinMaxDihedralAngle(MinMaxDihedralAngle& m, tbb::split)
+    : edge_range(m.edge_range), tmesh(m.tmesh), np(m.np),
+      iterators(m.iterators),
+      min_angle(200), max_angle(-200)
+  { }
+
+  void operator()(const tbb::blocked_range<std::size_t>& r)
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
+
+    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
+      gt.compute_approximate_dihedral_angle_3_object();
+
+    for(std::size_t i = r.begin(); i != r.end(); ++i)
+    {
+      edge_descriptor e;
+      if constexpr (is_random_access)
+        e = *(edge_range.begin() + i);
+      else
+        e = *(iterators->at(i));
+
+      if(is_border(e, tmesh))
+        continue;
+
+      const halfedge_descriptor h = halfedge(e, tmesh);
+      CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+
+      const vertex_descriptor p = source(h,tmesh);
+      const vertex_descriptor q = target(h,tmesh);
+      const vertex_descriptor r = target(next(h,tmesh),tmesh);
+      const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
+
+      const FT angle = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+      if(angle < min_angle) {
+        min_angle = angle;
+        min_edge = e;
+      }
+      if(angle > max_angle) {
+        max_angle = angle;
+        max_edge = e;
+      }
+    }
+  }
+
+  void join(const MinMaxDihedralAngle& other)
+  {
+    if(other.min_angle < min_angle) {
+      min_angle = other.min_angle;
+      min_edge = other.min_edge;
+    }
+    if(other.max_angle > max_angle) {
+      max_angle = other.max_angle;
+      max_edge = other.max_edge;
+    }
+  }
+};
+
+} // namespace internal
+#endif // CGAL_LINKED_WITH_TBB
+
+/*!
+ * \ingroup PMP_measure_grp
+ *
+ * \brief computes the minimum and maximum dihedral angles of a range of edges of a given polygon mesh.
+ *
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
+ *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * \tparam EdgeRange a model of `Range` whhose iterator type is `InputIterator` with value type
+ *                   `boost::graph_traits<PolygonMesh>::%edge_descriptor`.
+ * \tparam TriangleMesh a model of `HalfedgeListGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param edge_range a range of edges of `tmesh`
+ * \param tmesh the polygon mesh
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+ *
+ * \cgalNamedParamsBegin
+ *
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`.}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with
+ *                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `geom_traits::Point_3` as value type.}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`.}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for
+ *                     `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \pre `CGAL::is_triangle_mesh(tmesh)`
+ * \pre There are no degenerate faces in `tmesh`.
+ *
+ * \see `detect_sharp_edges()`
+ * \see `sharp_edges_segmentation()`
+ */
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename EdgeRange,
+         typename TriangleMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_dihedral_angle(const EdgeRange& edge_range,
+                      const TriangleMesh& tmesh,
+                      const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<TriangleMesh>::edge_iterator;
+
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type;
+  using FT = typename Geom_traits::FT;
+
+  edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+  if(first == beyond)
+  {
+    return std::make_pair(std::make_pair(edge_descriptor(), FT(200)),
+                          std::make_pair(edge_descriptor(), FT(-200)));
+  }
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  // parallel
+  if constexpr (std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  {
+    internal::MinMaxDihedralAngle<EdgeRange, TriangleMesh, CGAL_NP_CLASS> reducer(edge_range, tmesh, np);
+    tbb::parallel_reduce(tbb::blocked_range<size_t>(0, edge_range.size()), reducer);
+
+    return std::make_pair(std::make_pair(reducer.min_edge, reducer.min_angle),
+                          std::make_pair(reducer.max_edge, reducer.max_angle));
+  }
+  else
+#endif
+  // sequential
+  {
+    edge_descriptor min_edge, max_edge;
+    FT min_angle(200), max_angle(-200);
+
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
+
+    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+    typename Geom_traits::Compute_approximate_dihedral_angle_3 approx_dh =
+      gt.compute_approximate_dihedral_angle_3_object();
+
+    for(edge_iterator eit = first; eit != beyond; ++eit)
+    {
+      if(is_border(*eit, tmesh))
+        continue;
+
+      const halfedge_descriptor h = halfedge(*eit, tmesh);
+      CGAL_assertion(!is_degenerate_triangle_face(h, tmesh));
+
+       const vertex_descriptor p = source(h,tmesh);
+       const vertex_descriptor q = target(h,tmesh);
+       const vertex_descriptor r = target(next(h,tmesh),tmesh);
+       const vertex_descriptor s = target(next(opposite(h,tmesh),tmesh),tmesh);
+
+       const FT angle = approx_dh(get(vpm,p), get(vpm,q), get(vpm,r), get(vpm,s));
+      if(angle < min_angle) {
+        min_angle = angle;
+        min_edge = *eit;
+      }
+      if(angle > max_angle) {
+        max_angle = angle;
+        max_edge = *eit;
+      }
+    }
+
+    return std::make_pair(std::make_pair(min_edge, min_angle),
+                          std::make_pair(max_edge, max_angle));
+  }
+}
+
+/*!
+ * \ingroup PMP_measure_grp
+ * computes the minimum and maximum dihedral angles of a given triangle mesh.
+ * Equivalent to `minmax_dihedral_angle(edges(tmesh), tmesh, np)`
+ */
+template<typename ConcurrencyTag = CGAL::Sequential_tag,
+         typename TriangleMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+#else
+auto
+#endif
+minmax_dihedral_angle(const TriangleMesh& tmesh,
+                      const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return minmax_dihedral_angle<ConcurrencyTag>(edges(tmesh), tmesh, np);
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_MEASURE_H

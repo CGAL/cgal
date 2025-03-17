@@ -336,6 +336,14 @@ template <typename T, typename Tag, typename Base>
 struct Named_function_parameters
   : internal_np::Named_params_impl<T, Tag, Base>
 {
+  // Add some nested types needed for instantiation of boost::graph_traits before overload elimination
+  // for example for the function PMP::interpolated_corrected_curvatures()
+  typedef void vertex_descriptor;
+  typedef void edge_descriptor;
+  typedef void directed_category;
+  typedef void edge_parallel_category;
+  typedef void traversal_category;
+
   typedef internal_np::Named_params_impl<T, Tag, Base> base;
   typedef Named_function_parameters<T, Tag, Base> self;
 

@@ -1636,6 +1636,15 @@ QString Scene_surface_mesh_item::computeStats(int type)
   case MEAN_ANGLE:
     angles(d->smesh_, mini, maxi, ave);
   }
+
+  double minda(0), maxda(0);
+  switch (type)
+  {
+  case MIN_DIHEDRAL_ANGLE:
+  case MAX_DIHEDRAL_ANGLE:
+    dihedral_angles(d->smesh_, minda, maxda);
+  }
+
   double min_area, max_area, med_area, mean_area;
   switch (type)
   {
@@ -1798,6 +1807,12 @@ QString Scene_surface_mesh_item::computeStats(int type)
     return QString::number(maxi);
   case MEAN_ANGLE:
     return QString::number(ave);
+
+  case MIN_DIHEDRAL_ANGLE:
+    return QString::number(minda);
+  case MAX_DIHEDRAL_ANGLE:
+    return QString::number(maxda);
+
   case NB_HOLES:
     return QString::number(nb_holes(d->smesh_));
 
@@ -1840,7 +1855,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.categories.append(std::pair<QString,int>(QString("Vertices"),2));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
   data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),5));
 
 
   //titles
@@ -1879,6 +1894,8 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+  data.titles.append(QString("Dihedral Minimum"));
+  data.titles.append(QString("Dihedral Maximum"));
 
   return data;
 }
