@@ -619,7 +619,7 @@ from_stream(std::istream& s)
   int nb_darts = std::stoi(line);
 
   // Load the anchor
-  int anchor_dart_id;
+  int anchor_dart_id = 0;
   s >> line;
   if (!line.compare("yes")) {
     _has_anchor = true;
