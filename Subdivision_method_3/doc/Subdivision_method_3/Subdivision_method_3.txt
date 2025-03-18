@@ -25,13 +25,13 @@ subdivision methods.
 `Polyhedron_3` and `Surface_mesh`, as they are models of the concept
 `MutableFaceGraph`, and it aims to be easy to use and to extend.
 `Subdivision_method_3` is not a class, but a namespace
-which contains popular subdivision methods and their refinement
+which contains four popular subdivision methods and their refinement
 functions. These include Catmull-Clark, Loop, Doo-Sabin and
 \f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily
 extended by substituting the geometry computation of the refinement
 host. In particular, the edge case where one wishes to subdivide
 a mesh while keeping its geometry fixed is offered, setting an optional parameter
-in Catmull-Clark and Loop subdivisions.
+in Catmull-Clark subdivision and Loop subdivision.
 
 \section secSubAlgo Subdivision Method
 
@@ -498,13 +498,11 @@ The source codes of `CatmullClark_mask_3`, `Loop_mask_3`,
 `DooSabin_mask_3`, and `Sqrt3_mask_3` are
 the best sources of learning these stencil interfaces.
 
-\section Subdivision_method_3The Subdivision Methods
+\section Subdivision_method_3The The Four Subdivision Methods
 
 `Subdivision_method_3` supports Catmull-Clark, Loop,
 Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions by specializing
 their respective refinement hosts.
-In addition, a linear subdivision host is provided which
-enable the user to perform an upsampling of a triangle mesh.
 They are designed to work on any model of a `MutableFaceGraph`
 such as `Polyhedron_3` and `Surface_mesh`. If your application
 uses a polygon mesh with a specialized geometry kernel, you need to
