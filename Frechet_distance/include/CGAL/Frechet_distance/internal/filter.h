@@ -164,12 +164,12 @@ bool Filter<K>::bichromaticFarthestDistance()
 
     if (certainly(sqrt(squared_max_dist) <= distance)) {
         cert.setAnswer(true);
-        cert.addPoint({CPoint(0, 0.), CPoint(0, 0.)});
+        cert.addPoint({CPoint(0, 0), CPoint(0, 0)});
         if (curve2.size() > 1) {
-            cert.addPoint({CPoint(curve1.size() - 1, 0.), CPoint(0, 0.)});
+            cert.addPoint({CPoint(curve1.size() - 1, 0), CPoint(0, 0)});
         }
         cert.addPoint(
-            {CPoint(curve1.size() - 1, 0.), CPoint(curve2.size() - 1, 0.)});
+            {CPoint(curve1.size() - 1, 0), CPoint(curve2.size() - 1, 0)});
         cert.validate();
 
         return true;
