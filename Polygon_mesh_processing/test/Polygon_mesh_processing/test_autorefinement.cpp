@@ -66,6 +66,11 @@ struct My_visitor
     tgt_check[tgt_id]=1;
   }
 
+  void delete_triangle(std::size_t src_id)
+  {
+    assert(src_id<nb_input);
+  }
+
   std::size_t nb_input;
   std::size_t expected_nb_output;
   std::vector<int> tgt_check;
