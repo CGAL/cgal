@@ -18,7 +18,7 @@
 #ifndef CGAL_POISSON_MESH_DOMAIN_3_H
 #define CGAL_POISSON_MESH_DOMAIN_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Poisson_reconstruction_function.h>
@@ -26,13 +26,13 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgPoissonSurfaceReconstruction3Ref
 
 \brief The class `Poisson_mesh_domain_3` derives from `Labeled_mesh_domain_3` for the handling of `Poisson_reconstruction_function`.
 
  This class has a constructor taking a labeling function. It has also a static template member
  function that acts as named constructor:
- <ul><li>`create_Poisson_mesh_domain()`, to create a domain from a `Poisson_reconstruction_function`</ ul>
+ <ul><li>`create_Poisson_mesh_domain()`</li>, to create a domain from a `Poisson_reconstruction_function`</ul>
 
 \tparam BGT is a geometric traits class that provides
     the basic operations to implement intersection tests and intersection computations through a bisection
@@ -117,9 +117,10 @@ public:
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
-   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
+   * \tparam NamedParameters
+   *  a sequence of \ref bgl_namedparameters "Named Parameters"
    *
    * \param function the Poisson reconstruction function
    * \param bounding_object the bounding object bounding the meshable space.
@@ -136,14 +137,41 @@ public:
    */
   template<typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Poisson_mesh_domain_3(const Function& function,
-                        const Bounding_object& bounding_object,
-                        const CGAL_NP_CLASS& np = parameters::default_values()
+    const Bounding_object& bounding_object,
+    const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                        , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
+    , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
 #endif // DOXYGEN_RUNNING
-                        )
-      : Base(make_implicit_to_labeling_function_wrapper<BGT>(function), bounding_object, np),
-        poisson_function(function)
+  )
+    : Base(make_implicit_to_labeling_function_wrapper<BGT>(function), bounding_object, np),
+    poisson_function(function)
+  {}
+
+  /*!  \brief Construction from a function, a bounding object and a relative error bound.
+   *
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * \param function the Poisson reconstruction function
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{relative_error_bound}
+   *      \cgalParamDescription{the relative error bound used to compute intersection points between the implicit surface and query segments.
+   *                            The bisection is stopped when the length of the intersected segment is less than the product
+   *                            of `relative_error_bound` by the diameter of the bounding object.}
+   *      \cgalParamDefault{FT(1e-3)}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   */
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Poisson_mesh_domain_3(const Function & function,
+    const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+    , typename std::enable_if<!is_named_function_parameter<Function>>::type * = nullptr
+#endif // DOXYGEN_RUNNING
+  )
+    : Base(make_implicit_to_labeling_function_wrapper<BGT>(function), function.bounding_sphere(), np),
+    poisson_function(function)
   {}
 ///@}
 
@@ -185,7 +213,7 @@ public:
    *                         or a bounding `Iso_cuboid_3`
    *
    * \param function the Poisson reconstruction function
-   * \param bounding_object object boundint the meshable domain and its center is inside the domain.
+   * \param bounding_object object bounding the meshable domain and its center is inside the domain.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    *
    * \cgalNamedParamsBegin
