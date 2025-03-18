@@ -43,7 +43,7 @@ public:
   Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings)
   {
     _vertices = std::vector<Point>(vertices.begin(), vertices.end());
-    _pairings = std::vector<int>(pairings.begin(), pairings.end());
+    _pairings = std::vector<std::size_t>(pairings.begin(), pairings.end());
   }
 
   // returns the number of vertices (equivalently, the number of sides)
@@ -65,7 +65,7 @@ public:
 
 private:
   std::vector<Point> _vertices;
-  std::vector<int> _pairings;
+  std::vector<std::size_t> _pairings;
 };
 
 //template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
@@ -197,7 +197,7 @@ is_valid()const
   }
   for (std::size_t k=0; k<n; ++k) {
     std::size_t paired_side = _pairings[k];
-    if ((paired_side<0) || (paired_side>=n)) {
+    if (paired_side>=n) {
       return false;
     }
     if (already_paired[paired_side]) {

@@ -39,7 +39,7 @@ int main()
   vertices.push_back(z6);
   vertices.push_back(z7);
 
-  std::vector<int> pairings;
+  std::vector<std::size_t> pairings;
   for (std::size_t k=0; k<8; ++k) {
     pairings.push_back((k+4)%8);
   }
