@@ -36,14 +36,14 @@ void CGAL_Remesh(double* vert_xyz_array, size_t vert_count, double criteria_a, d
 
   vector<Vertex_handle> cdt_Vh_Boundary;
 
-  for (int i = 0; i < vert_count; ++i)
+  for (size_t i = 0; i < vert_count; ++i)
   {
     Vertex_handle vh = cdt.insert(Point(vert_xyz_array[3 * i + 0], vert_xyz_array[3 * i + 1]));
     cdt_Vh_Boundary.push_back(vh);
   }
 
   // insert Constrain
-  for (int i = 0; i < cdt_Vh_Boundary.size() - 1; ++i)
+  for (size_t i = 0; i < cdt_Vh_Boundary.size() - 1; ++i)
   {
     cdt.insert_constraint(cdt_Vh_Boundary[i], cdt_Vh_Boundary[i + 1]);
   }
