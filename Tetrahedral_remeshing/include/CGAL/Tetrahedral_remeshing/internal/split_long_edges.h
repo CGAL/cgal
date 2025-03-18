@@ -89,7 +89,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
   const std::array<FT, 6> coeff = {0.33, 0.66,    //1/3 and 2/3
                                    0.3, 0.7,      // 0.5 +/- 0.2
                                    0.25, 0.75};   // 0.5 +/- 0.25
-  
+
   std::size_t attempt_id = 0;
   while(attempt_id < coeff.size())
   {
@@ -109,7 +109,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
         break;
       }
     } while(++circ != end);
-    
+
     if(steiner_successful)
       return steiner;
   }
