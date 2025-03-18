@@ -26,7 +26,7 @@ struct Type_mapper;
 
 namespace internal {
 
-template < typename T, typename K1, typename K2, typename = void >
+template < typename T, typename K1, typename K2, typename = void > // last tparam is for SFINAE
 struct Type_mapper_impl {
   typedef T type;
 };
