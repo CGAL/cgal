@@ -31,7 +31,8 @@ class Complex_number
 
 public:
   Complex_number(const FT& real_part)
-    : _real(real_part)
+    : _real(real_part),
+      _imag(0)
   {}
 
   Complex_number(const FT& real_part, const FT& imaginary_part)
