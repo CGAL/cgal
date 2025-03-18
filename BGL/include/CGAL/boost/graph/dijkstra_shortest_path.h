@@ -107,7 +107,7 @@ namespace internal {
 template<typename Graph,
          typename OutputIterator,
          typename NamedParameters = parameters::Default_named_parameters>
-OutputIterator shortest_path_between_two_vertices(
+OutputIterator dijkstra_shortest_path(
   const typename boost::graph_traits<Graph>::vertex_descriptor vs,//source
   const typename boost::graph_traits<Graph>::vertex_descriptor vt,//target
   const Graph& g,

@@ -20,7 +20,7 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/polygon_mesh_io.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_dual_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/alpha_expansion_graphcut.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/graph_traits_inheritance_macros.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/shortest_path.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/dijkstra_shortest_path.h
 
 
 EXAMPLE_PATH               +=  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \

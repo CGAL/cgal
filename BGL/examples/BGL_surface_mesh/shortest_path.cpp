@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
-#include <CGAL/boost/graph/shortest_path.h>
+#include <CGAL/boost/graph/dijkstra_shortest_path.h>
 #include <CGAL/IO/polygon_mesh_io.h>
 
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   }
 
   std::vector<halfedge_descriptor> halfedge_sequence;
-  CGAL::shortest_path_between_two_vertices(vs, vt, sm,
+  CGAL::dijkstra_shortest_path(vs, vt, sm,
     std::back_inserter(halfedge_sequence));
 
   // dump

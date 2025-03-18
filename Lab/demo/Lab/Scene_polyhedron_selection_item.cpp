@@ -5,7 +5,6 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Handle_hash_function.h>
@@ -31,7 +30,7 @@
 #include "triangulate_primitive.h"
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/boost/graph/shortest_path.h>
+#include <CGAL/boost/graph/dijkstra_shortest_path.h>
 #include <CGAL/boost/graph/properties.h>
 
 using namespace CGAL::Three;
@@ -1496,7 +1495,7 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   {
     fg_vertex_descriptor t(*it), s(*(it+1));
 
-    CGAL::shortest_path_between_two_vertices(s, t, mesh,
+    CGAL::dijkstra_shortest_path(s, t, mesh,
       std::back_inserter(path_halfedges));
   }
 
