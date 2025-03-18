@@ -496,7 +496,7 @@ acvd_impl(TriangleMesh& tmesh,
     {
       std::vector<std::pair<edge_descriptor, double>> to_split_new;
       to_split_new.reserve(2*to_split.size()); //upper bound
-      for (auto [e, nb_subsegments] : to_split)
+      for (const auto& [e, nb_subsegments] : to_split)
       {
         halfedge_descriptor h = halfedge(e, tmesh);
         const Point_3& s = get(vpm, source(h,tmesh));
@@ -1135,7 +1135,7 @@ acvd_impl(TriangleMesh& tmesh,
     std::vector<std::size_t> nm_clusters;
     for (std::size_t i=0; i<points.size(); ++i)
     {
-      for ( auto [j, size] : edge_map[i] )
+      for (const auto& [j, size] : edge_map[i] )
       {
         if (size > 2)
         {
@@ -1180,7 +1180,7 @@ acvd_impl(TriangleMesh& tmesh,
 
     // detect non-manifold vertices
     std::vector< std::vector< std::pair<std::size_t, std::size_t> > > link_edges(points.size());
-    for (const std::array<std::size_t, 3> & p : polygons)
+    for (const std::array<std::size_t, 3>& p : polygons)
     {
       for (int i=0; i<3; ++i)
         link_edges[p[i]].emplace_back(p[(i+1)%3], p[(i+2)%3]);
@@ -1222,11 +1222,10 @@ acvd_impl(TriangleMesh& tmesh,
       return std::make_pair(points, polygons);
     }
 
-
     std::vector<std::size_t> one_ring;
     for (std::size_t nmi : nm_clusters)
     {
-      for ( auto [n, s] : edge_map[nmi] )
+      for (const auto& [n, s] : edge_map[nmi] )
         one_ring.push_back(n);
     }
 
