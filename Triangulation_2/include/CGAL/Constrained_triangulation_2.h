@@ -51,7 +51,7 @@ struct CGAL_DEPRECATED No_intersection_tag :
 
 namespace internal {
 
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#if defined(CGAL_CDT_2_DEBUG_INTERSECTIONS) || defined(CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2)
   struct Indentation_level {
     int n;
     Indentation_level() : n(0) {}
@@ -68,7 +68,7 @@ namespace internal {
     };
     Exit_guard open_new_scope() { return Exit_guard(*this); }
   } cdt_2_indent_level;
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS || CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
 
 template <typename K>
 struct Itag {
@@ -738,7 +738,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
       int i;
       if(this->is_edge(vp.first, vp.second, fh,i)){
         fh->set_constraint(i,true);
-        boost::tie(fh,i) = mirror_edge(Edge(fh,i));
+        std::tie(fh,i) = mirror_edge(Edge(fh,i));
         fh->set_constraint(i,true);
       }
     }
@@ -815,7 +815,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
   internal::Indentation_level::Exit_guard exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   while(! stack.empty()){
-    boost::tie(vaa,vbb) = stack.top();
+    std::tie(vaa,vbb) = stack.top();
     stack.pop();
     CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS

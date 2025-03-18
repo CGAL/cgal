@@ -51,7 +51,7 @@ template<> struct Io_traits<float> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<double> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<long double> { typedef io_Read_write Io_tag; };
 
-
+struct IO_manip_tag{};
 
 } //namespace CGAL
 

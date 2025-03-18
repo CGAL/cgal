@@ -40,7 +40,7 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
                                     OutputIterator out)
 {
   halfedge_around_target_iterator hi, he;
-  for(boost::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
+  for(std::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
   {
     *out++ = source(*hi,g);
   }

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Documentation NONE)
 
 # Check whether this cmake script is the top level one
@@ -24,7 +24,7 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
-cmake_minimum_required(VERSION 3.18..3.29) # for list(SORT ... COMPARE NATURAL)
+cmake_minimum_required(VERSION 3.18...3.31) # for list(SORT ... COMPARE NATURAL)
 
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
@@ -299,8 +299,8 @@ file(GLOB CGAL_DOXYGEN_RESOURCES_DIRS
 list(SORT CGAL_DOXYGEN_RESOURCES_DIRS COMPARE NATURAL)
 
 if(NOT CGAL_DOXYGEN_RESOURCES_DIRS STREQUAL CGAL_DOXYGEN_RESOURCES_VERSIONS)
-  message(FATAL "The directories in ${CGAL_DOC_RESOURCE_PREFIX_DIR} do not match the
-expected versions: [${CGAL_DOXYGEN_RESOURCES_VERSIONS}] vs [${CGAL_DOXYGEN_RESOURCES_DIRS}]")
+  message(WARNING "The directories in ${CGAL_DOC_RESOURCE_PREFIX_DIR} do not match the expected versions:\n"
+                  "    [${CGAL_DOXYGEN_RESOURCES_DIRS}] vs [${CGAL_DOXYGEN_RESOURCES_VERSIONS}]")
 endif()
 
 function(CGAL_insert_in_sorted_list list_name value)
@@ -312,14 +312,15 @@ function(CGAL_insert_in_sorted_list list_name value)
   set(${list_name} ${list} PARENT_SCOPE)
 endfunction()
 
-if(DOXYGEN_VERSION IN_LIST CGAL_DOXYGEN_RESOURCES_VERSIONS)
-  list(FIND CGAL_DOXYGEN_RESOURCES_VERSIONS "${DOXYGEN_VERSION}" DOXYGEN_VERSION_INDEX)
+if(DOXYGEN_VERSION IN_LIST CGAL_DOXYGEN_RESOURCES_DIRS)
+  list(FIND CGAL_DOXYGEN_RESOURCES_DIRS "${DOXYGEN_VERSION}" DOXYGEN_VERSION_INDEX)
 else()
-  CGAL_insert_in_sorted_list(CGAL_DOXYGEN_RESOURCES_VERSIONS ${DOXYGEN_VERSION})
-  list(FIND CGAL_DOXYGEN_RESOURCES_VERSIONS ${DOXYGEN_VERSION} DOXYGEN_VERSION_INDEX)
+  CGAL_insert_in_sorted_list(CGAL_DOXYGEN_RESOURCES_DIRS ${DOXYGEN_VERSION})
+  list(FIND CGAL_DOXYGEN_RESOURCES_DIRS ${DOXYGEN_VERSION} DOXYGEN_VERSION_INDEX)
   math(EXPR DOXYGEN_VERSION_INDEX "${DOXYGEN_VERSION_INDEX} - 1")
 endif()
 list(GET CGAL_DOXYGEN_RESOURCES_DIRS "${DOXYGEN_VERSION_INDEX}" CGAL_DOC_RESOURCE_DIR)
+
 set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_PREFIX_DIR}/${CGAL_DOC_RESOURCE_DIR}")
 if(NOT EXISTS "${CGAL_DOC_RESOURCE_DIR}")
   message(FATAL_ERROR "Doxygen resources for version ${DOXYGEN_VERSION} not found")
