@@ -1622,7 +1622,7 @@ bool autorefine_triangle_soup_(PointRange& soup_points,
 * Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
 * the creation of new triangles.
-* If the `apply_iterative_snap_rounding()` parameter is set to true, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
+* If the `apply_iterative_snap_rounding()` parameter is set to `true`, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
 * while trying to make the triangle soup free of intersections. The `snap_grid_size()` parameter limits the drift of the snapped vertices.
 * A smaller value is more likely to output an intersection free output and perform more vertex collapses, but it may increase the Hausdorff distance from the input.
 *
