@@ -27,28 +27,40 @@ public:
   operator()(const Args&... args) const
     -> decltype(fp(args...))
   {
-    CGAL::Epic_converter<AK> converter;
+    const CGAL::Epic_converter<AK> converter;
 
     std::tuple<decltype(converter(approx(args)))...> converted_args;
 
-    auto convert = [&](auto index, const auto& arg)
-    {
+    // When C++20 is available, check the blame and clean this all up with lambdas
+    bool success = convert_all_impl(std::index_sequence_for<Args...>{}, converter, converted_args, args...);
+    if(!success) // failed to convert all arguments, call the base predicate
+      return fp(args...);
+
+    return call_epicp_impl(std::index_sequence_for<Args...>{}, converted_args);
+  }
+
+private:
+  template <std::size_t... I, typename Converter, typename Tuple, typename... Args>
+  bool convert_all_impl(std::index_sequence<I...>,
+                        const Converter& converter,
+                        Tuple& converted_args,
+                        const Args&... args) const
+  {
+    auto convert = [&](auto index, const auto& arg) {
       auto converted = converter(approx(arg));
       if(converted.second)
         std::get<index>(converted_args) = converted;
       return converted.second;
     };
 
-    bool success = [&]<std::size_t... I>(std::index_sequence<I...>) {
-      return (... && convert(std::integral_constant<std::size_t, I>{}, args));
-    }(std::index_sequence_for<Args...>{});
+    return (... && convert(std::integral_constant<std::size_t, I>{}, args));
+  }
 
-    if(!success) // failed to convert all arguments, call the base predicate
-      return fp(args...);
-
-    return [&]<std::size_t... I>(std::index_sequence<I...>) {
-      return epicp(std::get<I>(converted_args).first...);
-    }(std::index_sequence_for<Args...>{});
+  template <std::size_t... I, typename Tuple>
+  auto call_epicp_impl(std::index_sequence<I...>, const Tuple& converted_args) const
+    -> decltype(epicp(std::get<I>(converted_args).first...))
+  {
+    return epicp(std::get<I>(converted_args).first...);
   }
 };
 
