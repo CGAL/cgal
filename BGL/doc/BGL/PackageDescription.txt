@@ -771,7 +771,7 @@ user might encounter.
 - `CGAL::split_graph_into_polylines()`
 
 \cgalCRPSection{Graph Traversal}
-- `CGAL::shortest_path_between_two_vertices()`
+- `CGAL::dijkstra_shortest_path()`
 
 \cgalCRPSection{Graph Adaptors}
 - `CGAL::Dual`

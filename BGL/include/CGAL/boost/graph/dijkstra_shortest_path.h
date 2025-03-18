@@ -9,8 +9,8 @@
 // Author(s)     : Jane Tournois, Andreas Fabri
 //
 
-#ifndef CGAL_BOOST_GRAPH_SHORTEST_PATH_H
-#define CGAL_BOOST_GRAPH_SHORTEST_PATH_H
+#ifndef CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATH_H
+#define CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATH_H
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
@@ -92,12 +92,14 @@ namespace internal {
 *    \cgalParamDescription{a property map associating to each edge in the graph its weight or ``length''.
 *                          The weights must all be non-negative.}
 *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
-*                   as key type and `FT` as value type.}
+*                   as key type and a value type which as specified in the named parameter `distance_map`of the function
+                    <A href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">`boost::graph::dijkstra_shortest_paths()`</A>,
+                    with any model of `RingNumberType` fulfilling the requirements. }
 *    \cgalParamDefault{`get(boost::edge_weight, mesh)`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_index_map}
-*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamDescription{a property map associating to each vertex of `g` a unique index between `0` and `num_vertices(g) - 1`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `std::size_t` as value type}
 *     \cgalParamDefault{an automatically indexed internal map}
@@ -187,4 +189,4 @@ OutputIterator dijkstra_shortest_path(
 } // namespace CGAL
 
 
-#endif //CGAL_BOOST_GRAPH_SHORTEST_PATH_H
+#endif //CGAL_BOOST_GRAPH_DIJKSTRA_SHORTEST_PATH_H
