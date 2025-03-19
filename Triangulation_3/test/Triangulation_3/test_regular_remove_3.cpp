@@ -34,6 +34,8 @@ struct traits : public K
 {
     struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
     {
+      using Oriented_side = CGAL::Oriented_side;
+
       typedef K::Weighted_point_3 Weighted_point;
         typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
