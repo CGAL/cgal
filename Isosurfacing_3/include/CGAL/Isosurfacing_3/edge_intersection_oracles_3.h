@@ -202,8 +202,8 @@ struct Linear_interpolation_edge_intersection
  */
 //
 // @todo this is for the case where we know domain.value is an SDF
-// then we can do better than a dichotomy
-// Take code from the AW3 sharp branch
+// then we could do better than a dichotomy
+// see https://github.com/MaelRL/cgal/blob/AW3-Sharp_and_sparse-GF/Alpha_wrap_3/include/CGAL/Alpha_wrap_3/internal/offset_intersection.h
 struct Ray_marching_edge_intersection
 {
   template <typename Domain> // == Isosurfacing_domain_3 or similar
