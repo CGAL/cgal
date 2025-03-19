@@ -2,6 +2,7 @@
 #include <CGAL/Polygon_mesh_processing/approximated_centroidal_Voronoi_diagram_remeshing.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -13,11 +14,12 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Mesh = CGAL::Surface_mesh<K::Point_3>;
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+using Surface_mesh = CGAL::Surface_mesh<K::Point_3>;
+using Polyhedron = CGAL::Polyhedron_3<K>;
 
 namespace params = CGAL::parameters;
 
+template <class Mesh>
 void run_test(std::string fname, std::size_t genus)
 {
   Mesh mesh;
@@ -44,19 +46,15 @@ void run_test(std::string fname, std::size_t genus)
   assert(std::abs(bb.ymax()-bb_ref.ymax()) < 0.01 * dy);
   assert(std::abs(bb.zmax()-bb_ref.zmax()) < 0.01 * dz);
 
-std::ofstream("/tmp/out_"+std::to_string(genus)+".off") << mesh;
-
   PMP::approximated_centroidal_Voronoi_diagram_remeshing(mesh, 4);
   assert(-(vertices(mesh).size()-edges(mesh).size()+faces(mesh).size()-2)/2==genus);
-
-std::ofstream("/tmp/min_out_"+std::to_string(genus)+".off") << mesh;
 }
 
 int main()
 {
-  run_test(CGAL::data_file_path("meshes/tetrahedron.off"), 0);
-  run_test(CGAL::data_file_path("meshes/torus_quad.off"), 1);
-  run_test(CGAL::data_file_path("meshes/double-torus-example.off"), 2);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0);
+  run_test<Polyhedron>(CGAL::data_file_path("meshes/torus_quad.off"), 1);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/double-torus-example.off"), 2);
 
   return 0;
 }

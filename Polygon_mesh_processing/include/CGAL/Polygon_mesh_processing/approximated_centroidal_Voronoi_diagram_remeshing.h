@@ -399,7 +399,7 @@ acvd_impl(TriangleMesh& tmesh,
 
   using Matrix4x4 = typename Eigen::Matrix<FT, 4, 4>;
 
-  using Vertex_position_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using Vertex_position_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
 
   using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
@@ -635,17 +635,48 @@ acvd_impl(TriangleMesh& tmesh,
 
   // randomly initialize clusters
   //TODO: (possible optimization) use std::lower_bound with vertex_weight_pmap for better sampling
-  //      moreover with non-random access iterators, the complexity will be bad
+  static constexpr bool is_rand_access =
+    std::is_same_v<typename std::iterator_traits<decltype(vertices(tmesh).begin())>::iterator_category,
+                   std::random_access_iterator_tag>;
+
+  std::vector<vertex_descriptor> cluster_vertices;
+  cluster_vertices.reserve(nb_clusters);
+  if constexpr (is_rand_access)
+  {
+    for (int ci = 0; ci < nb_clusters; ++ci)
+    {
+      int vi;
+      vertex_descriptor vd;
+      do {
+        vi = rnd.get_int(0, nb_vertices);
+        vd = *std::next(vertices(tmesh).begin(), vi);
+      } while (get(vertex_cluster_pmap, vd) != -1);
+
+      cluster_vertices.push_back(vd);
+      put(vertex_cluster_pmap, vd, ci);
+    }
+  }
+  else
+  {
+    std::vector<vertex_descriptor> verts;
+    verts.reserve(num_vertices(tmesh));
+    verts.assign(vertices(tmesh).begin(), vertices(tmesh).end());
+
+    for (int ci = 0; ci < nb_clusters; ++ci)
+    {
+      vertex_descriptor vd;
+      do {
+          vd = verts[rnd.get_int(0, nb_vertices)];
+      } while (get(vertex_cluster_pmap, vd) != -1);
+
+      cluster_vertices.push_back(vd);
+      put(vertex_cluster_pmap, vd, ci);
+    }
+  }
+
   for (int ci = 0; ci < nb_clusters; ++ci)
   {
-    int vi;
-    vertex_descriptor vd;
-    do {
-      vi = rnd.get_int(0, nb_vertices);
-      vd = *(vertices(tmesh).begin() + vi);
-    } while (get(vertex_cluster_pmap, vd) != -1);
-
-    put(vertex_cluster_pmap, vd, ci);
+    vertex_descriptor vd=cluster_vertices[ci];
     Point_3 vp = get(vpm, vd);
     Vector_3 vpv = vp - ORIGIN;
     clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_quadric_pmap, vd));
@@ -1273,7 +1304,7 @@ acvd_impl(TriangleMesh& tmesh,
 *
 * performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 * Note that there is no guarantee that the output mesh will have the same topology as the input.
-* See \ref acvdrem for more details on the algorithm. This function required the \eigen library.
+* See \ref acvdrem for more details on the algorithm. This function requires the \eigen library.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
