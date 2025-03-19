@@ -1,0 +1,125 @@
+#define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+// #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/autorefinement.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/Real_timer.h>
+
+#include <boost/container/small_vector.hpp>
+
+#include <iostream>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel EPECK;
+typedef CGAL::Simple_cartesian<double> Cartesian;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+struct Track_visitor
+{
+  // inline void number_of_output_triangles(std::size_t nbt) { std::cout << "total number of triangles: " << nbt << std::endl;}
+  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
+
+  // inline void verbatim_triangle_copy(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " goes to " << tgt_id << std::endl;}
+  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+
+  // inline void new_subtriangle(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " subdivides to " << tgt_id << std::endl;}
+  inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+
+  // inline void delete_triangle(std::size_t src_id) { std::cout << src_id << " deleted" << std::endl;}
+  inline void delete_triangle(std::size_t /*src_id*/) {}
+};
+
+int main(int argc, char** argv)
+{
+  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
+                                         : std::string(argv[1]);
+
+  // const std::string out_file = argc <= 2 ? "rounded_soup.off"
+  //                                        : std::string(argv[2]);
+  const std::string out_file = "rounded_soup.off";
+
+  const int grid_size = argc <= 2 ? 23
+                                  : std::stoi(std::string(argv[2]));
+
+  const bool epeck = argc <= 3 ? false
+                               : std::string(argv[3])=="EPECK";
+
+  if(epeck)
+  {
+    std::vector<EPECK::Point_3> input_points;
+    std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
+
+    std::cout << "Snap rounding apply on " << filename << " with EPECK\n";
+    if (!CGAL::IO::read_polygon_soup(filename, input_points, input_triangles))
+    {
+      std::cerr << "Cannot read " << filename << "\n";
+      return 1;
+    }
+    std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << std::endl;
+    std::cout << "Is 2-manifold: " << PMP::is_polygon_soup_a_polygon_mesh(input_triangles) << std::endl;
+
+    PMP::repair_polygon_soup(input_points, input_triangles);
+    PMP::triangulate_polygons(input_points, input_triangles);
+
+    CGAL::Real_timer t;
+    t.start();
+    PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size));
+    t.stop();
+    std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
+    std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect(input_points, input_triangles) << std::endl;
+    std::cout << "Is 2-manifold: " << PMP::orient_polygon_soup(input_points, input_triangles) << "\n\n"  << std::endl;
+
+    std::vector<Cartesian::Point_3> output_points;
+    for(auto &p: input_points)
+      output_points.emplace_back(CGAL::to_double(p.x()),CGAL::to_double(p.y()),CGAL::to_double(p.z()));
+
+    CGAL::IO::write_polygon_soup(out_file, output_points, input_triangles, CGAL::parameters::stream_precision(17));
+  }
+  else
+  {
+    std::vector<EPICK::Point_3> input_points;
+    std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
+    std::cout << "Snap rounding on " << filename << " with EPICK\n";
+    if (!CGAL::IO::read_polygon_soup(filename, input_points, input_triangles))
+    {
+      std::cerr << "Cannot read " << filename << "\n";
+      return 1;
+    }
+    std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << std::endl;
+    std::cout << "Is 2-manifold: " << PMP::is_polygon_soup_a_polygon_mesh(input_triangles) << std::endl;
+
+    std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
+    PMP::triangle_soup_self_intersections(input_points, input_triangles, std::back_inserter(pairs_of_intersecting_triangles));
+    std::cout << "Nb of pairs of intersecting triangles: " << pairs_of_intersecting_triangles.size() << std::endl;
+
+    PMP::repair_polygon_soup(input_points, input_triangles);
+    PMP::triangulate_polygons(input_points, input_triangles);
+
+    CGAL::Real_timer t;
+    t.start();
+#if 1
+    Track_visitor visitor;
+    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
+#else
+    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
+#endif
+    t.stop();
+    std::cout << "\nOutput:" << std::endl;
+    std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
+    if(success)
+      std::cout << "Does self-intersect: " << PMP::does_triangle_soup_self_intersect<CGAL::Parallel_if_available_tag>(input_points, input_triangles) << std::endl;
+    else
+      std::cout << "ROUNDING FAILED" << std::endl;
+    CGAL::IO::write_polygon_soup(out_file, input_points, input_triangles, CGAL::parameters::stream_precision(17));
+    std::cout << "Is 2-manifold: " << PMP::orient_polygon_soup(input_points, input_triangles) << "\n\n"  << std::endl;
+  }
+  return 0;
+}
