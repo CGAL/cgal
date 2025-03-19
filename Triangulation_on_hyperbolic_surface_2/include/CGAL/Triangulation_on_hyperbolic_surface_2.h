@@ -161,7 +161,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
 {
   // (Triangulates by adding an internal edge between domain.vertex(size-1) and the other vertices)
   _combinatorial_map.clear();
-  int size = domain.size();
+  std::size_t size = domain.size();
 
   // Make the triangles
   std::vector<Dart_descriptor> dart_of_triangle(size-2);
@@ -188,7 +188,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
 
   // Sew the boundary edges and set their cross ratios
   for (int k1=0; k1<size; k1++) {
-    int k2 = domain.paired_side(k1);
+    std::size_t k2 = domain.paired_side(k1);
 
     p0 = domain.vertex((k1+1)%size);
     p2 = domain.vertex(k1);
