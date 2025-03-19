@@ -43,7 +43,7 @@ template<typename C3t3>
 bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
                                            const typename C3t3::Cell_handle circ,
                                            const typename C3t3::Triangulation::Geom_traits::Point_3& steiner,
-                                           const C3t3& c3t3)
+                                           const C3t3&)
 {
   using Point = typename C3t3::Triangulation::Geom_traits::Point_3;
 
