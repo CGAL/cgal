@@ -94,7 +94,7 @@ public:
   inline void set_id(size_t id){ m_id=id; }
   inline bool was_modified() const { return modified; }
 
-  inline size_t size(){ return poly.size(); }
+  inline size_t size() const{ return poly.size(); }
 
   inline iterator begin(){ return poly.begin(); }
   inline iterator end(){ return poly.end(); }
@@ -303,7 +303,7 @@ bool polygon_soup_snap_rounding_(PointRange &points,
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "End of the snapping" << std::endl;
 #endif
-      CGAL_assertion(!does_triangle_soup_self_intersect<Concurrency_tag>(points, triangles, np));
+      CGAL_assertion(!does_triangle_soup_self_intersect<Concurrency_tag>(points, triangles));
       if constexpr(has_visitor)
       {
         std::vector<std::vector<size_t> > map_io(number_of_input_triangles);
