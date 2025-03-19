@@ -134,7 +134,7 @@ The parameter `Tag` affects the behavior of `make_surface_mesh()`:
 
 \subsection Poisson_surface_reconstruction_3Output Output
 
-The surface reconstructed by `make_mesh_3()` is required to be a model of the concept 
+The surface reconstructed by `make_mesh_3()` is required to be a model of the concept
 `MeshComplex_3InTriangulation_3`, a data structure devised to represent a three dimensional complex embedded into a three dimensional triangulation. The surface facets can then be extracted into a face graph by `facets_in_complex_3_to_triangle_mesh()`.
 
 The surface reconstructed by `make_surface_mesh()` instead is required to be a
@@ -350,8 +350,8 @@ with the 03 option which maximizes speed.  All measurements were done using the 
 
 \subsection SurfReconstPerfPIF Poisson Implicit Function
 
-The point set chosen for benchmarking the Poisson implicit function is the Lucy statue point set from the 
-<a href="https://graphics.stanford.edu/data/3Dscanrep/">The Stanford 3D Scanning Repository</a> 
+The point set chosen for benchmarking the Poisson implicit function is the Lucy statue point set from the
+<a href="https://graphics.stanford.edu/data/3Dscanrep/">The Stanford 3D Scanning Repository</a>
 (originally 14 million points, here downscaled to 2.9 million points) depicted by \cgalFigureRef{Poisson_surface_reconstruction_3-fig-contouring_bench}.
 We measure the Poisson implicit function computation (i.e., the call to
 `Poisson_reconstruction_function::compute_implicit_function()` denoted by Poisson solve hereafter)
