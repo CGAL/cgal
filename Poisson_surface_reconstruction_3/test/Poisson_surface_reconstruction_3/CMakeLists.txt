@@ -42,6 +42,7 @@ if(TARGET CGAL::Eigen3_support)
 
     create_single_source_cgal_program("compare_mesh_3_vs_Poisson_implicit_surface_3.cpp")
     target_link_libraries(compare_mesh_3_vs_Poisson_implicit_surface_3  PRIVATE CGAL::Eigen3_support)
+  endif()
 else()
   message("NOTICE: Tests in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
