@@ -557,7 +557,7 @@ Reconstruction error (mm)
 
 \cgalFigureAnchor{Poisson_surface_reconstruction_3-fig-contouring_bench}
 <center>
-<img src="contouring_bench_4.jpg" style="max-width:80%;"/>
+<img src="contouring_bench.jpg" style="max-width:80%;"/>
 </center>
 \cgalFigureCaptionBegin{Poisson_surface_reconstruction_3-fig-contouring_bench}
 Contouring duration (in s) and reconstruction error (mm)
@@ -700,7 +700,7 @@ Reconstruction error (mm)
 </TABLE>
 
 
-\cgalFigureBegin{Poisson_surface_reconstruction_3-fig-simplification_bench,simplification_bench_2.jpg}
+\cgalFigureBegin{Poisson_surface_reconstruction_3-fig-simplification_bench,simplification_bench.jpg}
 Reconstruction error (mm) against number of points
 for the Lucy point set with 2.9M points
 as well as for simplified versions.
