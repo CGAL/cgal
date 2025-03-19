@@ -237,7 +237,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
     // PointID pos2 = 0;
     pos1 = 0;
     pos2 = 0;
-    cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+    cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
 
     if (possibly(Curve::distance(curve1[0], curve2[0], curve1.traits()) > distance) ||  // Uncertain (A)
         possibly(Curve::distance(curve1.back(), curve2.back(), curve1.traits()) > distance)) {
@@ -253,7 +253,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
                 std::min<typename PointID::IDType>(pos2 + step, curve2.size() - 1);
             if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
                 // step *= 2;
                 increase(step);
             } else if (step == 1) {
@@ -268,7 +268,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
                 std::min<typename PointID::IDType>(pos1 + step, curve1.size() - 1);
             if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
                 // step *= 2;
                 increase(step);
             } else if (step == 1) {
@@ -294,7 +294,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
                 return false;
             }
 
-            cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+            cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
 
             step = 2;
         } else {
@@ -317,19 +317,19 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
                 } else {
                     pos2 = new_pos2;
                 }
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
                 // step *= 2;
                 increase(step);
             } else if (step1_possible) {
                 pos1 = new_pos1;
                 // for some reason, not increasing the stepsize here is slightly
                 // faster step *= 2; increase(step);
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
             } else if (step2_possible) {
                 pos2 = new_pos2;
                 // for some reason, not increasing the stepsize here is slightly
                 // faster step *= 2; increase(step);
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
             } else {
                 decrease(step);
             }
@@ -351,7 +351,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
 
     PointID pos1 = 0;
     PointID pos2 = 0;
-    cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+    cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
 
     if (possibly(Curve::distance(curve1[0], curve2[0], curve1.traits()) > distance) || // Uncertain (A)
         possibly(Curve::distance(curve1.back(), curve2.back(), curve1.traits()) > distance)) {
@@ -366,7 +366,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
               (std::min<typename PointID::IDType>)(pos2 + step, curve2.size() - 1);
             if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
                 // step *= 2;
                 increase(step);
             } else if (step == 1) {
@@ -381,7 +381,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
                 (std::min<typename PointID::IDType>)(pos1 + step, curve1.size() - 1);
             if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
-                cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+                cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
                 // step *= 2;
                 increase(step);
             } else if (step == 1) {
@@ -406,7 +406,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
             } else {
                 return false;
             }
-            cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
+            cert.addPoint({CPoint(pos1, 0), CPoint(pos2, 0)});
 
             step = 2;
         } else {
@@ -421,13 +421,13 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
                 std::min<typename PointID::IDType>(pos2 + step2, curve2.size() - 1);
             if (isFree(curve1, pos1, new_pos1, curve2, pos2, new_pos2)) {
                 if (pos1 != new_pos1 && pos2 != new_pos2) {
-                    cert.addPoint({CPoint(pos1 + 1, 0.), CPoint(pos2 + 1, 0.)});
+                    cert.addPoint({CPoint(pos1 + 1, 0), CPoint(pos2 + 1, 0)});
                 }
                 if (new_pos1 > pos1 + 1) {
-                    cert.addPoint({CPoint(new_pos1, 0.), CPoint(pos2 + 1, 0.)});
+                    cert.addPoint({CPoint(new_pos1, 0), CPoint(pos2 + 1, 0)});
                 }
                 if (new_pos2 > pos2 + 1) {
-                    cert.addPoint({CPoint(new_pos1, 0.), CPoint(new_pos2, 0.)});
+                    cert.addPoint({CPoint(new_pos1, 0), CPoint(new_pos2, 0)});
                 }
                 pos1 = new_pos1;
                 pos2 = new_pos2;
@@ -462,9 +462,9 @@ bool Filter<K>::negative(PointID position1, PointID position2)
         size_t cur_pos1 = pos1 + step - 1;
         if (isPointTooFarFromCurve(curve1[cur_pos1], curve2)) {
             cert.setAnswer(false);
-            cert.addPoint({CPoint(cur_pos1, 0.), CPoint(0, 0.)});
+            cert.addPoint({CPoint(cur_pos1, 0), CPoint(0, 0)});
             cert.addPoint(
-                {CPoint(cur_pos1, 0.), CPoint(curve2.size() - 1, 0.)});
+                {CPoint(cur_pos1, 0), CPoint(curve2.size() - 1, 0)});
             cert.validate();
             return true;
         }
@@ -474,8 +474,8 @@ bool Filter<K>::negative(PointID position1, PointID position2)
         if (isPointTooFarFromCurve(curve2[cur_pos2], curve1)) {
             cert.setAnswer(false);
             cert.addPoint(
-                {CPoint(curve1.size() - 1, 0.), CPoint(cur_pos2, 0.)});
-            cert.addPoint({CPoint(0, 0.), CPoint(cur_pos2, 0.)});
+                {CPoint(curve1.size() - 1, 0), CPoint(cur_pos2, 0)});
+            cert.addPoint({CPoint(0, 0), CPoint(cur_pos2, 0)});
             cert.validate();
             return true;
         }
