@@ -103,14 +103,14 @@ CGAL::Image_3 convert_grid_to_image(const Grid& grid,
 
   // select number type
   WORD_KIND wordkind;
-  if(std::is_floating_point<FT>::value) // @fixme seems meaningless given that vx vy vz are doubles
+  if constexpr(std::is_floating_point_v<FT>)
     wordkind = WK_FLOAT;
   else
     wordkind = WK_FIXED;
 
   // select signed or unsigned
   SIGN sign;
-  if(std::is_signed<FT>::value)
+  if constexpr(std::is_signed_v<FT>)
     sign = SGN_SIGNED;
   else
     sign = SGN_UNSIGNED;
