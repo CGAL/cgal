@@ -106,5 +106,6 @@ Triangulation_2 2D Triangulation
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
 Triangulation_on_sphere_2 2D Triangulation on Sphere
+Vector_graphics_on_surfaces
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
