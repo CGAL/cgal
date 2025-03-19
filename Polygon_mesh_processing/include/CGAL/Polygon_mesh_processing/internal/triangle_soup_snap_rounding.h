@@ -69,8 +69,6 @@ double double_ceil(NT x){
   }
 };
 
-CGAL_MUTEX map_mutex;
-
 template <typename Range>
 class Indexes_range{
   typedef std::remove_cv_t<typename std::iterator_traits<typename Range::iterator>::value_type> Value_type;
@@ -129,6 +127,7 @@ struct Wrapp_id_visitor
 private:
   PolygonRange* triangles;
   Map* map_newtriangles;
+  inline static CGAL_MUTEX map_mutex;
 };
 
 /**
