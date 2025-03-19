@@ -1273,7 +1273,7 @@ acvd_impl(TriangleMesh& tmesh,
 *
 * performs Approximated Centroidal Voronoi Diagram (ACVD) remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 * Note that there is no guarantee that the output mesh will have the same topology as the input.
-* See \ref acvdrem for more details on the algorithm.
+* See \ref acvdrem for more details on the algorithm. This function required the \eigen library.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
