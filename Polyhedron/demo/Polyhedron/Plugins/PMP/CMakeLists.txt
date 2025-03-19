@@ -160,12 +160,12 @@ target_link_libraries(
 
 if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
+    "compilation of  degenerated_faces_plugin"
+    "compilation of  engrave_text_plugin"
+    "compilation of  isotropic_remeshing_plugin"
     "compilation of  join_and_split_plugin"
+    "compilation of  random_perturbation_plugin"
     "compilation of  selection_plugin"
     "compilation of  triangulate_facets_plugin"
-    "compilation of  isotropic_remeshing_plugin"
-    "compilation of  random_perturbation_plugin"
-    "compilation of  engrave_text_plugin"
-    "compilation of  degenerated_faces_plugin"
     PROPERTIES RESOURCE_LOCK Selection_test_resources)
 endif()
