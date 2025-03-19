@@ -182,9 +182,9 @@ private:
 * able to provide such a triangle soup within the number of iterations.
 */
 template <typename PointRange, typename PolygonRange, class NamedParameters>
-bool polygon_soup_snap_rounding_(PointRange &points,
-                       PolygonRange &triangles,
-                       const NamedParameters& np)
+bool polygon_soup_snap_rounding_impl(PointRange &points,
+                                     PolygonRange &triangles,
+                                     const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -497,14 +497,14 @@ bool polygon_soup_snap_rounding_(PointRange &points,
       std::map<size_t, std::vector<size_t> > map_newtriangles;
 #endif
       Wrapp_id_visitor visitor(&triangles, &map_newtriangles);
-      autorefine_triangle_soup_(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()).visitor(visitor));
+      autorefine_triangle_soup(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()).visitor(visitor));
       for(auto &pair: map_newtriangles)
         for(size_t new_id: pair.second)
           triangles[new_id].set_id(pair.first);
     }
     else
     {
-      autorefine_triangle_soup_(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()));
+      autorefine_triangle_soup(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()));
     }
   }
   return false;
@@ -512,24 +512,28 @@ bool polygon_soup_snap_rounding_(PointRange &points,
 
 template <typename PointRange, typename PolygonRange, class NamedParameters>
 bool polygon_soup_snap_rounding(PointRange &soup_points,
-                       PolygonRange &soup_triangles,
-                       const NamedParameters& np)
+                                PolygonRange &soup_triangles,
+                                const NamedParameters& np)
 {
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
     Autorefinement::Default_visitor//default
   > ::type Visitor;
+
   constexpr bool has_visitor = !std::is_same_v<Autorefinement::Default_visitor, Visitor>;
   if constexpr(has_visitor)
   {
+    //If a visitor is provided, we color the triangles with the index of their source to correctly track the modification
     using Triangle = std::remove_cv_t<typename std::iterator_traits<typename PolygonRange::iterator>::value_type>;
     std::vector<Indexes_range<Triangle> > indexes_soup_triangles;
     size_t id=0;
     for(typename PolygonRange::iterator it=soup_triangles.begin(); it!=soup_triangles.end(); ++it)
       indexes_soup_triangles.emplace_back((*it), id++);
     std::cout << "Test 0" << std::endl;
-    bool res=polygon_soup_snap_rounding_(soup_points, indexes_soup_triangles, np);
+
+    bool res=polygon_soup_snap_rounding_impl(soup_points, indexes_soup_triangles, np);
+
     soup_triangles.clear();
     for(const Indexes_range<Triangle> &t: indexes_soup_triangles)
       soup_triangles.push_back({t[0],t[1],t[2]});
@@ -537,7 +541,7 @@ bool polygon_soup_snap_rounding(PointRange &soup_points,
   }
   else
   {
-    return polygon_soup_snap_rounding_(soup_points, soup_triangles, np);
+    return polygon_soup_snap_rounding_impl(soup_points, soup_triangles, np);
   }
 }
 

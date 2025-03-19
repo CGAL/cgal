@@ -986,7 +986,7 @@ template <typename Range>
 class Indexes_range;
 
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-bool autorefine_triangle_soup_(PointRange& soup_points,
+bool autorefine_triangle_soup(PointRange& soup_points,
                                TriangleRange& soup_triangles,
                                const NamedParameters& np = parameters::default_values())
 {
@@ -1690,6 +1690,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  //Dispatch the execution according the apply_iterative_snap_rounding parameter
   const bool do_snap = choose_parameter(get_parameter(np, internal_np::apply_iterative_snap_rounding), false);
   if(do_snap)
   {
@@ -1698,7 +1699,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
   else
   {
-    return internal::autorefine_triangle_soup_(soup_points, soup_triangles, np);
+    return internal::autorefine_triangle_soup(soup_points, soup_triangles, np);
   }
 }
 
