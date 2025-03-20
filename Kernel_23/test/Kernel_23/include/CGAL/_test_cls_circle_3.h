@@ -157,9 +157,9 @@ void _test_circle_construct(const K &k) {
   FT r1 = squared_distance(center(c), p1);
   FT r2 = squared_distance(center(c), p2);
   FT r3 = squared_distance(center(c), p3);
-  assert(r1 == r2);
-  assert(r2 == r3);
-  assert(r3 == c.squared_radius());
+  assert(CGAL::testsuite::approx_equal<FT>(r1,r2));
+  assert(CGAL::testsuite::approx_equal<FT>(r2,r3));
+  assert(CGAL::testsuite::approx_equal<FT>(r3,c.squared_radius()));
 
   if (!nonexact) {
     p1 = Point_3(1.3,0.2,0.1);
