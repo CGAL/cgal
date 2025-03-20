@@ -90,7 +90,7 @@ public:
   static constexpr std::size_t EDGES_PER_CELL = 12;
 
   using Edge_vertices = std::array<vertex_descriptor, 2>;
-  using Cells_incident_to_edge = std::array<cell_descriptor, 4>;  // @todo: not always 4
+  using Cells_incident_to_edge = std::vector<cell_descriptor>;
   using Cell_vertices = std::array<vertex_descriptor, 8>;
   using Cell_edges = std::array<edge_descriptor, 12>;
 
@@ -308,7 +308,20 @@ public:
     std::size_t n2_lex = lex_index(n2_uniform_coords[0], n2_uniform_coords[1], n2_uniform_coords[2], max_depth);
     std::size_t n3_lex = lex_index(n3_uniform_coords[0], n3_uniform_coords[1], n3_uniform_coords[2], max_depth);
 
-    return { n0_lex, n1_lex, n2_lex, n3_lex };
+    Cells_incident_to_edge ics = { n0_lex, n1_lex, n2_lex, n3_lex };
+
+    // With an adaptative octree, there is no reason that all cells around an interesting edge
+    // have the same level. If there is such a jump, we have a duplicate to filter.
+    if (ics.front() == ics.back()) {
+      ics.pop_back(); // Remove the duplicate if the first and last are the same.
+    } else {
+      ics.erase(std::unique(ics.begin(), ics.end()), ics.end());
+    }
+
+    CGAL_postcondition(ics.size() >= 3);
+    CGAL_postcondition(std::set<std::size_t>(ics.begin(), ics.end()).size() == ics.size());
+
+    return ics;
   }
 
   static std::size_t depth(const cell_descriptor c,
