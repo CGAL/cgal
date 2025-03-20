@@ -46,7 +46,7 @@ void DemoWindowItem::paint(QPainter *painter,
   // 2. Draw the edges
   painter->setBrush(QBrush());
   painter->setPen(_edges_pen);
-  for (int i=0; i<_edges.size(); i++) {
+  for (std::size_t  i=0; i<_edges.size(); i++) {
     draw_edge(painter, _edges[i].first, _edges[i].second);
   }
 }
