@@ -522,11 +522,11 @@ public:
   compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
   {
     CGAL_assertion(depth <= m_side_per_depth.size());
-    // an odd coordinate will be first compute at the current depth,
+    // an odd coordinate will be first computed at the current depth,
     // while an even coordinate has already been computed at a previous depth.
     // So while the coordinate is even, we decrease the depth to end up of the first
     // non-even coordinate to compute it (with particular case for bbox limits).
-    // Note that is depth becomes too large, we might end up with incorrect coordinates
+    // Note that if the depth becomes too large, we might end up with incorrect coordinates
     // due to rounding errors.
     if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
     if (gc == 0) return (m_bbox.min)()[ci];

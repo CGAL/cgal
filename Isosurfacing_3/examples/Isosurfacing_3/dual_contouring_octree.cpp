@@ -29,6 +29,8 @@ using Gradients = CGAL::Isosurfacing::Gradient_function_3<Octree>;
 using MC_Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Octree, Values>;
 using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Octree, Values, Gradients>;
 
+namespace IS = CGAL::Isosurfacing;
+
 // Refine one of the octant
 struct Refine_one_eighth
 {
@@ -114,7 +116,9 @@ int main(int argc, char** argv)
   Polygon_range triangles;
 
   // run Dual Contouring
-  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(true));
+  IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                       CGAL::parameters::do_not_triangulate_faces(true)
+                                                                        .constrain_to_cell(false));
 
   // run Marching Cubes
   // ToDo: Does not yet work with topologically correct marching cubes

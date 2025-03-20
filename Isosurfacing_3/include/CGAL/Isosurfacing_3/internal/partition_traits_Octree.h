@@ -394,7 +394,7 @@ public:
                             Sequential_tag)
   {
     for(const edge_descriptor& e : get_leaf_edges(o))
-       f(e);
+      f(e);
   }
 
   template <typename Functor>

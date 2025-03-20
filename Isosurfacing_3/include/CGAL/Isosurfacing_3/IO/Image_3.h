@@ -130,7 +130,7 @@ CGAL::Image_3 convert_grid_to_image(const Grid& grid,
 
   // error handling
   if(im == nullptr || im->data == nullptr)
-    throw std::bad_alloc();  // @todo idk?
+    throw std::bad_alloc();
 
   // set min coordinates
   const Point_3& min_p = vertex(grid.span(), 0);
