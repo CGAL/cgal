@@ -70,8 +70,7 @@ namespace internal {
 
 /*!
 * \ingroup PkgBGLTraversal
-* computes the shortest path between two vertices in a graph `g`.
-* The vertices must belong to the same connected component of `g`.
+* computes the shortest path between two vertices in a graph `g`, where the vertices must belong to the same connected component of `g`.
 *
 * @tparam Graph a model of the concept `HalfedgeListGraph`
 * @tparam OutputIterator an output iterator with value type `boost::graph_traits<Graph>::%halfedge_descriptor`
