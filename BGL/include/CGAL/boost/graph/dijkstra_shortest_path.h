@@ -40,7 +40,7 @@ namespace internal {
   /// that is when the target has been examined through all its incident edges and
   /// the shortest path is thus known.
   template<typename Graph, typename VertexEdgeMap>
-  class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
+  class Stop_at_target_Dijkstra_visitor : public boost::default_dijkstra_visitor
   {
     using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
     using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
@@ -54,15 +54,12 @@ namespace internal {
       : destination_vd(destination_vd), relaxed_edges(relaxed_edges)
     {}
 
-    void initialize_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
-    void examine_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
-    void examine_edge(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+
     void edge_relaxed(const edge_descriptor& e, const Graph& g) const
     {
       relaxed_edges[target(e, g)] = e;
     }
-    void discover_vertex(const vertex_descriptor& /*s*/, const Graph& /*g*/) const {}
-    void edge_not_relaxed(const edge_descriptor& /*e*/, const Graph& /*g*/) const {}
+
     void finish_vertex(const vertex_descriptor& vd, const Graph& /* g*/) const
     {
       if (vd == destination_vd)
