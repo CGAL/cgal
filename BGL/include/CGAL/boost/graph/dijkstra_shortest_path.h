@@ -20,7 +20,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <CGAL/boost/graph/properties.h>
 
-#include <vector>
+#include <list>
 #include <unordered_map>
 
 namespace CGAL {
