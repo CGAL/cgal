@@ -16,16 +16,16 @@ DemoWindowItem::DemoWindowItem()
   : CGAL::Qt::GraphicsItem()
 {
   // Clear
-  _edges.clear();
+  edges_.clear();
 
   // Prepare the pens
-  _poincare_disk_pen.setStyle(Qt::SolidLine);
-  _poincare_disk_pen.setWidth(8);
-  _poincare_disk_pen.setBrush(Qt::black);
+  poincare_disk_pen_.setStyle(Qt::SolidLine);
+  poincare_disk_pen_.setWidth(8);
+  poincare_disk_pen_.setBrush(Qt::black);
 
-  _edges_pen.setStyle(Qt::SolidLine);
-  _edges_pen.setWidth(6);
-  _edges_pen.setBrush(Qt::blue);
+  edges_pen_.setStyle(Qt::SolidLine);
+  edges_pen_.setWidth(6);
+  edges_pen_.setBrush(Qt::blue);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,27 +35,27 @@ void DemoWindowItem::paint(QPainter *painter,
                            QWidget *widget)
 {
   // 1. Draw the poincaré disk
-  QRectF circle_rect = QRectF(-_poincare_disk_radius_in_pixels-3,
-                              -_poincare_disk_radius_in_pixels-3,
-                              2*_poincare_disk_radius_in_pixels+6,
-                              2*_poincare_disk_radius_in_pixels+6);
-  painter->setPen(_poincare_disk_pen);
+  QRectF circle_rect = QRectF(-poincare_disk_radius_in_pixels_-3,
+                              -poincare_disk_radius_in_pixels_-3,
+                              2*poincare_disk_radius_in_pixels_+6,
+                              2*poincare_disk_radius_in_pixels_+6);
+  painter->setPen(poincare_disk_pen_);
   painter->setBrush(QBrush());
   painter->drawEllipse(circle_rect);
 
   // 2. Draw the edges
   painter->setBrush(QBrush());
-  painter->setPen(_edges_pen);
-  for (std::size_t  i=0; i<_edges.size(); i++) {
-    draw_edge(painter, _edges[i].first, _edges[i].second);
+  painter->setPen(edges_pen_);
+  for (std::size_t  i=0; i<edges_.size(); i++) {
+    draw_edge(painter, edges_[i].first, edges_[i].second);
   }
 }
 
 QRectF DemoWindowItem::boundingRect() const {
-  return QRectF(-_poincare_disk_radius_in_pixels-3,
-                -_poincare_disk_radius_in_pixels-3,
-                _poincare_disk_radius_in_pixels+6,
-                _poincare_disk_radius_in_pixels+6);
+  return QRectF(-poincare_disk_radius_in_pixels_-3,
+                -poincare_disk_radius_in_pixels_-3,
+                poincare_disk_radius_in_pixels_+6,
+                poincare_disk_radius_in_pixels_+6);
 }
 
 void DemoWindowItem::modelChanged() {} // Only used by Qt : we don't need to fill it
@@ -76,9 +76,9 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation)
     point_2 = std::get<2>(*it);
     point_3 = std::get<3>(*it);
 
-    _edges.push_back(std::make_pair(point_1, point_2));
-    _edges.push_back(std::make_pair(point_2, point_3));
-    _edges.push_back(std::make_pair(point_3, point_1));
+    edges_.push_back(std::make_pair(point_1, point_2));
+    edges_.push_back(std::make_pair(point_2, point_3));
+    edges_.push_back(std::make_pair(point_3, point_1));
   }
 }
 
@@ -87,8 +87,8 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation)
 void DemoWindowItem::draw_point(QPainter* painter, Point position)
 {
   // First convert the point in doubles, well-scaled
-  double point_x = _poincare_disk_radius_in_pixels * CGAL::to_double(position.x());
-  double point_y = _poincare_disk_radius_in_pixels * CGAL::to_double(position.y());
+  double point_x = poincare_disk_radius_in_pixels_ * CGAL::to_double(position.x());
+  double point_y = poincare_disk_radius_in_pixels_ * CGAL::to_double(position.y());
 
   // Then draw a small circle
   QRectF circle_rect = QRectF(point_x-1, point_y-1, 3, 3);
@@ -161,10 +161,10 @@ void DemoWindowItem::draw_line(QPainter* painter,
                                double point_2_x, double point_2_y)
 {
   // Convert to doubles and scale by the radius of the poincaré disk
-  double src_x = _poincare_disk_radius_in_pixels * point_1_x;
-  double src_y = _poincare_disk_radius_in_pixels * point_1_y;
-  double tar_x = _poincare_disk_radius_in_pixels * point_2_x;
-  double tar_y = _poincare_disk_radius_in_pixels * point_2_y;
+  double src_x = poincare_disk_radius_in_pixels_ * point_1_x;
+  double src_y = poincare_disk_radius_in_pixels_ * point_1_y;
+  double tar_x = poincare_disk_radius_in_pixels_ * point_2_x;
+  double tar_y = poincare_disk_radius_in_pixels_ * point_2_y;
 
   // Actual drawing
   QLineF line (src_x, src_y, tar_x, tar_y);
@@ -180,23 +180,23 @@ void DemoWindowItem::draw_arc(QPainter* painter,
 
   // 1. Scale by the radius of the poincaré disk
 
-  double src_x = _poincare_disk_radius_in_pixels * point_1_x;
-  double src_y = _poincare_disk_radius_in_pixels * point_1_y;
+  double src_x = poincare_disk_radius_in_pixels_ * point_1_x;
+  double src_y = poincare_disk_radius_in_pixels_ * point_1_y;
 
-  double tar_x = _poincare_disk_radius_in_pixels * point_2_x;
-  double tar_y = _poincare_disk_radius_in_pixels * point_2_y;
+  double tar_x = poincare_disk_radius_in_pixels_ * point_2_x;
+  double tar_y = poincare_disk_radius_in_pixels_ * point_2_y;
 
-  double xc = _poincare_disk_radius_in_pixels * center_x;
-  double yc = _poincare_disk_radius_in_pixels * center_y;
+  double xc = poincare_disk_radius_in_pixels_ * center_x;
+  double yc = poincare_disk_radius_in_pixels_ * center_y;
 
   // 2. Define the radius of the circle and the box [xm, xM] \times [ym, yM] bounding the circle
 
   double circle_radius = sqrt((point_1_x-center_x)*(point_1_x-center_x) + (point_1_y-center_y)*(point_1_y-center_y));
 
-  double xm = _poincare_disk_radius_in_pixels * (center_x - circle_radius);
-  double xM = _poincare_disk_radius_in_pixels * (center_x + circle_radius);
-  double ym = _poincare_disk_radius_in_pixels * (center_y - circle_radius);
-  double yM = _poincare_disk_radius_in_pixels * (center_y + circle_radius);
+  double xm = poincare_disk_radius_in_pixels_ * (center_x - circle_radius);
+  double xM = poincare_disk_radius_in_pixels_ * (center_x + circle_radius);
+  double ym = poincare_disk_radius_in_pixels_ * (center_y - circle_radius);
+  double yM = poincare_disk_radius_in_pixels_ * (center_y + circle_radius);
 
   // If the source and the target are too close from each other (less than 10 pixels) or if the circle is very big then just draw a line
   double dist_sq = (src_x-tar_x)*(src_x-tar_x) + (src_y - tar_y)*(src_y-tar_y);
@@ -251,11 +251,11 @@ double DemoWindowItem::deg_angle(double x, double y)
 DemoWindow::DemoWindow() : DemosMainWindow()
 {
   setupUi(this); // Method automatically generated by the ui file and here inherited from Ui::MainWindow. Builds the window and the contents for us...
-  this->graphicsView->setScene(&_scene); // ... in particular graphicsView is already constructed : we just put our scene in it and then do things within the scene
-  _scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  _scene.setSceneRect(-600, -600, 1200, 1200);
-  _item = new DemoWindowItem();
-  _scene.addItem(_item);
+  this->graphicsView->setScene(&scene_); // ... in particular graphicsView is already constructed : we just put our scene in it and then do things within the scene
+  scene_.setItemIndexMethod(QGraphicsScene::NoIndex);
+  scene_.setSceneRect(-600, -600, 1200, 1200);
+  item_ = new DemoWindowItem();
+  scene_.addItem(item_);
   this->graphicsView->scale(0.5, -0.5); // Y-axis inversion
 
   setWindowTitle("Hyperbolic surfaces triangulation 2 Demo");
@@ -263,7 +263,7 @@ DemoWindow::DemoWindow() : DemosMainWindow()
 
 DemoWindowItem& DemoWindow::item()
 {
-  return *_item;
+  return *item_;
 }
 
 void DemoWindow::keyPressEvent(QKeyEvent* event) {}

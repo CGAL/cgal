@@ -44,14 +44,14 @@ private:
   typedef CGAL::Bbox_2                                Bbox_2; // "Bounding box": just a box type used for drawing
 
   // Edges to draw
-  std::vector<std::pair<Point,Point>>                 _edges;
+  std::vector<std::pair<Point,Point> > edges_;
 
   // Pens for drawing
-  QPen                                                _poincare_disk_pen;
-  QPen                                                _edges_pen;
+  QPen poincare_disk_pen_;
+  QPen edges_pen_;
 
   // radius of the poincaré disk
-  const int _poincare_disk_radius_in_pixels = 600;
+  const int poincare_disk_radius_in_pixels_ = 600;
 
   // Approximation treshold: used to decide when to simplify a computation (ex: draw a line
   // instead of an arc if an hyperbolic segment is very small)
@@ -93,8 +93,8 @@ class DemoWindow
   // (Q_OBJECT does not support templates)
 
 private:
-  QGraphicsScene                  _scene;
-  DemoWindowItem*                 _item;
+  QGraphicsScene scene_;
+  DemoWindowItem* item_;
 
 public:
   DemoWindow();
