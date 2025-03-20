@@ -250,7 +250,7 @@ public:
     std::copy(leaf_vertex_set.begin(), leaf_vertex_set.end(), std::back_inserter(vertices));
   }
 
-  static Point_3 point(const vertex_descriptor& v,
+  static Point_3 point(const vertex_descriptor v,
                        const Orthtree& o)
   {
     std::size_t dim_ = std::size_t(1) << o.depth();
@@ -311,13 +311,13 @@ public:
     return { n0_lex, n1_lex, n2_lex, n3_lex };
   }
 
-  static std::size_t depth(const cell_descriptor& c,
+  static std::size_t depth(const cell_descriptor c,
                            const Orthtree& o)
   {
     return o.depth(c);
   }
 
-  static Cell_vertices cell_vertices(const cell_descriptor& c,
+  static Cell_vertices cell_vertices(const cell_descriptor c,
                                      const Orthtree& o)
   {
     std::size_t i, j, k;
@@ -336,7 +336,7 @@ public:
     return v;
   }
 
-  static Cell_edges cell_edges(const cell_descriptor& c,
+  static Cell_edges cell_edges(const cell_descriptor c,
                                const Orthtree& o)
   {
     std::size_t i, j, k;
@@ -361,7 +361,7 @@ public:
                               const Orthtree& o,
                               const CGAL::Sequential_tag)
   {
-    for(const vertex_descriptor& v : get_leaf_vertices(o))
+    for(const vertex_descriptor v : get_leaf_vertices(o))
       f(v);
   }
 
@@ -371,7 +371,7 @@ public:
                               const Orthtree&,
                               const CGAL::Sequential_tag)
   {
-    for (const vertex_descriptor& v : vertices)
+    for (const vertex_descriptor v : vertices)
       f(v);
   }
 
@@ -404,7 +404,7 @@ public:
                             const Orthtree& o,
                             CGAL::Sequential_tag)
   {
-    for (const cell_descriptor& v : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
+    for (const cell_descriptor v : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
       f(v);
   }
 
@@ -419,7 +419,7 @@ public:
       cells.assign(cell_range.begin(), cell_range.end());
     }
 
-    for (const cell_descriptor& v : cells)
+    for (const cell_descriptor v : cells)
       f(v);
   }
 
