@@ -12,6 +12,11 @@
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 -   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
 
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+
+-   Added the function `dijkstra_shortest_path()` which computes the geometrically shortest sequence of halfedges between two vertices.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
