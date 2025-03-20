@@ -617,15 +617,16 @@ public:
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get(CGAL::vertex_point, mesh));
 
-    auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
 
     auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
 
     int number_of_patches = 0;
-    constexpr bool has_face_patch_map = !std::is_same_v<decltype(mesh_face_patch_map), CGAL::internal_np::Param_not_found>;
+    constexpr bool has_face_patch_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_patch_t>::value;
+
     if constexpr (has_face_patch_map) {
+      auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
       int max_patch_id = 0;
       for(auto f : faces(mesh)) {
         max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
@@ -780,6 +781,7 @@ public:
 
     auto point_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map),
                                                    CGAL::Identity_property_map<PointRange_value_type>{});
+    // TODO: face_patch_map is not used
     auto face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
                                                        boost::identity_property_map{});
     using Vertex_handle = typename Triangulation::Vertex_handle;
@@ -3904,7 +3906,6 @@ CGAL::Triangulation_3<Traits, typename Tr::Triangulation_data_structure>
 convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
                            const NamedParameters& np = parameters::default_values())
 {
-  using TDS = typename Tr::Triangulation_data_structure;
   using CCDT = Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>;
 
   CCDT tmp = std::move(ccdt).convert_for_remeshing();
