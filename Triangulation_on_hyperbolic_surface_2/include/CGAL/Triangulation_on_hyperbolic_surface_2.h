@@ -165,7 +165,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
 
   // Make the triangles
   std::vector<Dart_descriptor> dart_of_triangle(size-2);
-  for (int k=0; k<size-2; ++k) {
+  for (std::size_t  k=0; k<size-2; ++k) {
     dart_of_triangle[k] = _combinatorial_map.make_combinatorial_polygon(3);
   }
 
@@ -173,7 +173,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
   Dart_descriptor dart_1, dart_2;
   Point p0, p1, p2, p3;
 
-  for (int k=1; k<size-2; ++k) {
+  for (std::size_t  k=1; k<size-2; ++k) {
     dart_1 = dart_of_triangle[k];
     dart_2 = cw(dart_of_triangle[k-1]);
 
@@ -187,7 +187,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
   }
 
   // Sew the boundary edges and set their cross ratios
-  for (int k1=0; k1<size; k1++) {
+  for (std::size_t  k1=0; k1<size; k1++) {
     std::size_t k2 = domain.paired_side(k1);
 
     p0 = domain.vertex((k1+1)%size);
