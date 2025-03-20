@@ -146,42 +146,14 @@ OutputIterator dijkstra_shortest_path(
   }
   catch (const internal::Dijkstra_end_exception& ){}
 
-  // Walk back from target to source and collect vertices along the way
-  struct vertex_on_path
-  {
-    vertex_descriptor vertex;
-    bool is_constrained;
-  };
-
-  std::vector<vertex_descriptor> constrained_vertices = { vs };
+  std::list<halfedge_descriptor> path;
   vertex_descriptor t = vt;
-  std::vector<vertex_on_path> path;
-  do
-  {
-    const bool is_new_vertex = (constrained_vertices.end()
-      == std::find(constrained_vertices.begin(), constrained_vertices.end(), t));
-
-    vertex_on_path vop;
-    vop.vertex = t;
-    vop.is_constrained = !is_new_vertex;
-    path.push_back(vop);
-
+  do {
+    path.push_front(halfedge(relaxed_edges_map[t],g));
     t = get(pred_pmap, t);
-  }
-  while (t != vs);
-
-  // Add the last vertex
-  vertex_on_path vop;
-  vop.vertex = constrained_vertices.back();
-  vop.is_constrained = true;
-  path.push_back(vop);
-
-  // Display path
-  for (auto path_it = path.begin(); path_it != path.end() - 1; ++path_it)
-  {
-    const auto map_it = vis.relaxed_edges.find(path_it->vertex);
-    if (map_it != vis.relaxed_edges.end())
-      *halfedge_sequence_oit++ = halfedge(map_it->second, g);
+  }while (t != vs);
+  for(auto he : path){
+    *halfedge_sequence_oit++ = he;
   }
   return halfedge_sequence_oit;
 }

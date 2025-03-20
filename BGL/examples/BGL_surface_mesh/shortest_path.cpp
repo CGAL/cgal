@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     }
   }
 
-  std::vector<halfedge_descriptor> halfedge_sequence;
+  std::list<halfedge_descriptor> halfedge_sequence;
   CGAL::dijkstra_shortest_path(vs, vt, sm,
     std::back_inserter(halfedge_sequence));
 
@@ -68,12 +68,13 @@ int main(int argc, char** argv)
   auto vpmap = get(CGAL::vertex_point, sm);
 
   std::ofstream out("shortest_path.polylines.txt");
+  out << halfedge_sequence.size() << " " << get(vpmap, source(halfedge_sequence.front(),sm));
   for (const halfedge_descriptor he : halfedge_sequence)
   {
-    const vertex_descriptor v0 = source(he, sm);
-    const vertex_descriptor v1 = target(he, sm);
-    out << "2 " << get(vpmap, v0) << " " << get(vpmap, v1) << std::endl;
+    const vertex_descriptor v = target(he, sm);
+    out << " " << get(vpmap, v);
   }
+  out << std::endl;
   out.close();
 
   return EXIT_SUCCESS;
