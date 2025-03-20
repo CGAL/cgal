@@ -417,8 +417,10 @@ public:
                             const Orthtree& o,
                             CGAL::Sequential_tag)
   {
-    for (const cell_descriptor v : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
-      f(v);
+    for (const cell_descriptor c : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o))) {
+      const Uniform_coords uc = uniform_coordinates(c, o);
+      f(lex_index(uc[0], uc[1], uc[2], o.depth()));
+    }
   }
 
   template <typename Functor>
@@ -432,8 +434,10 @@ public:
       cells.assign(cell_range.begin(), cell_range.end());
     }
 
-    for (const cell_descriptor v : cells)
-      f(v);
+    for (const cell_descriptor c : cells) {
+      const Uniform_coords uc = uniform_coordinates(c, o);
+      f(lex_index(uc[0], uc[1], uc[2], o.depth()));
+    }
   }
 
 #ifdef CGAL_LINKED_WITH_TBB
