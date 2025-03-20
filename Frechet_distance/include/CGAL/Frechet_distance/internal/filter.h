@@ -134,7 +134,7 @@ bool Filter<K>::isFree(Curve const& curve1, PointID start1, PointID end1,
 }
 
 template <typename K>
-void Filter<K>::increase(size_t& step) { step = std::ceil(1.5 * step); }
+void Filter<K>::increase(size_t& step) { step = static_cast<size_t>(std::ceil(1.5 * step)); }
 
 template <typename K>
 void Filter<K>::decrease(size_t& step) { step /= 2; }
