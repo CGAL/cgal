@@ -183,7 +183,7 @@ try_to_compute_inexact_z0_from_z1_z2_z3(Complex_number<float>& z0,
     return false;
   }
 
-  Complex_number<float> one (1,0);
+  Complex_number<float> one(1.0f, 0.0f);
   Complex_number<float> u = (one - conj(z1*z2))   *   (one - conj(z2*z3));
   float a = -(conj(u*z1)*z3).imag();
   float b = (u*(conj(z3-z1))).imag();
@@ -194,8 +194,8 @@ try_to_compute_inexact_z0_from_z1_z2_z3(Complex_number<float>& z0,
     return false;
   }
 
-  z0.real(2*c/(std::sqrt(b*b-4*a*c)-b));
-  z0.imag(0);
+  z0.real(2.0f * c / (std::sqrt(b * b - 4.0f * a * c) - b));
+  z0.imag(0.0f);
   return true;
 }
 
