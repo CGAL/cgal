@@ -42,8 +42,8 @@ public:
   template<class PointRange, class PairingRange>
   Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings)
   {
-    _vertices = std::vector<Point>(vertices.begin(), vertices.end());
-    _pairings = std::vector<std::size_t>(pairings.begin(), pairings.end());
+    vertices_ = std::vector<Point>(vertices.begin(), vertices.end());
+    pairings_ = std::vector<std::size_t>(pairings.begin(), pairings.end());
   }
 
   // returns the number of vertices (equivalently, the number of sides)
@@ -64,8 +64,8 @@ public:
   bool is_valid() const;
 
 private:
-  std::vector<Point> _vertices;
-  std::vector<std::size_t> _pairings;
+  std::vector<Point> vertices_;
+  std::vector<std::size_t> pairings_;
 };
 
 //template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
@@ -82,7 +82,7 @@ Hyperbolic_fundamental_domain_2<Traits>::
 size() const
 {
   CGAL_precondition(is_valid());
-  return _vertices.size();
+  return vertices_.size();
 }
 
 template<class Traits>
@@ -91,7 +91,7 @@ Hyperbolic_fundamental_domain_2<Traits>::
 vertex(std::size_t index) const
 {
   CGAL_precondition(is_valid());
-  return _vertices[index];
+  return vertices_[index];
 }
 
 template<class Traits>
@@ -100,7 +100,7 @@ Hyperbolic_fundamental_domain_2<Traits>::
 paired_side(std::size_t index) const
 {
   CGAL_precondition(is_valid());
-  return _pairings[index];
+  return pairings_[index];
 }
 
 template<class Traits>
@@ -148,24 +148,24 @@ std::istream&
 Hyperbolic_fundamental_domain_2<Traits>::
 from_stream(std::istream& s)
 {
-  _vertices.clear();
-  _pairings.clear();
+  vertices_.clear();
+  pairings_.clear();
 
   std::string line;
   s >> line;
   std::size_t size = std::stoi(line);
-  _vertices.reserve(size);
-  _pairings.reserve(size);
+  vertices_.reserve(size);
+  pairings_.reserve(size);
 
   for (std::size_t k=0; k<size; ++k) {
     s >> line;
-    _pairings.push_back(std::stoi(line));
+    pairings_.push_back(std::stoi(line));
   }
 
   for (std::size_t k=0; k<size; ++k) {
     Point p;
     s >> p;
-    _vertices.push_back(p);
+    vertices_.push_back(p);
   }
   return s;
 }
@@ -178,7 +178,7 @@ Hyperbolic_fundamental_domain_2<Traits>::
 is_valid()const
 {
   // Get the number of vertices
-  std::size_t n = _vertices.size();
+  std::size_t n = vertices_.size();
 
   // Check that the number of vertices is even
   if (n%2) {
@@ -186,17 +186,17 @@ is_valid()const
   }
 
   // Check that there are as many side pairings as vertices
-  if (_pairings.size() != n) {
+  if (pairings_.size() != n) {
     return false;
   }
 
-  // Check that the _pairings vector encodes a perfect matching of the set {0,1,\dots,n-1}
+  // Check that the pairings_ vector encodes a perfect matching of the set {0,1,\dots,n-1}
   std::vector<bool> already_paired(n);
   for (std::size_t k=0; k<n; ++k) {
     already_paired[k] = false;
   }
   for (std::size_t k=0; k<n; ++k) {
-    std::size_t paired_side = _pairings[k];
+    std::size_t paired_side = pairings_[k];
     if (paired_side>=n) {
       return false;
     }
@@ -208,7 +208,7 @@ is_valid()const
 
   // Check that the vertices all lie within the open unit disk
   for (std::size_t k=0; k<n; ++k) {
-    if (norm(Complex_number(_vertices[k].x(), _vertices[k].y())) >= typename Traits::FT(1)) {
+    if (norm(Complex_number(vertices_[k].x(), vertices_[k].y())) >= typename Traits::FT(1)) {
       return false;
     }
   }

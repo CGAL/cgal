@@ -50,7 +50,7 @@ public:
   Point operator()(const Point& point) const;
 
 private:
-  Complex_number _coefficients[4];
+  Complex_number coefficients_[4];
 };
 
 // returns the composition of two isometries.
@@ -131,7 +131,7 @@ void
 Hyperbolic_isometry_2<Traits>::
 set_coefficient(int index, const Complex_number& coefficient)
 {
-  _coefficients[index] = coefficient;
+  coefficients_[index] = coefficient;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ const typename Traits::Complex&
 Hyperbolic_isometry_2<Traits>::
 get_coefficient(int index) const
 {
-  return _coefficients[index];
+  return coefficients_[index];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,8 +152,8 @@ Hyperbolic_isometry_2<Traits>::
 evaluate(const Point& point) const
 {
   Complex_number z(point.x(), point.y());
-  Complex_number numerator_of_the_result = _coefficients[0] * z + _coefficients[1];
-  Complex_number denominator_of_the_result = _coefficients[2] * z + _coefficients[3];
+  Complex_number numerator_of_the_result = coefficients_[0] * z + coefficients_[1];
+  Complex_number denominator_of_the_result = coefficients_[2] * z + coefficients_[3];
   Complex_number result = numerator_of_the_result / denominator_of_the_result;
   return Point(result.real(), result.imag());
 }
