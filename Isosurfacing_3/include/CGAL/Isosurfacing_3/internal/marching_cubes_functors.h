@@ -116,6 +116,8 @@ std::size_t get_cell_corners(const Domain& domain,
   // collect function values and build index
   std::size_t v_id = 0;
   std::bitset<Domain::VERTICES_PER_CELL> index = 0;
+  static_assert(Domain::VERTICES_PER_CELL == 8);
+
   for(const vertex_descriptor& v : vertices)
   {
     auto val = domain.value(v);
@@ -199,7 +201,6 @@ void MC_construct_triangles(const std::size_t i_case,
     if(Cube_table::triangle_cases[t_index] == -1)
       break;
 
-    // @todo move more of this stuff into the table
     const int eg0 = Cube_table::triangle_cases[t_index + 0];
     const int eg1 = Cube_table::triangle_cases[t_index + 1];
     const int eg2 = Cube_table::triangle_cases[t_index + 2];
@@ -298,7 +299,7 @@ public:
     CGAL_precondition(m_domain.cell_vertices(cell).size() == 8);
     CGAL_precondition(m_domain.cell_edges(cell).size() == 12);
 
-    // @todo for SDFs, we could query at the center of the voxel an early exit
+    // @speed for SDFs, we could query at the center of the voxel an early exit
 
     constexpr std::size_t vpc = Domain::VERTICES_PER_CELL;
 

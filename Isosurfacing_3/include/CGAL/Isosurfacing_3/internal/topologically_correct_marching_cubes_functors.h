@@ -184,7 +184,6 @@ public:
       if(Cube_table::triangle_cases[t_index] == -1)
         break;
 
-      // @todo move more of this stuff into the table
       const int eg0 = Cube_table::triangle_cases[t_index + 0];
       const int eg1 = Cube_table::triangle_cases[t_index + 1];
       const int eg2 = Cube_table::triangle_cases[t_index + 2];

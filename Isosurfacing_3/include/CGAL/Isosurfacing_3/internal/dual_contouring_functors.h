@@ -180,7 +180,6 @@ bool cell_position_QEM(const typename Domain::cell_descriptor& c,
   Eigen_vector_x v_svd;
   v_svd = x_hat + svd.solve(rhs - A * x_hat);
 
-
   if(constrain_to_cell)
   {
     // @todo clamping back doesn't necessarily yield the optimal position within the cell
