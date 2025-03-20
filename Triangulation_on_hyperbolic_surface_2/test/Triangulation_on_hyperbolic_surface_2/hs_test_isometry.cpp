@@ -57,7 +57,10 @@ int main()
 
   Point point (FT(3,11),FT(-1,73));
   Point image_point = h.evaluate(point);
-  assert(image_point==Point(FT(9146011623056232,66567955527962869), FT(-12617302915955411,133135911055925738)));
+  assert(image_point==Point(FT("9146011623056232") /
+                            FT("66567955527962869"),
+                            -FT("12617302915955411") /
+                            FT("133135911055925738")));
 
   std::cout << "printing an isometry for test purposes : " << std::endl << h;
 
