@@ -95,7 +95,8 @@ public:
   using Cell_edges = std::array<edge_descriptor, 12>;
 
 public:
-  static std::set<edge_descriptor> get_leaf_edges(const Orthtree& o) {
+  static std::set<edge_descriptor> get_leaf_edges(const Orthtree& o)
+  {
     std::set<edge_descriptor> leaf_edge_set;
     std::size_t dim = std::size_t(1) << o.depth();
     for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
@@ -133,8 +134,8 @@ public:
         {
           // add to leaf edge set
           std::size_t e_gl = e_glIndex(edge_voxels[0][3],
-            coords_global[0], coords_global[1], coords_global[2],
-            depth);
+                                       coords_global[0], coords_global[1], coords_global[2],
+                                       depth);
           leaf_edge_set.insert({ e_gl, depth });
         }
       }
@@ -143,7 +144,8 @@ public:
     return leaf_edge_set;
   }
 
-  static std::set<vertex_descriptor> get_leaf_vertices(const Orthtree& o) {
+  static std::set<vertex_descriptor> get_leaf_vertices(const Orthtree& o)
+  {
     std::set<vertex_descriptor> leaf_vertex_set;
     for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
     {
@@ -173,7 +175,11 @@ public:
     return leaf_vertex_set;
   }
 
-  static void get_leaves(const Orthtree& o, std::vector<cell_descriptor> &cells, std::vector<edge_descriptor>& edges, std::vector<vertex_descriptor>& vertices) {
+  static void get_leaves(const Orthtree& o,
+                         std::vector<cell_descriptor>& cells,
+                         std::vector<edge_descriptor>& edges,
+                         std::vector<vertex_descriptor>& vertices)
+  {
     std::set<edge_descriptor> leaf_edge_set;
     std::set<vertex_descriptor> leaf_vertex_set;
     std::size_t dim = std::size_t(1) << o.depth();
@@ -230,8 +236,8 @@ public:
         {
           // add to leaf edge set
           std::size_t e_gl = e_glIndex(edge_voxels[0][3],
-            coords_global[0], coords_global[1], coords_global[2],
-            depth);
+                                       coords_global[0], coords_global[1], coords_global[2],
+                                       depth);
           leaf_edge_set.insert({ e_gl, depth });
         }
       }
@@ -245,7 +251,7 @@ public:
   }
 
   static Point_3 point(const vertex_descriptor& v,
-                                          const Orthtree& o)
+                       const Orthtree& o)
   {
     std::size_t dim_ = std::size_t(1) << o.depth();
     const auto bbox = o.bbox(0);
@@ -268,7 +274,7 @@ public:
   }
 
   static Cells_incident_to_edge incident_cells(const edge_descriptor& e_id,
-    const Orthtree& o)
+                                               const Orthtree& o)
   {
     namespace Tables = internal::Cube_table;
 
@@ -306,7 +312,8 @@ public:
   }
 
   static std::size_t depth(const cell_descriptor& c,
-    const Orthtree& o) {
+                           const Orthtree& o)
+  {
     return o.depth(c);
   }
 
@@ -511,18 +518,26 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
 
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_vertex(Functor& f, const Orthtree& o) { return for_each_vertex(f, o, ConcurrencyTag{}); }
+  static void for_each_vertex(Functor& f, const Orthtree& o)
+  { return for_each_vertex(f, o, ConcurrencyTag{}); }
+
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_edge(Functor& f, std::vector<edge_descriptor>& edges, const Orthtree& o) { return for_each_edge(f, edges, o, ConcurrencyTag{}); }
+  static void for_each_edge(Functor& f, std::vector<edge_descriptor>& edges, const Orthtree& o)
+  { return for_each_edge(f, edges, o, ConcurrencyTag{}); }
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_edge(Functor& f, const Orthtree& o) { return for_each_edge(f, o, ConcurrencyTag{}); }
+  static void for_each_edge(Functor& f, const Orthtree& o)
+  { return for_each_edge(f, o, ConcurrencyTag{}); }
+
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_cell(Functor& f, std::vector<cell_descriptor>& cells, const Orthtree& o) { return for_each_cell(f, cells, o, ConcurrencyTag{}); }
+  static void for_each_cell(Functor& f, std::vector<cell_descriptor>& cells, const Orthtree& o)
+  { return for_each_cell(f, cells, o, ConcurrencyTag{}); }
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_cell(Functor& f, const Orthtree& o) { return for_each_cell(f, o, ConcurrencyTag{}); }
+  static void for_each_cell(Functor& f, const Orthtree& o)
+  { return for_each_cell(f, o, ConcurrencyTag{}); }
 
 private:
-  static Uniform_coords uniform_coordinates(Node_index node_index, const Orthtree &o)
+  static Uniform_coords uniform_coordinates(Node_index node_index,
+                                            const Orthtree& o)
   {
     Uniform_coords coords = o.global_coordinates(node_index);
     const std::size_t df = std::size_t(1) << (o.depth() - o.depth(node_index));
@@ -533,22 +548,23 @@ private:
   }
 
   static std::tuple<std::size_t, std::size_t, std::size_t> ijk_index(const std::size_t lex_index,
-    const std::size_t depth)
+                                                                     const std::size_t depth)
   {
     const std::size_t dim = (std::size_t(1) << depth) + 1;
     return std::make_tuple(lex_index % dim, (lex_index / dim) % dim, lex_index / (dim * dim));
   }
+
   // computes unique edge global index.
-// \param e local edge index
-// \param i_idx i-index of cell
-// \param j_idx j-index of cell
-// \param k_idx k-index of cell
-// \param depth of cell
+  // \param e local edge index
+  // \param i_idx i-index of cell
+  // \param j_idx j-index of cell
+  // \param k_idx k-index of cell
+  // \param depth of cell
   static std::size_t e_glIndex(const std::size_t e,
-    const std::size_t i_idx,
-    const std::size_t j_idx,
-    const std::size_t k_idx,
-    const std::size_t depth)
+                               const std::size_t i_idx,
+                               const std::size_t j_idx,
+                               const std::size_t k_idx,
+                               const std::size_t depth)
   {
     const unsigned long long gei_pattern_ = 670526590282893600ull;
     const size_t i = i_idx + (size_t)((gei_pattern_ >> 5 * e) & 1);        // global_edge_id[eg][0];
@@ -560,15 +576,16 @@ private:
   }
 
   static std::size_t lex_index(const std::size_t i,
-    const std::size_t j,
-    const std::size_t k,
-    const std::size_t depth)
+                               const std::size_t j,
+                               const std::size_t k,
+                               const std::size_t depth)
   {
     std::size_t dim = (std::size_t(1) << depth) + 1;
     return k * dim * dim + j * dim + i;
   }
 
-  static std::array<vertex_descriptor, 2> edge_vertices(const edge_descriptor& e_id, const Orthtree& o)
+  static std::array<vertex_descriptor, 2> edge_vertices(const edge_descriptor& e_id,
+                                                        const Orthtree& o)
   {
     namespace Tables = internal::Cube_table;
 
@@ -595,9 +612,9 @@ private:
   }
 
   static Node_index get_node(const std::size_t i,
-    const std::size_t j,
-    const std::size_t k,
-    const Orthtree& o)
+                             const std::size_t j,
+                             const std::size_t k,
+                             const Orthtree& o)
   {
     Node_index node_index = o.root();
     const std::size_t x = i;
@@ -623,7 +640,8 @@ private:
     return node_index;
   }
 
-  Node_index get_node(const std::size_t lex_index, const Orthtree &o) const
+  Node_index get_node(const std::size_t lex_index,
+                      const Orthtree& o) const
   {
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(lex_index, o.depth());
