@@ -657,8 +657,8 @@ private:
     return node_index;
   }
 
-  Node_index get_node(const std::size_t lex_index,
-                      const Orthtree& o) const
+  static Node_index get_node(const std::size_t lex_index,
+                             const Orthtree& o)
   {
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(lex_index, o.depth());
