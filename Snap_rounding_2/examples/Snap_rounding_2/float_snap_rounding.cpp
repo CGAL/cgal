@@ -9,13 +9,14 @@ typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
 typedef Traits_2::Curve_2                                       Segment_2;
 typedef Kernel::Point_2                          Point_2;
 typedef Kernel::FT                               FT;
+typedef std::vector<Point_2 > Polyline_2;
 
 int main()
 {
   std::vector<Point_2> pts;
   std::vector< Segment_2 > segs;
 
-  Kernel::FT e(std::pow(2, -60));
+  FT e(std::pow(2, -60));
 
   segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
   segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
@@ -31,7 +32,7 @@ int main()
   }
   std::cout << "\n\n" << std::endl;
 
-  std::vector< std::vector<Point_2 > > out;
+  std::vector< Polyline_2 > out;
   CGAL::double_snap_rounding_2(segs.begin(), segs.end(), out);
 
   std::cout << "Output" << std::endl;
