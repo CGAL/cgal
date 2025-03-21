@@ -83,10 +83,10 @@ public:
   }
 
   template <typename T>
-  void set_on_constraint(T constraint_id) {
+  void set_on_constraint(T constrained_polyline_id) {
     ++u.on_edge.nb_of_incident_constraints;
-    u.on_edge.c_id.ptr = constraint_id.vl_with_info_pointer();
-    u.on_edge.c_id.id = static_cast<std::size_t>(constraint_id.index());
+    u.on_edge.c_id.ptr = constrained_polyline_id.vl_with_info_pointer();
+    u.on_edge.c_id.id = static_cast<std::size_t>(constrained_polyline_id.index());
   }
 
   int number_of_incident_constraints() const {
@@ -115,9 +115,9 @@ public:
   }
 
   template<typename Triangulation>
-  auto constraint_id(const Triangulation&) const {
+  auto constrained_polyline_id(const Triangulation&) const {
     CGAL_assertion(m_vertex_type != CDT_3_vertex_type::STEINER_IN_FACE);
-    using C_id = typename Triangulation::Constraint_id;
+    using C_id = typename Triangulation::Constrained_polyline_id;
     using size_type = typename Triangulation::size_type;
     using Vertex_list_w_info_ptr = decltype(std::declval<C_id>().vl_with_info_pointer());
     auto ptr = static_cast<Vertex_list_w_info_ptr>(u.on_edge.c_id.ptr);
