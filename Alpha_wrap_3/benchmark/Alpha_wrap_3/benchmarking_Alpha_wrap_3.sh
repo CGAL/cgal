@@ -5,15 +5,14 @@ output_dir=$3
 alpha_value=$4
 timeout_value=$5
 virtual_thread=$6
-commit_hash=$7
-mode=${8:-""}
+mode=${7:-""}
 
 SCRIPT_DIR="$CGAL_directory/Alpha_wrap_3/benchmark/Alpha_wrap_3"
 BUILD_DIR=${BUILD_DIR:-"/app/build/Alpha_wrap_3"}
 
-mkdir -p $output_dir/Robustness/results/$commit_hash
-mkdir -p $output_dir/Performance/results/$commit_hash
-mkdir -p $output_dir/Quality/results/$commit_hash
+mkdir -p $output_dir/Robustness/results
+mkdir -p $output_dir/Performance/results
+mkdir -p $output_dir/Quality/results
 
 function compute_benchmark_data() {
     local input_file="$1"
@@ -24,15 +23,15 @@ function compute_benchmark_data() {
     
     python3 $SCRIPT_DIR/Robustness/compute_robustness_benchmark_data.py \
     -e $BUILD_DIR/robustness_benchmark -i "$input_file" -a $alpha_value -t $timeout_value \
-    > $output_dir/Robustness/results/$commit_hash/$filename.log
+    > $output_dir/Robustness/results/$filename.log
     
     python3 $SCRIPT_DIR/Performance/compute_performance_benchmark_data.py \
     -e $BUILD_DIR/performance_benchmark -i "$input_file" -a $alpha_value \
-    > $output_dir/Performance/results/$commit_hash/$filename.log
+    > $output_dir/Performance/results/$filename.log
     
     python3 $SCRIPT_DIR/Quality/compute_quality_benchmark_data.py \
     -e $BUILD_DIR/quality_benchmark -i "$input_file" -a $alpha_value \
-    > $output_dir/Quality/results/$commit_hash/$filename.log
+    > $output_dir/Quality/results/$filename.log
     
     echo "Benchmarks completed for: $filename"
 }
