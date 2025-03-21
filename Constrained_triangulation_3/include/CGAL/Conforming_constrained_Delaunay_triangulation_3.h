@@ -860,12 +860,12 @@ public:
       stack.pop();
       ch->set_subdomain_index(0);
       for(int i = 0; i < 4; ++i) {
-              if(ch->is_facet_on_surface(i))
-                continue;
-              auto n = ch->neighbor(i);
-              if(n->subdomain_index() == 1) {
-                stack.push(n);
-              }
+        if(ch->is_facet_on_surface(i))
+          continue;
+        auto n = ch->neighbor(i);
+        if(n->subdomain_index() == 1) {
+          stack.push(n);
+        }
       }
     }
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
