@@ -152,7 +152,7 @@ void _test_circle_construct(const K &k) {
   Point_3 p1, p2, p3;
   p1 = Point_3(1,0,0);
   p2 = Point_3(0,1,0);
-  p3 = Point_3(0,0,1);
+  p3 = Point_3(-1,0,0);
   Circle_3 c = theConstruct_circle_3(p1, p2, p3);
   FT r1 = squared_distance(center(c), p1);
   FT r2 = squared_distance(center(c), p2);
