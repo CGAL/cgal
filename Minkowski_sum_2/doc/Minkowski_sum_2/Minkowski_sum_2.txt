@@ -235,7 +235,7 @@ The program below computes the Minkowski sum of two polygons that are
 read from an input file. In this case the sum may contain holes. The
 Minkowski sum, for example, of the polygons described in the default
 input file `room_star.dat` is not simple and contains four holes,
-as illustrated in Figure \cgalFigureRef{mink_figsum_holes}.
+as illustrated in \cgalFigureRef{mink_figsum_holes}.
 
 \cgalExample{Minkowski_sum_2/sum_with_holes.cpp}
 
@@ -503,7 +503,7 @@ template to compute Boolean set operations more efficiently, we apply a
 simple approximation scheme such that each irrational line segment is
 approximated by two rational segments.
 
-Consider the example depicted in Figure \cgalFigureRef{mink_figapprox_offset},
+Consider the example depicted in \cgalFigureRef{mink_figapprox_offset},
 where the exact offset edge \f$ o_1 o_2\f$ is obtained by shifting the
 polygon edge \f$ p_1 p_2\f$ by a vector of length \f$ r\f$ that forms an
 angle \f$ \phi\f$ with the \f$ x\f$-axis. We select two points

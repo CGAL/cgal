@@ -1379,7 +1379,7 @@ CGAL_Kernel_obj(Point_3)
 }
 
 
-// This functor selects the i'th element in a vector of Object's
+// This functor selects the i-th element in a vector of Object's
 // and casts it to what is in the Object
 
 template <typename T2>
@@ -1422,7 +1422,7 @@ struct Ith {
   }
 };
 
-// This functor selects the i'th element in a vector of T2's
+// This functor selects the i-th element in a vector of T2's
 template <typename T2>
 struct Ith_for_intersection {
   typedef T2 result_type;
@@ -1440,7 +1440,7 @@ struct Ith_for_intersection {
   }
 };
 
-// This functor selects the i'th element in a vector of T2's
+// This functor selects the i-th element in a vector of T2's
 template <typename T2>
 struct Ith_for_intersection_with_variant {
   typedef T2 result_type;
