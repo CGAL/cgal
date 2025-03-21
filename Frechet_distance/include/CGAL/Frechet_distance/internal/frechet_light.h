@@ -166,7 +166,6 @@ private:
     Lambda min1_frac, min2_frac;
     QSimpleInterval qsimple1, qsimple2;
     CInterval out1, out2;
-    // TODO: can those be made members of out1, out2?
     bool out1_valid = false, out2_valid = false;
 
     // qsimple interval calculation functions
@@ -381,6 +380,7 @@ inline bool FrechetLight<C>::updateQSimpleInterval(QSimpleInterval& qsimple,
                                    curve.curve_length(mid, max));
         // TODO: return upper bound on error of fixed_point displacement to then
         // overestimate the mid_dist distance.
+        // might be a slight improvement but not critical
         auto fixed_point = fixed_curve.interpolate_at(fixed);
         auto mid_dist = Curve::distance(fixed_point, curve[mid], curve.traits());
 
@@ -509,7 +509,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         // from here on, regular mode -> IndexType = PointID
 
         // otherwise we have to compute the intersection interval:
-        // TODO: bad style: stripping down information added by getInterval
+        // TODO: uncritical for correctness or speed but unelegant coding style: stripping down information added by getInterval
         CInterval temp_interval = FrechetLight::getInterval<IndexType>(
             fixed_curve, fixed, curve, cur);
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
@@ -1319,7 +1319,7 @@ auto FrechetLight<C>::computeInitialInputs() -> Inputs
 template <typename C>
 std::pair<double,double> FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
-  //TODO: no interval here for split?
+  //TODO: In a future version, the epsilon could be an FT type, but for now we keep it simple
     double min = 0;
     double max = curve1.getUpperBoundDistance(curve2);
 
@@ -1366,7 +1366,9 @@ bool FrechetLight<C>::isOnUpperLeft(const CPosition& pt) const
     return pt[0] == 0 || pt[1] == curve_pair[1]->size() - 1;
 }
 
-// TODO by André: I am not sure whether this is currently fine using interval arithmetic, but this only affects the certificates, which are currently not active. This needs to be checked in case certificates are used in the future.
+// TODO by André: I am not sure whether this is currently fine using interval arithmetic,
+// but this only affects the certificates, which are currently not active.
+// This needs to be checked in case certificates are used in the future.
 template <typename C>
 Certificate<C>& FrechetLight<C>::computeCertificate()
 {
