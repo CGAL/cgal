@@ -15,7 +15,6 @@ int main() {
 
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 
 #include "arr_conics.h"

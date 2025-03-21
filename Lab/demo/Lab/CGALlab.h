@@ -20,7 +20,7 @@ public:
    * Constructor : calls the constructor of QApplication
    */
   CGAL_Lab(int& argc, char **argv,
-                  QString application_name = "Polyhedron_3 demo",
+                  QString application_name = "CGAL Lab",
                   QString main_window_title = "CGAL Lab",
                   QStringList input_keywords = QStringList());
 

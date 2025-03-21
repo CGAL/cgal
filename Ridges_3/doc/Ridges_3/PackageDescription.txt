@@ -5,7 +5,6 @@
 
 /*!
 \addtogroup PkgRidges3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges3}
 \cgalPkgPicture{RidgesMechPartDetail.png}
 \cgalPkgSummaryBegin

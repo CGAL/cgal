@@ -56,7 +56,7 @@ void nngIpelet::protected_run(int fn)
   int ret_val;
   int kNeighbors=1;
 
-  boost::tie(ret_val,kNeighbors)=request_value_from_user<int>((boost::format("Number of nearest neighbors (default : k=%1%)") % kNeighbors).str() );
+  std::tie(ret_val,kNeighbors)=request_value_from_user<int>((boost::format("Number of nearest neighbors (default : k=%1%)") % kNeighbors).str() );
   if (ret_val == -1) return;
   if (ret_val == 0) kNeighbors=1;
 

@@ -27,7 +27,6 @@
 
 /*!
 \addtogroup PkgTriangulation2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Triangulations,PkgTriangulation2}
 \cgalPkgPicture{cdt2d-small.png}
 \cgalPkgSummaryBegin

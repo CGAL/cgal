@@ -72,7 +72,7 @@ int main (int, char**)
   Point_set::Property_map<int> intensity;
   bool okay;
 
-  boost::tie (intensity, okay) = ps3.add_property_map<int>("intensity", 0);
+  std::tie (intensity, okay) = ps3.add_property_map<int>("intensity", 0);
   assert (okay);
 
   Point_set::iterator it = ps3.insert (Point (double(0), double(1), double(2)),

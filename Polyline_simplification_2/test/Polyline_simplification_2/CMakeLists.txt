@@ -8,5 +8,6 @@ project(Polyline_simplification_2_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "issue-5774.cpp" )
+create_single_source_cgal_program( "issue-8735.cpp" )
 create_single_source_cgal_program( "simplify_polygon_test.cpp" )
 create_single_source_cgal_program( "simplify_polyline_with_duplicate_points.cpp" )

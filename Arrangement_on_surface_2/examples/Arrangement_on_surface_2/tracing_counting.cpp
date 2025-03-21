@@ -3,7 +3,6 @@
 
 #include <list>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_tracing_traits_2.h>
 #include <CGAL/Arr_counting_traits_2.h>
 

@@ -83,7 +83,7 @@ void generator::protected_run(int fn)
     origin= Kernel::Vector_2((bbox.xmin()+bbox.xmax())/2,(bbox.ymin()+bbox.ymax())/2);
     if (size<1){
       size=200;
-      //boost::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
+      //std::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
       //if (ret_val == -1) return;
       //if (ret_val == 0) size=200;
       origin =  Kernel::Vector_2(200,200);
@@ -92,7 +92,7 @@ void generator::protected_run(int fn)
 
   int nbelements=30;
 
-  boost::tie(ret_val,nbelements)=request_value_from_user<int>((boost::format("Number of elements (default : %1%)") % nbelements).str() );
+  std::tie(ret_val,nbelements)=request_value_from_user<int>((boost::format("Number of elements (default : %1%)") % nbelements).str() );
   if (ret_val == -1) return;
   if (ret_val == 0) nbelements=30;
 

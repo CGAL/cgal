@@ -963,7 +963,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   }
   CGAL_assertion(num_vertices(P)>=3);
   typename boost::graph_traits<Polyhedron>::vertex_iterator b,e;
-  boost::tie(b,e) = vertices(P);
+  std::tie(b,e) = vertices(P);
   if (num_vertices(P) == 3){
     typename boost::property_map<Polyhedron, vertex_point_t>::type vpmap  = get(CGAL::vertex_point, P);
     typedef typename Traits::Triangle_3                Triangle_3;

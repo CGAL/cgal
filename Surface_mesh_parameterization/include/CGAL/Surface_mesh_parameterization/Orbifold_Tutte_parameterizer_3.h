@@ -121,7 +121,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
 
   // Since the cones are unique, we only need to loop all the vertices once
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit) {
     for(std::size_t i=0; i<cones.size(); ++i) {
       TM_vertex_descriptor vd = *vit;
@@ -154,7 +154,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   int counter = 0;
 
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit)
   {
     TM_vertex_descriptor vd = *vit;

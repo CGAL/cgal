@@ -566,7 +566,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       }
     }
     if(verbose)
-      qCDebug(qlog_cgallab_plugins) << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qCDebug(qlog_cgallab_plugins) << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();

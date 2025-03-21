@@ -75,7 +75,7 @@ struct test_emptiness : public Surface_fixture
     m.remove_vertex(iv);
     assert(m.is_removed(iv));
     Sm::Vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = m.vertices(); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = m.vertices(); vb != ve; ++vb) {
       Sm::Vertex_around_target_range vr = m.vertices_around_target(m.halfedge(*vb));
       assert(!is_empty_range(std::begin(vr), std::end(vr)));
     }

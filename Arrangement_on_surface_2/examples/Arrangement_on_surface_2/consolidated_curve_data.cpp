@@ -2,7 +2,6 @@
 // Associating a color attribute with segments using the consolidated
 // curve-data traits.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 
 #include "arr_exact_construction_segments.h"

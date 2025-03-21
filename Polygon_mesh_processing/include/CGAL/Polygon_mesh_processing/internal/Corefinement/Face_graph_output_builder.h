@@ -2515,7 +2515,7 @@ public:
               typedef std::pair<halfedge_descriptor, halfedge_descriptor> Hedge_pair;
               std::vector< Hedge_pair> hedges_to_link;
               typename CGAL::Halfedge_around_target_iterator<TriangleMesh> hit, end;
-              boost::tie(hit,end) = halfedges_around_target(vd, tm1);
+              std::tie(hit,end) = halfedges_around_target(vd, tm1);
               for(; hit!=end; ++hit)
               {
                 // look for a border halfedge incident to the non-manifold vertex that will not be

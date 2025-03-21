@@ -127,7 +127,7 @@ public:
           continue;
 
         std::vector<float>::iterator min_it, max_it;
-        boost::tie(min_it, max_it)
+        std::tie(min_it, max_it)
           = boost::minmax_element (hori.begin(), hori.end());
 
         std::vector<bool> occupy (1 + (std::size_t)((*max_it - *min_it) / grid.resolution()), false);

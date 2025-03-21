@@ -18,7 +18,6 @@ template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base
 {
-  Node_1() {} // // it is important `time_stamp_` is not initialized
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -49,7 +48,7 @@ struct Node_1
   }
   ///@}
   int m_erase_counter;
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 class Node_2

@@ -220,6 +220,10 @@ class Compact_container
                              CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
+
+  template <typename U> using EraseCounterStrategy =
+      internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
+
   typedef Compact_container <T, Al, Ip, Ts>         Self;
   typedef Compact_container_traits <T>              Traits;
 public:
@@ -354,7 +358,7 @@ public:
     return all_items[block_number].first[index_in_block];
   }
 
-  friend void swap(Compact_container& a, Compact_container b) {
+  friend void swap(Compact_container& a, Compact_container b) noexcept {
     a.swap(b);
   }
 
@@ -390,22 +394,16 @@ public:
   // (just forward the arguments to the constructor, to optimize a copy).
   template < typename... Args >
   iterator
-  emplace(const Args&... args)
+  emplace(Args&&... args)
   {
     if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    new (ret) value_type(args...);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
+    const auto ts = Time_stamper::time_stamp(ret);
+    new (ret) value_type(std::forward<Args>(args)...);
+    Time_stamper::restore_timestamp(ret, ts);
     Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
@@ -414,24 +412,7 @@ public:
 
   iterator insert(const T &t)
   {
-    if (free_list == nullptr)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
-    Time_stamper::set_time_stamp(ret, time_stamp);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    return iterator(ret, 0);
+    return emplace(t);
   }
 
   template < class InputIterator >
@@ -450,22 +431,14 @@ public:
 
   void erase(iterator x)
   {
-    typedef internal::Erase_counter_strategy<
-      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+    auto ptr = &*x;
+    CGAL_precondition(type(ptr) == USED);
+    EraseCounterStrategy<T>::increment_erase_counter(*x);
+    const auto ts = Time_stamper::time_stamp(ptr);
+    std::allocator_traits<allocator_type>::destroy(alloc, ptr);
+    Time_stamper::restore_timestamp(ptr, ts);
 
-    CGAL_precondition(type(&*x) == USED);
-    EraseCounterStrategy::increment_erase_counter(*x);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = x->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-    if constexpr (Time_stamper::has_timestamp) {
-      x->set_time_stamp(ts);
-    }
-
-    put_on_free_list(&*x);
+    put_on_free_list(ptr);
     --size_;
   }
 
@@ -598,25 +571,7 @@ public:
     while ( capacity_<n )
     { // Pb because the order of free list is no more the order of
       // allocate_new_block();
-      pointer new_block = alloc.allocate(block_size + 2);
-      all_items.push_back(std::make_pair(new_block, block_size + 2));
-      capacity_ += block_size;
-      // We insert this new block at the end.
-      if (last_item == nullptr) // First time
-      {
-        first_item = new_block;
-        last_item  = new_block + block_size + 1;
-        set_type(first_item, nullptr, START_END);
-      }
-      else
-      {
-        set_type(last_item, new_block, BLOCK_BOUNDARY);
-        set_type(new_block, last_item, BLOCK_BOUNDARY);
-        last_item = new_block + block_size + 1;
-      }
-      set_type(last_item, nullptr, START_END);
-      // Increase the block_size for the next time.
-      Increment_policy::increase_size(*this);
+      push_back_new_block();
     }
 
     // Now we put all the new elements on freelist, starting from the last block
@@ -627,16 +582,18 @@ public:
     do
     {
       --curblock; // We are sure we have at least create a new block
-      pointer new_block = all_items[curblock].first;
-      for (size_type i = all_items[curblock].second-2; i >= 1; --i)
-        put_on_free_list(new_block + i);
+      auto [new_block, block_size] = all_items[curblock];
+      put_block_on_free_list(new_block, block_size - 2);
     }
     while ( curblock>lastblock );
   }
 
 private:
 
-  void allocate_new_block();
+std::pair<pointer, size_type> push_back_new_block();
+void put_block_on_free_list(pointer new_block, size_type block_size);
+
+void allocate_new_block();
 
   void put_on_free_list(pointer x)
   {
@@ -697,7 +654,7 @@ public:
   static bool is_begin_or_end(const_pointer ptr)
   { return type(ptr)==START_END; }
 
-  void swap(Self &c)
+  void swap(Self &c) noexcept
   {
     std::swap(alloc, c.alloc);
     std::swap(capacity_, c.capacity_);
@@ -803,23 +760,13 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
 }
 
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
-void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
+auto Compact_container<T, Allocator, Increment_policy, TimeStamper>::push_back_new_block()
+    -> std::pair<pointer, size_type>
 {
-  typedef internal::Erase_counter_strategy<
-    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-
   pointer new_block = alloc.allocate(block_size + 2);
+  std::pair<pointer, size_type> result{new_block, block_size};
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
-  // We don't touch the first and the last one.
-  // We mark them free in reverse order, so that the insertion order
-  // will correspond to the iterator order...
-  for (size_type i = block_size; i >= 1; --i)
-  {
-    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
-    Time_stamper::initialize_time_stamp(new_block + i);
-    put_on_free_list(new_block + i);
-  }
   // We insert this new block at the end.
   if (last_item == nullptr) // First time
   {
@@ -836,7 +783,32 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   set_type(last_item, nullptr, START_END);
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);
+  return result;
 }
+
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::
+put_block_on_free_list(pointer new_block, size_type block_size)
+{
+  // The block actually has a size==block_size+2.
+  // We don't touch the first and the last one.
+  // We mark them free in reverse order, so that the insertion order
+  // will correspond to the iterator order...
+  for (size_type i = block_size; i >= 1; --i)
+  {
+    EraseCounterStrategy<T>::set_erase_counter(*(new_block + i), 0);
+    Time_stamper::initialize_time_stamp(new_block + i);
+    put_on_free_list(new_block + i);
+  }
+}
+
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
+{
+  auto [new_block, block_size] = push_back_new_block();
+  put_block_on_free_list(new_block, block_size);
+}
+
 
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline

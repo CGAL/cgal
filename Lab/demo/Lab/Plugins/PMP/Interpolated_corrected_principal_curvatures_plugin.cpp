@@ -67,7 +67,7 @@ void compute(SMesh* sMesh,
   bool created = false;
   SMesh::Property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+  std::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     ("v:principal_curvatures_and_directions_map", { 0, 0,
         Vector(0,0,0),
         Vector(0,0,0) });
