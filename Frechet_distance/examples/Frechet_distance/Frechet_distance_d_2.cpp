@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
       std::ifstream in((argc > 1) ? argv[2] : CGAL::data_file_path("wkt/LetterAbis.wkt"));
       //CGAL::IO::read_linestring_WKT(in, polylineB);
     }
-    bool res = CGAL::is_Frechet_distance_larger(polylineA, polylineB, 0.001, CGAL::parameters::geom_traits(Traits()));
+    bool res = CGAL::is_Frechet_distance_larger(polylineA, polylineB, 0.001);
     std::cout << std::boolalpha << res << std::endl;
     return 0;
 }

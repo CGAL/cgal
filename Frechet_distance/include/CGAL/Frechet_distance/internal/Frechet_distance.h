@@ -165,8 +165,6 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         }
         else
         {
-          // static_assert(false, "not implemented");
-
           using AT = Frechet_distance::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
           using ET = Traits;
           using Filtered_traits = std::tuple<typename Traits::Point_d,AT,ET>;

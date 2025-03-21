@@ -31,18 +31,6 @@ namespace CGAL
 #ifdef CGAL_EIGEN3_ENABLED
 template<class Dim> struct Epick_d;
 template<class Dim> struct Epeck_d;
-
-template < typename P, int D>
-struct Ambient_dimension<P, Epick_d<Dimension_tag<D>>>
-{
-  static constexpr int value = D;
-};
-
-template < typename P, int D>
-struct Ambient_dimension<P, Epeck_d<Dimension_tag<D>>>
-{
-  static constexpr int value = D;
-};
 #endif
 
 namespace internal
@@ -75,6 +63,19 @@ namespace internal
   {
     using type = typename Get_default_traits_base<P>::type;
   };
+
+#ifdef CGAL_EIGEN3_ENABLED
+  template <typename P, int dim>
+  struct Get_default_traits<P, Epick_d<Dimension_tag<dim>>>
+  {
+    using type = Frechet_distance_traits_d<typename Kernel_traits<P>::Kernel>;
+  };
+  template <typename P, int dim>
+  struct Get_default_traits<P, Epeck_d<Dimension_tag<dim>>>
+  {
+    using type = Frechet_distance_traits_d<typename Kernel_traits<P>::Kernel>;
+  };
+  #endif
 
   template <class P>
   struct Get_default_traits<P, ::CGAL::internal_kernel_traits::Dummy_kernel<P>>
