@@ -124,7 +124,6 @@ public:
     {
       if constexpr (Approximate_traits::Dimension::value<=3)
       {
-        // TODO: this assumes that input interval are all tight --> need a PM!    @SL
         using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
                                          typename Kernel_traits<Rational_point>::Kernel, NT_converter<distance_t,double>>;
         I2R convert;
@@ -189,7 +188,7 @@ public:
             else if constexpr (dim==3)
               this->points.emplace_back(coords[0], coords[1], coords[2]);
             else
-              this->points.emplace_back(coords.begin(), coords.end());
+              this->points.emplace_back(coords);
           }
           else
           {
