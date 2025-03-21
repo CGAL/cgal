@@ -365,7 +365,7 @@ public:
     // - The end value is when `constraint_it` is the end iterator of `constraints_set`.
     //   In that case `vertex_it` must be singular.
     //
-    // - Otherwise all members must be valid pointers or dereferencable iterators.
+    // - Otherwise all members must be valid pointers or dereferenceable iterators.
 
     bool is_singular() const {
       return hierarchy == nullptr;

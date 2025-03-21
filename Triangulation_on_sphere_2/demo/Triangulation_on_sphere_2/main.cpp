@@ -69,7 +69,7 @@ public slots:
     if (list.size()!=4){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of 4 doubles: The radius first, then the coordinates of the center.");
+      msgBox->setText("ERROR : Input should consist of 4 doubles: The radius first, then the coordinates of the center.");
       msgBox->exec();
       return;
     }

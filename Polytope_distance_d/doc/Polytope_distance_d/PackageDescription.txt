@@ -4,7 +4,6 @@
 
 /*!
 \addtogroup PkgPolytopeDistanceDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Optimal Distances,PkgPolytopeDistanceD}
 \cgalPkgPicture{dist.png}
 \cgalPkgSummaryBegin

@@ -49,6 +49,7 @@ create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
 create_single_source_cgal_program( "test_meshing_determinism.cpp" )
 create_single_source_cgal_program( "test_meshing_without_features_determinism.cpp" )
 create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
+create_single_source_cgal_program( "test_mesh_3_issue_8773.cpp" )
 create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step_with_features.cpp" )
@@ -79,6 +80,7 @@ foreach(target
     test_meshing_determinism
     test_meshing_without_features_determinism
     test_mesh_3_issue_1554
+    test_mesh_3_issue_8773
     test_mesh_polyhedral_domain_with_features_deprecated
     test_mesh_cell_base_3
     test_meshing_with_one_step
@@ -108,6 +110,7 @@ if(TARGET CGAL::TBB_support)
       test_meshing_determinism
       test_meshing_without_features_determinism
       test_mesh_3_issue_1554
+      test_mesh_3_issue_8773
       test_mesh_polyhedral_domain_with_features_deprecated
       test_mesh_cell_base_3
       test_min_edge_length
@@ -129,6 +132,7 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_meshing_polyhedral_complex"
       "execution   of  test_mesh_capsule_var_distance_bound"
       "execution   of  test_mesh_3_issue_1554"
+      "execution   of  test_mesh_3_issue_8773"
       "execution   of  test_mesh_polyhedral_domain_with_features_deprecated"
       "execution   of  test_mesh_cell_base_3"
       PROPERTY RUN_SERIAL 1)

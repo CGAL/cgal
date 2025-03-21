@@ -22,7 +22,6 @@
 
 /*!
 \addtogroup PkgCircularKernel2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Circular Geometry Kernel,PkgCircularKernel2}
 \cgalPkgPicture{Boolean_operation_detail.png}
 \cgalPkgSummaryBegin
