@@ -78,8 +78,6 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
   // remove complex edge before splitting
   const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
-  if (dimension == 1)
-    c3t3.remove_from_complex(e);
 
   struct Cell_info {
     Subdomain_index subdomain_index_;
@@ -125,6 +123,9 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     ++circ;
   }
   while (circ != end);
+
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
 
   for(Cell_handle c : inc_cells)
   {
