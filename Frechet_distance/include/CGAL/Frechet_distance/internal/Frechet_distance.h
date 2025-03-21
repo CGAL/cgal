@@ -79,7 +79,6 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         using Filtered_traits = std::pair<AT,ET>;
 
         return Curve<Filtered_traits, true>(point_range, traits);
-        //return Curve<Traits, false>(point_range, traits);
       }
     }
     else
@@ -104,8 +103,10 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-        //TODO: not implemented
-        return Curve<Traits, false>(point_range, traits);
+        using AT = Frechet_distance::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+        using ET = Traits;
+        using Filtered_traits = std::tuple<typename Traits::Point_d,AT,ET>;
+        return Curve<Filtered_traits, true>(point_range, traits);
       }
     }
   }
@@ -135,8 +136,11 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         }
         else
         {
-          //TODO: not implemented  @SL ??
-          return Curve<Traits, false>(point_range, traits);
+          using AT = Frechet_distance::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+          using ET = Frechet_distance::internal::Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
+          using Filtered_traits = std::pair<AT,ET>;
+
+          return Curve<Filtered_traits, true>(point_range, traits);
         }
       }
       else
@@ -161,8 +165,12 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         }
         else
         {
-          //TODO: not implemented
-          return Curve<Traits, false>(point_range, traits);
+          // static_assert(false, "not implemented");
+
+          using AT = Frechet_distance::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+          using ET = Traits;
+          using Filtered_traits = std::tuple<typename Traits::Point_d,AT,ET>;
+          return Curve<Filtered_traits, true>(point_range, traits);
         }
       }
     }
