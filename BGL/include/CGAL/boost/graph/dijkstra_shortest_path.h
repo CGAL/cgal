@@ -85,7 +85,7 @@ namespace internal {
 *
 *  \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_weight_map}
-*    \cgalParamDescription{a property map associating to each edge in the graph its weight or ``length''.
+*    \cgalParamDescription{a property map associating to each edge in the graph its weight or "length".
 *                          The weights must all be non-negative.}
 *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
 *                   as key type and a value type which as specified in the named parameter `distance_map`of the function
