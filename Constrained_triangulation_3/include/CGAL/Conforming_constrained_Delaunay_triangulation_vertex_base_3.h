@@ -87,7 +87,7 @@ public:
       break;
     case CDT_3_vertex_type::STEINER_ON_EDGE:
       set_dimension(1);
-      set_index(ccdt_3_data().constraint_id(tr).index());
+      set_index(ccdt_3_data().constrained_polyline_id(tr).index());
       break;
     case CDT_3_vertex_type::STEINER_IN_FACE:
       set_dimension(2);

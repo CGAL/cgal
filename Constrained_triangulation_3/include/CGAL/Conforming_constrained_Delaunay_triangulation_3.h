@@ -1084,7 +1084,7 @@ protected:
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 public:
-  using Constraint_id = typename Constraint_hierarchy::Constraint_id;
+  using Constrained_polyline_id = typename Constraint_hierarchy::Constraint_id;
 
 protected:
 
@@ -1145,7 +1145,7 @@ protected:
 
     void hide_point(Cell_handle, const Point_3 &) const {}
 
-    void insert_Steiner_point_on_constraint(Constraint_id constraint,
+    void insert_Steiner_point_on_constraint(Constrained_polyline_id constraint,
                                             Vertex_handle va,
                                             Vertex_handle vb,
                                             Vertex_handle v_Steiner) const
@@ -1345,7 +1345,7 @@ public:
     return insert(p, lt, c, li, lj, restore_Delaunay);
   }
 
-  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb, bool restore_Delaunay = true)
+  Constrained_polyline_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb, bool restore_Delaunay = true)
   {
     const auto id = this->insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
     if(restore_Delaunay) {
@@ -1454,13 +1454,13 @@ public:
       ++circ;
       const auto vb = *circ;
       const auto c_id = this->constraint_from_extremities(va, vb);
-      if(c_id != Constraint_id{}) {
+      if(c_id != Constrained_polyline_id{}) {
         const bool constraint_c_id_is_reversed = va != (*this->constraint_hierarchy.vertices_in_constraint_begin(c_id));
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
         const auto c_id = this->insert_constrained_edge(va, vb, restore_Delaunay);
-        CGAL_assertion(c_id != Constraint_id{});
+        CGAL_assertion(c_id != Constrained_polyline_id{});
         border.push_back(Face_edge{c_id});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
       }
@@ -1509,7 +1509,7 @@ public:
   {
     std::vector<Vertex_handle> steiner_vertices;
     const auto c_id = this->constraint_from_extremities(va, vb);
-    if(c_id != Constraint_id{}) {
+    if(c_id != Constrained_polyline_id{}) {
       auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
       CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
@@ -1550,7 +1550,7 @@ private:
       for(const auto& border : this->face_borders[polygon_contraint_id]) {
         auto& handles = vec_of_handles.emplace_back();
         for(const auto& face_edge : border) {
-          const auto c_id = face_edge.constraint_id;
+          const auto c_id = face_edge.constrained_polyline_id;
           const bool reversed = face_edge.is_reverse;
           const auto v_begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
           const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
@@ -1602,7 +1602,7 @@ private:
           ++it;
           const auto vb = *it;
           const auto c_id = this->constraint_from_extremities(va, vb);
-          if(c_id != Constraint_id{}) {
+          if(c_id != Constrained_polyline_id{}) {
             auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
             auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
             CGAL_assertion_code(const auto constraint_size = std::distance(vit, v_end);)
@@ -3309,8 +3309,8 @@ private:
           if(!is_a_new_edge)
             continue;
           auto [va, vb] = pair;
-          Constraint_id c_id = this->constraint_around(va, vb);
-          if(c_id != Constraint_id{}) {
+          Constrained_polyline_id c_id = this->constraint_around(va, vb);
+          if(c_id != Constrained_polyline_id{}) {
             if(CGAL::angle(this->point(va), steiner_pt, this->point(vb)) != CGAL::ACUTE) {
               cleanup();
               return std::make_pair(va, vb);
@@ -3373,8 +3373,8 @@ private:
 #endif // CGAL_DEBUG_CDT_3 & 64
     CGAL_assertion(std::next(contexts.begin()) == contexts.end());
     const auto& context = *contexts.begin();
-    const auto constraint_id = context.id();
-    CGAL_assertion(constraint_id != Constraint_id{});
+    const auto constrained_polyline_id = context.id();
+    CGAL_assertion(constrained_polyline_id != Constrained_polyline_id{});
     // this->study_bug = true;
     Locate_type mid_lt;
     int mid_li, min_lj;
@@ -3382,7 +3382,7 @@ private:
     CGAL_assertion(mid_lt != Locate_type::VERTEX);
     [[maybe_unused]] auto v =
       this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d},
-                                                  constraint_id, insert_in_conflict_visitor);
+                                                  constrained_polyline_id, insert_in_conflict_visitor);
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_Steiner_points()) {
       std::cerr << "  -> " << IO::oformat(v, with_offset) << '\n';
     }
@@ -3847,11 +3847,11 @@ protected:
   std::vector<CDT_2> face_cdt_2;
   bool cdt_2_are_initialized = false;
   struct Face_edge {
-    Constraint_id constraint_id;
+    Constrained_polyline_id constrained_polyline_id;
     bool is_reverse = false;
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
-  std::multimap<Constraint_id, CDT_3_signed_index> constraint_to_faces;
+  std::multimap<Constrained_polyline_id, CDT_3_signed_index> constraint_to_faces;
 
   // boost::dynamic_bitset<> face_constraint_misses_subfaces;
   // std::size_t face_constraint_misses_subfaces_find_first() const {

@@ -69,7 +69,7 @@ protected:
   using Constraint_hierarchy =
       Polyline_constraint_hierarchy_2<Vertex_handle, Compare_vertex_handle, Point>;
 public:
-  using Constraint_id = typename Constraint_hierarchy::Constraint_id;
+  using Constrained_polyline_id = typename Constraint_hierarchy::Constraint_id;
 
 protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
@@ -148,7 +148,7 @@ protected:
     }
     void hide_point(Cell_handle, const Point& ) const {}
 
-    void insert_Steiner_point_on_constraint([[maybe_unused]] Constraint_id constraint,
+    void insert_Steiner_point_on_constraint([[maybe_unused]] Constrained_polyline_id constraint,
                                             [[maybe_unused]] Vertex_handle va,
                                             [[maybe_unused]] Vertex_handle vb,
                                             [[maybe_unused]] Vertex_handle v_Steiner) const
@@ -165,7 +165,7 @@ protected:
   }
 
   void add_to_subconstraints_to_conform(Vertex_handle va, Vertex_handle vb,
-                                        Constraint_id id) {
+                                        Constrained_polyline_id id) {
     const auto pair = make_subconstraint(va, vb);
 #if CGAL_DEBUG_CDT_3 & 32
     std::cerr << "tr().subconstraints_to_conform.push("
@@ -175,7 +175,7 @@ protected:
   }
 
   template <typename Visitor>
-  Constraint_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
+  Constrained_polyline_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
                                              Visitor&) {
     if(va != vb) {
       if(segment_vertex_epsilon != 0.) {
@@ -183,7 +183,7 @@ protected:
         check_segment_vertex_distance_or_throw(va, vb, min_vertex, CGAL::to_double(min_dist),
                                                Check_distance::NON_SQUARED_DISTANCE);
       }
-      const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
+      const Constrained_polyline_id c_id = constraint_hierarchy.insert_constraint(va, vb);
       pair_of_vertices_to_cid.emplace(make_sorted_pair(va, vb), c_id);
       // traverse all the vertices along [va, vb] and add pairs of consecutive
       // vertices as sub-constraints.
@@ -404,7 +404,7 @@ public:
     return insert(p, lt, c, li, lj);
   }
 
-  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
+  Constrained_polyline_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
   {
     const auto id = insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
     restore_Delaunay(insert_in_conflict_visitor);
@@ -481,15 +481,15 @@ public:
     CGAL_precondition(v->ccdt_3_data().is_Steiner_vertex_on_edge());
     CGAL_assertion(v->ccdt_3_data().number_of_incident_constraints() == 1);
     const auto v_time_stamp = v->time_stamp();
-    const auto constraint_id = v->ccdt_3_data().constraint_id(*this);
-    const auto first = this->constraint_hierarchy.vertices_in_constraint_begin(constraint_id);
-    const auto end =   this->constraint_hierarchy.  vertices_in_constraint_end(constraint_id);
+    const auto constrained_polyline_id = v->ccdt_3_data().constrained_polyline_id(*this);
+    const auto first = this->constraint_hierarchy.vertices_in_constraint_begin(constrained_polyline_id);
+    const auto end =   this->constraint_hierarchy.  vertices_in_constraint_end(constrained_polyline_id);
     std::cerr << "ancestors_of_Steiner_vertex_on_edge " << display_vert(v) << '\n';
     for(auto it = first; it != end; ++it) {
       std::cerr << "  - " << display_vert(*it) << '\n';
     }
     CGAL_assertion(first != end);
-    const auto last = std::prev(this->constraint_hierarchy.vertices_in_constraint_end(constraint_id));
+    const auto last = std::prev(this->constraint_hierarchy.vertices_in_constraint_end(constrained_polyline_id));
     CGAL_assertion(first != last);
     CGAL_assertion((*first)->time_stamp() < v_time_stamp);
     CGAL_assertion((*last)->time_stamp() < v_time_stamp);
@@ -575,7 +575,7 @@ protected:
   void restore_Delaunay(Visitor& visitor) {
     update_all_finite_edges();
     while(!subconstraints_to_conform.empty()) {
-      const auto [subconstraint, constraint_id] = subconstraints_to_conform.top();
+      const auto [subconstraint, constrained_polyline_id] = subconstraints_to_conform.top();
       subconstraints_to_conform.pop();
       const auto [va, vb] = subconstraint;
       if(!constraint_hierarchy.is_subconstraint(va, vb)) {
@@ -585,14 +585,14 @@ protected:
       std::cerr << "tr().subconstraints_to_conform.pop()="
                 << display_subcstr(subconstraint) << "\n";
 #endif // CGAL_DEBUG_CDT_3
-      conform_subconstraint(subconstraint, constraint_id, visitor);
+      conform_subconstraint(subconstraint, constrained_polyline_id, visitor);
     }
   }
 
   template <typename Visitor>
   Vertex_handle insert_Steiner_point_on_subconstraint(
       Point steiner_pt, Cell_handle hint,
-      Subconstraint subconstraint, Constraint_id constraint, Visitor& visitor)
+      Subconstraint subconstraint, Constrained_polyline_id constraint, Visitor& visitor)
   {
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
@@ -617,7 +617,7 @@ protected:
   /// Return `true` if a Steiner point was inserted
   template <typename Visitor>
   bool conform_subconstraint(Subconstraint subconstraint,
-                             Constraint_id constraint,
+                             Constrained_polyline_id constraint,
                              Visitor& visitor)
   {
     const Vertex_handle va = subconstraint.first;
@@ -639,7 +639,7 @@ protected:
     return false;
   }
 
-  Constraint_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
+  Constrained_polyline_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
     if(va->ccdt_3_data().number_of_incident_constraints() == 0 || vb->ccdt_3_data().number_of_incident_constraints() == 0)
     {
       return {};
@@ -650,15 +650,15 @@ protected:
     }
     return {};
     // @TODO: cleanup the rest of the function, and `constraint_around`
-    Constraint_id c_id = constraint_around(va, vb, false);
-    if(c_id != Constraint_id{}) return c_id;
+    Constrained_polyline_id c_id = constraint_around(va, vb, false);
+    if(c_id != Constrained_polyline_id{}) return c_id;
     c_id = constraint_around(vb, va, false);
-    if(c_id != Constraint_id{}) return c_id;
+    if(c_id != Constrained_polyline_id{}) return c_id;
     c_id = constraint_around(va, vb, true);
     return c_id;
   }
 
-  auto constraint_extremities(Constraint_id c_id) const {
+  auto constraint_extremities(Constrained_polyline_id c_id) const {
       CGAL_assertion(std::find(this->constraint_hierarchy.constraints_begin(),
                                this->constraint_hierarchy.constraints_end(), c_id) != this->constraint_hierarchy.constraints_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
@@ -674,8 +674,8 @@ protected:
     return std::make_pair(c_va, c_vb);
   }
 
-  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
-    auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
+  Constrained_polyline_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
+    auto constraint_id_goes_to_vb = [this, va, vb](Constrained_polyline_id c_id) {
       const auto [c_va, c_vb] = constraint_extremities(c_id);
       if (va == c_va && vb == c_vb)
         return true;
@@ -685,20 +685,20 @@ protected:
     }; // end lambda constraint_id_goes_to_vb
     if (va->ccdt_3_data().number_of_incident_constraints() == 1)
     {
-      const Constraint_id c_id = va->ccdt_3_data().constraint_id(*this);
-      CGAL_assertion(c_id != Constraint_id{});
+      const Constrained_polyline_id c_id = va->ccdt_3_data().constrained_polyline_id(*this);
+      CGAL_assertion(c_id != Constrained_polyline_id{});
       if(constraint_id_goes_to_vb(c_id)) return c_id;
     } else if (expensive == true && va->ccdt_3_data().number_of_incident_constraints() > 1) {
       boost::container::small_vector<Vertex_handle, 64> adj_vertices;
       this->finite_adjacent_vertices(va, std::back_inserter(adj_vertices));
       for(auto other_v: adj_vertices) {
         for(auto context: this->constraint_hierarchy.contexts(va, other_v)) {
-          const Constraint_id c_id = context.id();
+          const Constrained_polyline_id c_id = context.id();
           if(constraint_id_goes_to_vb(c_id)) return c_id;
         }
       }
     }
-    return Constraint_id{};
+    return Constrained_polyline_id{};
   }
 
   struct Construct_Steiner_point_return_type {
@@ -808,7 +808,7 @@ protected:
   }
 
   Construct_Steiner_point_return_type
-  construct_Steiner_point(Constraint_id constraint_id, Subconstraint subconstraint)
+  construct_Steiner_point(Constrained_polyline_id constrained_polyline_id, Subconstraint subconstraint)
   {
     auto& gt = tr().geom_traits();
     auto compare_angle_functor = gt.compare_angle_3_object();
@@ -823,7 +823,7 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     const auto& pa = tr().point(va);
     const auto& pb = tr().point(vb);
-    const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
+    const auto [orig_va, orig_vb] = constraint_extremities(constrained_polyline_id);
     const auto& orig_pa = tr().point(orig_va);
     const auto& orig_pb = tr().point(orig_vb);
 
@@ -859,8 +859,8 @@ protected:
 
     if(reference_vertex->ccdt_3_data().is_Steiner_vertex_on_edge()) {
       CGAL_assertion(reference_vertex->ccdt_3_data().number_of_incident_constraints() == 1);
-      const auto ref_constraint_id = reference_vertex->ccdt_3_data().constraint_id(*this);
-      const auto [ref_va, ref_vb] = constraint_extremities(ref_constraint_id);
+      const auto ref_constrained_polyline_id = reference_vertex->ccdt_3_data().constrained_polyline_id(*this);
+      const auto [ref_va, ref_vb] = constraint_extremities(ref_constrained_polyline_id);
 #if CGAL_CDT_3_DEBUG_CONFORMING
       std::cerr << "  reference point is on constraint: " << display_vert(ref_va)
                 << "    " << display_vert(ref_vb) << '\n'
@@ -935,10 +935,10 @@ protected:
   double segment_vertex_epsilon = 1e-8;
   std::optional<double> max_bbox_edge_length;
   using Pair_of_vertex_handles = std::pair<Vertex_handle, Vertex_handle>;
-  std::map<Pair_of_vertex_handles, Constraint_id> pair_of_vertices_to_cid;
+  std::map<Pair_of_vertex_handles, Constrained_polyline_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {this};
 
-  using Stack_info = std::pair<Subconstraint, Constraint_id>;
+  using Stack_info = std::pair<Subconstraint, Constrained_polyline_id>;
   using Subconstraints_to_conform = std::stack<Stack_info, std::vector<Stack_info>>;
   Subconstraints_to_conform subconstraints_to_conform;
 
