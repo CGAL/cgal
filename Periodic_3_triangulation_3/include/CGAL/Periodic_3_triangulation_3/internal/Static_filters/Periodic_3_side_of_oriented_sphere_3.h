@@ -42,9 +42,6 @@ public:
   typedef typename K::Iso_cuboid_3                      Iso_cuboid_3;
   typedef typename K::Periodic_3_offset_3               Offset;
 
-public:
-  typedef typename Base::result_type  result_type;
-
 private:
   const Iso_cuboid_3 * _dom;
 
