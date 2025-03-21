@@ -142,7 +142,7 @@ void Filter<K>::decrease(size_t& step) { step /= 2; }
 // TODO: is it better to use #ifdef CERTIFY blocks here to avoid constructing
 // CPosition objects?
 // Also, calls to cert.XXX() seem to do unnecessary work right now
-
+// uncritical, but could be optimized
 template <typename K>
 bool Filter<K>::bichromaticFarthestDistance()
 {

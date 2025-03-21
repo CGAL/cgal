@@ -97,7 +97,7 @@ class FrechetKdTree
 public:
     FrechetKdTree() = default;
 
-    void insert(Polylines const& curves);  // TODO: also add other methods of inserting points
+    void insert(Polylines const& curves);
 
     template <typename ConcurrencyTag>
     void build()
@@ -213,8 +213,6 @@ private:
             }
 
             // rect[2*dim : 4*dim] is contained in intersection rect (see notebook)
-            // TODO: this is a manual test if a rectangle is contained in
-            // another rectangle. Does CGAL offer anything handy for that?
             for (std::size_t i = 2*dim; i < 4*dim; ++i, ++pb) {
                 if (*pb - distance > rect.min_coord(i) ||
                     *pb + distance < rect.max_coord(i)) {
@@ -268,6 +266,7 @@ auto FrechetKdTree<Traits>::search(Polyline const& curve, FT distance)
 {
     // TODO: This is the best way I found to not copy the 8-dimensional point,
     // but only the id. Is there an even better way?
+    // uncritical but style question Ask @SL
     class back_insert_it
     {
         PolylineIDs* curve_ids;

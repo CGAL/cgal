@@ -218,8 +218,8 @@ struct Lambda<Curve<T,false>>
     using PointID = typename C::PointID;
 
     RO2 value;
-    FT approx; // TODO: isn't it an issue to use that with an exact FT?
-               // TODO: we could use the interval in the RO2?
+    FT approx; // TODO: isn't it an issue to use that with an exact FT?  Ask @SL
+               // TODO: we could use the interval in the RO2?            Ask @SL
 
     bool is_zero, is_one;
 
@@ -391,12 +391,7 @@ BFDirection toBFDirection(Direction direction);
 // Interval
 //
 
-// TODO: does CGAL have any replacement for this or do we want our custom type
-// here?
-/*!
- * \ingroup PkgFrechetDistanceFunctions
- * A class representing a
-*/
+// TODO: CGAL has no Interval<T> class template yet, but it would look like this probably
 
 template <typename C>
 struct Interval {
@@ -662,24 +657,6 @@ using CIntervals = std::vector<CInterval<C>>;
 
 template <typename C>
 using CIntervalsID = ID<CIntervals<C>>;
-
-#if 0
-// TODO: CGAL certainly has a replacement for this; do we want this though as
-// it's (probably) only used for visualization? Ellipse
-struct Ellipse {
-    Point center;
-    distance_t width;
-    distance_t height;
-    double alpha;
-
-    void invalidate()
-    {
-        width = -1.;
-        height = -1.;
-    }
-    bool is_valid() { return width >= 0 && height >= 0; }
-};
-#endif
 
 //
 // Interval
