@@ -216,15 +216,12 @@ public:
     set_qlu_data(q_x.get(), l_x.get(), u_x.get());
 
     // Problem settings.
-    OSQPSettings *settings = (OSQPSettings *) malloc(sizeof(OSQPSettings));
+    OSQPSettings *settings = OSQPSettings_new();
     CGAL_assertion(settings);
 
     // Structures.
-    OSQPCscMatrix* P = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
-    OSQPCscMatrix* A = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
-
-    csc_set_data(A, m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
-    csc_set_data(P, n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
+    OSQPCscMatrix* A = OSQPCscMatrix_new(m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
+    OSQPCscMatrix* P = OSQPCscMatrix_new(n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
 
     // Set solver settings.
     osqp_set_default_settings(settings);
@@ -254,9 +251,9 @@ public:
     }
 
     osqp_cleanup(solver);
-    if (A) free(A);
-    if (P) free(P);
-    if (settings) free(settings);
+    if (A) OSQPCscMatrix_free(A);
+    if (P) OSQPCscMatrix_free(P);
+    if (settings) OSQPSettings_free(settings);
 
     return (exitflag == 0);
   }
