@@ -32,6 +32,8 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqr
 template <typename K>
 void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 {
+  std::cout << "\n ==== Test with Kernel: " << typeid(K).name() << " ====" << std::endl;
+
   using FT = typename K::FT;
   using Point_2 = typename K::Point_2;
   using Point_3 = typename K::Point_3;
@@ -124,8 +126,17 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 
 //  CGAL::draw(*ss_ptr);
 
+  // randomly switch the weight signs
+  if(rnd.get_int(0, 2))
+  {
+    std::cout << "using negative weights" << std::endl;
+    for(std::vector<FT>& ws : weights)
+      for(FT& w : ws)
+        w = -w;
+  }
+
   Mesh sm;
-  bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights));
+  bool success = extrude_skeleton(pwh, sm, CGAL::parameters::weights(weights).verbose(true).maximum_height(hole_n));
   assert(success);
   if(!success)
   {
@@ -135,7 +146,7 @@ void test_kernel(const int hole_n, const int hole_nv, CGAL::Random& rnd)
 
   std::cout << num_vertices(sm) << " vertices and " << num_faces(sm) << " faces" << std::endl;
 
-//  CGAL::draw(sm);
+  CGAL::draw(sm);
 }
 
 int main(int argc, char** argv)

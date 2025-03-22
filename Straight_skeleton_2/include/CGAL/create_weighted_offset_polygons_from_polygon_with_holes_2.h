@@ -106,6 +106,8 @@ create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& aOf
   std::vector<boost::shared_ptr<OutPolygon> > raw_output =
     create_exterior_weighted_skeleton_and_offset_polygons_2<OutPolygon>(aOffset, aPoly, aWeights, ofk, ssk);
 
+  CGAL_postcondition(raw_output.size() >= 2);
+
   // filter offset of the outer frame
   std::swap(raw_output[0], raw_output.back());
   raw_output.pop_back();

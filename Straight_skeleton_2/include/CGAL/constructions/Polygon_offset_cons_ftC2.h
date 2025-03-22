@@ -68,8 +68,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
     {
       if ( ! CGAL_NTS is_zero(den) )
       {
-        FT numX = t * l1->b() / w0 - t * l0->b() / w1 + l0->b() * l1->c() - l1->b() * l0->c() ;
-        FT numY = t * l1->a() / w0 - t * l0->a() / w1 + l0->a() * l1->c() - l1->a() * l0->c() ;
+        FT numX = w0*t*l1->b() - w1*t*l0->b() + l0->b()*l1->c() - l1->b()*l0->c() ;
+        FT numY = w0*t*l1->a() - w1*t*l0->a() + l0->a()*l1->c() - l1->a()*l0->c() ;
 
         x = -numX / den ;
         y =  numY / den ;
@@ -92,11 +92,8 @@ construct_offset_pointC2 ( typename K::FT const& t,
 
           CGAL_STSKEL_TRAITS_TRACE("  Projected seed point: (" << px << "," << py << ")" ) ;
 
-          // When reformulating the progression of the front using the line orthogonal
-          // to the input segment, the speed (weight) becomes inverted: a large weight
-          // in the coefficients of the line means the front moves slower
-          x = px + t * l0->a() / w0 ;
-          y = py + t * l0->b() / w0 ;
+          x = px + w0 * t * l0->a() ;
+          y = py + w0 * t * l0->b() ;
 
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }

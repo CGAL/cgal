@@ -1,3 +1,25 @@
+#define CGAL_SLS_DEBUG_DRAW
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+#define CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
+#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 10000000
+#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE 10000000
+#define CGAL_STRAIGHT_SKELETON_VALIDITY_ENABLE_TRACE
+#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 10000000
+
+void Straight_skeleton_external_trace(std::string m)
+{
+  std::cout << std::setprecision(17) << m << std::endl << std::endl ;
+}
+
+void Straight_skeleton_traits_external_trace(std::string m)
+{
+  std::cout << std::setprecision(17) << m << std::endl << std::endl ;
+}
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -170,16 +192,17 @@ int main(int argc, char** argv)
 
   Mesh sm;
   if(use_angles)
-    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(speeds).maximum_height(height));
+    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::angles(speeds).maximum_height(height).verbose(true));
   else
-    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::weights(speeds).maximum_height(height));
+    CGAL::extrude_skeleton(pwh, sm, CGAL::parameters::weights(speeds).maximum_height(height).verbose(true));
 
   timer.stop();
   std::cout << "Extrusion computation took " << timer.time() << " s." << std::endl;
-
-  CGAL::draw(sm);
+  std::cout << num_vertices(sm) << " vertices, " << num_faces(sm) << " faces" << std::endl;
 
   CGAL::IO::write_polygon_mesh("extruded_skeleton.off", sm, CGAL::parameters::stream_precision(17));
+
+  CGAL::draw(sm);
 
   return EXIT_SUCCESS;
 }
