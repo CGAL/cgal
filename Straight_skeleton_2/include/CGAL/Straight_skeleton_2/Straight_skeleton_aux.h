@@ -128,9 +128,9 @@ public:
   {
     ss << "{E" ;
     insert_handle_id(ss,t.e0())  ;
-    ss << ",E" ;
+    ss << " E" ;
     insert_handle_id(ss,t.e1()) ;
-    ss << ",E" ;
+    ss << " E" ;
     insert_handle_id(ss,t.e2()) ;
     ss << "}" ;
     return ss ;

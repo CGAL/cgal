@@ -31,7 +31,9 @@ template<class HDS_V>
 void print_vertex ( HDS_V const& v )
 {
   if(v->has_infinite_time())
-    std::cout << "F" << v->id() << " " ;
+    std::cout << "FN" << v->id() << " " ;
+  else if (v->is_contour())
+    std::cout << "CN" << v->id() << " " ;
   else
     std::cout << "N" << v->id() << " " ;
 }
@@ -92,6 +94,7 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
   typedef CGAL::Straight_skeleton_2<K> Ss ;
 
   typedef typename Ss::Vertex_const_handle     Vertex_const_handle ;
+  typedef typename Ss::Vertex_const_iterator   Vertex_const_iterator ;
   typedef typename Ss::Halfedge_const_handle   Halfedge_const_handle ;
   typedef typename Ss::Halfedge_const_iterator Halfedge_const_iterator ;
 
@@ -102,6 +105,32 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
             << " vertices, " << ss.size_of_halfedges()
             << " halfedges and " << ss.size_of_faces()
             << " faces" << std::endl ;
+
+  std::cout << "All vertices: " << std::endl;
+  for ( Vertex_const_iterator v = ss.vertices_begin(); v != ss.vertices_end(); ++v )
+  {
+    print_vertex(v);
+    std::cout << "@ " << v->time() << std::endl;
+  }
+
+  std::cout << "All halfedges: " << std::endl;
+
+  for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
+  {
+    if(h->is_inner_bisector())
+      std::cout << "IBH" << h->id() << " " << std::flush ;
+    else if(h->is_bisector())
+      std::cout << "BH" << h->id() << " " << std::flush ;
+    else
+      std::cout << "CH" << h->id() << " " << std::flush ;
+
+    print_vertex(h->prev()->vertex()) ;
+    print_point(h->prev()->vertex()->point()) ;
+    std::cout << " ==> " << std::flush ;
+    print_vertex(h->vertex());
+    print_point(h->vertex()->point()) ;
+    std::cout << std::endl;
+  }
 
   std::cout << "Faces " << std::endl;
   for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
@@ -131,24 +160,6 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
     std::cout << std::endl;
   }
 
-  std::cout << "All halfedges: " << std::endl;
-
-  for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
-  {
-    if(h->is_inner_bisector())
-      std::cout << "IBH" << h->id() << " " << std::flush ;
-    else if(h->is_bisector())
-      std::cout << "BH" << h->id() << " " << std::flush ;
-    else
-      std::cout << "CH" << h->id() << " " << std::flush ;
-
-    print_vertex(h->prev()->vertex()) ;
-    print_point(h->prev()->vertex()->point()) ;
-    std::cout << " ==> " << std::flush ;
-    print_vertex(h->vertex());
-    print_point(h->vertex()->point()) ;
-    std::cout << std::endl;
-  }
 }
 
 } // namespace IO

@@ -127,7 +127,7 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
   typedef typename Kernel_traits<Point_2>::Kernel                    IK;
   typedef typename IK::FT                                            IFT;
 
-  static_assert((std::is_same<typename std::iterator_traits<WeightIterator>::value_type, IFT>::value));
+  static_assert((std::is_same<typename std::iterator_traits<WeightIterator>::value_type, IFT>::value), "");
 
   boost::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
 
@@ -170,8 +170,8 @@ create_partial_exterior_weighted_straight_skeleton_2(const FT& aMaxOffset,
     std::vector<Hole> holes ;
     holes.push_back(lPoly) ;
 
-    // put a weight large enough such that frame edges are not relevant
-    const IFT frame_weight = FT(10) * *(std::max_element(aWeightsBegin, aWeightsEnd));
+    // weight 0 such that the frame does not play a role
+    const IFT frame_weight = 0;
     CGAL_STSKEL_BUILDER_TRACE(4, "Frame weight = " << frame_weight);
 
     std::vector<IFT> lFrameWeights(4, frame_weight);

@@ -20,6 +20,7 @@
   #include <CGAL/draw_polygon_2.h>
   #include <CGAL/draw_polygon_with_holes_2.h>
   #include <CGAL/draw_triangulation_2.h>
+  #include <CGAL/Straight_skeleton_2/IO/print.h>
 #endif
 
 #include <CGAL/create_weighted_straight_skeleton_2.h>
@@ -85,10 +86,19 @@ inline constexpr FT default_extrusion_height()
   return (std::numeric_limits<double>::max)();
 }
 
+template <typename GeomTraits>
+typename GeomTraits::Point_3 lift(const typename GeomTraits::Point_2& p,
+                                  const typename GeomTraits::FT& h)
+{
+  return { p.x(), p.y(), h };
+}
+
+// #define CGAL_SS2_NUDGE_ZERO_WEIGHTS
+
 // @todo Maybe this postprocessing is not really necessary? Do users really care if the point
 // is not perfectly above the input contour edge (it generally cannot be anyway if the kernel
 // is not exact except for some specific cases)?
-#define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+// #define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
 // The purpose of this visitor is to snap back almost-vertical (see preprocessing_weights()) edges
@@ -135,19 +145,108 @@ snap_point_to_contour_halfedge_plane(const typename GeomTraits::Point_2& op,
 }
 
 template <typename HDS, typename GeomTraits>
+typename GeomTraits::Point_2
+hds_intersection(typename HDS::Halfedge_const_handle h_1,
+                 typename HDS::Halfedge_const_handle h_2)
+{
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+  using Line_2 = typename GeomTraits::Line_2;
+
+  CGAL_SS_i::Segment_2_with_ID<GeomTraits> lS1 (h_1->opposite()->vertex()->point(),
+                                                h_1->vertex()->point(),
+                                                h_1->id());
+  CGAL_SS_i::Segment_2_with_ID<GeomTraits> lS2 (h_2->opposite()->vertex()->point(),
+                                                h_2->vertex()->point(),
+                                                h_2->id());
+
+  // @fixme use caches
+  boost::optional<Line_2> l1 = compute_normalized_line_coeffC2(lS1);
+  boost::optional<Line_2> l2 = compute_normalized_line_coeffC2(lS2);
+  CGAL_assertion(bool(l1) && bool(l2));
+
+  FT denom = l1->a()*l2->b() - l2->a()*l1->b();
+  CGAL_assertion(!is_zero(denom));
+  FT num_x = (l1->b()*l2->c() - l2->b()*l1->c());
+  FT num_y = (l2->a()*l1->c() - l1->a()*l2->c());
+  FT ix = num_x / denom;
+  FT iy = num_y / denom;
+
+  return Point_2(ix, iy);
+}
+
+template <typename HDS, typename GeomTraits>
 void snap_skeleton_vertex(typename HDS::Halfedge_const_handle hds_h,
-                          typename HDS::Halfedge_const_handle contour_h,
+                          const typename GeomTraits::FT vertical_weight,
                           std::map<typename GeomTraits::Point_2,
                                    typename GeomTraits::Point_2>& snapped_positions)
 {
-  typename HDS::Vertex_const_handle hds_tv = hds_h->vertex();
+  using HDS_Vertex_const_handle = typename HDS::Vertex_const_handle;
+  using HDS_Halfedge_const_handle = typename HDS::Halfedge_const_handle;
 
-  // this re-applies snapping towards contour_h even if the point was already snapped towards another contour
-  auto insert_result = snapped_positions.emplace(hds_tv->point(), hds_tv->point());
-  insert_result.first->second = snap_point_to_contour_halfedge_plane<HDS, GeomTraits>(insert_result.first->second, contour_h);
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+  using Line_2 = typename GeomTraits::Line_2;
 
-  // std::cout << "snap_skeleton_vertex(V" << hds_tv->id() << " pt: " << hds_h->vertex()->point() << ")"
-  //           << " to " << insert_result.first->second << std::endl;
+  HDS_Vertex_const_handle hds_tv = hds_h->vertex();
+  if(hds_tv->is_contour())
+    return;
+
+  auto insert_res = snapped_positions.emplace(hds_tv->point(), Point_2());
+  if(insert_res.second) // snapped position already computed
+    return;
+
+  // gather incident contour (vertical) halfedges
+  std::vector<HDS_Halfedge_const_handle> vertical_chs;
+  std::vector<HDS_Halfedge_const_handle> non_vertical_chs;
+
+  HDS_Halfedge_const_handle curr = hds_h;
+  do
+  {
+    HDS_Halfedge_const_handle ch = curr->defining_contour_edge();
+    CGAL_assertion(ch->opposite()->is_border());
+
+    if(contour_h->weight() == vertical_weight)
+      vertical_chs.push_back(ch);
+    else
+     non_vertical_chs.push_back(ch);
+
+    curr = curr->next()->opposite();
+  }
+  while(curr != hds_h);
+
+  CGAL_assertion(non_vertical_chs.size() + vertical_chs.size() == 3);
+
+  if(vertical_chs.empty())
+    return;
+
+  if(vertical_chs.size() == 2)
+  {
+    HDS_Halfedge_const_handle non_vertical_ch = non_vertical_chs.front();
+
+    // The new position is at the intersection of the two vertical lines
+    const Point_2 sp = hds_intersection<HDS, GeomTraits>(vertical_chs[0], vertical_chs[1]);
+
+    // The time (z coordinate) is the weighted distance to the non-vertical edge
+    CGAL_SS_i::Segment_2_with_ID<GeomTraits> seg(non_vertical_ch->opposite()->vertex()->point(),
+                                                 non_vertical_ch->vertex()->point(),
+                                                 non_vertical_ch->id());
+
+    boost::optional<Line_2> line = compute_weighted_line_coeffC2(seg);
+    CGAL_assertion(bool(line));
+
+    // Compute weighted distance
+    const FT a = line->a(), b = line->b(), c = line->c();
+    const FT t = a*sp.x() + b*sp.y() + c;
+
+    insert_res.first->second = lift(sp, t);
+  }
+  else
+  {
+    CGAL_assertion(vertical_chs.size() == 1);
+
+
+  }
 }
 
 template <typename GeomTraits, typename PointRange>
@@ -176,7 +275,9 @@ class Skeleton_offset_correspondence_builder_visitor
 
   using FT = typename GeomTraits::FT;
   using Point_2 = typename GeomTraits::Point_2;
+  using Line_2 = typename GeomTraits::Line_2;
 
+  using SS_Vertex_const_handle = typename StraightSkeleton_2::Vertex_const_handle;
   using SS_Halfedge_const_handle = typename StraightSkeleton_2::Halfedge_const_handle;
 
   using HDS = typename StraightSkeleton_2::Base;
@@ -199,10 +300,7 @@ public:
   { }
 
 public:
-  void on_offset_contour_started() const
-  {
-    // std::cout << "~~ new contour ~~" << std::endl;
-  }
+  void on_offset_contour_started() const { }
 
   // can't modify the position yet because we need arrange_polygons() to still work properly
   //
@@ -227,15 +325,30 @@ public:
     const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
     const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
 
-    // if both are vertical, it's the common vertex (which has to exist)
     if(is_h1_vertical && is_h2_vertical)
     {
-      CGAL_assertion(contour_h1->vertex() == contour_h2->opposite()->vertex() ||
-                     contour_h2->vertex() == contour_h1->opposite()->vertex());
+      std::cout << "BOTH VERTICAL" << std::endl;
+      std::cout << contour_h1->opposite()->vertex()->point() << " " << contour_h1->vertex()->point() << std::endl;
+      std::cout << contour_h2->opposite()->vertex()->point() << " " << contour_h2->vertex()->point() << std::endl;
+
       if(contour_h1->vertex() == contour_h2->opposite()->vertex())
+      {
         m_snapped_positions[op] = contour_h1->vertex()->point();
-      else
+      }
+      else if(contour_h2->vertex() == contour_h1->opposite()->vertex())
+      {
         m_snapped_positions[op] = contour_h2->vertex()->point();
+      }
+      else
+      {
+        // this can happen for example with outward extrusion and two vertical edges
+        // that are non consecutive and with a convex region of non-vertical edges in between.
+        // Their extension will enclose the region.
+        //
+        // In this case, the point position will be at the intersection of the supporting lines
+        // of the two edges.
+        m_snapped_positions[op] = hds_intersection<HDS, GeomTraits>(contour_h1, contour_h2);
+      }
     }
     else if(is_h1_vertical)
     {
@@ -320,9 +433,14 @@ class Extrusion_builder
 
 private:
   Geom_traits m_gt;
+  const bool m_verbose;
 
 public:
-  Extrusion_builder(const Geom_traits& gt) : m_gt(gt) { }
+  Extrusion_builder(const Geom_traits& gt,
+                    const bool verbose)
+    : m_gt(gt),
+      m_verbose(verbose)
+  { }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,7 +455,7 @@ public:
                                   const bool invert_faces = false)
   {
 #ifdef CGAL_SLS_DEBUG_DRAW
-    CGAL::draw(p);
+    // CGAL::draw(p);
 #endif
 
     CDT cdt;
@@ -350,7 +468,8 @@ public:
     }
     catch(const typename CDT::Intersection_of_constraints_exception&)
     {
-      std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
+      if(m_verbose)
+        std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
       return;
     }
 
@@ -405,7 +524,8 @@ public:
     std::rotate(face_points.rbegin(), face_points.rbegin() + 1, face_points.rend());
     CGAL_assertion(face_points[0][2] == 0 && face_points[1][2] == 0);
 
-    const Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0], face_points[2] - face_points[0]);
+    const Vector_3 n = CGAL::cross_product(face_points[1] - face_points[0],
+                                           face_points[2] - face_points[0]);
     PK traits(n);
     PCDT pcdt(traits);
 
@@ -415,7 +535,14 @@ public:
     }
     catch(const typename PCDT::Intersection_of_constraints_exception&)
     {
-      std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
+      if(m_verbose)
+      {
+        std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
+        for(const auto& p : face_points) {
+          std::cerr << "  " << p << std::endl;
+        }
+      }
+
       return;
     }
 
@@ -473,20 +600,13 @@ public:
         continue;
 
       HDS_Halfedge_const_handle hds_h = hds_f->halfedge(), done = hds_h;
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-      HDS_Halfedge_const_handle contour_h = hds_h->defining_contour_edge();
-      CGAL_assertion(hds_h == contour_h);
-      const bool is_vertical = (contour_h->weight() == vertical_weight);
-#endif
-
       do
       {
         HDS_Vertex_const_handle hds_tv = hds_h->vertex();
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
         // this computes the snapped position but does not change the geometry of the skeleton
-        if(is_vertical && !hds_tv->is_contour())
-          snap_skeleton_vertex<HDS, Geom_traits>(hds_h, contour_h, snapped_positions);
+        snap_skeleton_vertex<HDS, Geom_traits>(hds_h, vertical_weight, snapped_positions);
 #endif
 
         face_points.emplace_back(hds_tv->point().x(), hds_tv->point().y(), hds_tv->time());
@@ -497,7 +617,8 @@ public:
 
       if(face_points.size() < 3)
       {
-        std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
+        if(m_verbose)
+          std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing a face at a vertex?" << std::endl;
         continue;
       }
 
@@ -600,7 +721,8 @@ public:
 
       if(face_points.size() < 3)
       {
-        std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
+        if(m_verbose)
+          std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing a face at a vertex?" << std::endl;
         continue;
       }
 
@@ -621,6 +743,7 @@ public:
                           FaceRange& faces)
   {
     CGAL_precondition(!is_zero(height));
+    CGAL_USE(vertical_weight);
 
     const FT abs_height = abs(height);
 
@@ -668,17 +791,22 @@ public:
 
     if(!ss_ptr)
     {
-      std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
+      if(m_verbose)
+        std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
       return false;
     }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-    // print_straight_skeleton(*ss_ptr);
+    Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
     CGAL::draw(*ss_ptr);
 #endif
 
+    std::cout << "built SS" << std::endl;
+
     if(is_default_extrusion_height)
     {
+      std::cout << "lateral faces..." << std::endl;
+
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       construct_lateral_faces(*ss_ptr, points, faces, vertical_weight, snapped_positions);
 #else
@@ -696,8 +824,12 @@ public:
       Offset_polygons raw_output;
       ob.construct_offset_contours(abs_height, std::back_inserter(raw_output));
 
+      std::cout << "horizontal faces..." << std::endl;
+
       Offset_polygons_with_holes output = CGAL::arrange_offset_polygons_2<Polygon_with_holes_2>(raw_output);
       construct_horizontal_faces(output, height, points, faces);
+
+      std::cout << "lateral faces..." << std::endl;
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       construct_lateral_faces(*ss_ptr, ob, height, points, faces, offset_points, vertical_weight, snapped_positions);
@@ -714,8 +846,11 @@ public:
     }
 
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+    std::cout << "Apply snapping..." << std::endl;
     apply_snapping<Geom_traits>(points, snapped_positions);
 #endif
+
+    std::cout << "Done" << std::endl;
 
     return true;
   }
@@ -731,6 +866,7 @@ public:
   {
     CGAL_precondition(!is_zero(height));
     CGAL_precondition(height != default_extrusion_height<FT>()); // was checked before, this is just a reminder
+    CGAL_USE(vertical_weight);
 
     const FT abs_height = abs(height);
 
@@ -763,12 +899,13 @@ public:
 
       if(!ss_ptr)
       {
-        std::cerr << "Error: encountered an error during outer skeleton construction" << std::endl;
+        if(m_verbose)
+          std::cerr << "Error: encountered an error during outer skeleton construction" << std::endl;
         return false;
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
@@ -779,6 +916,8 @@ public:
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       ob.construct_offset_contours(abs_height, std::back_inserter(raw_output));
+
+      CGAL_postcondition(raw_output.size() >= 2);
 
       // Manually filter the offset of the outer frame
       std::swap(raw_output[0], raw_output.back());
@@ -812,18 +951,19 @@ public:
                                           CGAL_SS_i::vertices_begin(hole),
                                           CGAL_SS_i::vertices_end(hole),
                                           std::begin(no_holes), std::end(no_holes),
-                                          std::begin(speeds[hole_id]), std::end(speeds[hole_id]),
+                                          std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
                                           std::begin(no_speeds), std::end(no_speeds),
                                           m_gt);
 
       if(!ss_ptr)
       {
-        std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
+        if(m_verbose)
+          std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
         return EXIT_FAILURE;
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
@@ -884,17 +1024,27 @@ void convert_angles(AngleRange& angles)
   {
     CGAL_precondition(0 < angle && angle < 180);
 
-    // @todo should this be an epsilon around 90°? As theta goes to 90°, tan(theta) goes to infinity
-    // and thus we could get numerical issues (overlfows) if the kernel is not exact
-    if(angle == 90)
+    if(angle == 90) { // distinguish to ensure zero is returned
       return 0;
-    else
-      return std::tan(CGAL::to_double(angle * CGAL_PI / 180));
+    } else if (angle == 45) {
+      return 1;
+    } else if (angle == 135) {
+      return -1;
+    } else {
+      const double rad_angle = CGAL::to_double(angle * CGAL_PI / 180);
+      return std::cos(rad_angle) / std::sin(rad_angle); // cotan
+    }
   };
 
   for(auto& contour_angles : angles)
+  {
     for(FT& angle : contour_angles)
+    {
+      std::cout << "convert " << angle << " to ";
       angle = angle_to_weight(angle);
+      std::cout << angle << std::endl;
+    }
+  }
 }
 
 // handle vertical angles (inf speed)
@@ -915,6 +1065,8 @@ preprocess_weights(WeightRange& weights)
   {
     for(FT& w : contour_weights)
     {
+      std::cout << "w = " << w << std::endl;
+
       // '0' means a vertical slab, aka 90° angle (see preprocess_angles())
       if(w == 0)
         continue;
@@ -927,12 +1079,12 @@ preprocess_weights(WeightRange& weights)
       }
       else if(slope == Slope::INWARD && w < 0)
       {
-        std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
+        std::cerr << "Error: mixing positive and negative weights is not supported" << std::endl;
         return {Slope::UNKNOWN, false, FT(-1)};
       }
       else if(slope == Slope::OUTWARD && w > 0)
       {
-        std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
+        std::cerr << "Error: mixing positive and negative weights is not supported" << std::endl;
         return {Slope::UNKNOWN, false, FT(-1)};
       }
 
@@ -944,17 +1096,16 @@ preprocess_weights(WeightRange& weights)
   }
 
   if(slope == Slope::UNKNOWN)
-  {
-    std::cerr << "Warning: all edges vertical?" << std::endl;
     slope = Slope::VERTICAL;
-  }
 
+#ifdef CGAL_SS2_NUDGE_ZERO_WEIGHTS
   // Take a weight which is a large % of the max value to ensure there's no ambiguity
   //
   // Since the max value might not be very close to 90°, take the max between of the large-% weight
   // and the weight corresponding to an angle of 89.9999999°
   const FT weight_of_89d9999999 = 572957787.3425436; // tan(89.9999999°)
-  const FT scaled_max = (std::max)(weight_of_89d9999999, 1e3 * max_value);
+  FT scaled_max = (std::max)(weight_of_89d9999999, 1e3 * max_value);
+  scaled_max = 1000;
 
   for(auto& contour_weights : weights)
   {
@@ -965,7 +1116,11 @@ preprocess_weights(WeightRange& weights)
     }
   }
 
+  std::cout << "scaled_max = " << scaled_max << std::endl;
   return {slope, true, scaled_max};
+#else
+  return {slope, true, 0 /*vertical weight*/};
+#endif
 }
 
 template <typename PolygonWithHoles,
@@ -1021,6 +1176,14 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
     }
   }
 
+  std::cout << "Weights" << std::endl;
+  for(const std::vector<FT>& contour_weights : weights) {
+    for(const FT& w : contour_weights) {
+      std::cout << "  " << w;
+    }
+    std::cout << std::endl;
+  }
+
   // End of preprocessing, start the actual skeleton computation
 
   if(slope != Slope::INWARD && height == default_extrusion_height<FT>())
@@ -1036,7 +1199,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   points.reserve(2 * pwh.outer_boundary().size()); // just a reasonnable guess
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
-  Extrusion_builder<Geom_traits> builder(gt);
+  Extrusion_builder<Geom_traits> builder(gt, verbose);
   bool res;
   if(slope != Slope::OUTWARD) // INWARD or VERTICAL
     res = builder.inward_construction(pwh, weights, vertical_weight, height, points, faces);
@@ -1061,6 +1224,8 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   PMP::polygon_soup_to_polygon_mesh(points, faces, out);
 
   CGAL_warning(is_valid_polygon_mesh(out) && is_closed(out));
+
+  std::cout << "Finished" << std::endl;
 
   return true;
 }

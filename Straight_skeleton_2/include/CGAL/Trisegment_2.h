@@ -194,12 +194,14 @@ public:
   {
     const std::string lPadding = std::string(2 * aDepth, ' ');
 
-    os << lPadding << "[&: " << &aTri << " ID: " << aTri.id() << "\n"
-       << lPadding << "\tE" << aTri.e0().mID << " E" << aTri.e1().mID << " E" << aTri.e2().mID << "\n"
-       << lPadding << "\t" << s2str(aTri.e0()) << " w = " << n2str(aTri.w0()) << ";" << "\n"
-       << lPadding << "\t" << s2str(aTri.e1()) << " w = " << n2str(aTri.w1()) << ";" << "\n"
-       << lPadding << "\t" << s2str(aTri.e2()) << " w = " << n2str(aTri.w2()) << ";" << "\n"
-       << lPadding << "\tCollinearity: " << trisegment_collinearity_to_string(aTri.collinearity()) << "\n"
+    os << lPadding << "[\n"
+       << lPadding << " ID: " << aTri.id() << "\n"
+       << lPadding << " E" << aTri.e0().mID << " E" << aTri.e1().mID << " E" << aTri.e2().mID << "\n"
+       << lPadding << " " << s2str(aTri.e0()) << " w = " << n2str(aTri.w0()) << ";" << "\n"
+       << lPadding << " " << s2str(aTri.e1()) << " w = " << n2str(aTri.w1()) << ";" << "\n"
+       << lPadding << " " << s2str(aTri.e2()) << " w = " << n2str(aTri.w2()) << ";" << "\n"
+       << lPadding << " Collinearity: " << trisegment_collinearity_to_string(aTri.collinearity()) << "\n"
+       << lPadding << " Seeds: " << bool(aTri.mChildL) << " " << bool(aTri.mChildR) << " " << bool(aTri.mChildT) << "\n"
        << lPadding << "]\n" << std::flush;
   }
 

@@ -54,7 +54,7 @@ template<class K, class Caches>
 Trisegment_collinearity trisegment_collinearity_no_exact_constructions(const Segment_2_with_ID<K>& e0,
                                                                        const Segment_2_with_ID<K>& e1,
                                                                        const Segment_2_with_ID<K>& e2,
-                                                                      Caches& caches )
+                                                                       Caches& caches)
 {
   // 'are_edges_orderly_collinear()' is used to harmonize coefficients, but if the kernel is inexact
   // we could also have that are_edges_orderly_collinear() returns false, but the computed coefficients
@@ -68,7 +68,8 @@ Trisegment_collinearity trisegment_collinearity_no_exact_constructions(const Seg
   bool is_02 = (l0->a() == l2->a()) && (l0->b() == l2->b()) && (l0->c() == l2->c());
   bool is_12 = (l1->a() == l2->a()) && (l1->b() == l2->b()) && (l1->c() == l2->c());
 
-  CGAL_STSKEL_TRAITS_TRACE("coeff equalities: " << is_01 << " " << is_02 << " " << is_12)
+  CGAL_STSKEL_TRAITS_TRACE("collinearity: [" << e0.id() << ", " << e1.id() << ", " << e2.id()
+                        << "]: " << is_01 << " " << is_02 << " " << is_12);
 
   if ( is_01 & !is_02 & !is_12 )
     return TRISEGMENT_COLLINEARITY_01;
@@ -248,37 +249,6 @@ compute_normalized_line_coeffC2( Segment_2_with_ID<K> const& e,
   return rRes ;
 }
 
-// @todo weightless coefficients are stored because we use them sometimes weighted, and sometimes
-// inversely weighted (filtering bound). Should we store them weighted also for speed reasons?
-template<class K, class Caches>
-boost::optional< typename K::Line_2 > compute_weighted_line_coeffC2( Segment_2_with_ID<K> const& e,
-                                                                     typename K::FT const& aWeight,
-                                                                     Caches& aCaches )
-{
-  typedef typename K::FT FT ;
-  typedef typename K::Line_2 Line_2 ;
-
-  CGAL_precondition( CGAL_NTS is_finite(aWeight) && CGAL_NTS is_positive(aWeight) ) ;
-
-  boost::optional< Line_2 > l = compute_normalized_line_coeffC2(e, aCaches);
-  if( ! l )
-    return boost::none ;
-
-  FT a = l->a() * aWeight ;
-  FT b = l->b() * aWeight ;
-  FT c = l->c() * aWeight ;
-
-  CGAL_STSKEL_TRAITS_TRACE("\n~~ Weighted line coefficients for E" << e.id() << " " << s2str(e)
-                            << "\nweight=" << n2str(aWeight)
-                            << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
-                            ) ;
-
-  if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
-    return boost::none;
-
-  return cgal_make_optional( K().construct_line_2_object()(a,b,c) ) ;
-}
-
 template<class FT>
 Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, FT const& sx, FT const& sy, FT const& tx, FT const& ty )
 {
@@ -312,9 +282,6 @@ construct_trisegment ( Segment_2_with_ID<K> const& e0,
   typedef Trisegment_2<K, Segment_2_with_ID<K> >Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~  Construct trisegment [" << typeid(typename K::FT).name() << "]");
-  CGAL_STSKEL_TRAITS_TRACE("Segments E" << e0.id() << " E" << e1.id() << " E" << e2.id());
-
   Trisegment_collinearity lCollinearity = trisegment_collinearity_no_exact_constructions(e0,e1,e2,aCaches);
 
   return Trisegment_2_ptr( new Trisegment_2(e0, w0, e1, w1, e2, w2, lCollinearity, id) ) ;
@@ -347,8 +314,7 @@ compute_normal_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segm
 
   typedef boost::optional<Line_2> Optional_line_2 ;
 
-  CGAL_STSKEL_TRAITS_TRACE("\n~~ Computing normal offset lines isec time [" << typeid(FT).name() << "]") ;
-  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
+  CGAL_STSKEL_TRAITS_TRACE("\ncompute_normal_offset_lines_isec_timeC2(" << tri->id() << ") [" << typeid(FT).name() << "]") ;
 
   FT num(0), den(0) ;
 
@@ -356,55 +322,108 @@ compute_normal_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segm
   //
   // An offset line is given by:
   //
-  //   a*x(t) + b*y(t) + c - t = 0
+  //   a*x(t) + b*y(t) + c - w*t = 0
   //
-  // were 't > 0' being to the left of the line.
+  // with 't > 0' being to the left of the line.
   // If 3 such offset lines intersect at the same offset distance, the intersection 't',
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
-  // The result is :
   //
-  // sage: var('a0 b0 c0 a1 b1 c1 a2 b2 c2 x y t w0 w1 w2')
-  // (a0, b0, c0, a1, b1, c1, a2, b2, c2, x, y, t, w0, w1, w2)
-  // sage:
-  // sage: eqw0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
-  // sage: eqw1 = w1*a1*x + w1*b1*y + w1*c1 - t == 0
-  // sage: eqw2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
-  // sage:
-  // sage: solve([eqw0,eqw1,eqw2], x,y,t)
-  //   x ==  (((c1*w1 - c2*w2)*b0 - (b1*w1 - b2*w2)*c0)*w0 - (b2*c1*w2 - b1*c2*w2)*w1) / (((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1),
-  //   y == -(((c1*w1 - c2*w2)*a0 - (a1*w1 - a2*w2)*c0)*w0 - (a2*c1*w2 - a1*c2*w2)*w1) / (((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1),
-  //   t == -((b2*c1*w2 - b1*c2*w2)*a0*w1 - (a2*c1*w2 - a1*c2*w2)*b0*w1 + (a2*b1*w2 - a1*b2*w2)*c0*w1)*w0/(((b1*w1 - b2*w2)*a0 - (a1*w1 - a2*w2)*b0)*w0 - (a2*b1*w2 - a1*b2*w2)*w1)
+  //   [[ t == ((b2*c1 - b1*c2)*a0 - (a2*c1 - a1*c2)*b0 + (a2*b1 - a1*b2)*c0)/((b2*w1 - b1*w2)*a0 - (a2*w1 - a1*w2)*b0 + (a2*b1 - a1*b2)*w0) ]]
 
   bool ok = false ;
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCaches) ;
-  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->e1(), tri->w1(), aCaches) ;
-  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->e2(), tri->w2(), aCaches) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(tri->e0(), aCaches) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(tri->e1(), aCaches) ;
+  Optional_line_2 l2 = compute_normalized_line_coeffC2(tri->e2(), aCaches) ;
 
   if ( l0 && l1 && l2 )
   {
-    CGAL_STSKEL_TRAITS_TRACE("coeffs E" << tri->e0().id() << " [" << n2str(l0->a()) << "; " << n2str(l0->b()) << "; " << n2str(l0->c()) << "]"
-                        << "\ncoeffs E" << tri->e1().id() << " [" << n2str(l1->a()) << "; " << n2str(l1->b()) << "; " << n2str(l1->c()) << "]"
-                        << "\ncoeffs E" << tri->e2().id() << " [" << n2str(l2->a()) << "; " << n2str(l2->b()) << "; " << n2str(l2->c()) << "]") ;
+    const FT& a0 = l0->a(); const FT& b0 = l0->b(); const FT& c0 = l0->c(); const FT& w0 = tri->w0();
+    const FT& a1 = l1->a(); const FT& b1 = l1->b(); const FT& c1 = l1->c(); const FT& w1 = tri->w1();
+    const FT& a2 = l2->a(); const FT& b2 = l2->b(); const FT& c2 = l2->c(); const FT& w2 = tri->w2();
 
-    num = (l2->a()*l0->b()*l1->c())
-         -(l2->a()*l1->b()*l0->c())
-         -(l2->b()*l0->a()*l1->c())
-         +(l2->b()*l1->a()*l0->c())
-         +(l1->b()*l0->a()*l2->c())
-         -(l0->b()*l1->a()*l2->c());
+    CGAL_STSKEL_TRAITS_TRACE("coeffs E" << tri->e0().id() << " [" << n2str(a0) << "; " << n2str(b0) << "; " << n2str(c0) << "]"
+                        << "\ncoeffs E" << tri->e1().id() << " [" << n2str(a1) << "; " << n2str(b1) << "; " << n2str(c1) << "]"
+                        << "\ncoeffs E" << tri->e2().id() << " [" << n2str(a2) << "; " << n2str(b2) << "; " << n2str(c2) << "]") ;
+    CGAL_STSKEL_TRAITS_TRACE("weight E" << tri->e0().id() << " [" << n2str(w0) << "] "
+                          << "weight E" << tri->e1().id() << " [" << n2str(w1) << "] "
+                          << "weight E" << tri->e2().id() << " [" << n2str(w2) << "]") ;
 
-    den = (-l2->a()*l1->b())
-         +( l2->a()*l0->b())
-         +( l2->b()*l1->a())
-         -( l2->b()*l0->a())
-         +( l1->b()*l0->a())
-         -( l0->b()*l1->a());
+    num = (b2*c1 - b1*c2)*a0 - (a2*c1 - a1*c2)*b0 + (a2*b1 - a1*b2)*c0 ;
+    den = (b2*w1 - b1*w2)*a0 - (a2*w1 - a1*w2)*b0 + (a2*b1 - a1*b2)*w0 ;
+
+    // Here we are in a pickle: lines are not collinear but with weights, we could
+    // get an infinity of solutions still (particularly easy to create with null weights)
+    if (CGAL_NTS certified_is_zero(den)) {
+      // If the numerator (which is a 2nd determinant within the augmented matrix) is also 0,
+      // then we have a consistent system, so an infinity of solution for a fixed value of 't'
+      if (CGAL_NTS certified_is_zero(num)) {
+        CGAL_STSKEL_TRAITS_TRACE("Infinite solutions");
+
+        const auto& e0 = tri->e0();
+        const auto& e1 = tri->e1();
+        const auto& e2 = tri->e2();
+
+        CGAL_assertion(are_edges_parallelC2(e0, e1));
+        CGAL_assertion(are_edges_parallelC2(e1, e2));
+
+        // System is consistent, extract t
+        bool w0_is_zero = CGAL_NTS certified_is_zero(w0);
+        bool w1_is_zero = CGAL_NTS certified_is_zero(w1);
+        bool w2_is_zero = CGAL_NTS certified_is_zero(w2);
+
+        // If the intersection is a line, that would mean that all lines are collinear
+        // and there would be two lines in the same direction, so edges would be collinear
+        // and we would not be here
+        CGAL_assertion(!(w0_is_zero && w1_is_zero && w2_is_zero));
+
+        // If at least one line is not moving, evaluate a moving line at a point of the static line.
+        if (w0_is_zero && w1_is_zero) {
+          CGAL_assertion(a0 * a1 < 0);
+          num = a2*e0.source().x() + b2*e0.source().y() + c2;
+          den = w0;
+        } else if (w0_is_zero && w2_is_zero) {
+          CGAL_assertion(a0 * a2 < 0);
+          num = a1*e0.source().x() + b1*e0.source().y() + c1;
+          den = w1;
+        } else if (w1_is_zero && w2_is_zero) {
+          CGAL_assertion(a1 * a2 < 0);
+          num = a0*e1.source().x() + b0*e1.source().y() + c0;
+          den = w0;
+        } else if (w0_is_zero) {
+          num = a2*e0.source().x() + b2*e0.source().y() + c2;
+          den = w2;
+        } else if (w1_is_zero) {
+          num = a1*e0.source().x() + b1*e0.source().y() + c1;
+          den = w1;
+        } else if (w2_is_zero) {
+          num = a0*e1.source().x() + b0*e1.source().y() + c0;
+          den = w0;
+        } else {
+          // We can't have two lines moving in the same direction with the same speeds,
+          // otherwise they are either identical and we would be collinear (contradiction),
+          // or there is no solution to the base linear system (also contradiction).
+          // So if there is the same speed, they move in opposite directions and the only possibility
+          // is at t=0
+          if (CGAL_NTS certified_is_zero(w0 - w1)) {
+            num = 0;
+            den = 1;
+          } else {
+            num = c1 - c0;
+            den = w0 - w1;
+          }
+        }
+      } else {
+          CGAL_assertion_msg(false, "Unexpected case: lines are not collinear, but no valid 't' could be computed.");
+      }
+    } else {
+      CGAL_STSKEL_TRAITS_TRACE("No solution exists (inconsistent system).");
+    }
 
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);
   }
 
-  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): n=" << num << " d=" << den << " n/d=" << Rational<FT>(num,den)  )
+  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): n=" << num << " d=" << den << " n/d=" << Rational<FT>(num,den));
 
   return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
@@ -423,8 +442,8 @@ compute_oriented_midpoint ( Segment_2_with_ID<K> const& e0,
   typedef typename K::FT FT ;
 
   CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
-                            << "\ne0: " << s2str(e0)
-                            << "\ne1: " << s2str(e1)
+                            << "\n\te0: " << s2str(e0)
+                            << "\n\te1: " << s2str(e1)
                           );
 
   FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
@@ -549,18 +568,17 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   CGAL_precondition(tri->e0() == tri->e1());
   CGAL_precondition(bool(tri->child_l()));
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCaches) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(tri->e0(), aCaches) ;
   if( !l0 )
     return boost::none ;
 
-  const Segment_2& contour_seg = tri->e0();
-  Direction_2 perp_dir ( contour_seg.source().y() - contour_seg.target().y() ,
-                         contour_seg.target().x() - contour_seg.source().x() ) ;
   boost::optional< typename K::Point_2 > seed = construct_offset_lines_isecC2(tri->child_l(), aCaches ) ;
-
   if(!seed)
     return boost::none;
 
+  const Segment_2& contour_seg = tri->e0();
+  const Direction_2 perp_dir(contour_seg.source().y() - contour_seg.target().y(),
+                             contour_seg.target().x() - contour_seg.source().x());
   const Ray_2 ray(*seed, perp_dir);
   const Segment_2& opp_seg = tri->e2();
   Boolean inter_exist = K().do_intersect_2_object()(ray, opp_seg);
@@ -571,7 +589,6 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   auto inter_res = K().intersect_2_object()(ray, opp_seg);
 
   FT t;
-
   if(const Segment_2* seg = boost::get<Segment_2>(&*inter_res))
   {
     // get the segment extremity closest to the seed
@@ -588,7 +605,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   }
 
   bool ok = CGAL_NTS is_finite(t);
-  return cgal_make_optional(ok, Rational<FT>(t, FT(1))) ;
+  return cgal_make_optional(ok, Rational<FT>(t, tri->w0())) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2
@@ -600,6 +617,11 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
 // (a predicate for instance should return indeterminate in this case)
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
+//
+// DETAILS:
+//   The offset lines are defined as:
+//     a*x + b*y + c - w*t = 0
+//   where (a,b,c) are the normalized line coefficients and w is the weight.
 //
 template <class K, class Caches>
 boost::optional< Rational< typename K::FT> >
@@ -629,17 +651,17 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   //   which passes through 'q', the degenerate offset vertex (e0*,e1*).
   //   This "degenerate" bisecting line is given by:
   //
-  //     B0(t) = p + t*[l0.a,l0.b]
+  //     B0(t) = p + w0*t*[l0.a,l0.b]
   //
   //   where p is the projection of q along l0 and l0.a,l0.b are the _normalized_ line coefficients for e0 (or e1 which is the same)
   //   Since [a,b] is a _unit_ vector pointing perpendicularly to the left of e0 (and e1);
-  //   any point B0(k) is at a distance k from the line supporting e0 and e1.
+  //   any point B0(t) is at a scaled distance u from the line supporting e0 and e1 (scaled by w0).
   //
   //   (2)
   //   The bisecting line of e0 and e2 is given by the following SEL
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c - t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c - t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
   //
   //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l2.c) are the normalized line coefficientes of e0 and e2, resp.
   //
@@ -650,34 +672,43 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
   //   to the lines supporting the 3 edges is exactly 't' (since those expressions are precisely parametrized in a distance)
   //   Solving the following vectorial equation:
   //
-  //     [x(y),y(t)] = p + t*[l0.a,l0.b]
+  //     [x(y),y(t)] = p + w0*t*[l0.a,l0.b]
   //
   //   for t gives the result we want.
   //
-  //
   //   (4)
-  //   With weights, the above equations become:
+  //   To solve this system we can reformulate it as the intersection of three non collinear lines.
+  //   The two equations from the non collinear edges:
   //
-  //   sage: eq0 = w0*a0*x + w0*b0*y + w0*c0 - t == 0
-  //   sage: eq2 = w2*a2*x + w2*b2*y + w2*c2 - t == 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
   //
-  //   sage: solve([eq0,eq2], x,y)
-  //     [[x == -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0),
-  //       y ==  (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0) ]]
+  //   and if l0 is not vertical (b0 != 0), we add the vertical line:
   //
-  //   sage: x0 = -(b2*t*w2 - (b2*c0*w2 - b0*c2*w2 + b0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
-  //   sage: eqb0 = px + t * a0 / w0 - x0 == 0
-  //   sage: solve(eqb0, t)
-  //     [t == -(b2*c0 - b0*c2 - (a2*b0 - a0*b2)*px)*w0*w2/(b0*w0 - (a0*a2*b0 - (a0^2 - 1)*b2)*w2) ]
+  //     x(t) = px + w0*t*l0.a
   //
-  //   sage: y0 = (a2*t*w2 - (a2*c0*w2 - a0*c2*w2 + a0*t)*w0)/((a2*b0*w2 - a0*b2*w2)*w0)
-  //   sage: eqb1 = py + t * b0 / w0 - y0 == 0
-  //   sage: solve(eqb1, t)
-  //     [t == -(a2*c0 - a0*c2 + (a2*b0 - a0*b2)*py)*w0*w2/(a0*w0 + (a2*b0^2 - a0*b0*b2 - a2)*w2)]
+  //   else, because l0 is vertical (==> not horizontal), we add the horizontal line:
+  //
+  //     y(t) = py + w0*t*l0.b
+  //
+  // sage: sage: var('a0 b0 c0 a2 b2 c2 x y t w0 w2 px py')
+  // sage: eq0 = a0*x + b0*y + c0 - w0*t == 0
+  // sage: eq2 = a2*x + b2*y + c2 - w2*t == 0
+  // sage: eqv = px + w0 * t * a0 == x
+  // sage: solve([eq0,eq2,eqv], x, y, t)
+  //    [[ x == -(b0*px*w2 - (a0*b2*c0 - a0*b0*c2 + b2*px)*w0)/((a0*a2*b0 - a0^2*b2 + b2)*w0 - b0*w2),
+  //       y == (a0*px*w2 - (a0*a2*c0 - a0^2*c2 + a2*px + c2)*w0 + c0*w2)/((a0*a2*b0 - a0^2*b2 + b2)*w0 - b0*w2),
+  //       t == (a0*b2*px - (a2*px + c2)*b0 + b2*c0)/((a0*a2*b0 - a0^2*b2 + b2)*w0 - b0*w2) ]]
+  // sage: eqv = py + w0 * t * b0 == y
+  // sage: solve([eq0,eq2,eqv], x, y, t)
+  //    [[ x == -(b0*py*w2 - (b0*b2*c0 - b0^2*c2 + b2*py + c2)*w0 + c0*w2)/((a2*b0^2 - a0*b0*b2 - a2)*w0 + a0*w2),
+  //       y == (a0*py*w2 - (a2*b0*c0 - a0*b0*c2 + a2*py)*w0)/((a2*b0^2 - a0*b0*b2 - a2)*w0 + a0*w2),
+  //       t == -(a2*b0*py - (b2*py + c2)*a0 + a2*c0)/((a2*b0^2 - a0*b0*b2 - a2)*w0 + a0*w2) ]]
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCaches) ;
-  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->other_collinear_edge(), tri->other_collinear_edge_weight(), aCaches) ;
-  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCaches) ;
+
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(tri->collinear_edge(), aCaches) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(tri->other_collinear_edge(), aCaches) ;
+  Optional_line_2 l2 = compute_normalized_line_coeffC2(tri->non_collinear_edge(), aCaches) ;
 
   Optional_point_2 q = construct_degenerate_seed_pointC2(tri, aCaches);
 
@@ -698,6 +729,8 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
 
     if ( tri->collinear_edge_weight() == tri->other_collinear_edge_weight() )
     {
+      const FT& w0 = tri->collinear_edge_weight();
+      const FT& w2 = tri->non_collinear_edge_weight();
       const FT& l0a = l0->a() ;
       const FT& l0b = l0->b() ;
       const FT& l0c = l0->c() ;
@@ -705,50 +738,29 @@ compute_degenerate_offset_lines_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, 
       const FT& l2b = l2->b() ;
       const FT& l2c = l2->c() ;
 
-      // Since l0 and l1 are parallel, we cannot solve the system using:
-      //   l0a*x + l0b*y + l0c = 0 (1)
-      //   l1a*x + l1b*y + l1c = 0
-      //   l2a*x + l2b*y + l2c = 0
-      // Instead, we use the equation of the line orthogonal to l0 (and l1).
-      // However, rephrasing
-      //   l0a*x + l0b*y + l0c = 0
-      // to
-      //   [x, y] = projected_seed + t * N
-      // requires the norm (l0a² + l0b²) to be exactly '1', which likely isn't the case
-      // if we are using inexact square roots. In that case, the norm behaves similarly
-      // to a weight (i.e. speed), and the speed is inverted in the alternate front formulation.
-      // Equation (1) rewritten with weights is:
-      //   w*l0a*x + w*l0b*y + w*l0c = 0
-      // with l0a² + l0b² ~= 1. Extracting the numerical error, we have:
-      //   w'*l0a'*x + w'*l0b'*y + w'*l0c' = 0,
-      // with l0a'² + l0b'² = 1.
-      // The orthogonal displacement is rephrased to:
-      //   [x, y] = projected_seed + t / w' * N,
-      // with w' = weight * (l0a² + l0b²).
-      const FT sq_w0 = square(l0a) + square(l0b); // l0a and l0b are already *weighted* coefficients
-
       FT num(0), den(0) ;
-      if ( ! CGAL_NTS is_zero(l0b) ) // Non-vertical
+      if ( ! CGAL_NTS is_zero(l0b) ) // l0 is not vertical, add the vertical component
       {
-        num = ((l2a*l0b - l0a*l2b) * px - l2b*l0c + l0b*l2c) * sq_w0 ;
-        den = l0a*l0a*l2b - l2b*sq_w0 + l0b*sq_w0 - l0a*l2a*l0b ;
+        num = l0a*l2b*px - (l2a*px + l2c)*l0b + l2b*l0c ;
+        den = (l0a*l2a*l0b - l0a*l0a*l2b + l2b)*w0 - l0b*w2 ;
 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, non-vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
-      else
+      else // l0 is vertical, add the horizontal component
       {
-        // l0b = 0, and all sq_w0 disappear
-        num = - l0a*l2b*py - l0a*l2c + l2a*l0c ;
-        den = l2a - l0a;
+        num = -(l2a*l0b*py - (l2b*py + l2c)*l0a + l2a*l0c) ;
+        den = (l2a*l0b*l0b - l0a*l0b*l2b - l2a)*w0 + l0a*w2 ;
 
         CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
       }
 
-      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);
-      return cgal_make_optional(ok, Rational<FT>(num,den)) ;
+      ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den) ;
+     return cgal_make_optional(ok, Rational<FT>(num,den)) ;
     }
     else
     {
+      // @todo we can't be there, but understand how (where (if)) is parallel + non-collinear handled
+
       // l0 and l1 are collinear but with different speeds, so there cannot be an event.
       CGAL_STSKEL_TRAITS_TRACE("Event times (degenerate, inequal norms)")
       CGAL_STSKEL_TRAITS_TRACE("--> Returning 0/0 (no event)");
@@ -812,22 +824,33 @@ construct_normal_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment
 
   FT x(0), y(0) ;
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->e0(), tri->w0(), aCaches) ;
-  Optional_line_2 l1 = compute_weighted_line_coeffC2(tri->e1(), tri->w1(), aCaches) ;
-  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->e2(), tri->w2(), aCaches) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(tri->e0(), aCaches) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(tri->e1(), aCaches) ;
+  Optional_line_2 l2 = compute_normalized_line_coeffC2(tri->e2(), aCaches) ;
 
   bool ok = false ;
 
   if ( l0 && l1 && l2 )
   {
-    FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
+    // [[ x == ((c2*w1 - c1*w2)*b0 - (b2*w1 - b1*w2)*c0 + (b2*c1 - b1*c2)*w0)/((b2*w1 - b1*w2)*a0 - (a2*w1 - a1*w2)*b0 + (a2*b1 - a1*b2)*w0),
+    //    y == -((c2*w1 - c1*w2)*a0 - (a2*w1 - a1*w2)*c0 + (a2*c1 - a1*c2)*w0)/((b2*w1 - b1*w2)*a0 - (a2*w1 - a1*w2)*b0 + (a2*b1 - a1*b2)*w0) ]]
+
+    const FT& a0 = l0->a(); const FT& b0 = l0->b(); const FT& c0 = l0->c(); const FT& w0 = tri->w0();
+    const FT& a1 = l1->a(); const FT& b1 = l1->b(); const FT& c1 = l1->c(); const FT& w1 = tri->w1();
+    const FT& a2 = l2->a(); const FT& b2 = l2->b(); const FT& c2 = l2->c(); const FT& w2 = tri->w2();
+
+    CGAL_STSKEL_TRAITS_TRACE("coeffs E" << tri->e0().id() << " [" << n2str(a0) << "; " << n2str(b0) << "; " << n2str(c0) << "] weight [" << n2str(w0) << "]"
+                        << "\ncoeffs E" << tri->e1().id() << " [" << n2str(a1) << "; " << n2str(b1) << "; " << n2str(c1) << "] weight [" << n2str(w1) << "]"
+                        << "\ncoeffs E" << tri->e2().id() << " [" << n2str(a2) << "; " << n2str(b2) << "; " << n2str(c2) << "] weight [" << n2str(w2) << "]") ;
+
+    FT den = (b2*w1 - b1*w2)*a0 - (a2*w1 - a1*w2)*b0 + (a2*b1 - a1*b2)*w0 ;
 
     CGAL_STSKEL_TRAITS_TRACE("\tden=" << n2str(den) )
 
     if ( ! CGAL_NTS certified_is_zero(den) )
     {
-      FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
-      FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
+      FT numX = (c2*w1 - c1*w2)*b0 - (b2*w1 - b1*w2)*c0 + (b2*c1 - b1*c2)*w0 ;
+      FT numY = -((c2*w1 - c1*w2)*a0 - (a2*w1 - a1*w2)*c0 + (a2*c1 - a1*c2)*w0) ;
 
       CGAL_STSKEL_TRAITS_TRACE("\tnumX=" << n2str(numX) << "\n\tnumY=" << n2str(numY) ) ;
 
@@ -835,8 +858,8 @@ construct_normal_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment
       {
         ok = true ;
 
-        x =  numX / den ;
-        y = -numY / den ;
+        x = numX / den ;
+        y = numY / den ;
 
        CGAL_STSKEL_TRAITS_TRACE("\n\tx=" << n2str(x) << "\n\ty=" << n2str(y) ) ;
       }
@@ -864,6 +887,7 @@ construct_artifical_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID
   CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
   CGAL_precondition(tri->e0() == tri->e1());
+  CGAL_precondition(!is_zero(tri->w0()));
   CGAL_precondition(bool(tri->child_l()));
 
   const Segment_2& contour_seg = tri->e0();
@@ -931,8 +955,8 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
 
   FT x(0),y(0) ;
 
-  Optional_line_2 l0 = compute_weighted_line_coeffC2(tri->collinear_edge(), tri->collinear_edge_weight(), aCaches) ;
-  Optional_line_2 l2 = compute_weighted_line_coeffC2(tri->non_collinear_edge(), tri->non_collinear_edge_weight(), aCaches) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(tri->collinear_edge(), aCaches) ;
+  Optional_line_2 l2 = compute_normalized_line_coeffC2(tri->non_collinear_edge(), aCaches) ;
 
   Optional_point_2 q = construct_degenerate_seed_pointC2(tri, aCaches);
 
@@ -940,68 +964,62 @@ construct_degenerate_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Seg
 
   if ( l0 && l2 && q )
   {
-    const Comparison_result res = CGAL::compare(tri->collinear_edge_weight(), tri->other_collinear_edge_weight());
-    if ( res == EQUAL )
+    const FT& w0 = tri->collinear_edge_weight();
+    const FT& w2 = tri->non_collinear_edge_weight();
+    const FT& l0a = l0->a() ;
+    const FT& l0b = l0->b() ;
+    const FT& l0c = l0->c() ;
+    const FT& l2a = l2->a() ;
+    const FT& l2b = l2->b() ;
+    const FT& l2c = l2->c() ;
+
+    if ( tri->collinear_edge_weight() == tri->other_collinear_edge_weight() )
     {
       FT px, py ;
       line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(), px,py);
 
       CGAL_STSKEL_TRAITS_TRACE("Degenerate, equal weights " << tri->collinear_edge_weight() ) ;
       CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
-      const FT& l0a = l0->a() ;
-      const FT& l0b = l0->b() ;
-      const FT& l0c = l0->c() ;
-      const FT& l2a = l2->a() ;
-      const FT& l2b = l2->b() ;
-      const FT& l2c = l2->c() ;
 
-      // See details in compute_degenerate_offset_lines_isec_timeC2()
-      const FT sq_w0 = square(l0a) + square(l0b);
-
-      // Note that "* sq_w0" is removed from the numerator expression.
-      //
-      // This is because the speed is inverted while representing the front
-      // progression using the orthogonal normalized vector [l0a, l0b]: P = Q + t/w * V with V normalized.
-      // However, here l0a & l0b are not normalized but *weighted* coeff, so we need to divide by w0².
-      // Hence we can just avoid multiplying by w0² in the numerator in the first place.
-      FT num, den ;
+      FT num_x, num_y, den ;
       if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
       {
-        num = ((l2a*l0b - l0a*l2b) * px - l2b*l0c + l0b*l2c) /* * sq_w0 */ ;
-        den = l0a*l0a*l2b - l2b*sq_w0 + l0b*sq_w0 - l0a*l2a*l0b ;
+        num_x = -(l0b*px*w2 - (l0a*l2b*l0c - l0a*l0b*l2c + l2b*px)*w0) ;
+        num_y = (l0a*px*w2 - (l0a*l2a*l0c - l0a*l0a*l2c + l2a*px + l2c)*w0 + l0c*w2) ;
+        den = ((l0a*l2a*l0b - l0a*l0a*l2b + l2b)*w0 - l0b*w2) ;
       }
       else
       {
-        num = ((l2a*l0b - l0a*l2b) * py - l0a*l2c + l2a*l0c) /* * sq_w0 */ ;
-        den = l0a*l0b*l2b - l0b*l0b*l2a + l2a*sq_w0 - l0a*sq_w0;
+        num_x = -(l0b*py*w2 - (l0b*l2b*l0c - l0b*l0b*l2c + l2b*py + l2c)*w0 + l0c*w2) ;
+        num_y = (l0a*py*w2 - (l2a*l0b*l0c - l0a*l0b*l2c + l2a*py)*w0) ;
+        den = ((l2a*l0b*l0b - l0a*l0b*l2b - l2a)*w0 + l0a*w2) ;
       }
 
-      if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
+      if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) &&
+             CGAL_NTS is_finite(num_x) && CGAL_NTS is_finite(num_y) )
       {
-        x = px + l0a * num / den ;
-        y = py + l0b * num / den ;
-
+        x = num_x / den ;
+        y = num_y / den ;
         ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
       }
     }
     else
     {
+      CGAL_assertion(false); // this is COLLINEAR, not parallel so we can never be here
+
       CGAL_STSKEL_TRAITS_TRACE("Degenerate, different weights " << n2str(tri->collinear_edge_weight())
                                                      << " and " << n2str(tri->other_collinear_edge_weight()));
-
-      const FT& l0a = l0->a() ; const FT& l0b = l0->b() ; const FT& l0c = l0->c() ;
-      const FT& l2a = l2->a() ; const FT& l2b = l2->b() ; const FT& l2c = l2->c() ;
 
       // The line parallel to l0 (and l1) passing through q is: l0a*x + l0b*y + lambda = 0, with
       const FT lambda = -l0a*q->x() - l0b*q->y();
 
       // The bisector between l0 (l1) and l2 is:
-      //  l0a*x + l0b*y + l0c - t = 0
-      //  l2a*x + l2b*y + l2c - t = 0
+      //  l0a*x + l0b*y + l0c - w0*t = 0
+      //  l2a*x + l2b*y + l2c - w2*t = 0
 
       // The intersection point is thus:
-      //  l0a*x + l0b*y + l0c - t = 0
-      //  l2a*x + l2b*y + l2c - t = 0
+      //  l0a*x + l0b*y + l0c - w0*t = 0
+      //  l2a*x + l2b*y + l2c - w2*t = 0
       //  l0a*x + l0b*y + lambda = 0
 
       // const FT t = l0c - lambda ; // (3) - (1)
@@ -1037,6 +1055,9 @@ construct_offset_lines_isecC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   boost::optional< Point_2 > rRes =
       tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? construct_normal_offset_lines_isecC2    (tri, aCaches)
                                                           : construct_degenerate_offset_lines_isecC2(tri, aCaches);
+
+
+  CGAL_STSKEL_TRAITS_TRACE("isec = " << (rRes ? p2str(*rRes) : "none"));
 
   aCaches.mPoint_cache.Set(tri->id(), rRes) ;
 

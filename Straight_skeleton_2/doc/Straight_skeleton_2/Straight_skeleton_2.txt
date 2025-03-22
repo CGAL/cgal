@@ -142,14 +142,14 @@ The main entry points for straight skeletons are the following functions:
 \subsection Straight_skeleton_2Weights Weighted Straight Skeletons
 
 Weighted straight skeletons are a generalization of straight skeletons: contour edges are assigned
-a positive weight, which can be understood as assigning a speed to the wavefront spawned from
+a weight, which can be understood as assigning a speed to the wavefront spawned from
 the contour edge. Vertices no longer move along the angular bisector between two contour edges, but
 along a weighted bisector.
 
-This \cgal package supports positive multiplicative weights: if the supporting line of a contour edge
+This \cgal package supports multiplicative weights: if the supporting line of a contour edge
 is described through the equation `ax+by+c=0` then the supporting line of the offset edge
-at distance `t` is `ax+by+c-t=0`. With a multiplicative weight `w`, the equation becomes `w(ax+by+c)-t=0`.
-Therefore, a larger weight implies a faster moving front.
+at distance `t` is `ax+by+c-t=0`. With a multiplicative weight `w`, the equation becomes `ax+by+c-w*t=0`.
+Therefore, a larger weight implies a slower moving front.
 
 \cgalFigureAnchor{SLSWeight}
 <center>
@@ -282,7 +282,7 @@ to its offset distance, the resulting roof is "correct" in that water will alway
 to the contour edges (the roof's border), regardless of where it falls on the roof.
 Laycock and Day \cgalCite{cgal:ld-agrm-03} give an algorithm for roof design based on the straight skeleton.
 
-This \cgal package implements skeleton extrusion for polygons with holes, with support for positive
+This \cgal package implements skeleton extrusion for polygons with holes, with support for
 multiplicative weights. The output is a closed, combinatorially 2-manifold surface triangle mesh.
 
 \cgalFigureAnchor{SLSExtrusion}

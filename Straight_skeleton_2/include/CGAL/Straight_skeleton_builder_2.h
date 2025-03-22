@@ -452,6 +452,8 @@ private :
   // @todo Should split events always have lower priority than edge events?
   Comparison_result CompareEventsSupportAngles ( EventPtr const& aA, EventPtr const& aB )
   {
+    CGAL_STSKEL_BUILDER_TRACE(4, "Compare event support angles " << aA->triedge() << " and " << aB->triedge());
+
     CGAL_precondition ( aA->type() != Event::cEdgeEvent && aB->type() != Event::cEdgeEvent ) ;
 
     if(aA->triedge() == aB->triedge())
@@ -503,9 +505,62 @@ public:
   public:
     Event_compare ( Self* aBuilder ) : mBuilder(aBuilder) {}
 
+    // Priority queue comparison: `A` has higher priority than `B`
+    // if `operator()(A, B)` is `false`.
     bool operator() ( EventPtr const& aA, EventPtr const& aB ) const
     {
-      return mBuilder->CompareEvents(aA,aB) == LARGER ;
+      CGAL_STSKEL_BUILDER_TRACE(16, "operator()(" << aA->triedge() << "; " << aB->triedge() << ")");
+
+      Comparison_result res = mBuilder->CompareEvents(aA,aB);
+      if(res == EQUAL)
+      {
+        CGAL_STSKEL_BUILDER_TRACE(16, "Events have equal time, find earliest seed") ;
+        CGAL_STSKEL_BUILDER_TRACE(16, "  N" << aA->seed0()->id() << " at " << aA->seed0()->time()) ;
+        CGAL_STSKEL_BUILDER_TRACE(16, "  N" << aA->seed1()->id() << " at " << aA->seed1()->time()) ;
+        CGAL_STSKEL_BUILDER_TRACE(16, "  N" << aB->seed0()->id() << " at " << aB->seed0()->time()) ;
+        CGAL_STSKEL_BUILDER_TRACE(16, "  N" << aB->seed1()->id() << " at " << aB->seed1()->time()) ;
+
+        int aContourCounterA = int(aA->seed0()->is_contour()) + int(aA->seed1()->is_contour()) ;
+        int aContourCounterB = int(aB->seed0()->is_contour()) + int(aB->seed1()->is_contour()) ;
+
+        // 'A' has more contour seeds => 'A' has higher prio => return false
+        if (aContourCounterA > aContourCounterB) return false ;
+        if (aContourCounterA < aContourCounterB) return true ;
+
+        Trisegment_2_ptr lTriA, lTriB ;
+        if (aContourCounterA == 2) // all 4 seeds are contour vertices
+        {
+          return aA->seed0()->id() < aB->seed0()->id(); // for determinism
+        }
+        else if (aContourCounterA == 1) // compare the non-contour seeds
+        {
+          lTriA = aA->seed0()->is_contour() ? aA->seed1()->trisegment() : aA->seed0()->trisegment() ;
+          lTriB = aB->seed0()->is_contour() ? aB->seed1()->trisegment() : aB->seed0()->trisegment() ;
+        }
+        else // no contour vertices, keep for each event the earliest seed
+        {
+          lTriA = aA->seed0()->trisegment();
+          if (aA->seed0() != aA->seed1())
+          {
+            if (mBuilder->CompareEvents(aA->seed1()->trisegment(), lTriA) == SMALLER)
+              lTriA = aA->seed1()->trisegment() ;
+          }
+
+          lTriB = aB->seed0()->trisegment();
+          if (aB->seed0() != aB->seed1())
+          {
+            if (mBuilder->CompareEvents(aB->seed1()->trisegment(), lTriB) == SMALLER)
+              lTriB = aB->seed1()->trisegment() ;
+          }
+        }
+
+        // smmallest has priority
+        return mBuilder->CompareEvents(lTriA, lTriB) == LARGER ;
+      }
+      else
+      {
+        return res == LARGER ;
+      }
     }
 
   private:
@@ -527,12 +582,7 @@ public:
       CGAL_precondition( aA->type() != Event::cEdgeEvent || aB->type() != Event::cEdgeEvent ) ;
 
       if ( ! mBuilder->AreEventsSimultaneous(aA,aB) )
-      {
-        Comparison_result res = mBuilder->CompareEvents(aA,aB);
-        if ( res == EQUAL )
-          return aA < aB;
-        return ( res == LARGER ) ;
-      }
+        return Event_compare(mBuilder).operator()(aA, aB) ; // @todo cache
 
       // There are simultaneous events, we will need to refresh the queue before calling top()
       // see PopNextSplitEvent()
@@ -543,7 +593,7 @@ public:
       // i.e. `true` if the angle is larger
       Comparison_result res = mBuilder->CompareEventsSupportAngles(aA, aB);
       if ( res == EQUAL )
-        return aA < aB;
+        return Event_compare(mBuilder).operator()(aA, aB) ; // @todo cache
       return ( res == LARGER ) ;
     }
 
@@ -709,8 +759,6 @@ private :
                                                                      CreateSegment<Traits>(aTriedge.e2()),
                                                                      aTriedge.e2()->weight() );
 
-    CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":\n" << r ) ;
-
     // Consecutive collinear segments must not have the same weight
     CGAL_assertion_code(if(r->collinearity() == TRISEGMENT_COLLINEARITY_01))
     CGAL_assertion_code(if(aTriedge.e0()->weight() != aTriedge.e1()->weight()) {)
@@ -854,7 +902,7 @@ private :
 
   void AddSplitEvent ( Vertex_handle aV, EventPtr const& aEvent )
   {
-    CGAL_STSKEL_BUILDER_TRACE(2, "V" << aV->id() << " PQ: " << *aEvent);
+    CGAL_STSKEL_BUILDER_TRACE(2, "V" << aV->id() << " Split PQ: push " << *aEvent);
     GetVertexData(aV).mSplitEvents.push(aEvent);
   }
 
@@ -890,6 +938,19 @@ private :
                          const_cast<EventPtr*>(&lPQ.top()) + lPQ.size(),
                          Split_event_compare(this, aV));
         }
+
+#ifdef CGAL_SLS_PRINT_QUEUE_BEFORE_EACH_POP
+        CGAL_STSKEL_BUILDER_TRACE(4, "SPLIT QUEUE OF " << aV->id() << " -------------------------------------------------- ");
+        CGAL_STSKEL_BUILDER_TRACE(4, "Queue size: " << lPQ.size());
+        auto spq = lPQ;
+        while(!spq.empty())
+        {
+          EventPtr event = spq.top();
+          CGAL_STSKEL_BUILDER_TRACE(4, "SPQ Event: " << *event);
+          spq.pop();
+        }
+        CGAL_STSKEL_BUILDER_TRACE(4, "END SPLIT QUEUE OF " << aV->id() << " --------------------------------------------- ");
+#endif
 
         rEvent = lPQ.top();
         lPQ.pop();
@@ -949,7 +1010,7 @@ private :
     Comparison_result rResult = aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() )
                                                                : EQUAL;
 
-    CGAL_STSKEL_BUILDER_TRACE(3, "Compare events " << aA->triedge() << " and " << aB->triedge() << " -> " << rResult);
+    CGAL_STSKEL_BUILDER_TRACE(4, "Compare events " << aA->triedge() << " and " << aB->triedge() << " -> " << rResult);
     return rResult;
   }
 

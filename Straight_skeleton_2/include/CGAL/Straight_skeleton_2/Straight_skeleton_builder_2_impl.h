@@ -106,8 +106,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode,
   {
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
 
-    CGAL_STSKEL_BUILDER_TRACE(4, "\n[] Considering E" << lTrisegment->e0().mID << " E" << lTrisegment->e1().mID << " E" << lTrisegment->e2().mID
-                                << " Collinearity: " << trisegment_collinearity_to_string(lTrisegment->collinearity()) ) ;
+    CGAL_STSKEL_BUILDER_TRACE(4, "\nConsidering " << lTrisegment ) ;
 
     // The 02 collinearity configuration is problematic: 01 or 12 collinearity has a seed position
     // giving the point through which the bisector passes. However, for 02, it is not a given.
@@ -362,9 +361,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
     CollectSplitEvents(aNode, aPrevEventTriedge) ;
 
   EventPtr lLEdgeEvent = FindEdgeEvent( lPrev , aNode, aPrevEventTriedge ) ;
-  CGAL_STSKEL_BUILDER_TRACE(2, "Done Left " << (lLEdgeEvent ? "Found" : "Not Found"));
+  CGAL_STSKEL_BUILDER_TRACE(2, "Done; Edge Event on the Left: " << (lLEdgeEvent ? "Found" : "Not Found"));
   EventPtr lREdgeEvent = FindEdgeEvent( aNode , lNext, aPrevEventTriedge ) ;
-  CGAL_STSKEL_BUILDER_TRACE(2, "Done Right " << (lREdgeEvent ? "Found" : "Not Found"));
+  CGAL_STSKEL_BUILDER_TRACE(2, "Done; Edge Event on the Right: " << (lREdgeEvent ? "Found" : "Not Found"));
 
   bool lAcceptL = !!lLEdgeEvent ;
   bool lAcceptR = !!lREdgeEvent ;
@@ -672,8 +671,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
     {
       if ( K().orientation_2_object()(lLH->vertex()->point(),
                                       lLH->opposite()->vertex()->point(),
-                                      lRH->vertex()->point()) == EQUAL )
+                                      lRH->vertex()->point()) == EQUAL ) {
         return false; // collinear
+      }
 
       // parallel but not collinear, order arbitrarily (but consistently)
       return K().less_xy_2_object()(lLH->vertex()->point(), lRH->vertex()->point()) ;
@@ -699,6 +699,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HarmonizeSpeeds(boost::mpl::bool_<tru
     {
       CGAL_STSKEL_BUILDER_TRACE(4, "Harmonize " << lBorder->id() << " with " << (*lRes.first)->id() ) ;
       mTraits.InitializeLineCoeffs(lBorder->id(), (*lRes.first)->id());
+      if(lBorder->weight() != (*lRes.first)->weight()) {
+        throw std::runtime_error("Collinear input edges must have the same weight");
+      }
     }
     else
     {
@@ -801,7 +804,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
 
           CGAL_STSKEL_BUILDER_TRACE ( 3, "Split point found at the "
                                     << ( rSite == AT_SOURCE ? "SOURCE vertex" : ( rSite == AT_TARGET ? "TARGET vertex" : "strict inside" ) )
-                                    << " of the offset edge " << vh2str(lPrevN) << " " << vh2str(v)
+                                    << " of the offset edge " << vh2str(lPrevN) << " -- " << vh2str(v)
                                     ) ;
           break ;
         }
@@ -1578,7 +1581,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
       {
         EventPtr event = mpq.top();
         mpq.pop();
-        CGAL_STSKEL_BUILDER_TRACE(4, *event);
+        CGAL_STSKEL_BUILDER_TRACE(4, "MPQ Event: " << *event);
       }
       CGAL_STSKEL_BUILDER_TRACE(4, "END MAIN QUEUE --------------------------------------------- ");
 #endif
@@ -1606,13 +1609,18 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
         }
 
         ++ mStepID ;
+
+        CGAL::draw(*mSSkel);
       }
       else
       {
         CGAL_STSKEL_BUILDER_TRACE (3,"\nAlready processed") ;
       }
     }
-    else break ;
+    else
+    {
+      break ;
+    }
   }
 
   mVisitor.on_propagation_finished();
@@ -2410,6 +2418,8 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   mVisitor.on_cleanup_started();
 
+  CGAL::draw(*mSSkel);
+
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
                 ,[this](Vertex_handle_pair p){ this->MergeSplitNodes(p); }
@@ -2432,6 +2442,8 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
   EnforceSimpleConnectedness();
 
   mVisitor.on_cleanup_finished();
+
+  CGAL::draw(*mSSkel);
 
   // If 'mMaxTime' is sufficiently large, it will be a full skeleton and could be validated as such...
   if(mMaxTime) // might be a partial skeleton

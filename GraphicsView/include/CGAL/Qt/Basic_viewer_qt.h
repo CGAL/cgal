@@ -54,8 +54,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/assertions.h>
 
-#define CGAL_BASIC_VIEWER_INIT_SIZE_X 500
-#define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
+#define CGAL_BASIC_VIEWER_INIT_SIZE_X 1500
+#define CGAL_BASIC_VIEWER_INIT_SIZE_Y 1500
 
 namespace CGAL
 {
