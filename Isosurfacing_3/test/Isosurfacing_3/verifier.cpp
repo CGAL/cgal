@@ -103,6 +103,8 @@ void verify_euler() {
 
   using Mesh = CGAL::Surface_mesh<Point>;
 
+  std::cout << "  == Verify Euler ==" << std::endl;
+
   const std::size_t num_tests = 10000;
 
   for (std::size_t i = 0; i < num_tests; i++) {
@@ -110,11 +112,17 @@ void verify_euler() {
     Values values { grid };
     Domain domain { grid, values };
 
-    read_iso_volume("data/MarchingCubes_cases/Grids/" + std::to_string(i) + "-scalar_field.iso", grid, values);
+    std::string filename = "/path/to/data/MarchingCubes_cases/Grids/" + std::to_string(i) + "-scalar_field.iso";
+
+    std::cout << "Verify " << filename << "..." << std::endl;
+
+    read_iso_volume(filename, grid, values);
 
     Point_range points;
     Polygon_range triangles;
     IS::marching_cubes<CGAL::Sequential_tag>(domain, 0, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
+
+    CGAL::IO::write_polygon_soup("last_result.off", points, triangles);
 
     assert(points.size() && triangles.size());
     assert(!has_duplicate_points(points, triangles));
@@ -126,7 +134,7 @@ void verify_euler() {
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, m);
 
     const int euler = euler_characteristic(m);
-    const int solution = read_euler("data/MarchingCubes_cases/Grid_invariants/" + std::to_string(i) + "-euler_number.txt");
+    const int solution = read_euler("/path/to/data/MarchingCubes_cases/Grid_invariants/" + std::to_string(i) + "-euler_number.txt");
 
     if (euler != solution)
       std::cout << "error in test " << i << ": euler " << euler << " != " << solution << std::endl;
@@ -149,6 +157,8 @@ void verify_betti() {
 
   using Mesh = CGAL::Surface_mesh<Point>;
 
+  std::cout << "  == Verify Betti ==" << std::endl;
+
   const std::size_t num_tests = 10000;
 
   for (std::size_t i = 0; i < num_tests; i++) {
@@ -157,11 +167,17 @@ void verify_betti() {
     Values values { grid };
     Domain domain { grid, values };
 
-    read_iso_volume("data/Closed_Surfaces/Grids/" + std::to_string(i) + "-scalar_field.iso", grid, values);
+    std::string filename = "/path/to/data/Closed_Surfaces/Grids/" + std::to_string(i) + "-scalar_field.iso";
+
+    std::cout << "Verify " << filename << "..." << std::endl;
+
+    read_iso_volume(filename, grid, values);
 
     Point_range points;
     Polygon_range triangles;
     IS::marching_cubes<CGAL::Sequential_tag>(domain, 0, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
+
+    CGAL::IO::write_polygon_soup("last_result.off", points, triangles);
 
     assert(points.size() && triangles.size());
     assert(!has_duplicate_points(points, triangles));
@@ -174,7 +190,7 @@ void verify_betti() {
 
     const int b0 = betti_0(m);
     const int b1 = betti_1(m);
-    const auto solution = read_betti("data/Closed_Surfaces/InvariantsGrid/" + std::to_string(i) + "-invariant_grid.txt");
+    const auto solution = read_betti("/path/to/data/Closed_Surfaces/InvariantsGrid/" + std::to_string(i) + "-invariant_grid.txt");
 
     if (b0 != solution[0])
       std::cout << "error in test " << i << ": b0 " << b0 << " != " << solution[0] << std::endl;
@@ -232,6 +248,6 @@ int main(int, char**)
 
   verify_euler<K>();
   verify_betti<K>();
-  //compare_to_reference<K>("data/MarchingCubes_cases/Grids/" + std::to_string(100) + "-scalar_field.iso");
-  // compare_to_reference<K>("data/Closed_Surfaces/Grids/" + std::to_string(0) + "-scalar_field.iso");
+  //compare_to_reference<K>("/path/to/data/MarchingCubes_cases/Grids/" + std::to_string(100) + "-scalar_field.iso");
+  // compare_to_reference<K>("/path/to/data/Closed_Surfaces/Grids/" + std::to_string(0) + "-scalar_field.iso");
 }
