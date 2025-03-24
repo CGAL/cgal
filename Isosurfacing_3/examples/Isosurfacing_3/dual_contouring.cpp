@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
@@ -6,8 +7,12 @@
 #include <CGAL/Isosurfacing_3/Value_function_3.h>
 #include <CGAL/Isosurfacing_3/Gradient_function_3.h>
 
-#include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
+#include <cmath>
+#include <iostream>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -23,7 +28,9 @@ using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Grid, Values, Gradie
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-// https://www-sop.inria.fr/galaad/surface/
+using Mesh = CGAL::Surface_mesh<Point>;
+
+// "Devil" - https://www-sop.inria.fr/galaad/surface/
 auto devil_value = [](const Point& point)
 {
   const FT x = point.x(), y = point.y(), z = point.z();
@@ -43,16 +50,19 @@ auto devil_gradient = [](const Point& point)
 
 int main(int argc, char** argv)
 {
-  const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.;
+  const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0;
+  const FT box_c = (argc > 2) ? std::abs(std::stod(argv[2])) : 1.;
+  const std::size_t grid_n = (argc > 3) ? std::stoi(argv[3]) : 50;
 
   // create bounding box and grid
-  const CGAL::Bbox_3 bbox { -1, -1, -1, 1, 1, 1 };
-  Grid grid { bbox, CGAL::make_array<std::size_t>(50, 50, 50) };
+  const CGAL::Bbox_3 bbox { -box_c, -box_c, -box_c, box_c, box_c, box_c };
+  Grid grid { bbox, CGAL::make_array<std::size_t>(grid_n, grid_n, grid_n) };
 
   std::cout << "Span: " << grid.span() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
   std::cout << "Cell #: " << grid.xdim() << ", " << grid.ydim() << ", " << grid.zdim() << std::endl;
 
+  // fill up values & gradients
   Values values { devil_value, grid };
   Gradients gradients { devil_gradient, grid };
 
@@ -69,9 +79,19 @@ int main(int argc, char** argv)
                                                                        CGAL::parameters::do_not_triangulate_faces(true)
                                                                                         .constrain_to_cell(false));
 
-  std::cout << "Output #vertices: " << points.size() << std::endl;
-  std::cout << "Output #triangles: " << triangles.size() << std::endl;
-  CGAL::IO::write_polygon_soup("dual_contouring.off", points, triangles);
+  std::cout << "Soup #vertices: " << points.size() << std::endl;
+  std::cout << "Soup #triangles: " << triangles.size() << std::endl;
+
+  if(!CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles)) {
+    std::cerr << "Warning: the soup is not a 2-manifold surface, non-manifoldness?..." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "Create the mesh..." << std::endl;
+  Mesh mesh;
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, mesh);
+
+  CGAL::IO::write_polygon_mesh("dual_contouring.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Done" << std::endl;
 
