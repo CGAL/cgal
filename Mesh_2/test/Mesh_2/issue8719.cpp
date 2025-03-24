@@ -66,7 +66,7 @@ void CGAL_Remesh(double* vert_xyz_array, size_t vert_count, double criteria_a, d
   for (CDT::Vertex_iterator v_it = cdt.vertices_begin(); v_it != cdt.vertices_end(); ++v_it)
   {
 
-    CDT::Vertex_handle vh = v_it->handle();
+    CDT::Vertex_handle vh = v_it;
     indexList[vh] = i;
     visitedVertices.push_back(vh);
     i++;
@@ -114,11 +114,11 @@ void CGAL_Remesh(double* vert_xyz_array, size_t vert_count, double criteria_a, d
 
     if (face->is_in_domain())
     {
-      newFaces[i] = int(indexList.find(face->vertex(0)->handle())->second);
+      newFaces[i] = int(indexList.find(face->vertex(0))->second);
       i += 1;
-      newFaces[i] = int(indexList.find(face->vertex(1)->handle())->second);
+      newFaces[i] = int(indexList.find(face->vertex(1))->second);
       i += 1;
-      newFaces[i] = int(indexList.find(face->vertex(2)->handle())->second);
+      newFaces[i] = int(indexList.find(face->vertex(2))->second);
       i += 1;
     }
   }
