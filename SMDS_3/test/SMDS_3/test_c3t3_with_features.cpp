@@ -334,7 +334,7 @@ struct Tester
     // Test vertex iterators
     //-------------------------------------------------------
     std::cout << "Test vertex iterators\n";
-    const Vertex_handle& vertex_to_modify = c3t3.vertices_in_complex_begin();
+    Vertex_handle vertex_to_modify = c3t3.vertices_in_complex_begin();
     c3t3.remove_from_complex(vertex_to_modify);
     c3t3.add_to_complex(vertex_to_modify,corner_index_bis);
 

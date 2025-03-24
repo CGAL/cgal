@@ -77,22 +77,22 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     switch(im->wordKind) {
 
     case WK_FLOAT:
-      sprintf(type, "float");
+      snprintf(type, 30, "float");
       scale[0] = '\0';
       break;
 
     case WK_FIXED:
       switch(im->sign) {
       case SGN_SIGNED:
-        sprintf(type, "signed fixed");
+        snprintf(type, 30, "signed fixed");
         break;
       case SGN_UNSIGNED:
-        sprintf(type, "unsigned fixed");
+        snprintf(type, 30, "unsigned fixed");
         break;
       default:
         return -1;
       }
-      sprintf(scale, "SCALE=2**0\n");
+      snprintf(scale, 20, "SCALE=2**0\n");
       break;
 
     default:
@@ -101,17 +101,17 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
 
     switch(end) {
     case END_LITTLE:
-      sprintf(endianness, "decm");
+      snprintf(endianness, 5, "decm");
       break;
     case END_BIG:
-      sprintf(endianness, "sun");
+      snprintf(endianness, 5, "sun");
       break;
     default:
       /* fix architecture endianness */
       if( _getEndianness() == END_LITTLE)
-        sprintf(endianness, "decm");
+        snprintf(endianness, 5, "decm");
       else
-        sprintf(endianness, "sun");
+        snprintf(endianness, 5, "sun");
       break;
     }
 
