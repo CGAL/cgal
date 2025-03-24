@@ -27,7 +27,9 @@
 namespace IS = CGAL::Isosurfacing;
 
 template <typename Grid>
-bool check_closed_not_empty(const Grid& grid, const IS::Interpolated_discrete_values_3<Grid>& values, const typename Grid::Geom_traits::FT iso = 0)
+bool check_closed_not_empty(const Grid& grid,
+                            const IS::Interpolated_discrete_values_3<Grid>& values,
+                            const typename Grid::Geom_traits::FT iso = 0)
 {
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
@@ -67,7 +69,10 @@ bool check_closed_not_empty(const Grid& grid, const IS::Interpolated_discrete_va
 }
 
 template <typename Grid>
-bool check_iso_vertices(const Grid& grid, const IS::Interpolated_discrete_values_3<Grid>& values, const typename Grid::Geom_traits::FT iso = 0) {
+bool check_iso_vertices(const Grid& grid,
+                        const IS::Interpolated_discrete_values_3<Grid>& values,
+                        const typename Grid::Geom_traits::FT iso = 0)
+{
   for(std::size_t x=0; x<grid.xdim(); ++x) {
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
@@ -81,7 +86,10 @@ bool check_iso_vertices(const Grid& grid, const IS::Interpolated_discrete_values
 }
 
 template <typename Grid>
-bool check_iso_edges(const Grid& grid, const IS::Interpolated_discrete_values_3<Grid>& values, const typename Grid::Geom_traits::FT iso = 0) {
+bool check_iso_edges(const Grid& grid,
+                     const IS::Interpolated_discrete_values_3<Grid>& values,
+                     const typename Grid::Geom_traits::FT iso = 0)
+{
   for(std::size_t x=0; x<grid.xdim(); ++x) {
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
@@ -99,7 +107,10 @@ bool check_iso_edges(const Grid& grid, const IS::Interpolated_discrete_values_3<
 }
 
 template <typename Grid>
-void to_grid(const Grid& grid, IS::Interpolated_discrete_values_3<Grid>& values, const std::array<typename Grid::Geom_traits::FT, 8>& center_values) {
+void to_grid(const Grid& grid,
+             IS::Interpolated_discrete_values_3<Grid>& values,
+             const std::array<typename Grid::Geom_traits::FT, 8>& center_values)
+{
   assert(grid.xdim() == 2);
   assert(grid.ydim() == 2);
   assert(grid.zdim() == 2);
@@ -115,7 +126,10 @@ void to_grid(const Grid& grid, IS::Interpolated_discrete_values_3<Grid>& values,
 }
 
 template <typename Grid>
-void embed_in_positive_grid(const Grid& grid, IS::Interpolated_discrete_values_3<Grid>& values, const std::array<typename Grid::Geom_traits::FT, 8>& center_values) {
+void embed_in_positive_grid(const Grid& grid,
+                            IS::Interpolated_discrete_values_3<Grid>& values,
+                            const std::array<typename Grid::Geom_traits::FT, 8>& center_values)
+{
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
 
@@ -149,7 +163,8 @@ void embed_in_positive_grid(const Grid& grid, IS::Interpolated_discrete_values_3
   values(2, 2, 2) = center_values[7];
 }
 
-enum class AmbiguousCase {
+enum class AmbiguousCase
+{
   CONTOUR_6_VTS,
   CONTOUR_7_VTS_CONFIG_A,
   CONTOUR_7_VTS_CONFIG_B,
@@ -167,7 +182,9 @@ enum class AmbiguousCase {
 };
 
 template <typename FT>
-FT generate_predefined_inner_ambiguity(const AmbiguousCase topology_case, std::array<FT, 8>& values) {
+FT generate_predefined_inner_ambiguity(const AmbiguousCase topology_case,
+                                       std::array<FT, 8>& values)
+{
   FT iso;
 
   switch (topology_case) {
@@ -233,7 +250,8 @@ FT generate_predefined_inner_ambiguity(const AmbiguousCase topology_case, std::a
   return iso;
 }
 
-enum class SingularCase {
+enum class SingularCase
+{
   SIMPLE,
   DOUBLE,
   TRIPLE,
@@ -243,7 +261,9 @@ enum class SingularCase {
 };
 
 template <typename FT>
-FT generate_predefined_singular(const SingularCase topology_case, std::array<FT, 8>& values) {
+FT generate_predefined_singular(const SingularCase topology_case,
+                                std::array<FT, 8>& values)
+{
   FT iso;
   bool invert;
 
@@ -291,7 +311,8 @@ FT generate_predefined_singular(const SingularCase topology_case, std::array<FT,
   return iso;
 }
 
-enum class IsoEdgeCase {
+enum class IsoEdgeCase
+{
   SIMPLE,
   SEPARATED,
   SINGULAR,
@@ -304,7 +325,9 @@ enum class IsoEdgeCase {
 };
 
 template <typename FT>
-FT generate_predefined_iso_edge(const IsoEdgeCase topology_case, std::array<FT, 8>& values) {
+FT generate_predefined_iso_edge(const IsoEdgeCase topology_case,
+                                std::array<FT, 8>& values)
+{
   FT iso;
   bool invert;
 
@@ -367,7 +390,8 @@ FT generate_predefined_iso_edge(const IsoEdgeCase topology_case, std::array<FT, 
   return iso;
 }
 
-enum class PlaneCase {
+enum class PlaneCase
+{
   SIMPLE,
   INTERSECTING,
   PLANE_TUBES,
@@ -375,7 +399,9 @@ enum class PlaneCase {
 };
 
 template <typename FT>
-FT generate_predefined_plane(const PlaneCase topology_case, std::array<FT, 8>& values) {
+FT generate_predefined_plane(const PlaneCase topology_case,
+                             std::array<FT, 8>& values)
+{
   FT iso;
   bool invert;
 
@@ -413,17 +439,22 @@ FT generate_predefined_plane(const PlaneCase topology_case, std::array<FT, 8>& v
   return iso;
 }
 
+// export meshes to compare tmc and mc to the high resolution trilinear interpolation
 template<typename KERNEL>
-void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso)
+void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_values,
+                              typename KERNEL::FT iso)
 {
   using K = KERNEL;
+
   using Grid = IS::Cartesian_grid_3<K>;
   using Values = IS::Interpolated_discrete_values_3<Grid>;
   using Domain = IS::Marching_cubes_domain_3<Grid, Values>;
   using Point = typename K::Point_3;
-  using Mesh = CGAL::Surface_mesh<Point>;
+
   using Point_range = std::vector<Point>;
   using Triangle_range = std::vector<std::vector<std::size_t> >;
+
+  using Mesh = CGAL::Surface_mesh<Point>;
 
   Grid grid { Point{-1., -1., -1.}, Point{1., 1., 1.}, std::array<std::size_t, 3>{2, 2, 2} };
   Values values { grid };
@@ -442,9 +473,9 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
     Triangle_range triangles_high_res;
     IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain_high_res, iso, points_high_res, triangles_high_res, CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
-    #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
+#ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
     CGAL::IO::write_polygon_soup("trilinear.off", points_high_res, triangles_high_res);
-    #endif
+#endif
 
     assert(CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles_high_res));
     Mesh m;
@@ -460,22 +491,27 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
     Triangle_range triangles_mc;
     IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, iso, points_mc, triangles_mc, CGAL::parameters::use_topologically_correct_marching_cubes(false));
 
-    #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
+#ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
     CGAL::IO::write_polygon_soup("mc.off", points_mc, triangles_mc);
-    #endif
+#endif
   }
 
   Point_range points;
   Triangle_range triangles;
   IS::marching_cubes<CGAL::Sequential_tag>(domain, iso, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
-  #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
+#ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
   CGAL::IO::write_polygon_soup("tmc.off", points, triangles);
-  #endif
+#endif
 }
 
+// check if the mesh created by tmc has the expected topological properties
 template<typename KERNEL>
-void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso, std::size_t components, int euler, std::size_t boundaries)
+void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values,
+                typename KERNEL::FT iso,
+                std::size_t components,
+                int euler,
+                std::size_t boundaries)
 {
   using K = KERNEL;
   using Grid = IS::Cartesian_grid_3<K>;
@@ -611,48 +647,222 @@ void test_cube()
   CGAL::IO::write_polygon_soup("test_cube.off", points, polygons, CGAL::parameters::stream_precision(17));
 }
 
+template<typename KERNEL>
+void test_all_ambiguous_cases()
+{
+  using FT = typename KERNEL::FT;
+
+  std::cout << "Testing ambiguous cases..." << std::endl;
+
+  std::array<FT, 8> case_values;
+  FT iso;
+
+  std::cout << "\tTesting case 'CONTOUR_6_VTS'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_6_VTS, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'CONTOUR_7_VTS_CONFIG_A'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_7_VTS_CONFIG_A, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'CONTOUR_7_VTS_CONFIG_B'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_7_VTS_CONFIG_B, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'CONTOUR_8_VTS_CONFIG_A'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_8_VTS_CONFIG_A, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'CONTOUR_8_VTS_CONFIG_B'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_8_VTS_CONFIG_B, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'CONTOUR_9_VTS_CONFIG_A'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::CONTOUR_9_VTS_CONFIG_A, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'MC_4_TUNNEL'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_4_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 0, 2);
+
+  std::cout << "\tTesting case 'MC_7_TUNNEL'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_7_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 0, 2);
+
+  std::cout << "\tTesting case 'MC_10_TUNNEL'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_10_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 0, 2);
+
+  std::cout << "\tTesting case 'MC_12_TUNNEL'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_12_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 0, 2);
+
+  std::cout << "\tTesting case 'MC_13_TUNNEL'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_13_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 2, 1, 3);
+
+  std::cout << "\tTesting case 'MC_13_12_VTS_CONFIG_A'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_13_12_VTS_CONFIG_A, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'MC_13_12_VTS_CONFIG_B'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_13_12_VTS_CONFIG_B, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'MC_13_SIMPLE'..." << std::endl;
+  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_13_SIMPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 3, 3, 3);
+}
+
+template<typename KERNEL>
+void test_all_singular_cases()
+{
+  using FT = typename KERNEL::FT;
+
+  std::cout << "Testing singular cases..." << std::endl;
+
+  std::array<FT, 8> case_values;
+  FT iso;
+
+  std::cout << "\tTesting case 'SIMPLE'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::SIMPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'DOUBLE'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::DOUBLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'TRIPLE'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::TRIPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'TUNNEL_OPEN'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::TUNNEL_OPEN, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'TUNNEL'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'TUNNEL_DOUBLE'..." << std::endl;
+  iso = generate_predefined_singular(SingularCase::TUNNEL_DOUBLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+}
+
+template<typename KERNEL>
+void test_all_iso_edge_cases()
+{
+  using FT = typename KERNEL::FT;
+
+  std::cout << "Testing iso edge cases..." << std::endl;
+
+  std::array<FT, 8> case_values;
+  FT iso;
+
+  std::cout << "\tTesting case 'SIMPLE'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::SIMPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'SEPARATED'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::SEPARATED, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+
+  std::cout << "\tTesting case 'SINGULAR'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::SINGULAR, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'DOUBLE_SINGULAR_SIMPLE'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::DOUBLE_SINGULAR_SIMPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'DOUBLE_SINGULAR'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::DOUBLE_SINGULAR, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'DOUBLE_SINGULAR_SPLIT'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::DOUBLE_SINGULAR_SPLIT, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 2, 2, 2);
+
+  std::cout << "\tTesting case 'WEDGE'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::WEDGE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+
+  std::cout << "\tTesting case 'WEDGE_SINGULAR'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::WEDGE_SINGULAR, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'EDGE_TUNNEL'..." << std::endl;
+  iso = generate_predefined_iso_edge(IsoEdgeCase::EDGE_TUNNEL, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+}
+
+// this category includes cases that are almost always non-manifold
+template<typename KERNEL>
+void test_all_plane_cases()
+{
+  using FT = typename KERNEL::FT;
+
+  std::cout << "Testing plane cases..." << std::endl;
+
+  std::array<FT, 8> case_values;
+  FT iso;
+
+  std::cout << "\tTesting case 'SIMPLE'..." << std::endl;
+  iso = generate_predefined_plane(PlaneCase::SIMPLE, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 1, 1, 1);
+
+  std::cout << "\tTesting case 'INTERSECTING'..." << std::endl;
+  iso = generate_predefined_plane(PlaneCase::INTERSECTING, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 2, 2, 2);
+
+  std::cout << "\tTesting case 'PLANE_TUBES'..." << std::endl;
+  iso = generate_predefined_plane(PlaneCase::PLANE_TUBES, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 2, 2, 2);
+
+  std::cout << "\tTesting case 'CROSS'..." << std::endl;
+  iso = generate_predefined_plane(PlaneCase::CROSS, case_values);
+  compare_tmc_mc_trilinear<KERNEL>(case_values, iso);
+  assert_tmc<KERNEL>(case_values, iso, 4, 4, 4);
+}
+
 int main(int, char**)
 {
   using K = CGAL::Simple_cartesian<double>;
-  using FT = typename K::FT;
 
-  std::array<FT, 8> case_values;
-  FT iso = 0;
-
-  // this is what the algorithm is built for, this works
-  iso = generate_predefined_inner_ambiguity(AmbiguousCase::MC_13_TUNNEL, case_values);
-  compare_tmc_mc_trilinear<K>(case_values, iso);  // export meshes to compare tmc and mc to the high resolution trilinear interpolation
-  assert_tmc<K>(case_values, iso, 2, 1, 3);  // check if the mesh created by tmc has the expected topological properties
-
-  // issue with degenerated hyperbolas
-  iso = generate_predefined_singular(SingularCase::SIMPLE, case_values);
-  compare_tmc_mc_trilinear<K>(case_values, iso);
-
-  iso = generate_predefined_singular(SingularCase::TUNNEL, case_values);
-  compare_tmc_mc_trilinear<K>(case_values, iso);
-
-  // issue with edge with isovalue
-  // the simple example still works
-  iso = generate_predefined_iso_edge(IsoEdgeCase::SIMPLE, case_values);
-  compare_tmc_mc_trilinear<K>(case_values, iso);
-  assert_tmc<K>(case_values, iso, 1, 1, 1);
-
-  // this does not properly work
-  iso = generate_predefined_iso_edge(IsoEdgeCase::DOUBLE_SINGULAR, case_values);
-  compare_tmc_mc_trilinear<K>(case_values, iso);
-  assert_tmc<K>(case_values, iso, 1, 1, 1);
-
-  // this cetagory includes cases that are almost always non-manifold
-  iso = generate_predefined_plane(PlaneCase::CROSS, case_values);
-  // compare_tmc_mc_trilinear<K>(case_values, iso);
-
-  // TODO: more examples still to test...
+  test_all_ambiguous_cases<K>();
+  test_all_singular_cases<K>();
+  test_all_iso_edge_cases<K>();
+  test_all_plane_cases<K>();
 
   // this is the example, where the issue was originally discovered
-  // TODO: find which of the cases occur in this example and fail
   test_cube<K>();
 
   std::cout << "Done" << std::endl;
-
   return EXIT_SUCCESS;
 }
