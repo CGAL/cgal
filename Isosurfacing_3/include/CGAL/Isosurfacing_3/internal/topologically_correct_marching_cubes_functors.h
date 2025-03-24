@@ -152,7 +152,7 @@ public:
       const int eg1 = Cube_table::triangle_cases[t_index + 1];
       const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
-      local_triangles.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
+      local_triangles.push_back({vertices[eg2], vertices[eg1], vertices[eg0]});
     }
   }
 
