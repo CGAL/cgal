@@ -84,7 +84,8 @@ template<class PointRange, class PointMap>
 class Indexed_extended_point_map {
 public:
   using value_type = typename boost::property_traits<PointMap>::value_type;
-  using reference = const value_type&;
+  using reference = std::conditional_t< std::is_reference_v<typename boost::property_traits<PointMap>::reference>,
+                                        const value_type&, value_type>;
   using key_type = std::size_t;
   using category = boost::readable_property_map_tag;
 
