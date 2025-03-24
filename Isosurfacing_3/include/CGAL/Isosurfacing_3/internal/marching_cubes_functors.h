@@ -46,6 +46,7 @@
 #include <CGAL/Isosurfacing_3/internal/tables.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/enumerable_thread_specific.h>
@@ -55,6 +56,7 @@
 
 #include <array>
 #include <bitset>
+#include <unordered_map>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -223,30 +225,40 @@ void triangles_to_polygon_soup(const TriangleRange& triangles,
                                PointRange& points,
                                PolygonRange& polygons)
 {
+  using Point = typename PointRange::value_type;
+  using PointIndexMap = std::unordered_map<Point, std::size_t>;
+
+  PointIndexMap point_index_map;
+  std::size_t current_index = 0;
+
 #ifdef CGAL_LINKED_WITH_TBB
-    for(const auto& triangle_list : triangles)
-    {
+  for(const auto& triangle_list : triangles)
+  {
 #else
-      const auto& triangle_list = triangles;
+    const auto& triangle_list = triangles;
 #endif
 
-      for(const auto& triangle : triangle_list)
+    for(const auto& triangle : triangle_list)
+    {
+      auto& polygon = polygons.emplace_back();
+      CGAL::internal::resize(polygon, 3);
+
+      for (int i=2; i>=0; --i)
       {
-        const std::size_t id = points.size();
+        const Point& p = triangle[i];
 
-        points.push_back(triangle[0]);
-        points.push_back(triangle[1]);
-        points.push_back(triangle[2]);
-
-        // simply use increasing indices
-        polygons.push_back({id + 2, id + 1, id + 0});
-
-        // just a safeguard against arrays of the wrong size
-        CGAL_assertion(polygons.back().size() == 3);
+        auto [it, inserted] = point_index_map.emplace(p, current_index);
+        if(inserted)
+        {
+          points.push_back(p);
+          ++current_index;
+        }
+        polygon[i] = it->second;
       }
+    }
 
 #ifdef CGAL_LINKED_WITH_TBB
-    }
+  }
 #endif
 }
 

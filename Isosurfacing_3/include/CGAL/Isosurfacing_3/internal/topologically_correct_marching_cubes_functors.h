@@ -80,9 +80,9 @@ private:
   using Edge_index = std::array<std::size_t, 4>;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::enumerable_thread_specific<std::vector<std::array<Point_3, 3>>> m_triangles;
+  using Triangles = tbb::enumerable_thread_specific<std::vector<std::array<Point_3, 3> > >;
 #else
-  std::vector<std::array<Point_3, 3>> m_triangles;
+  using Triangles = std::vector<std::array<Point_3, 3> >;
 #endif
 
 private:
@@ -90,6 +90,8 @@ private:
   FT m_isovalue;
   bool m_isovalue_nudging;
   bool m_constrain_to_cell;
+
+  Triangles m_triangles;
 
 public:
   TMC_functor(const Domain& domain,
@@ -102,6 +104,11 @@ public:
       m_constrain_to_cell(constrain_to_cell)
   { }
 
+  // returns the created triangle list
+  Triangles& triangles()
+  {
+    return m_triangles;
+  }
   void operator()(const cell_descriptor& cell) {
     std::array<FT, 8> values;
     std::array<Point_3, 8> corners;
