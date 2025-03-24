@@ -15,19 +15,12 @@
 
 
 #include <iostream>
-#include <CGAL/basic.h>
-#include <CGAL/enum.h>
-// #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
 #include <CGAL/box_intersection_d.h>
-#include <list>
 #include <set>
-#include <CGAL/utility.h>
-#include <CGAL/Iterator_project.h>
-#include <CGAL/function_objects.h>
-#include <CGAL/tss.h>
+#include <vector>
 
 namespace CGAL {
 namespace Box_intersection_d {
@@ -112,6 +105,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   auto comp_by_y=[&](size_t ai, size_t bi){
     return compare(pts[ai].y(),pts[bi].y())==SMALLER;
   };
+  // Total order is required to using set
   auto comp_by_x_first=[&](size_t ai, size_t bi){
     Comparison_result res=compare(pts[ai].x(),pts[bi].x());
     if(res==EQUAL)
@@ -131,6 +125,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   // Compute the order of the points along the 2 axis
   // Sorted the points may perform exact computations and thus refine the intervals of the coordinates values
   // This refine ensures that the order of the points will be preserved when rounded
+  // However, except for this reason these sets are unused
   using Iterator_set_x = typename std::set<size_t, decltype(comp_by_x_first)>::iterator;
   using Iterator_set_y = typename std::set<size_t, decltype(comp_by_y_first)>::iterator;
   std::set<size_t, decltype(comp_by_x_first)> p_sort_by_x(comp_by_x_first);
@@ -141,7 +136,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
     p_sort_by_y.insert(i);
   }
 
-  //Kd-Tree to exhibits pairs
+  //Prepare boxes for box_intersection_d
   std::vector<PBox> points_boxes;
   std::vector<SBox> segs_boxes;
   for(size_t i=0; i<pts.size(); ++i)
@@ -154,6 +149,8 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
     return std::pow(std::nextafter(p.x().approx().sup(),std::numeric_limits<double>::infinity())-p.x().approx().inf(),2)+
            std::pow(std::nextafter(p.y().approx().sup(),std::numeric_limits<double>::infinity())-p.y().approx().inf(),2);
   };
+
+  // Callback used for box_intersection_d
   auto callback=[&](PBox &bp, SBox &bseg){
     size_t pi=bp.index();
     size_t si=bseg.index();
@@ -166,10 +163,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
     Point_2& p= pts[bp.index()];
     Segment_2 seg(pts[polylines[bseg.index()][0]], pts[polylines[bseg.index()][1]]);
 
-    // (A+B)^2 <= 4*max(A^2,B^2) and we take some margin
+    // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
     double bound=16*(std::max)(round_bound(pts[pi]), (std::max)(round_bound(pts[si1]), round_bound(pts[si2])));
 
-    // If the segment is closed to the vertex and we subdivide it at same x coordinate of that vertex
+    // If the segment is closed to the vertex, we subdivide it at same x coordinate that this vertex
     if(possibly(Kernel().compare_squared_distance_2_object()(p, seg, bound)!=CGAL::LARGER) &&
        compare(seg.source().x(),p.x())!=compare(seg.target().x(),p.x()))
     {
@@ -179,7 +176,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
         p_sort_by_y.insert(pts.size()-1);
       else
         pts.pop_back(); // Remove the new point if it is already exist
-      polylines[si].emplace_back(*pair.first);
+      polylines[si].emplace_back(*pair.first); // Some duplicates maybe introduced, it will be removed later
     }
   };
 
@@ -191,7 +188,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
     size_t size_before=pts.size();
     CGAL::box_intersection_d(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
     points_boxes.clear();
-    // The new vertices may intersect a segment when rounded, we repeat until they are not new vertices
+    // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
 #ifdef DOUBLE_2D_SNAP_VERBOSE
     std::cout << points_boxes.size()-size_before << " subdivisions performed" << std::endl;
 #endif
@@ -260,7 +257,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
   std::cout << "Subdivide horizontal and vertical segments with vertices on them" << std::endl;
 #endif
-  //The order may have changed (Example: (1,1)<(1,2)<(1+e,1))
+  //The order may have changed (Example: (1,1)<(1,2)<(1+e,1)), we recompute it
   p_sort_by_x.clear();
   p_sort_by_y.clear();
   for(size_t i=0; i!=pts.size(); ++i)
@@ -342,7 +339,6 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
     const Point_2& p1 = it->source();
     const Point_2& p2 = it->target();
 
-    // Check and insert the first endpoint if it's not already added
     if (unique_point_set.find(p1) == unique_point_set.end()) {
       unique_point_set.insert(p1);
       pts.push_back(p1);
@@ -412,7 +408,6 @@ typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	inpu
     const Point_2& p1 = it->source();
     const Point_2& p2 = it->target();
 
-    // Check and insert the endpoints if they are not already added
     if (unique_point_set.find(p1) == unique_point_set.end()) {
       unique_point_set.insert(p1);
       pts.push_back(p1);
