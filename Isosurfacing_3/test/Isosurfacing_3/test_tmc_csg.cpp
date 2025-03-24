@@ -1,7 +1,7 @@
 #include "test_util.h"
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Isosurfacing_3/internal/implicit_shapes_helper.h>
@@ -76,13 +76,13 @@ void test_cube()
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #polygons: " << polygons.size() << std::endl;
 
-  CGAL::IO::write_polygon_soup("MC.off", points, polygons, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_OFF("MC.off", points, polygons, CGAL::parameters::stream_precision(17));
 }
 
 int main(int, char**)
 {
   test_cube<CGAL::Simple_cartesian<double> >();
-  //test_cube<CGAL::Epeck >();
+  test_cube<CGAL::Exact_predicates_inexact_constructions_kernel>();
 
   std::cout << "Done" << std::endl;
 
