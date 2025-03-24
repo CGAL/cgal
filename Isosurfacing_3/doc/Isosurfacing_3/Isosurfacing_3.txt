@@ -237,6 +237,8 @@ Both these domain models have template parameters enabling the user to customize
                                  oracle, provided it meets the requirements described by the concept
                                  `IsosurfacingEdgeIntersectionOracle_3`.
 
+<!-- comment this for now. MC and TMC timings are probably not good
+
 \section SecPerformance Performance
 
 Due to their cell-based nature, the isosurfacing algorithms are well-suited for parallel execution.
@@ -245,6 +247,8 @@ Due to their cell-based nature, the isosurfacing algorithms are well-suited for 
 <center>
 <img src="MC_DC_performance.png" style="max-width:70%;"/>
 </center>
+
+-->
 
 \section SecIsosurfacingExamples Examples
 
