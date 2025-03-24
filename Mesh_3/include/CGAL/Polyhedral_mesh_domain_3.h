@@ -112,6 +112,7 @@ The class `Polyhedral_mesh_domain_3` implements
 a domain defined by a simplicial polyhedral surface.
 
 The input polyhedral surface must be free of intersections.
+
 It must include (at least) one closed connected component
 that defines the boundary of the domain to be meshed.
 Inside this bounding component,
@@ -238,8 +239,9 @@ public:
   /// @{
 
   /*!
-    Construction from a bounding polyhedral surface which must be closed, and free of intersections.
-    The inside of `bounding_polyhedron` will be meshed.
+    Construction from a polyhedral surface which must and free of intersections.
+    If `polyhedron` is closed, the inside of `bounding_polyhedron` will be meshed,
+    otherwise there will be no interior and only the surface will be meshed.
   */
   Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
@@ -256,6 +258,9 @@ public:
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
     this->build();
+
+    if(!is_closed(bounding_polyhedron))
+      set_surface_only();
   }
 
   /*!
