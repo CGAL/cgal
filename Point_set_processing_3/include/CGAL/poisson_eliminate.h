@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace poisson_eliminate_impl {
 
 double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
   double sampleArea = domain_size / double(sample_size);
@@ -103,7 +103,7 @@ public:
     if (range.size() > k)
       return get(point_map, *(range.begin() + k));
     else
-      return tiling_points[k - range.size()];
+      return tiling_points.at(k - range.size());
   }
 
   friend reference get(const Indexed_extended_point_map& ppmap, key_type k) {
@@ -111,7 +111,7 @@ public:
     if ((k < ppmap.range.size()))
       return get(ppmap.point_map, *(ppmap.range.begin() + k));
     else
-      return ppmap.tiling_points[k - ppmap.range.size()];
+      return ppmap.tiling_points.at(k - ppmap.range.size());
   }
 };
 
@@ -281,19 +281,19 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
   using Point = typename boost::property_traits<PointMap>::value_type;
   using GeomTraits = typename NP_helper::Geom_traits;
   using FT = typename GeomTraits::FT;
-  using IPM = internal::Indexed_extended_point_map<PointRange, PointMap>;
+  using IPM = poisson_eliminate_impl::Indexed_extended_point_map<PointRange, PointMap>;
   PointMap point_map = NP_helper::get_const_point_map(points, np);
 
   const unsigned int ambient_dimension = CGAL::Ambient_dimension<Point>::value;
 
-  using Search_base = internal::Search_traits<Point>;
+  using Search_base = poisson_eliminate_impl::Search_traits<Point>;
 
   using Search_traits = CGAL::Search_traits_adapter<std::size_t, IPM, Search_base>;
   using Splitter = CGAL::Sliding_midpoint<Search_traits>;
   using Fuzzy_sphere = CGAL::Fuzzy_sphere<Search_traits>;
   using Tree = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
 
-  internal::Compute_squared_distance<Point> squared_distance;
+  poisson_eliminate_impl::Compute_squared_distance<Point> squared_distance;
 
   // hard coded parameters alpha, beta and gamma with values proposed in publication
   const double alpha = 8;
@@ -329,10 +329,10 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
     domain_size *= CGAL::to_double(upper[i] - lower[i]);
 
   // named parameter for r_max
-  double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * internal::get_maximum_radius(dimension, number_of_points, domain_size)));
-  double r_min = CGAL::to_double(weight_limiting ? internal::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
+  double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * poisson_eliminate_impl::get_maximum_radius(dimension, number_of_points, domain_size)));
+  double r_min = CGAL::to_double(weight_limiting ? poisson_eliminate_impl::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
 
-  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_function), internal::Weight_functor<Point>(r_min, alpha));
+  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_function), poisson_eliminate_impl::Weight_functor<Point>(r_min, alpha));
 
   std::size_t heap_size = points.size();
   std::vector<Point> tiling_points;
@@ -346,7 +346,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
       if (lower[int(dim)] > (*(it + dim) - r_max)) {
         FT v = 2 * lower[int(dim)] - (*(it + dim));
         Point p2;
-        internal::copy_and_replace(p, p2, dim, v);
+        poisson_eliminate_impl::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
         if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
@@ -355,7 +355,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
       if (upper[int(dim)] < (*(it + dim) + r_max)) {
         FT v = 2 * upper[int(dim)]- (*(it + dim));
         Point p2;
-        internal::copy_and_replace(p, p2, dim, v);
+        poisson_eliminate_impl::copy_and_replace(p, p2, dim, v);
         tiling_points.emplace_back(p2);
         if (dim + 1 < CGAL::Ambient_dimension<Point>::value)
           self(self, tiling_points.back(), dim + 1);
@@ -373,7 +373,9 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
   }
 
   // Tiling requires either to copy the point range or to use a special Index_property_map with a second array of points to keep the input range const.
-  Tree tree(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(points.size() + tiling_points.size()), Splitter(), Search_traits(ipm));
+  Tree tree(boost::counting_iterator<std::size_t>(0),
+            boost::counting_iterator<std::size_t>(points.size() + tiling_points.size()),
+            Splitter(), Search_traits(ipm));
   tree.build();
 
   std::vector<std::size_t> heap(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(points.size()));
@@ -385,7 +387,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
     // Computing weights
     std::vector<double> weights(points.size(), 0);
     std::vector<std::size_t> res;
-    for (std::size_t i = 0; i < heap_size; i++) {
+    for (std::size_t i = 0; i < heap_size; ++i) {
       const Point& p = get(ipm, heap[i]);
       res.clear();
       tree.search(std::back_inserter(res), Fuzzy_sphere(p, r_max, 0, Search_traits(ipm)));
@@ -413,7 +415,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
     while (heap_size > target_points) {
       std::size_t i = heap[0];
 
-      internal::pop_heap(heap, heap_pos, heap_size, weights);
+      poisson_eliminate_impl::pop_heap(heap, heap_pos, heap_size, weights);
 
       // Adjust weights of neighbors
       res.clear();
@@ -429,7 +431,7 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
 
         weights[res[n]] -= weight_functor(p2, p, d2, r_max);
 
-        internal::move_down(heap, heap_pos, heap_size, weights, heap_pos[res[n]]);
+        poisson_eliminate_impl::move_down(heap, heap_pos, heap_size, weights, heap_pos[res[n]]);
       }
     }
 
