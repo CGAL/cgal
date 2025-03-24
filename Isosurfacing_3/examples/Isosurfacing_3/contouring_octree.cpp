@@ -48,9 +48,9 @@ auto blobby_function = [](const Point& p) -> FT
   return std::exp(-1.5 * ((p.x() - 0.2) * (p.x() - 0.2) + (p.y() - 0.2) * (p.y() - 0.2) + (p.z() - 0.2) * (p.z() - 0.2))) +
          std::exp(-1.5 * ((p.x() + 0.2) * (p.x() + 0.2) + (p.y() + 0.2) * (p.y() + 0.2) + (p.z() + 0.2) * (p.z() + 0.2))) +
          std::exp(-1.5 * ((p.x() - 0.4) * (p.x() - 0.4) + (p.y() + 0.4) * (p.y() + 0.4) + (p.z() - 0.4) * (p.z() - 0.4))) +
-         std::exp(-6 * ((p.x() - 0.1) * (p.x() - 0.1) + (p.y() - 0.1) * (p.y() - 0.1))) + // Tentacle along z-axis
-         std::exp(-6 * ((p.y() + 0.1) * (p.y() + 0.1) + (p.z() + 0.1) * (p.z() + 0.1))) + // Tentacle along x-axis
-         std::exp(-6 * ((p.x() + 0.1) * (p.x() + 0.1) + (p.z() - 0.1) * (p.z() - 0.1))) - // Tentacle along y-axis
+         std::exp(-6 * ((p.x() - 0.1) * (p.x() - 0.1) + (p.y() - 0.1) * (p.y() - 0.1))) +
+         std::exp(-6 * ((p.y() + 0.1) * (p.y() + 0.1) + (p.z() + 0.1) * (p.z() + 0.1))) +
+         std::exp(-6 * ((p.x() + 0.1) * (p.x() + 0.1) + (p.z() - 0.1) * (p.z() - 0.1))) -
          0.3;
 };
 
@@ -59,9 +59,9 @@ auto blobby_gradient = [](const Point& p) -> Vector
   const FT g1 = -3 * std::exp(-1.5 * ((p.x() - 0.2) * (p.x() - 0.2) + (p.y() - 0.2) * (p.y() - 0.2) + (p.z() - 0.2) * (p.z() - 0.2)));
   const FT g2 = -3 * std::exp(-1.5 * ((p.x() + 0.2) * (p.x() + 0.2) + (p.y() + 0.2) * (p.y() + 0.2) + (p.z() + 0.2) * (p.z() + 0.2)));
   const FT g3 = -3 * std::exp(-1.5 * ((p.x() - 0.4) * (p.x() - 0.4) + (p.y() + 0.4) * (p.y() + 0.4) + (p.z() - 0.4) * (p.z() - 0.4)));
-  const FT g4 = -12 * std::exp(-6 * ((p.x() - 0.1) * (p.x() - 0.1) + (p.y() - 0.1) * (p.y() - 0.1))); // Gradient for z-axis tentacle
-  const FT g5 = -12 * std::exp(-6 * ((p.y() + 0.1) * (p.y() + 0.1) + (p.z() + 0.1) * (p.z() + 0.1))); // Gradient for x-axis tentacle
-  const FT g6 = -12 * std::exp(-6 * ((p.x() + 0.1) * (p.x() + 0.1) + (p.z() - 0.1) * (p.z() - 0.1))); // Gradient for y-axis tentacle
+  const FT g4 = -12 * std::exp(-6 * ((p.x() - 0.1) * (p.x() - 0.1) + (p.y() - 0.1) * (p.y() - 0.1)));
+  const FT g5 = -12 * std::exp(-6 * ((p.y() + 0.1) * (p.y() + 0.1) + (p.z() + 0.1) * (p.z() + 0.1)));
+  const FT g6 = -12 * std::exp(-6 * ((p.x() + 0.1) * (p.x() + 0.1) + (p.z() - 0.1) * (p.z() - 0.1)));
 
   return Vector(g1 * (p.x() - 0.2) + g2 * (p.x() + 0.2) + g3 * (p.x() - 0.4) + g4 * (p.x() - 0.1) + g6 * (p.x() + 0.1),
                 g1 * (p.y() - 0.2) + g2 * (p.y() + 0.2) + g3 * (p.y() + 0.4) + g4 * (p.y() - 0.1) + g5 * (p.y() + 0.1),

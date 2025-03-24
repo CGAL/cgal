@@ -12,7 +12,7 @@ namespace CGAL {
 <img src="isosurfacing_teaser.png" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{IsosurfacingTeaser}
-Generating a surface from a 3D gray level image using Marching Cubes (3D input image: qim.dk)
+Generating a surface from a 3D gray level image using Marching Cubes (3D input image from qim.dk)
 \cgalFigureCaptionEnd
 
 \section SecIsoSurfacingIntroduction Introduction
@@ -24,19 +24,19 @@ the level set forms a surface.
 In the following, we shall refer to the the field of scalar values as the value field.
 "Isosurfacing", also known as "isosurface extraction" or "contouring", is the process of constructing
 the isosurface corresponding to a given value field and isovalue.
-Isosurfacing is often needed for volume visualization and for the simulation of physical phenomena.
+%Isosurfacing is often needed for volume visualization and for the simulation of physical phenomena.
 
 This \cgal package provides methods to extract isosurfaces from 3D value fields.
 These contouring techniques rely on the partition of the 3D space and of the field to construct
 an approximate representation of the isosurface.
 The 3D value field can be described through various representations: an implicit function,
-an interpolated set of discrete sampling values, etc. (see \ref SecIsosurfacingExamples).
+an interpolated set of discrete sampling values, a 3D image, etc. (see \ref SecIsosurfacingExamples).
 The isovalue is user-defined.
 The output is a polygon soup, made either of triangles or quads depending on the method,
 and may consist of a single connected component, or multiple, disjoint components.
 Note that due to the inherent approximate nature of these discrete methods that only sample 3D value fields,
 parts of the "true" isosurface may be missing from the output, and the output may contain artifacts
-that re not present in the true isosurface.
+that are not present in the true isosurface.
 
 \section SecIsosurfacingMethods Isosurfacing Methods
 
@@ -104,6 +104,11 @@ does not intersect the domain boundaries.
 </center>
 \cgalFigureCaptionBegin{IsosurfacingMCTMC}
 Marching Cubes vs Topologically Correct Marching Cubes.
+Some vertex values can represent complex surfaces within a single cell: on the left,
+the values at the vertices of the cell have been interpolated within the cell and correspond
+to a tunnel-like surface. This surface is not correctly recovered when applying the cases of
+the Marching Cubes algorithm to the cell: 2 independent disk-like sheets are created (middle).
+However, by inserting new vertices, TMC correctly captures the topology within a single cell (right).
 \cgalFigureCaptionEnd
 
 \subsection SubSecDualContouring Dual Contouring (DC)
@@ -148,10 +153,12 @@ of the output surface mesh.
 | ----              | ----        | ----       | ----          | ----                  | ----                       |
   MC                | Triangles   | no         | no            | no                    | no                         |
   TMC               | Triangles   | yes        | yes           | yes                   | no                         |
-  DC                | Polygons    | no         | no            | no                    | yes (not guaranteed)       |
-</center>
+  DC                | Quads**    | no         | no            | no                    | yes (not guaranteed)       |
 
 (* assuming the isosurface does not exit the specified bounding box of the input 3D domain)
+
+(** which can be triangulated on-the-fly)
+</center>
 
 Note that the output mesh has boundaries when the isosurface intersects the domain boundaries,
 regardless of the method (see \cgalFigureRef{IsosurfacingOpen}).
@@ -170,12 +177,12 @@ Output meshes can have boundaries when the isosurface intersects the domain boun
 
 The following functions are the main entry points to the isosurfacing algorithms:
 <ul>
- <li>Marching Cubes</li>: `CGAL::Isosurfacing::marching_cubes()`, using the named parameter:`use_topologically_correct_marching_cubes` set to `false`;
- <li>Topologically Correct Marching Cubes</li>: `CGAL::Isosurfacing::marching_cubes()`;
+ <li>Marching Cubes</li>: `CGAL::Isosurfacing::marching_cubes()`, using the named parameter: `use_topologically_correct_marching_cubes` set to `false`;
+ <li>Topologically Correct Marching Cubes</li>: `CGAL::Isosurfacing::marching_cubes()`, using the named parameter: `use_topologically_correct_marching_cubes` set to `true`;
  <li>%Dual Contouring</li>: `CGAL::Isosurfacing::dual_contouring()`.
 </ul>
 
-These three free functions share the same signature:
+All these free functions share the same signature:
 
 \code{.cpp}
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
@@ -185,7 +192,8 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
 void ...(const Domain& domain,
          const typename Domain::FT isovalue,
          PointRange& points,
-         PolygonRange& polygons);
+         PolygonRange& polygons,
+         ...);
 \endcode
 
 The input (space partition, value field, gradient field) is provided in the form of a `domain`,
@@ -232,7 +240,7 @@ Both these domain models have template parameters enabling the user to customize
                                  for `CGAL::Isosurfacing::Marching_cubes_domain_3`, and a dichotomy
                                  for `CGAL::Isosurfacing::Dual_contouring_domain_3`. This parameter should
                                  be adjusted depending on how the value field is defined: there is for
-                                 example no point incorporating a dichotomy in Dual Contouring if the value field is defined
+                                 example no point incorporating a dichotomy in %Dual Contouring if the value field is defined
                                  through linear interpolation. Users can pass their own edge intersection
                                  oracle, provided it meets the requirements described by the concept
                                  `IsosurfacingEdgeIntersectionOracle_3`.
@@ -291,12 +299,6 @@ Results of the %Dual Contouring algorithm: untriangulated (left column) or trian
 unconstrained vertex location (top row) or constrained vertex location (bottom row).
 \cgalFigureCaptionEnd
 
-\subsection SubSecDCOctreeExample Dual Contouring using Octree
-
-The following example shows the use of an octree for dual contouring or marching cubes.
-
-\cgalExample{Isosurfacing_3/dual_contouring_octree.cpp}
-
 \subsection SubSecImplicitDataExample Implicit Data
 
 The following example shows the usage of Marching Cubes and %Dual Contouring algorithms to extract
@@ -335,6 +337,15 @@ distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the dista
 negative inside the mesh.
 
 \cgalExample{Isosurfacing_3/contouring_mesh_offset.cpp}
+
+\subsection SubSecContouringOctreeExample Contouring using Octrees
+
+The following example shows the use of an octree as discretization instead of a %Cartesian grid
+for both %Dual Contouring and Marching Cubes. Note that in this configuration, all methods
+lose guarantees, and cracks can easily appear in the surface if the octree's surface is not
+correctly constructed.
+
+\cgalExample{Isosurfacing_3/contouring_octree.cpp}
 
 \section SecIsosurfacingHistory Design and Implementation History
 
