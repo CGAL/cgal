@@ -19,9 +19,9 @@ Data sets: [Marching Cubes cases] [Randomly generated grids] from http://liscust
 namespace IS = CGAL::Isosurfacing;
 
 template <typename Grid, typename Values>
-void read_iso_volume(const std::string& filename, Grid& grid, Values& values) {
+void read_iso_volume(const std::string& filename, Grid& grid, Values& values)
+{
   using Geom_traits = typename Grid::Geom_traits;
-  using FT = typename Geom_traits::FT;
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
   typename Geom_traits::Construct_point_3 point = grid.geom_traits().construct_point_3_object();
   typename Geom_traits::Construct_iso_cuboid_3 iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
@@ -89,9 +89,7 @@ std::array<int, 2> read_betti(const std::string& filename) {
 
 template <typename K>
 void verify_euler() {
-  using FT = typename K::FT;
   using Point = typename K::Point_3;
-  using Vector = typename K::Vector_3;
 
   using Mesh = CGAL::Surface_mesh<Point>;
   using Grid = IS::Cartesian_grid_3<K>;
@@ -142,10 +140,9 @@ void verify_euler() {
 }
 
 template <typename K>
-void verify_betti() {
-  using FT = typename K::FT;
+void verify_betti()
+{
   using Point = typename K::Point_3;
-  using Vector = typename K::Vector_3;
 
   using Mesh = CGAL::Surface_mesh<Point>;
   using Grid = IS::Cartesian_grid_3<K>;
@@ -201,20 +198,16 @@ void verify_betti() {
 }
 
 template <typename K>
-void compare_to_reference(const std::string& filename) {
-  using FT = typename K::FT;
+void compare_to_reference(const std::string& filename)
+{
   using Point = typename K::Point_3;
-  using Vector = typename K::Vector_3;
 
-  using Mesh = CGAL::Surface_mesh<Point>;
   using Grid = IS::Cartesian_grid_3<K>;
   using Values = IS::Interpolated_discrete_values_3<Grid>;
   using Domain = IS::Marching_cubes_domain_3<Grid, Values>;
 
   using Point_range = std::vector<Point>;
   using Polygon_range = std::vector<std::vector<std::size_t> >;
-
-  using Mesh = CGAL::Surface_mesh<Point>;
 
   Grid grid;
   Values values { grid };
@@ -244,7 +237,6 @@ void compare_to_reference(const std::string& filename) {
 int main(int, char**)
 {
   using K = CGAL::Simple_cartesian<double>;
-  using FT = typename K::FT;
 
   verify_euler<K>();
   verify_betti<K>();
