@@ -20,19 +20,6 @@ using namespace CGAL::Three;
 
 typedef Tr::Bare_point Bare_point;
 
-struct Compare_to_isovalue {
-  double iso_value;
-  bool less;
-  typedef bool result_type;
-
-  Compare_to_isovalue(double iso_value, bool less)
-    : iso_value(iso_value), less(less) {}
-
-  bool operator()(double x) const {
-    return (x < iso_value) == less;
-  }
-};
-
 Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  const Polylines_container& polylines,
                                  const SMesh* pBoundingMesh,
@@ -355,6 +342,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.protect_features
     = protect_features || protect_borders || !polylines.empty();
   param.detect_connected_components = detect_connected_components;
+  param.iso_value = iso_value;
+  param.inside_is_less = inside_is_less;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_min_sizing = facet_min_sizing;

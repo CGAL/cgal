@@ -4,7 +4,6 @@
 #include <list>
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Arr_iostream.h>
 
 #include "arr_linear.h"

@@ -167,7 +167,7 @@ public:
     low = static_cast<limb>(l & mask); //extract low bits from l
     high= static_cast<limb>((l - low) >> sizeof_limb); //extract high bits from l
 
-    CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
+    CGAL_postcondition ( l == low + ( high * (limb2(1) << sizeof_limb) ) );
   }
 
   // Given a limb2, returns the higher limb.

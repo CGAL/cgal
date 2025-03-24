@@ -1225,6 +1225,17 @@ compute the curvatures on a specific vertex.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
+\subsection DCurvartures Discrete Curvatures
+
+The package also provides methods to compute the standard, non-interpolated discrete mean and Gaussian
+curvatures on triangle meshes, based on the work of Meyer et al. \cgalCite{cgal:mdsb-ddgot-02}.
+These curvatures are computed at each vertex of the mesh, and are based on the angles of the incident
+triangles. The functions are:
+- `CGAL::Polygon_mesh_processing::discrete_mean_curvature()`
+- `CGAL::Polygon_mesh_processing::discrete_mean_curvatures()`
+- `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()`
+- `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvatures()`
+
 ****************************************
 \section PMPSlicer Slicer
 

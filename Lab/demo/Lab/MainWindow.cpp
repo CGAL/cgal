@@ -565,7 +565,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qdebug << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -612,6 +612,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else{
       pluginsStatus_map[name] = loader.errorString();
+      if(verbose)
+        qdebug << "\n#### Error: " << loader.errorString();
 
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
@@ -2396,8 +2398,12 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    CGAL::qglviewer::Vec min(static_cast<float>(bbox.xmin())+viewer->offset().x, static_cast<float>(bbox.ymin())+viewer->offset().y, static_cast<float>(bbox.zmin())+viewer->offset().z),
-        max(static_cast<float>(bbox.xmax())+viewer->offset().x, static_cast<float>(bbox.ymax())+viewer->offset().y, static_cast<float>(bbox.zmax())+viewer->offset().z);
+    CGAL::qglviewer::Vec min{static_cast<float>(bbox.xmin()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymin()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmin()) + viewer->offset().z};
+    CGAL::qglviewer::Vec max{static_cast<float>(bbox.xmax()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymax()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmax()) + viewer->offset().z};
     viewer->setSceneBoundingBox(min, max);
     viewerShow(static_cast<float>(min.x), static_cast<float>(min.y), static_cast<float>(min.z),
                static_cast<float>(max.x), static_cast<float>(max.y), static_cast<float>(max.z));

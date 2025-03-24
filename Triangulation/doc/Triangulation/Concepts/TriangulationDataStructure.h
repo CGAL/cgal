@@ -870,6 +870,7 @@ a vertex of the `c`.
 */
 int index(Vertex_handle v) const;
 
+/// @}
 
 /// \name Internal
 /// \cgalAdvancedBegin

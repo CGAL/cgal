@@ -517,7 +517,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
 
   int coord = depth%3;
   Point_3 point_on_plane = find_median_point(V, coord);
-  CGAL_NEF_TRACEN("build_kdtree: plane: "<<partition_plane<< " " << point_on_plane);
+//  CGAL_NEF_TRACEN("build_kdtree: plane: "<<partition_plane<< " " << point_on_plane);
 
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Side_of_plane sop(point_on_plane, coord, reference_counted);

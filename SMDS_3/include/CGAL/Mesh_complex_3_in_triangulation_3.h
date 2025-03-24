@@ -973,7 +973,7 @@ private:
     typedef typename  Vertex_map_iterator_first::reference  pointer;
     typedef typename iterator_adaptor_::reference           reference;
 
-    Vertex_map_iterator_first_dereference() : Self::iterator_adaptor_() { }
+    Vertex_map_iterator_first_dereference() = default;
 
     template < typename Iterator >
     Vertex_map_iterator_first_dereference(Iterator i)
@@ -2034,6 +2034,7 @@ Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 rescan_after_load_of_triangulation()
 {
   corners_.clear();
+  far_vertices_.clear();
   for(typename Tr::Finite_vertices_iterator
         vit = this->triangulation().finite_vertices_begin(),
         end = this->triangulation().finite_vertices_end();
@@ -2041,6 +2042,8 @@ rescan_after_load_of_triangulation()
   {
     if ( vit->in_dimension() == 0 ) {
       add_to_complex(vit, Corner_index(1));
+    } else if(vit->in_dimension() == -1) {
+      far_vertices_.push_back(vit);
     }
   }
 

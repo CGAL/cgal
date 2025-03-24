@@ -377,7 +377,7 @@ public:
     for (const auto& pair : points) {
       const auto& point = pair.first;
       directions.push_back(typename Intersection_kernel::Vector_2(to_exact(m_data->centroid), point));
-      const FT length = CGAL::sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
+      const FT length = CGAL::approximate_sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
       sum_length += length;
       num += 1;
     }
@@ -676,8 +676,9 @@ public:
       m_data->plane.to_2d(Point_3(0, 0, 0) + vec));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
+  template<class IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Point_3& point) const
+      ->std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_2> {
     return m_data->exact_plane.to_2d(point);
   }
 
@@ -687,8 +688,9 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Line_3& line) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Line_2> {
     return typename Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
@@ -700,25 +702,21 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Segment_2 to_2d(const typename Intersection_kernel::Segment_3& segment) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Segment_3& segment) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Segment_2> {
     return typename Intersection_kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
       m_data->exact_plane.to_2d(segment.target()));
-  }
-
-  const Vector_3 to_3d(const Vector_2& vec) const {
-    return Vector_3(
-      m_data->plane.to_3d(Point_2(FT(0), FT(0))),
-      m_data->plane.to_3d(Point_2(FT(0), FT(0)) + vec));
   }
 
   const Point_3 to_3d(const Point_2& point) const {
     return m_data->plane.to_3d(point);
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_3 to_3d(const typename Intersection_kernel::Point_2& point) const {
+  template <typename IK = Intersection_kernel>
+  auto to_3d(const typename Intersection_kernel::Point_2& point) const
+      ->std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_3> {
     return m_data->exact_plane.to_3d(point);
   }
 

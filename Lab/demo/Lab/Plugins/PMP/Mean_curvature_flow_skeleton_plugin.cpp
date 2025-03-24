@@ -692,7 +692,7 @@ if(!contracted_item)
   item->mcs->poles(pole_points);
   vertex_iterator vb, ve;
   int id = 0;
-  for (boost::tie(vb, ve) = vertices(*pMesh); vb != ve; ++vb)
+  for (std::tie(vb, ve) = vertices(*pMesh); vb != ve; ++vb)
   {
     std::vector<Point> line;
     line.clear();

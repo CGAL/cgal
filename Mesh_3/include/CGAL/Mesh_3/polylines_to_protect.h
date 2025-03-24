@@ -325,7 +325,7 @@ struct Angle_tester
     else
     {
       out_edge_iterator out_edge_it, out_edges_end;
-      boost::tie(out_edge_it, out_edges_end) = out_edges(v, g);
+      std::tie(out_edge_it, out_edges_end) = out_edges(v, g);
 
       vertex_descriptor v1 = target(*out_edge_it++, g);
       vertex_descriptor v2 = target(*out_edge_it++, g);

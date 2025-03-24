@@ -644,7 +644,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
 #endif
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 
   std::array<Index, 4> surface_center_index_table_ = {};
   /// Stores visited facets (4 first bits)

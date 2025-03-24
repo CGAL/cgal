@@ -3,7 +3,6 @@
 /// \ingroup PkgEnvelope3Ref
 /*!
 \addtogroup PkgEnvelope3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3}
 \cgalPkgPicture{Envelope_3/fig/Envelope_3.png}
 \cgalPkgSummaryBegin

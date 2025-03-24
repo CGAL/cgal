@@ -40,11 +40,11 @@ int main (int, char**)
   bool success = false;
   Color_map color;
 
-  boost::tie (color, success) = point_set.add_property_map<Color> ("color", black);
+  std::tie (color, success) = point_set.add_property_map<Color> ("color", black);
   assert (success);
 
   FT_map intensity;
-  boost::tie (intensity, success) = point_set.add_property_map<FT> ("intensity", 0.);
+  std::tie (intensity, success) = point_set.add_property_map<FT> ("intensity", 0.);
   assert (success);
 
   point_set.reserve (10); // For memory optimization

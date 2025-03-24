@@ -193,7 +193,7 @@ protected:
         const Less_by_direction  orderMid(g, cw90(bisector_direction));
 
         typename Graph_::vertex_iterator vit, ve;
-        boost::tie(vit, ve) = boost::vertices(g);
+        std::tie(vit, ve) = boost::vertices(g);
 
         // Step 1: Sort S according to order induced by D1
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
@@ -218,7 +218,7 @@ protected:
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists
-                boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
+                std::tie(existing_e, existing)=boost::edge(*it, *ri, g);
                 if (!existing)
                     boost::add_edge(*it, *ri, g);
             }

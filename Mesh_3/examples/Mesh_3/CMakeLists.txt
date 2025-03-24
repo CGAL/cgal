@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Mesh_3_Examples)
 
 add_compile_definitions(CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -157,9 +157,14 @@ if(TARGET CGAL::CGAL_ImageIO)
                           PRIVATE CGAL::Eigen3_support)
 
     create_single_source_cgal_program(
-      "mesh_3D_gray_image_with_custom_initialization.cpp")
-    target_link_libraries(mesh_3D_gray_image_with_custom_initialization
+      "mesh_3D_image_with_image_initialization.cpp")
+    target_link_libraries(mesh_3D_image_with_image_initialization
                           PRIVATE CGAL::Eigen3_support)
+
+    create_single_source_cgal_program(
+      "mesh_3D_image_with_initial_points.cpp")
+    target_link_libraries(mesh_3D_image_with_initial_points
+                          PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program("mesh_3D_image_variable_size.cpp")
     target_link_libraries(mesh_3D_image_variable_size
@@ -199,7 +204,8 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_weighted_image_with_detection_of_features
     mesh_3D_image_variable_size
     mesh_3D_image_with_custom_initialization
-    mesh_3D_gray_image_with_custom_initialization
+    mesh_3D_image_with_initial_points
+    mesh_3D_image_with_image_initialization
     mesh_3D_image_with_features
     mesh_3D_image_with_detection_of_features
     mesh_3D_image_with_input_features

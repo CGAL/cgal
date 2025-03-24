@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>630</width>
-    <height>532</height>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -61,7 +61,7 @@
     <item>
      <widget class="QTabWidget" name="selectionOrEuler">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -176,7 +176,7 @@
               <item>
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -200,7 +200,7 @@
                   <item>
                    <spacer name="verticalSpacer_2">
                     <property name="orientation">
-                     <enum>Qt::Vertical</enum>
+                     <enum>Qt::Orientation::Vertical</enum>
                     </property>
                     <property name="sizeHint" stdset="0">
                      <size>
@@ -218,7 +218,7 @@
                        <string>Sharp edges angle:</string>
                       </property>
                       <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -274,7 +274,7 @@
               <item>
                <spacer name="verticalSpacer_4">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -294,7 +294,7 @@
               <item>
                <spacer name="verticalSpacer_7">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -367,7 +367,7 @@
               <item>
                <spacer name="verticalSpacer_6">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -386,7 +386,7 @@
             <item>
              <spacer name="verticalSpacer_10">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -479,7 +479,7 @@
             <item>
              <spacer name="verticalSpacer_8">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -572,20 +572,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <spacer name="verticalSpacer_9">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
+            <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0,0">
              <item>
               <widget class="QComboBox" name="editionBox">
                <item>
@@ -635,6 +622,11 @@
                </item>
                <item>
                 <property name="text">
+                 <string>Remove degree 2 vertex</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
                  <string>Add vertex and face to border (Advanced)</string>
                 </property>
                </item>
@@ -660,20 +652,56 @@
               </widget>
              </item>
              <item>
+              <widget class="QTextEdit" name="movePointCoordinates_textEdit">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>New Coordinates:  X Y Z</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="movePoint_pushButton">
+               <property name="text">
+                <string>Apply move</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="docImage_Label">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QLabel" name="label_4">
-               <property name="text">
-                <string>Ctrl+Z to cancel the temporary selection. Ctrl+U to undo last operation (if applicable).</string>
-               </property>
-              </widget>
-             </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Ctrl+Z to cancel the temporary selection. Ctrl+U to undo last operation (if applicable).</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -685,7 +713,7 @@
     <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>

@@ -562,7 +562,7 @@ function template computes the offset of a given polygon \f$ P\f$ by a
 rational radius \f$ r\f$ in an exact manner. The input polygon \f$
 P\f$ must be either simple or degenerate consisting of two vertices
 (representing a line segment). The `traits` argument must model the
-concept `ArrangementTraits_2` and it should be capable of handling
+concept `AosTraits_2` and it should be capable of handling
 conic arcs in an exact manner---using an instance of the
 `Arr_conic_traits_2` class template with the number types provided by
 the \core library is the preferred option; see \ref arr_sssectr_conic
@@ -631,7 +631,7 @@ Similarly, the function template
 \link inset_polygon_2() `inset_polygon_2(P, r, traits, oi)` \endlink
 computes the exact inset of \f$ P\f$ with radius \f$ r\f$, and returns
 its output through the given output iterator `oi`. The `traits` parameter
-must model the concept `ArrangementTraits_2` and it should be capable of
+must model the concept `AosTraits_2` and it should be capable of
 handling conic arcs in an exact manner, whereas the value-type of `oi`
 must be an instance of `Gps_traits_2::Polygon_2`.
 

@@ -5,7 +5,7 @@
 
 /// \cgalConceptNamespace
 /// The namespace containing concepts specific to Arrangements.
-namespace ArrTraits {}
+namespace AosTraits {}
 
 /// \defgroup PkgArrangementOnSurface2ConceptsTopologyTraits Topology Traits Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
@@ -66,7 +66,6 @@ namespace ArrTraits {}
 
 /*!
 \addtogroup PkgArrangementOnSurface2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Arrangements,PkgArrangementOnSurface2}
 \cgalPkgPicture{Arrangement_2.png}
 \cgalPkgSummaryBegin
@@ -82,11 +81,11 @@ namespace ArrTraits {}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-Given a set \f$ \mathcal{C}\f$ of planar curves, the <I>arrangement</I>
+Given a set \f$\mathcal{C}\f$ of planar curves, the <I>arrangement</I>
 \f$ {\mathcal A}({\mathcal C})\f$ is the subdivision of the plane induced
-by the curves in \f$ \mathcal{C}\f$ into maximally connected cells. The cells
-can be \f$ 0\f$-dimensional (<I>vertices</I>), \f$ 1\f$-dimensional (<I>edges</I>)
-or \f$ 2\f$-dimensional (<I>faces</I>).
+by the curves in \f$\mathcal{C}\f$ into maximally connected cells. The cells
+can be \f$0\f$-dimensional (<I>vertices</I>), \f$1\f$-dimensional (<I>edges</I>)
+or \f$2\f$-dimensional (<I>faces</I>).
 
 The class `Arrangement_2<Traits,Dcel>` encapsulates a data structure
 that maintains arrangements of arbitrary bounded planar curves. It comes
@@ -112,85 +111,87 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalCRPSection{Concepts}
 
-- `ArrangementDcel`
-- `ArrangementDcelWithRebind`
-- `ArrangementDcelVertex`
-- `ArrangementDcelHalfedge`
-- `ArrangementDcelFace`
-- `ArrangementDcelOuterCcb`
-- `ArrangementDcelInnerCcb`
-- `ArrangementDcelIsolatedVertex`
-- `ArrangementBasicTopologyTraits`
-- `ArrangementBasicTraits_2`
-- `ArrangementConstructXMonotoneCurveTraits_2`
-- `ArrangementConstructCurveTraits_2`
-- `ArrangementLandmarkTraits_2`
-- `ArrangementXMonotoneTraits_2`
-- `ArrangementTraits_2`
-- `ArrangementHorizontalSideTraits_2`
-- `ArrangementVerticalSideTraits_2`
-- `ArrangementIdentifiedVerticalTraits_2`
-- `ArrangementIdentifiedHorizontalTraits_2`
-- `ArrangementOpenBoundaryTraits_2`
-- `ArrangementSphericalBoundaryTraits_2`
-- `ArrangementInputFormatter`
-- `ArrangementOutputFormatter`
-- `ArrangementWithHistoryInputFormatter`
-- `ArrangementWithHistoryOutputFormatter`
-- `ArrangementPointLocation_2`
-- `ArrangementVerticalRayShoot_2`
-- `ArrangementOpenLeftTraits_2`
-- `ArrangementOpenRightTraits_2`
-- `ArrangementOpenBottomTraits_2`
-- `ArrangementOpenTopTraits_2`
-- `ArrangementClosedLeftTraits_2`
-- `ArrangementClosedRightTraits_2`
-- `ArrangementClosedBottomTraits_2`
-- `ArrangementClosedTopTraits_2`
-- `ArrangementContractedLeftTraits_2`
-- `ArrangementContractedRightTraits_2`
-- `ArrangementContractedBottomTraits_2`
-- `ArrangementContractedTopTraits_2`
-- `ArrangementLeftSideTraits_2`
-- `ArrangementRightSideTraits_2`
-- `ArrangementBottomSideTraits_2`
-- `ArrangementTopSideTraits_2`
-- `ArrangementTopologyTraits`
+- `AosApproximateTraits_2`
+- `AosApproximatePointTraits_2`
+- `AosBasicTopologyTraits`
+- `AosBasicTraits_2`
+- `AosBottomSideTraits_2`
+- `AosClosedBottomTraits_2`
+- `AosClosedLeftTraits_2`
+- `AosClosedRightTraits_2`
+- `AosClosedTopTraits_2`
+- `AosConstructCurveTraits_2`
+- `AosConstructXMonotoneCurveTraits_2`
+- `AosContractedBottomTraits_2`
+- `AosContractedLeftTraits_2`
+- `AosContractedRightTraits_2`
+- `AosContractedTopTraits_2`
+- `AosDcel`
+- `AosDcelFace`
+- `AosDcelHalfedge`
+- `AosDcelInnerCcb`
+- `AosDcelIsolatedVertex`
+- `AosDcelOuterCcb`
+- `AosDcelVertex`
+- `AosDcelWithRebind`
+- `AosHorizontalSideTraits_2`
+- `AosIdentifiedHorizontalTraits_2`
+- `AosIdentifiedVerticalTraits_2`
+- `AosInputFormatter`
+- `AosLandmarkTraits_2`
+- `AosLeftSideTraits_2`
+- `AosOpenBottomTraits_2`
+- `AosOpenBoundaryTraits_2`
+- `AosOpenLeftTraits_2`
+- `AosOpenRightTraits_2`
+- `AosOpenTopTraits_2`
+- `AosOutputFormatter`
+- `AosPointLocation_2`
+- `AosRightSideTraits_2`
+- `AosSphericalBoundaryTraits_2`
+- `AosTopologyTraits`
+- `AosTopSideTraits_2`
+- `AosTraits_2`
+- `AosVerticalRayShoot_2`
+- `AosVerticalSideTraits_2`
+- `AosWithHistoryInputFormatter`
+- `AosWithHistoryOutputFormatter`
+- `AosXMonotoneTraits_2`
 
 \cgalCRPSection{Geometric Object Concepts}
 
-- `ArrTraits::Point_2`
-- `ArrTraits::XMonotoneCurve_2`
-- `ArrTraits::Curve_2`
+- `AosTraits::Point_2`
+- `AosTraits::XMonotoneCurve_2`
+- `AosTraits::Curve_2`
 
 \cgalCRPSection{Function Object Concepts}
 
-- `ArrTraits::CompareX_2`
-- `ArrTraits::CompareXy_2`
-- `ArrTraits::ConstructMinVertex_2`
-- `ArrTraits::ConstructMaxVertex_2`
-- `ArrTraits::IsVertical_2`
-- `ArrTraits::IsOnXIdentification_2`
-- `ArrTraits::IsOnYIdentification_2`
-- `ArrTraits::CompareYAtX_2`
-- `ArrTraits::CompareYAtXLeft_2`
-- `ArrTraits::CompareYAtXRight_2`
-- `ArrTraits::Equal_2`
-- `ArrTraits::ParameterSpaceInX_2`
-- `ArrTraits::ParameterSpaceInY_2`
-- `ArrTraits::CompareXOnBoundary_2`
-- `ArrTraits::CompareYOnBoundary_2`
-- `ArrTraits::CompareXNearBoundary_2`
-- `ArrTraits::CompareYNearBoundary_2`
-- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
-- `ArrTraits::Intersect_2`
-- `ArrTraits::Split_2`
-- `ArrTraits::AreMergeable_2`
-- `ArrTraits::Merge_2`
-- `ArrTraits::MakeXMonotone_2`
-- `ArrTraits::Approximate_2`
-- `ArrTraits::ConstructXMonotoneCurve_2`
-- `ArrTraits::ConstructCurve_2`
+- `AosTraits::Approximate_2`
+- `AosTraits::AreMergeable_2`
+- `AosTraits::CompareX_2`
+- `AosTraits::CompareXy_2`
+- `AosTraits::CompareYAtX_2`
+- `AosTraits::CompareYAtXLeft_2`
+- `AosTraits::CompareYAtXRight_2`
+- `AosTraits::ConstructMinVertex_2`
+- `AosTraits::ConstructMaxVertex_2`
+- `AosTraits::CompareXOnBoundary_2`
+- `AosTraits::CompareYOnBoundary_2`
+- `AosTraits::CompareXNearBoundary_2`
+- `AosTraits::CompareYNearBoundary_2`
+- `AosTraits::CompareXOnBoundaryOfCurveEnd_2`
+- `AosTraits::ConstructCurve_2`
+- `AosTraits::ConstructXMonotoneCurve_2`
+- `AosTraits::Equal_2`
+- `AosTraits::Intersect_2`
+- `AosTraits::IsVertical_2`
+- `AosTraits::IsOnXIdentification_2`
+- `AosTraits::IsOnYIdentification_2`
+- `AosTraits::MakeXMonotone_2`
+- `AosTraits::Merge_2`
+- `AosTraits::ParameterSpaceInX_2`
+- `AosTraits::ParameterSpaceInY_2`
+- `AosTraits::Split_2`
 
 \cgalCRPSection{Classes}
 

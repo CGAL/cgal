@@ -1515,7 +1515,7 @@ public:
 
   //@}
 
-  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
+  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks \
    * point-location strategy and the drawing function.
    */
   //@{
