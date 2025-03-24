@@ -61,26 +61,6 @@ box(const typename K::Point_3& b,
   return inside ? - d : d;
 }
 
-// template <typename K>
-// typename K::FT
-// disk(const typename K::Point_3& c,
-//      const typename K::Vector_3& n,
-//      const typename K::FT r,
-//      const typename K::Point_3& q)
-// {
-//   typename K::Plane_3 pl(c, n);
-//   typename K::Point_3 pq = pl.projection(q);
-
-//   typename K::FT sq_dpl = CGAL::squared_distance(q, pl);
-
-//   if(CGAL::squared_distance(pq, c) < CGAL::square(r))
-//     return CGAL::approximate_sqrt(sq_dpl);
-//   else
-//     return CGAL::approximate_sqrt(CGAL::square(CGAL::approximate_sqrt(CGAL::squared_distance(pq, c)) - r) + sq_dpl);
-// }
-
-
-
 // p is the center of the base disk
 // q is the center of the top disk
 template<typename K>
@@ -94,7 +74,6 @@ infinite_cylinder(const typename K::Point_3& b,
   typename K::Point_3 pq = pl.projection(q);
   return CGAL::approximate_sqrt(CGAL::squared_distance(pq, b)) - r;
 }
-
 
 // c is the center of the torus
 // n is the normal of the plane containing all centers of the tube
