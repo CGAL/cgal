@@ -76,7 +76,6 @@ public:
     m_overlapping(overlapping)
   {}
 
-
   template <typename CurveIterator>
   void sweep(CurveIterator begin, CurveIterator end)
   {
