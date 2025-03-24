@@ -17,7 +17,6 @@
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/tuple.h>
 
-
 namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
   constexpr Kernel_d_interface(){}
@@ -49,6 +48,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         typedef typename Get_type<Base, Weighted_point_tag>::type        Weighted_point_d;
         typedef typename Get_functor<Base, Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
         typedef typename Get_functor<Base, Compare_lexicographically_tag>::type Compare_lexicographically_d;
+        typedef typename Get_functor<Base, Compare_squared_distance_tag>::type Compare_squared_distance_d;
         typedef typename Get_functor<Base, Equal_points_tag>::type Equal_d;
         typedef typename Get_functor<Base, Less_lexicographically_tag>::type Less_lexicographically_d;
         typedef typename Get_functor<Base, Less_or_equal_lexicographically_tag>::type Less_or_equal_lexicographically_d;
@@ -96,7 +96,25 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
             return CP(this->kernel())(std::forward<T>(t)...);
           }
         };
-        typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
+        //typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
+        struct Construct_vector_d : private Store_kernel<Kernel> {
+          typedef Kernel R_; // for the macro
+          CGAL_FUNCTOR_INIT_STORE(Construct_vector_d)
+          typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type CV;
+          typedef Vector_d result_type;
+          Vector_d operator()(Point_d const& p, Point_d const& q)const{
+            return Difference_of_points_d(this->kernel())(q,p);
+          }
+          Vector_d operator()(Point_d & p, Point_d & q)const{
+            return Difference_of_points_d(this->kernel())(q,p);
+          }
+          template<class...T>
+          decltype(auto)
+          operator()(T&&...t)const{
+            return CV(this->kernel())(std::forward<T>(t)...);
+          }
+        };
+
         typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
         typedef typename Get_functor<Base, Construct_ttag<Sphere_tag> >::type Construct_sphere_d;
         typedef typename Get_functor<Base, Construct_ttag<Hyperplane_tag> >::type Construct_hyperplane_d;
@@ -181,6 +199,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
         typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
         typedef typename Get_functor<Base, Squared_length_tag>::type Squared_length_d;
+        typedef typename Get_functor<Base, Construct_bbox_tag>::type Construct_bbox_d;
         typedef typename Get_functor<Base, Scalar_product_tag>::type Scalar_product_d;
         typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
         typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
@@ -212,6 +231,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         Compute_coordinate_d compute_coordinate_d_object()const{ return Compute_coordinate_d(*this); }
         Has_on_positive_side_d has_on_positive_side_d_object()const{ return Has_on_positive_side_d(*this); }
         Compare_lexicographically_d compare_lexicographically_d_object()const{ return Compare_lexicographically_d(*this); }
+        Compare_squared_distance_d compare_squared_distance_d_object()const{ return Compare_squared_distance_d(*this); }
         Equal_d equal_d_object()const{ return Equal_d(*this); }
         Less_lexicographically_d less_lexicographically_d_object()const{ return Less_lexicographically_d(*this); }
         Less_or_equal_lexicographically_d less_or_equal_lexicographically_d_object()const{ return Less_or_equal_lexicographically_d(*this); }
@@ -259,6 +279,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object()const{ return Compute_squared_radius_smallest_orthogonal_sphere_d(*this); }
         Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
         Squared_length_d squared_length_d_object()const{ return Squared_length_d(*this); }
+        Construct_bbox_d construct_bbox_d_object()const{ return Construct_bbox_d(*this); }
         Scalar_product_d scalar_product_d_object()const{ return Scalar_product_d(*this); }
         Center_of_sphere_d center_of_sphere_d_object()const{ return Center_of_sphere_d(*this); }
         Construct_circumcenter_d construct_circumcenter_d_object()const{ return Construct_circumcenter_d(*this); }
