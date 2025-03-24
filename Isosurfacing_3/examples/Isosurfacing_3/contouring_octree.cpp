@@ -2,6 +2,8 @@
 
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
 #include <CGAL/Isosurfacing_3/Dual_contouring_domain_3.h>
+#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 #include <CGAL/Isosurfacing_3/Value_function_3.h>
 #include <CGAL/Isosurfacing_3/Gradient_function_3.h>
 #include <CGAL/Isosurfacing_3/Octree_partition.h>
@@ -25,6 +27,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 using Octree = CGAL::Octree<Kernel, std::vector<Point> >;
 using Values = CGAL::Isosurfacing::Value_function_3<Octree>;
 using Gradients = CGAL::Isosurfacing::Gradient_function_3<Octree>;
+using MC_Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Octree, Values>;
 using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Octree, Values, Gradients>;
 
 namespace IS = CGAL::Isosurfacing;
@@ -229,6 +232,35 @@ void run_DC_octree(const CGAL::Bbox_3 bbox,
   CGAL::IO::write_polygon_soup("DC_octree_" + name + ".off", points, triangles);
 }
 
+template <typename Splitter>
+void run_TMC_octree(const CGAL::Bbox_3 bbox,
+                    const Splitter& split_predicate,
+                    const std::function<FT(const Point&)> function,
+                    const FT isovalue,
+                    const std::string& name)
+{
+  std::vector<Point> bbox_points { { bbox.xmin(), bbox.ymin(), bbox.zmin() },
+  { bbox.xmax(), bbox.ymax(), bbox.zmax() } };
+
+  Octree octree(bbox_points);
+  octree.refine(split_predicate);
+
+  Values values { function, octree };
+
+  Point_range points;
+  Polygon_range triangles;
+  MC_Domain mcdomain { octree, values };
+
+  std::cout << "Running TMC" << std::endl;
+
+  CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
+
+  std::cout << "Output #vertices (TMC): " << points.size() << std::endl;
+  std::cout << "Output #triangles (TMC): " << triangles.size() << std::endl;
+
+  CGAL::IO::write_polygon_soup("TMC_octree_" + name + ".off", points, triangles);
+}
+
 // Whether you are using MC, TMC, or DC, there is no guarantee for an octree:
 // it should behave well if your nodes are split with a uniform size around the surface,
 // but it is sure to produce cracks if you have varying depths around the isosurface.
@@ -247,6 +279,9 @@ int main(int argc, char** argv)
 
   Refine_around_isovalue isvalue_splitter_2(5, 5, blobby_function, isovalue);
   run_DC_octree(bbox, isvalue_splitter_2, blobby_function, blobby_gradient, isovalue, "blobby_adapted");
+
+  // to illustrate cracks
+  run_TMC_octree(bbox, one_eight_splitter, sphere_function, isovalue, "one_eight");
 
   std::cout << "Done" << std::endl;
 
