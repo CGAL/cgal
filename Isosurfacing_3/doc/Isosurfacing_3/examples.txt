@@ -5,6 +5,6 @@
 \example Isosurfacing_3/contouring_mesh_offset.cpp
 \example Isosurfacing_3/contouring_vtk_image.cpp
 \example Isosurfacing_3/dual_contouring.cpp
-\example Isosurfacing_3/dual_contouring_octree.cpp
+\example Isosurfacing_3/contouring_octree.cpp
 \example Isosurfacing_3/marching_cubes.cpp
 */
