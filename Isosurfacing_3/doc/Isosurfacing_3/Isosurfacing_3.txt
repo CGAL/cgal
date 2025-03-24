@@ -261,8 +261,18 @@ run both methods on different types of input data.
 The following example illustrates a basic run of the Marching Cubes algorithm, and in particular
 the free function to create a domain from a %Cartesian grid, and the named parameter
 that enables the user to switch from Marching Cubes to Topologically Correct Marching Cubes.
+The resulting triangle soup is converted to a triangle mesh, and is remeshed using
+the isotropic remeshing algorithm.
 
 \cgalExample{Isosurfacing_3/marching_cubes.cpp}
+
+\cgalFigureAnchor{IsosurfacingMC}
+<center>
+<img src="MC.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{IsosurfacingMC}
+Results of the Marching Cubes algorithm, and the final result after remeshing.
+\cgalFigureCaptionEnd
 
 \subsection SubSecDCExample Dual Contouring
 
