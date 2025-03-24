@@ -159,7 +159,7 @@ private:
     const bool res_l_o1o2 = (CGAL::compare_squared_distance(o1, o2, expected_result*(1-epsilon)-1) == CGAL::LARGER);
     const bool res_l_o2o1 = (CGAL::compare_squared_distance(o2, o1, expected_result*(1-epsilon)-1) == CGAL::LARGER);
 
-    // The equal result is guaranted only on exact construction kernel
+    // The equal result is guaranteed only on exact construction kernel
     if(epsilon==0)
     {
       assert(res_e_o1o2);
