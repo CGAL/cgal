@@ -716,7 +716,7 @@ public:
     //! type of an arc on generic curve
     typedef internal::Arc_2< Self > Arc_2;
 
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    //! type of weakly x-monotone arc for \c AosTraits_2
     typedef Arc_2 X_monotone_curve_2;
 
     //!@}

@@ -3,7 +3,6 @@
 /// \ingroup PkgJetFitting3Ref
 /*!
 \addtogroup PkgJetFitting3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJetFitting3}
 \cgalPkgPicture{DavidDetail.png}
 \cgalPkgSummaryBegin

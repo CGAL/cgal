@@ -3,7 +3,6 @@
 /// \ingroup PkgConvexHullDRef
 /*!
 \addtogroup PkgConvexHullDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullD}
 \cgalPkgPicture{convex_hull_d-teaser.png}
 \cgalPkgSummaryBegin

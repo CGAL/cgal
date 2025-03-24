@@ -10,18 +10,18 @@ namespace CGAL {
  * The `Arr_bounded_planar_topology_traits_2` template has two parameters:
  * <UL>
  * <LI>The `GeometryTraits_2` template-parameter should be substituted by
- * a model of the `ArrangementBasicTraits_2` concept. The traits
+ * a model of the `AosBasicTraits_2` concept. The traits
  * class defines the types of \f$x\f$-monotone curves and two-dimensional
- * points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and
- * `ArrangementBasicTraits_2::Point_2`,
+ * points, namely `AosBasicTraits_2::X_monotone_curve_2` and
+ * `AosBasicTraits_2::Point_2`,
  *   respectively, and supports basic geometric predicates on them.
  * <LI>The `Dcel` template-parameter should be substituted by
- * a class that is a model of the `ArrangementDcel` concept. The
+ * a class that is a model of the `AosDcel` concept. The
  * value of this parameter is by default
  * `Arr_default_dcel<Traits>`.
  * </UL>
  *
- * \cgalModels{ArrangementBasicTopologyTraits}
+ * \cgalModels{AosBasicTopologyTraits}
  *
  * \sa `Arr_default_dcel<Traits>`
  * \sa `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel,x,y>`
@@ -62,10 +62,10 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! obtains the DCEL (const version). */
+  /*! obtains the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! obtains the DCEL (non-const version). */
+  /*! obtains the \dcel (non-const version). */
   Dcel& dcel();
 
   /*! obtains the unbounded face (const version). */

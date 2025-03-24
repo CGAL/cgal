@@ -316,7 +316,7 @@ public:
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
-    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
      * into a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its value type is a variant
@@ -411,7 +411,7 @@ public:
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
     /*! operates */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
 
@@ -429,7 +429,7 @@ public:
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
     /*! operates */
-    Comparison_result operator()(const X_monotone_curve_2& xc)
+    Comparison_result operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
 

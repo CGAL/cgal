@@ -10,7 +10,6 @@
 /// \ingroup PkgTDS3Ref
 /*!
 \addtogroup PkgTDS3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Triangulation Data Structure,PkgTDS3}
 \cgalPkgPicture{tds3_small.png}
 \cgalPkgSummaryBegin

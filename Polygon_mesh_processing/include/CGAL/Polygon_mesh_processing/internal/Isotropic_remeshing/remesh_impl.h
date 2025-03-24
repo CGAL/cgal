@@ -879,14 +879,14 @@ namespace internal {
         std::array<halfedge_descriptor, 2> r1 = internal::is_badly_shaped(
             face(he, mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_,
-            cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
+            cap_threshold, // bound on the angle: above 160 deg => cap
             0,// collapse length threshold : not needed here
             0); // flip triangle height threshold
 
         std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
-            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0, 0);
+            mesh_, vpmap_, vcmap_, ecmap_, gt_, 4, cap_threshold, 0, 0);
 
         const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
                                 || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
@@ -1692,6 +1692,17 @@ private:
       // else keep current status for en and eno
     }
 
+    void remove_border_face(const halfedge_descriptor h)
+    {
+      CGAL_assertion(is_border(opposite(h, mesh_), mesh_));
+      for (halfedge_descriptor hf : halfedges_around_face(h, mesh_))
+      {
+        set_status(hf, MESH_BORDER); //only 1 or 2 of the listed halfedges
+                                     //will survive face removal, but status will be correct
+      }
+      CGAL::Euler::remove_face(h, mesh_);
+    }
+
     template<typename Bimap, typename SizingFunction>
     bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
@@ -1721,7 +1732,7 @@ private:
 
         if(is_border(opposite(h, mesh_), mesh_))
         {
-          CGAL::Euler::remove_face(h, mesh_);
+          remove_border_face(h);
           continue;
         }
 
@@ -1732,7 +1743,7 @@ private:
 
           if(is_border(hfo, mesh_))
           {
-            CGAL::Euler::remove_face(h, mesh_);
+            remove_border_face(h);
             break;
           }
           vertex_descriptor vc = target(hf, mesh_);

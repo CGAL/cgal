@@ -5,7 +5,6 @@
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_naive_point_location.h>
 
 #include "arr_conics.h"

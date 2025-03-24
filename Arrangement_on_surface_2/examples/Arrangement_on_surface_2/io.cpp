@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Arr_iostream.h>
 
 #include "arr_inexact_construction_segments.h"
