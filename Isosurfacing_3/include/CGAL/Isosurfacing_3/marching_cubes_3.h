@@ -94,15 +94,13 @@ void marching_cubes(const Domain& domain,
   {
     internal::TMC_functor<Domain, PointRange, TriangleRange> functor(domain, isovalue, isovalue_nudging, constrain_to_cell);
     domain.template for_each_cell<ConcurrencyTag>(functor);
-    functor.to_triangle_soup(points, triangles);
+    internal::triangles_to_polygon_soup(functor.triangles(), points, triangles);
   }
   else
   {
     // run marching cubes
     internal::Marching_cubes_3<Domain> functor(domain, isovalue, isovalue_nudging);
     domain.template for_each_cell<ConcurrencyTag>(functor);
-
-    // copy the result to points and triangles
     internal::triangles_to_polygon_soup(functor.triangles(), points, triangles);
   }
 }
