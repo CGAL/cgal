@@ -1,5 +1,4 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
-#include <CGAL/Polygon_mesh_processing/cut_with_plane.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -149,11 +148,10 @@ void test()
       assert(false);
       return ;
     }
-
     PMP::clip(tm1, K::Plane_3(0,0,1,-4.5),
                params::throw_on_self_intersection(true)
                .allow_self_intersections(true));
-    assert(vertices(tm1).size() == 16);
+    assert(vertices(tm1).size() == 13);
   }
 
   // clipping with identity
@@ -322,7 +320,7 @@ void test()
     TriangleMesh tm1;
     make_triangle( K::Point_3(0, 0, 0), K::Point_3(0, 1, 0), K::Point_3(1, 0, 0), tm1 );
     PMP::clip(tm1, K::Plane_3(0, -1, 0 , 0));
-    assert(vertices(tm1).size() == 4);
+    assert(vertices(tm1).size() == 3);
   }
 
   // test with clipper on border edge: full triangle
@@ -395,31 +393,31 @@ void test()
 
     //  -> closed mesh, true/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
-    assert(faces(tm1).size() == 14);
+    assert(faces(tm1).size() == 12);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, false/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(true));
-    assert(faces(tm1).size() == 14);
+    assert(faces(tm1).size() == 12);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, true/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
-    assert(faces(tm1).size() == 14);
+    assert(faces(tm1).size() == 12);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, false/false
     PMP::clip(tm1, K::Plane_3(1,0,0,-1), params::use_compact_clipper(false).clip_volume(false));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 10);
     assert(!CGAL::is_closed(tm1));
 
     // -> open mesh true/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 10);
 
     // -> open mesh true/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 10);
 
     // -> open mesh false/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(false));
@@ -464,7 +462,7 @@ void test()
     ss >> tm1;
     CGAL::Euler::remove_face(halfedge(*std::prev(faces(tm1).end()),tm1),tm1);
     PMP::clip(tm1, K::Plane_3(-1,0,0,2));
-    assert(vertices(tm1).size() == 6);
+    assert(vertices(tm1).size() == 5);
   }
 
   {
@@ -512,7 +510,7 @@ void test()
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     std::size_t nbv = vertices(tm1).size();
     PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true));
-    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+    assert(vertices(tm1).size()==nbv);
   }
 
   {
@@ -527,7 +525,7 @@ void test()
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     std::size_t nbv = vertices(tm1).size();
     PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
-    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+    assert(vertices(tm1).size()==nbv);
   }
 
   {
@@ -541,7 +539,7 @@ void test()
     TriangleMesh tm1;
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true));
-    assert(vertices(tm1).size()==178);
+    assert(vertices(tm1).size()==176);
   }
 
   {
@@ -555,7 +553,7 @@ void test()
     TriangleMesh tm1;
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
-    assert(vertices(tm1).size()==178);
+    assert(vertices(tm1).size()==176);
   }
 }
 
@@ -898,9 +896,11 @@ void test_new_clip()
   {
     TriangleMesh ele;
     std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> ele;
-    PMP::new_clip(ele, K::Plane_3(1,0,0,0));
-    PMP::new_clip(ele, K::Plane_3(0,1,0,0));
-    PMP::new_clip(ele, K::Plane_3(0,0,1,0));
+    PMP::clip(ele, K::Plane_3(1,0,0,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+    PMP::clip(ele, K::Plane_3(0,1,0,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+    PMP::clip(ele, K::Plane_3(0,0,1,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+    assert(faces(ele).size()==1220);
+    assert(vertices(ele).size()==691);
   }
 }
 
@@ -929,8 +929,8 @@ int main()
   std::cout << "running test_new_clip with Surface_mesh\n";
   test_new_clip<Surface_mesh>();
   std::cout << "Done!" << std::endl;
-//  std::cout << "running test_new_clip with Polyhedron\n";
-//  test_new_clip<Polyhedron>();
-//  std::cout << "Done!" << std::endl;
+  std::cout << "running test_new_clip with Polyhedron\n";
+  test_new_clip<Polyhedron>();
+  std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
