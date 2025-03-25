@@ -87,7 +87,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
 
   void clip(const Vector_3& OrigVertex, SphericalPolygon<Vector_3> & result, bool doClean=true) const {
     // PRECONDITION : clipNorth, and all northes are normalized.
-#define _ray_spherical_eps 1e-6f
     const int n = this->size();
     result.clear();
     switch( n ) {
@@ -95,15 +94,19 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
       case 1 : {
                  result = (*this);
                  Vector_3 clipNorth = LInf_normalize(OrigVertex);
-                 NT dot = this->begin()->north_ * clipNorth;
-                 if( dot < -0.99984769515 ) { // about one degree
-                   // intersection of two almost opposite hemispheres ==> empty
+                //  NT dot = this->begin()->north_ * clipNorth;
+                 Vector_3 v(cross_product(clipNorth, this->begin()->north_));
+                 if(v==NULL_VECTOR /* && is_negative(dot) */){ // Original code test if dot equal -1 with normalized vector, know the vectors are not normalized
+                   // intersection of two opposite hemispheres ==> empty
                    result.clear();
                    break;
-                 } else if( dot > 0.99984769515 ) {
-                   break;
                  }
-                 Vector_3 v(LInf_normalize(cross_product(clipNorth, this->begin()->north_)));
+                //  else if( is_positive(dot)){} //Theoritcally impossible, it would end the algorithm before
+                //  } else if( dot > 0.99984769515 ) {
+                  //  break;
+                //  }
+
+                 v = LInf_normalize(v);
                  result.begin()->vertex_ = v;
                  result.emplace_back(-v, clipNorth);
                  break;
@@ -114,12 +117,12 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                  iterator next = result.begin();
                  iterator cur = next++;
                  NT vDot = this->begin()->vertex_ * clipNorth;
-                 if( vDot >= _ray_spherical_eps ) {
+                 if( is_positive(vDot) ) {
                    // we'll get a triangle
                    next->vertex_ = LInf_normalize(cross_product(clipNorth, next->north_));
                    Vector_3 v( LInf_normalize(cross_product(cur->north_, clipNorth)));
                    result.emplace(next, v, clipNorth);
-                 } else if( vDot <= - _ray_spherical_eps ) {
+                 } else if( is_negative(vDot) ) {
                    // we'll get a triangle
                    cur->vertex_ =  LInf_normalize(cross_product(clipNorth, cur->north_));
                    Vector_3 v( LInf_normalize(cross_product(next->north_, clipNorth)));
@@ -128,8 +131,8 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                    // we keep a moon crescent
                    NT curTest(clipNorth *  cross_product(cur->north_, cur->vertex_));
                    Vector_3 nextTest( cross_product(next->north_, next->vertex_));
-                   if( curTest > 0.0f ) {
-                     if( (clipNorth * nextTest) <= 0.0f ) {
+                   if( is_positive(curTest) ) {
+                     if( !is_positive(clipNorth * nextTest) ) {
                        next->north_ = clipNorth;
                        cur->vertex_ =  LInf_normalize(cross_product(next->north_, cur->north_));
                        next->vertex_ = -cur->vertex_;
@@ -138,7 +141,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                        //std::cerr << "kept a crescent\n";
                      }
                    } else {
-                     if( (clipNorth * nextTest) > 0.0f ) {
+                     if( is_positive(clipNorth * nextTest) ) {
                        cur->north_ = clipNorth;
                        next->vertex_ =  LInf_normalize(cross_product(cur->north_, next->north_));
                        cur->vertex_ = -next->vertex_;
@@ -160,20 +163,20 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                       nextDot = clipNorth * this->begin()->vertex_;
                     else
                       nextDot = clipNorth * (cur+1)->vertex_;
-                    if( curDot >= _ray_spherical_eps ) { // cur is "IN"
+                    if( is_positive(curDot) ) { // cur is "IN"
                       ++nbKept;
                       result.push_back(*cur);
-                      if( nextDot <= -_ray_spherical_eps ) { // next is "OUT"
+                      if( is_negative(nextDot) ) { // next is "OUT"
                         result.emplace_back( LInf_normalize(cross_product(cur->north_, clipNorth)), clipNorth);
                       }
-                    } else if( curDot > -_ray_spherical_eps ) { // cur is "ON" the clipping plane
+                    } else if( !is_negative(curDot) ) { // cur is "ON" the clipping plane
                       ++nbKept;
-                      if ( nextDot <= -_ray_spherical_eps ) // next is "OUT"
+                      if ( is_negative(nextDot) ) // next is "OUT"
                         result.emplace_back(cur->vertex_, clipNorth);
                       else
                         result.push_back(*cur);
                     } else { // cur is "OUT"
-                      if ( nextDot >= _ray_spherical_eps ) { // next is "IN"
+                      if ( is_positive(nextDot) ) { // next is "IN"
                         result.emplace_back( LInf_normalize(cross_product(clipNorth, cur->north_)), cur->north_);
                       }
                     }
