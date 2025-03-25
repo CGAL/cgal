@@ -10,7 +10,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/polygon_soup_io.h>
-#include <CGAL/Real_timer.h>
 
 #include <cmath>
 #include <iostream>
@@ -188,9 +187,6 @@ void run_DC_octree(const CGAL::Bbox_3 bbox,
                    const FT isovalue,
                    const std::string& name)
 {
-  CGAL::Real_timer timer;
-  timer.start();
-
   std::vector<Point> bbox_points { { bbox.xmin(), bbox.ymin(), bbox.zmin() },
                                    { bbox.xmax(), bbox.ymax(), bbox.zmax() } };
 
@@ -219,25 +215,22 @@ void run_DC_octree(const CGAL::Bbox_3 bbox,
                                                        CGAL::parameters::do_not_triangulate_faces(true)
                                                                         .constrain_to_cell(false));
 
-  timer.stop();
-
   std::cout << "Output #vertices (DC): " << points.size() << std::endl;
   std::cout << "Output #triangles (DC): " << triangles.size() << std::endl;
-  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
-  std::ofstream oo("octree_" + name + ".polylines.txt");
+  std::ofstream oo("octree_DC_" + name + ".polylines.txt");
   oo.precision(17);
   octree.dump_to_polylines(oo);
 
-  CGAL::IO::write_polygon_soup("DC_octree_" + name + ".off", points, triangles);
+  CGAL::IO::write_polygon_soup("DC_" + name + ".off", points, triangles);
 }
 
 template <typename Splitter>
-void run_TMC_octree(const CGAL::Bbox_3 bbox,
-                    const Splitter& split_predicate,
-                    const std::function<FT(const Point&)> function,
-                    const FT isovalue,
-                    const std::string& name)
+void run_MC_octree(const CGAL::Bbox_3 bbox,
+                   const Splitter& split_predicate,
+                   const std::function<FT(const Point&)> function,
+                   const FT isovalue,
+                   const std::string& name)
 {
   std::vector<Point> bbox_points { { bbox.xmin(), bbox.ymin(), bbox.zmin() },
   { bbox.xmax(), bbox.ymax(), bbox.zmax() } };
@@ -251,14 +244,18 @@ void run_TMC_octree(const CGAL::Bbox_3 bbox,
   Polygon_range triangles;
   MC_Domain mcdomain { octree, values };
 
-  std::cout << "Running TMC" << std::endl;
+  std::cout << "Running MC" << std::endl;
 
   CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
 
-  std::cout << "Output #vertices (TMC): " << points.size() << std::endl;
-  std::cout << "Output #triangles (TMC): " << triangles.size() << std::endl;
+  std::cout << "Output #vertices (MC): " << points.size() << std::endl;
+  std::cout << "Output #triangles (MC): " << triangles.size() << std::endl;
 
-  CGAL::IO::write_polygon_soup("TMC_octree_" + name + ".off", points, triangles);
+  std::ofstream oo("octree_MC_" + name + ".polylines.txt");
+  oo.precision(17);
+  octree.dump_to_polylines(oo);
+
+  CGAL::IO::write_polygon_soup("MC_" + name + ".off", points, triangles);
 }
 
 // Whether you are using MC, TMC, or DC, there is no guarantee for an octree:
@@ -274,14 +271,16 @@ int main(int argc, char** argv)
   run_DC_octree(bbox, one_eight_splitter, sphere_function, sphere_gradient, isovalue, "one_eight");
 
   // This is
-  Refine_around_isovalue isovalue_splitter(1, 5, sphere_function, isovalue);
+  Refine_around_isovalue isovalue_splitter(3, 5, sphere_function, isovalue);
   run_DC_octree(bbox, isovalue_splitter, sphere_function, sphere_gradient, isovalue, "sphere_adapted");
 
-  Refine_around_isovalue isvalue_splitter_2(5, 5, blobby_function, isovalue);
+  Refine_around_isovalue isvalue_splitter_2(3, 5, blobby_function, isovalue);
   run_DC_octree(bbox, isvalue_splitter_2, blobby_function, blobby_gradient, isovalue, "blobby_adapted");
 
   // to illustrate cracks
-  run_TMC_octree(bbox, one_eight_splitter, sphere_function, isovalue, "one_eight");
+  run_MC_octree(bbox, isovalue_splitter, sphere_function, isovalue, "adapted");
+
+  run_MC_octree(bbox, one_eight_splitter, sphere_function, isovalue, "one_eight");
 
   std::cout << "Done" << std::endl;
 
