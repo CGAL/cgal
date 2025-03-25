@@ -186,7 +186,7 @@ struct SphericalPolygonElement {
   // n1 = cross(v1, v2),  more generally: n_i     = cross(v_i, v_{i+1}).
   SphericalPolygonElement(){}
   SphericalPolygonElement(const Vec3<NT> & n) : north_(n.LInfNormalized()) {}
-  SphericalPolygonElement(const Vec3<NT> & n) : north_(n) {}
+  // SphericalPolygonElement(const Vec3<NT> & n) : north_(n) {}
   SphericalPolygonElement(const Vec3<NT> & v, const Vec3<NT> & n) : vertex_(v), north_(n) {}
 };
 
@@ -205,15 +205,15 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<NT>> {
     switch( this->size() ) {
       case 0 : return Vec3<NT>(0.0f, 0.0f, 0.0f); break;
       case 1 : return this->begin()->north_; break;
-      case 2 : // The two vertex are opposite so we do not take their mean
-               // We want a direction with negative dot with bith north_
-               // We take the two perpendicular vector of resp north_0, and north_1 that lies on the same circle on them
-               // And we take a barycenter of them
-               Vec3<NT> perp1=Vec3<NT>::cross((*this)[0].north_, (*this)[0].vertex_).LInfNormalized();
-               Vec3<NT> perp2=Vec3<NT>::cross((*this)[1].north_, (*this)[1].vertex_).LInfNormalized();
-               return perp1 + perp2;
-               // return (*this)[0].north_ + (*this)[1].north_; //Old, need that both north_ was L2 normalized
-               break;
+      case 2 :{   // The two vertex are opposite so we do not take their mean
+                  // We want a direction with negative dot with bith north_
+                  // We take the two perpendicular vector of resp north_0, and north_1 that lies on the same circle on them
+                  // And we take a barycenter of them
+                  Vec3<NT> perp1=Vec3<NT>::cross((*this)[0].north_, (*this)[0].vertex_).LInfNormalized();
+                  Vec3<NT> perp2=Vec3<NT>::cross((*this)[1].north_, (*this)[1].vertex_).LInfNormalized();
+                  return perp1 + perp2;
+                  // return (*this)[0].north_ + (*this)[1].north_; //Old, need that both north_ was L2 normalized
+               } break;
       default : {
                   Vec3<NT> avg;
                   for( const SphericalPolygonElement<NT> & v : *this )
