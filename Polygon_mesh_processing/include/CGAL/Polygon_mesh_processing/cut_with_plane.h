@@ -30,11 +30,15 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+#ifndef DOXYGEN_RUNNING
 template <class PolygonMesh>
 struct Default_cut_visitor
 {
+  /// called before splitting an edge
   void before_edge_split(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, PolygonMesh&) {}
+  /// called after an edge split, `h` = the new halfedge pointing to the new vertex
   void edge_split(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, PolygonMesh&) {}
+  /// gives access to all the vertex that are on the cutting plane
   void vertices_on_cut(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>&, PolygonMesh&){}
 };
 
@@ -96,6 +100,7 @@ struct Orthogonal_cut_plane_traits
   Do_intersect_3 do_intersect_3_object() const { return Do_intersect_3(); }
 #endif
 };
+#endif
 
 /*!
  *  \ingroup PMP_corefinement_grp
@@ -143,12 +148,6 @@ struct Orthogonal_cut_plane_traits
  *     \cgalParamExtra{If the concurrenty tag is set to `Parallel_tag`, the property map might be filled by several thread at the same time.}
  *   \cgalParamNEnd
  *
- *    \cgalParamNBegin{visitor}
- *      \cgalParamDescription{TODO add concept}
- *      \cgalParamType{reference wrapper recommeded if it has state TODO}
- *      \cgalParamDefault{None}
- *    \cgalParamNEnd
- *
  *    \cgalParamNBegin{do_not_triangulate_faces}
  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.}
  *      \cgalParamType{`bool`}
@@ -183,6 +182,14 @@ void cut_with_plane(PolygonMesh& pm,
   //       to limit the number of intersection points computed: several classify done lazily
   //       on points not already eliminated (verices all out with adjacent vertices out too)
   // actually might be a global classifier to filter out edges, testing all planes at once per vertex and stop as soon as one is out
+  // TODO: doc visitor
+ /*
+  *    \cgalParamNBegin{visitor}
+  *      \cgalParamDescription{TODO add concept}
+  *      \cgalParamType{reference wrapper recommeded if it has state TODO}
+  *      \cgalParamDefault{None}
+  *    \cgalParamNEnd
+ */
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
