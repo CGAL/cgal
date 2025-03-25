@@ -1028,28 +1028,28 @@ void split(TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * adds intersection edges of `plane` and `tm` in `tm` and duplicates those edges.
+  * adds intersection edges of `plane` and `pm` in `pm` and duplicates those edges.
   *
-  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Plane_3` must be from the same %kernel as the point of the internal vertex point map of `PolygonMesh`.
+  * \note `Plane_3` must be from the same %kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param tm input triangulated surface mesh
-  * @param plane the plane that will be used to split `tm`.
-  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
+  * @param pm input surface mesh
+  * @param plane the plane that will be used to split `pm`.
+  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `pm`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -1059,7 +1059,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `pm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -1068,50 +1068,78 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `pm`.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
-  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`.}
   *   \cgalParamNEnd
+  *
+  *    \cgalParamNBegin{do_not_triangulate_faces}
+  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                            Always `true` if `pm` is not a triangle mesh.}
+  *      \cgalParamType{`bool`}
+  *      \cgalParamDefault{`false`}
+  *    \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
   */
-template <class TriangleMesh,
+template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
-void split(TriangleMesh& tm,
+void split(PolygonMesh& pm,
 #ifdef DOXYGEN_RUNNING
-           const Plane_3& plane,
+          const Plane_3& plane,
 #else
-           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
+          const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np = parameters::default_values())
+          const NamedParameters& np = parameters::default_values())
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = CGAL::parameters;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  using params::get_parameter;
-  using params::choose_parameter;
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, pm));
 
-  // create a splitter mesh for the splitting plane using an internal CGAL function
-  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
-  double xd = (std::max)(1., 0.01 * (bbox.xmax() - bbox.xmin()));
-  double yd = (std::max)(1., 0.01 * (bbox.ymax() - bbox.ymin()));
-  double zd = (std::max)(1., 0.01 * (bbox.zmax() - bbox.zmin()));
-  bbox = CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
-                      bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
 
-  TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, params::default_values());
+  // config flags
+  const bool throw_on_self_intersection =
+    choose_parameter(get_parameter(np, internal_np::throw_on_self_intersection), false);
+  const bool allow_self_intersections =
+    choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-  if(os == CGAL::ON_ORIENTED_BOUNDARY)
-  {
-    const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
-    return split(tm, splitter, np, params::do_not_modify(do_not_modify));
-  }
+  auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
+  auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
 
-  //else nothing to do, no intersection.
+  if (triangulate && !is_triangle_mesh(pm))
+    triangulate = false;
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Corefinement::Default_visitor<PolygonMesh>//default
+  > ::type User_visitor;
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
+
+  cut_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
+                                       .edge_is_marked_map(ecm)
+                                       .vertex_point_map(vpm)
+                                       .geom_traits(traits)
+                                       .do_not_triangulate_faces(!triangulate)
+                                       .throw_on_self_intersection(!allow_self_intersections &&
+                                                                   throw_on_self_intersection)
+                                       .concurrency_tag(Concurrency_tag()));
+
+  //split mesh along marked edges
+  internal::split_along_edges(pm, ecm, vpm, uv);
 }
 
 

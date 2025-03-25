@@ -580,9 +580,10 @@ void test_split_plane()
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  assert(num_vertices(meshes[2]) == 48);
-  assert(num_vertices(meshes[0]) == 1527);
-  assert(num_vertices(meshes[1]) == 1674);
+
+  assert(num_vertices(meshes[2]) == 46);
+  assert(num_vertices(meshes[0]) == 1523);
+  assert(num_vertices(meshes[1]) == 1668);
 
   CGAL::clear(tm1);
   meshes.clear();
@@ -601,7 +602,7 @@ void test_split_plane()
 
   PMP::split(tm1,K::Plane_3(0,0,1,-1));
   PMP::split_connected_components(tm1, meshes, params::default_values());
-  assert(meshes.size() == 281);
+  assert(meshes.size() == 2);
 
   CGAL::clear(tm1);
   meshes.clear();
@@ -641,8 +642,8 @@ void test_split_plane()
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  assert(num_vertices(meshes[0]) == 16);
-  assert(num_vertices(meshes[1]) == 16);
+  assert(num_vertices(meshes[0]) == 12);
+  assert(num_vertices(meshes[1]) == 12);
 
   CGAL::clear(tm1);
   meshes.clear();

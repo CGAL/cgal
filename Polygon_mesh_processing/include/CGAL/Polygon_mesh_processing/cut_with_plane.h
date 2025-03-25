@@ -156,7 +156,7 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{vertex_point_map}
- *      \cgalParamDescription{a property map associating points to the vertices of `tm_in`}
+ *      \cgalParamDescription{a property map associating points to the vertices of `pm`}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
  *                     as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
  *      \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}

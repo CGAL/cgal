@@ -5,6 +5,7 @@
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - added new implementation of `CGAL::Polygon_mesh_processing::clip()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
+- added new implementation of `CGAL::Polygon_mesh_processing::split()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
