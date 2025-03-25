@@ -335,6 +335,15 @@ Vec3<NT> vertex(const PointRange& p, int i)
 
 template <class NT, class Convex>
 bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int & vB, const Vec3<NT> & dir) {
+
+  /* TODO
+  Actual complexity is linear of the size of A and B
+  With the graph of the convex_hull, we have O(sqrt(n)) by compute the product on adjacent vertices and
+  progressed along the incrasing one.
+  With some preprocess (adding temporary edge of the construction of the graph of the convex hull), this can be
+  O(log n)
+  */
+
   // difference above is: A - B
   NT maxOverA = vertex<NT>(A, 0) | dir;
   NT minOverB = vertex<NT>(B, 0) | dir;
