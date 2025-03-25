@@ -193,9 +193,9 @@ void run_DC_octree(const CGAL::Bbox_3 bbox,
   Octree octree(bbox_points);
   octree.refine(split_predicate);
 
-  std::size_t leaf_counter = 0;
-  for (auto _ : octree.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(octree)))
-    ++leaf_counter;
+
+  auto leaf_range = octree.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(octree));
+  std::size_t leaf_counter = std::distance(leaf_range.begin(), leaf_range.end());
 
   std::cout << "octree has " << leaf_counter << " leaves" << std::endl;
 
