@@ -9,7 +9,8 @@
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
-
+- Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+  to know faces in the output meshes that are corresponding to input coplanar faces.
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
