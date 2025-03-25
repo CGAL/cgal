@@ -64,9 +64,9 @@ struct Vec3
     const NT * data() const { return data_; }
 
     inline NT squaredLength() const { return x()*x()+y()*y()+z()*z(); }
-    inline NT l1norm() const { return std::max(std::abs(x()), std::max(std::abs(y()), std::abs(z()))); }
+    inline NT l1norm() const { return max(abs(x()), max(abs(y()), abs(z()))); }
     inline NT norm2() const { return x()*x()+y()*y()+z()*z(); }
-    inline NT length() const { return ::sqrt(squaredLength()); }
+    inline NT length() const { return std::sqrt(to_double(squaredLength())); }
     inline void normalize() { const NT l = length(); x() /= l; y() /= l; z() /= l; }
     inline Self normalized() const { const NT l = length(); return Self(x()/l, y()/l, z()/l); }
     inline void LInfNormalize() { const NT l = l1norm(); x() /= l; y() /= l; z() /= l; }
