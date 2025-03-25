@@ -33,7 +33,7 @@ namespace predicates_impl
 
 template <class Vector_3>
 Vector_3 LInf_normalize(const Vector_3 &v){
-  auto l=(max)(v.x(), (max)(v.y(),v.z()));
+  auto l=(max)(abs(v.x()), (max)(abs(v.y()),abs(v.z())));
   return v/l;
 }
 
@@ -73,7 +73,9 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                   // And we take a barycenter of them
                   Vector_3 perp1= LInf_normalize(cross_product((*this)[0].north_, (*this)[0].vertex_));
                   Vector_3 perp2= LInf_normalize(cross_product((*this)[1].north_, (*this)[1].vertex_));
-                  return perp1 + perp2;
+                  CGAL_assertion(is_positive((perp1+perp2) * (*this)[0].north_));
+                  CGAL_assertion(is_positive((perp1+perp2) * (*this)[1].north_));
+                  return (perp1 + perp2);
                   // return (*this)[0].north_ + (*this)[1].north_; //Old, need that both north_ was L2 normalized
                } break;
       default : {
