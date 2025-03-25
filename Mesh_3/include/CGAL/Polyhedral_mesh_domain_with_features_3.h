@@ -185,7 +185,7 @@ public:
     this->build();
 
     if(!is_closed(polyhedron))
-      set_surface_only();
+      this->set_surface_only();
   }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
