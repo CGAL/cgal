@@ -72,6 +72,10 @@ It is a model of the concept `MeshDomainWithFeatures_3`. It also provides
 a member function to automatically detect sharp features and boundaries from
 the input polyhedral surface(s).
 
+\note When the given surface(s) are not closed, the surface only will be meshed.
+It is then recommended to use the parameter `parameters::surface_only()` to speedup
+the meshing process.
+
 \tparam IGT stands for a geometric traits class providing the types
 and functors required to implement the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be
@@ -162,11 +166,12 @@ public:
 
   /*!
     Constructor from a polyhedral surface.
-    No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done.
-    The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
-    The interior of `bounding_polyhedron` will be meshed.
+    No feature detection is done at this level. Note that a copy of `polyhedron` will be done.
+    The polyhedron `polyhedron` must be free of intersections.
+    If `polyhedron` is closed, its inside will be meshed,
+    otherwise there will be no interior and only the surface will be meshed.
   */
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& bounding_polyhedron
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& polyhedron
 #ifndef DOXYGEN_RUNNING
                                          , CGAL::Random* p_rng = nullptr
 #endif
@@ -174,10 +179,13 @@ public:
     : Base(p_rng) , borders_detected_(false)
   {
     stored_polyhedra.resize(1);
-    stored_polyhedra[0] = bounding_polyhedron;
+    stored_polyhedra[0] = polyhedron;
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[0]);
     this->build();
+
+    if(!is_closed(polyhedron))
+      set_surface_only();
   }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

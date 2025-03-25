@@ -677,9 +677,10 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
 
 The following code creates a polyhedral domain, with only one polyhedron,
-and no "bounding polyhedron". Since the volumetric part of the domain may be empty,
-and should not be meshed,
-it is necessary to use the `CGAL::parameters::surface_only()` parameter to mesh the surface only.
+and no "bounding polyhedron". The volumetric part of the domain may be empty
+and should not be meshed.
+In this case, it is recommended to use the `CGAL::parameters::surface_only()` parameter
+to speedup the meshing of the surface only.
 This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
