@@ -166,7 +166,7 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNBegin{geom_traits}
  *      \cgalParamDescription{an instance of a geometric traits class}
  *      \cgalParamType{a class model of `Kernel`}
- *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
  *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *    \cgalParamNEnd
  *
@@ -448,8 +448,8 @@ void cut_with_plane(PolygonMesh& pm,
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `PolygonMesh`.
-  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Plane_3` must be from the same kernel as the point of the internal vertex point map of `PolygonMesh`.
+  * \note `Plane_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -459,7 +459,7 @@ void cut_with_plane(PolygonMesh& pm,
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
-  * @param plane plane whose negative side defines the half-space to intersect `tm` with.
+  * @param plane plane whose negative side defines the halfspace to intersect `tm` with.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -513,7 +513,7 @@ void cut_with_plane(PolygonMesh& pm,
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
-  *                     and `clip_volume` to `false`.}
+  *                     and `clip_volume` to `false` (overwriting any value provided)}
   *   \cgalParamNEnd
   *
   *    \cgalParamNBegin{do_not_triangulate_faces}
