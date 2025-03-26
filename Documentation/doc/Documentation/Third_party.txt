@@ -320,7 +320,7 @@ The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.or
 \osqp (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
 
 In \cgal, \osqp provides an optional solver for the quadratic programming used in the \ref PkgShapeRegularization package.
-In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`. \cgal is compatible with the master branch of  <A HREF="https://github.com/osqp/osqp">`https://github.com/osqp/osqp`</A>.
+In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`. \cgal is compatible with \osqp version 1.0.0.
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
