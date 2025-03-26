@@ -1,4 +1,4 @@
-// Copyright (c) 2018 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
+// Author(s)     : Sébastien Loriot
 //
+
 
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_FACE_AREA_SORTING_H
 #define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_FACE_AREA_SORTING_H

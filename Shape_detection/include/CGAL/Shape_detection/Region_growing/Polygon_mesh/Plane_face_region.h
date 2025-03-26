@@ -1,4 +1,4 @@
-// Copyright (c) 2018 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
+// Author(s)     : Sébastien Loriot
 //
 
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_PLANE_FACE_REGION_H
@@ -298,66 +298,6 @@ namespace Polygon_mesh {
 
       \pre `query` is a valid const_iterator of `input_range`
     */
-#ifdef FAST // TODO: bench me
-    bool is_part_of_region(
-      const Item query,
-      const Region&) const
-    {
-      //TODO: that's a bit dummy that we retest points that are already in the region...
-
-      halfedge_descriptor h = halfedge(m_seed_face, m_face_graph);
-
-
-      const typename GeomTraits::Point_3& p=get(m_vpm,source(h, m_face_graph));
-      const typename GeomTraits::Point_3& q=get(m_vpm,target(h, m_face_graph));
-      typename GeomTraits::Point_3 r;
-      //TODO: add safety checks for degenerate faces
-      do{
-        h=next(h, m_face_graph);
-        r=get(m_vpm,target(h, m_face_graph));
-      }
-      while(!collinear(p,q,r));
-
-
-      if (m_cos_value_threshold==1 || m_distance_threshold == 0)
-      {
-        h = halfedge(query, m_face_graph);
-        for (vertex_descriptor v : vertices_around_face(h, m_face_graph))
-        {
-          if (!coplanar(p,q,r, get(m_vpm, v)))
-            return false;
-        }
-      }
-      else
-      {
-        // test on distance of points to the plane of the seed face
-        const FT squared_distance_threshold = m_distance_threshold * m_distance_threshold;
-        h = halfedge(query, m_face_graph);
-        typename GeomTraits::Plane_3 plane(p,q,r);
-        for (vertex_descriptor v : vertices_around_face(h, m_face_graph))
-        {
-          FT sd = m_squared_distance_3(plane, get(m_vpm, v));
-          if (sd>squared_distance_threshold) return false;
-        }
-
-
-        // test on the normal of the query face to the normal of the seed face
-        const Vector_3 face_normal = get(m_face_normals, query);
-        const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
-        const FT squared_cos_value = cos_value * cos_value;
-
-        FT squared_cos_value_threshold =
-          m_cos_value_threshold * m_cos_value_threshold;
-        squared_cos_value_threshold *= m_squared_length_3(face_normal);
-        squared_cos_value_threshold *= m_squared_length_3(m_normal_of_best_fit);
-
-        if (squared_cos_value < squared_cos_value_threshold)
-          return false;
-      }
-
-      return true;
-    }
-#else
     bool is_part_of_region(
       const Item query,
       const Region&) const
@@ -420,7 +360,6 @@ namespace Polygon_mesh {
                                                       m_cos_value_threshold) == SMALLER;
       }
     }
-#endif
 
     /*!
       \brief implements `RegionType::is_valid_region()`.
