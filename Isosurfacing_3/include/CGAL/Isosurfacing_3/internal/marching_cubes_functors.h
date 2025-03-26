@@ -78,20 +78,14 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
   typename GeomTraits::Construct_point_3 point = gt.construct_point_3_object();
 
-  FT mu = FT(0);
-
   // @todo, technically we should be using the edge intersection oracle here, but there is a nuance
   // between MC and DC on the handling of edges that have val0 = val1 = isovalue: in MC we assume
   // the isosurface is in the middle, in DC we assume the isosurface is not intersecting the edge.
   // In the oracle, we follow DC right now. Could put a Boolean parameter, but it's ugly.
 
-  // don't divide by 0
-  if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound
-    mu = FT(0.5);  // if both points have the same value, assume isolevel is in the middle
-  else
-    mu = (isovalue - d0) / (d1 - d0);
-
-  CGAL_assertion(mu >= FT(0.0) || mu <= FT(1.0));
+  const FT den = d1 - d0;
+  FT mu = is_zero(den) ? FT(1) / FT(2) : (isovalue - d0) / den;
+  mu = std::clamp<FT>(mu, FT(0), FT(1));
 
   // linear interpolation
   return point((FT(1) - mu) * x_coord(p0) +  mu * x_coord(p1),
