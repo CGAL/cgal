@@ -400,7 +400,10 @@ private:
         get_edge_vertex(eg, v0, v1, l_edges_);
 
         // @todo use the domain's interpolation scheme?
-        FT l = (i0 - values[v0]) / (values[v1] - values[v0]);
+        const FT den = values[v1] - values[v0];
+        FT l = is_zero(den) ? FT(1) / FT(2) : (i0 - values[v0]) / den;
+        l = std::clamp<FT>(l, FT(0), FT(1));
+
         ecoord[eg] = l;
 
         const FT px = (FT(1) - l) * x_coord(corners[v0]) + l * x_coord(corners[v1]);
