@@ -64,12 +64,13 @@ namespace internal {
 
 // Interpolate linearly between two vertex locations v0, v1 with values d0 and d1 according to the isovalue
 template <typename GeomTraits>
-typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Point_3& p0,
-                                                  const typename GeomTraits::Point_3& p1,
-                                                  const typename GeomTraits::FT d0,
-                                                  const typename GeomTraits::FT d1,
-                                                  const typename GeomTraits::FT isovalue,
-                                                  const GeomTraits& gt)
+std::pair<typename GeomTraits::Point_3, typename GeomTraits::FT>
+vertex_interpolation(const typename GeomTraits::Point_3& p0,
+                     const typename GeomTraits::Point_3& p1,
+                     const typename GeomTraits::FT d0,
+                     const typename GeomTraits::FT d1,
+                     const typename GeomTraits::FT isovalue,
+                     const GeomTraits& gt)
 {
   using FT = typename GeomTraits::FT;
 
@@ -88,9 +89,9 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   mu = std::clamp<FT>(mu, FT(0), FT(1));
 
   // linear interpolation
-  return point((FT(1) - mu) * x_coord(p0) +  mu * x_coord(p1),
-               (FT(1) - mu) * y_coord(p0) +  mu * y_coord(p1),
-               (FT(1) - mu) * z_coord(p0) +  mu * z_coord(p1));
+  return { point((FT(1) - mu) * x_coord(p0) +  mu * x_coord(p1),
+                 (FT(1) - mu) * y_coord(p0) +  mu * y_coord(p1),
+                 (FT(1) - mu) * z_coord(p0) +  mu * z_coord(p1)), mu };
 }
 
 // retrieves the values of a cell and return the lookup index
@@ -173,7 +174,7 @@ void MC_construct_vertices(const typename Domain::cell_descriptor& cell,
 
       vertices[e_id] = vertex_interpolation(corners[v0], corners[v1],
                                             values[v0], values[v1],
-                                            isovalue, domain.geom_traits());
+                                            isovalue, domain.geom_traits()).first;
     }
 
     flag <<= 1;
