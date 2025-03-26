@@ -94,9 +94,9 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   CGAL_assertion(mu >= FT(0.0) || mu <= FT(1.0));
 
   // linear interpolation
-  return point(x_coord(p1) * mu + x_coord(p0) * (FT(1) - mu),
-               y_coord(p1) * mu + y_coord(p0) * (FT(1) - mu),
-               z_coord(p1) * mu + z_coord(p0) * (FT(1) - mu));
+  return point((FT(1) - mu) * x_coord(p0) +  mu * x_coord(p1),
+               (FT(1) - mu) * y_coord(p0) +  mu * y_coord(p1),
+               (FT(1) - mu) * z_coord(p0) +  mu * z_coord(p1));
 }
 
 // retrieves the values of a cell and return the lookup index
