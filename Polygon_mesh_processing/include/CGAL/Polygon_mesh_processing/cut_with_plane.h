@@ -117,12 +117,6 @@ struct Orthogonal_cut_plane_traits
  *
  *  \cgalNamedParamsBegin
  *
- *    \cgalParamNBegin{concurrency_tag}
- *      \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
- *      \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
- *      \cgalParamDefault{`CGAL::Sequential_tag`}
- *    \cgalParamNEnd
- *
  *   \cgalParamNBegin{edge_is_constrained_map}
  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pm`.
  *                           If an edge marked as constrained is split, the two resulting edges will be marked as constrained.}
@@ -177,6 +171,13 @@ void cut_with_plane(PolygonMesh& pm,
                     const NamedParameters& np = parameters::default_values())
 {
   // TODO: concurrency tag
+ /*
+  *    \cgalParamNBegin{concurrency_tag}
+  *      \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *      \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *      \cgalParamDefault{`CGAL::Sequential_tag`}
+  *    \cgalParamNEnd
+  */
   // TODO: if you want to clip with many planes (**Kernel**),
   //       it might be interesting to first classify all vertices with all planes
   //       to limit the number of intersection points computed: several classify done lazily
