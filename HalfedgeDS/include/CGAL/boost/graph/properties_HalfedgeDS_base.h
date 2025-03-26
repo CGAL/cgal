@@ -20,7 +20,7 @@
 #include <CGAL/number_utils.h>
 #include <memory>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
-#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/squared_distance_3.h>
 #include <CGAL/Dynamic_property_map.h>
 
 namespace CGAL {

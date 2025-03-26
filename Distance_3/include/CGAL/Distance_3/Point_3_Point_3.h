@@ -32,16 +32,18 @@ squared_distance(const typename K::Point_3& pt1,
   return k.compute_squared_distance_3_object()(pt1, pt2);
 }
 
-} // namespace internal
-
 template <class K>
 inline
-typename K::FT
-squared_distance(const Point_3<K>& pt1,
-                 const Point_3<K>& pt2)
+typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt1,
+                         const typename K::Point_3& pt2,
+                         const K& k,
+                         const typename K::FT& d2)
 {
-  return internal::squared_distance(pt1, pt2, K());
+  return compare(k.compute_squared_distance_3_object()(pt1, pt2), d2);
 }
+
+} // namespace internal
 
 } // namespace CGAL
 

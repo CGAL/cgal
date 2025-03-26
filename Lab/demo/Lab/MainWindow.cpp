@@ -565,7 +565,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qdebug << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -612,6 +612,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else{
       pluginsStatus_map[name] = loader.errorString();
+      if(verbose)
+        qdebug << "\n#### Error: " << loader.errorString();
 
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());

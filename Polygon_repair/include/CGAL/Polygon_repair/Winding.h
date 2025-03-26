@@ -88,7 +88,7 @@ private:
   using Context = typename CDTplus::Context;
 
   CDTplus cdt;
-  constexpr static int unintialized = std::numeric_limits<int>::lowest();
+  constexpr static int uninitialized = std::numeric_limits<int>::lowest();
 
 
   struct Polygon_less {
@@ -180,7 +180,7 @@ sets the polygon as input of the winding number computation.
             queue.push_back(n);
           }
         }else{
-          if(n->info().wind == unintialized){
+          if(n->info().wind == uninitialized){
             Vertex_handle u = e.first->vertex(cdt.cw(e.second));
             Vertex_handle v = e.first->vertex(cdt.ccw(e.second));
             int delta = 0;
@@ -204,7 +204,7 @@ sets the polygon as input of the winding number computation.
   {
     std::list<std::pair<Edge,int>> border;
     for(Face_handle f : cdt.all_face_handles()){
-      f->info().wind = unintialized;
+      f->info().wind = uninitialized;
     }
     int index = 0;
     label(cdt.infinite_face(),index++, border);
@@ -213,7 +213,7 @@ sets the polygon as input of the winding number computation.
       int wind;
       std::tie(e,wind) = border.front();
       border.pop_front();
-      if(e.first->info().wind == unintialized){
+      if(e.first->info().wind == uninitialized){
         label(e.first, wind,border);
       }else{
         CGAL_assertion(e.first->info().wind == wind);

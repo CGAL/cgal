@@ -1056,7 +1056,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           setProperty("need_invalidate_aabb_tree", false);
         }
         invalidateOpenGLBuffers();
-        Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
+        Q_EMIT updateInstructions("Hold Ctrl+Right-click to move the vertex, or enter new coordinates below.\nHit Ctrl+Z to deselect the vertex. (2/2)");
       }
       else
       {
@@ -1978,6 +1978,23 @@ void Scene_polyhedron_selection_item::moveVertex()
    // poly_item->invalidateOpenGLBuffers();
     d->ready_to_move = false;
   }
+}
+
+void Scene_polyhedron_selection_item::moveVertex(const Point_3& new_position)
+{
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+  fg_vertex_descriptor vh = *temp_selected_vertices.begin();
+
+  VPmap vpm = get(CGAL::vertex_point,*polyhedron());
+  put(vpm, vh, Point_3(new_position.x() - offset.x,
+                       new_position.y() - offset.y,
+                       new_position.z() - offset.z));
+  const Point_3& p = get(vpm,vh);
+  d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
+  setProperty("need_invalidate_aabb_tree", true);
+  invalidateOpenGLBuffers();
+  poly_item->updateVertex(vh);
+  // poly_item->invalidateOpenGLBuffers();
 }
 
 void Scene_polyhedron_selection_item::validateMoveVertex()
