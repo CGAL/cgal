@@ -98,7 +98,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                  Vector_3 clipNorth = LInf_normalize(OrigVertex);
                 //  NT dot = this->begin()->north_ * clipNorth;
                  Vector_3 v(cross_product(clipNorth, this->begin()->north_));
-                 if(v==NULL_VECTOR /* && is_negative(dot) */){ // Original code test if dot equal -1 with normalized vector, know the vectors are not normalized
+                 if(v==NULL_VECTOR /* && is_negative(dot) */){ // Original code test if dot equal -1 with normalized vector, now the vectors are not normalized
                    // intersection of two opposite hemispheres ==> empty
                    result.clear();
                    break;
@@ -238,14 +238,16 @@ bool sphericalDisjoint(const Convex & a, const Convex & b, unsigned long INTER_M
   SphericalPolygon<Vector_3> positiveBound, tempPoly;
   int vA, vB;
   Vector_3 dir(b[0] - a[0]);
-  if( ! differenceCoversZeroInDir(a, b, vA, vB, dir) ) return true;
+  if( ! differenceCoversZeroInDir(a, b, vA, vB, dir)) return true;
+  if((b[vB] - a[vA])==NULL_VECTOR) return false;
   positiveBound.clear();
   positiveBound.emplace_back(dir);
   positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
   if( positiveBound.empty() ) return false;
   unsigned long planeStatPerPair = 0;
   do {
-    if( ! differenceCoversZeroInDir(a, b, vA, vB, positiveBound.averageDirection()) ) return true;
+    if( ! differenceCoversZeroInDir(a, b, vA, vB, positiveBound.averageDirection())) return true;
+    if((b[vB] - a[vA])==NULL_VECTOR) return false;
     if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER))
     {
       return false;

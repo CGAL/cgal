@@ -27,10 +27,20 @@ void test_cube()
   std::vector<Point_3> inside(1, Point_3(0.25,0.25,0.20));
   std::vector<Point_3> outside(1, Point_3(-0.25,0.25,0.25));
 
-  bool res1=CGAL::Convex_hull_3::do_intersect(cube, inside);
-  std::cout << "Do intersect inside: " << res1 << std::endl;
-  bool res2=CGAL::Convex_hull_3::do_intersect(cube, outside);
-  std::cout << "Do intersect outside: " << res2 << std::endl;
+  assert(CGAL::Convex_hull_3::do_intersect(cube, inside));
+  assert(CGAL::Convex_hull_3::do_intersect(inside, cube));
+  assert(!CGAL::Convex_hull_3::do_intersect(cube, outside));
+  assert(!CGAL::Convex_hull_3::do_intersect(outside, cube));
+
+  //Test intersection on vertex, edge, face
+  for(double x=0.; x<=1.; x+=0.5)
+    for(double y=0.; y<=1.; y+=0.5)
+      for(double z=0.; z<=1.; z+=0.5){
+        std::vector<Point_3> vertex(1, Point_3(x,y,z));
+        assert(CGAL::Convex_hull_3::do_intersect(cube, vertex));
+        assert(CGAL::Convex_hull_3::do_intersect(vertex, cube));
+      }
+
 }
 
 void test_half_sphere()
