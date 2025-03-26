@@ -342,8 +342,8 @@ negative inside the mesh.
 
 The following example shows the use of an octree as discretization instead of a %Cartesian grid
 for both %Dual Contouring and Marching Cubes. Note that in this configuration, all methods
-lose guarantees, and cracks can easily appear in the surface if the octree is not adapted
-to the surface being extracted.
+lose guarantees, and cracks can easily appear in the surface for Marching Cubes if the octree
+is not adapted to the surface being extracted.
 
 \cgalExample{Isosurfacing_3/contouring_octree.cpp}
 
