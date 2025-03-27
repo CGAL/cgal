@@ -16,6 +16,7 @@
 #include <boost/mpl/or.hpp>
 
 #include <type_traits>
+#include <CGAL/Dimension.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {
@@ -66,34 +67,45 @@ namespace details {
       : std::is_convertible<From, To>
   {};
 
-  template <typename T>  // high priority Priority_tag<0>
-  auto detect_Bare_point_type(T* = nullptr, void_t<typename T::Bare_point_3>* = nullptr, Priority_tag<0> = {}) {
+  template <typename T, typename Dimension> // high priority Priority_tag<0>
+  auto
+  detect_Bare_point_type(T*, void_t<typename T::Bare_point_3>*, Dimension, Priority_tag<0> = {}) {
     return typename T::Bare_point_3{};
   }
 
-  template <typename T>
-  auto detect_Bare_point_type(T* = nullptr, void_t<typename T::Bare_point>* = nullptr, Priority_tag<1> = {}) {
+  template <typename T, typename Dimension>
+  auto
+  detect_Bare_point_type(T*, void_t<typename T::Bare_point>*, Dimension, Priority_tag<1> = {}) {
     return typename T::Bare_point{};
   }
 
   template <typename T> // low priority Priority_tag<2>: use Tr::Point_3
-  auto detect_Bare_point_type(T* = nullptr, void_t<typename T::Point_3>* = nullptr, Priority_tag<2> = {}) {
+  auto
+  detect_Bare_point_type(T*, void_t<typename T::Point_3>*, Dimension_tag<3>, Priority_tag<2> = {}) {
     return typename T::Point_3{};
   }
 
-  template <typename T> // lowest priority Priority_tag<3>: use Tr::Point, and assume it is bare
-  auto detect_Bare_point_type(T* = nullptr, void_t<typename T::Point>* = nullptr, Priority_tag<3> = {}) {
+  template <typename T> // low priority Priority_tag<2>: use Tr::Point_2 (2D case)
+  auto
+  detect_Bare_point_type(T*, void_t<typename T::Point_2>*, Dimension_tag<2>, Priority_tag<2> = {}) {
+    return typename T::Point_2{};
+  }
+
+  template <typename T, typename Dimension> // lowest priority Priority_tag<3>: use Tr::Point, and
+                                            // assume it is bare
+  auto detect_Bare_point_type(T*, void_t<typename T::Point>*, Dimension, Priority_tag<3> = {}) {
     return typename T::Point{};
   }
 } // namespace details
 
-template <typename T>
+template <typename T, int dim = 3>
 struct Bare_point_type {
-  using type = decltype(details::detect_Bare_point_type<T>(nullptr, nullptr, Priority_tag<0>()));
+  using type = decltype(details::detect_Bare_point_type<T>(
+      nullptr, nullptr, Dimension_tag<dim>{}, Priority_tag<0>()));
 };
 
-template <typename T>
-using Bare_point_type_t = typename Bare_point_type<T>::type;
+template <typename T, int dim = 3>
+using Bare_point_type_t = typename Bare_point_type<T, dim>::type;
 
 template <typename Tr>
 constexpr bool is_regular_triangulation_v = (!std::is_same_v<Bare_point_type_t<Tr>, typename Tr::Point>);
