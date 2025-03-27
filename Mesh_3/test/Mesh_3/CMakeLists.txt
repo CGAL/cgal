@@ -115,7 +115,6 @@ if(TARGET CGAL::TBB_support)
       test_min_edge_length
       test_max_edge_distance
       test_min_size_criteria
-      test_remeshing_polyhedron
       )
     if(TARGET ${target})
       target_link_libraries(${target} PRIVATE CGAL::TBB_support)
