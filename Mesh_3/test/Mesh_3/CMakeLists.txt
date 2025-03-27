@@ -1,6 +1,3 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
 cmake_minimum_required(VERSION 3.12...3.31)
 project( Mesh_3_Tests )
 
@@ -50,6 +47,7 @@ create_single_source_cgal_program( "test_meshing_determinism.cpp" )
 create_single_source_cgal_program( "test_meshing_without_features_determinism.cpp" )
 create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
 create_single_source_cgal_program( "test_mesh_3_issue_8773.cpp" )
+create_single_source_cgal_program( "test_meshing_implicit_sphere_with_Delaunay_triamgulation.cpp" )
 create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step_with_features.cpp" )
