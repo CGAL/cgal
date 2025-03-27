@@ -1,11 +1,16 @@
 #include "Scene_c3t3_item.h"
 #include "Scene_surface_mesh_item.h"
+#include "Scene_polygon_soup_item.h"
+
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Three.h>
+
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <QAction>
 #include <QList>
+#include <QMessageBox>
 
 using namespace CGAL::Three;
 
@@ -49,39 +54,73 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
 
   QAction* actionCDT;
   CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 
   void cdt_3()
   {
-    Scene_surface_mesh_item* mesh_item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!mesh_item)
-      return;
-    auto* mesh = mesh_item->face_graph();
-    if(!mesh)
-      return;
-    auto patch_id_pmap = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
-    auto  cdt = patch_id_pmap
-        ? CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
-        : CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
-    auto triangulation_item = std::make_unique<Scene_c3t3_item>();
-    auto& item_tr = triangulation_item->triangulation();
+    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
+    {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      Scene_surface_mesh_item* mesh_item =
+          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+      Scene_polygon_soup_item* soup_item =
+          qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+      if(mesh_item)
+      {
+        auto* mesh = mesh_item->face_graph();
+        if(!mesh)
+          return;
+        auto patch_id_pmap = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
+        auto  cdt = patch_id_pmap
+            ? CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
+            : CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
+        auto triangulation_item = std::make_unique<Scene_c3t3_item>();
+        auto& item_tr = triangulation_item->triangulation();
 
-    const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
-    auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
-    item_tr.set_infinite_vertex(inf_v);
-    triangulation_item->triangulation_changed();
+        const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
+        auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
+        item_tr.set_infinite_vertex(inf_v);
+        triangulation_item->triangulation_changed();
 
-    triangulation_item->setParent(mesh_item->parent());
-    triangulation_item->setName("CDT of " + mesh_item->name());
-    triangulation_item->show_intersection(false);
-    scene->addItem(triangulation_item.release());
-    mesh_item->setVisible(false);
+        triangulation_item->setParent(mesh_item->parent());
+        triangulation_item->setName("CDT of " + mesh_item->name());
+        triangulation_item->show_intersection(false);
+        scene->addItem(triangulation_item.release());
+        mesh_item->setVisible(false);
+      }
+      else if(soup_item)
+      {
+        auto cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
+                     soup_item->points(), soup_item->polygons());
+
+        auto triangulation_item = std::make_unique<Scene_c3t3_item>();
+        auto& item_tr = triangulation_item->triangulation();
+
+        const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
+        auto inf_v =
+            item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
+        item_tr.set_infinite_vertex(inf_v);
+        triangulation_item->triangulation_changed();
+
+        triangulation_item->setParent(soup_item->parent());
+        triangulation_item->setName("CDT of " + soup_item->name());
+        triangulation_item->show_intersection(false);
+        scene->addItem(triangulation_item.release());
+        soup_item->setVisible(false);
+      }
+      else
+      {
+        CGAL::Three::Three::warning(tr("This function is only applicable on PLCs and polygon soups."));
+      }
+    }
+    QApplication::restoreOverrideCursor();
   }
 
 public:
-  void init(QMainWindow*, CGAL::Three::Scene_interface* scene, Messages_interface*) override
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene, Messages_interface*) override
   {
     this->scene = scene;
+    this->mw = mw;
     actionCDT = new QAction("3D Constrained Delaunay Triangulation", this);
     connect(actionCDT, &QAction::triggered, this, &CDT_3_plugin::cdt_3);
   }
@@ -90,7 +129,8 @@ public:
   {
     if(action != actionCDT)
       return false;
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())) ||
+           qobject_cast<Scene_polygon_soup_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   QList<QAction*> actions() const override { return QList<QAction*>() << actionCDT; }
