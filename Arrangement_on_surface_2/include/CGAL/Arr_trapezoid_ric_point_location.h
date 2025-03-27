@@ -130,7 +130,7 @@ protected:
   inline Result_type default_result() const { return Result::default_result(); }
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_trapezoid_ric_point_location
   (bool with_guarantees = true,
    double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD,
@@ -141,7 +141,7 @@ public:
     td.size_threshold(size_thrs);
   }
 
-  /*! Constructor given an arrangement. */
+  /*! constructs given an arrangement. */
   Arr_trapezoid_ric_point_location
   (const Base_aos& arr,
    bool with_guarantees = true,
@@ -157,7 +157,7 @@ public:
     _construct_td();
   }
 
-  /*! Destructor. */
+  /*! destructs. */
   ~Arr_trapezoid_ric_point_location() { }
 
   /*! defines whether the underlying search structure guarantees logarithmic
@@ -190,7 +190,7 @@ public:
   void print_dag(std::ostream& out) const { td.print_dag(out); }
 #endif
 
-  /*! Locate the arrangement feature containing the given point.
+  /*! locates the arrangement feature containing the given point.
    * \param p The query point.
    * \return An object representing the arrangement feature containing the
    *         query point. This object is either a Face_const_handle or a
@@ -198,7 +198,7 @@ public:
    */
   result_type locate(const Point_2& p) const;
 
-  /*! Locate the arrangement feature which a upward vertical ray emanating from
+  /*! locates the arrangement feature which a upward vertical ray emanating from
    * the given point hits.
    * \param p The query point.
    * \return An object representing the arrangement feature the ray hits.
@@ -208,7 +208,7 @@ public:
   result_type ray_shoot_up(const Point_2& p) const
   { return (_vertical_ray_shoot(p, true)); }
 
-  /*! Locate the arrangement feature which a downward vertical ray emanating
+  /*! locates the arrangement feature which a downward vertical ray emanating
    * from the given point hits.
    * \param p The query point.
    * \return An object representing the arrangement feature the ray hits.
@@ -307,7 +307,7 @@ public:
 //#endif
 
 protected:
-  /*! Construct the trapezoidal decomposition. */
+  /*! constructs the trapezoidal decomposition. */
   void _construct_td() {
     td.clear();
 
@@ -322,7 +322,7 @@ protected:
     td.insert(he_container.begin(), he_container.end());
   }
 
-  /*! Obtain the unbounded face that contains the point when the trapezoid is
+  /*! obtains the unbounded face that contains the point when the trapezoid is
    * unbounded
    * \param tr The unbounded trapezoid whose face we should get
    * \param p  The query point.
@@ -334,7 +334,7 @@ protected:
                                         const Point_2& p,
                                         Arr_all_sides_oblivious_tag) const;
 
-  /*! Obtain the unbounded face that contains the point when the trapezoid is
+  /*! obtains the unbounded face that contains the point when the trapezoid is
    * unbounded
    * \param tr The unbounded trapezoid whose face we should get
    * \param p  The query point.
@@ -346,7 +346,7 @@ protected:
                                         const Point_2& p,
                                         Arr_not_all_sides_oblivious_tag) const;
 
-  /*! Locate the arrangement feature which a vertical ray emanating from the
+  /*! locates the arrangement feature which a vertical ray emanating from the
    * given point hits, considering isolated vertices.
    * \param p The query point.
    * \param shoot_up Indicates whether the ray is directed upward or downward.
@@ -356,9 +356,8 @@ protected:
    */
   result_type _vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
 
-  /*! In vertical ray shoot, when the closest halfedge is found
-   * (or unbounded face)
-   * we check the isolated vertices inside the face to check whether there
+  /*! in vertical ray shoot, when the closest halfedge is found (or unbounded
+   * face) checks the isolated vertices inside the face to check whether there
    * is an isolated vertex right above/below the query point.
    */
   result_type _check_isolated_for_vertical_ray_shoot

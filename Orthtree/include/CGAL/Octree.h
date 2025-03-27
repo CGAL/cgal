@@ -25,7 +25,7 @@ namespace CGAL {
   \brief Alias that specializes the `Orthtree` class to a 3D octree storing 3D points.
 
   \tparam GeomTraits a model of `Kernel`
-  \tparam PointRange a model of `Range` whose value type is the key type of `PointMap`
+  \tparam PointRange a model of `Range` whose value type is the key type of `PointMap` and whose iterator type is a model of `RandomAccessIterator`
   \tparam PointMap a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
   \tparam cubic_nodes Boolean to enforce cubic nodes
  */

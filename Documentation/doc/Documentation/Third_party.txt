@@ -54,7 +54,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.72 or later</b>
+<b>Version 1.74 or later</b>
 
 The \boost libraries are a set of portable C++ source libraries.
 Most of \boost libraries are header-only, but a few of them need to be compiled or
@@ -86,7 +86,6 @@ Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later
 
 The \boost library also provides a module for multi precision integers and rational numbers:
 <A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
-Versions supported are <b>\boost Version 1.72 or later</b>.
 
 The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
 for multi precision numbers. `CGAL_Core` requires \boost multiprecision.

@@ -687,14 +687,16 @@ initialize()
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
         bbox.zmin() + 0.5*zdelta);
-#  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-      std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
-#  endif
       CGAL::Random rnd(0);
       Random_points_on_sphere_3<Bare_point> random_point(radius, rnd);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
+#ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES
+                << " points on a far sphere (radius = " << radius << ")...";
+#endif
+
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
                               (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
@@ -745,11 +747,12 @@ initialize()
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
         bbox.zmin() + 0.5*zdelta);
-# ifdef CGAL_MESH_3_VERBOSE
-      std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
-# endif
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
+# ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES
+                << " points on a far sphere (radius = " << radius << ")...";
+#endif
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
                               (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
