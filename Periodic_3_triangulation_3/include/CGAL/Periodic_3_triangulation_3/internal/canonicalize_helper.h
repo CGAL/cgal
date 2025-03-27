@@ -176,9 +176,10 @@ construct_canonical_point(const typename Gt_::Point_3& p,
 
   for(;;)
   {
-    // Here we actually construct because we are using a kernel with exact constructions
-    // so it is faster than using <Object, Offset> APIs which have to perform constructions
-    // within the predicates every single time
+    // Here we actually construct because we are interested in the constructed point,
+    // numerical errors or not. If we used predicates, we could have an inconsistency
+    // at the end with the predicates saying "inside" but the constructed point
+    // being outside.
     canonical_p = cp(p, transl);
 
     if(canonical_p.x() < domain.xmin())
