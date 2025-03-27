@@ -1,11 +1,15 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
+#if defined(CGAL_TEST_SUITE) && ! (defined(__OPTIMIZE__) || defined(NDEBUG))
+constexpr int NUMBER_OF_ITERATIONS = 1;
+#else
+constexpr int NUMBER_OF_ITERATIONS = 10;
+#endif
 
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
-
 #include <CGAL/tetrahedral_remeshing.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/draw_triangulation_3.h>
+#include <CGAL/IO/File_medit.h>
 
 #include <fstream>
 #include <string>
@@ -35,7 +39,7 @@ int main(int argc, char* argv[])
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, 1.,
-    CGAL::parameters::number_of_iterations(10));
+    CGAL::parameters::number_of_iterations(NUMBER_OF_ITERATIONS));
 
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
