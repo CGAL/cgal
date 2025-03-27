@@ -120,7 +120,7 @@ public:
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, const Triangle_mesh& tm_tgt);
   /// called for each face `f` present in the output mesh `tm` that corresponds to a face present in both input meshes corefined.
-  void coplanar_face_in_output(face_descriptor f, TriangleMesh& tm);
+  void subface_of_coplanar_faces_intersection(face_descriptor f, TriangleMesh& tm);
 
 /// @}
 
