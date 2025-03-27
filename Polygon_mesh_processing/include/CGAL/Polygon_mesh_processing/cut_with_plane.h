@@ -1,4 +1,4 @@
-// Copyright (c) 2024 GeometryFactory (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,9 +20,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#endif
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
@@ -105,7 +102,7 @@ struct Orthogonal_cut_plane_traits
 /*!
  *  \ingroup PMP_corefinement_grp
  *
- *  refines `pm` by inserting the intersection points of `plane` with its edges and faces.
+ *  refines `pm` by inserting the intersection points and edge of `plane` with faces and edges of `pm`.
  *
  *  \tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  *  \tparam Plane_3 plane type, equal to `GeomTraits::Plane_3`, `GeomTraits` being the type of the parameter `geom_traits`.
@@ -144,7 +141,7 @@ struct Orthogonal_cut_plane_traits
  *
  *    \cgalParamNBegin{do_not_triangulate_faces}
  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.}
- *      \cgalParamType{`bool`}
+ *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`true`}
  *    \cgalParamNEnd
  *
@@ -164,6 +161,10 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNEnd
  *
  *  \cgalNamedParamsEnd
+ *
+ *  \sa split()
+ *  \sa clip()
+ *
  */
 template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
 void cut_with_plane(PolygonMesh& pm,

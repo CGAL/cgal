@@ -1,4 +1,4 @@
-// Copyright (c) 2016 GeometryFactory (France).
+// Copyright (c) 2016-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -680,23 +680,25 @@ clip(TriangleMesh& tm,
   *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `pm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found. Always `false` if `pm` is not a triangle mesh.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{clip_volume}
-  *     \cgalParamDescription{If `true`, and `pm` is closed, the clipping will be done on
-  *                           the volume \link coref_def_subsec bounded \endlink by `pm`
-  *                           rather than on its surface (i.e., `pm` will be kept closed).}
+  *                           will be thrown if at least one self-intersection is found.
+  *                           This option is only taken into account if `pm` is not a triangle mesh.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_compact_clipper}
-  *     \cgalParamDescription{if `false` the parts of `pm` coplanar with `plane` will not be part of the output}
+  *     \cgalParamDescription{If `false`, the parts of `pm` coplanar with `plane` will not be part of the output.
+  *                           Always `true` if `clip_volume` is `true`.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and if `pm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `pm`
+  *                           rather than on its surface (i.e., `pm` will remain closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{allow_self_intersections}
@@ -711,7 +713,7 @@ clip(TriangleMesh& tm,
   *    \cgalParamNBegin{do_not_triangulate_faces}
   *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
   *                            Always `true` if `pm` is not a triangle mesh.}
-  *      \cgalParamType{`bool`}
+  *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd
   *
@@ -773,10 +775,7 @@ void clip(PolygonMesh& pm,
 
 
   if (allow_self_intersections)
-  {
     clip_volume=false;
-    triangulate=false;
-  }
 
   if (clip_volume && !is_closed(pm)) clip_volume=false;
   if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
@@ -835,8 +834,8 @@ void clip(PolygonMesh& pm,
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -1028,10 +1027,13 @@ void split(TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * adds intersection edges of `plane` and `pm` in `pm` and duplicates those edges.
+  * splits a polygon mesh with a plane.
   *
-  * \note `Plane_3` must be from the same %kernel as the point of the internal vertex point map of `PolygonMesh`.
-  * \note `Plane_3` must be from the same %kernel as the point of the vertex point map of `tm`.
+  * The polygon mesh is refined with the intersection edges, and those edges are duplicated as to create a boundary,
+  * and thus separate connected components on either side of the plane.
+  *
+  * \note `Plane_3` must be from the same kernel as the point of the internal vertex point map of `PolygonMesh`.
+  * \note `Plane_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -1078,7 +1080,7 @@ void split(TriangleMesh& tm,
   *    \cgalParamNBegin{do_not_triangulate_faces}
   *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
   *                            Always `true` if `pm` is not a triangle mesh.}
-  *      \cgalParamType{`bool`}
+  *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd
   * \cgalNamedParamsEnd
@@ -1148,8 +1150,8 @@ void split(PolygonMesh& pm,
   *
   * adds intersection edges of `iso_cuboid` and `tm` in `tm` and duplicates those edges.
   *
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
