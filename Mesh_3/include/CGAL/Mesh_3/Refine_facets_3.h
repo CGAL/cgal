@@ -22,6 +22,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Mesh_3/config.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -243,9 +245,10 @@ class Refine_facets_3_base
                                              typename Tr::Facet,
                                              Concurrency_tag>
   , public Container_
+  , public Triangulation_helpers<Tr>
 {
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Point         Weighted_point;
+  typedef Bare_point_type_t<Tr>      Bare_point;
 
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -773,12 +776,12 @@ class Refine_facets_3
 
   typedef Rf_base Base;
 
-  typedef Mesher_level<Tr,
-                       Self,
-                       typename Tr::Facet,
-                       Previous_level_,
-                       Triangulation_mesher_level_traits_3<Tr>,
-                       Concurrency_tag >               Base_ML;
+  typedef Mesh_3::Mesher_level<Tr,
+                               Self,
+                               typename Tr::Facet,
+                               Previous_level_,
+                               Triangulation_mesher_level_traits_3<Tr>,
+                               Concurrency_tag >               Base_ML;
 
   typedef typename Tr::Lock_data_structure Lock_data_structure;
 
@@ -788,8 +791,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Point          Weighted_point;
+  typedef Bare_point_type_t<Tr>       Bare_point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
@@ -821,9 +824,6 @@ public:
                   , std::atomic<bool>* stop_ptr
 #endif
                   );
-
-  /// Destructor
-  virtual ~Refine_facets_3() { }
 
   /// Get a reference on triangulation
   Tr& triangulation_ref_impl() { return this->r_tr_; }
@@ -1660,6 +1660,9 @@ compute_facet_properties(const Facet& facet,
       r_tr_.geom_traits().compare_xyz_3_object();
   typename GT::Construct_segment_3 construct_segment =
       r_tr_.geom_traits().construct_segment_3_object();
+  typename MD::Construct_intersection construct_intersection =
+          r_oracle_.construct_intersection_object();
+
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1670,12 +1673,8 @@ compute_facet_properties(const Facet& facet,
   Cell_handle n = c->neighbor(i);
   if ( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) ){
     // the dual is a segment
-    Bare_point p1, p2;
-    if(force_exact){
-      r_tr_.dual_segment_exact(facet, p1, p2);
-    } else {
-      r_tr_.dual_segment(facet, p1, p2);
-    }
+    const auto [p1, p2] =
+        force_exact ? this->dual_segment_exact(r_tr_, facet) : this->dual_segment(r_tr_, facet);
     if (p1 == p2) { fp = Facet_properties(); return; }
 
     // Trick to have canonical vector : thus, we compute always the same
@@ -1690,9 +1689,6 @@ compute_facet_properties(const Facet& facet,
     if ( surface )
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     {
-      typename MD::Construct_intersection construct_intersection =
-          r_oracle_.construct_intersection_object();
-
       Intersection intersect = construct_intersection(segment);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       // In the following, std::get<2>(intersect) == 0 is a way to
@@ -1716,12 +1712,8 @@ compute_facet_properties(const Facet& facet,
     // vector with small coordinates. Its can happen than the
     // constructed ray is degenerate (the point(1) of the ray is
     // point(0) plus a vector whose coordinates are epsilon).
-    Ray_3 ray;
-    if(force_exact){
-      r_tr_.dual_ray_exact(facet,ray);
-    } else {
-      r_tr_.dual_ray(facet,ray);
-    }
+    const Ray_3 ray =
+        force_exact ? this->dual_ray_exact(r_tr_, facet) : this->dual_ray(r_tr_, facet);
     if (is_degenerate(ray)) { fp = Facet_properties(); return; }
 
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1729,9 +1721,6 @@ compute_facet_properties(const Facet& facet,
     if ( surface )
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     {
-      typename MD::Construct_intersection construct_intersection =
-          r_oracle_.construct_intersection_object();
-
       Intersection intersect = construct_intersection(ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
@@ -1757,15 +1746,12 @@ is_facet_encroached(const Facet& facet,
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
     return false;
 
-  const Cell_handle& cell = facet.first;
-  const int& facet_index = facet.second;
-
   const Bare_point& center = get_facet_surface_center(facet);
-  const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+  const Weighted_point& reference_point = r_tr_.point(r_tr_.vertices(facet).front());
 
   // the facet is encroached if the new point is closer to the center than
   // any vertex of the facet
-  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
+  return this->greater_or_equal_power_distance(r_tr_, center, reference_point, point);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1773,7 +1759,9 @@ bool
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
-  typedef typename Tr::Weighted_point Weighted_point;
+  if constexpr (is_regular_triangulation_v<Tr>) {  // we have a regular triangulation
+
+  typedef typename Tr::Point   Weighted_point;
   typedef typename GT::FT      FT;
 
   typename GT::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
@@ -1853,6 +1841,7 @@ is_encroached_facet_refinable(Facet& facet) const
 
     default: break;
   }
+  } // end of (we have a regular triangulation)
 
   return true;
 }

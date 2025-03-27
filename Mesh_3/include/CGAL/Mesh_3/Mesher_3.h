@@ -42,6 +42,7 @@
 #include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
 #include <CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_3.h>
@@ -53,6 +54,7 @@
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/type_traits.h>
 
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -153,7 +155,7 @@ public:
 #endif
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
-  typedef typename Triangulation::Bare_point        Bare_point;
+  typedef Bare_point_type_t<Triangulation>          Bare_point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
@@ -641,6 +643,11 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
+  auto& gt = r_c3t3_.triangulation().geom_traits();
+  using Helpers = CGAL::Mesh_3::Triangulation_helpers<Triangulation>;
+  auto cwp = Helpers::construct_triangulation_point_object(r_c3t3_.triangulation());
+  auto translate = gt.construct_translated_point_3_object();
+  
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Initializing... ";
   WallClockTimer t;
@@ -698,8 +705,7 @@ initialize()
 #endif
 
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
-                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
+        r_c3t3_.add_far_point(cwp(translate(*random_point, center)));
 
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
@@ -754,8 +760,7 @@ initialize()
                 << " points on a far sphere (radius = " << radius << ")...";
 #endif
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
-                              (r_c3t3_.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
+        r_c3t3_.add_far_point(cwp(translate(*random_point, center)));
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
 # endif

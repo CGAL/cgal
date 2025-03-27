@@ -22,6 +22,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
+#include <CGAL/type_traits.h>
 
 #include <string>
 
@@ -40,8 +41,8 @@ class Odt_move
   typedef typename Tr::Facet                                  Facet;
   typedef typename Tr::Cell_handle                            Cell_handle;
 
-  typedef typename Tr::Bare_point                             Bare_point;
-  typedef typename Tr::Weighted_point                         Weighted_point;
+  typedef Bare_point_type_t<Tr>                               Bare_point;
+  typedef typename Tr::Point                                  Weighted_point;
 
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;

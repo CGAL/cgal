@@ -18,6 +18,7 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -111,8 +112,8 @@ void output_to_medit(std::ostream& os,
   typedef typename C3T3::Triangulation           Triangulation;
   typedef Triangulation                          Tr;
 
-  typedef typename Tr::Bare_point                Bare_point;
-  typedef typename Tr::Weighted_point            Weighted_point;
+  typedef Bare_point_type_t<Tr>                  Bare_point;
+  typedef typename Tr::Point                     Weighted_point;
 
   typedef typename C3T3::Vertex_handle           Vertex_handle;
   typedef typename C3T3::Facet                   Facet;

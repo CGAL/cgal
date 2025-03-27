@@ -30,6 +30,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Handle_hash_function.h>
 
 #ifdef CGAL_MESH_3_PROFILING
@@ -376,8 +377,7 @@ class C3T3_helpers_base
 {
 protected:
   typedef typename Tr::Geom_traits          GT;
-  typedef typename Tr::Bare_point           Bare_point;
-  typedef typename Tr::Weighted_point       Weighted_point;
+  typedef typename Tr::Point                Weighted_point;
   typedef typename GT::FT                   FT;
   typedef typename Tr::Vertex_handle        Vertex_handle;
   typedef typename Tr::Cell_handle          Cell_handle;
@@ -448,8 +448,8 @@ class C3T3_helpers_base<Tr, Parallel_tag>
 {
 protected:
   typedef typename Tr::Geom_traits          GT;
-  typedef typename Tr::Bare_point           Bare_point;
-  typedef typename Tr::Weighted_point       Weighted_point;
+  typedef Bare_point_type_t<Tr>             Bare_point;
+  typedef typename Tr::Point                Weighted_point;
   typedef typename Tr::Vertex_handle        Vertex_handle;
   typedef typename Tr::Cell_handle          Cell_handle;
   typedef typename Tr::Facet                Facet;
@@ -609,7 +609,8 @@ template <typename C3T3,
           typename MeshDomain>
 class C3T3_helpers
 : public C3T3_helpers_base<typename C3T3::Triangulation,
-                           typename C3T3::Concurrency_tag>
+                           typename C3T3::Concurrency_tag>,
+  public CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation>
 {
   // -----------------------------------
   // Private types
@@ -625,8 +626,8 @@ class C3T3_helpers
   typedef typename Tr::Geom_traits                    GT;
 
   typedef typename GT::FT                             FT;
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef typename Tr::Point                          Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
   typedef typename GT::Vector_3                       Vector_3;
   typedef typename GT::Plane_3                        Plane_3;
   typedef typename GT::Tetrahedron_3                  Tetrahedron;
@@ -640,8 +641,8 @@ class C3T3_helpers
   typedef typename C3T3::Subdomain_index              Subdomain_index;
   typedef typename C3T3::Index                        Index;
 
-  typedef std::optional<Surface_patch_index>        Surface_patch;
-  typedef std::optional<Subdomain_index>            Subdomain;
+  typedef std::optional<Surface_patch_index>          Surface_patch;
+  typedef std::optional<Subdomain_index>              Subdomain;
 
   typedef std::vector<Cell_handle>                    Cell_vector;
   typedef std::set<Cell_handle>                       Cell_set;
@@ -735,7 +736,7 @@ public:
   /** @brief tries to move `old_vertex` to `new_position` in the mesh
    *
    * Same as update_mesh, but with the precondition that
-   * Th().no_topological_change(tr_, old_vertex, new_position,
+   * this->no_topological_change(tr_, old_vertex, new_position,
    * incident_cells_) return false.
    */
   template <typename SliverCriterion, typename OutputIterator>
@@ -2149,14 +2150,12 @@ private:
 
   template <typename CellForwardIterator>
   void reset_circumcenter_cache(CellForwardIterator cells_begin,
-                            CellForwardIterator cells_end) const
+                                CellForwardIterator cells_end) const
   {
-    while(cells_begin != cells_end) {
-      (*cells_begin)->invalidate_weighted_circumcenter_cache();
-      ++cells_begin;
-    }
+    if constexpr(is_regular_triangulation_v<Tr>)
+      for(auto it = cells_begin; it != cells_end; ++it)
+        (*it)->invalidate_weighted_circumcenter_cache();
   }
-
 
 private:
 
@@ -2436,7 +2435,7 @@ update_mesh(const Vertex_handle& old_vertex,
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
-  if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
+  if ( this->no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
     return update_mesh_no_topo_change(old_vertex, move, new_position, criterion,
                                       modified_vertices, incident_cells_);
@@ -2674,7 +2673,7 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
 
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
@@ -2804,7 +2803,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
                             Moving_vertices_set& moving_vertices)
 {
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
   typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
   typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
@@ -2943,13 +2942,13 @@ move_point(const Vertex_handle& old_vertex,
 #endif
 
   typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
+  auto cwp = this->construct_triangulation_point_object(tr_);
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
 
-# ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
@@ -2957,7 +2956,7 @@ move_point(const Vertex_handle& old_vertex,
   }
   // Sequential
   else
-# endif // CGAL_LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   {
     tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
   }
@@ -2965,7 +2964,7 @@ move_point(const Vertex_handle& old_vertex,
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
 
-  if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
+  if ( this->no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
     reset_circumcenter_cache(incident_cells_);
     reset_sliver_cache(incident_cells_);
@@ -2994,8 +2993,8 @@ move_point(const Vertex_handle& old_vertex,
 #endif
 
   typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
+  auto cwp = this->construct_triangulation_point_object(tr_);
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -3004,7 +3003,7 @@ move_point(const Vertex_handle& old_vertex,
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
 
-  if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
+  if ( this->no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
     reset_circumcenter_cache(incident_cells_);
     reset_sliver_cache(incident_cells_);
@@ -3058,8 +3057,8 @@ move_point(const Vertex_handle& old_vertex,
   //======= /Get incident cells ==========
 
   typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
+  auto cwp = this->construct_triangulation_point_object(tr_);
 
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
@@ -3071,7 +3070,7 @@ move_point(const Vertex_handle& old_vertex,
     return Vertex_handle();
   }
 
-  if ( Th().no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
+  if ( this->no_topological_change(tr_, old_vertex, move, new_position, incident_cells_) )
   {
     reset_circumcenter_cache(incident_cells_);
     reset_sliver_cache(incident_cells_);
@@ -3349,7 +3348,7 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
                           const Weighted_point& new_position) const
 {
   // Change vertex position
-  tr_.set_point(old_vertex, move, new_position);
+  this->set_point(tr_, old_vertex, move, new_position);
   CGAL_expensive_postcondition(tr_.is_valid());
   return old_vertex;
 }
@@ -3427,7 +3426,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
 
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
 
   // Get incident facets
   Facet_vector facets;
@@ -3459,7 +3458,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
       if(ref_facet.first == Cell_handle())
         ref_facet = f;
 
-      const Triangle ct = tr_.get_incident_triangle(f, v);
+      const Triangle ct = this->get_incident_triangle(tr_, f, v);
       triangles.push_back(ct);
     }
   }
@@ -3481,7 +3480,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // The surface center of a facet might have an offset in periodic triangulations
   const Bare_point& ref_facet_scp = ref_facet.first->get_facet_surface_center(ref_facet.second);
-  const Bare_point& ref_point = tr_.get_closest_point(cp(position), ref_facet_scp);
+  const Bare_point& ref_point = this->get_closest_point(tr_, cp(position), ref_facet_scp);
   return std::make_pair(plane, ref_point);
 }
 
@@ -3509,7 +3508,7 @@ project_on_surface_if_possible(const Vertex_handle& v,
   // @todo should call below if it's available...
   // return domain_.project_on_surface(p);
 
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
   typename GT::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
@@ -3904,7 +3903,7 @@ get_conflict_zone_after_move_topo_change(const Vertex_handle& new_vertex,
   // `remove_cells_and_facets_from_c3t3()`
   if (lt == Tr::VERTEX)
   {
-    CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+    CGAL_assertion(is_periodic_triangulation_v<Tr>);
     tr_.incident_cells(cell->vertex(li), std::back_inserter(deleted_cells));
   }
   else

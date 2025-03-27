@@ -83,7 +83,7 @@ output_to_tetgen(std::string filename,
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Weighted_point;
   typedef typename Tr::Facet Facet;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;

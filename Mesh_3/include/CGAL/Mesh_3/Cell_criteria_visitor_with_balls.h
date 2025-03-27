@@ -18,6 +18,7 @@
 #define CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H
 
 #include <CGAL/license/Mesh_3.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
@@ -43,8 +44,8 @@ public:
   typedef typename Base::Handle  Handle;
   typedef Handle Cell_handle;
 
-  typedef typename Tr::Bare_point      Bare_point;
-  typedef typename Tr::Weighted_point  Weighted_point;
+  typedef Bare_point_type_t<Tr>        Bare_point;
+  typedef typename Tr::Point           Weighted_point;
   typedef typename Tr::Geom_traits     GT;
   typedef typename GT::FT              FT;
 

@@ -33,7 +33,7 @@ namespace CGAL {
       template <typename Tr>
       struct Type_of_points<Tag_true, Tr>
       {
-        typedef typename Tr::Weighted_point Point;
+        typedef typename Tr::Point         Point;
       };
 
     } // end namespace Meshes::details

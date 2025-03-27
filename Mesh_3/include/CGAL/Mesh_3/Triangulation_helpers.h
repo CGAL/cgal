@@ -20,10 +20,10 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/functional.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Time_stamper.h>
 
-#include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <algorithm>
@@ -39,8 +39,359 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-template<typename Tr>
+enum class Helpers_tr_type {
+  DELAUNAY = 0,
+  REGULAR = 1,
+
+  PERIODIC = 0,
+  NON_PERIODIC = 1,
+
+  ALL = 2
+};
+
+template <std::size_t N>
+static constexpr auto indices = std::make_index_sequence<N>{};
+
+template<typename Tr,
+         Helpers_tr_type,
+         Helpers_tr_type>
+struct Triangulation_helpers_utils;
+
+template <typename Tr, typename Derived, Helpers_tr_type>
+struct Triangulation_helpers_utils_decorator;
+
+template <typename Tr, typename Derived>
+struct Triangulation_helpers_utils_decorator<Tr, Derived, Helpers_tr_type::NON_PERIODIC>
+{
+  using EK = Exact_predicates_exact_constructions_kernel;
+
+  template <typename Obj>
+  static decltype(auto) to_exact(const Tr&, Obj&& obj) {
+    using Geom_traits = typename Tr::Geom_traits;
+    using To_exact = Cartesian_converter<Geom_traits, EK>;
+    return To_exact()(std::forward<Obj>(obj));
+  }
+
+  template <typename Obj>
+  static decltype(auto) back_from_exact(const Tr&, Obj&& obj) {
+    using Geom_traits = typename Tr::Geom_traits;
+    using Back_from_exact = Cartesian_converter<EK, Geom_traits>;
+    return Back_from_exact()(std::forward<Obj>(obj));
+  }
+
+  static auto exact_point(const Tr& tr, typename Tr::Vertex_handle v) {
+    return to_exact(tr, tr.point(v));
+  }
+
+  template <typename Exact_points>
+  static auto exact_circumcenter(const Tr& tr, const Exact_points& points) {
+    auto circumcenter_fct = Derived::construct_exact_circumcenter_object(tr);
+    return std::apply(circumcenter_fct, points);
+  }
+
+  template <typename Exact_points>
+  static auto circumcenter(const Tr& tr, const Exact_points& points) {
+    auto circumcenter_fct = Derived::construct_circumcenter_object(tr);
+    return std::apply(circumcenter_fct, points);
+  }
+
+  static auto dual_exact(const Tr& tr, typename Tr::Cell_handle c)
+  {
+    auto circumcenter_fct = Derived::construct_exact_circumcenter_object(tr);
+    return back_from_exact(tr, std::apply(circumcenter_fct, exact_points(tr, c)));
+  }
+
+  static auto dual_segment_exact(const Tr& tr, typename Tr::Facet facet)
+  {
+    auto [c, i] = facet;
+    auto n = c->neighbor(i);
+
+    return std::make_pair(dual_exact(tr, c), dual_exact(tr, n));
+  }
+
+  static auto dual_segment(const Tr& tr, typename Tr::Facet facet)
+  {
+    auto [c, i] = facet;
+    auto n = c->neighbor(i);
+
+    return std::make_pair(Derived::dual(tr, c), Derived::dual(tr, n));
+  }
+
+  // for a facet on the convex hull, return its version viewed from the
+  // inside of the triangulation
+  static auto dual_ray_aux(const Tr& tr, typename Tr::Facet facet) {
+    auto [c, i] = facet;
+    auto n = c->neighbor(i);
+    auto in = n->index(c);
+
+    if(tr.is_infinite(c)) {
+      CGAL_precondition(!tr.is_infinite(n));
+      return std::make_pair(n, in);
+    } else {
+      CGAL_precondition(tr.is_infinite(n));
+      return facet;
+    }
+  }
+
+  static auto dual_ray_exact(const Tr& tr, typename Tr::Facet f) {
+    auto cstr_exact_plane = EK().construct_plane_3_object();
+    auto cstr_exact_perpendicular_line = EK().construct_perpendicular_line_3_object();
+    auto cstr_exact_ray = EK().construct_ray_3_object();
+
+    const auto facet_inside = dual_ray_aux(tr, f);
+    const auto facet_exact_points = exact_points(tr, facet_inside);
+
+    auto [cell_inside, index] = facet_inside;
+    auto fourth_exact_point = exact_point(tr, cell_inside->vertex(index));
+    using Point = CGAL::cpp20::remove_cvref_t<decltype(facet_exact_points[0])>;
+    using CRef = std::add_lvalue_reference_t<std::add_const_t<Point>>;
+    std::tuple<CRef, CRef, CRef, CRef> cell_exact_points_const_ref{facet_exact_points[0],
+                                                                   facet_exact_points[1],
+                                                                   facet_exact_points[2],
+                                                                   fourth_exact_point};
+    const auto facet_exact_center = exact_circumcenter(tr, facet_exact_points);
+    const auto exact_plane =
+        std::apply(cstr_exact_plane, Derived::exact_bare_points(tr, facet_exact_points));
+    const auto exact_line = cstr_exact_perpendicular_line(exact_plane, facet_exact_center);
+
+    const auto exact_ray =
+        cstr_exact_ray(exact_circumcenter(tr, cell_exact_points_const_ref), exact_line);
+    return back_from_exact(tr, exact_ray);
+  }
+
+  static auto dual_ray(const Tr& tr, typename Tr::Facet facet) {
+    auto cstr_ray = tr.geom_traits().construct_ray_3_object();
+    auto cstr_perpendicular_line = tr.geom_traits().construct_perpendicular_line_3_object();
+    auto cstr_plane = tr.geom_traits().construct_plane_3_object();
+
+    const auto facet_inside = dual_ray_aux(tr, facet);
+    const auto facet_points = points(tr, facet_inside);
+    const auto facet_center = circumcenter(tr, facet_points);
+    const auto plane = std::apply(cstr_plane, Derived::bare_points(tr, facet_points));
+    const auto line = cstr_perpendicular_line(plane, facet_center);
+    const auto ray = cstr_ray(Derived::dual(tr, facet_inside.first), line);
+    return ray;
+  }
+
+  template <std::size_t... index, typename Vertices>
+  static auto exact_points_of_vertices(const Tr& tr, const Vertices& vertices,
+                                       std::index_sequence<index...>)
+  {
+    return std::array{exact_point(tr, vertices[index])...};
+  }
+
+  template <typename ...Args>
+  static auto exact_points(const Tr& tr, Args&&... args) {
+    auto vertices = tr.vertices(std::forward<Args>(args)...);
+
+    constexpr auto N = vertices.size();
+    return exact_points_of_vertices(tr, vertices, indices<N>);
+  }
+
+  template <std::size_t... index, typename Vertices>
+  static auto points_of_vertices(const Tr& tr, const Vertices& vertices,
+                                std::index_sequence<index...>)
+  {
+    return std::array{tr.point(vertices[index])...};
+  }
+
+  template <typename ...Args>
+  static auto points(const Tr& tr, Args&&... args) {
+    auto vertices = tr.vertices(std::forward<Args>(args)...);
+
+    constexpr auto N = vertices.size();
+    return points_of_vertices(tr, vertices, indices<N>);
+  }
+
+  template <typename Vector>
+  static void set_point(const Tr&, typename Tr::Vertex_handle v, const Vector& /*move*/,
+                        const typename Tr::Point& new_position)
+  {
+    v->set_point(new_position);
+  }
+
+  template <typename Facet, typename Vertex_handle>
+  static auto get_incident_triangle(const Tr& tr, const Facet& f, const Vertex_handle)
+  {
+    return tr.triangle(f);
+  }
+
+  template <typename Bare_point>
+  static const Bare_point& get_closest_point(const Tr&, const Bare_point& /*p*/, const Bare_point& q)
+  {
+    return q;
+  }
+
+  template <typename Bare_point>
+  static auto min_squared_distance(const Tr& tr, const Bare_point& p, const Bare_point& q)
+  {
+    return tr.geom_traits().compute_squared_distance_3_object()(p, q);
+  }
+};
+
+template <typename Tr>
+struct Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::REGULAR>
+    : public Triangulation_helpers_utils_decorator<
+          Tr,
+          Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::REGULAR>,
+          Helpers_tr_type::NON_PERIODIC>
+{
+  using Self = Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::REGULAR>;
+
+  // returns a callable that constructs a point from a bare point
+  static auto construct_triangulation_point_object(const Tr& tr)
+  {
+    return tr.geom_traits().construct_weighted_point_3_object();
+  }
+
+  // returns a callable that constructs a bare point from a weighted point
+  static auto construct_bare_point_object(const Tr& tr)
+  {
+    return tr.geom_traits().construct_point_3_object();
+  }
+
+  static auto compute_weight_object(const Tr& tr)
+  {
+    return tr.geom_traits().compute_weight_3_object();
+  }
+
+  static auto construct_exact_bare_point_object(const Tr&)
+  {
+    typename Self::EK ek;
+    return ek.construct_point_3_object();
+  }
+
+  static auto construct_exact_circumcenter_object(const Tr&)
+  {
+    typename Self::EK ek;
+    return ek.construct_weighted_circumcenter_3_object();
+  }
+
+  static auto construct_circumcenter_object(const Tr& tr)
+  {
+    return tr.geom_traits().construct_weighted_circumcenter_3_object();
+  }
+
+  template <std::size_t... index, typename Points>
+  static auto exact_bare_points_aux(const Tr& tr, const Points& points, std::index_sequence<index...>) {
+    return std::array{construct_exact_bare_point_object(tr)(points[index])...};
+  };
+
+  template <typename Exact_points>
+  static auto exact_bare_points(const Tr& tr, const Exact_points& points) {
+    constexpr auto N = points.size();
+    return exact_bare_points_aux(tr, points, indices<N>);
+  }
+
+  template <std::size_t... index, typename Points>
+  static auto bare_points_aux(const Tr& tr, const Points& points, std::index_sequence<index...>) {
+    return std::array{construct_bare_point_object(tr)(points[index])...};
+  };
+
+  template <typename Points>
+  static auto bare_points(const Tr& tr, const Points& points) {
+    constexpr auto N = points.size();
+    return bare_points_aux(tr, points, indices<N>);
+  }
+
+  static auto dual(const Tr& tr, typename Tr::Cell_handle c)
+  {
+    return c->weighted_circumcenter(tr.geom_traits());
+  }
+
+  template <typename ...Args>
+  static bool greater_or_equal_power_distance(const Tr& tr, Args&&... args)
+  {
+    auto compare_power_distance =
+        tr.geom_traits().compare_power_distance_3_object();
+    return compare_power_distance(std::forward<Args>(args)...) != CGAL::SMALLER;
+  }
+
+  template <typename ...Args>
+  static auto side_of_power_sphere(const Tr& tr, Args&&... args)
+  {
+    return tr.side_of_power_sphere(std::forward<Args>(args)...);
+  }
+};
+
+template <typename Tr>
+struct Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::DELAUNAY>
+    : public Triangulation_helpers_utils_decorator<
+          Tr,
+          Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::DELAUNAY>,
+          Helpers_tr_type::NON_PERIODIC>
+{
+  using Self = Triangulation_helpers_utils<Tr, Helpers_tr_type::NON_PERIODIC, Helpers_tr_type::DELAUNAY>;
+  static auto construct_triangulation_point_object(const Tr&)
+  {
+    return CGAL::Identity<>();
+  }
+
+  static auto construct_bare_point_object(const Tr&)
+  {
+    return CGAL::Identity<>();
+  }
+
+  static auto compute_weight_object(const Tr&)
+  {
+    using FT = typename Tr::Geom_traits::FT;
+    return [](const auto&) { return FT(0); };
+  }
+
+  static auto construct_exact_bare_point_object(const Tr&)
+  {
+    return CGAL::Identity<>();
+  }
+
+  static auto construct_exact_circumcenter_object(const Tr&)
+  {
+    typename Self::EK ek;
+    return ek.construct_circumcenter_3_object();
+  }
+
+  static auto construct_circumcenter_object(const Tr& tr)
+  {
+    return tr.geom_traits().construct_circumcenter_3_object();
+  }
+
+  template <typename Points>
+  static decltype(auto) exact_bare_points(const Tr&, Points&& points)
+  {
+    return std::forward<Points>(points);
+  }
+
+  template <typename Points>
+  static decltype(auto) bare_points(const Tr&, Points&& points)
+  {
+    return std::forward<Points>(points);
+  }
+
+  static auto dual(const Tr& tr, typename Tr::Cell_handle c)
+  {
+    return c->circumcenter(tr.geom_traits());
+  }
+
+  template <typename ...Args>
+  static bool greater_or_equal_power_distance(const Tr& tr, Args&&... args)
+  {
+    auto compare_distance =
+        tr.geom_traits().compare_distance_3_object();
+    return compare_distance(std::forward<Args>(args)...) != CGAL::SMALLER;
+  }
+
+  template <typename ...Args>
+  static auto side_of_power_sphere(const Tr& tr, Args&&... args)
+  {
+    return tr.side_of_sphere(std::forward<Args>(args)...);
+  }
+};
+
+template <typename Tr>
 class Triangulation_helpers
+    : public Triangulation_helpers_utils<
+          Tr,
+          is_periodic_triangulation_v<Tr> ? Helpers_tr_type::PERIODIC : Helpers_tr_type::NON_PERIODIC,
+          is_regular_triangulation_v<Tr> ? Helpers_tr_type::REGULAR : Helpers_tr_type::DELAUNAY>
 {
   typedef typename Tr::Geom_traits              GT;
 
@@ -49,11 +400,7 @@ class Triangulation_helpers
 
   // If `Tr` is not a triangulation that has defined Bare_point,
   // use Point_3 as defined in the traits class.
-  typedef typename boost::mpl::eval_if_c<
-    CGAL::internal::Has_nested_type_Bare_point<Tr>::value,
-    typename CGAL::internal::Bare_point_type<Tr>,
-    boost::mpl::identity<typename GT::Point_3>
-  >::type                                       Bare_point;
+  typedef Bare_point_type_t<Tr>                 Bare_point;
 
   // 'Point' is either a bare point or a weighted point, depending on the triangulation.
   // Since 'Triangulation_helpers' can be templated by an unweighted triangulation,
@@ -62,6 +409,7 @@ class Triangulation_helpers
 
   typedef typename Tr::Vertex                   Vertex;
   typedef typename Tr::Vertex_handle            Vertex_handle;
+  typedef typename Tr::Facet                    Facet;
   typedef typename Tr::Cell                     Cell;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Tr::Cell_iterator            Cell_iterator;
@@ -103,10 +451,6 @@ class Triangulation_helpers
   };
 
 public:
-  /// Constructor / Destructor
-  Triangulation_helpers() {}
-  ~Triangulation_helpers() {}
-
   /**
    * Returns `true` if moving `v` to `p` makes no topological
    * change in `tr`.
@@ -175,6 +519,11 @@ no_topological_change(Tr& tr,
                       const Point& p,
                       Cell_vector& cells_tos) const
 {
+  // Check here that the Triangulation_helpers class is empty.
+  // That cannot be check within the class definition, where the class is still incomplete.
+  static_assert(std::is_empty_v<Triangulation_helpers<Tr>>,
+    "Triangulation_helpers should be an empty utility class");
+
   if(tr.point(v0) == p)
     return true;
 
@@ -186,7 +535,7 @@ no_topological_change(Tr& tr,
   //
   // Note that the function was nevertheless adapted to work with periodic triangulation
   // so this hack can be disabled if one day 'side_of_power_sphere()' is improved.
-  if(std::is_same<typename Tr::Periodic_tag, Tag_true>::value)
+  if(is_periodic_triangulation_v<Tr>)
     return false;
 
   typename GT::Construct_opposite_vector_3 cov =
@@ -196,12 +545,12 @@ no_topological_change(Tr& tr,
   const Point fp = tr.point(v0);
 
   // move the point
-  tr.set_point(v0, move, p);
+  this->set_point(tr, v0, move, p);
 
   if(!well_oriented(tr, cells_tos))
   {
     // Reset (restore) v0
-    tr.set_point(v0, cov(move), fp);
+    this->set_point(tr, v0, cov(move), fp);
     return false;
   }
 
@@ -227,7 +576,7 @@ no_topological_change(Tr& tr,
 
       if(tr.is_infinite(c->vertex(j)))
       {
-        if(tr.side_of_power_sphere(c, tr.point(cj->vertex(mj)), false)
+        if(this->side_of_power_sphere(tr, c, tr.point(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -236,7 +585,7 @@ no_topological_change(Tr& tr,
       }
       else
       {
-        if(tr.side_of_power_sphere(cj, tr.point(c->vertex(j)), false)
+        if(this->side_of_power_sphere(tr, cj, tr.point(c->vertex(j)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -247,7 +596,7 @@ no_topological_change(Tr& tr,
   }
 
   // Reset (restore) v0
-  tr.set_point(v0, cov(move), fp);
+  this->set_point(tr, v0, cov(move), fp);
 
   return np;
 }
@@ -309,7 +658,7 @@ no_topological_change__without_set_point(
         }
 
         Cell_handle c_copy_h = Cell_range::s_iterator_to(c_copy);
-        if(tr.side_of_power_sphere(c_copy_h, pg(cj->vertex(mj)), false)
+        if(this->side_of_power_sphere(tr, c_copy_h, pg(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -331,7 +680,7 @@ no_topological_change__without_set_point(
         }
 
         Cell_handle cj_copy_h = Cell_range::s_iterator_to(cj_copy);
-        if(tr.side_of_power_sphere(cj_copy_h, pg(v1), false)
+        if(this->side_of_power_sphere(tr, cj_copy_h, pg(v1), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
@@ -381,24 +730,25 @@ inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
 {
-  if(tr.number_of_vertices() == 0)
-    return false;
+  if constexpr (is_regular_triangulation_v<Tr>) {
+    if(tr.number_of_vertices() == 0)
+      return false;
 
-  typename GT::Compare_weighted_squared_radius_3 cwsr =
-    tr.geom_traits().compare_weighted_squared_radius_3_object();
+    typename GT::Compare_weighted_squared_radius_3 cwsr =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
 
-  Cell_handle hint = (v == Vertex_handle()) ? Cell_handle() : v->cell();
-  Vertex_handle nv = tr.nearest_power_vertex(p, hint);
-  const Point& nvwp = tr.point(nv);
-
-  if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
-  {
-    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    Cell_handle hint = (v == Vertex_handle()) ? Cell_handle() : v->cell();
+    Vertex_handle nv = tr.nearest_power_vertex(p, hint);
     const Point& nvwp = tr.point(nv);
-    // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
-    return (cwsr(nvwp , - tr.min_squared_distance(p, cp(nvwp))) != CGAL::LARGER);
-  }
 
+    if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
+    {
+      auto cp = construct_bare_point_object(tr);
+      const Point& nvwp = tr.point(nv);
+      // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
+      return (cwsr(nvwp , - this->min_squared_distance(tr, p, cp(nvwp))) != CGAL::LARGER);
+    }
+  } // end if constexpr (is_regular_triangulation_v<Tr>)
   return false;
 }
 
@@ -421,7 +771,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  auto cp = construct_bare_point_object(tr);
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -482,7 +832,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  auto cp = construct_bare_point_object(tr);
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -530,7 +880,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits GT;
   typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr);
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -576,7 +926,7 @@ well_oriented(const Tr& tr,
 {
   typedef typename Tr::Geom_traits GT;
   typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr);
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -601,8 +951,6 @@ well_oriented(const Tr& tr,
   }
   return true;
 }
-
-
 
 } // end namespace Mesh_3
 

@@ -28,7 +28,6 @@
 // Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 #include <CGAL/basic.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>

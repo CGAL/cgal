@@ -63,7 +63,7 @@ public:
   // is set to true rely on a permanent and safe access to the points.
   static_assert(
    (std::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
-   (std::is_same<typename Dt::Periodic_tag, Tag_false>::value));
+   (false == is_periodic_triangulation_v<Dt>));
 
   typedef typename internal::Alpha_nt_selector_2<
     Gt, ExactAlphaComparisonTag, typename Dt::Weighted_tag>::Type_of_alpha  Type_of_alpha;

@@ -282,8 +282,8 @@ private:
   // the Poisson equation Laplacian(f) = divergent(normals field).
   std::shared_ptr<Triangulation> m_tr;
   mutable std::shared_ptr<std::vector<Cached_bary_coord> > m_bary;
-  mutable std::vector<Point> Dual;
-  mutable std::vector<Vector> Normal;
+  mutable std::vector<Point> m_dual_points;
+  mutable std::vector<Vector> normals;
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
@@ -296,37 +296,7 @@ private:
   Cell_handle& get_hint() const { return m_hint; }
 #endif
 
-  FT average_spacing;
-
-  /// function to be used for the different constructors available that are
-  /// doing the same thing but with default template parameters
-  template <typename InputIterator,
-            typename PointPMap,
-            typename NormalPMap,
-            typename Visitor
-  >
-  void forward_constructor(
-    InputIterator first,
-    InputIterator beyond,
-    PointPMap point_pmap,
-    NormalPMap normal_pmap,
-    Visitor visitor)
-  {
-    CGAL::Timer task_timer; task_timer.start();
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
-
-    // Inserts points in triangulation
-    m_tr->insert(
-      first,beyond,
-      point_pmap,
-      normal_pmap,
-      visitor);
-
-    // Prints status
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
-                                                           << std::endl;
-  }
-
+  FT m_average_spacing;
 
 // Public methods
 public:
@@ -357,13 +327,7 @@ public:
     PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point` (the position of an input point).
     NormalPMap normal_pmap ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
   )
-    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
-    , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>
-                      (CGAL::make_range(first, beyond), 6,
-                       CGAL::parameters::point_map(point_pmap)))
-  {
-    forward_constructor(first, beyond, point_pmap, normal_pmap, Poisson_visitor());
-  }
+      : Poisson_reconstruction_function(first, beyond, point_pmap, normal_pmap, Poisson_visitor()) {}
 
   /// \cond SKIP_IN_MANUAL
   template <typename InputIterator,
@@ -378,10 +342,22 @@ public:
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     Visitor visitor)
     : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
-    , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6,
-                                                                          CGAL::parameters::point_map(point_pmap)))
+    , m_average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6,
+                                                                            CGAL::parameters::point_map(point_pmap)))
   {
-    forward_constructor(first, beyond, point_pmap, normal_pmap, visitor);
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
+    m_tr->insert(
+      first,beyond,
+      point_pmap,
+      normal_pmap,
+      visitor);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << std::endl;
   }
 
   // This variant creates a default point property map = Identity_property_map and Visitor=Poisson_visitor
@@ -396,15 +372,10 @@ public:
       std::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>::value
     >* = 0
   )
-    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
-  , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
-  {
-    forward_constructor(first, beyond,
-      make_identity_property_map(
-      typename std::iterator_traits<InputIterator>::value_type()),
-      normal_pmap, Poisson_visitor());
-    CGAL::Timer task_timer; task_timer.start();
-  }
+      : Poisson_reconstruction_function(first, beyond,
+                                        make_identity_property_map(
+                                        typename std::iterator_traits<InputIterator>::value_type()),
+                                        normal_pmap, Poisson_visitor()) {}
   /// \endcond
 
   /// @}
@@ -499,9 +470,9 @@ public:
       coarse_poisson_function.compute_implicit_function(solver, Poisson_visitor(),
                                                         0.);
       internal::Poisson::Constant_sizing_field<Triangulation>
-        min_sizing_field(CGAL::square(average_spacing));
+        min_sizing_field(CGAL::square(m_average_spacing));
       internal::Poisson::Constant_sizing_field<Triangulation>
-        sizing_field_ok(CGAL::square(average_spacing*average_spacing_ratio));
+        sizing_field_ok(CGAL::square(m_average_spacing*average_spacing_ratio));
 
       Special_wrapper_of_two_functions_keep_pointers<
         internal::Poisson::Constant_sizing_field<Triangulation>,
@@ -661,14 +632,14 @@ public:
 
   void initialize_cell_normals() const
   {
-    Normal.resize(m_tr->number_of_cells());
+    normals.resize(m_tr->number_of_cells());
     int i = 0;
     int N = 0;
     for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
         fcit != m_tr->finite_cells_end();
         ++fcit){
-      Normal[i] = cell_normal(fcit);
-      if(Normal[i] == NULL_VECTOR){
+      normals[i] = cell_normal(fcit);
+      if(normals[i] == NULL_VECTOR){
         N++;
       }
       ++i;
@@ -678,23 +649,23 @@ public:
 
   void initialize_duals() const
   {
-    Dual.resize(m_tr->number_of_cells());
+    m_dual_points.resize(m_tr->number_of_cells());
     int i = 0;
     for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
         fcit != m_tr->finite_cells_end();
         ++fcit){
-      Dual[i++] = m_tr->dual(fcit);
+      m_dual_points[i++] = m_tr->dual(fcit);
     }
   }
 
   void clear_duals() const
   {
-    Dual.clear();
+    m_dual_points.clear();
   }
 
   void clear_normals() const
   {
-    Normal.clear();
+    normals.clear();
   }
 
   void initialize_matrix_entry(Cell_handle ch) const
@@ -1083,7 +1054,7 @@ private:
 
   Vector get_cell_normal(Cell_handle cell)
   {
-    return Normal[cell->info()];
+    return normals[cell->info()];
   }
 
   Vector cell_normal(Cell_handle cell) const
@@ -1130,7 +1101,7 @@ private:
     {
       Cell_handle cell = circ;
       if(!m_tr->is_infinite(cell))
-        voronoi_points.push_back(Dual[cell->info()]);
+        voronoi_points.push_back(m_dual_points[cell->info()]);
       else // one infinite tet, switch to another calculation
         return area_voronoi_face_boundary(edge);
       circ++;
@@ -1176,7 +1147,7 @@ private:
       if(!m_tr->is_infinite(cell))
       {
         // circumcenter of cell
-        Point c = Dual[cell->info()];
+        Point c = m_dual_points[cell->info()];
         Tetrahedron tet = m_tr->tetrahedron(cell);
 
         int i = cell->index(vi);

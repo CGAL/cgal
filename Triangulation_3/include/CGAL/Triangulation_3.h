@@ -1325,8 +1325,8 @@ protected:
   find_conflicts(Cell_handle d,
                  const Conflict_test& tester,
                  Triple<OutputIteratorBoundaryFacets,
-                 OutputIteratorCells,
-                 OutputIteratorInternalFacets> it,
+                        OutputIteratorCells,
+                        OutputIteratorInternalFacets> it,
                  bool *could_lock_zone = nullptr,
                  const Facet *this_facet_must_be_in_the_cz = nullptr,
                  bool *the_facet_is_in_its_cz = nullptr) const
@@ -1455,18 +1455,9 @@ protected:
     Facet facet;
 
     // Find the cells in conflict
-    switch(dimension())
-    {
-      case 3:
-        find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                              std::back_inserter(cells),
-                                              Emptyset_iterator()));
-        break;
-      case 2:
-        find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                              std::back_inserter(cells),
-                                              Emptyset_iterator()));
-    }
+    find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+                                          std::back_inserter(cells),
+                                          Emptyset_iterator()));
     // Create the new cells and delete the old.
     return _tds._insert_in_hole(cells.begin(), cells.end(),
                                 facet.first, facet.second);
@@ -1934,6 +1925,9 @@ public:
              f.first->vertex(vertex_triple_index(f.second, 0)),
              f.first->vertex(vertex_triple_index(f.second, 1)),
              f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  static auto vertices(const Cell_handle c, int i) {
+    return vertices(Facet{c, i});
   }
   static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
   {

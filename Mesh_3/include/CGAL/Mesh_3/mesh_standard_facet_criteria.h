@@ -26,6 +26,8 @@
 
 #include <CGAL/number_utils.h> // for to_double
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/type_traits.h>
 #include <cmath>
 
 
@@ -73,12 +75,12 @@ public:
   }
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
@@ -97,14 +99,12 @@ protected:
     }
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  Is_bad do_is_bad(const Tr& tr, const Facet& f) const override
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits      GT;
-    typedef typename Tr::Bare_point       Bare_point;
-    typedef typename Tr::Weighted_point   Weighted_point;
 
     typedef typename GT::Compute_squared_area_3     Area;
     typedef typename GT::Compute_squared_distance_3 Distance;
@@ -116,12 +116,9 @@ protected:
     Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     Construct_triangle_3 triangle = tr.geom_traits().construct_triangle_3_object();
 
-    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
-    const Weighted_point& wp2 = tr.point(f.first, (f.second+2)&3);
-    const Weighted_point& wp3 = tr.point(f.first, (f.second+3)&3);
-    const Bare_point& p1 = cp(wp1);
-    const Bare_point& p2 = cp(wp2);
-    const Bare_point& p3 = cp(wp3);
+    const auto& p1 = cp(tr.point(f.first, (f.second+1)&3));
+    const auto& p2 = cp(tr.point(f.first, (f.second+2)&3));
+    const auto& p3 = cp(tr.point(f.first, (f.second+3)&3));
 
     const FT triangle_area = area(triangle(p1,p2,p3));
     const FT d12 = distance(p1,p2);
@@ -154,7 +151,8 @@ private:
 // Curvature_adapted size Criterion class
 template <typename Tr, typename Visitor_>
 class Curvature_size_criterion :
-  public Mesh_3::Abstract_criterion<Tr, Visitor_>
+  public Mesh_3::Abstract_criterion<Tr, Visitor_>,
+  public Mesh_3::Triangulation_helpers<Tr>
 {};
 
 template <typename Tr, typename Visitor_>
@@ -177,37 +175,32 @@ public:
   Uniform_curvature_size_criterion(const FT b = 0) : B_(b * b) {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  Is_bad do_is_bad(const Tr& tr, const Facet& f) const override
   {
     CGAL_assertion(f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits    GT;
-    typedef typename Tr::Weighted_point Weighted_point;
-    typedef typename Tr::Bare_point Bare_point;
+    auto weighted_circumcenter = this->construct_circumcenter_object(tr);
 
-    typename GT::Construct_weighted_circumcenter_3 weighted_circumcenter =
-        tr.geom_traits().construct_weighted_circumcenter_3_object();
+    const auto& p1 = tr.point(f.first, (f.second+1)&3);
+    const auto& p2 = tr.point(f.first, (f.second+2)&3);
+    const auto& p3 = tr.point(f.first, (f.second+3)&3);
 
-    const Weighted_point& p1 = tr.point(f.first, (f.second+1)&3);
-    const Weighted_point& p2 = tr.point(f.first, (f.second+2)&3);
-    const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
+    const auto c = weighted_circumcenter(p1,p2,p3);
+    const auto& center = f.first->get_facet_surface_center(f.second);
 
-    const Bare_point c = weighted_circumcenter(p1,p2,p3);
-    const Bare_point& center = f.first->get_facet_surface_center(f.second);
-
-    const FT sq_dist = tr.min_squared_distance(c, center);
+    const FT sq_dist = this->min_squared_distance(tr, c, center);
 
     if ( sq_dist > B_ )
     {
@@ -249,24 +242,24 @@ public:
   Variable_curvature_size_criterion(const Sizing_field& s) : size_(s) {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  Is_bad do_is_bad(const Tr& tr, const Facet& f) const override
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
 
     typedef typename Tr::Geom_traits    GT;
-    typedef typename Tr::Weighted_point Weighted_point;
-    typedef typename Tr::Bare_point Bare_point;
+    typedef typename Tr::Point          Weighted_point;
+    typedef Bare_point_type_t<Tr>       Bare_point;
 
     typename GT::Construct_weighted_circumcenter_3 weighted_circumcenter =
       tr.geom_traits().construct_weighted_circumcenter_3_object();
@@ -279,7 +272,7 @@ protected:
     const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
     const Index& index = f.first->get_facet_surface_center_index(f.second);
 
-    const FT sq_dist = tr.min_squared_distance(c, ball_center);
+    const FT sq_dist = this->min_squared_distance(tr, c, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
 
     CGAL_assertion(sq_bound > FT(0));
@@ -331,33 +324,29 @@ public:
   Variable_size_criterion(const Sizing_field& s) : size_(s) {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  Is_bad do_is_bad(const Tr& tr, const Facet& f) const override
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
 
-    typedef typename Tr::Geom_traits    GT;
-    typedef typename Tr::Bare_point     Bare_point;
-    typedef typename Tr::Weighted_point Weighted_point;
+    auto cp = tr.geom_traits().construct_point_3_object();
 
-    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    const auto wp1 = tr.point(f.first, (f.second+1)&3);
+    const auto& p1 = cp(wp1);
+    const auto& ball_center = f.first->get_facet_surface_center(f.second);
+    const auto& index = f.first->get_facet_surface_center_index(f.second);
 
-    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
-    const Bare_point& p1 = cp(wp1);
-    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
-    const Index& index = f.first->get_facet_surface_center_index(f.second);
-
-    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
+    const FT sq_radius = this->min_squared_distance(tr, p1, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
     CGAL_assertion(sq_bound > FT(0));
 
@@ -383,7 +372,8 @@ private:
 // Uniform size Criterion class
 template <typename Tr, typename Visitor_>
 class Uniform_size_criterion :
-  public Facet_size_criterion<Tr, Visitor_>
+  public Facet_size_criterion<Tr, Visitor_>,
+  public Mesh_3::Triangulation_helpers<Tr>
 {
 private:
   typedef typename Tr::Facet Facet;
@@ -410,33 +400,28 @@ public:
   }
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
+  Is_bad do_is_bad(const Tr& tr, const Facet& f) const override
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits        GT;
-    typedef typename Tr::Bare_point         Bare_point;
-    typedef typename Tr::Weighted_point     Weighted_point;
+    auto cp = tr.geom_traits().construct_point_3_object();
 
-    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    const auto& p1 = cp(tr.point(f.first, (f.second+1)&3));
+    const auto& ball_center = f.first->get_facet_surface_center(f.second);
 
-    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
-    const Bare_point p1 = cp(wp1);
-    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
-
-    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
+    const FT sq_radius = this->min_squared_distance(tr, p1, ball_center);
 
     if (!is_lower_bound() && sq_radius > B_ )
     {
@@ -486,18 +471,18 @@ public:
   ~Facet_on_surface_criterion() {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
+  Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const override
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
@@ -541,21 +526,21 @@ public:
   /// Constructor
   Facet_on_same_surface_criterion() {}
   /// Destructor
-  virtual ~Facet_on_same_surface_criterion() {}
+  ~Facet_on_same_surface_criterion() override {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
+  Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const override
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -631,11 +616,7 @@ public:
   typedef Handle Facet;
 
   // Constructor
-  Facet_criterion_visitor(const Facet& f)
-    : Base(f) {}
-
-  // Destructor
-  ~Facet_criterion_visitor() {}
+  using Base::Base;
 
   void visit(const Criterion& criterion)
   {
@@ -673,7 +654,7 @@ public:
     , size_ratio_(0.4*0.4*4.)
   {
     typedef typename Tr::Geom_traits    GT;
-    typedef typename Tr::Weighted_point Weighted_point;
+    typedef typename Tr::Point          Weighted_point;
     typedef typename Tr::Cell_handle    Cell_handle;
 
     typename GT::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
@@ -807,7 +788,7 @@ private:
   FT angle_ratio_;
   FT size_ratio_;
 
-};  // end class Facet_criterion_visitor
+};  // end class Facet_criterion_visitor_with_features
 
 
 template <typename Tr>

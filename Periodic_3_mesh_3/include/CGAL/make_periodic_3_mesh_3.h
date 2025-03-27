@@ -178,14 +178,14 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
 {
   typedef C3t3_initializer_base<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true> Base;
 
-  virtual ~C3t3_initializer() { }
+  ~C3t3_initializer() override { }
 
   // this override will be used when initialize_features() is called, in make_mesh_3.h
-  virtual void
+  void
   initialize_features(C3T3& c3t3,
                       const MeshDomain& domain,
                       const MeshCriteria& criteria,
-                      const parameters::internal::Mesh_3_options& mesh_options)
+                      const parameters::internal::Mesh_3_options& mesh_options) override
   {
     return Periodic_3_mesh_3::internal::init_c3t3_with_features
       (c3t3, domain, criteria, mesh_options.nonlinear_growth_of_balls);

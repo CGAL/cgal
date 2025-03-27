@@ -63,6 +63,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <memory>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
 
@@ -442,8 +443,8 @@ class Sliver_perturber
   typedef typename Base::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex                   Vertex;
 
-  typedef typename Tr::Bare_point               Bare_point;
-  typedef typename Tr::Weighted_point           Weighted_point;
+  typedef Bare_point_type_t<Tr>                 Bare_point;
+  typedef typename Tr::Point                    Weighted_point;
 
   typedef typename std::vector<Cell_handle>     Cell_vector;
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
@@ -1251,7 +1252,7 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = helper_.construct_triangulation_point_object(tr_>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(

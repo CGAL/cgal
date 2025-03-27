@@ -49,6 +49,7 @@ template <
   >
 class Poisson_mesh_cell_criteria_3
 {
+  const Tr& tr_;
   Sizing_field sizing_field;
   Second_sizing_field second_sizing_field;
   double radius_edge_bound_;
@@ -91,20 +92,22 @@ public:
 
   typedef typename Tr::Cell_handle Cell_handle;
 
-  Poisson_mesh_cell_criteria_3(const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
-                  const double radius_bound = 0) //< cell radius bound (ignored if zero)
-    : sizing_field(radius_bound*radius_bound),
-      second_sizing_field(),
-      radius_edge_bound_(radius_edge_bound)
-  {}
+  Poisson_mesh_cell_criteria_3(const Tr& tr,
+                               const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
+                               const double radius_bound = 0)      //< cell radius bound (ignored if zero)
+      : tr_(tr)
+      , sizing_field(radius_bound * radius_bound)
+      , second_sizing_field()
+      , radius_edge_bound_(radius_edge_bound) {}
 
-  Poisson_mesh_cell_criteria_3(const double radius_edge_bound, //< radius edge ratio bound (ignored if zero)
+  Poisson_mesh_cell_criteria_3(const Tr& tr,
+                               const double radius_edge_bound, //< radius edge ratio bound (ignored if zero)
                                const Sizing_field& sizing_field,
                                const Second_sizing_field second_sizing_field = Second_sizing_field())
-    : sizing_field(sizing_field),
-      second_sizing_field(second_sizing_field),
-      radius_edge_bound_(radius_edge_bound)
-  {}
+      : tr_(tr)
+      , sizing_field(sizing_field)
+      , second_sizing_field(second_sizing_field)
+      , radius_edge_bound_(radius_edge_bound) {}
 
   // inline
   // void set_squared_radius_bound(const double squared_radius_bound)
@@ -189,6 +192,16 @@ public:
 
   }; // end Is_bad
 
+  std::optional<Cell_quality> operator()(const Cell_handle& c) const
+  {
+    if(tr_.is_infinite(c) ) {
+      return std::nullopt;
+    }
+    Cell_quality qual;
+    if( Is_bad(this)(c, qual) )
+      return qual;
+    return std::nullopt;
+  }
 
   Is_bad is_bad_object() const
   { return Is_bad(this); }

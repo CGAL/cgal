@@ -18,6 +18,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Profile_counter.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
@@ -297,8 +298,8 @@ public:
 
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Point          Weighted_point;
+  typedef Bare_point_type_t<Tr>       Bare_point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -332,9 +333,6 @@ public:
                 , std::atomic<bool>* stop_ptr
 #endif
                 );
-
-  // Destructor
-  virtual ~Refine_cells_3() { }
 
   // Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }

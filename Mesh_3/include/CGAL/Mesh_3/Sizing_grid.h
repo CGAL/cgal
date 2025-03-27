@@ -24,6 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <queue>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
 
@@ -111,8 +112,8 @@ public:
   typedef typename Tr::Geom_traits GT;
   typedef typename GT::FT FT;
 
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
+  typedef typename Tr::Point Weighted_point;
+  typedef Bare_point_type_t<Tr> Bare_point;
 
   typedef typename GT::Vector_3 Vector;
   typedef Sizing_grid_node<GT> Node;

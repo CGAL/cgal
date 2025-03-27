@@ -1,3 +1,4 @@
+#define DEBUG_TRACE
 // poisson_reconstruction.cpp
 
 //----------------------------------------------------------

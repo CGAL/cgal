@@ -24,10 +24,34 @@
 #include <CGAL/Mesh_3/mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_facet_topology.h>
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
+#include <CGAL/type_traits.h>
 
 #include <optional>
 
 namespace CGAL {
+
+namespace Mesh_3 {
+namespace details {
+
+  template<typename Tr> auto mesh_facet_criteria_3_default_visitor() {
+    using Point = typename Tr::Point;
+    using Bare_point = Bare_point_type_t<Tr>;
+    constexpr bool is_bare = std::is_same_v<Point, Bare_point>;
+    Tr tr;
+    typename Tr::Facet facet;
+    if constexpr (is_bare) {
+      return Mesh_3::Facet_criterion_visitor<Tr>(tr, facet);
+    }
+    else {
+      return Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr>(tr, facet);
+    }
+  }
+
+  template <typename Tr>
+  using Mesh_facet_criteria_3_default_visitor =
+      CGAL::cpp20::remove_cvref_t<decltype(mesh_facet_criteria_3_default_visitor<Tr>())>;
+} // namespace details
+} // namespace Mesh_3
 
 /*!
   \ingroup PkgMesh3MeshClasses
@@ -55,7 +79,7 @@ namespace CGAL {
 */
 template<typename Tr
 #ifndef DOXYGEN_RUNNING
-         ,typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr>
+         , typename Visitor_ = Mesh_3::details::Mesh_facet_criteria_3_default_visitor<Tr>
 #endif
          >
 class Mesh_facet_criteria_3

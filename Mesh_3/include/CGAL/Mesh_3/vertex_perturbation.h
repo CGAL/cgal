@@ -25,6 +25,7 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/type_traits.h>
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   #include <CGAL/Timer.h>
@@ -116,16 +117,15 @@ edge_sq_length(const typename Tr::Edge& e,
                const Tr& tr)
 {
   typedef typename Tr::Geom_traits     GT;
-  typedef typename Tr::Bare_point      Bare_point;
-  typedef typename Tr::Weighted_point  Weighted_point;
+  typedef Bare_point_type_t<Tr>        Bare_point;
+  typedef typename Tr::Point           Weighted_point;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
   // distances between vertices within a common cell, which means that even
   // if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
-  typename GT::Construct_point_3 cp =
-    tr.geom_traits().construct_point_3_object();
+  auto cp = Triangulation_helpers<Tr>::construct_bare_point_object(tr);
 
   const Weighted_point& wp = tr.point(e.first, e.second);
   const Weighted_point& wq = tr.point(e.first, e.third);
@@ -174,7 +174,7 @@ min_incident_edge_sq_length(const typename Tr::Vertex_handle& v,
  * Perturbation interface. It is used by Sliver_perturber class.
  */
 template <typename C3T3, typename MeshDomain, typename SliverCriterion>
-class Abstract_perturbation
+class Abstract_perturbation : public Triangulation_helpers<typename C3T3::Triangulation>
 {
 protected:
   typedef typename C3T3::Vertex_handle                    Vertex_handle;
@@ -397,8 +397,8 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
+  typedef typename Tr::Point                          Weighted_point;
 
 public:
   /**
@@ -450,10 +450,8 @@ protected:
 
     const Tr& tr = c3t3.triangulation();
 
-    typename GT::Construct_point_3 cp =
-      tr.geom_traits().construct_point_3_object();
-    typename GT::Construct_weighted_point_3 cwp =
-      tr.geom_traits().construct_weighted_point_3_object();
+    auto cp = this->construct_bare_point_object(tr);
+    auto cwp = this->construct_triangulation_point_object(tr);
     typename GT::Compute_squared_length_3 sq_length =
       tr.geom_traits().compute_squared_length_3_object();
     typename GT::Construct_translated_point_3 translate =
@@ -555,8 +553,8 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
+  typedef typename Tr::Point                          Weighted_point;
 
 public:
   /**
@@ -653,8 +651,7 @@ private:
   {
     const Triangulation& tr = c3t3.triangulation();
 
-    typename GT::Construct_point_3 cp =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
+    auto cp = this->construct_bare_point_object(tr);
     typename GT::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
 
@@ -731,8 +728,8 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
+  typedef typename Tr::Point                          Weighted_point;
 
 public:
   /**
@@ -882,8 +879,8 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
+  typedef typename Tr::Point                          Weighted_point;
 
 public:
   /**
@@ -1118,7 +1115,7 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
 
 public:
   /**
@@ -1246,8 +1243,8 @@ protected:
   typedef typename GT::FT                             FT;
   typedef typename GT::Vector_3                       Vector_3;
 
-  typedef typename Tr::Bare_point                     Bare_point;
-  typedef typename Tr::Weighted_point                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                       Bare_point;
+  typedef typename Tr::Point                          Weighted_point;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
   typedef boost::unordered_set<Vertex_handle, Hash_fct> Vertex_set;
@@ -1319,10 +1316,8 @@ private:
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 
-    typename GT::Construct_point_3 cp =
-      c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename GT::Construct_weighted_point_3 cwp =
-      c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+    auto cp = this->construct_bare_point_object(c3t3.triangulation());
+    auto cwp = this->construct_triangulation_point_object(c3t3.triangulation());
     typename GT::Construct_translated_point_3 translate =
       c3t3.triangulation().geom_traits().construct_translated_point_3_object();
     typename GT::Construct_vector_3 vector =

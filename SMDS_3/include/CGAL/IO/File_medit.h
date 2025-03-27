@@ -1134,7 +1134,7 @@ bool read_MEDIT(std::istream& in,
 
   // Default non_manifold value is true if the triangulation periodic, false otherwise
   const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
-                                             std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+                                             is_periodic_triangulation_v<T3>);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
   bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/, non_manifold);

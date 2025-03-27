@@ -153,7 +153,7 @@ struct Construct_initial_points_labeled_image
     typedef typename C3t3::Triangulation       Tr;
     typedef typename Tr::Geom_traits           GT;
     typedef typename GT::FT                    FT;
-    typedef typename Tr::Weighted_point        Weighted_point;
+    typedef typename Tr::Point                Weighted_point;
     typedef typename Tr::Segment               Segment_3;
     typedef typename Tr::Vertex_handle         Vertex_handle;
     typedef typename Tr::Cell_handle           Cell_handle;

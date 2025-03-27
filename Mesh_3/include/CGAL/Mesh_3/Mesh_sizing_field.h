@@ -22,6 +22,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
 #endif
@@ -86,11 +88,12 @@ template <typename Tr, bool Need_vertex_update = true>
 class Mesh_sizing_field
   : public Mesh_sizing_field_base<typename Tr::Cell_handle,
                                   typename Tr::Concurrency_tag>
+  , public CGAL::Mesh_3::Triangulation_helpers<Tr>
 {
   // Types
   typedef typename Tr::Geom_traits              GT;
-  typedef typename Tr::Bare_point               Bare_point;
-  typedef typename Tr::Weighted_point           Weighted_point;
+  typedef Bare_point_type_t<Tr>                 Bare_point;
+  typedef typename Tr::Point                    Weighted_point;
   typedef typename GT::FT                       FT;
 
   typedef typename Tr::Vertex_handle            Vertex_handle;
@@ -169,7 +172,7 @@ fill(const std::map<Bare_point, FT>& value_map)
 {
   typedef typename Tr::Finite_vertices_iterator  Fvi;
 
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
 
   for ( Fvi vit = tr_.finite_vertices_begin(); vit != tr_.finite_vertices_end(); ++ vit )
   {
@@ -196,7 +199,7 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Bare_point& p, const Cell_handle& c) const
 {
-  typename GT::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
+  auto cwp = this->construct_triangulation_point_object(tr_);
 
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   //use the inexact locate (much faster than locate) to get a hint
@@ -239,7 +242,7 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
 {
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
   typename GT::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
 
   // Interpolate value using tet vertices values
@@ -277,7 +280,7 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
 {
   typename GT::Compute_area_3 area =  tr_.geom_traits().compute_area_3_object();
 
-  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  auto cp = this->construct_bare_point_object(tr_);
   // Find infinite vertex and put it in k0
   int k0 = 0;
   int k1 = 1;

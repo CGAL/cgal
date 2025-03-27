@@ -18,10 +18,12 @@
 #define CGAL_MESH_3_LLOYD_MOVE_H
 
 #include <CGAL/license/Mesh_3.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/Time_stamper.h>
 #include <CGAL/convex_hull_2.h>
@@ -41,7 +43,7 @@ namespace Mesh_3 {
 
 template <typename C3T3,
           typename SizingField = Uniform_sizing_field<typename C3T3::Triangulation> >
-class Lloyd_move
+class Lloyd_move : public Triangulation_helpers<typename C3T3::Triangulation>
 {
   typedef typename C3T3::Triangulation                        Tr;
   typedef typename Tr::Geom_traits                            GT;
@@ -51,8 +53,8 @@ class Lloyd_move
   typedef typename Tr::Facet                                  Facet;
   typedef typename Tr::Cell_handle                            Cell_handle;
 
-  typedef typename Tr::Bare_point                             Bare_point;
-  typedef typename Tr::Weighted_point                         Weighted_point;
+  typedef Bare_point_type_t<Tr>                               Bare_point;
+  typedef typename Tr::Point                                  Weighted_point;
 
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;
@@ -290,8 +292,8 @@ private:
       // calling a function 'get_closest_point(p, q)' that simply returns q
       // for a non-periodic triangulation, and checks all possible offsets for
       // periodic triangulations
-      points.push_back(tr.get_closest_point(cp(position),
-                                            cell->get_facet_surface_center(i)));
+      points.push_back(this->get_closest_point(tr, cp(position),
+                                               cell->get_facet_surface_center(i)));
     }
 
     return points;
