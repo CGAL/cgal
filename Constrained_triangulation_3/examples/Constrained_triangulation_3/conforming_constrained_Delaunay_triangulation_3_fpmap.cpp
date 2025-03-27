@@ -5,7 +5,7 @@
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/IO/File_MEDIT.h>
+#include <CGAL/IO/File_medit.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -16,7 +16,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pinion.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh)) {
