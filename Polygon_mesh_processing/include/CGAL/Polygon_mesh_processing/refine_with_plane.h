@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Self_intersection_exception.h>
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #endif
@@ -353,7 +354,7 @@ void refine_with_plane(PolygonMesh& pm,
     auto last = std::unique(test_faces.begin(), test_faces.end());
     test_faces.erase(last, test_faces.end());
     if (does_self_intersect<Concurrency_tag>(test_faces, pm, np))
-      throw std::runtime_error("TODO Corefinement::Self_intersection_exception");
+      throw Corefinement::Self_intersection_exception();
   }
 
   //TODO: parallel for
