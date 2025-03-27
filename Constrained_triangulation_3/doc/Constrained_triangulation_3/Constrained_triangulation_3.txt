@@ -14,9 +14,9 @@ This package implements the construction of a 3D conforming Delaunay triangulati
 constrained to a set of faces of a surface polygon mesh.
 
 For any Piecewise Linear Complex (PLC) in 3D,
-the algorithm builds a Delaunay triangulation conforming to this PLC.
+the algorithm builds a Constrained Delaunay triangulation conforming to this PLC.
 The constrained triangulation does not always exist, and it may be necessary
-to add Steiner points to the PLC to make it triangulable.
+to add Steiner points to the PLC to make it tetrahedralizable.
 
 The problem is described by Cohen-Steiner et al \cgalCite{cgal:cohen2002conforming},
 and by Si \cgalCite{cgal:si2008cdt3}.
@@ -28,51 +28,51 @@ In this section, we define the main concepts that have to be understood to use t
 
 \subsection CT_3_PLC Piecewise Linear Complex
 
-A `Piecewise Linear Complex` is the 3-dimensional generalization of a polyhedron.
+A _Piecewise Linear Complex_ is the 3-dimensional generalization of a planar straight-line graph.
 
-A PLC is built from simple geometric elements, called `simplices`
+A PLC is built from simple geometric elements, called _faces_
 that are topologically connected together in a structured way.
-`Simplices` (vertices, edges, and facets) are the basic elements forming the complex.
-Their geometric counterparts are points, segments, polygons, respectively.
+`Faces (vertices, edges, and facets) are the basic elements forming the complex.
+Their geometric counterparts are points, segments, and polygons, respectively.
 The polygons can be non-convex, have holes, and as many boundary segments as needed.
-Each simplex is embedded into the geometric space via the points coordinates.
+Each face is embedded into the geometric space via the points coordinates.
 
-The simplices must satisfy the following conditions :
-- they must be connected together by their common faces;
-- each simplex is polygonal, with at least three vertices, that must be closed and coplanar;
+The faces must satisfy the following conditions. They must be connected together by
+their common faces of lower dimension:
 - two edges can only intersect at a common vertex which is also in the PLC;
-- two facets can only intersect at a common edge or vertex which is also in the PLC;
-- two cells can only intersect at a common facet, edge or vertex which is also in the PLC.
+- two facets can only intersect at a common edge or vertex which is also in the PLC.
+
+\todo add an image of a PLC
 
 \subsection CT_3_CDT Conforming Delaunay Triangulation
 
-The goal of the algorithms developed in this package is to compute a Delaunay
+The goal of the algorithms developed in this package is to compute a constrained Delaunay
 mesh containing a given set of polygonal constraints in 3D as sub-complex.
 See package \ref PkgTriangulation3 for more details on Delaunay triangulations.
 
-A triangulation is a `Delaunay triangulation` if the circumscribing sphere of any cell
+A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any cell
 of the triangulation contains no vertex in its interior.
-A `constrained Delaunay triangulation` is a constrained triangulation which is as much
-Delaunay as possible, given that some facets are marked as `constrained`.
+A _constrained Delaunay triangulation_ is a constrained triangulation which is as much
+Delaunay as possible, given that some facets are marked as _constrained_.
 The circumscribing sphere of any cell contains in its interior no data point
-which is on the same side of the constrained facet as the cell.
+which is on the same side of the constrained facet as the cell. \todo pour Laurent
 
 In 3D, constrained triangulations do not always exist. It can be shown using the
 example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
 \cgalCite{b-ip-48a}, that requires the addition of
-Steiner points to be triangulable.
+Steiner points to be tetrahedralizable. \todo add a picture of the Sch&ouml;nhardt polyhedra
 
 Shewchuk \cgalCite{cgal:shewchuk1998condition} showed that for any PLC,
 there exists another PLC that is a refined version of the original one,
 that admits a constrained Delaunay triangulation.
 The refined PLC is obtained by adding Steiner points on the input edges and facets,
 and the constrained triangulation built on this PLC is called
-a `conforming Delaunay triangulation`.
+a _conforming Delaunay triangulation_.
 
 The algorithm implemented in this package is based on the work of
 Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
 Steiner points are added on input edges and input facets
-of the PLC to make it triangulable.
+of the PLC to make it tetrahedralizable.
 
 
 \section CT_3_api API
