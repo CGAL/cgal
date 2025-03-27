@@ -2141,7 +2141,7 @@ public:
 
         for (face_descriptor f : patches_of_tm1[i].faces)
         {
-          user_visitor.input_coplanar_face(f, tm1);
+          user_visitor.coplanar_face_in_output(f, tm1);
         }
       }
     }
@@ -2154,7 +2154,7 @@ public:
 
         for (face_descriptor f : patches_of_tm2[i].faces)
         {
-          user_visitor.input_coplanar_face(f, tm2);
+          user_visitor.coplanar_face_in_output(f, tm2);
         }
       }
     }
