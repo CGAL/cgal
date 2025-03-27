@@ -45,7 +45,7 @@
 
 #include <CGAL/Polygon_mesh_processing/refine_with_plane.h>
 
-namespace CGAL{
+namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
@@ -523,7 +523,7 @@ generic_clip_impl(
   *
   * \brief clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink by `clipper`.
   *
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
@@ -635,15 +635,10 @@ clip(TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief clips `pm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
+  * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
   *
-  * If `pm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `pm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume`to `true`.
   * See Subsection \ref coref_clip for more details.
-  *
-  * \note `Plane_3` must be from the same kernel as the point of the internal vertex point map of `PolygonMesh`.
-  * \note `Plane_3` must be from the same kernel as the point of the vertex point map of `pm`.
-  *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(pm)` \endlink
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
@@ -681,7 +676,7 @@ clip(TriangleMesh& tm,
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.
-  *                           This option is only taken into account if `pm` is not a triangle mesh.}
+  *                           This option is only taken into account if `pm` is a triangle mesh.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
@@ -719,11 +714,13 @@ clip(TriangleMesh& tm,
   *
   * \cgalNamedParamsEnd
   *
+  * @return `true` 
+  *
   * @see `split()`
   */
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
-void clip(PolygonMesh& pm,
+bool clip(PolygonMesh& pm,
 #ifdef DOXYGEN_RUNNING
           const Plane_3& plane,
 #else
@@ -824,6 +821,8 @@ void clip(PolygonMesh& pm,
 #endif
     }
   }
+
+  return true;
 }
 
 /**
@@ -831,7 +830,7 @@ void clip(PolygonMesh& pm,
   *
   * \brief clips `tm` by keeping the part that is inside `iso_cuboid`.
   *
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
   * \note `Iso_cuboid_3` must be from the same kernel as the point of the internal vertex point map of `TriangleMesh`.
@@ -1032,11 +1031,6 @@ void split(TriangleMesh& tm,
   * The polygon mesh is refined with the intersection edges, and those edges are duplicated as to create a boundary,
   * and thus separate connected components on either side of the plane.
   *
-  * \note `Plane_3` must be from the same kernel as the point of the internal vertex point map of `PolygonMesh`.
-  * \note `Plane_3` must be from the same kernel as the point of the vertex point map of `tm`.
-  *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
-  *
   * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1064,17 +1058,10 @@ void split(TriangleMesh& tm,
   *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `pm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
+  *                           will be thrown if at least one self-intersection is found.
+  *                           This option is only taken into account if `pm` is a triangle mesh.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
-  *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `pm`.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
-  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`.}
   *   \cgalParamNEnd
   *
   *    \cgalParamNBegin{do_not_triangulate_faces}
@@ -1114,8 +1101,6 @@ void split(PolygonMesh& pm,
   // config flags
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np, internal_np::throw_on_self_intersection), false);
-  const bool allow_self_intersections =
-    choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
   auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
@@ -1136,8 +1121,7 @@ void split(PolygonMesh& pm,
                                           .vertex_point_map(vpm)
                                           .geom_traits(traits)
                                           .do_not_triangulate_faces(!triangulate)
-                                          .throw_on_self_intersection(!allow_self_intersections &&
-                                                                      throw_on_self_intersection)
+                                          .throw_on_self_intersection(throw_on_self_intersection)
                                           .concurrency_tag(Concurrency_tag()));
 
   //split mesh along marked edges

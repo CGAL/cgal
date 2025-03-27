@@ -102,7 +102,7 @@ struct Orthogonal_cut_plane_traits
 /*!
  *  \ingroup PMP_corefinement_grp
  *
- *  refines `pm` by inserting the intersection points and edge of `plane` with faces and edges of `pm`.
+ *  refines `pm` by inserting new vertices and new edges at the intersection of `plane` with `pm`.
  *
  *  \tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  *  \tparam Plane_3 plane type, equal to `GeomTraits::Plane_3`, `GeomTraits` being the type of the parameter `geom_traits`.
@@ -119,15 +119,15 @@ struct Orthogonal_cut_plane_traits
  *                           If an edge marked as constrained is split, the two resulting edges will be marked as constrained.}
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
- *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edge_is_marked_map}
- *     \cgalParamDescription{a property map filled by this function that puts `true` for all intersection edge of faces
+ *     \cgalParamDescription{a property map filled by this function that puts `true` for all intersection edges of faces
  *                           of `pm` and `plane`, and `false` for all other edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
- *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_oriented_side_map}
@@ -136,13 +136,13 @@ struct Orthogonal_cut_plane_traits
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
  *                    as key type and `Oriented_side` as value type}
  *     \cgalParamDefault{Dynamic vertex property map}
- *     \cgalParamExtra{If the concurrenty tag is set to `Parallel_tag`, the property map might be filled by several thread at the same time.}
  *   \cgalParamNEnd
  *
  *    \cgalParamNBegin{do_not_triangulate_faces}
  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.}
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`true`}
+ *      \cgalParamExtra{The function `triangulate_faces()` can be used to triangule faces before calling this function.}
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{vertex_point_map}
@@ -178,6 +178,10 @@ void refine_with_plane(PolygonMesh& pm,
   *      \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
   *      \cgalParamDefault{`CGAL::Sequential_tag`}
   *    \cgalParamNEnd
+  *
+  * + for vertex_oriented_side_map
+  * --->   \cgalParamExtra{If parallelism is used, concurrent accesses to the property map must be safe.}
+
   */
   // TODO: if you want to clip with many planes (**Kernel**),
   //       it might be interesting to first classify all vertices with all planes
