@@ -415,16 +415,6 @@ compare_slope(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
-compare_squared_distance(const Point_3<K> &p,
-                         const Point_3<K> &q,
-                         const typename K::FT &d2)
-{
-  return internal::compare_squared_distance(p, q, d2, K());
-}
-
-template < class K >
-inline
-typename K::Comparison_result
 compare_squared_radius(const Point_3<K> &p,
                        const typename K::FT &sr)
 {
