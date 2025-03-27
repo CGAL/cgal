@@ -25,10 +25,9 @@ namespace Polygon_mesh {
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
+    \brief Sorting of polygon mesh faces with respect to their area.
 
-    `Items` of faces in a polygon mesh are sorted with respect to the quality of the
-    least squares plane fit applied to the vertices of incident faces of each face.
+    `Items` of faces in a polygon mesh are sorted in descending order of area.
 
     \tparam GeomTraits
     a model of `Kernel`

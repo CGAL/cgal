@@ -96,7 +96,9 @@ to simplify the definition and creation of the different classes. The naming con
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh>`
 - `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, VertexPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, VertexToPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region<GeomTraits, PolygonMesh, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, VertexToPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting<GeomTraits, PolygonMesh, VertexToPointMap>`
 
 
 \defgroup PkgShapeDetectionRGConcepts Concepts

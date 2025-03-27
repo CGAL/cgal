@@ -261,7 +261,7 @@ their own propagation and seeding conditions (see \ref Shape_detection_RegionGro
 
 \subsubsection Shape_detection_RegionGrowingFramework_examples Examples
 
-This toy example shows how to define a custom models of`NeighborQuery` and
+This toy example shows how to define a custom models of `NeighborQuery` and
 `RegionType` concept, which are used to parameterize the
 `CGAL::Shape_detection::Region_growing`.
 
@@ -483,6 +483,7 @@ In particular, it provides
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query` class that retrieves all edge-adjacent faces of a face, and
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
 all mesh faces, which have been added to the region so far, and controls the quality of this fit.
+- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` is another `RegionType` that uses the 3D plane of the seed face and does not refit the plane to the region.
 
 This component accepts any model of the concept `FaceListGraph` as a polygon mesh. Figure \cgalFigureRef{Region_growing_on_surface_mesh}
 gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm
@@ -495,10 +496,11 @@ A surface mesh depicted with one color per detected plane.
 The quality of region growing on a polygon mesh can be improved by slightly increasing the running time. To achieve
 this, one can sort the input faces with respect to some quality criteria. These quality criteria
 can be included in region growing through the seed range (see \ref Shape_detection_RegionGrowingFramework for more details).
-We provide such a quality sorting:
+We provide two sortings:
 
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - the input faces are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each face.
+- `CGAL::Shape_detection::Polygon_mesh::Face_area_sorting` - the input faces are sorted with respect to the area. The largest face are chosen as the first seed.
 
 
 \subsubsection Shape_detection_RegionGrowingMesh_parameters Parameters
@@ -528,7 +530,7 @@ and only then detect regions.
 \subsubsection Shape_detection_RegionGrowingMesh_performance Performance
 
 Since accessing neighbors of a face in a polygon mesh is fast, performance of the region growing on a polygon mesh
-mostly depends on the `RegionType` model's implementation, which is usually fast, too.
+mostly depends on the `RegionType` model's implementation, which is usually fast, too. `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` is faster than `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` as it does not perform a refitting of the plane to the region, whereas the latter may provide a tighter fit of the plane to the region and thus a lower number of larger regions.
 
 
 \subsection Shape_detection_RegionGrowingSegments Segment Set
