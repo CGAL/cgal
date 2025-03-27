@@ -20,7 +20,6 @@ using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
 using halfedge_descriptor = boost::graph_traits<Mesh>::halfedge_descriptor;
 
-namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = CGAL::parameters;
 
 
