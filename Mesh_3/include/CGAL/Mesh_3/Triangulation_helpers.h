@@ -743,7 +743,7 @@ inside_protecting_balls(const Tr& tr,
 
     if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
     {
-      auto cp = construct_bare_point_object(tr);
+      auto cp = this->construct_bare_point_object(tr);
       const Point& nvwp = tr.point(nv);
       // 'true' if the distance between 'p' and 'nv' is smaller or equal than the weight of 'nv'
       return (cwsr(nvwp , - this->min_squared_distance(tr, p, cp(nvwp))) != CGAL::LARGER);
@@ -771,7 +771,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  auto cp = construct_bare_point_object(tr);
+  auto cp = this->construct_bare_point_object(tr);
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -832,7 +832,7 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  auto cp = construct_bare_point_object(tr);
+  auto cp = this->construct_bare_point_object(tr);
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();

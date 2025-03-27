@@ -551,8 +551,8 @@ public:
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Tr& tr = derived().triangulation_ref_impl();
-    auto cp = this->construct_triangulation_point_object(tr);
-    Point p = cp(this->refinement_point(e));
+    auto cwp = this->construct_triangulation_point_object(tr);
+    Point p = cwp(this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -941,8 +941,8 @@ public:
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Tr& tr = derived().triangulation_ref_impl();
-    auto cp = this->construct_triangulation_point_object(tr);
-    const Point& p = cp(this->refinement_point(e));
+    auto cwp = helper_.construct_triangulation_point_object(tr);
+    Point p = cwp(this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<

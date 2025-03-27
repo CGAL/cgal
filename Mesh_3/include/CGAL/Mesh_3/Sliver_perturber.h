@@ -1252,7 +1252,7 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
-  auto cp = helper_.construct_triangulation_point_object(tr_>
+  auto cp = helper_.construct_bare_point_object(tr_>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(

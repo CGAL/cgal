@@ -837,7 +837,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    auto cp = helper_.construct_triangulation_point_object(tr_);
+    auto cp = helper_.construct_bare_point_object(tr_);
     typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
 
     // Get move for each moving vertex
@@ -889,7 +889,7 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {
-  auto cp = helper_.construct_triangulation_point_object(tr_);
+  auto cp = helper_.construct_bare_point_object(tr_);
   typename GT::Compute_squared_length_3 sq_length = tr_.geom_traits().compute_squared_length_3_object();
   typename GT::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
   typename GT::Construct_vector_3 vector = tr_.geom_traits().construct_vector_3_object();
@@ -1071,7 +1071,7 @@ fill_sizing_field()
   else
 #endif //CGAL_LINKED_WITH_TBB
   {
-    auto cp = helper_.construct_triangulation_point_object(tr_);
+    auto cp = helper_.construct_bare_point_object(tr_);
 
     // Fill map with local size
     for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
@@ -1205,7 +1205,7 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 {
-  auto cp = helper_.construct_triangulation_point_object(tr_);
+  auto cp = helper_.construct_bare_point_object(tr_);
   typename GT::Compute_squared_distance_3 sq_distance = tr_.geom_traits().compute_squared_distance_3_object();
 
   const Bare_point circumcenter = tr_.dual(cell);
