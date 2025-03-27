@@ -23,3 +23,4 @@ qt6_wrap_ui(UIS drawing_window_description.ui)
 
 add_executable( Triangulation_on_hyperbolic_surface_2_demo Triangulation_on_hyperbolic_surface_2_demo.cpp window.cpp ${UIS})
 target_link_libraries(Triangulation_on_hyperbolic_surface_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets )
+cgal_add_compilation_test(Triangulation_on_hyperbolic_surface_2_demo)
