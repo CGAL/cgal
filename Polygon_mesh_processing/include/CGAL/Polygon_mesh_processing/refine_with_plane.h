@@ -11,8 +11,8 @@
 // Author(s)     : Sébastien Loriot
 
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_CUT_WITH_PLANE_H
-#define CGAL_POLYGON_MESH_PROCESSING_CUT_WITH_PLANE_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_WITH_PLANE_H
+#define CGAL_POLYGON_MESH_PROCESSING_REFINE_WITH_PLANE_H
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
@@ -167,9 +167,9 @@ struct Orthogonal_cut_plane_traits
  *
  */
 template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
-void cut_with_plane(PolygonMesh& pm,
-                    const Plane_3& plane,
-                    const NamedParameters& np = parameters::default_values())
+void refine_with_plane(PolygonMesh& pm,
+                       const Plane_3& plane,
+                       const NamedParameters& np = parameters::default_values())
 {
   // TODO: concurrency tag
  /*
@@ -452,4 +452,4 @@ void cut_with_plane(PolygonMesh& pm,
 } } // CGAL::Polygon_mesh_processing
 
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_CUT_WITH_PLANE_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_REFINE_WITH_PLANE_H

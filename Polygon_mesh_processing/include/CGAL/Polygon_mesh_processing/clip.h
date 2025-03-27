@@ -43,7 +43,7 @@
 #include <vector>
 #include <bitset>
 
-#include <CGAL/Polygon_mesh_processing/cut_with_plane.h>
+#include <CGAL/Polygon_mesh_processing/refine_with_plane.h>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -764,14 +764,14 @@ void clip(PolygonMesh& pm,
   if (triangulate && !is_triangle_mesh(pm))
     triangulate = false;
 
-  cut_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
-                                       .edge_is_marked_map(ecm)
-                                       .vertex_point_map(vpm)
-                                       .geom_traits(traits)
-                                       .do_not_triangulate_faces(!triangulate)
-                                       .throw_on_self_intersection(!allow_self_intersections &&
-                                                                   throw_on_self_intersection)
-                                       .concurrency_tag(Concurrency_tag()));
+  refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
+                                          .edge_is_marked_map(ecm)
+                                          .vertex_point_map(vpm)
+                                          .geom_traits(traits)
+                                          .do_not_triangulate_faces(!triangulate)
+                                          .throw_on_self_intersection(!allow_self_intersections &&
+                                                                      throw_on_self_intersection)
+                                          .concurrency_tag(Concurrency_tag()));
 
 
   if (allow_self_intersections)
@@ -1131,14 +1131,14 @@ void split(PolygonMesh& pm,
   > ::type User_visitor;
   User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
 
-  cut_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
-                                       .edge_is_marked_map(ecm)
-                                       .vertex_point_map(vpm)
-                                       .geom_traits(traits)
-                                       .do_not_triangulate_faces(!triangulate)
-                                       .throw_on_self_intersection(!allow_self_intersections &&
-                                                                   throw_on_self_intersection)
-                                       .concurrency_tag(Concurrency_tag()));
+  refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
+                                          .edge_is_marked_map(ecm)
+                                          .vertex_point_map(vpm)
+                                          .geom_traits(traits)
+                                          .do_not_triangulate_faces(!triangulate)
+                                          .throw_on_self_intersection(!allow_self_intersections &&
+                                                                      throw_on_self_intersection)
+                                          .concurrency_tag(Concurrency_tag()));
 
   //split mesh along marked edges
   internal::split_along_edges(pm, ecm, vpm, uv);

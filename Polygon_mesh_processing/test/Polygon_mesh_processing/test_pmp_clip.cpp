@@ -863,7 +863,7 @@ void test_new_clip()
   {
     TriangleMesh e;
     std::ifstream("data-clip/ee.off") >> e;
-    PMP::cut_with_plane(e, K::Plane_3(1,0,0,-2));
+    PMP::refine_with_plane(e, K::Plane_3(1,0,0,-2));
     assert(faces(e).size()==5);
     assert(vertices(e).size()==24);
   }
@@ -871,7 +871,7 @@ void test_new_clip()
   {
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
-    PMP::cut_with_plane(c, K::Plane_3(1,0,0,-2));
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2));
     assert(faces(c).size()==2);
     assert(vertices(c).size()==8);
   }
@@ -880,7 +880,7 @@ void test_new_clip()
     TriangleMesh e;
     std::ifstream("data-clip/ee.off") >> e;
     PMP::triangulate_faces(e);
-    PMP::cut_with_plane(e, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
+    PMP::refine_with_plane(e, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
     assert(faces(e).size()==30);
     assert(vertices(e).size()==28);
   }
@@ -889,7 +889,7 @@ void test_new_clip()
     TriangleMesh c;
     std::ifstream("data-clip/c.off") >> c;
     PMP::triangulate_faces(c);
-    PMP::cut_with_plane(c, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
+    PMP::refine_with_plane(c, K::Plane_3(1,0,0,-2), CGAL::parameters::do_not_triangulate_faces(false));
     assert(faces(c).size()==8);
     assert(vertices(c).size()==9);
   }
