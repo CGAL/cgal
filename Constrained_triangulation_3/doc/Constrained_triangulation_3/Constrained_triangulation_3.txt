@@ -60,7 +60,11 @@ which is on the same side of the constrained facet as the cell. \todo pour Laure
 In 3D, constrained triangulations do not always exist. It can be shown using the
 example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
 \cgalCite{b-ip-48a}, that requires the addition of
-Steiner points to be tetrahedralizable. \todo add a picture of the Sch&ouml;nhardt polyhedra
+Steiner points to be tetrahedralizable (see Figure \cgalFigureRef{schonhardt_fig}).
+
+\cgalFigureBegin{schonhardt_fig, schonhardt.png}
+A Sch&ouml;nhardt polyhedron.
+\cgalFigureEnd
 
 Shewchuk \cgalCite{cgal:shewchuk1998condition} showed that for any PLC,
 there exists another PLC that is a refined version of the original one,
