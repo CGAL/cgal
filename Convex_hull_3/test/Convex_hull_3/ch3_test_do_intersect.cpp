@@ -1,13 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Extreme_points_traits_adapter_3.h>
-#include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_3/predicates.h>
-
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <vector>
@@ -149,11 +144,41 @@ void test_half_sphere()
     }
 }
 
-int main()
+void test_random_tetrahedrons(int N, CGAL::Random &r)
 {
+  using P = Point_3;
+  using Tet = typename K::Tetrahedron_3;
+
+  auto random_point=[&](){
+    return Point_3(r.get_double(0, 1), r.get_double(0, 1), r.get_double(0, 1));
+  };
+  for(int i=0; i<N; ++i)
+  {
+    P p0 = random_point();
+    P p1 = random_point();
+    P p2 = random_point();
+    P p3 = random_point();
+
+    P q0 = random_point();
+    P q1 = random_point();
+    P q2 = random_point();
+    P q3 = random_point();
+
+    assert(CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3))==
+            CGAL::Convex_hull_3::do_intersect(std::vector<Point_3>({p1,p2,p3,p0}), std::vector<Point_3>({q1,q2,q3,q0})));
+  }
+}
+
+int main(int argc, char** argv)
+{
+  CGAL::Random rp;
+  CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
+  std::cout << "random seed = " << r.get_seed() << std::endl;
+
   std::cout << std::setprecision(17);
   test_degenerate();
   test_cube();
   test_half_sphere();
+  test_random_tetrahedrons(1000, r);
   return 0;
 }
