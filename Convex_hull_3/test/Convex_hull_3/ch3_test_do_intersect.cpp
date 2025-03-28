@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -12,7 +13,9 @@
 #include <vector>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel        K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+// typedef CGAL::Simple_cartesian<double>                           K;
 typedef K::Point_3                                               Point_3;
 typedef K::Vector_3                                              Vector_3;
 typedef CGAL::Surface_mesh<Point_3>                              Mesh;

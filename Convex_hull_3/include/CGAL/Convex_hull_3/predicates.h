@@ -19,6 +19,8 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+
 #include <vector>
 
 namespace CGAL {
@@ -206,7 +208,7 @@ bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int &
 
   /* TODO
   Actual complexity is linear of the size of A and B
-  With the graph of the convex_hull, we have O(sqrt(n)) by compute the product on adjacent vertices and
+  With the graph of the convex_hull, we have O(sqrt(n)) by computing the product on adjacent vertices and
   progressed along the incrasing one.
   With some preprocess (adding temporary edge of the construction of the graph of the convex hull), this can be
   O(log n)
@@ -229,33 +231,103 @@ bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int &
   return maxOverA >= minOverB;
 }
 
-template<typename Convex >
-bool sphericalDisjoint(const Convex & a, const Convex & b, unsigned long INTER_MAX_ITER) {
-  using Point_3 = std::remove_cv_t<typename std::iterator_traits<typename Convex::const_iterator>::value_type>;
-  using Kernel= typename Kernel_traits<Point_3>::Kernel;
-  using Vector_3= typename Kernel::Vector_3;
+template <typename IK, typename OK, typename I2O>
+struct RangeConverter{
+  template<typename PointRange>
+  std::vector<typename OK::Point_3> operator()(const PointRange &pts) const{
+    std::vector<typename OK::Point_3> out;
+    for(const typename IK::Point_3 &p: pts)
+      out.push_back(I2O()(p));
+    return out;
+  }
 
-  SphericalPolygon<Vector_3> positiveBound, tempPoly;
-  int vA, vB;
-  Vector_3 dir(b[0] - a[0]);
-  if( ! differenceCoversZeroInDir(a, b, vA, vB, dir)) return true;
-  if((b[vB] - a[vA])==NULL_VECTOR) return false;
-  positiveBound.clear();
-  positiveBound.emplace_back(dir);
-  positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
-  if( positiveBound.empty() ) return false;
-  unsigned long planeStatPerPair = 0;
-  do {
-    if( ! differenceCoversZeroInDir(a, b, vA, vB, positiveBound.averageDirection())) return true;
+  size_t operator()(size_t v) const{
+    return v;
+  }
+};
+
+template<typename K>
+struct Functor_spherical_disjoint{
+  typedef typename K::Boolean  result_type;
+
+  template< typename Convex>
+  bool operator()(const Convex a, const Convex b, unsigned long INTER_MAX_ITER) const{
+    using Point_3 = typename K::Point_3;
+    using Vector_3= typename K::Vector_3;
+
+    SphericalPolygon<Vector_3> positiveBound, tempPoly;
+    int vA, vB;
+    Vector_3 dir(b[0] - a[0]);
+    if( ! differenceCoversZeroInDir(a, b, vA, vB, dir)) return true;
     if((b[vB] - a[vA])==NULL_VECTOR) return false;
-    if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER))
-    {
-      return false;
-    }
+    positiveBound.clear();
+    positiveBound.emplace_back(dir);
     positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
     if( positiveBound.empty() ) return false;
-  } while( true );
+    unsigned long planeStatPerPair = 0;
+    do {
+      if( ! differenceCoversZeroInDir(a, b, vA, vB, positiveBound.averageDirection())) return true;
+      if((b[vB] - a[vA])==NULL_VECTOR) return false;
+      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER))
+      {
+        return false;
+      }
+      positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
+      if( positiveBound.empty() ) return false;
+    } while( true );
+  }
+};
+
+// template<typename K>
+// struct Spherical_disjoint_traits_base{
+//   typedef Functor_spherical_disjoint<K> Spherical_disjoint;
+//   Spherical_disjoint spherical_disjoint_object() const {
+//     return Functor_spherical_disjoint<K>();
+//   }
+// };
+
+template<typename K,
+         bool Has_filtered_predicates_ = CGAL::internal::Has_filtered_predicates<K>::value>
+struct Spherical_disjoint_traits;
+
+template<typename K>
+struct Spherical_disjoint_traits<K, false>{ //: Spherical_disjoint_traits_base<K>{
+  typedef Functor_spherical_disjoint<K> Spherical_disjoint;
+  Spherical_disjoint spherical_disjoint_object() const {
+    return Functor_spherical_disjoint<K>();
+  }
+};
+template<typename K>
+struct Spherical_disjoint_traits<K, true> {
+  // Exact traits is based on the exact kernel.
+  typedef Spherical_disjoint_traits<typename K::Exact_kernel> Exact_traits;
+  // Filtering traits is based on the filtering kernel.
+  typedef Spherical_disjoint_traits<typename K::Approximate_kernel> Filtering_traits;
+
+  typedef typename K::C2E                C2E;
+  typedef typename K::C2F                C2F;
+  typedef Filtered_predicate<
+              typename Exact_traits::Spherical_disjoint,
+              typename Filtering_traits::Spherical_disjoint,
+              RangeConverter<K, typename K::Exact_kernel, C2E>,
+              RangeConverter<K, typename K::Approximate_kernel, C2F> >  Spherical_disjoint;
+
+  Spherical_disjoint spherical_disjoint_object() const
+  {
+    typename Exact_traits::Spherical_disjoint pe = Exact_traits().spherical_disjoint_object();
+    typename Filtering_traits::Spherical_disjoint pf = Filtering_traits().spherical_disjoint_object();
+
+    return Spherical_disjoint(pe, pf);
+  }
+};
+
+template<typename Convex >
+inline bool sphericalDisjoint(const Convex & a, const Convex & b, unsigned long INTER_MAX_ITER) {
+  using Point_3 = std::remove_cv_t<typename std::iterator_traits<typename Convex::const_iterator>::value_type>;
+  using Kernel= typename Kernel_traits<Point_3>::Kernel;
+  return Spherical_disjoint_traits<Kernel>().spherical_disjoint_object()(a, b, INTER_MAX_ITER);
 }
+
 
 } // end of predicates_impl namespace
 
@@ -331,6 +403,7 @@ bool do_intersect(const PointRange1& r1, const PointRange2& r2,
     b.push_back(get(point_map2, p));
 
   unsigned int max_nb_iterations = choose_parameter(get_parameter(np1, internal_np::number_of_iterations), 0);
+
 
   return !predicates_impl::sphericalDisjoint(a, b, max_nb_iterations);
 }
