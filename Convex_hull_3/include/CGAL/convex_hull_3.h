@@ -1064,6 +1064,8 @@ void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
                    const NamedParameters& np = parameters::default_values())
 {
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, vertex_point_t);
+
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
