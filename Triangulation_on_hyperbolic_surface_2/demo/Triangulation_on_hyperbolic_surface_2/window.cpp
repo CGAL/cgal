@@ -31,8 +31,8 @@ DemoWindowItem::DemoWindowItem()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DemoWindowItem::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget)
+                           const QStyleOptionGraphicsItem*,
+                           QWidget*)
 {
   // 1. Draw the poincaré disk
   QRectF circle_rect = QRectF(-poincare_disk_radius_in_pixels_-3,
@@ -266,4 +266,4 @@ DemoWindowItem& DemoWindow::item()
   return *item_;
 }
 
-void DemoWindow::keyPressEvent(QKeyEvent* event) {}
+void DemoWindow::keyPressEvent(QKeyEvent*) {}
