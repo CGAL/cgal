@@ -465,7 +465,7 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
   to_grid(grid, values, case_values);
 
   {
-    Grid grid_high_res { Point{-1., -1., -1.}, Point{1., 1., 1.}, std::array<std::size_t, 3>{151, 151, 151} };
+    Grid grid_high_res { Point{-1., -1., -1.}, Point{1., 1., 1.}, std::array<std::size_t, 3>{51, 51, 51} };
     IS::Value_function_3<Grid> values_high_res { values, grid_high_res };
     IS::Marching_cubes_domain_3<Grid, IS::Value_function_3<Grid>> domain_high_res { grid_high_res, values_high_res };
 
