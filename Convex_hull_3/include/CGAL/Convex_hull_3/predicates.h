@@ -197,38 +197,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 };
 
-//----------------------------
-
-template <class Vector_3, class Convex>
-bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int & vB, const Vector_3 & dir) {
-  using Kernel= typename Kernel_traits<Vector_3>::Kernel;
-  using NT= typename Kernel::FT;
-
-  /* TODO
-  Actual complexity is linear of the size of A and B
-  With the graph of the convex_hull, we have O(sqrt(n)) by computing the product on adjacent vertices and
-  progressed along the incrasing one.
-  With some preprocess (adding temporary edge of the construction of the graph of the convex hull), this can be
-  O(log n)
-  */
-
-  // difference above is: A - B
-  NT maxOverA = Vector_3(ORIGIN, A[0]) * dir;
-  NT minOverB = Vector_3(ORIGIN, B[0]) * dir;
-  vA = vB = 0;
-  const int na = A.size();
-  for( int i = 1; i < na; ++i ) {
-    NT tempA = Vector_3(ORIGIN, A[i]) * dir;
-    if( tempA > maxOverA ) { maxOverA = tempA; vA = i; }
-  }
-  const int nb = B.size();
-  for( int i = 1; i < nb; ++i ) {
-    NT tempB = Vector_3(ORIGIN, B[i]) * dir;
-    if( tempB < minOverB ) { minOverB = tempB; vB = i; }
-  }
-  return maxOverA >= minOverB;
-}
-
 template <class Vector_3, class Convex>
 const typename Kernel_traits<Vector_3>::Kernel::Point_3& extreme_point(const Convex& C, const Vector_3 dir) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
