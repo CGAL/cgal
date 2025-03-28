@@ -12,8 +12,11 @@
 - Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
   to know faces in the output meshes that are corresponding to input coplanar faces.
 
-### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
+### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
+- Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
 
+
+### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
 ### [BGL](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
