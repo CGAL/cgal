@@ -639,8 +639,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef typename Polygon_set_2::Arrangement_on_surface_2
                                                         Arrangement_2;
 
-  /* Should be perfored more efficeintly  than using sweep and than
-   * difference().
+  /* Should be perfored more efficiently than using sweep and then difference().
    *
    * Use sweep to find intersections on the interior of curves (not on vertices)
    * and overlapping edges which are not allowed (note that 0/1 dimension
