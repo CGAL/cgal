@@ -114,6 +114,28 @@ This example shows an example of building such a triangulation.
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 
+\subsection CT_3_example_ccdt_fpmap Build a conforming constrained Delaunay triangulation with known face patches
+
+When the user knows a priori the set of patch ids that he wants to attach to faces, this information
+can be used and kept valid through the construction of the conforming constrained
+Delaunay triangulation.
+
+The following examples shows an example of how to detect surface patches separated by sharp edges,
+and use this surface segmentation in the tetrahedrization process.
+
+\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
+
+Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
+
+\cgalFigureBegin{ccdt_fpmap, ccdt_fpmap.png}
+(Left) Input PLC;
+(Middle-left) The corresponding conforming constrained Delaunay triangulation with one patch per input face;
+(Middle-Right) Input PLC segmented according to sharp edges;
+(Right) The corresponding conforming constrained Delaunay triangulation using the segmentation.
+\cgalFigureEnd
+#camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349
+
+
 \subsection CT_3_example_remesh Remeshing a conforming constrained Delaunay triangulation
 
 Once the triangulation is built, it is possible to remesh it using the
