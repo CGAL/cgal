@@ -22,6 +22,7 @@
 
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/utils.h> // for CGAL::min
@@ -58,22 +59,20 @@ public:
 
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const override
   {
     typedef typename Tr::Geom_traits    Geom_traits;
-    typedef typename Tr::Bare_point     Bare_point;
-    typedef typename Tr::Weighted_point Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_distance_3 Distance;
     typedef typename Geom_traits::Compute_squared_radius_3   Radius;
@@ -83,14 +82,10 @@ protected:
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
     Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Weighted_point& wp = tr.point(ch, 0);
-    const Weighted_point& wq = tr.point(ch, 1);
-    const Weighted_point& wr = tr.point(ch, 2);
-    const Weighted_point& ws = tr.point(ch, 3);
-    const Bare_point& p = cp(wp);
-    const Bare_point& q = cp(wq);
-    const Bare_point& r = cp(wr);
-    const Bare_point& s = cp(ws);
+    const auto& p = cp(tr.point(ch, 0));
+    const auto& q = cp(tr.point(ch, 1));
+    const auto& r = cp(tr.point(ch, 2));
+    const auto& s = cp(tr.point(ch, 3));
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -157,36 +152,30 @@ public:
   }
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const override
   {
     typedef typename Tr::Geom_traits     Geom_traits;
-    typedef typename Tr::Bare_point      Bare_point;
-    typedef typename Tr::Weighted_point  Weighted_point;
 
     typedef typename Geom_traits::Compute_squared_radius_3 Radius;
     typedef typename Geom_traits::Construct_point_3        Construct_point_3;
     Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
     Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Weighted_point& wp = tr.point(ch, 0);
-    const Weighted_point& wq = tr.point(ch, 1);
-    const Weighted_point& wr = tr.point(ch, 2);
-    const Weighted_point& ws = tr.point(ch, 3);
-    const Bare_point& p = cp(wp);
-    const Bare_point& q = cp(wq);
-    const Bare_point& r = cp(wr);
-    const Bare_point& s = cp(ws);
+    const auto& p = cp(tr.point(ch, 0));
+    const auto& q = cp(tr.point(ch, 1));
+    const auto& r = cp(tr.point(ch, 2));
+    const auto& s = cp(tr.point(ch, 3));
 
     const FT size = sq_radius(p, q, r, s);
 
@@ -241,36 +230,26 @@ public:
   ~Cell_variable_size_criterion() {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
+  Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const override
   {
-    typedef typename Tr::Geom_traits      Geom_traits;
-    typedef typename Tr::Bare_point       Bare_point;
-    typedef typename Tr::Weighted_point   Weighted_point;
+    auto sq_radius = tr.geom_traits().compute_squared_radius_3_object();
+    auto cp = tr.geom_traits().construct_point_3_object();
 
-    typedef typename Geom_traits::Compute_squared_radius_3 Radius;
-    typedef typename Geom_traits::Construct_point_3        Construct_point_3;
-    Radius sq_radius = tr.geom_traits().compute_squared_radius_3_object();
-    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-
-    const Weighted_point& wp = tr.point(ch, 0);
-    const Weighted_point& wq = tr.point(ch, 1);
-    const Weighted_point& wr = tr.point(ch, 2);
-    const Weighted_point& ws = tr.point(ch, 3);
-    const Bare_point& p = cp(wp);
-    const Bare_point& q = cp(wq);
-    const Bare_point& r = cp(wr);
-    const Bare_point& s = cp(ws);
+    const auto& p = cp(tr.point(ch, 0));
+    const auto& q = cp(tr.point(ch, 1));
+    const auto& r = cp(tr.point(ch, 2));
+    const auto& s = cp(tr.point(ch, 3));
 
     const FT size = sq_radius(p, q, r, s);
     const FT sq_bound = CGAL::square( size_(tr.dual(ch), 3,
@@ -320,18 +299,18 @@ public:
 
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const
+  Is_bad do_is_bad(const Tr& /*tr*/, const Cell_handle& ch) const override
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -374,11 +353,7 @@ public:
   typedef Handle Cell_handle;
 
   // Constructor
-  Cell_criterion_visitor(const Cell_handle& ch)
-    : Base(ch) {}
-
-  // Destructor
-  ~Cell_criterion_visitor() {}
+  using Base::Base;
 
   void visit(const Criterion& criterion)
   {
@@ -397,7 +372,6 @@ class Cell_criteria_visitor_with_features
 
   typedef typename Tr::Geom_traits    GT;
   typedef typename GT::FT             FT;
-  typedef typename Tr::Weighted_point Weighted_point;
 
 
 public:
@@ -428,20 +402,20 @@ public:
 
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
-    const Weighted_point& wpk1 = tr.point(ch, k1);
+    const auto& wpk1 = tr.point(ch, k1);
     if(compare(wpk1, FT(0)) == CGAL::SMALLER) // 0 < wpk1's weight
     {
       ++wp_nb_;
     }
 
-    const Weighted_point& wpk2 = tr.point(ch, k2);
+    const auto& wpk2 = tr.point(ch, k2);
     if(compare(wpk2, FT(0)) == CGAL::SMALLER)
     {
       if ( 0 == wp_nb_ ) { std::swap(k1,k2); }
       ++wp_nb_;
     }
 
-    const Weighted_point& wpk3 = tr.point(ch, k3);
+    const auto& wpk3 = tr.point(ch, k3);
     if(compare(wpk3, FT(0)) == CGAL::SMALLER)
     {
       if ( 0 == wp_nb_ ) { std::swap(k1,k3); }
@@ -449,7 +423,7 @@ public:
       ++wp_nb_;
     }
 
-    const Weighted_point& wpk4 = tr.point(ch, k4);
+    const auto& wpk4 = tr.point(ch, k4);
     if(compare(wpk4, FT(0)) == CGAL::SMALLER)
     {
       if ( 0 == wp_nb_ ) { std::swap(k1,k4); }
@@ -458,10 +432,10 @@ public:
       ++wp_nb_;
     }
 
-    const Weighted_point& p1 = tr.point(ch, k1);
-    const Weighted_point& p2 = tr.point(ch, k2);
-    const Weighted_point& p3 = tr.point(ch, k3);
-    const Weighted_point& p4 = tr.point(ch, k4);
+    const auto& p1 = tr.point(ch, k1);
+    const auto& p2 = tr.point(ch, k2);
+    const auto& p3 = tr.point(ch, k3);
+    const auto& p4 = tr.point(ch, k4);
 
     switch ( wp_nb_ )
     {

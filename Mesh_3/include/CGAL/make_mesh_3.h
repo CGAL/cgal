@@ -42,7 +42,9 @@ namespace Mesh_3 {
 namespace internal {
 
 template <typename C3T3, typename PointDimIndex>
-struct Push_to_initial_point {
+struct Push_to_initial_point
+    : public CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation>
+{
   // This struct cannot be a lambda-expression before C++20, because we need it to be copyable/assignable.
   std::vector<PointDimIndex>* points_vector_ptr;
   C3T3* c3t3_ptr;
@@ -58,7 +60,7 @@ struct Push_to_initial_point {
     if constexpr (CGAL::STL_Extension::internal::tuple_like_of_size_2<T>)
     {
       const auto& [pt, index] = initial_pt;
-      const auto& cwp = c3t3_ptr->triangulation().geom_traits().construct_weighted_point_3_object();
+      auto cwp = this->construct_triangulation_point_object(c3t3_ptr->triangulation());
       points_vector_ptr->push_back(PointDimIndex{cwp(pt), 2, index});
     }
     else
@@ -99,8 +101,10 @@ add_points_from_generator(C3T3& c3t3,
   // Insert points and set their index and dimension
   for (const auto& [wpoint, dimension, index] : initial_points)
   {
-    if(Th().inside_protecting_balls(c3t3.triangulation(), Vertex_handle(), wpoint.point()))
-      continue;
+    if constexpr (is_regular_triangulation_v<typename C3T3::Triangulation>) {
+      if(Th().inside_protecting_balls(c3t3.triangulation(), Vertex_handle(), wpoint.point()))
+        continue;
+    }
 
     Vertex_handle v = c3t3.triangulation().insert(wpoint);
 
@@ -339,10 +343,10 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures>
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_true
 template < typename C3T3, typename MD, typename MC >
-struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true>
+struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true> final
   : public C3t3_initializer_base < C3T3, MD, MC >
 {
-  virtual ~C3t3_initializer() { }
+  ~C3t3_initializer() override { }
 
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
   typedef parameters::internal::Initialization_options<MD, C3T3> Default_init_options;

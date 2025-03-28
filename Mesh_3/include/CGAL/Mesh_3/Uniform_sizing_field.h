@@ -28,7 +28,7 @@ template <typename Tr>
 class Uniform_sizing_field
 {
   typedef typename Tr::Geom_traits    GT;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point          Weighted_point;
   typedef typename GT::FT             FT;
 
 public:

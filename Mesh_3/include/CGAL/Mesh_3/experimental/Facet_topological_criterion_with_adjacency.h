@@ -46,21 +46,21 @@ public:
   {}
 
   /// Destructor
-  virtual ~Facet_topological_criterion_with_adjacency() {}
+  ~Facet_topological_criterion_with_adjacency() override {}
 
 protected:
-  virtual void do_accept(Visitor_& v) const
+  void do_accept(Visitor_& v) const override
   {
     v.visit(*this);
   }
 
-  virtual Self* do_clone() const
+  Self* do_clone() const override
   {
     // Call copy ctor on this
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad (const Tr& /*tr*/, const Facet& f) const
+  Is_bad do_is_bad (const Tr& /*tr*/, const Facet& f) const override
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;

@@ -40,9 +40,7 @@
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
-
-#include <boost/mpl/identity.hpp>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
 
@@ -56,11 +54,7 @@ public:
   typedef MixedComplexTraits_3                           Geometric_traits;
 
   typedef typename Gt::Weighted_point_3                  Weighted_point;
-  typedef typename boost::mpl::eval_if_c<
-    internal::Has_nested_type_Bare_point<Gt>::value,
-    typename internal::Bare_point_type<Gt>,
-    boost::mpl::identity<typename Gt::Point_3>
-  >::type                                                Bare_point;
+  typedef Bare_point_type_t<Gt>                          Bare_point;
 
   typedef typename Gt::FT                                FT;
   // For normal

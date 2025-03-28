@@ -22,6 +22,7 @@
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
+#include <CGAL/type_traits.h>
 #include <type_traits>
 #include <cfloat>
 
@@ -115,7 +116,7 @@ public:
   */
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
-  typedef typename Tr::Bare_point       Point_3;
+  typedef Bare_point_type_t<Tr>         Point_3;
 
   /// @}
 

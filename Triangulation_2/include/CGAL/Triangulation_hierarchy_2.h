@@ -19,7 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <CGAL/assertions.h>
 #include <CGAL/spatial_sort.h>
@@ -65,11 +65,7 @@ public:
   typedef typename Tr_Base::Point                  Point;
 
   // If the triangulation has defined the `Bare_point` typename, use it.
-  typedef typename boost::mpl::eval_if_c<
-    internal::Has_nested_type_Bare_point<Tr_Base>::value,
-    typename internal::Bare_point_type<Tr_Base>,
-    boost::mpl::identity<typename Tr_Base::Point>
-  >::type                                          Bare_point;
+  typedef Bare_point_type_t<Tr_Base, 2>            Bare_point;
   typedef typename Geom_traits::Weighted_point_2   Weighted_point;
 
   typedef typename Tr_Base::Weighted_tag           Weighted_tag;

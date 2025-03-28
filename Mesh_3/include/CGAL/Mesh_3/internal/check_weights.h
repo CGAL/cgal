@@ -22,34 +22,31 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/STL_Extension/internal/Has_features.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
 
 template<typename Triangulation, typename MeshDomain>
-bool has_non_protecting_weights(const Triangulation& tr,
-                                const MeshDomain&)
+bool has_non_protecting_weights(const Triangulation& tr, const MeshDomain&, Tag_true)
 {
-  const bool with_features = ::CGAL::internal::Has_features<MeshDomain>::value;
+  constexpr bool with_features = ::CGAL::internal::Has_features<MeshDomain>::value;
 
   typedef typename Triangulation::FT                FT;
-  typedef typename Triangulation::Weighted_point    Weighted_point;
 
-  typename Triangulation::Geom_traits::Compare_weighted_squared_radius_3 cwsr =
-    tr.geom_traits().compare_weighted_squared_radius_3_object();
+  auto cwsr = tr.geom_traits().compare_weighted_squared_radius_3_object();
 
   for (typename Triangulation::Finite_vertices_iterator
         vv = tr.finite_vertices_begin();
         vv != tr.finite_vertices_end();
         ++vv)
   {
-    const Weighted_point& vv_wp = tr.point(vv);
+    const auto& vv_wp = tr.point(vv);
     if (cwsr(vv_wp, FT(0)) != CGAL::EQUAL)
     {
-      if (with_features)
+      if constexpr (with_features)
       {
         if (vv->in_dimension() > 1)
           return true;
@@ -61,6 +58,17 @@ bool has_non_protecting_weights(const Triangulation& tr,
   return false;
 }
 
+template <typename Triangulation, typename MeshDomain>
+bool has_non_protecting_weights(const Triangulation&, const MeshDomain&, Tag_false)
+{
+  return false;
+}
+
+template<typename Triangulation, typename MeshDomain>
+bool has_non_protecting_weights(const Triangulation& tr, const MeshDomain& md)
+{
+  return has_non_protecting_weights(tr, md, Boolean_tag<is_regular_triangulation_v<Triangulation> >());
+}
 
 } // end namespace internal
 } // end namespace Mesh_3

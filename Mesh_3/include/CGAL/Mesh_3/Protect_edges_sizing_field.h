@@ -43,6 +43,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -117,14 +118,15 @@ template<typename C3T3,
          typename DistanceFunction = CGAL::Default>
 class Protect_edges_sizing_field
   : public CGAL::SMDS_3::internal::Debug_messages_tools
+  , public CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation>
 {
 
   typedef Protect_edges_sizing_field          Self;
 
 public:
   typedef typename C3T3::Triangulation        Tr;
-  typedef typename Tr::Bare_point             Bare_point;
-  typedef typename Tr::Weighted_point         Weighted_point;
+  typedef Bare_point_type_t<Tr>               Bare_point;
+  typedef typename Tr::Point                  Weighted_point;
   typedef typename Weighted_point::Weight     Weight;
 
   typedef typename Tr::Geom_traits            GT;
@@ -550,7 +552,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with non-periodic triangulations
-  CGAL_assertion(!(std::is_same_v<typename Tr::Periodic_tag, CGAL::Tag_true>));
+  CGAL_assertion(!is_periodic_triangulation_v<Tr>);
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl
@@ -864,7 +866,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
         if(!vertices_in_conflict_zone_set.insert(v).second)
           continue;
 
-        const FT sq_d = tr.min_squared_distance(p, cp(c3t3_.triangulation().point(v)));
+        const FT sq_d = this->min_squared_distance(tr, p, cp(c3t3_.triangulation().point(v)));
 
         if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
@@ -921,7 +923,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
           end = tr.finite_vertices_end() ; it != end ; ++it )
     {
       const Weighted_point& it_wp = tr.point(it);
-      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      FT sq_d = this->min_squared_distance(tr, p, cp(it_wp));
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
@@ -950,7 +952,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index, V
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
       const Weighted_point& it_wp = tr.point(it);
-      FT sq_d = tr.min_squared_distance(p, cp(it_wp));
+      FT sq_d = this->min_squared_distance(tr, p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1

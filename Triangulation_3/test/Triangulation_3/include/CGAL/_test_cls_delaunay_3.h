@@ -22,7 +22,6 @@
 #include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 #include <CGAL/Random.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/identity.hpp>
 
@@ -170,11 +169,7 @@ _test_cls_delaunay_3(const Triangulation &)
   typedef typename Cls::Point                Point;
 
   // If the triangulation has defined the `Bare_point` typename, use it.
-  typedef typename boost::mpl::eval_if_c<
-    CGAL::internal::Has_nested_type_Bare_point<Cls>::value,
-    typename CGAL::internal::Bare_point_type<Cls>,
-    boost::mpl::identity<typename Cls::Point>
-  >::type                                    Bare_point;
+  typedef Base_point_type_t<Cls>             Bare_point;
 
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;

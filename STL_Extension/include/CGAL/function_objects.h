@@ -25,12 +25,12 @@
 
 namespace CGAL {
 
-template < class Value>
-struct Identity {
-  typedef Value argument_type;
-  typedef Value result_type;
-  Value&       operator()( Value& x)       const { return x; }
-  const Value& operator()( const Value& x) const { return x; }
+template < class = void>
+struct Identity { // similary to C++20 std::identity
+  using is_transparent = void;
+
+  template <typename T>
+  T&& operator()(T&& x) const { return std::forward<T>(x); }
 };
 
 template < class Value>

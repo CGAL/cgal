@@ -19,6 +19,7 @@
 #define CGAL_MESH_3_FACET_CRITERIA_VISITOR_WITH_BALLS_H
 
 #include <CGAL/license/Mesh_3.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/mesh_standard_facet_criteria.h>
@@ -48,8 +49,8 @@ public:
   typedef typename Base::Handle  Handle;
   typedef Handle Facet;
 
-  typedef typename Tr::Bare_point      Bare_point;
-  typedef typename Tr::Weighted_point  Weighted_point;
+  typedef Bare_point_type_t<Tr>        Bare_point;
+  typedef typename Tr::Point           Weighted_point;
   typedef typename Tr::Geom_traits     GT;
   typedef typename GT::FT              FT;
 
@@ -202,7 +203,7 @@ public:
   //      Base::do_visit(criterion);
   //    }
 
-};  // end class Facet_criterion_visitor
+};  // end class Facet_criterion_visitor_with_balls
 
 
 } //end namespace Mesh_3

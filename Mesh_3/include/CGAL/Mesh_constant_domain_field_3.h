@@ -22,9 +22,7 @@
 
 #include <map>
 #include <utility>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
-#include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/identity.hpp>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
 
@@ -65,11 +63,7 @@ public:
 #ifdef DOXYGEN_RUNNING
   typedef GT::Point_3 Point_3;
 #else
-  typedef typename boost::mpl::eval_if_c<
-      internal::Has_nested_type_Bare_point<GT>::value,
-      typename internal::Bare_point_type<GT>,
-      boost::mpl::identity<typename GT::Point_3>
-    >::type                       Point_3;
+  typedef Bare_point_type_t<GT>   Point_3;
   #endif
 
   /*!

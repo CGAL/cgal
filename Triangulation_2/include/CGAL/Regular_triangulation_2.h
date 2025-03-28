@@ -19,9 +19,9 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/identity.hpp>
 #include <boost/utility/result_of.hpp>
@@ -56,11 +56,7 @@ public:
 
   // Traits are not supposed to define Bare_point, but leaving below
   // for backward compatibility
-  typedef typename boost::mpl::eval_if_c<
-      internal::Has_nested_type_Bare_point<Gt>::value,
-      typename internal::Bare_point_type<Gt>,
-      boost::mpl::identity<typename Gt::Point_2>
-    >::type                                    Bare_point;
+  typedef Bare_point_type_t<Gt, 2>             Bare_point;
   typedef typename Gt::Weighted_point_2        Weighted_point;
 
   typedef typename Gt::FT                      Weight;

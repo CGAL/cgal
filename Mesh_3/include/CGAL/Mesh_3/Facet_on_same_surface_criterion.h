@@ -48,18 +48,18 @@ namespace Mesh_3 {
 //  virtual ~Facet_on_same_surface_criterion() {};
 //
 //protected:
-//  virtual void do_accept(Visitor_& v) const
+//  void do_accept(Visitor_& v) const override
 //  {
 //    v.visit(*this);
 //  }
 //
-//  virtual Self* do_clone() const
+//  Self* do_clone() const override
 //  {
 //    // Call copy ctor on this
 //    return new Self(*this);
 //  }
 //
-//  virtual Is_bad do_is_bad (const Tr& tr, Facet& f) const
+//  Is_bad do_is_bad (const Tr& tr, Facet& f) const override
 //  {
 //    typedef typename Tr::Vertex_handle  Vertex_handle;
 //    typedef typename Tr::Cell_handle    Cell_handle;

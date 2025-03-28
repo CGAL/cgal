@@ -24,6 +24,7 @@
 #include <boost/callable_traits/is_invocable.hpp>
 
 #include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
   namespace Mesh_3 {
@@ -32,9 +33,9 @@ namespace CGAL {
       public CGAL::Boolean_tag
       <
         boost::callable_traits::is_invocable_r<
-          typename Tr::FT,
+          typename Tr::Geom_traits::FT,
           Type,
-          typename Tr::Bare_point,
+          Bare_point_type_t<Tr>,
           int,
           typename Tr::Vertex::Index
         >::value

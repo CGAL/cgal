@@ -21,6 +21,7 @@
 #define CGAL_POINT_GENERATORS_3_H 1
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/generators.h>
 #include <CGAL/point_generators_2.h>
@@ -486,7 +487,7 @@ template<class C3T3>
 class Triangle_from_c3t3_facet
 {
   typedef typename C3T3::Triangulation                    Tr;
-  typedef typename Tr::Bare_point                         Bare_point;
+  typedef Bare_point_type_t<Tr>                           Bare_point;
   typedef typename Tr::Triangle                           Triangle;
   typedef typename Tr::Facet                              Facet;
   typedef typename Tr::Cell_handle                        Cell_handle;
@@ -516,8 +517,8 @@ template<class C3T3>
 class Tetrahedron_from_c3t3_cell
 {
   typedef typename C3T3::Triangulation                    Tr;
+  typedef Bare_point_type_t<Tr>                           Bare_point;
   typedef typename Tr::Cell_handle                        Cell;
-  typedef typename Tr::Bare_point                         Bare_point;
   typedef typename Tr::Tetrahedron                        Tetrahedron;
 
 public:

@@ -45,6 +45,7 @@
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -81,8 +82,8 @@ class Protect_edges_sizing_field
 
 public:
   typedef typename C3T3::Triangulation        Tr;
-  typedef typename Tr::Bare_point             Bare_point;
-  typedef typename Tr::Weighted_point         Weighted_point;
+  typedef Bare_point_type_t<Tr>               Bare_point;
+  typedef typename Tr::Point                  Weighted_point;
   typedef typename Weighted_point::Weight     Weight;
 
   typedef typename Tr::Geom_traits            Gt;
@@ -565,7 +566,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 operator()(const bool refine)
 {
   // This class is only meant to be used with periodic triangulations
-  CGAL_assertion((std::is_same<typename Tr::Periodic_tag, CGAL::Tag_true>::value));
+  CGAL_assertion(is_periodic_triangulation_v<Tr>);
 
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Inserting protection balls..." << std::endl

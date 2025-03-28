@@ -26,6 +26,7 @@
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/functional.h>
 
@@ -44,8 +45,8 @@ class Triangulation_sizing_field
 {
   // Types
   typedef typename Tr::Geom_traits                        GT;
-  typedef typename Tr::Bare_point                         Bare_point;
-  typedef typename Tr::Weighted_point                     Weighted_point;
+  typedef Bare_point_type_t<Tr>                           Bare_point;
+  typedef typename Tr::Point                              Weighted_point;
   typedef typename GT::FT                                 FT;
 
   typedef Triangulation_vertex_base_with_info_3<FT, GT>   Vbb;

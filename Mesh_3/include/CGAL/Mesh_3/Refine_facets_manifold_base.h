@@ -21,6 +21,7 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
@@ -62,8 +63,8 @@ public:
   typedef Complex3InTriangulation3                               C3t3;
   typedef MeshDomain                                             Mesh_domain;
 
-  typedef typename Tr::Bare_point                                Bare_point;
-  typedef typename Tr::Weighted_point                            Weighted_point;
+  typedef Bare_point_type_t<Tr>                                  Bare_point;
+  typedef typename Tr::Point                                     Weighted_point;
 
   typedef typename Tr::Vertex_handle                             Vertex_handle;
   typedef typename Tr::Facet                                     Facet;
@@ -133,13 +134,13 @@ private:
   FT compute_sq_distance_to_facet_center(const Facet& f,
                                          const Vertex_handle v) const
   {
-    typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
-    typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
+    auto cw = this->compute_weight_object(this->r_tr_);
+    auto cp = this->construct_bare_point_object(this->r_tr_);
 
     const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
     const Weighted_point& wp = this->r_tr_.point(v);
 
-    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);
+    return this->min_squared_distance(this->r_tr_, fcenter, cp(wp)) - cw(wp);
   }
 
   std::pair<Facet, FT>

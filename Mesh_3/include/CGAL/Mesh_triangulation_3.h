@@ -80,23 +80,6 @@ public:
   // possibilities). To enable Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
-  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
-  {
-    return q;
-  }
-
-  Triangle get_incident_triangle(const Facet& f, const Vertex_handle) const
-  {
-    return triangle(f);
-  }
-
-  void set_point(const Vertex_handle v,
-                 const Vector& /*move*/,
-                 const Weighted_point& new_position)
-  {
-    v->set_point(new_position);
-  }
-
   FT compute_power_distance_to_power_sphere(const Cell_handle c,
                                             const Vertex_handle v) const
   {
@@ -117,13 +100,7 @@ public:
 
     return compute_power_distance_to_power_sphere(c, v);
   }
-
-  typename Geom_traits::FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
-  {
-    return geom_traits().compute_squared_distance_3_object()(p, q);
-  }
 };
-
 
 /*!
 \ingroup PkgMesh3MeshClasses
@@ -168,11 +145,13 @@ template<class MD,
 struct Mesh_triangulation_3
 {
 private:
+  using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
   using K = typename Default::Lazy_get<GT, Kernel_traits<MD> >::type;
 
+public:
+#ifndef DOXYGEN_RUNNING
   using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 
-  using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
   using Vertex_base = typename Default::Get<
     VertexBase,
     Mesh_vertex_generator_3<Geom_traits,
@@ -190,7 +169,7 @@ private:
                                                      Concurrency_tag> {};
   using Triangulation =
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
-
+#endif // not DOXYGEN_RUNNING
 public:
 #ifndef DOXYGEN_RUNNING
   using type = Triangulation;

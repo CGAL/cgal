@@ -140,7 +140,7 @@ output_to_avizo(std::ostream& os,
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Weighted_point;
 
   const Tr& tr = c3t3.triangulation();
 

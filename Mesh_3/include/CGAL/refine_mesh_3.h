@@ -22,6 +22,7 @@
 #include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
 #include <CGAL/SMDS_3/Dump_c3t3.h>
@@ -41,7 +42,7 @@ namespace details {
  * of a C3T3 from C3T3::Tr::Vertex , keeping the dimension and indices.
  */
 template <typename C3T3>
-class Insert_vertex_in_c3t3
+class Insert_vertex_in_c3t3 : public Mesh_3::Triangulation_helpers<typename C3T3::Triangulation>
 {
 private:
   typedef typename C3T3::Vertex_handle          Vertex_handle;
@@ -50,8 +51,7 @@ private:
   typedef typename C3T3::Triangulation          Tr;
   typedef typename Tr::Geom_traits              Geom_traits;
   typedef typename Tr::Vertex                   Vertex;
-  typedef typename Tr::Weighted_point           Weighted_point;
-  typedef typename Weighted_point::Weight       Weight;
+  typedef typename Tr::Point                    Weighted_point;
 
 public:
   Insert_vertex_in_c3t3(C3T3& c3t3)
@@ -59,19 +59,26 @@ public:
 
   void operator()(const Vertex& vertex) const
   {
-    typename Geom_traits::Construct_point_3 cp =
-        r_c3t3_.triangulation().geom_traits().construct_point_3_object();
-    typename Geom_traits::Compute_weight_3 cw =
-        r_c3t3_.triangulation().geom_traits().compute_weight_3_object();
-
+    auto&& tr = r_c3t3_.triangulation();
     // Get vh properties
     int dimension = vertex.in_dimension();
-    Weight w = (dimension < 2) ? cw(vertex.point()) : 0;
-    Weighted_point point(cp(vertex.point()), w);
+
+
+    auto point = std::invoke([&]() -> decltype(auto) {
+      if constexpr (is_regular_triangulation_v<Tr>) {
+        auto cp = this->construct_bare_point_object(tr);
+        auto cw = this->compute_weight_object(tr);
+        auto cwp = this->construct_triangulation_point_object(tr);
+        auto w = (dimension < 2) ? cw(vertex.point()) : 0;
+        return cwp(cp(vertex.point()), w);
+      } else {
+        return vertex.point();
+      }
+    });
     Index index = vertex.index();
 
     // Insert point and restore handle properties
-    Vertex_handle new_vertex = r_c3t3_.triangulation().insert(point);
+    Vertex_handle new_vertex = tr.insert(point);
     r_c3t3_.set_index(new_vertex, index);
     r_c3t3_.set_dimension(new_vertex, dimension);
 
@@ -402,19 +409,22 @@ void refine_mesh_3_impl(C3T3& c3t3,
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
 
-  // Exudation
-  if ( exude )
+  if constexpr (is_regular_triangulation_v<typename C3T3::Triangulation>)
   {
-    double exude_time_limit = refine_time;
+    // Exudation
+    if ( exude )
+    {
+      double exude_time_limit = refine_time;
 
-    if ( exude.is_time_limit_set() )
-      exude_time_limit = exude.time_limit();
+      if ( exude.is_time_limit_set() )
+        exude_time_limit = exude.time_limit();
 
-    exude_mesh_3(c3t3,
-                 parameters::time_limit = exude_time_limit,
-                 parameters::sliver_bound = exude.bound());
+      exude_mesh_3(c3t3,
+                  parameters::time_limit = exude_time_limit,
+                  parameters::sliver_bound = exude.bound());
 
-    dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
+      dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
+    }
   }
 }
 #endif // DOXYGEN_RUNNING

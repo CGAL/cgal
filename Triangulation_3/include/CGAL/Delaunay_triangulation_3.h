@@ -544,7 +544,9 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool *could_lock_zone = nullptr) const
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
   {
     CGAL_precondition(dimension() >= 2);
 
@@ -567,7 +569,10 @@ public:
       ifit = Tr_Base::find_conflicts(c, tester,
                                      make_triple(std::back_inserter(facets),
                                                  std::back_inserter(cells),
-                                                 ifit), could_lock_zone).third;
+                                                 ifit),
+                                     could_lock_zone,
+                                     this_facet_must_be_in_the_cz,
+                                     the_facet_is_in_its_cz).third;
     }
 
     // Reset the conflict flag on the boundary.

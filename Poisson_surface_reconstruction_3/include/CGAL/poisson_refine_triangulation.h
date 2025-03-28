@@ -19,6 +19,7 @@
 #include <CGAL/IO/trace.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
+#include <CGAL/refine_mesh_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_mesh_traits_generator_3.h>
@@ -226,18 +227,36 @@ unsigned int poisson_refine_triangulation(
 
   std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
+  CGAL::Labeled_mesh_domain_3<typename Tr::Geom_traits, int, int> bounding_domain{
+    [](typename Tr::Geom_traits::Point_3) { return 1; },
+    enlarged_bbox,
+    CGAL::parameters::construct_surface_patch_index([](int, int) { return 0; })
+  };
+
+  Mesh_complex_3_in_triangulation_3<Tr, int, int> c3t3;
+  c3t3.triangulation() = std::move(tr);
+
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound,
+  Tets_criteria tets_criteria(c3t3.triangulation(),
+                              radius_edge_ratio_bound*radius_edge_ratio_bound,
                               sizing_field,
                               second_sizing_field);
+  Mesh_facet_criteria_3<Tr> facet_criteria{0, 0 , 0};
+  Mesh_criteria_3<Tr> mesh_criteria{facet_criteria, tets_criteria};
+
   Oracle oracle;
   Null_mesher_level null_mesher_level;
   Refiner refiner(tr, tets_criteria, max_vertices, enlarged_bbox, oracle, null_mesher_level);
   refiner.scan_triangulation(); // Push bad cells to the queue
   refiner.refine(Null_mesh_visitor()); // Refine triangulation until queue is empty
 
+  CGAL::refine_mesh_3(c3t3, bounding_domain, mesh_criteria,
+                      CGAL::parameters::no_exude().no_perturb());
+
   nb_vertices = tr.number_of_vertices() - nb_vertices;
 
+  std::cerr << "Poisson_refine_triangulation: " << nb_vertices
+            << " vertices inserted." << std::endl;
 
   return static_cast<unsigned int>(nb_vertices);
 }

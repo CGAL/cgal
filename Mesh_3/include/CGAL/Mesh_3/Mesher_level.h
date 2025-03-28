@@ -24,7 +24,9 @@
 #endif
 
 #include <CGAL/Mesher_level.h>
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
+#include <CGAL/type_traits.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
@@ -132,7 +134,7 @@ public:
   /** Type of point that are inserted into the triangulation. */
   typedef typename Triangulation::Point Point;
   /** Type of point with no weight */
-  typedef typename Triangulation::Bare_point Bare_point;
+  typedef Bare_point_type_t<Triangulation> Bare_point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -464,6 +466,7 @@ template <
 class Mesher_level
   : public Mesher_level_base<Tr, Derived, Element, Previous,
                              Triangulation_traits>
+  , public Triangulation_helpers<Tr>
 {
 public:
 
@@ -548,8 +551,8 @@ public:
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Tr& tr = derived().triangulation_ref_impl();
-    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
-                       this->refinement_point(e));
+    auto cp = this->construct_triangulation_point_object(tr);
+    Point p = cp(this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -938,8 +941,8 @@ public:
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Tr& tr = derived().triangulation_ref_impl();
-    const Point& p = tr.geom_traits().construct_weighted_point_3_object()(
-      this->refinement_point(e));
+    auto cp = this->construct_triangulation_point_object(tr);
+    const Point& p = cp(this->refinement_point(e));
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<

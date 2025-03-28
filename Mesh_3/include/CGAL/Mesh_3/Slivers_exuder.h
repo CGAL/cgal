@@ -33,6 +33,7 @@
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -343,8 +344,8 @@ private: // Types
   typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_>     Self;
 
   typedef typename C3T3::Triangulation                       Tr;
-  typedef typename Tr::Weighted_point                        Weighted_point;
-  typedef typename Tr::Bare_point                            Bare_point;
+  typedef typename Tr::Point                                 Weighted_point;
+  typedef Bare_point_type_t<Tr>                              Bare_point;
   typedef typename Tr::Cell_handle                           Cell_handle;
   typedef typename Tr::Facet                                 Facet;
   typedef typename Tr::Vertex_handle                         Vertex_handle;

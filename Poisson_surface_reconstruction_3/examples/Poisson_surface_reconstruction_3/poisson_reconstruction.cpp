@@ -1,3 +1,4 @@
+#define DEBUG_TRACE
 // poisson_reconstruction.cpp
 
 //----------------------------------------------------------
@@ -18,7 +19,7 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Poisson_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
@@ -56,7 +57,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
 // Mesh_3
-typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
 typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -327,7 +328,7 @@ int main(int argc, char * argv[])
                       << "                    manifold_with_boundary()\n";
 
     // Defines mesh domain
-    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+    Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(function, bsphere,
         CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
     // Generates mesh with manifold option

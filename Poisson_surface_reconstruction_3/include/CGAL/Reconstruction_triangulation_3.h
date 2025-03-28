@@ -23,8 +23,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Delaunay_triangulation_cell_base_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 
@@ -125,6 +125,12 @@ public:
   const Vector& normal() const { return this->point().normal(); }
   Vector&       normal()       { return this->point().normal(); }
 
+  // For Mesh_3
+  using Index = int;
+  int in_dimension() const { return 3; }
+  void set_in_dimension(int d) { CGAL_assertion(d == 3); }
+  void set_index(Index i) { m_index = i; }
+
 // Private methods
 private:
 
@@ -134,6 +140,28 @@ private:
 
 }; // end of Reconstruction_vertex_base_3
 
+template <typename Gt,
+          typename Cb = Regular_triangulation_cell_base_3<Gt, Triangulation_cell_base_with_info_3<int, Gt>>>
+class Reconstruction_cell_base_3 : public Cb
+{
+  int m_subdomain_index = 0;
+public:
+  using Surface_patch_index = int;
+  using Subdomain_index = int;
+  int subdomain_index() const { return m_subdomain_index; }
+  void set_subdomain_index(int index) { m_subdomain_index = index; }
+  bool is_face_on_surface(int) const { return false; }
+  int surface_patch_index(int) const { CGAL_error(); return 0; }
+  void set_surface_patch_index(int, int) { CGAL_error(); }
+
+  template <typename TDS2> struct Rebind_TDS
+  {
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
+    typedef Reconstruction_cell_base_3<Gt, Cb2> Other;
+  };
+
+  using Cb::Cb;
+}; // end of Reconstruction_cell_base_3
 
 /// \internal
 /// Helper class:
@@ -174,8 +202,7 @@ template <class BaseGt,
           class Gt = Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
           class Tds_ = Triangulation_data_structure_3<
                          Reconstruction_vertex_base_3<Gt>,
-                         Delaunay_triangulation_cell_base_3<
-                           Gt, Triangulation_cell_base_with_info_3<int, Gt> > > >
+                         Reconstruction_cell_base_3<Gt> >>
 class Reconstruction_triangulation_3
   : public Delaunay_triangulation_3<Gt, Tds_>
 {
@@ -264,16 +291,6 @@ public:
 
 
 public:
-
-  /// Default constructor.
-  Reconstruction_triangulation_3()
-  {}
-
-  ~Reconstruction_triangulation_3()
-  {}
-
-  // Default copy constructor and operator =() are fine.
-
   // Repeat base class' public methods used below
   /// \cond SKIP_IN_MANUAL
   using Base::points_begin;
@@ -342,11 +359,9 @@ public:
       v->type() = static_cast<unsigned char>(type);
       return v;
     }
-    typename Base::Locate_type lt;
-    int li, lj;
-    Cell_handle ch = Base::locate(p, lt, li, lj, start);
+    Cell_handle ch = Base::locate(p, start);
 
-    Vertex_handle v = Base::insert(p, lt, ch, li, lj);
+    Vertex_handle v = Base::insert(p, ch);
     v->type() = static_cast<unsigned char>(type);
     return v;
 
@@ -406,6 +421,11 @@ public:
       m /= 2;
       fractions.push_front(m/n);
     }
+    std::cerr << "fractions:";
+    for(auto f : fractions) {
+      std::cerr << " " << f;
+    }
+    std::cerr << std::endl;
 
     insert_fraction(visitor);
     return 0;
@@ -424,10 +444,14 @@ public:
     if((fraction+more) > points.size()){
       more = points.size() - fraction;
     }
+    std::cerr << "Insert " << more << " points (fraction=" << frac << ") , from "
+              << fraction << " to " << (fraction+more) << std::endl;
+    const auto range_begin = points.begin() + fraction;
+    const auto range_end = range_begin + more;
+    spatial_sort (range_begin, range_end, geom_traits());
+
     Cell_handle hint;
-    spatial_sort (points.begin()+fraction, points.begin()+fraction+more, geom_traits());
-    for (typename std::vector<Point_with_normal>::const_iterator p = points.begin()+fraction;
-         p != points.begin()+fraction+more; ++p)
+    for (auto p = range_begin; p != range_end; ++p)
     {
       Vertex_handle v = insert(*p, INPUT, hint, visitor);
       hint = v->cell();

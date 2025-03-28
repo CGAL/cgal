@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <CGAL/type_traits.h>
 
 namespace CGAL {
 namespace internal {
@@ -75,8 +76,8 @@ bool project_points(C3T3& c3t3,
 
   typedef typename C3T3::Triangulation         Tr;
 
-  typedef typename Tr::Bare_point              Bare_point;
-  typedef typename Tr::Weighted_point          Weighted_point;
+  typedef Bare_point_type_t<Tr>                Bare_point;
+  typedef typename Tr::Point                   Weighted_point;
   typedef typename Tr::Geom_traits::Vector_3   Vector_3;
   typedef typename Tr::Geom_traits::FT         FT;
 

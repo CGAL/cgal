@@ -38,8 +38,6 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <iostream>
@@ -1842,7 +1840,7 @@ bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 is_valid(bool verbose) const
 {
-  typedef typename Tr::Weighted_point                         Weighted_point;
+  typedef typename Tr::Point                                  Weighted_point;
   typedef boost::unordered_map<Vertex_handle, int, Hash_fct>  Vertex_map;
 
   Vertex_map vertex_map;

@@ -382,8 +382,8 @@ public:
     CGAL::Random random(0);
 
     typedef typename C3t3::Triangulation                  Tr;
-    typedef typename Tr::Weighted_point                   Weighted_point;
-    typedef typename IGT_::Sphere_3                        Sphere_3;
+    typedef typename Tr::Point                            Weighted_point;
+    typedef typename IGT_::Sphere_3                       Sphere_3;
     typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
 
     Tr& tr = c3t3.triangulation();

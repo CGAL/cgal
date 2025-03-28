@@ -38,7 +38,7 @@ output_to_maya(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Weighted_point;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 

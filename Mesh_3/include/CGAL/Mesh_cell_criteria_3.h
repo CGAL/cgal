@@ -27,6 +27,30 @@
 
 namespace CGAL {
 
+namespace Mesh_3 {
+namespace details {
+
+  template<typename Tr> auto mesh_cell_criteria_3_default_visitor() {
+    using Point = typename Tr::Point;
+    using Bare_point = Bare_point_type_t<Tr>;
+    constexpr bool is_bare = std::is_same_v<Point, Bare_point>;
+    Tr tr;
+    typename Tr::Cell_handle ch;
+    if constexpr (is_bare) {
+      return Mesh_3::Cell_criterion_visitor<Tr>(tr, ch);
+    }
+    else {
+      return Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr>(tr, ch);
+    }
+  }
+
+  template <typename Tr>
+  using Mesh_cell_criteria_3_default_visitor =
+      CGAL::cpp20::remove_cvref_t<decltype(mesh_cell_criteria_3_default_visitor<Tr>())>;
+} // namespace details
+} // namespace Mesh_3
+
+
 /*!
 \ingroup PkgMesh3MeshClasses
 
@@ -47,7 +71,7 @@ and a sizing field which may be a uniform or variable field.
 */
 template <typename Tr
 #ifndef DOXYGEN_RUNNING
-          ,typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr>
+          ,typename Visitor_ = Mesh_3::details::Mesh_cell_criteria_3_default_visitor<Tr>
 #endif
           >
 class Mesh_cell_criteria_3
