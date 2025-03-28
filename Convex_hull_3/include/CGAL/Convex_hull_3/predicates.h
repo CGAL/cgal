@@ -67,7 +67,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   Vector_3 averageDirection() const {
     // PRECONDITION : all northes are normalized.
     switch( this->size() ) {
-      case 0 : return NULL_VECTOR; break;
+      case 0 : return Vector_3(1,0,0); break;
       case 1 : return this->begin()->north_; break;
       case 2 :{   // The two vertex are opposite so we do not take their mean
                   // We want a direction with negative dot with bith north_
@@ -94,7 +94,10 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
     const int n = this->size();
     result.clear();
     switch( n ) {
-      case 0 : break; // 0 means empty, so nothing to do
+      case 0 : {
+                result.emplace_back(OrigVertex); // 0 means empty, so nothing to do
+                break;
+               }
       case 1 : {
                  result = (*this);
                  Vector_3 clipNorth = LInf_normalize(OrigVertex);
@@ -231,8 +234,16 @@ bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int &
   return maxOverA >= minOverB;
 }
 
+template <class Vector_3, class Convex>
+const typename Kernel_traits<Vector_3>::Kernel::Point_3& extreme_point(const Convex& C, const Vector_3 dir) {
+  using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
+  return *std::max_element(C.begin(), C.end(), [&](const Point_3 &a, const Point_3 &b){
+                                               return compare(Vector_3(ORIGIN, a)*dir, Vector_3(ORIGIN, b)*dir)==SMALLER;
+                                               });
+}
+
 template <typename IK, typename OK, typename I2O>
-struct RangeConverter{
+struct RangeConverter: public I2O{
   template<typename PointRange>
   std::vector<typename OK::Point_3> operator()(const PointRange &pts) const{
     std::vector<typename OK::Point_3> out;
@@ -256,25 +267,17 @@ struct Functor_spherical_disjoint{
     using Vector_3= typename K::Vector_3;
 
     SphericalPolygon<Vector_3> positiveBound, tempPoly;
-    int vA, vB;
-    Vector_3 dir(b[0] - a[0]);
-    if( ! differenceCoversZeroInDir(a, b, vA, vB, dir)) return true;
-    if((b[vB] - a[vA])==NULL_VECTOR) return false;
     positiveBound.clear();
-    positiveBound.emplace_back(dir);
-    positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
-    if( positiveBound.empty() ) return false;
     unsigned long planeStatPerPair = 0;
     do {
-      if( ! differenceCoversZeroInDir(a, b, vA, vB, positiveBound.averageDirection())) return true;
-      if((b[vB] - a[vA])==NULL_VECTOR) return false;
-      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER))
-      {
-        return false;
-      }
-      positiveBound.clip(b[vB] - a[vA], tempPoly); positiveBound.swap(tempPoly);
-      if( positiveBound.empty() ) return false;
-    } while( true );
+      Vector_3 dir = std::move(positiveBound.averageDirection());
+      Vector_3 sp = extreme_point(a, dir) - extreme_point(b, -dir);
+      if(sp==NULL_VECTOR) return false;
+      if(is_negative(sp * dir)) return true;
+      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return false;
+      positiveBound.clip(-sp, tempPoly); positiveBound.swap(tempPoly);
+    } while( !positiveBound.empty() );
+    return false;
   }
 };
 
