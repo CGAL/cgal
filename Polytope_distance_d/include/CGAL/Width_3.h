@@ -166,7 +166,7 @@ class Width_3 {
     typedef Width_polyhedron_items_3                        Items;
     typedef Polyhedron_3< Traits, Items, HalfedgeDS_list>   LocalPolyhedron;
     LocalPolyhedron P;
-    convex_hull_3( begin, beyond, P, CHT());
+    convex_hull_3( begin, beyond, P, parameters::geom_traits(CHT()));
     width_3_convex(P);
   }
 

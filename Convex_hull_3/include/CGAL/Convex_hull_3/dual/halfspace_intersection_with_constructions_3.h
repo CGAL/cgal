@@ -127,7 +127,7 @@ namespace CGAL
           }
 
           Polyhedron ch;
-          CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch, ch_traits);
+          CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch, parameters::geom_traits(ch_traits));
 
           Convex_hull_3::internal::build_dual_polyhedron (ch, P, p_origin);
         }

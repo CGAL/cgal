@@ -261,7 +261,7 @@ namespace CGAL
         // compute the intersection of the half-space using the dual formulation
         Hull_traits_dual_3 dual_traits(*origin);
         Polyhedron_dual_3 dual_convex_hull;
-        CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+        CGAL::convex_hull_3(begin, end, dual_convex_hull, parameters::geom_traits(dual_traits));
         Convex_hull_3::internal::build_primal_polyhedron(P, dual_convex_hull, *origin);
 
         // Posterior check if the origin is inside the computed polyhedron

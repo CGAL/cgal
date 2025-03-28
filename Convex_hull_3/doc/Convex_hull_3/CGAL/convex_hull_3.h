@@ -11,15 +11,29 @@ if the convex hull is a point or a segment, endpoints will be added in `pm` as i
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam PolygonMesh must be a model of `MutableFaceGraph`.
-\tparam Traits must be a model of the concept `ConvexHullTraits_3`.
-For the purposes of checking the postcondition that the convex hull
-is valid, `Traits` must also be a model of the concept
-`IsStronglyConvexTraits_3`.
+\tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-If the kernel `R` of the points determined by the value type of `InputIterator`
-is a kernel with exact predicates but inexact constructions
-(in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
-then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
+\param first
+\param last
+\param pm the `PolygonMesh` that will contain the convex hull
+\param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+  \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of the concept `ConvexHullTraits_3`.
+                     For the purposes of checking the postcondition that the convex hull
+                     is valid, `Traits` must also be a model of the concept `IsStronglyConvexTraits_3`.}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.
+                        If the kernel `R` of the points determined by the value type of `InputIterator`
+                        is a kernel with exact predicates but inexact constructions
+                        (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
+                        then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+
 
 \attention The user must include the header file of the `PolygonMesh` type.
 
@@ -31,8 +45,8 @@ Barber <I>et al.</I> \cgalCite{bdh-qach-96}.
 
 */
 
-template <class InputIterator, class PolygonMesh, class Traits>
-void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, const Traits& ch_traits = Default_traits);
+template <class InputIterator, class PolygonMesh, class NamedParameters = CGAL::parameters::Default_named_parameters>
+void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, const NamedParameters &  np = p = parameters::default_values());
 
 
 /*!

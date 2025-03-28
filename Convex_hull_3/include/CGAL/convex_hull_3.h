@@ -990,11 +990,16 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
    convex_hull_3(first, beyond, ch_object, Traits());
 }
 
-template <class InputIterator, class PolygonMesh, class Traits>
+template <class InputIterator, class PolygonMesh, class CGAL_NP_TEMPLATE_PARAMETERS>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    PolygonMesh& polyhedron,
-                   const Traits& traits)
+                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  typedef typename GetGeomTraits<PolygonMesh,CGAL_NP_CLASS>::type         Traits;
+
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
   typedef typename Traits::Point_3                Point_3;
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;
@@ -1048,33 +1053,36 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
     polyhedron, traits);
 }
 
+/*
 template <class InputIterator, class PolygonMesh>
 void convex_hull_3(InputIterator first, InputIterator beyond,
-                   PolygonMesh& polyhedron,
+                   PolygonMesh& polyhedron
+                //   ,
                    // workaround to avoid ambiguity with next overload.
-                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0)
+                //   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0
+                  )
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3, PolygonMesh>::type Traits;
   convex_hull_3(first, beyond, polyhedron, Traits());
 }
-
-template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
+*/
+template <class VertexListGraph, class PolygonMesh, class CGAL_NP_TEMPLATE_PARAMETERS>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np = parameters::default_values())
+                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  typedef typename GetVertexPointMap<VertexListGraph, NamedParameters>::const_type Vpmap;
+  typedef typename GetVertexPointMap<VertexListGraph, CGAL_NP_CLASS>::const_type Vpmap;
   typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
   Vpmap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(boost::vertex_point, g));
 
   Vpmap_fct v2p(vpm);
   convex_hull_3(boost::make_transform_iterator(vertices(g).begin(), v2p),
-                boost::make_transform_iterator(vertices(g).end(), v2p), pm);
+                boost::make_transform_iterator(vertices(g).end(), v2p), pm, np);  // AF: Added np but is it the right one?
 }
 
 
@@ -1091,7 +1099,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   typedef typename Kernel_traits<Point_3>::type Traits;
 
   Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
-  convex_hull_3(first, beyond, its, Traits());
+  convex_hull_3(first, beyond, its, parameters::geom_traits(Traits()));
 }
 
 
@@ -1116,7 +1124,7 @@ extreme_points_3(const InputRange& range,
                  const Traits& traits)
 {
   Convex_hull_3::internal::Output_iterator_wrapper<OutputIterator> wrapper(out);
-  convex_hull_3(range.begin(), range.end(), wrapper, traits);
+  convex_hull_3(range.begin(), range.end(), wrapper, CGAL::parameters::geom_traits(traits));
   return out;
 }
 
