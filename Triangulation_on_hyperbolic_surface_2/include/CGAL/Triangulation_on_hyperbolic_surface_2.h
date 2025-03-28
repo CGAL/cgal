@@ -59,6 +59,16 @@ public:
   {
     typename Combinatorial_map_with_cross_ratios::Dart_descriptor dart;
     typename Traits::Hyperbolic_point_2 vertices[3];
+
+    Anchor(){};
+
+    Anchor(typename Combinatorial_map_with_cross_ratios::Dart_descriptor dart, typename Traits::Hyperbolic_point_2 a,
+           typename Traits::Hyperbolic_point_2 b, typename Traits::Hyperbolic_point_2 c) {
+      this->dart = dart;
+      vertices[0] = a;
+      vertices[1] = b;
+      vertices[2] = c;
+    }
   };
 
   typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                           Dart_descriptor;
