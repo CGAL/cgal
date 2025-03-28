@@ -997,7 +997,7 @@ private:
       return 0;
     }
     if (o1 * o2 * o3 == 0){
-      return 2; // means we dont know
+      return 2; // means we don't know
     }
     return 1;
   }
@@ -1235,7 +1235,7 @@ private:
             }
             // this was for a fast float check
             if (inter == 2)
-              { //we dont know if point exist or if inside of triangle
+              { //we don't know if point exist or if inside of triangle
                 cut[cutp[i]] = true;
                 cut[cutp[j]] = true;
                 continue;
