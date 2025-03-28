@@ -407,7 +407,7 @@ is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
     Vertex_const_handle cver;
     Point_2 second_point;
     if (cmp_endpoints(*next) == SMALLER) {
-      // next curve's minimum is the joint vertex. Look if it's max exists in
+      // next curve's minimum is the joint vertex. Look if its max exists in
       // the arrangement and insert lexicographically
       second_point = max_functor(*next);
       obj = pl.locate(second_point);
@@ -757,7 +757,7 @@ bool are_holes_and_boundary_pairwise_disjoint
 /* A valid polygon with holes is :
  * 1 - Has empty or closed boundary and all the holes are closed
  * 2 - The PWH is relatively simple polygon (holes are simple...)
- * 3 - Has it's boundary oriented counterclockwise and the holes oriented
+ * 3 - Has its boundary oriented counterclockwise and the holes oriented
  *     clockwise
  * 4 - All the segments (boundary and holes) do not cross or intersect in their
  *     relative interior
