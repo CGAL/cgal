@@ -8,9 +8,8 @@ class MyConstruct_point_2
   typedef typename K::Point_2    Point_2;
   typedef typename K::Line_2     Line_2;
   typedef typename Point_2::Rep  Rep;
-public:
-  typedef Point_2                result_type;
 
+public:
   // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
   // Unfortunately it is needed for optimizing away copy-constructions,
   // due to current lack of delegating constructors in the C++ standard.

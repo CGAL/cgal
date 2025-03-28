@@ -4338,7 +4338,7 @@ public:
     Kernel::Vector_3 const& n);
 
   /*!
-    introduces a variable of type `Kernel::Point_3`.
+    introduces a variable of type `Kernel::Circle_3`.
     It is initialized to the circle passing through the three points.
     \pre The three points are not collinear.
   */
@@ -7600,7 +7600,7 @@ public:
     and also for `Type1` and `Type2` of respective types
 
     - `Kernel::Triangle_3` and `Kernel::Tetrahedron_3`
-    - `Kernel::Plane_3` and `Kernel::Sphere_3` (or the contrary)
+    - `Kernel::Plane_3` and `Kernel::Sphere_3`
     - `Kernel::Sphere_3` and `Kernel::Sphere_3`.
 
   */

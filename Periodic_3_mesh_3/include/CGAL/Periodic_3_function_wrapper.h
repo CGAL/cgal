@@ -41,7 +41,7 @@ public:
 
   /// Operator ()
   return_type operator()(const Point_3& p) const {
-    return f_(P3T3::internal::robust_canonicalize_point(p, gt_));
+    return f_(P3T3::internal::construct_canonical_point(p, gt_));
   }
 
 private:

@@ -25,6 +25,7 @@ namespace CGAL {
 template <class R_>
 class TriangleC3
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -44,13 +45,13 @@ public:
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
     : base{p, q, r} {}
 
-  bool       operator==(const TriangleC3 &t) const;
-  bool       operator!=(const TriangleC3 &t) const;
+  Boolean operator==(const TriangleC3 &t) const;
+  Boolean operator!=(const TriangleC3 &t) const;
 
   Plane_3    supporting_plane() const;
 
-  bool       has_on(const Point_3 &p) const;
-  bool       is_degenerate() const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean is_degenerate() const;
 
   const Point_3 & vertex(int i) const;
   const Point_3 & operator[](int i) const;
@@ -59,7 +60,7 @@ public:
 };
 
 template < class R >
-bool
+typename R::Boolean
 TriangleC3<R>::operator==(const TriangleC3<R> &t) const
 {
   if (CGAL::identical(base, t.base))
@@ -75,7 +76,7 @@ TriangleC3<R>::operator==(const TriangleC3<R> &t) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 TriangleC3<R>::operator!=(const TriangleC3<R> &t) const
 {
   return !(*this == t);
@@ -118,7 +119,7 @@ TriangleC3<R>::supporting_plane() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 TriangleC3<R>::
 has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
@@ -127,7 +128,7 @@ has_on(const typename TriangleC3<R>::Point_3 &p) const
 }
 
 template < class R >
-bool
+typename R::Boolean
 TriangleC3<R>::is_degenerate() const
 {
   return collinear(vertex(0),vertex(1),vertex(2));
