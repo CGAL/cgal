@@ -12,7 +12,6 @@
 /// \defgroup PkgHyperbolicSurfaceTriangulation2InputOutput Input/Output Functions
 /// \ingroup PkgHyperbolicSurfaceTriangulation2Ref
 
-
 /*!
 \addtogroup PkgHyperbolicSurfaceTriangulation2Ref
 
@@ -26,7 +25,7 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{6}
+\cgalPkgSince{6.1}
 \cgalPkgDependsOn{\ref PkgCombinatorialMaps}
 \cgalPkgBib{cgal:y-t2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
@@ -34,7 +33,6 @@
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
-
 
 \cgalClassifedRefPages
 
@@ -57,6 +55,6 @@ Models for `HyperbolicSurfaceTraits_2` and `ComplexNumber` are provided: `CGAL::
 
 \cgalCRPSection{Input/Output Functions}
 
-- `operator<<` and `operator>>`  are overloaded for several classes of the package.
+- `operator<<` and `operator>>` are overloaded for several classes of the package.
 
 */

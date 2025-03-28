@@ -15,7 +15,7 @@ typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                Domain;
 typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>        Factory;
 typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>          Triangulation;
 
-int main(){
+int main() {
   // Generates the domain:
   Factory factory = Factory();
   Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL)); // get a random seed with time(NULL)
