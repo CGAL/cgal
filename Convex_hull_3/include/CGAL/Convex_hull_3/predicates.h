@@ -47,7 +47,7 @@ struct SphericalPolygonElement {
   // v1 = cross(n0, n1),  more generally: v_{i+1} = cross(n_i, n_{i+1})  and
   // n1 = cross(v1, v2),  more generally: n_i     = cross(v_i, v_{i+1}).
   SphericalPolygonElement(){}
-  SphericalPolygonElement(const Vector_3 & n) : north_(LInf_normalize(n)) {}
+  SphericalPolygonElement(const Vector_3 & n) : north_(n) {}
   SphericalPolygonElement(const Vector_3 & v, const Vector_3 & n) : vertex_(v), north_(n) {}
 };
 
@@ -65,9 +65,9 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 
   Vector_3 averageDirection() const {
-    // PRECONDITION : all northes are normalized.
+    // PRECONDITION : all vertex are normalized.
     switch( this->size() ) {
-      case 0 : return Vector_3(1,0,0); break;
+      case 0 : return Vector_3(1,0,0); break; // An arbitrary one
       case 1 : return this->begin()->north_; break;
       case 2 :{   // The two vertex are opposite so we do not take their mean
                   // We want a direction with negative dot with bith north_
@@ -89,20 +89,18 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
     }
   }
 
-  void clip(const Vector_3& OrigVertex, SphericalPolygon<Vector_3> & result, bool doClean=true) const {
-    // PRECONDITION : clipNorth, and all northes are normalized.
+  void clip(const Vector_3& clipNorth, SphericalPolygon<Vector_3> & result, bool doClean=true) const {
     const int n = this->size();
     result.clear();
     switch( n ) {
       case 0 : {
-                result.emplace_back(OrigVertex); // 0 means empty, so nothing to do
+                result.emplace_back(clipNorth); // 0 means empty, so nothing to do
                 break;
                }
       case 1 : {
                  result = (*this);
-                 Vector_3 clipNorth = LInf_normalize(OrigVertex);
                 //  NT dot = this->begin()->north_ * clipNorth;
-                 Vector_3 v(cross_product(clipNorth, this->begin()->north_));
+                 Vector_3 v(LInf_normalize(cross_product(clipNorth, this->begin()->north_)));
                  if(v==NULL_VECTOR /* && is_negative(dot) */){ // Original code test if dot equal -1 with normalized vector, now the vectors are not normalized
                    // intersection of two opposite hemispheres ==> empty
                    result.clear();
@@ -113,14 +111,12 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                   //  break;
                 //  }
 
-                 v = LInf_normalize(v);
                  result.begin()->vertex_ = v;
                  result.emplace_back(-v, clipNorth);
                  break;
                }
       case 2 : {
                  result = (*this);
-                 Vector_3 clipNorth = LInf_normalize(OrigVertex);
                  iterator next = result.begin();
                  iterator cur = next++;
                  NT vDot = this->begin()->vertex_ * clipNorth;
@@ -163,7 +159,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
       default : { // n >= 3
                   int nbKept(0);
                   const_iterator cur = this->begin();
-                  Vector_3 clipNorth = LInf_normalize(OrigVertex);
                   NT nextDot, curDot = clipNorth * cur->vertex_;
                   while( cur != this->end() ) {
                     if( cur+1 == this->end() )
@@ -237,9 +232,18 @@ bool differenceCoversZeroInDir(const Convex& A, const Convex& B, int & vA, int &
 template <class Vector_3, class Convex>
 const typename Kernel_traits<Vector_3>::Kernel::Point_3& extreme_point(const Convex& C, const Vector_3 dir) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
-  return *std::max_element(C.begin(), C.end(), [&](const Point_3 &a, const Point_3 &b){
-                                               return compare(Vector_3(ORIGIN, a)*dir, Vector_3(ORIGIN, b)*dir)==SMALLER;
-                                               });
+  using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
+
+  typename Convex::const_iterator argmax=C.begin();
+  FT tmax= Vector_3(ORIGIN, *argmax)*dir;
+  for(typename Convex::const_iterator it=C.begin()+1; it!=C.end(); ++it){
+    FT v=Vector_3(ORIGIN, *it)*dir;
+    if(compare(tmax, v)==SMALLER){
+      tmax=v;
+      argmax=it;
+    }
+  }
+  return *argmax;
 }
 
 template <typename IK, typename OK, typename I2O>
