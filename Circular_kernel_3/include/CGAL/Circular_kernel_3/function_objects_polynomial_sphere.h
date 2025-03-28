@@ -155,13 +155,13 @@ template < class SK > \
                 const Circular_arc_point_3 &c1) const
     { return SphericalFunctors::equal<SK>(Circular_arc_point_3(c0), c1); }
 
-    // Our Line_arc_3 dont have orientation
+    // Our Line_arc_3 doesn't have orientation
     result_type
     operator() (const Line_arc_3 &l0,
                 const Line_arc_3 &l1) const
     { return SphericalFunctors::equal<SK>(l0, l1); }
 
-    // Our Circular_arc_3 dont have orientation (as parameter)
+    // Our Circular_arc_3 doesn't have orientation (as parameter)
     result_type
     operator() (const Circular_arc_3 &c0,
                 const Circular_arc_3 &c1) const

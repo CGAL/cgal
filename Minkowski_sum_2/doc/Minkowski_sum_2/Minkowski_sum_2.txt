@@ -669,7 +669,7 @@ of the offset approximation for degenerate polygons such as line segments. This
 enhancement was developed by Efi Fogel, who also developed a new decomposition
 strategy, which can handle polygons with holes, essentially enabling the
 computation of Minkowski sum of two polygons with holes using the decomposition
-approach. The later was introduced with release 4.6. Ron Wein, Efi Fogel,
+approach. The latter was introduced with release 4.6. Ron Wein, Efi Fogel,
 Ophir Setter, Andreas Fabri, and Laurent Rineau helped maintaining the package
 applying bug fixes and other improvements. In particular, Andreas Fabri and
 Laurent Rineau helped tracing and solving several bugs in the approximated

@@ -471,7 +471,7 @@ namespace CGAL {
       return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK>());
     }
 
-    // At the moment we dont need those functions
+    // At the moment we don't need those functions
     // But in the future maybe (some make_x_monotone? etc..)
     template <class SK>
     typename SK::Circular_arc_point_3
