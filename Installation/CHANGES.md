@@ -54,6 +54,11 @@
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
 
 
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+
+-   Added the function `dijkstra_shortest_path()` which computes the geometrically shortest sequence of halfedges between two vertices.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
