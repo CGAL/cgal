@@ -295,6 +295,8 @@ for more information.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
 If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
+\attention In the master branch of \ceres `glog` was dropped as a dependecy and `abseil` was added instead. It is not compatible with \visualstudio 2017 or earlier versions.
+
 \subsection thirdpartyGLPK GLPK
 
 \glpk (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
