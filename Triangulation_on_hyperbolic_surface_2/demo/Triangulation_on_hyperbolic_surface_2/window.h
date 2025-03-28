@@ -23,6 +23,7 @@
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
@@ -33,24 +34,27 @@ typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                         
 typedef Traits::Hyperbolic_point_2                                               Point;
 typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>                      Triangulation;
 
-class DemoWindowItem :
-    public CGAL::Qt::GraphicsItem
+class DemoWindowItem
+  : public CGAL::Qt::GraphicsItem
 {
-    Q_OBJECT // Qt macro for Qt objects
-    // (Q_OBJECT does not support templates)
+  Q_OBJECT // Qt macro for Qt objects
+  // (Q_OBJECT does not support templates)
+
 private:
-  typedef CGAL::Bbox_2                                Bbox_2; // "Bounding box" : just a box type used for drawing
+  typedef CGAL::Bbox_2                                Bbox_2; // "Bounding box": just a box type used for drawing
 
   // Edges to draw
-  std::vector<std::pair<Point,Point>>                 _edges;
+  std::vector<std::pair<Point,Point> > edges_;
 
   // Pens for drawing
-  QPen                                                _poincare_disk_pen;
-  QPen                                                _edges_pen;
+  QPen poincare_disk_pen_;
+  QPen edges_pen_;
 
   // radius of the poincaré disk
-  const int _poincare_disk_radius_in_pixels = 600;
-  // Approximation treshold : used to decide when to simplify a computation (ex : draw a line instead of an arc if an hyperbolic segment is very small)
+  const int poincare_disk_radius_in_pixels_ = 600;
+
+  // Approximation treshold: used to decide when to simplify a computation (ex: draw a line
+  // instead of an arc if an hyperbolic segment is very small)
   const double computation_treshold = 0.001;
   const double computation_treshold_squared = computation_treshold*computation_treshold;
 
@@ -81,14 +85,16 @@ private:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class DemoWindow :
-    public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
+class DemoWindow
+  : public CGAL::Qt::DemosMainWindow,
+    public Ui::MainWindow
 {
-    Q_OBJECT // Qt macro for Qt objects
-    // (Q_OBJECT does not support templates)
+  Q_OBJECT // Qt macro for Qt objects
+  // (Q_OBJECT does not support templates)
+
 private:
-  QGraphicsScene                  _scene;
-  DemoWindowItem*                 _item;
+  QGraphicsScene scene_;
+  DemoWindowItem* item_;
 
 public:
   DemoWindow();

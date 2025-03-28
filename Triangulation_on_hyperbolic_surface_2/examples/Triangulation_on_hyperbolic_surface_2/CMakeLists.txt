@@ -1,11 +1,9 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project( Triangulation_on_hyperbolic_surface_2_Examples )
 
 # CGAL and its components
 find_package( CGAL REQUIRED  )
-
-include_directories(../../include/)
 
 # create a target per cppfile
 file(
