@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
   std::size_t number_of_patches = PMP::sharp_edges_segmentation(mesh, 80, eif, fpmap);
 
   std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
-                       << mesh.number_of_faces() << " faces" << std::endl;
+                       << mesh.number_of_faces() << " faces\n"
+            << "Number of patches: " << number_of_patches << std::endl;
 
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
                 CGAL::parameters::face_patch_map(fpmap));
