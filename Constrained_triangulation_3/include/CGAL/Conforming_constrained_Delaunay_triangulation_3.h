@@ -3894,22 +3894,15 @@ protected:
 * \brief creates a triangulation for Tetrahedral remeshing
 * \tparam Traits traits
 * \tparam Tr triangulation
-* \tparam NamedParameters named params
 *
 * \param ccdt triangulation
-* \param np named parameters
 */
-template <typename Traits,
-          typename Tr,
-          typename NamedParameters = parameters::Default_named_parameters>
+template <typename Traits, typename Tr>
 CGAL::Triangulation_3<Traits, typename Tr::Triangulation_data_structure>
-convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
-                           const NamedParameters& np = parameters::default_values())
+convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt)
 {
-  using CCDT = Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>;
-
-  CCDT tmp = std::move(ccdt).convert_for_remeshing();
-  return std::move(tmp.triangulation());
+  auto tmp = std::move(ccdt).convert_for_remeshing();
+  return std::move(tmp).triangulation();
 }
 
 } // end CGAL
