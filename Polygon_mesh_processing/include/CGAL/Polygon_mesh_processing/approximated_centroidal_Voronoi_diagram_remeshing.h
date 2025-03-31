@@ -480,47 +480,50 @@ acvd_impl(TriangleMesh& tmesh,
     }
     FT threshold = 3. * cum / nbe;
 
-    std::vector<std::pair<edge_descriptor, double>> to_split;
+    std::vector<edge_descriptor> to_split;
     int ei = -1;
     for (edge_descriptor e : edges(tmesh))
     {
       FT l = lengths[++ei];
       if (l >= threshold)
       {
-        double nb_subsegments = std::ceil(l / threshold);
-        to_split.emplace_back(e, nb_subsegments);
+        to_split.emplace_back(e);
       }
     }
 
+    auto el = [&gt, &vpm, &tmesh](halfedge_descriptor h)
+    {
+      return edge_length(h, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
+    };
+
     while (!to_split.empty())
     {
-      std::vector<std::pair<edge_descriptor, double>> to_split_new;
-      to_split_new.reserve(2*to_split.size()); //upper bound
-      for (const auto& [e, nb_subsegments] : to_split)
+      std::vector<edge_descriptor> to_split_new;
+      to_split_new.reserve(3*to_split.size()); // upper bound
+      for (edge_descriptor e : to_split)
       {
         halfedge_descriptor h = halfedge(e, tmesh);
         Point_3 s = get(vpm, source(h,tmesh));
         Point_3 t = get(vpm, target(h,tmesh));
 
-        for (double k=1; k<nb_subsegments; ++k)
+        // the new halfedge hnew pointing to the inserted vertex.
+        // The new halfedge is followed by the old halfedge, i.e., next(hnew,g) == h.
+        halfedge_descriptor hnew = Euler::split_edge(h, tmesh);
+
+        put(vpm, target(hnew, tmesh), midpoint(s,t));
+        for (halfedge_descriptor hhh : {hnew, opposite(h, tmesh)})
         {
-          // the new halfedge hnew pointing to the inserted vertex.
-          // The new halfedge is followed by the old halfedge, i.e., next(hnew,g) == h.
-          halfedge_descriptor hnew = Euler::split_edge(h, tmesh);
-          put(vpm, target(hnew, tmesh), barycenter(t, k/nb_subsegments, s));
-          for (halfedge_descriptor hhh : {hnew, opposite(h, tmesh)})
+          if (!is_border(hhh, tmesh))
           {
-            if (!is_border(hhh, tmesh))
-            {
-              halfedge_descriptor hf = Euler::split_face(hhh, next(next(hhh, tmesh), tmesh), tmesh);
-              FT l = edge_length(hf, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
-              if (l >= threshold)
-              {
-                double nb_subsegments = std::ceil(l / threshold);
-                to_split_new.emplace_back(edge(hf,tmesh), nb_subsegments);
-              }
-            }
+            halfedge_descriptor hf = Euler::split_face(hhh, next(next(hhh, tmesh), tmesh), tmesh);
+            if (el(hf) >= threshold)
+              to_split_new.emplace_back(edge(hf,tmesh));
           }
+        }
+        if (el(hnew) >= threshold)
+        {
+          to_split_new.push_back(edge(h, tmesh));
+          to_split_new.push_back(edge(hnew, tmesh));
         }
       }
       to_split.swap(to_split_new);

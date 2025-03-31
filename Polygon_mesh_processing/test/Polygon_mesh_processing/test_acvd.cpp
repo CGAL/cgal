@@ -20,13 +20,14 @@ using Polyhedron = CGAL::Polyhedron_3<K>;
 namespace params = CGAL::parameters;
 
 template <class Mesh>
-void run_test(std::string fname, std::size_t genus)
+void run_test(std::string fname, std::size_t genus, bool subdiv)
 {
   Mesh mesh;
   CGAL::IO::read_polygon_mesh(fname, mesh);
 
   PMP::triangulate_faces(mesh);
-  CGAL::Subdivision_method_3::Loop_subdivision(mesh, params::number_of_iterations(5));
+  if (subdiv)
+    CGAL::Subdivision_method_3::Loop_subdivision(mesh, params::number_of_iterations(5));
 
   Mesh ref=mesh;
   CGAL::Bbox_3 bb_ref = PMP::bbox(ref);
@@ -52,9 +53,12 @@ void run_test(std::string fname, std::size_t genus)
 
 int main()
 {
-  run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0);
-  run_test<Polyhedron>(CGAL::data_file_path("meshes/torus_quad.off"), 1);
-  run_test<Surface_mesh>(CGAL::data_file_path("meshes/double-torus-example.off"), 2);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0, true);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/tetrahedron.off"), 0, false);
+  run_test<Polyhedron>(CGAL::data_file_path("meshes/torus_quad.off"), 1, true);
+  run_test<Polyhedron>(CGAL::data_file_path("meshes/torus_quad.off"), 1, false);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/double-torus-example.off"), 2, true);
+  run_test<Surface_mesh>(CGAL::data_file_path("meshes/double-torus-example.off"), 2, false);
 
   return 0;
 }
