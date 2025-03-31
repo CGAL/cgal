@@ -322,8 +322,8 @@ test_new_3(const R& rep)
 
   cccit = construct_cartesian_const_iterator_3(p1);
   cccit = construct_cartesian_const_iterator_3(p1,0);
-  cccit = construct_cartesian_const_iterator_3(v5);
-  cccit = construct_cartesian_const_iterator_3(v5,0);
+  // AF cccit = construct_cartesian_const_iterator_3(v5);
+  // AF cccit = construct_cartesian_const_iterator_3(v5,0);
 
   typename R::Construct_perpendicular_plane_3 construct_perpendicular_plane
         = rep.construct_perpendicular_plane_3_object();

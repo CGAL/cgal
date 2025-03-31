@@ -122,7 +122,7 @@ typename Access::Iso_box<K, typename Ambient_dimension<typename std::iterator_tr
 bounding_box(ForwardIterator f, ForwardIterator l, const K& k)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
-  return internal::bounding_box(f, l, k, typename Ambient_dimension<Pt>::type() );
+  return internal::bounding_box(f, l, k, typename Ambient_dimension<Pt,K>::type() );
 }
 
 template < class ForwardIterator >
