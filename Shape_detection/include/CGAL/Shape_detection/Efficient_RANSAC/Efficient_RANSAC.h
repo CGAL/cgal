@@ -18,6 +18,8 @@
 
 #include <CGAL/Random.h>
 
+#include <CGAL/Point_set_3.h>
+
 #include <CGAL/Shape_detection/Efficient_RANSAC/Octree.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Plane.h>
@@ -232,7 +234,7 @@ public:
   */
   Efficient_RANSAC(Traits t = Traits())
           : m_traits(t), m_direct_octrees(nullptr), m_global_octree(nullptr), m_num_subsets(0),
-            m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false) {
+            m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false), m_extracted_shapes(std::make_shared<std::vector<std::shared_ptr<Shape> > >()) {
   }
 
   /*!
@@ -282,6 +284,9 @@ public:
           Normal_map normal_map = Normal_map()
           ///< Property map to access the normal of an input point.
   ) {
+    if constexpr (std::is_convertible_v<Input_range, Point_set_3<Point>>)
+      CGAL_assertion(input_range.has_normal_map());
+
     m_point_pmap = point_map;
     m_normal_pmap = normal_map;
 
@@ -289,9 +294,6 @@ public:
     m_input_iterator_beyond = input_range.end();
 
     clear();
-
-    m_extracted_shapes =
-            std::make_shared<std::vector<std::shared_ptr<Shape> > >();
 
     m_num_available_points = m_num_total_points = std::distance(
             m_input_iterator_first, m_input_iterator_beyond);
