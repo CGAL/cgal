@@ -712,9 +712,7 @@ private:
   bool
   point_out_prism_return_local_id(const Point_3 &point, const ePoint_3 &epoint, const std::vector<unsigned int> &prismindex, const unsigned int jump, int &id) const
   {
-    Vector_3 bmin, bmax;
-
-    Orientation ori;
+    Orientation ori = ON_ORIENTED_BOUNDARY; // to avoid maybe uninitialized warning
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
