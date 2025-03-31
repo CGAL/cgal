@@ -468,12 +468,14 @@ public:
                                          lHR->vertex()->point(),
                                          lHR->id());
 
-    boost::optional< Line_2 > lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lHL->weight(), mCaches);
-    boost::optional< Line_2 > lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lHR->weight(), mCaches);
+    boost::optional< Line_2 > lL = CGAL_SS_i::compute_normalized_line_coeffC2(lSL, mCaches);
+    boost::optional< Line_2 > lR = CGAL_SS_i::compute_normalized_line_coeffC2(lSR, mCaches);
+    if ( !lL || !lR )
+      return;
 
     Vector_2 lVL(  lL->b(), - lL->a()) ;
     Vector_2 lVR(- lR->b(),   lR->a()) ;
-    Vector_2 lVLR = lVL + lVR ;
+    Vector_2 lVLR = lHR->weight() * lVL + lHL->weight() * lVR ;
     const Point_2& laP = aNode->point();
     Ray_2 bisect_ray(laP, lVLR) ;
 
@@ -499,11 +501,13 @@ public:
       CGAL_SS_i::Segment_2_with_ID<K> lSh (s_h, (*h)->id());
       boost::optional< Line_2 > lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mCaches);
 
-      FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
-                       ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
+      const FT& aL = lL->a(); const FT& bL = lL->b(); const FT& cL = lL->c(); const FT& wL = lHL->weight();
+      const FT& aR = lR->a(); const FT& bR = lR->b(); const FT& cR = lR->c(); const FT& wR = lHR->weight();
+      const FT& ah = lh->a(); const FT& bh = lh->b(); const FT& ch = lh->c();
 
-      Point_2 lP = laP + lVLR;
-      FT lBound = lLambda * ( lL->a()*lP.x() + lL->b()*lP.y() + lL->c() ) ;
+      FT num = -((bh*cR - bR*ch)*aL - (ah*cR - aR*ch)*bL + (ah*bR - aR*bh)*cL) ;
+      FT den = ah*bL*wR - aL*bh*wR - (ah*bR - aR*bh)*wL ;
+      FT lBound = num / den ;
 
       if(!is_finite(lBound) || !is_positive(lBound))
         continue;
@@ -781,16 +785,18 @@ public:
                                   lToFiltered(lHR->vertex()->point()),
                                   lHR->id());
 
-    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_weighted_line_coeffC2(lSL, lToFiltered(lHL->weight()), mApproximate_traits.mCaches);
-    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
-
-    Target_Point_2 laP = lToFiltered(aNode->point());
+    boost::optional<Target_Line_2> lL = CGAL_SS_i::compute_normalized_line_coeffC2(lSL, mApproximate_traits.mCaches);
+    boost::optional<Target_Line_2> lR = CGAL_SS_i::compute_normalized_line_coeffC2(lSR, mApproximate_traits.mCaches);
+    if ( !lL || !lR )
+      return;
 
     // These are weighted direction of the lines supporting the contour segments.
     // Coefficients for SR are negated because aNode is at the "source" of SR.
     Target_Vector_2 lVL(  lL->b(), - lL->a()) ;
     Target_Vector_2 lVR(- lR->b(),   lR->a()) ;
-    Target_Vector_2 lVLR = lVL + lVR ;
+    Target_Vector_2 lVLR = lHR->weight() * lVL + lHL->weight() * lVR ;
+
+    Target_Point_2 laP = lToFiltered(aNode->point());
     Target_Ray_2 bisect_ray(laP, lVLR) ;
 
     // @todo this should use some kind of spatial searching
@@ -815,35 +821,22 @@ public:
           continue;
 
         // We want the time it takes to get from aNode to h along the primary bisector of aNode.
-        //
-        // Let d0 be the weighted direction of the defining contour edge to the left of aNode, that is (-b0, a0) / w0.
-        // Let d1 be the weighted, opposite direction of the defining contour edge to the right of aNode, that is (b1, -a1) / w1.
-        // The bisector has direction n0 + n1.
-        // Let n2 be the unweighted normal of 'h', that is v3 = (a, b) if h is defined as la*x+lb*y+lc = 0
-        //
-        // Projecting aNode onto h orthogonally, we create a right triangle.
-        // Let theta be the angle between the line orthogonal to h through aNode and the primary bisector of aNode.
-        // Let T be the distance between aNode and the projection of aNode onto h.
-        // Let H be the distance between aNode and the intersection of aNode and h along the primary bisector of aNode.
-        //
-        // We have:
-        //   cos(theta) = (d0 + d1) * n2 / (|d0 + d1| * |n2|)  [note that |n2| = 1]
-        // and on the other hand:
-        //   cos(theta) = T / H
-        // If we express H as lambda * |d0 + d1|, we get:
-        //   lambda = - T / (d0 + d1) * n2
-
         Target_Segment_with_ID_2 lSh (s_h, (*h)->id());
         boost::optional<Target_Line_2> lh = CGAL_SS_i::compute_normalized_line_coeffC2(lSh, mApproximate_traits.mCaches);
 
-        Target_FT lLambda = - ( lh->a()*laP.x() + lh->b()*laP.y() + lh->c() ) /
-                                ( lh->a()*lVLR.x() + lh->b()*lVLR.y() ) ;
+        const Target_FT& aL = lL->a(); const Target_FT& bL = lL->b(); const Target_FT& cL = lL->c(); const Target_FT& wL = lToFiltered(lHL->weight());
+        const Target_FT& aR = lR->a(); const Target_FT& bR = lR->b(); const Target_FT& cR = lR->c(); const Target_FT& wR = lToFiltered(lHR->weight());
+        const Target_FT& ah = lh->a(); const Target_FT& bh = lh->b(); const Target_FT& ch = lh->c();
 
-        // Scale it because |d0 + d1| doesn't send aNode to the t=1 line, but to t=lL(aNode+d0+d1)=lR(aNode+d0+d1)
-        Target_Point_2 lP = laP + lVLR;
-        Target_FT lBound = lLambda * ( lL->a()*lP.x() + lL->b()*lP.y() + lL->c() ) ;
+        // [[ x == (bh*c0*w1 - b0*ch*w1 - (bh*c1 - b1*ch)*w0)/(ah*b0*w1 - a0*bh*w1 - (ah*b1 - a1*bh)*w0),
+        //    y == -(ah*c0*w1 - a0*ch*w1 - (ah*c1 - a1*ch)*w0)/(ah*b0*w1 - a0*bh*w1 - (ah*b1 - a1*bh)*w0),
+        //    t == -((bh*c1 - b1*ch)*a0 - (ah*c1 - a1*ch)*b0 + (ah*b1 - a1*bh)*c0)/(ah*b0*w1 - a0*bh*w1 - (ah*b1 - a1*bh)*w0) ]]
 
-#if 0
+        Target_FT num = -((bh*cR - bR*ch)*aL - (ah*cR - aR*ch)*bL + (ah*bR - aR*bh)*cL) ;
+        Target_FT den = ah*bL*wR - aL*bh*wR - (ah*bR - aR*bh)*wL ;
+        Target_FT lBound = num / den ;
+
+#if 1
         std::cout << "E" << (*h)->id() << " s_h = " << s_h << std::endl;
         std::cout << "left/right E" << lHL->id() << " E" << lHR->id() << std::endl;
         std::cout << "V" << aNode->id() << std::endl;
@@ -858,26 +851,17 @@ public:
         std::cout << "lAP + lVL " << laP + lVL <<  std::endl;
         std::cout << "lAP + lVR " << laP + lVR <<  std::endl;
         std::cout << "lAP+v " << laP + lVLR << std::endl;
-        std::cout << "Inter pt: " << *ip << std::endl;
 
-        boost::optional<Target_Line_2> lh1 = CGAL_SS_i::compute_weighted_line_coeffC2(lSR, lToFiltered(lHR->weight()), mApproximate_traits.mCaches);
+        std::cout << "lL check" << square(lL->a()) + square(lL->b()) << std::endl;
+        std::cout << "lR check" << square(lR->a()) + square(lR->b()) << std::endl;
 
-        std::cout << "lh0 check" << square(lh0->a()) + square(lh0->b()) << std::endl;
-        std::cout << "lh1 check" << square(lh1->a()) + square(lh1->b()) << std::endl;
-        std::cout << "l0 time at aNode: " << lh0->a()*laP.x() + lh0->b()*laP.y() + lh0->c() << std::endl;
-        std::cout << "l1 time at aNode: " << lh1->a()*laP.x() + lh1->b()*laP.y() + lh1->c() << std::endl;
-        std::cout << "l0 time at aNode + lVLR: " << lh0->a()*(laP + lVLR).x() + lh0->b()*(laP + lVLR).y() + lh0->c() << std::endl;
-        std::cout << "l1 time at aNode + lVLR: " << lh1->a()*(laP + lVLR).x() + lh1->b()*(laP + lVLR).y() + lh1->c() << std::endl;
+        std::cout << "lBound: " << lBound << std::endl;
 
         auto ipp = FK().intersect_2_object()(s_h, bisect_ray);
         Target_Point_2* ip = boost::get<Target_Point_2>(&*ipp);
-        std::cout << "l0 time at inter pt: " << lh0->a()*ip->x() + lh0->b()*ip->y() + lh0->c() << std::endl;
-        std::cout << "l1 time at inter pt: " << lh1->a()*ip->x() + lh1->b()*ip->y() + lh1->c() << std::endl;
-        std::cout << "lh-> " << lh->a() << " " << lh->b() << " " << square(lh->a()) + square(lh->b()) << std::endl;
-        std::cout << "lh time at inter pt: " << lh->a()*ip->x() + lh->b()*ip->y() + lh->c() << std::endl;
-        std::cout << "lLambda: " << lLambda << std::endl;
-        std::cout << "lBound: " << lBound << std::endl;
-        CGAL_assertion(lBound == lh0->a()*ip->x() + lh0->b()*ip->y() + lh0->c());
+        std::cout << "l0 time at inter pt: " << (lL->a()*ip->x() + lL->b()*ip->y() + lL->c()) / wL << std::endl;
+        std::cout << "l1 time at inter pt: " << (lR->a()*ip->x() + lR->b()*ip->y() + lR->c()) / wR << std::endl;
+        std::cout << "lh at inter pt: " << lh->a()*ip->x() + lh->b()*ip->y() + lh->c() << std::endl;
 #endif
 
         if(!is_finite(lBound) || !is_positive(lBound))

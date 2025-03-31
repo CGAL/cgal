@@ -13,13 +13,17 @@
 #define CGAL_DRAW_SS2_H
 
 #include <CGAL/license/Straight_skeleton_2.h>
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Straight_skeleton_2.h>
+
+#include <CGAL/point_generators_2.h>
 #include <CGAL/Random.h>
 
+#include <cmath>
 #include <sstream>
 
 namespace CGAL {
@@ -40,19 +44,22 @@ struct DefaultColorFunctorSS2
 template<class SS2, class ColorFunctor>
 class SimpleStraightSkeleton2ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                    Base;
+  typedef Basic_viewer_qt                     Base;
+
   typedef typename SS2::Vertex_const_handle   Vertex_const_handle;
   typedef typename SS2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SS2::Face_const_handle     Face_const_handle;
 
-  //  typedef typename SS2::Point                 Point;
+  typedef typename SS2::Traits::FT            FT;
+  typedef typename SS2::Traits::Point_2       Point;
 
 public:
   /// Construct the viewer.
   /// @param ass2 the ss2 to view
   /// @param title the title of the window
   SimpleStraightSkeleton2ViewerQt(QWidget* parent, const SS2& ass2,
-                               const char* title="Basic SS2 Viewer",
-                               const ColorFunctor& fcolor=ColorFunctor()) :
+                                  const char* title="Basic SS2 Viewer",
+                                  const ColorFunctor& fcolor = ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
     Base(parent, title, true, true, true, false, false),
     ss2(ass2),
@@ -62,32 +69,77 @@ public:
   }
 
 protected:
-  /*
-  void compute_face(Facet_const_handle fh)
+  void compute_face(Halfedge_const_handle eh)
   {
-    CGAL::IO::Color c=m_fcolor.run(ss2, fh);
+    // Skip faces with infinite halfedges
+    Halfedge_const_handle h = eh;
+    do {
+      if(h->vertex()->has_infinite_time()) {
+        return;
+      }
+      h = h->next();
+    } while(h != eh);
+
+    CGAL::IO::Color c(150,170,170);
+
     face_begin(c);
-
-    add_point_in_face(fh->vertex(0)->point());
-    add_point_in_face(fh->vertex(1)->point());
-    add_point_in_face(fh->vertex(2)->point());
-
+    h = eh;
+    do {
+      add_point_in_face(h->vertex()->point());
+      h = h->next();
+    } while(h != eh);
     face_end();
   }
-  */
+
   void compute_edge(Halfedge_const_handle eh)
   {
+    const bool src_inf = eh->opposite()->vertex()->has_infinite_time();
+    const bool dst_inf = eh->vertex()->has_infinite_time();
+
+    // if there is an inf vertex, put it at the destination
+    const Point& src_p = src_inf ? eh->vertex()->point() : eh->opposite()->vertex()->point();
+    Point dst_p = src_inf ? eh->opposite()->vertex()->point() : eh->vertex()->point();
+
+    if(src_inf || dst_inf)
+      dst_p = src_p + 0.1 * (dst_p - src_p);
+
     if(eh->is_bisector())
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::red());
+    {
+      if (src_inf || dst_inf)
+        add_segment(src_p, dst_p, CGAL::IO::orange());
+      else
+        add_segment(src_p, dst_p, CGAL::IO::red());
+    }
     else
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::black());
+    {
+      CGAL_assertion(!src_inf && !dst_inf);
+      if (eh->weight() == 0)
+        add_segment(src_p, dst_p, CGAL::IO::violet());
+      else
+        add_segment(src_p, dst_p, CGAL::IO::black());
+    }
   }
   void print_halfedge_labels(Halfedge_const_handle h)
   {
+    // Calculate length of the halfedge
+    double edge_length = std::sqrt(CGAL::squared_distance(h->opposite()->vertex()->point(),
+                                                          h->vertex()->point()));
+
+    double radius = 0.01 * edge_length;
+
+    // Generate random point on circle centered at the midpoint
+    typedef CGAL::Random_points_on_circle_2<Point, CGAL::Creator_uniform_2<FT, Point> > Random_points;
+    Point midpoint = CGAL::barycenter(h->opposite()->vertex()->point(), 0.75,
+                                      h->vertex()->point(), 0.25);
+
+    CGAL::Random rnd(h->id());
+    Random_points random_point(radius, rnd);
+    Point label_pos = midpoint + (*random_point - CGAL::ORIGIN);
+
     std::stringstream label;
     label << "H" << h->id() << " (V" << h->vertex()->id() << ") ";
     label << "H" << h->opposite()->id() << " (V" << h->opposite()->vertex()->id() << ") ";
-    add_text(CGAL::midpoint(h->opposite()->vertex()->point(), h->vertex()->point()), label.str());
+    add_text(label_pos, label.str());
   }
 
   void compute_vertex(Vertex_const_handle vh)
@@ -103,9 +155,31 @@ protected:
   }
   void print_vertex_label(Vertex_const_handle vh)
   {
+    // Calculate minimum incident edge length
+    double min_length = std::numeric_limits<double>::max();
+    auto h = vh->halfedge();
+    do {
+      if(!h->vertex()->has_infinite_time() && !h->opposite()->vertex()->has_infinite_time()) {
+        double len = CGAL::squared_distance(h->vertex()->point(),
+                                          h->opposite()->vertex()->point());
+        min_length = std::min(min_length, std::sqrt(len));
+      }
+      h = h->next();
+    } while(h != vh->halfedge());
+
+    double radius = 0.001 * min_length;
+
+    // Generate random point on circle
+    typedef CGAL::Random_points_on_circle_2<Point, CGAL::Creator_uniform_2<FT, Point> > Random_points;
+
+    CGAL::Random rnd(vh->id());
+    Random_points random_point(radius, rnd);
+    Point label_pos = vh->point() + (*random_point - CGAL::ORIGIN);
+
     std::stringstream label;
     label << "V" << vh->id() << std::ends;
-    add_text(vh->point(), label.str());
+
+    add_text(label_pos, label.str());
   }
 
   void compute_elements()
@@ -119,7 +193,11 @@ protected:
         compute_edge(it);
         print_halfedge_labels(it);
       }
+
+      if(!it->is_bisector() && !it->is_border())
+        compute_face(it);
     }
+
     for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin(); it!=ss2.vertices_end(); ++it)
     {
       compute_vertex(it);
