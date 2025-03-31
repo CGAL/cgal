@@ -88,7 +88,7 @@ void dump_mesh_with_cluster_colors(TriangleMesh tmesh, ClusterMap cluster_map, s
                                           CGAL::IO::gray(),
                                           CGAL::IO::white() }};
 
-  auto vcm = tmesh.template add_property_map<typename TriangleMesh::Vertex_index, CGAL::IO::Color>("f:color").first;
+  auto vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), tmesh);
 
   for (auto v : vertices(tmesh))
   {
@@ -499,8 +499,8 @@ acvd_impl(TriangleMesh& tmesh,
       for (const auto& [e, nb_subsegments] : to_split)
       {
         halfedge_descriptor h = halfedge(e, tmesh);
-        const Point_3& s = get(vpm, source(h,tmesh));
-        const Point_3& t = get(vpm, target(h,tmesh));
+        Point_3 s = get(vpm, source(h,tmesh));
+        Point_3 t = get(vpm, target(h,tmesh));
 
         for (double k=1; k<nb_subsegments; ++k)
         {
