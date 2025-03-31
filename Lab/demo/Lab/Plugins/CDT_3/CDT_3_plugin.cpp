@@ -58,62 +58,59 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
 
   void cdt_3()
   {
-    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
-    {
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-      Scene_surface_mesh_item* mesh_item =
-          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-      Scene_polygon_soup_item* soup_item =
-          qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
-      if(mesh_item)
-      {
-        auto* mesh = mesh_item->face_graph();
-        if(!mesh)
-          return;
-        auto patch_id_pmap = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
-        auto  cdt = patch_id_pmap
-            ? CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
-            : CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
-        auto triangulation_item = std::make_unique<Scene_c3t3_item>();
-        auto& item_tr = triangulation_item->triangulation();
+    CGAL::Three::OverrideCursorScopeGuard guard(Qt::WaitCursor);
+    Scene_item* item = scene->item(scene->mainSelectionIndex());
+    Scene_surface_mesh_item* mesh_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    Scene_polygon_soup_item* soup_item = qobject_cast<Scene_polygon_soup_item*>(item);
+    if(mesh_item)
+      item = mesh_item;
+    else if(soup_item)
+      item = soup_item;
+    else
+      item = nullptr;
 
-        const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
-        auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
-        item_tr.set_infinite_vertex(inf_v);
-        triangulation_item->triangulation_changed();
-
-        triangulation_item->setParent(mesh_item->parent());
-        triangulation_item->setName("CDT of " + mesh_item->name());
-        triangulation_item->show_intersection(false);
-        scene->addItem(triangulation_item.release());
-        mesh_item->setVisible(false);
-      }
-      else if(soup_item)
-      {
-        auto cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
-                     soup_item->points(), soup_item->polygons());
-
-        auto triangulation_item = std::make_unique<Scene_c3t3_item>();
-        auto& item_tr = triangulation_item->triangulation();
-
-        const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
-        auto inf_v =
-            item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
-        item_tr.set_infinite_vertex(inf_v);
-        triangulation_item->triangulation_changed();
-
-        triangulation_item->setParent(soup_item->parent());
-        triangulation_item->setName("CDT of " + soup_item->name());
-        triangulation_item->show_intersection(false);
-        scene->addItem(triangulation_item.release());
-        soup_item->setVisible(false);
-      }
-      else
-      {
-        CGAL::Three::Three::warning(tr("This function is only applicable on PLCs and polygon soups."));
-      }
+    if(item == nullptr) {
+      CGAL::Three::Three::warning(tr("This function is only applicable on PLCs and polygon soups."));
+      return;
     }
-    QApplication::restoreOverrideCursor();
+
+    auto* const mesh = mesh_item ? mesh_item->face_graph() : nullptr;
+    if(!mesh) return;
+
+    using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<EPICK>;
+    CDT cdt = std::invoke([&] {
+      CDT cdt;
+      if(mesh_item) {
+        auto patch_id_pmap_opt = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
+
+        if(patch_id_pmap_opt.has_value()) {
+          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
+            *mesh, CGAL::parameters::face_patch_map(*patch_id_pmap_opt));
+        }
+        else {
+          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
+        }
+      }
+      else if(soup_item) {
+        cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
+            soup_item->points(), soup_item->polygons());
+
+      }
+      return cdt;
+    });
+    auto triangulation_item = std::make_unique<Scene_c3t3_item>();
+    auto& item_tr = triangulation_item->triangulation();
+
+    const auto cdt_tr = CGAL::convert_to_triangulation_3(std::move(cdt));
+    auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
+    item_tr.set_infinite_vertex(inf_v);
+    triangulation_item->triangulation_changed();
+
+    triangulation_item->setParent(item->parent());
+    triangulation_item->setName("CDT of " + item->name());
+    triangulation_item->show_intersection(false);
+    scene->addItem(triangulation_item.release());
+    item->setVisible(false);
   }
 
 public:
