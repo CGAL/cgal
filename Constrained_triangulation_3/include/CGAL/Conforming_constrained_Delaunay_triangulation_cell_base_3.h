@@ -35,7 +35,6 @@ namespace CGAL {
  * @cgalModels{ConformingConstrainedDelaunayTriangulationCellBase_3, SimplicialMeshCellBase_3, RemeshingCellBase_3}
  *
  * \note This cell base class also models the `SimplicialMeshCellBase_3` and `RemeshingCellBase_3` concepts, allowing the use of functionality from \ref Chapter_Tetrahedral_Remeshing "Tetrahedral Remeshing" and \ref Chapter_3D_Simplicial_Mesh_Data_Structure "3D Simplicial Mesh Data Structures", if the corresponding vertex base also models the right concepts.
- * \todo After discussion with Jane. Maybe there should be a second pair of Vb/Cb, designed to model the concepts of simplicial mesh and remeshing.
  *
  * \sa `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3`
  */
@@ -46,9 +45,8 @@ class Conforming_constrained_Delaunay_triangulation_cell_base_3
   using Base = Base_with_time_stamp<Cell_base>;
   Conforming_constrained_Delaunay_triangulation_cell_data_3 ccdt_3_data_;
 
-  mutable bool sliver_cache_validity_ = false;
   CDT_3_signed_index subdomain_index_ = -1;
-  double sliver_value_ = 0.;
+  mutable double sliver_value_ = 0.;
 public:
   // To get correct cell type in TDS
   template < class TDS3 >
@@ -82,15 +80,14 @@ public:
 
   // model of RemeshingCellBase_3
   void set_sliver_value(double value) {
-    sliver_cache_validity_ = true;
     sliver_value_ = value;
   }
   double sliver_value() const {
     CGAL_assertion(is_cache_valid());
     return sliver_value_;
   }
-  bool is_cache_valid() const { return sliver_cache_validity_; }
-  void reset_cache_validity() const { sliver_cache_validity_ = false; }
+  bool is_cache_valid() const { return sliver_value_ != sliver_value_ /* ie is a NaN */; }
+  void reset_cache_validity() const { sliver_value_ = std::numeric_limits<double>::quiet_NaN(); }
 
   static std::string io_signature() {
     static_assert(
