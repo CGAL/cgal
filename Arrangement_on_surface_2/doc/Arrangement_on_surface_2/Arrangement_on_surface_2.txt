@@ -285,18 +285,18 @@ classes built on top of the halfedge data structure.
 
 The \f$x\f$-monotone curves of an arrangement are embedded in a
 rectangular two-dimensional area called the parameter space. The
-parameter space is defined as \f$ X \times Y\f$, where \f$ X\f$ and
-\f$ Y\f$ are open, half-open, or closed intervals with endpoints in
-the compactified real line \f$ \mathbb{R} \cup
-\{-\infty,+\infty\}\f$. Let \f$x_{\rm min}\f$, \f$x_{\rm max}\f$,
-\f$y_{\rm min}\f$, and \f$y_{\rm max}\f$ denote the endpoints of \f$
-X\f$ and \f$ Y\f$, respectively. We typically refer to these values as
-the left, right, bottom, and top sides of the boundary of the
-parameter space. If the parameter space is, for example, the entire
-compactified plane, as in the case of arrangements in the plane,
-\f$x_{\rm min} = y_{\rm min} = -\infty\f$ and \f$x_{\rm max} = y_{\rm
-max} = +\infty\f$; see Section \ref aos_sec-curved_surfaces for more
-details.
+parameter space is defined as \f$X \times Y\f$, where \f$X\f$ and
+\f$Y\f$ are open, half-open, or closed intervals with endpoints in the
+compactified real line \f$\mathbb{R} \cup \{-\infty,+\infty\}\f$. Let
+\f$x_{\rm min}\f$, \f$x_{\rm max}\f$, \f$y_{\rm min}\f$, and
+\f$y_{\rm max}\f$ denote the endpoints of \f$X\f$ and \f$Y\f$,
+respectively. We typically refer to these values as the left, right,
+bottom, and top sides of the boundary of the parameter space. If the
+parameter space is, for example, the entire compactified plane, as in
+the case of arrangements in the plane,
+\f$x_{\rm min} = y_{\rm min} = -\infty\f$ and
+\f$x_{\rm max} = y_{\rm max} = +\infty\f$; see Section \ref
+aos_sec-curved_surfaces for more details.
 
 \cgalAdvancedEnd
 
@@ -350,20 +350,20 @@ theoretically, the former are degenerate holes. See
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-arr_segs,arr_segs.png}
 An arrangement of interior-disjoint line segments with some of the
-\dcel records that represent it. The unbounded face \f$ f_0\f$ has
+\dcel records that represent it. The unbounded face \f$f_0\f$ has
 a single connected component that forms a hole inside it, and this
-hole comprises of several faces. The halfedge \f$ e\f$ is directed
-from its source vertex \f$ v_1\f$ to its target vertex \f$
-v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a
-line segment that connects the points associated with \f$ v_1\f$ and
-\f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The
-predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of
-\f$ e\f$ are part of the chain that form the outer boundary of the
-face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure
+hole comprises of several faces. The halfedge \f$e\f$ is directed
+from its source vertex \f$v_1\f$ to its target vertex \f$v_2\f$.
+This edge, together with its twin \f$e'\f$, correspond to a
+line segment that connects the points associated with \f$v_1\f$ and
+\f$v_2\f$ and separates the face \f$f_1\f$ from \f$f_2\f$. The
+predecessor \f$e_{\rm prev}\f$ and successor \f$e_{\rm next}\f$ of
+\f$e\f$ are part of the chain that form the outer boundary of the
+face \f$f_2\f$. The face \f$f_1\f$ has a more complicated structure
 as it contains two holes in its interior: One hole consists of two
-adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole
-comprises of two edges. \f$ f_1\f$ also contains two isolated vertices
-\f$ u_1\f$ and \f$ u_2\f$ in its interior.
+adjacent faces \f$f_3\f$ and \f$f_4\f$, while the other hole
+comprises of two edges. \f$f_1\f$ also contains two isolated vertices
+\f$u_1\f$ and \f$u_2\f$ in its interior.
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
@@ -392,12 +392,12 @@ the `Arrangement_2` class template; their description follows.
 <UL>
 
 <LI>The `Traits` template-parameter should be substituted by a
-  model of the `ArrangementBasicTraits_2` concept and optionally
+  model of the `AosBasicTraits_2` concept and optionally
   additional geometry traits concepts. A model of the
-  `ArrangementBasicTraits_2` concept defines the types of
+  `AosBasicTraits_2` concept defines the types of
   \f$x\f$-monotone curves and two-dimensional points, namely
-  `ArrangementBasicTraits_2::X_monotone_curve_2` and
-  `ArrangementBasicTraits_2::Point_2`, respectively, and supports
+  `AosBasicTraits_2::X_monotone_curve_2` and
+  `AosBasicTraits_2::Point_2`, respectively, and supports
   basic geometric predicates on them. The instantiated traits class
   determines the family of planar curves that induce the arrangement.
 
@@ -417,7 +417,7 @@ the `Arrangement_2` class template; their description follows.
   in Section \ref aos_sec-geom_traits.
 
 <LI>The `Dcel` template-parameter should be substituted by a class
-  that models the `ArrangementDcel` concept, which is used to represent
+  that models the `AosDcel` concept, which is used to represent
   the topological layout of the arrangement. This parameter is
   substituted by `Arr_default_dcel<Traits>` by default, and
   we use this default value in this and in the following three
@@ -487,12 +487,12 @@ results.
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef int                                             Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Traits;
-typedef Traits_2::Point_2                               Point;
-typedef Traits_2::X_monotone_curve_2                    Segment;
-typedef CGAL::Arrangement_2<Traits_2>                   Arrangement;
+using Number_type = int;
+using Kernel = CGAL::Cartesian<Number_type>;
+using Traits = CGAL::Arr_non_caching_segment_traits_2<Kernel>;
+using Point = Traits_2::Point_2;
+using Segment = Traits_2::X_monotone_curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits_2>;
 
 int main() {
   Arrangement arr;
@@ -767,7 +767,7 @@ void print_face(typename Arrangement::Face_const_handle f) {
   }
 
   // Print the boundary of each of the holes.
-  size_t index = 1;
+  std::size_t index = 1;
   for (auto hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
     std::cout << " Hole #" << index++ << ": ";
     print_ccb(*hi);
@@ -1018,17 +1018,17 @@ exact manner.
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT                                          Number_type;
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Number_type = Kernel::FT;
 
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>      Traits;
-typedef Traits::Point_2                                     Point;
-typedef Traits::X_monotone_curve_2                          Segment;
+using Traits = CGAL::Arr_non_caching_segment_traits_2<Kernel>;
+using Point = Traits::Point_2;
+using Segment = Traits::X_monotone_curve_2;
 
-typedef CGAL::Arrangement_2<Traits>                         Arrangement;
-typedef Arrangement::Vertex_handle                          Vertex_handle;
-typedef Arrangement::Halfedge_handle                        Halfedge_handle;
-typedef Arrangement::Face_handle                            Face_handle;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Vertex_handle = Arrangement::Vertex_handle;
+using Halfedge_handle = Arrangement::Halfedge_handle;
+using Face_handle = Arrangement::Face_handle;
 \endcode
 
 <!-- ----------------------------------------------------------------------- -->
@@ -1040,7 +1040,7 @@ the member functions that manipulate them are easier to understand.
 
 The call \link Arrangement_on_surface_2::insert_in_face_interior()
 `arr.insert_in_face_interior(p, f)`\endlink inserts an isolated point
-\f$p\f$, located in the interior of a given face \f$ f\f$, into the
+\f$p\f$, located in the interior of a given face \f$f\f$, into the
 arrangement and returns a handle to the arrangement vertex associated
 with \f$p\f$ it has created. Naturally, this function has a
 precondition that \f$p\f$ is really an isolated point; namely it does
@@ -1305,10 +1305,10 @@ geometric algorithms that operate on it. Thus, the `Arrangement_2`
 class template does not support point-location queries directly.
 Instead, the \ref PkgArrangementOnSurface2 package provides a set of
 class templates that are capable of answering such queries; all are
-models of the concept `ArrangementPointLocation_2`. Each model employs
+models of the concept `AosPointLocation_2`. Each model employs
 a different algorithm or <em>strategy</em> for answering queries.  A
 model of this concept must define the \link
-ArrangementPointLocation_2::locate() `locate()`\endlink member
+AosPointLocation_2::locate() `locate()`\endlink member
 function, which accepts an input query-point and returns a polymorphic
 object representing the arrangement cell that contains this point.
 The returned object is of type
@@ -1325,7 +1325,7 @@ the appropriate handle can be obtained with <em>value retrieval</em>
 by `std::get` as demonstrated in the example below.
 
 Note that the handles returned by the \link
-ArrangementPointLocation_2::locate() `locate()`\endlink functions are
+AosPointLocation_2::locate() `locate()`\endlink functions are
 non-mutable (`const`). If necessary, such handles may be cast to
 mutable handles using the
 `Arrangement_on_surface_2::non_const_handle()` methods.
@@ -1338,7 +1338,7 @@ when `pl` is constructed or at a later time using the
 
 The function template `locate_point()` listed below accepts a
 point-location object, the type of which is a model of the
-`ArrangementPointLocation_2` concept, and a query point. The function
+`AosPointLocation_2` concept, and a query point. The function
 template issues a point-location query for the given point, and prints
 out the result.  It is defined in the header file
 `point_location_utils.h`.
@@ -1347,10 +1347,9 @@ out the result.  It is defined in the header file
 \code
 template <typename PointLocation>
 void locate_point(const PointLocation& pl,
-                  const typename PointLocation::Arrangement_2::Point_2& q)
-{
-  typedef PointLocation                                 Point_location;
-  typedef typename Point_location::Arrangement_2        Arrangement_2;
+                  const typename PointLocation::Arrangement_2::Point_2& q) {
+  using Point_location = PointLocation;
+  using Arrangement_2 = typename Point_location::Arrangement_2;
   typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj =
     pl.locate(q);
 
@@ -1372,13 +1371,12 @@ to an arrangement.
 template <typename Arrangement_>
 void print_point_location
 (const typename PointLocation::Arrangement_::Point_2& q
- typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
-{
-  typedef Arrangement_                                  Arrangement_2;
+ typename CGAL::Arr_point_location_result<Arrangement_>::Type obj) {
+  using Arrangement_2 = Arrangement_;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
 
   const Vertex_const_handle*   v;
   const Halfedge_const_handle* e;
@@ -1439,9 +1437,9 @@ vary according to the user choice.} for answering queries:
   Reference Manual for more details.
 
   The arrangement attached to the landmark strategy must be either (i)
-  an instance of the `Arrangement_2<Geom,Dcel>` class template, where
-  the `Traits` parameter is substituted by a geometry-traits class
-  that models the `ArrangementLandmarkTraits_2` concept, or (ii) an
+  an instance of the `Arrangement_2<GeomTraits,Dcel>` class template,
+  where the `GeomTraits` parameter is substituted by a geometry-traits
+  class that models the `AosLandmarkTraits_2` concept, or (ii) an
   instance of the `Arrangement_on_surface_2<GeomTraits,TopolTraits>`
   class template, where the `GeomTraits` is similarly substituted;
   see Section \ref aos_sssec-tr_landmarks_concept for details about
@@ -1560,7 +1558,7 @@ that it hits a vertex, or that the arrangement does not have any
 vertex or edge lying directly above (or below) the query point.
 
 All point-location classes listed in the previous section are also
-models of the `ArrangementVerticalRayShoot_2` concept. That is, they
+models of the `AosVerticalRayShoot_2` concept. That is, they
 all have member functions called `ray_shoot_up(q)` and
 `ray_shoot_down(q)` that accept a query point \f$q\f$. These functions
 output a polymorphic object of type
@@ -1577,7 +1575,7 @@ directly above (or below) \f$q\f$.
 
 The function template `vertical_ray_shooting_query()` listed
 below accepts a vertical ray-shooting object, the type of which
-models the `ArrangementVerticalRayShoot_2` concept. It exports
+models the `AosVerticalRayShoot_2` concept. It exports
 the result of the upward vertical ray-shooting operation from a
 given query point to the standard output-stream. The ray-shooting
 object `vrs` is assumed to be already attached to an arrangement.
@@ -1588,18 +1586,17 @@ The function template is defined in the header file
 template <typename VerticalRayShooting>
 void shoot_vertical_ray(const RayShoot& vrs,
                         const typename
-                        VerticalRayShooting::Arrangement_2::Point_2& q)
-{
-  typedef VerticalRayShooting                           Vertical_ray_shooting;
+                        VerticalRayShooting::Arrangement_2::Point_2& q) {
+  using Vertical_ray_shooting = VerticalRayShooting;
 
   // Perform the point-location query.
   typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
 
   // Print the result.
-  typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  using Arrangement_2 = typename Vertical_ray_shooting::Arrangement_2;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
 
   const Vertex_const_handle* v;
   const Halfedge_const_handle* e;
@@ -1685,7 +1682,7 @@ namely the <em>surface sweep</em> and the <em>zone construction</em>.
 These operations accepts \f$x\f$-monotone curves; thus, the
 geometry-traits class used by the arrangements passed as input to, or
 obtained as output from, these operations must be a model of the
-`ArrangementXMonotoneTraits_2` concept; see Section \ref
+`AosXMonotoneTraits_2` concept; see Section \ref
 aos_sec-geom_traits for the precise definition of this concept. It
 defines the minimal set of geometric primitives, among other things,
 required to perform the algorithms of the surface-sweep and
@@ -1746,13 +1743,13 @@ location.\cgalFootnote{The \cgalFootnoteCode{CGAL::insert_non_intersecting_curve
 function template, as all other functions reviewed in this section, is
 parameterized by an arrangement type and a point-location type (The
 latter must be substituted by a model of the
-`ArrangementPointLocation_2` concept).} The insertion operation thus
+`AosPointLocation_2` concept).} The insertion operation thus
 hardly requires any geometric operations on top of the ones needed to
 answer the point-location queries. Moreover, it is sufficient that the
 traits class that substitutes the `Traits` template parameter of the
 `Arrangement_2<Traits,Dcel>` class template when the latter is
-instantiated models the concept `ArrangementBasicTraits_2` concept
-(and the concept `ArrangementLandmarkTraits_2` if the landmark
+instantiated models the concept `AosBasicTraits_2` concept
+(and the concept `AosLandmarkTraits_2` if the landmark
 point-location strategy is used), and does not have to support the
 computation of intersection points between curves. This implies that
 using a kernel that provides exact geometric predicates, but
@@ -1780,7 +1777,7 @@ function relatively efficient; however, its preconditions on the input
 curves are still rather restricting. Let us assume that the traits
 class that substitutes the `Traits` template parameter of the
 `Arrangement_2<Traits,Dcel>` class template models the refined
-`ArrangementXMonotoneTraits_2` concept and supports curve intersection
+`AosXMonotoneTraits_2` concept and supports curve intersection
 computations; see Section \ref aos_sec-geom_traits for the exact
 details. Given an \f$x\f$-monotone curve, it is sufficient to locate
 its left endpoint in the arrangement and to trace its <em>zone</em>
@@ -1850,10 +1847,10 @@ pl)`\endlink, where \f$c\f$ is not necessarily \f$x\f$-monotone. In
 this case the type of `arr` must be an instance of the
 `Arrangement_2<Traits, Dcel>` class template, where the `Traits`
 template parameter is substituted by a traits class that models the
-concept `ArrangementTraits_2`, which refines the
-`ArrangementXMonotoneTraits_2` concept. It has to define an additional
-\link ArrangementTraits_2::Curve_2 `Curve_2`\endlink type, which may
-differ from the \link ArrangementBasicTraits_2::X_monotone_curve_2
+concept `AosTraits_2`, which refines the
+`AosXMonotoneTraits_2` concept. It has to define an additional
+\link AosTraits_2::Curve_2 `Curve_2`\endlink type, which may
+differ from the \link AosBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink type.  It also has to support the
 subdivision of curves of this new type into \f$x\f$-monotone curves
 and possibly singular points; see the exact details in Section \ref
@@ -1894,7 +1891,7 @@ associated with \f$p\f$.
 
 The type of `arr` must be and instance of the `Arrangement_2` class
 template instantiated with a traits class that models the
-`ArrangementXMonotoneTraits_2` concept, as the insertion operation may
+`AosXMonotoneTraits_2` concept, as the insertion operation may
 involve the splitting of curves.
 
 <!-- ----------------------------------------------------------------------- -->
@@ -1958,7 +1955,7 @@ use the zone framework.
 The free function template `%CGAL::do_intersect<>(arr, c, pl)` checks
 whether the given query curve \f$c\f$ intersects the curves and points
 of an existing arrangement `arr`. If \f$c\f$ is not \f$x\f$-monotone
-(that is, it is of type \link ArrangementTraits_2::Curve_2
+(that is, it is of type \link AosTraits_2::Curve_2
 `Curve_2`\endlink) the curve is subdivided into \f$x\f$-monotone
 subcurves and isolated points. Each \f$x\f$-monotone curve (or point)
 is checked for intersection in turn using the zone framework. For
@@ -1973,9 +1970,9 @@ user-defined point-location object, it constructs a local object of
 the walk point-location type, namely, an instance of the
 `Arr_walk_along_line_point_location` class template, and uses it to
 locate the endpoint. If the given curve is \f$x\f$-monotone then the
-traits type must model the `ArrangementXMonotoneTraits_2` concept. If
+traits type must model the `AosXMonotoneTraits_2` concept. If
 the curve is not \f$x\f$-monotone then the traits type must model the
-`ArrangementTraits_2` concept.
+`AosTraits_2` concept.
 
 The `CGAL::zone<>(arr, c, oi, pl)` function template computes the zone
 of a given \f$x\f$-monotone curve in a given arrangement. More
@@ -1988,7 +1985,7 @@ that instead of accepting a user-defined point-location object, it
 constructs a local object of the walk point-location type, namely, an
 instance of the `Arr_walk_along_line_point_location` class template,
 and uses it to locate the endpoint. The traits type must model the
-`ArrangementXMonotoneTraits_2` concept.
+`AosXMonotoneTraits_2` concept.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection arr_ssec_sweep The Surface-Sweep Algorithm
@@ -2082,7 +2079,7 @@ arrangement of intersecting line segments, as constructed in \ref
 Arrangement_on_surface_2/global_insertion.cpp. The segments of
 \f$\mathcal{S}_1\f$ are drawn in solid lines and the segments of
 \f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note that the
-segment \f$ s\f$ (light dashed line) overlaps one of the segments in
+segment \f$s\f$ (light dashed line) overlaps one of the segments in
 \f$\mathcal{S}_1\f$.  \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
@@ -2115,9 +2112,9 @@ below. The three levels, starting from the most restrictive, are
 
 <table>
 <tr><th>Type of Curves <th>Geometry-Traits Concept <th>Insertion Function
-<tr><td>\f$x\f$-monotone and pairwise disjoint <td>`ArrangementBasicTraits_2` or `ArrangementLandmarkTraits_2` <td>`CGAL::insert_non_intersecting_curve<>()`
-<tr><td>\f$x\f$-monotone <td>`ArrangementXMonotoneTraits_2` <td> `%CGAL::insert<>()`
-<tr><td>general <td>`ArrangementTraits_2` <td>`%CGAL::insert<>()`
+<tr><td>\f$x\f$-monotone and pairwise disjoint <td>`AosBasicTraits_2` or `AosLandmarkTraits_2` <td>`CGAL::insert_non_intersecting_curve<>()`
+<tr><td>\f$x\f$-monotone <td>`AosXMonotoneTraits_2` <td> `%CGAL::insert<>()`
+<tr><td>general <td>`AosTraits_2` <td>`%CGAL::insert<>()`
 </table>
 
 The insertion function template `%insert()` is overloaded to
@@ -2143,8 +2140,8 @@ form a single curve associated with a single edge.  An attempt to
 remove a vertex or an edge from an arrangement object `arr` using the
 free functions above requires that the traits class used to
 instantiate the arrangement type of `arr` models the concept
-`ArrangementXMonotoneTraits_2`, which refines the
-`ArrangementBasicTraits_2` concept; see Section \ref
+`AosXMonotoneTraits_2`, which refines the
+`AosBasicTraits_2` concept; see Section \ref
 aos_sec-geom_traits.
 
 The function template `CGAL::remove_vertex<>(arr, v)` removes the
@@ -2536,7 +2533,7 @@ the file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in
 the \f$x\f$-range of the curve associated with a given halfedge
 \f$e\f$. The function template also exemplifies how some of the above
 functions can be used. The traits functor \link
-ArrangementBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
+AosBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
 the code is described in Section \ref
 aos_sssec-geom_traits-concepts_basic.
 
@@ -2682,20 +2679,20 @@ next.  These types are defined in the header file `arr_linear.h`.
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::FT                                        Number_type;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
 
-typedef CGAL::Arr_linear_traits_2<Kernel>                 Traits;
-typedef Traits::Point_2                                   Point;
-typedef Traits::Segment_2                                 Segment;
-typedef Traits::Ray_2                                     Ray;
-typedef Traits::Line_2                                    Line;
-typedef Traits::X_monotone_curve_2                        X_monotone_curve;
+using Traits = CGAL::Arr_linear_traits_2<Kernel>;
+using Point = Traits::Point_2;
+using Segment = Traits::Segment_2;
+using Ray = Traits::Ray_2;
+using Line = Traits::Line_2;
+using X_monotone_curve = Traits::X_monotone_curve_2;
 
-typedef CGAL::Arrangement_2<Traits>                       Arrangement;
-typedef Arrangement::Vertex_handle                        Vertex_handle;
-typedef Arrangement::Halfedge_handle                      Halfedge_handle;
-typedef Arrangement::Face_handle                          Face_handle;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Vertex_handle = Arrangement::Vertex_handle;
+using Halfedge_handle = Arrangement::Halfedge_handle;
+using Face_handle = Arrangement::Face_handle;
 \endcode
 
 <!-- ----------------------------------------------------------------------- -->
@@ -2854,7 +2851,7 @@ right sides) are <em>identified</em> if
 called an <em>identification curve</em>.
 
 Rectangles, strips, quadrants, half-planes, and planes can be modeled
-with \f$\phi_S \f$ being the identity mapping. For example,
+with \f$\phi_S\f$ being the identity mapping. For example,
 \f$\Phi_S(x, y) = (x, y, 0)\f$ with \f$X = Y =(-\infty, +\infty)\f$
 parameterizes a plane. Surfaces such as paraboloids can be
 modeled through continuous and bijective parameterizations, for
@@ -3055,17 +3052,17 @@ respectively.
   If you want to determine whether the pre-image of a point \f$p\f$
   lies on identified sides, you need to employ one of the two traits
   functors \link
-  ArrangementIdentifiedHorizontalTraits_2::Is_on_x_identification_2
+  AosIdentifiedHorizontalTraits_2::Is_on_x_identification_2
   `Is_on_x_identification_2`\endlink or \link
-  ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+  AosIdentifiedVerticalTraits_2::Is_on_y_identification_2
   `Is_on_y_identification_2`\endlink; see Section \ref
   aos_ssec-traits-curved. If the pre-image of an \f$x\f$-monotone
   curve \f$c\f$ does not entirely lie on identified sides, you can
   determine the location of the pre-image of an endpoint of \f$c\f$
   employing either the \link
-  ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
+  AosVerticalSideTraits_2::Parameter_space_in_x_2
   `Parameter_space_in_x_2`\endlink functor or the \link
-  ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+  AosHorizontalSideTraits_2::Parameter_space_in_y_2
   `Parameter_space_in_y_2`\endlink functors; see Section \ref
   aos_ssec-traits-curved. The operations in both functors accept an
   enumeration that indicates the curve end, that is,
@@ -3122,20 +3119,20 @@ parameter space are identified and the bottom and top sides are
 contracted, which is the settings used by the traits class template
 `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>`; see Section \ref
 arr_ssectr_spherical. The traits functors \link
-ArrangementBasicTraits_2::Construct_min_vertex_2
+AosBasicTraits_2::Construct_min_vertex_2
 `Construct_min_vertex_2`\endlink, \link
-ArrangementBasicTraits_2::Construct_max_vertex_2
+AosBasicTraits_2::Construct_max_vertex_2
 `Construct_min_vertex_2`\endlink, and \link
-ArrangementBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
+AosBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
 the code are described is Section \ref
 aos_sssec-geom_traits-concepts_basic.  The traits functors \link
-ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
+AosVerticalSideTraits_2::Parameter_space_in_x_2
 `Parameter_space_in_x_2`\endlink, \link
-ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+AosHorizontalSideTraits_2::Parameter_space_in_y_2
 `Parameter_space_in_y_2`\endlink, \link
-ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+AosIdentifiedVerticalTraits_2::Is_on_y_identification_2
 `Is_on_y_identification_2`\endlink, and \link
-ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2
+AosHorizontalSideTraits_2::Compare_x_on_boundary_2
 `Compare_x_on_boundary_2`\endlink, are described is Section \ref
 aos_ssec-traits-curved.
 
@@ -3255,10 +3252,10 @@ The hierarchy of the main geometry traits concepts.
 \subsubsection aos_sssec-geom_traits-concepts_basic The Basic Concept
 <!-- ----------------------------------------------------------------------- -->
 
-A model of the basic concept `ArrangementBasicTraits_2` needs to
-define the types \link ArrangementBasicTraits_2::Point_2
+A model of the basic concept `AosBasicTraits_2` needs to
+define the types \link AosBasicTraits_2::Point_2
 `Point_2`\endlink and \link
-ArrangementBasicTraits_2::X_monotone_curve_2
+AosBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink, where objects of the former type are the
 geometric mapping of arrangement vertices, and objects of the latter
 type are the geometric mapping of edges. In addition, it has to
@@ -3269,20 +3266,20 @@ and points that do not lie in the interiors of the curves. The basic
 set of predicates is also sufficient for answering vertical
 ray-shooting queries and point-location queries with a small
 exception: Locating a point using the landmark strategy requires a
-traits class that models the concept `ArrangementLandmarkTraits_2`;
+traits class that models the concept `AosLandmarkTraits_2`;
 see Section \ref aos_sssec-tr_landmarks_concept.
 
 <DL>
 
-<DT>\link ArrangementBasicTraits_2::Compare_x_2 <B>`Compare_x_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Compare_x_2 <B>`Compare_x_2`</B>\endlink:
 <DD>Compares the \f$x\f$-coordinates of two points.
 
-<DT>\link ArrangementBasicTraits_2::Compare_xy_2 <B>`Compare_xy_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Compare_xy_2 <B>`Compare_xy_2`</B>\endlink:
 <DD>Compares two points lexicographically, first by their
   \f$x\f$-coordinates, and if they are equal, by their
   \f$y\f$-coordinates.
 
-<DT>\link ArrangementBasicTraits_2::Equal_2 <B>`Equal_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Equal_2 <B>`Equal_2`</B>\endlink:
 <DD>There are two overloaded Boolean operators that test equality. One
   returns true iff two given points represent the same geometric point
   in the two-dimensional surface, and the second returns true iff the
@@ -3291,36 +3288,36 @@ see Section \ref aos_sssec-tr_landmarks_concept.
   of two \f$x\f$-monotone curves is used only for testing as part of
   the test suite.}
 
-<DT>\link ArrangementBasicTraits_2::Construct_min_vertex_2 <B>`Construct_min_vertex_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Construct_min_vertex_2 <B>`Construct_min_vertex_2`</B>\endlink:
 <DD>Returns the lexicographically smallest (or left) endpoint of an
   \f$x\f$-monotone curve.
 
-<DT>\link ArrangementBasicTraits_2::Construct_max_vertex_2 <B>`Construct_max_vertex_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Construct_max_vertex_2 <B>`Construct_max_vertex_2`</B>\endlink:
 <DD> Returns the lexicographically largest (or right) endpoint of an
   \f$x\f$-monotone curve.
 
-<DT>\link ArrangementBasicTraits_2::Is_vertical_2 <B>`Is_vertical_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Is_vertical_2 <B>`Is_vertical_2`</B>\endlink:
 <DD> Determines whether an \f$x\f$-monotone curve is vertical.
 
-<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_2 <B>`Compare_y_at_x_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Compare_y_at_x_2 <B>`Compare_y_at_x_2`</B>\endlink:
 <DD>Given an \f$x\f$-monotone curve \f$c\f$ and a point \f$p\f$ that
   lies in the \f$x\f$-range of \f$c\f$, determines whether \f$p\f$ is
   below, above or lies on \f$c\f$.
 
-<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_right_2 <B>`Compare_y_at_x_right_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Compare_y_at_x_right_2 <B>`Compare_y_at_x_right_2`</B>\endlink:
 <DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ that
   share a common minimal (left) endpoint \f$p\f$, determines whether
   \f$c_1\f$ is above or below \f$c_2\f$ immediately to the right of
   \f$p\f$, or whether the two curves overlap there.  </DL>
 
-Every model of the concept `ArrangementBasicTraits_2` needs to define
-a nested type named \link ArrangementBasicTraits_2::Has_left_category
+Every model of the concept `AosBasicTraits_2` needs to define
+a nested type named \link AosBasicTraits_2::Has_left_category
 `Has_left_category`\endlink. It determines whether the traits class
 supports the following predicate:
 
 <DL>
 
-<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_left_2 <B>`Compare_y_at_x_left_2`</B>\endlink:
+<DT>\link AosBasicTraits_2::Compare_y_at_x_left_2 <B>`Compare_y_at_x_left_2`</B>\endlink:
 <DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ that
   share a common maximal (right) endpoint \f$p\f$, determines whether
   \f$c_1\f$ is above or under \f$c_2\f$ immediately to the left of
@@ -3328,7 +3325,7 @@ supports the following predicate:
 
 </DL>
 
-If the `ArrangementBasicTraits_2::Has_left_category` type nested in a
+If the `AosBasicTraits_2::Has_left_category` type nested in a
 model of the basic concept is defined as `Tag_true`\cgalFootnote{In
 principle, the category type may only be convertible to the tag type,
 but in practice the category is typically explicitly defined as the
@@ -3347,18 +3344,18 @@ bottom, or top side of the boundary of the parameter space, must be
 conveyed by the traits class. This is done through the definition of
 four additional nested types, namely
 <ol>
-<li>\link ArrangementBasicTraits_2::Left_side_category
+<li>\link AosBasicTraits_2::Left_side_category
 `Left_side_category`\endlink,
-<li>\link ArrangementBasicTraits_2::Right_side_category
+<li>\link AosBasicTraits_2::Right_side_category
 `Right_side_category`\endlink,
-<li>\link ArrangementBasicTraits_2::Bottom_side_category
+<li>\link AosBasicTraits_2::Bottom_side_category
 `Bottom_side_category`\endlink, and
-<li>\link ArrangementBasicTraits_2::Top_side_category
+<li>\link AosBasicTraits_2::Top_side_category
 `Top_side_category`\endlink.
 </ol>
 Each of those types must be convertible
 to the type `Arr_oblivious_side_tag` for the class to be a model of
-the concept `ArrangementBasicTraits_2`.
+the concept `AosBasicTraits_2`.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection aos_sssec-geom_traits-concepts_intersecting Intersections
@@ -3366,17 +3363,17 @@ the concept `ArrangementBasicTraits_2`.
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
 may intersect in their interior requires operations that are not part
-of the `ArrangementBasicTraits_2` concept. The additional operations
-are listed by the concept `ArrangementXMonotoneTraits_2`, which
+of the `AosBasicTraits_2` concept. The additional operations
+are listed by the concept `AosXMonotoneTraits_2`, which
 refines the basic arrangement geometry-traits concept described above.
-While models of the `ArrangementXMonotoneTraits_2` concept still
+While models of the `AosXMonotoneTraits_2` concept still
 handle only \f$x\f$-monotone curves, the curves are not restricted to
 be disjoint in their interiors. Such a model must be capable of
 computing points of intersection between \f$x\f$-monotone curves,
 splitting curves at these intersection points to obtain pairs of
 interior-disjoint subcurves, and optionally merging pairs of
 subcurves. A point of intersection between two curves is also
-represented by the \link ArrangementBasicTraits_2::Point_2
+represented by the \link AosBasicTraits_2::Point_2
 `Point_2`\endlink type. A model of the refined concept must define an
 additional type called `Multiplicity`.  An object of this type
 indicates the multiplicity of the intersection point of two curves,
@@ -3397,12 +3394,12 @@ operations:
 
 <DL>
 
-<DT>\link ArrangementXMonotoneTraits_2::Split_2 <B>`Split_2`</B>\endlink:
+<DT>\link AosXMonotoneTraits_2::Split_2 <B>`Split_2`</B>\endlink:
 <DD> Splits an \f$x\f$-monotone curve \f$c\f$ into two subcurves at a
   given point \f$p\f$ that lies in the interior of \f$c\f$.
 
-<DT>\link ArrangementXMonotoneTraits_2::Are_mergeable_2 <B>`Are_mergeable_2`</B>\endlink:
-<DD> Determines whether two \f$ x\f$-monotone curves \f$c_1\f$ and
+<DT>\link AosXMonotoneTraits_2::Are_mergeable_2 <B>`Are_mergeable_2`</B>\endlink:
+<DD> Determines whether two \f$x\f$-monotone curves \f$c_1\f$ and
   \f$c_2\f$ that share a common endpoint can be merged into a single
   continuous \f$x\f$-monotone curve representable by the traits
   class.\cgalFootnote{On the face of it this seems a difficult
@@ -3411,10 +3408,10 @@ operations:
   underlying curves are identical and whether they do not bend to form
   a non-\f$x\f$-monotone curve.}
 
-<DT>\link ArrangementXMonotoneTraits_2::Merge_2 <B>`Merge_2`</B>\endlink:
+<DT>\link AosXMonotoneTraits_2::Merge_2 <B>`Merge_2`</B>\endlink:
 <DD> Merges two mergeable \f$x\f$-monotone curves into a single curve.
 
-<DT>\link ArrangementXMonotoneTraits_2::Intersect_2 <B>`Intersect_2`</B>\endlink:
+<DT>\link AosXMonotoneTraits_2::Intersect_2 <B>`Intersect_2`</B>\endlink:
 <DD> Computes all intersection points and overlapping sections of two
   given \f$x\f$-monotone curves. If possible, computes also the
   multiplicity of each intersection point. Providing the multiplicity
@@ -3428,12 +3425,12 @@ operations:
 
 </DL>
 
-Using a model of the `ArrangementXMonotoneTraits_2` it is
+Using a model of the `AosXMonotoneTraits_2` it is
 possible to construct arrangements of sets of \f$x\f$-monotone curves
 (and points) that may intersect one another. The two operations
 listed above, regarding the merging of curves, are optional, and should
 be provided only if the type `Has_merge_category` nested in a model of
-the `ArrangementXMonotoneTraits_2` concept is defined as `Tag_true`.
+the `AosXMonotoneTraits_2` concept is defined as `Tag_true`.
 Otherwise, it is not possible to merge \f$x\f$-monotone curve and
 redundant vertices may be left in the arrangement due to the removal of
 edges.
@@ -3442,11 +3439,11 @@ edges.
 \subsubsection aos_sssec-geom_traits-concepts_arbitrary Supporting Arbitrary Curves
 <!-- ----------------------------------------------------------------------- -->
 
-The concept `ArrangementTraits_2` refines the
-`ArrangementXMonotoneTraits_2` concept. A model of the refined concept
+The concept `AosTraits_2` refines the
+`AosXMonotoneTraits_2` concept. A model of the refined concept
 must define an additional type that is used to represent general, not
 necessarily \f$x\f$-monotone and not necessarily continuous, curves,
-named \link ArrangementTraits_2::Curve_2 `Curve_2`\endlink. It also
+named \link AosTraits_2::Curve_2 `Curve_2`\endlink. It also
 has to support the subdivision of a curve of that type into a set of
 continuous \f$x\f$-monotone curves and isolated points. For example,
 the curve \f$c:\ (x^2 + y^2)(x^2 + y^2 - 1) = 0\f$ comprises the unit
@@ -3459,20 +3456,20 @@ operation:
 
 <DL>
 
-<DT>\link ArrangementTraits_2::Make_x_monotone_2 <B>`Make_x_monotone_2`</B>\endlink:
+<DT>\link AosTraits_2::Make_x_monotone_2 <B>`Make_x_monotone_2`</B>\endlink:
 
 <DD> Divides a given general curve of type \link
-  ArrangementTraits_2::Curve_2 `Curve_2`\endlink into continuous weakly
+  AosTraits_2::Curve_2 `Curve_2`\endlink into continuous weakly
   \f$x\f$-monotone curves and isolated points.
 
 </DL>
 
-Note that a model of the refined concept `ArrangementTraits_2` is
+Note that a model of the refined concept `AosTraits_2` is
 required only when using the free `insert()` function templates (see
 Section \ref arr_secgl_funcs) that accept an object of type \link
-ArrangementTraits_2::Curve_2 `Curve_2`\endlink or a range of objects
+AosTraits_2::Curve_2 `Curve_2`\endlink or a range of objects
 of that type. In all other cases it is sufficient to use a model of
-the `ArrangementXMonotoneTraits_2` concept.
+the `AosXMonotoneTraits_2` concept.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection aos_sssec-tr_landmarks_concept The Landmark Concept
@@ -3489,22 +3486,22 @@ The type of an arrangement associated with the landmark point-location
 strategy (see Section \ref arr_ssecpl) must be an instance of the
 `Arrangement_on_surface_2<GeomTraits, TopolTraits>` class template,
 where the `GeomTraits` parameter is substituted by a model of the
-concept `ArrangementLandmarkTraits_2`. (Naturally, it can also model
-either the `ArrangementXMonotoneTraits_2` concept or the
-`ArrangementTraits_2` concept.) The `ArrangementLandmarkTraits_2`
-concept refines the two concepts `ArrangementApproximateTraits_2` and
-`ArrangementConstructXMonotoneCurveTraits_2`. Each of these two
-concepts, in turn, refines the concept `ArrangementBasicTraits_2`.
+concept `AosLandmarkTraits_2`. (Naturally, it can also model
+either the `AosXMonotoneTraits_2` concept or the
+`AosTraits_2` concept.) The `AosLandmarkTraits_2`
+concept refines the two concepts `AosApproximatePointTraits_2` and
+`AosConstructXMonotoneCurveTraits_2`. Each of these two
+concepts, in turn, refines the concept `AosBasicTraits_2`.
 
-A model of the `ArrangementApproximateTraits_2` concept must define a
+A model of the `AosApproximatePointTraits_2` concept must define a
 fixed precision number type (typically the double-precision
 floating-point `double`) and support the operation below (in addition
-to fulfilling the requirements listed by the `ArrangementBasicTraits_2`
+to fulfilling the requirements listed by the `AosBasicTraits_2`
 concept).
 
 <DL>
 
-<DT>\link ArrangementApproximateTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
+<DT>\link AosApproximatePointTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
 <DD> Given a point `p`, approximate the \f$x\f$ and
 \f$y\f$-coordinates of `p` using a not necessarily multi-precision
 number type. We use this operation for approximate
@@ -3515,33 +3512,32 @@ fixed-precision number type.
 
 </DL>
 
-A model of the `ArrangementConstructXMonotoneCurveTraits_2` concept
+A model of the `AosConstructXMonotoneCurveTraits_2` concept
 must support the operation below (in addition to fulfilling the
-requirements listed by the `ArrangementBasicTraits_2` concept).
+requirements listed by the `AosBasicTraits_2` concept).
 
 <DL>
 
-<DT>\link ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2 <B>`Construct_x_monotone_curve_2`</B>\endlink:
+<DT>\link AosConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2 <B>`Construct_x_monotone_curve_2`</B>\endlink:
 <DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
 an \f$x\f$-monotone curve connecting \f$p_1\f$ and \f$p_2\f$.
 
 </DL>
 
-Most traits classes model the `ArrangementTraits_2` concept, and some
-also model the `ArrangementLandmarkTraits_2` concept.
+Most traits classes model the `AosTraits_2` concept, and some
+also model the `AosLandmarkTraits_2` concept.
+
+The concept `AosConstructCurveTraits_2` refines the concept
+`AosBasicTraits_2`. A model of the `AosConstructCurveTraits_2` concept
+must support the operation below (in addition to fulfilling the
+requirements listed by the `AosBasicTraits_2` concept).
 
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection aos_sssec-tr_additional_concepts The Construct Curve Concept
 <!-- ----------------------------------------------------------------------- -->
 
-The concept `ArrangementConstructCurveTraits_2` refines the concept
-`ArrangementTraits_2`. A model of the
-`ArrangementConstructCurveTraits_2` concept must support the operation
-below (in addition to fulfilling the requirements listed by the
-`ArrangementTraits_2` concept).
-
 <DL>
-<DT>\link ArrangementConstructCurveTraits_2::Construct_curve_2 <B>`Construct_curve_2`</B>\endlink:
+<DT>\link AosConstructCurveTraits_2::Construct_curve_2 <B>`Construct_curve_2`</B>\endlink:
 <DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
 a curve connecting \f$p_1\f$ and \f$p_2\f$.
 </DL>
@@ -3550,8 +3546,61 @@ The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
 polylines; see Section ~\ref arr_sssectr_polylines.
 The type that substitutes the template parameter `SubcurveTraits_2`
 when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
-a geometry-traits class that models the concept `ArrangementConstructCurveTraits_2`
+a geometry-traits class that models the concept `AosConstructCurveTraits_2`
 to enable the construction of polylines from a sequence of two or more points.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsubsection aos_sssec-tr_approximatetion_concept Supporting Approximations of Curves
+<!-- ----------------------------------------------------------------------- -->
+
+Operations on arrangements are guaranteed to be robust only if the
+operations of the geometry traits used to carry out the high-level
+operations are robust. Geometry traits constructors are guaranteed to
+be robust only if the kernel in use supports exact constructions, such
+as the Epec kernel. Even if you only intend to perform point-location
+queries on an arrangement induced by a collection of curves, you need
+an exact-construction kernel, if the curves are not pairwise disjoint
+in their interiors. However, when using an exact-construction kernel
+you still may desire to perform (independent) operations on
+approximations of the points or the interior-disjoint \f$x\f$-monotone
+curves of the arrangements in order to gain speed, for example drawing
+the arrangement on a raster window.  Naturally, reconstructing an
+arrangement from the approximations of its points and
+interior-disjoint \f$x\f$-monotone curves, may result with an arrangement
+of a different topology, or even worse, intersections in the interior
+of the curves.
+
+The concept `AosApproximateTraits_2` refines the concept
+`AosApproximatePointTraits_2`. In addition to the type
+`Approximate_number_type` required by the latter, a model of the
+`AosApproximateTraits_2` concept must define the type
+`Approximate_point_2`, which is typically defined as
+`CGAL::Cartesian<Approximate_number_type>::%Point_2`. Also, it must
+support the operations below (in addition to the operation required by
+the concept `AosApproximatePointTraits_2`).
+
+<DL>
+<DT>\link AosApproximateTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
+<DD>This operation is overloaded with three versions. The first one
+  returns an approximation of the \f$x\f$- or \f$y\f$-coordinates of a given
+  point as required by the concept `AosApproximatePointTraits_2`; see
+  Section \ref aos_sssec-tr_landmarks_concept. The description of the remaining
+  two follow.
+
+  (i) Given a point \f$p\f$, obtain an approximation of \f$p\f$, which is an
+    object of type `Approximate_point_2`. This is trivially
+    implemented using the first version.
+
+  (ii) Given an \f$x\f$-monotone curve \f$c\f$, a small number \f$\epsilon\f$ of
+    type `Approximate_number_type` that serves as an error bound, an
+    output iterator associated with a container
+    of approximate points, and a flag that indicates whether to
+    approximate \f$c\f$ starting from its smallest lexicographic endpoint,
+    compute a polyline that approximates \f$c\f$ in the indicated
+    direction, such that the largest distance between \f$c\f$ and the
+    polyline is not larger than \f$\epsilon\f$. The polyline is
+    represented as a sequence of approximate points.
+</DL>
 
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection aos_ssec-traits-curved Supporting Unbounded Curves or Curved Surfaces
@@ -3567,13 +3616,13 @@ boundary sides) or approach them (the pre-images of their endpoints
 approach boundary sides). These boundary conditions typically occur
 with unbounded curves or with arrangements embedded in curved
 surfaces. The category types \link
-ArrangementBasicTraits_2::Left_side_category
+AosBasicTraits_2::Left_side_category
 `Left_side_category`\endlink, \link
-ArrangementBasicTraits_2::Right_side_category
+AosBasicTraits_2::Right_side_category
 `Right_side_category`\endlink, \link
-ArrangementBasicTraits_2::Bottom_side_category
+AosBasicTraits_2::Bottom_side_category
 `Bottom_side_category`\endlink, and \link
-ArrangementBasicTraits_2::Top_side_category
+AosBasicTraits_2::Top_side_category
 `Top_side_category`\endlink, nested in every geometry traits class
 indicate whether the corresponding boundary side (i.e., left, right,
 bottom, and top) is open, closed, contracted, or identified, and
@@ -3602,9 +3651,9 @@ closed, contracted, and identified sides, respectively. (When curves
 are expected to neither reach nor approach a particular side, special
 handling is not required; thus, there is no need for a corresponding
 concept.) For example, it is required that the category type \link
-ArrangementOpenBottomTraits_2::Bottom_side_category
+AosOpenBottomTraits_2::Bottom_side_category
 `Bottom_side_category`\endlink, nested in models of the concept
-`ArrangementOpenBottomTraits_2`, is convertible to the tag type
+`AosOpenBottomTraits_2`, is convertible to the tag type
 `Arr_open_side_tag`.  This makes for a total of 16 abstract concepts
 (combine one of left, right, bottom, and top with one of open, closed,
 contracted, identified). Any one of these individual abstract concept
@@ -3618,8 +3667,8 @@ contracted side must be adjacent to two identified sides. While this
 narrows down the number of tangible concepts, the total number is
 still high; in practice we have used only two so far (not counting the
 "plain" concept, models of which do not handle boundary conditions at
-all), namely, `ArrangementOpenBoundaryTraits_2` and
-`ArrangementSphericalBoundaryTraits_2`; see below for more
+all), namely, `AosOpenBoundaryTraits_2` and
+`AosSphericalBoundaryTraits_2`; see below for more
 details. Many of the traits class-templates provided by the \ref
 PkgArrangementOnSurface2 package do not handle boundary conditions at
 all. Some of them, such as the `Arr_segment_traits_2` traits (see
@@ -3641,7 +3690,7 @@ sufficient to handle not only curves embedded in an unbounded
 parameter space, but also curves embedded in a bounded parameter space
 with open boundaries. The arrangement type instantiated with a traits
 class that models the combined concept
-`ArrangementOpenBoundaryTraits_2` shown in
+`AosOpenBoundaryTraits_2` shown in
 \cgalFigureRef{aos_fig-open_concept_hierarchy} can handle curves that
 are open in any direction. Recall that an arrangement that supports
 unbounded \f$x\f$-monotone curves maintains an implicit bounding
@@ -3651,20 +3700,21 @@ are expected to be unbounded; namely, there exists \f$d \in \{0,1\}\f$
 such that \f$\lim_{t \rightarrow d}x(t) = \pm\infty\f$ or \f$\lim_{t
 \rightarrow d}y(t) = \pm\infty\f$ holds for at least one input curve
 \f$c(t) = (x(t),y(t))\f$, the arrangement template must be
-instantiated with a model of the `ArrangementOpenBoundaryTraits_2`
+instantiated with a model of the `AosOpenBoundaryTraits_2`
 concept.\cgalFootnote{A curve that reaches the boundary of the
 parameter space in this case is open and unbounded.}
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-spherical_concept_hierarchy,spherical_concept_hierarchy.png}
-Bottom portion of the refinement hierarchy of the geometry-traits
-concepts for curves embedded in a sphere-like parameterized surface
+The entire spherical boundary cluster of the refinement hierarchy of the
+geometry-traits concepts for curves embedded in a sphere-like parameterized
+surface.
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
 A suitable geometry-traits component for arrangements embedded in
 surfaces homeomorphic to a sphere is a model of the combined concept
-`ArrangementSphericalBoundaryTraits_2` shown in
+`AosSphericalBoundaryTraits_2` shown in
 \cgalFigureRef{aos_fig-spherical_concept_hierarchy}. Here the two
 vertical sides of the parameter space are identified and the two
 horizontal sides are contracted.
@@ -3679,9 +3729,9 @@ exists for the right, bottom, and top sides.
 <!-- ----------------------------------------------------------------------- -->
 
 The shared requirements for the four options of a side are collected
-in abstract layers called `ArrangementLeftSideTraits_2`,
-`ArrangementRightSideTraits_2`, `ArrangementBottomSideTraits_2`, and
-`ArrangementTopSideTraits_2`; see, e.g.,
+in abstract layers called `AosLeftSideTraits_2`,
+`AosRightSideTraits_2`, `AosBottomSideTraits_2`, and
+`AosTopSideTraits_2`; see, e.g.,
 \cgalFigureRef{aos_fig-left_side_cluster}.
 
 <!-- ----------------------------------------------------------------------- -->
@@ -3695,8 +3745,8 @@ curves that either reach or approach horizontal sides.
 
 The shared requirements for the options of opposite sides are
 collected in two additional abstract layers called
-`ArrangementVerticalSideTraits_2` and
-`ArrangementHorizontalSideTraits_2`; see
+`AosVerticalSideTraits_2` and
+`AosHorizontalSideTraits_2`; see
 \cgalFigureRef{aos_fig-side_clusters}.
 
 <!-- ----------------------------------------------------------------------- -->
@@ -3717,8 +3767,8 @@ of the parameter space and for curves that reach the identified top
 side of the parameter space do not exist either. Instead, the shared
 requirements for opposite identified sides are collected in two
 additional abstract concepts called
-`ArrangementIdentifiedVerticalTraits_2` and
-`ArrangementIdentifiedHorizontalTraits_2`; see
+`AosIdentifiedVerticalTraits_2` and
+`AosIdentifiedHorizontalTraits_2`; see
 \cgalFigureRef{aos_fig-identified_clusters}. The former lists
 requirements for operations that handle curves that reach identified
 vertical sides of the parameter space, and the latter lists
@@ -3728,12 +3778,12 @@ horizontal sides of the parameter space.
 In the following we list the specific requirements of all the
 aforementioned concepts.
 
-The abstract concept `ArrangementVerticalSideTraits_2` requires the
+The abstract concept `AosVerticalSideTraits_2` requires the
 following predicate:
 
 <DL>
 
-<DT>\link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
+<DT>\link AosVerticalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
 
 <DD>This three-valued predicate is overloaded with two versions as
   follows:
@@ -3763,18 +3813,18 @@ in between. Return `CGAL::ARR_LEFT_BOUNDARY`,
 min},x_{\rm max}\}\f$, then the boundary side containing \f$p\f$
 cannot be open and must not be identified. In other words, this
 overloaded version is required only for the concepts
-`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
-`ArrangementContractedLeftTraits_2` and
-`ArrangementContractedRightTraits_2`.
+`AosClosedLeftTraits_2`, `AosClosedRightTraits_2`,
+`AosContractedLeftTraits_2` and
+`AosContractedRightTraits_2`.
 
 </DL>
 
-The abstract concept `ArrangementHorizontalSideTraits_2` requires the
+The abstract concept `AosHorizontalSideTraits_2` requires the
 following predicate:
 
 <DL>
 
-<DT>\link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
+<DT>\link AosHorizontalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
 
 <DD>This three-valued predicate is overloaded with two versions as
   follows:
@@ -3804,9 +3854,9 @@ in between. Return `CGAL::ARR_BOTTOM_BOUNDARY`,
 min},y_{\rm max}\}\f$, then the boundary side containing \f$p\f$
 cannot be open and must not be identified. In other words, this
 overloaded version is required only for the concepts
-`ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
-`ArrangementContractedBottomTraits_2` and
-`ArrangementContractedTopTraits_2`.
+`AosClosedBottomTraits_2`, `AosClosedTopTraits_2`,
+`AosContractedBottomTraits_2` and
+`AosContractedTopTraits_2`.
 
 </DL>
 
@@ -3823,14 +3873,14 @@ asymmetry is also reflected in the predicates listed below. They help
 determining the order of curve-ends lying on the boundary of the
 parameter space with respect to regular points and among each other.
 
-The concepts `ArrangementClosedLeftTraits_2`,
-`ArrangementClosedRightTraits_2`, and
-`ArrangementIdentifiedVerticalTraits_2` require the following
+The concepts `AosClosedLeftTraits_2`,
+`AosClosedRightTraits_2`, and
+`AosIdentifiedVerticalTraits_2` require the following
 additional predicate:
 
 <DL>
 
-<DT>\link ArrangementIdentifiedVerticalTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
+<DT>\link AosIdentifiedVerticalTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
 
 <DD>Given two points \f$p_1=(x_{p_1},y_{p_1})\f$ and
 \f$p_2=(x_{p_2},y_{p_2})\f$, such that at least one of them lies on a
@@ -3841,16 +3891,16 @@ min},x_{\rm max}\}\f$ (resp. \f$x_{p_2} \in \{x_{\rm min},x_{\rm
 max}\}\f$), then the vertical boundary side containing \f$p_1\f$
 (resp. \f$p_2\f$) must be either closed or identified. In other words,
 this overloaded version is required only for the concepts
-`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`, and
-`ArrangementIdentifiedVerticalTraits_2`.
+`AosClosedLeftTraits_2`, `AosClosedRightTraits_2`, and
+`AosIdentifiedVerticalTraits_2`.
 
 </DL>
 
-The concept `ArrangementVerticalSideTraits_2` requires the following additional predicate:
+The concept `AosVerticalSideTraits_2` requires the following additional predicate:
 
 <DL>
 
-<DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
+<DT>\link AosVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
 
 <DD>
 <table border="0" cellspacing="10">
@@ -3882,12 +3932,12 @@ boundary-side in a similar manner.
 
 </DL>
 
-The concept `ArrangementHorizontalSideTraits_2` requires two additional
+The concept `AosHorizontalSideTraits_2` requires two additional
 predicates:
 
 <DL>
 
-<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2 <B>`Compare_x_on_boundary_2`</B>\endlink:
+<DT>\link AosHorizontalSideTraits_2::Compare_x_on_boundary_2 <B>`Compare_x_on_boundary_2`</B>\endlink:
 
 <DD>This predicate is overloaded with three versions.
 We distinguish between open and non-open sides as explained below.
@@ -3941,10 +3991,10 @@ min},y_{\rm max}\}\f$ (resp. \f$y_{p_2} \in \{y_{\rm min},y_{\rm
 max}\}\f$), then the boundary side containing \f$p_1\f$
 (resp. \f$p_2\f$) must be either closed or identified. In other words,
 this overloaded version is required only for the concepts
-`ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
-and `ArrangementIdentifiedHorizontalTraits_2`.
+`AosClosedBottomTraits_2`, `AosClosedTopTraits_2`,
+and `AosIdentifiedHorizontalTraits_2`.
 
-<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2
+<DT>\link AosHorizontalSideTraits_2::Compare_x_near_boundary_2
 <B>`Compare_x_near_boundary_2`</B>\endlink:
 
 <DD>
@@ -3981,12 +4031,12 @@ boundary-side, \f$p\f$ is located far to the top in a similar manner.
 
 </DL>
 
-The concept `ArrangementIdentifiedVerticalTraits_2` requires the following
+The concept `AosIdentifiedVerticalTraits_2` requires the following
 additional predicate:
 
 <DL>
 
-<DT>\link ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2 <B>`Is_on_y_identification_2`</B>\endlink:
+<DT>\link AosIdentifiedVerticalTraits_2::Is_on_y_identification_2 <B>`Is_on_y_identification_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions.
 
@@ -4001,12 +4051,12 @@ boundary.
 
 </DL>
 
-Similarly, the concept `ArrangementIdentifiedHorizontalTraits_2`
+Similarly, the concept `AosIdentifiedHorizontalTraits_2`
 requires the following additional predicate:
 
 <DL>
 
-<DT>\link ArrangementIdentifiedHorizontalTraits_2::Is_on_x_identification_2 <B>`Is_on_x_identification_2`</B>\endlink:
+<DT>\link AosIdentifiedHorizontalTraits_2::Is_on_x_identification_2 <B>`Is_on_x_identification_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions.
 
@@ -4143,14 +4193,14 @@ template that handles line segments, namely the
 `Arr_non_caching_segment_basic_traits_2<Kernel>` class template.  This
 class template and the `Arr_segment_traits_2<Kernel>` class template
 are both parameterized by a geometric kernel and model the concepts
-`ArrangementTraits_2` and `ArrangementLandmarkTraits_2`.
+`AosTraits_2` and `AosLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
-\cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2}, which enables Boolean set
+\cgalFootnoteCode{AosDirectionalXMonotoneTraits_2}, which enables Boolean set
 operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
-models the `ArrangementLandmarkTraits_2` traits concept but not the
-refined `ArrangementXMonotoneTraits_2` concept. Like the
+models the `AosLandmarkTraits_2` traits concept but not the
+refined `AosXMonotoneTraits_2` concept. Like the
 `Arr_segment_traits_2` class template it derives from the `Kernel`
 type. Unlike the `Arr_segment_traits_2` class template it defines its
 point and segment types as `Kernel::Point_2` and `Kernel::Segment_2`,
@@ -4197,8 +4247,8 @@ The `Arr_linear_traits_2<Kernel>` class used in Section \ref
 aos_sec-unbounded for demonstrating the construction of arrangements
 of unbounded curves is capable of handling bounded and unbounded
 linear objects, namely, lines, rays, and line segments. It models the
-concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
-`{ArrangementOpenBoundaryTraits_2`. It is parameterized by a geometric
+concepts `AosTraits_2`, `AosLandmarkTraits_2`, and
+`{AosOpenBoundaryTraits_2`. It is parameterized by a geometric
 kernel and its nested \link Arr_linear_traits_2::Point_2
 `Point_2`\endlink type is defined to be the kernel-point type. The
 \link Arr_linear_traits_2::Curve_2 `Curve_2`\endlink (and \link
@@ -4242,13 +4292,13 @@ arr_sssectr_polycurves.
 The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
 polylines. It models the following four concepts:
 
-- `ArrangementTraits_2`,
+- `AosTraits_2`,
 
-- `ArrangementDirectionalXMonotoneTraits_2`
+- `AosDirectionalXMonotoneTraits_2`
 
-- `ArrangementConstructXMonotoneCurveTraits_2`, and
+- `AosConstructXMonotoneCurveTraits_2`, and
 
-- `ArrangementConstructCurveTraits_2`.
+- `AosConstructCurveTraits_2`.
 
 The type that substitutes the template parameter `SubcurveTraits_2`
 when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
@@ -4256,16 +4306,16 @@ a geometry-traits class that models the same four concepts.  We refer
 to the type that substitutes the template parameter `SubcurveTraits_2`
 as the <em>subcurve traits</em> hereafter.  If, in addition, the
 subcurve traits also models the concept
-`ArrangementApproximateTraits_2` then the instantiated
+`AosApproximatePointTraits_2` then the instantiated
 `Arr_polyline_traits_2<SubcurveTraits>` type models the concept
-`ArrangementApproximateTraits_2` as well. (By definition, modeling the
-concepts `ArrangementApproximateTraits_2` and
-`ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
-concept `ArrangementLandmarkTraits_2`.) Similarly, if the subcurve
-traits also models the concept `ArrangementOpenBoundaryTraits_2` then
+`AosApproximatePointTraits_2` as well. (By definition, modeling the
+concepts `AosApproximatePointTraits_2` and
+`AosConstructXMonotoneCurveTraits_2` implies modeling the
+concept `AosLandmarkTraits_2`.) Similarly, if the subcurve
+traits also models the concept `AosOpenBoundaryTraits_2` then
 the instantiated `Arr_polyline_traits_2<SubcurveTraits>` type models
-the concept `ArrangementOpenBoundaryTraits_2` as well. Modeling the
-`ArrangementConstructXMonotoneCurveTraits_2` concept implies that the
+the concept `AosOpenBoundaryTraits_2` as well. Modeling the
+`AosConstructXMonotoneCurveTraits_2` concept implies that the
 subcurve traits must support the construction of a unique
 (\f$x\f$-monotone) segment given two input points.
 
@@ -4403,14 +4453,14 @@ template, instantiated with the predefined filtered kernel.
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-typedef Kernel::FT                                         Number_type;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
 
-typedef CGAL::Arr_segment_traits_2<Kernel>                 Segment_traits;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits>        Traits;
-typedef Traits::Point_2                                    Point;
-typedef Traits::Curve_2                                    Polyline;
-typedef CGAL::Arrangement_2<Traits>                        Arrangement;
+using Segment_traits = CGAL::Arr_segment_traits_2<Kernel>;
+using Traits = CGAL::Arr_polyline_traits_2<Segment_traits>;
+using Point = Traits::Point_2;
+using Polyline = Traits::Curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 <!-- ----------------------------------------------------------------------- -->
@@ -4428,8 +4478,8 @@ is continuous. As a matter of fact, most characteristics of the
 also to the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class
 template. The only difference between the two, is that the latter is
 not a model of the concepts
-`ArrangementConstructXMonotoneCurveTraits_2` nor
-`ArrangementConstructCurveTraits_2`, and as such, it is not
+`AosConstructXMonotoneCurveTraits_2` nor
+`AosConstructCurveTraits_2`, and as such, it is not
 able to construct a subcurve from only two points. As a consequence,
 it does not support the operations that (i) construct a polycurve from
 a sequence of points, and (ii) push a point at the back or at the
@@ -4538,10 +4588,10 @@ are rational).
 The \ref PkgArrangementOnSurface2 package offers a traits
 class-template called `Arr_circle_segment_traits_2<Kernel>` that
 exclusively handles line segments, circular arcs, and whole circles
-and models the concepts `ArrangementTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`; see Package \ref
+and models the concepts `AosTraits_2` and
+`AosDirectionalXMonotoneTraits_2`; see Package \ref
 PkgBooleanSetOperations2Ref. Note that it is not a model of the
-`ArrangementLandmarkTraits_2` concept.  It exploits efficient
+`AosLandmarkTraits_2` concept.  It exploits efficient
 computations with square root numbers, which makes it attractive for
 arrangements induced by line segments, circular arcs, and whole
 circles.  When the traits class-template is instantiated, the `Kernel`
@@ -4592,16 +4642,16 @@ performance further.
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-typedef Kernel::FT                                         Number_type;
-typedef CGAL::Arr_circle_segment_traits_2<Kernel>          Traits;
-typedef Traits::CoordNT                                    CoordNT;
-typedef Traits::Point_2                                    Point;
-typedef Traits::Curve_2                                    Curve;
-typedef Traits::Rational_point_2                           Rational_point;
-typedef Traits::Rational_segment_2                         Segment;
-typedef Traits::Rational_circle_2                          Circle;
-typedef CGAL::Arrangement_2<Traits>                        Arrangement;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
+using Traits = CGAL::Arr_circle_segment_traits_2<Kernel>;
+using CoordNT = Traits::CoordNT;
+using Point = Traits::Point_2;
+using Curve = Traits::Curve_2;
+using Rational_point = Traits::Rational_point_2;
+using Segment = Traits::Rational_segment_2;
+using Circle = Traits::Rational_circle_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 The \link Arr_circle_segment_traits_2::Curve_2 `Curve_2`\endlink type
@@ -4763,8 +4813,8 @@ type traits-class, then use them to define the conic traits
 class-template. Also note the types defined by the rational kernels,
 which we need for conveniently constructing conic arcs.
 
-The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
-`ArrangementLandmarkTraits_2` concepts. Its \link
+The `Arr_conic_traits_2` models the `AosTraits_2` and
+`AosLandmarkTraits_2` concepts. Its \link
 Arr_conic_traits_2::Point_2 `Point_2`\endlink type is derived from
 `AlgKernel::Point_2`, while the \link Arr_conic_traits_2::Curve_2
 `Curve_2`\endlink type represents a bounded, not necessarily
@@ -4867,7 +4917,7 @@ they have another intersection point at
 
 A <em>rational function</em> is given by the equation \f$y =
 \frac{P(x)}{Q(x)}\f$, where \f$P\f$ and \f$Q\f$ are polynomials of
-arbitrary degrees. In particular, if \f$ Q(x) = 1\f$, then the
+arbitrary degrees. In particular, if \f$Q(x) = 1\f$, then the
 function is simply a polynomial function. A bounded <em>rational
 arc</em> is defined by the graph of a rational function over some
 interval \f$[x_{\rm min}, x_{\rm max}]\f$, where \f$Q\f$ does not have
@@ -4883,12 +4933,12 @@ more complicated curves and for interpolation; see, e.g.,
 Using the `Arr_rational_function_traits_2` class template it is
 possible to construct and maintain arrangements induced by rational
 arcs. Every instance of the `Arr_rational_function_traits_2` class
-template models the concepts `ArrangementTraits_2` and
-`ArrangementOpenBoundaryTraits_2`, but it does not model the
-`ArrangementLandmarkTraits_2` concept. It also models the refined
-concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
+template models the concepts `AosTraits_2` and
+`AosOpenBoundaryTraits_2`, but it does not model the
+`AosLandmarkTraits_2` concept. It also models the refined
+concept `AosDirectionalXMonotoneTraits_2`, which enables
 Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
-Note that it is not a model of `ArrangementLandmarkTraits_2` concept,
+Note that it is not a model of `AosLandmarkTraits_2` concept,
 so it is impossible to use the landmark point-location strategy with
 this traits class.
 
@@ -4909,7 +4959,7 @@ depicted in \cgalFigureRef{aos_fig-rat_func_singular}. This arc has
 two singularities, at \f$x = 1\f$ and at \f$x = 2\f$. It is split into
 three continuous portions defined over the intervals \f$[0,1)\f$,
 \f$(1,2)\f$, and \f$(2,3]\f$ by the traits operation \link
-ArrangementTraits_2::Make_x_monotone_2
+AosTraits_2::Make_x_monotone_2
 `Make_x_monotone_2`\endlink. Arbitrary rational functions are
 represented by the nested type \link
 Arr_rational_function_traits_2::Curve_2 `Curve_2`\endlink and
@@ -4968,15 +5018,15 @@ are defined in the header file `arr_rat_functions.h`.
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CORE::BigInt                               Number_type;
-typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
-typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits;
+using Number_type = CORE::BigInt;
+using AK1 = CGAL::Algebraic_kernel_d_1<Number_type>;
+using Traits = CGAL::Arr_rational_function_traits_2<AK1>;
 
-typedef Traits::Polynomial_1                       Polynomial;
-typedef Traits::Algebraic_real_1                   Alg_real;
-typedef Traits::Bound                              Bound;
+using Polynomial = Traits::Polynomial_1;
+using Alg_real = Traits::Algebraic_real_1;
+using Bound = Traits::Bound;
 
-typedef CGAL::Arrangement_2<Traits>                Arrangement;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 The constructed rational functions are cached by the traits class. The
@@ -5082,17 +5132,17 @@ header file `arr_Bezier.h`.
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
-typedef Nt_traits::Rational                             NT;
-typedef Nt_traits::Rational                             Rational;
-typedef Nt_traits::Algebraic                            Algebraic;
-typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-typedef Rat_kernel::Point_2                             Rat_point;
-typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                        Traits;
-typedef Traits::Curve_2                                 Bezier_curve;
-typedef CGAL::Arrangement_2<Traits>                     Arrangement;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using NT = Nt_traits::Rational;
+using Rational = Nt_traits::Rational;
+using Algebraic = Nt_traits::Algebraic;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
+using Rat_point = Rat_kernel::Point_2;
+using Traits =
+  CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+using Bezier_curve = Traits::Curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 As mentioned above, we assume that the coordinates of all control
@@ -5114,9 +5164,9 @@ Arr_Bezier_curve_traits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink types defined by the traits class.
 
 Every instance of the `Arr_Bezier_curve_traits_2` class templates
-models the concept `ArrangementTraits_2` (but it does not model the
-`ArrangementLandmarkTraits_2` concept). It also models the refined
-concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
+models the concept `AosTraits_2` (but it does not model the
+`AosLandmarkTraits_2` concept). It also models the refined
+concept `AosDirectionalXMonotoneTraits_2`, which enables
 Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
 
 <!-- ----------------------------------------------------------------------- -->
@@ -5171,9 +5221,9 @@ either vertical or a closed connected point set, with all interior
 points parameterizable in \f$x\f$.
 
 Every instance of the `Arr_algebraic_segment_traits_2<Coefficient>`
-class template models the `ArrangementTraits_2` and
-`ArrangementOpenBoundaryTraits_2` concepts (but it does not model the
-`ArrangementLandmarkTraits_2` concept).  The template argument
+class template models the `AosTraits_2` and
+`AosOpenBoundaryTraits_2` concepts (but it does not model the
+`AosLandmarkTraits_2` concept).  The template argument
 `Coefficient` determines the type of the scalar coefficients of the
 polynomial.  Currently supported integral number types are `Gmpz`,
 `leda_integer`, and `CORE::BigInt`. This is reflected in the
@@ -5241,12 +5291,12 @@ A weakly \f$x\f$-monotone segment of an algebraic curve is represented
 by the \link Arr_algebraic_segment_traits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink type nested in the traits
 class-template. You can construct such segments in two ways as
-follows: (i) using the \link ArrangementTraits_2::Make_x_monotone_2
+follows: (i) using the \link AosTraits_2::Make_x_monotone_2
 `Make_x_monotone_2`\endlink functor or (ii) using the \link
 Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2
 `Construct_x_monotone_segment_2`\endlink functor.  Both functors are
 nested in the traits class-template. The former is required by the
-concept `ArrangementTraits_2` our traits class models; see Section
+concept `AosTraits_2` our traits class models; see Section
 \ref aos_sssec-geom_traits-concepts_arbitrary. The latter enables the
 construction of individual segments. The \link
 Arr_algebraic_segment_traits_2::X_monotone_curve_2
@@ -5380,7 +5430,7 @@ segments in Euclidean geometry.
 The `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>` class template
 handles arcs of great circles (also known as geodesic arcs) of a unit
 sphere (centered at the origin in \f$\mathbb{R}^3\f$). It is a model of the
-concept `ArrangementSphericalBoundaryTraits_2`; see Section \ref
+concept `AosSphericalBoundaryTraits_2`; see Section \ref
 aos_ssec-traits-curved. An arrangement type (an instance of the
 template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`) that
 uses an instance of this traits class as the geometry traits must use
@@ -5521,8 +5571,8 @@ nested types are defined as follows:
   CopyConstructible, EqualityComparable, and DefaultConstructible.
   The latter ensures that every instance of the class template
   `Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
-  template parameter with a model of the `ArrangementLandmarkTraits_2`
-  concept models the `ArrangementLandmarkTraits_2` concept as well
+  template parameter with a model of the `AosLandmarkTraits_2`
+  concept models the `AosLandmarkTraits_2` concept as well
 
 </UL>
 
@@ -5670,7 +5720,7 @@ program. The tracing traits supports filtering of traced functors. The
 calls `traits.enable_trace(id)` and `traits.disable_trace(id)` enables
 and disables the tracing of a functor identified by `id`,
 respectively. A functor is identified by an enumeration. For example,
-the functor \link ArrangementTraits_2::Make_x_monotone_2
+the functor \link AosTraits_2::Make_x_monotone_2
 `Make_x_monotone_2`\endlink is identified by the enumeration
 `Arr_tracing_traits_2::MAKE_X_MONOTONE_OP`. The calls
 `traits.enable_all_traces()` and `traits.disable_all_traces()` enables
@@ -5688,7 +5738,7 @@ topological entities and the implementation of the functions that
 handle these topological entities, used by the
 `Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>` class
 template and by the peripheral modules. Every topology traits class
-must model the basic concept `ArrangementBasicTopologyTraits`. A model
+must model the basic concept `AosBasicTopologyTraits`. A model
 of this basic concept holds the (\dcel) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
 and the incidence relations between them. At this point we do not
@@ -6032,8 +6082,8 @@ In such cases you may explicitly extend the base \dcel
 class-template, as described in the next paragraph, or implement your
 own \dcel class from scratch and use the resulting \dcel to
 instantiate the `Arrangement_2` class template. In any case such a
-class must model the concept `ArrangementDcel` or its refinement
-`ArrangementDcelWithRebind`. The latter requires a `rebind` struct
+class must model the concept `AosDcel` or its refinement
+`AosDcelWithRebind`. The latter requires a `rebind` struct
 template, which implements a policy-clone idiom. Here, the \dcel
 class is the policy class and the `rebind` member template struct
 is used to pass a different traits type parameter to the policy class
@@ -6348,17 +6398,16 @@ header file `Overlay_color_traits.h`.
 
 \code{.cpp}
 template <typename Arrangement> struct Overlay_color_traits {
-  typedef unsigned int                                  Color;
-  typedef typename Arrangement::Vertex_const_handle     V_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle   H_const_handle;
-  typedef typename Arrangement::Face_const_handle       F_const_handle;
-  typedef typename Arrangement::Vertex_handle           V_handle;
-  typedef typename Arrangement::Halfedge_handle         H_handle;
-  typedef typename Arrangement::Face_handle             F_handle;
+  using Color = unsigned int;
+  using V_const_handle = typename Arrangement::Vertex_const_handle;
+  using H_const_handle = typename Arrangement::Halfedge_const_handle;
+  using F_const_handle = typename Arrangement::Face_const_handle;
+  using V_handle = typename Arrangement::Vertex_handle;
+  using H_handle = typename Arrangement::Halfedge_handle;
+  using F_handle = typename Arrangement::Face_handle;
 
   // Compute the average of the red, green, and blue components separately.
-  Color blend(Color color1, Color color2) const
-  {
+  Color blend(Color color1, Color color2) const {
     return
       ((((color1 & 0x000000ff) + (color2 & 0x000000ff)) / 2) & 0x000000ff) |
       ((((color1 & 0x0000ff00) + (color2 & 0x0000ff00)) / 2) & 0x0000ff00) |
@@ -6447,12 +6496,12 @@ between these curves and the arrangement edges they induce. Similarly,
 the `Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
 extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
 `GeometryTraits` template parameter, of either class templates, must
-be substituted by a model of the `ArrangementTraits_2` concept; see
+be substituted by a model of the `AosTraits_2` concept; see
 Section \ref aos_ssec-insert_gen. It should define the \link
-ArrangementTraits_2::Curve_2 `Curve_2`\endlink type and support its
-subdivision into \link ArrangementBasicTraits_2::X_monotone_curve_2
+AosTraits_2::Curve_2 `Curve_2`\endlink type and support its
+subdivision into \link AosBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink objects, among the others.  The `Dcel`
-parameter must be substituted by a model of the `ArrangementDcel`
+parameter must be substituted by a model of the `AosDcel`
 concept. You can use either the default \dcel class or an extended
 \dcel class (see Section \ref arr_ssecex_dcel) based on your needs. An
 arrangement that support the cross-mapping mentioned above is referred
@@ -6687,8 +6736,8 @@ predefined \ascii format that encodes the arrangement topology, as well
 as all geometric entities associated with vertices and edges.
 
 The ability to use the input/output operators, requires that the \link
-ArrangementBasicTraits_2::Point_2 `Point_2`\endlink type and the \link
-ArrangementBasicTraits_2::X_monotone_curve_2
+AosBasicTraits_2::Point_2 `Point_2`\endlink type and the \link
+AosBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink type defined by the traits class both
 support the `<<` and `>>` operators. The `Arr_conic_traits_2` class
 (see Section \ref arr_sssectr_conic), the
@@ -6755,7 +6804,7 @@ from a file:
 \cgalExample{Arrangement_on_surface_2/dcel_extension_io.cpp}
 
 You may develop your own formatter classes - models of the
-`ArrangementInputFormatter` and `ArrangementOutputFormatter`
+`AosInputFormatter` and `AosOutputFormatter`
 concepts, as defined in the Reference Manual.
 Doing so, you can define other I/O formats, such as an XML-based
 format or a binary format.
@@ -6932,15 +6981,15 @@ and returns it. The functor template is defined in the header file
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/property_map.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::FT                                        Number_type;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
 
 template <typename Arrangement> struct Edge_length {
   // Boost property-type definitions.
-  typedef boost::readable_property_map_tag      category;
-  typedef Number_type                           value_type;
-  typedef value_type                            reference;
-  typedef typename Arrangement::Halfedge_handle key_type;
+  using category = boost::readable_property_map_tag;
+  using value_type = Number_type;
+  using reference = value_type;
+  using key_type = typename Arrangement::Halfedge_handle;
 
   value_type operator()(typename Arrangement::Halfedge_handle e) const {
     const auto diff_x = e->target()->point().x() - e->source()->point().x();
@@ -7023,13 +7072,13 @@ header file `Extended_face_property_map.h` listed below.
 // A property map that reads/writes the information to/from the extended face.
 template <typename Arrangement, class Type> class Extended_face_property_map {
 public:
-  typedef typename Arrangement::Face_handle       Face_handle;
+  using Face_handle = typename Arrangement::Face_handle;
 
   // Boost property type definitions.
-  typedef boost::read_write_property_map_tag      category;
-  typedef Type                                    value_type;
-  typedef value_type&                             reference;
-  typedef Face_handle                             key_type;
+  using category = boost::read_write_property_map_tag;
+  using value_type = Type;
+  using reference = value_type&;
+  using key_type = Face_handle;
 
   // The get function is required by the property map concept.
   friend reference get(const Extended_face_property_map& map, key_type key)

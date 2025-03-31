@@ -9,10 +9,14 @@
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
+- Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+  to know faces in the output meshes that are corresponding to input coplanar faces.
+
+### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
+- Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
 
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
-
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
 ### [BGL](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
@@ -23,12 +27,18 @@
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 -   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
 -   Fixed a bug in the extensions of vertex and halfedge types of the DCEL when used to instantiate Arrangement_with_history_2 or similar arrangement classes that derive from Arrangement_2.
+-   Renamed the prefix of the names of all concepts in the Arrangement_on_surface_2 package from "Arrangement" to "Aos".
+-   Renamed the old concept `AosApproximateTraits_2` to `AosApproximatePointTraits_2` to make room for the new concept `AosApproximateTraits_2`. This concept requires the provision of a functor called `Approximate_2` that has an operator that approximates the coordinates of a point.
+-   Introduced a new concept called `AosApproximateTraits_2`. It refines the concept `AosApproximatePointTraits_2`. This concept requires the provision of a functor called `Approximate_2`. In addition to an operator that approximates the coordinates of a point, it also requires the provision of (i) an operator that approximates a points, and (ii) an operator that approximates a curve.
+-   Changed all "typedef" style statements in the user manual to "using" style. (Observe that a similar update to the examples has already been made in a previous release.)
+-   Fixed do_intersect() of a 2D Arrangement and a curve.
 
 ### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
 
 -   Added two new meshing parameters that enable mesh initialization customization :
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
+-   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
   
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
 -   Added a new mesh domain `Poisson_mesh_domain_3` that integrates some optimizations from the deprecated 3D Surface Mesh Generation package.
@@ -45,6 +55,7 @@
 
 ### Triangulations
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
+
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
