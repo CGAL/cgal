@@ -118,8 +118,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   std::cout << "Start meshing...";
   std::cout.flush();
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      params::no_exude()
-                                             .no_perturb()
+                                      params::surface_only()
                                              .manifold_with_boundary());
 
   time.stop();

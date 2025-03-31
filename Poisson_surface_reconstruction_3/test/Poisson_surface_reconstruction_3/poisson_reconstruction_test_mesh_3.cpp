@@ -276,7 +276,7 @@ int main(int argc, char * argv[])
       // Generates surface mesh with manifold option
       Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(
           function, bsphere, params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
-      C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb().manifold_with_boundary());
+      C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::surface_only().manifold_with_boundary());
 
       // Prints status
       /*long*/ memory = CGAL::Memory_sizer().virtual_size();
@@ -320,7 +320,7 @@ int main(int argc, char * argv[])
       Poisson_mesh_domain domain = Poisson_mesh_domain::create_Poisson_mesh_domain(
           function, bsphere, params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
       Poisson_C3t3 c3t3 =
-          CGAL::make_mesh_3<Poisson_C3t3>(domain, criteria, params::no_exude().no_perturb().manifold_with_boundary());
+          CGAL::make_mesh_3<Poisson_C3t3>(domain, criteria, params::surface_only().manifold_with_boundary());
 
       // Prints status
       /* long */ memory = CGAL::Memory_sizer().virtual_size();

@@ -356,7 +356,7 @@ int main(int argc, char * argv[])
 
       // Generates mesh with manifold option
       LC3t3 c3t3 =
-          CGAL::make_mesh_3<LC3t3>(domain, criteria, CGAL::parameters::no_exude().no_perturb().manifold_with_boundary());
+          CGAL::make_mesh_3<LC3t3>(domain, criteria, CGAL::parameters::surface_only().manifold_with_boundary());
       meshing_timer.stop();
 
       const LTr& tr = c3t3.triangulation();
@@ -398,7 +398,7 @@ int main(int argc, char * argv[])
 
       // Generates mesh with manifold option
       C3t3 c3t3 =
-          CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::no_exude().no_perturb().manifold_with_boundary());
+          CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::surface_only().manifold_with_boundary());
 
       meshing_timer.stop();
 

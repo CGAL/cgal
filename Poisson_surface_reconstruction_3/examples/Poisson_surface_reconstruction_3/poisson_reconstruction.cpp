@@ -332,7 +332,7 @@ int main(int argc, char * argv[])
 
     // Generates mesh with manifold option
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::no_exude().no_perturb()
+                                        CGAL::parameters::surface_only()
                                         .manifold_with_boundary());
 
     // Prints status
