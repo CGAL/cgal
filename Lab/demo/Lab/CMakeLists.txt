@@ -383,21 +383,19 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     target_link_libraries(cgal_lab PRIVATE Qt6::WebSockets)
   endif()
   cgal_add_compilation_test(cgal_lab)
+
+  #
+  # the `CGALlab` executable
+  #   required as a dependency by all plugins
+  #
   add_executable(CGALlab CGALlab.cpp)
   target_link_libraries(CGALlab PRIVATE cgal_lab)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
   cgal_add_compilation_test(CGALlab)
 
-  target_link_libraries(CGALlab PRIVATE demo_framework)
-
-  # Link with CGAL
-  target_link_libraries(CGALlab PRIVATE CGAL::CGAL_Qt6)
-
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
-
-  ###########
-  # PLUGINS #
-  ###########
+  #
+  # PLUGINS
+  #
 
   file(
     GLOB DEMO_PLUGINS
@@ -409,11 +407,14 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_subdirectory(implicit_functions)
 
+  add_dependencies(CDT_3  IO_surface_meshes detect_sharp_edges_plugin)
+  add_dependencies(Mesh_3 IO_surface_meshes)
+
   #
   # EXECUTABLES
   #
   add_executable(CGAL_Mesh_3 Mesh_3.cpp)
-  add_dependencies(CGAL_Mesh_3 Mesh_3)
+  add_dependencies(CGAL_Mesh_3 Mesh_3 IO_surface_meshes)
   target_link_libraries(CGAL_Mesh_3 PRIVATE cgal_lab)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3)
 

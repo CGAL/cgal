@@ -50,7 +50,7 @@ target_link_libraries(lcc_io_plugin PRIVATE scene_lcc_item)
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
-  cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP)
+  cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
   target_link_libraries(om_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_selection_item)
   target_link_libraries(om_plugin PRIVATE CGAL::OpenMesh_support)
 else()
@@ -71,7 +71,7 @@ endif()
 
 if(VTK_FOUND AND VTK_LIBRARIES)
   message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
-  cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
+  cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer IO_surface_meshes)
   target_link_libraries(vtk_plugin
       PRIVATE
       scene_surface_mesh_item
@@ -119,7 +119,7 @@ if(3MF_LIBRARIES
    AND 3MF_INCLUDE_DIR
    AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
   include_directories(${3MF_INCLUDE_DIR})
-  cgal_lab_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
+  cgal_lab_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
   target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
   target_compile_definitions(io_3mf_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
