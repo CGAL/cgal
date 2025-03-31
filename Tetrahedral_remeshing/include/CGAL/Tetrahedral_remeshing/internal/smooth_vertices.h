@@ -871,13 +871,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
           {
             const auto intersection = proj.value().first;
             using Segment = typename Tr::Geom_traits::Segment_3;
-            if (const Segment* s = std::get_if<Segment>(&intersection))
-              return CGAL::midpoint(s->source(), s->target());
-            else
-            {
-              CGAL_assertion(false);
-              return std::nullopt;
-            }
+            const Segment* s = std::get_if<Segment>(&intersection);
+            CGAL_assertion(s != nullptr);
+            return CGAL::midpoint(s->source(), s->target());
           };
 
         const auto n = vertices_normals.at(v).at(si);

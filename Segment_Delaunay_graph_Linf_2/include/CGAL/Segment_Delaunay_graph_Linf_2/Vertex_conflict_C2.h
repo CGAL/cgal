@@ -780,7 +780,7 @@ private:
 
         // philaris: execution should never reach here
         // philaris: code added to avoid warnings on some compilers
-        CGAL_assertion( false );
+        CGAL_assertion(false);
         return ZERO;
 
       } // end of case where segment is neither horizontal nor vertical
@@ -877,7 +877,7 @@ private:
             otherpnt = seg.source();
           } else {
             // unreachable
-            CGAL_assertion( false );
+            CGAL_assertion(false);
           }
 
           lhor = compute_horizontal_side_line(
@@ -1138,7 +1138,7 @@ private:
             otherpnt = seg.source();
           } else {
             // unreachable
-            CGAL_assertion( false );
+            CGAL_assertion(false);
           }
 
           lhor = compute_horizontal_side_line(

@@ -122,8 +122,7 @@ void find_start_cone(const ConeMap& cmap,
     return;
   }
 
-  std::cerr << "Error: did not find first cone" << std::endl;
-  CGAL_postcondition(false);
+  CGAL_postcondition_msg(false,"Error: did not find first cone");
 }
 
 // Locate the cone tagged 'First_unique_cone' in the seam mesh.
@@ -143,8 +142,7 @@ void find_start_cone(const ConeMap& cmap,
     return;
   }
 
-  std::cerr << "Error: did not find first cone" << std::endl;
-  CGAL_postcondition(false);
+  CGAL_postcondition_msg(false,"Error: did not find first cone");
 }
 
 /// Check the validity of the input cones in the `Seam_mesh` mesh.

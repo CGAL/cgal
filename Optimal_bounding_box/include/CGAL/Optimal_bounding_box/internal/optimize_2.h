@@ -169,6 +169,7 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
 
   auto it = std::min_element(volumes.begin(), volumes.end());
   typename std::iterator_traits<decltype(it)>::difference_type d = std::distance(volumes.begin(), it);
+  CGAL_assertion(d == 0 || d == 1 || d == 2);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
   std::cout << "volumes: " << volumes[0] << " " << volumes[1] << " " << volumes[2] << std::endl;
@@ -211,10 +212,6 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
     opt.set(2, 0, 0); opt.set(2, 1, -s); opt.set(2, 2, c);
 
     rot = opt * rot;
-  }
-  else
-  {
-    CGAL_assertion(false);
   }
 }
 

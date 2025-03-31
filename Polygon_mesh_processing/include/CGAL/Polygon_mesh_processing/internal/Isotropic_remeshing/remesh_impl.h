@@ -1957,7 +1957,7 @@ private:
         else if(is_on_mesh(h))          nb_mesh++;
         else if(is_on_border(h))        nb_border++;
         else if(is_an_isolated_constraint(h)) nb_isolated++;
-        else CGAL_assertion(false);
+        else CGAL_unreachable();
       }
       CGAL_USE(nb_border);
       CGAL_USE(nb_mesh);

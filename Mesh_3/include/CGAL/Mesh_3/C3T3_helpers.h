@@ -73,10 +73,8 @@ public:
   }
 
 
-  Intrusive_list(const Intrusive_list& )
-  {
-    CGAL_assertion(false);
-  }
+  Intrusive_list(const Intrusive_list& ) = delete;
+
 
 #ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
   template <typename IT>
