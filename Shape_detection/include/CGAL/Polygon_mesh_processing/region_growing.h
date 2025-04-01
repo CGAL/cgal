@@ -156,6 +156,13 @@ private:
       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
     \cgalParamNEnd
+      \cgalParamNBegin{face_normal_map}
+        \cgalParamDescription{a property map associating normal vectors to the faces of `pmesh`.}
+        \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+                       as key type and `GT::Vector_3` as value type, `GT` being the type of the parameter `geom_traits`.}
+        \cgalParamDefault{If this parameter is omitted, face normals will be estimated using crossproducts of vectors created
+                          from consecutive vertices of the face.}
+      \cgalParamNEnd
     \cgalParamNBegin{region_primitive_map}
       \cgalParamDescription{a property map filled by this function and that will contain for each region
                             the plane (or only its orthognonal vector) estimated that approximates it.}
@@ -192,13 +199,13 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
                              Static_boolean_property_map<edge_descriptor, false>());
 
   using Neighbor_query = internal::One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
-  using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
-  using Sorting = RG_PM::Least_squares_plane_fit_sorting<Traits, PolygonMesh, Neighbor_query, VPM>;
+  using Region_type = RG_PM::Plane_face_region<Traits, PolygonMesh, VPM>;
+  using Sorting = RG_PM::Face_area_sorting<Traits, PolygonMesh, VPM>;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, RegionMap>;
 
   Neighbor_query neighbor_query(mesh, ecm);
   Region_type region_type(mesh, np);
-  Sorting sorting(mesh, neighbor_query, np);
+  Sorting sorting(mesh, np);
   sorting.sort();
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
