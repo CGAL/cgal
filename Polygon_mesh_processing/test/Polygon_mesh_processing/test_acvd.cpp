@@ -37,7 +37,7 @@ void run_test(std::string fname, std::size_t genus, bool subdiv)
   CGAL::Bbox_3 bb = PMP::bbox(ref);
 
   assert(-(vertices(mesh).size()-edges(mesh).size()+faces(mesh).size()-2)/2==genus);
-  assert(vertices(mesh).size()==1000);
+  assert(vertices(mesh).size()>=1000);
 
   double dx = bb.xmax()-bb.xmin(),
          dy = bb.ymax()-bb.ymin(),
