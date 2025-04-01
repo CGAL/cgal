@@ -16,6 +16,8 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+#include <CGAL/Point_set_3.h>
+
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
