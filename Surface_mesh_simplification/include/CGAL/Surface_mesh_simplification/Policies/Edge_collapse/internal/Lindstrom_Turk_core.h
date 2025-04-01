@@ -320,17 +320,16 @@ extract_triangle_data()
 {
   mTriangle_data.reserve(mProfile.triangles().size());
 
-  //TODO for obscur reason, computing this abs_max increase running time by 10%
-  double abs_max;
   for(const Triangle& tri : mProfile.triangles())
   {
     const Point_reference p0 = get_point(tri.v0);
     const Point_reference p1 = get_point(tri.v1);
     const Point_reference p2 = get_point(tri.v2);
 
-    abs_max=(std::max)({abs_max,std::abs(p0.x()),std::abs(p0.y()),std::abs(p0.z()),
-                             std::abs(p1.x()),std::abs(p1.y()),std::abs(p1.z()),
-                             std::abs(p2.x()),std::abs(p2.y()),std::abs(p2.z())});
+    //TODO for obscur reason, computing this maxBb increase running time by 10%
+    maxBb=(std::max)({maxBb,std::abs(p0.x()),std::abs(p0.y()),std::abs(p0.z()),
+                            std::abs(p1.x()),std::abs(p1.y()),std::abs(p1.z()),
+                            std::abs(p2.x()),std::abs(p2.y()),std::abs(p2.z())});
 
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
@@ -343,7 +342,6 @@ extract_triangle_data()
 
     mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
   }
-  maxBb= abs_max;
 }
 
 template<class TM, class K>
@@ -662,7 +660,7 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
     CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
 
     // Due to double number type, l may have a small value instead of zero (example sum of the faces normals of a tetrahedra for volumic constraint)
-    // if bin is greater than maxBb, we consider that l is zero
+    // if bi is greater than maxBb, we consider that l is zero
     CGAL_SMS_LT_TRACE(3, "      error consider: " << (std::abs(bi) / (2*maxBb)));
     if(l > (std::abs(bi) / (2*maxBb)))
     // if(!CGAL_NTS is_zero(l))
