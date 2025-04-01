@@ -164,6 +164,11 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+CGAL_add_named_parameter(weight_function_t, weight_function, weight_function)
+CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
+CGAL_add_named_parameter(progressive_t, progressive, progressive)
+CGAL_add_named_parameter(tiling_t, tiling, tiling)
+CGAL_add_named_parameter(dimension_t, dimension, dimension)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -346,6 +351,8 @@ CGAL_add_named_parameter_with_compatibility(do_reset_c3t3_t, do_reset_c3t3, do_r
 CGAL_add_named_parameter_with_compatibility(mesh_param_t, mesh_param, mesh_options)
 CGAL_add_named_parameter_with_compatibility(manifold_param_t, manifold_param, manifold_option)
 CGAL_add_named_parameter_with_compatibility(features_option_param_t,features_options_param,features_options)
+CGAL_add_named_parameter_with_compatibility(initial_points_generator_param_t,initial_points_generator_param,initial_points_generator)
+CGAL_add_named_parameter_with_compatibility(initial_points_param_t,initial_points_param,initial_points)
 
 CGAL_add_named_parameter_with_compatibility_cref_only(image_3_param_t, image_3_param, image)
 CGAL_add_named_parameter_with_compatibility(iso_value_param_t, iso_value_param, iso_value)

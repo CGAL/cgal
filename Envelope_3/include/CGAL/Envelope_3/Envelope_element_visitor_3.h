@@ -2067,7 +2067,7 @@ protected:
         v2_is_new = true;
       }
 
-      // now use the approppriate method to insert the new edge
+      // now use the appropriate method to insert the new edge
       if (v1_is_new && v2_is_new) {
         // if both vertices are new - use the O(1) operation
         // _insert_in_face_interior (in the face mapped to by he->face())

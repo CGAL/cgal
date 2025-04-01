@@ -276,11 +276,11 @@ struct Non_manifold_output_visitor
 
     if (vid_not_used.any()){
       std::vector<ID> free_vids;
-      for (ID i = vid_not_used.find_first();
+      for (auto i = vid_not_used.find_first();
                        i < vid_not_used.npos;
                        i = vid_not_used.find_next(i))
       {
-        free_vids.push_back(i);
+        free_vids.push_back(static_cast<ID>(i));
       }
       // now reindex the vertices
       for (auto& p : vid1)
@@ -1091,6 +1091,10 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_tm2_for_union_and_intersection(nb_patches_tm2,false);
     patch_status_not_set_tm1.set();
     patch_status_not_set_tm2.set();
+    // extra containers used when entire connected components are identical (filled only if needed)
+    std::vector<std::size_t> coplanar_tm1_to_coplanar_tm2;
+    std::vector<vertex_descriptor> extreme_vertex_per_cc_1;
+    std::vector<vertex_descriptor> extreme_vertex_per_cc_2;
 
     // first set coplanar status of patches using the coplanar faces collected during the
     // extra intersection edges collected. This is important in the case of full connected components
@@ -1847,8 +1851,61 @@ public:
           {
             if (coplanar_patches_of_tm1.test(patch_id))
             {
-              if (is_tm1_inside_out == is_tm2_inside_out)
+              // Two "identical" coplanar patches that are entire connected components
+              // we have the correspondence between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
+              CGAL_assertion(tm1_coplanar_faces.size()==tm2_coplanar_faces.size());
+              if (coplanar_tm1_to_coplanar_tm2.empty()) // fill container only once
+              {
+                coplanar_tm1_to_coplanar_tm2.resize(nb_patches_tm1, NID);
+                for (std::size_t i=0; i<tm1_coplanar_faces.size(); ++i)
+                {
+                  std::size_t pid1 = tm1_patch_ids[get(fids1, tm1_coplanar_faces[i])];
+                  std::size_t pid2 = tm2_patch_ids[get(fids2, tm2_coplanar_faces[i])];
+                  coplanar_tm1_to_coplanar_tm2[pid1]=pid2;
+                }
+
+                const vertex_descriptor null_v = boost::graph_traits<TriangleMesh>::null_vertex();
+                extreme_vertex_per_cc_1.assign(nb_patches_tm1, null_v);
+                for (face_descriptor fd : faces(tm1))
+                {
+                  std::size_t patch_id = tm1_patch_ids[get(fids1, fd)];
+                  if (!coplanar_patches_of_tm1.test(patch_id)) continue;
+                  halfedge_descriptor hd=halfedge(fd, tm1);
+                  for (halfedge_descriptor h : CGAL::halfedges_around_face(hd, tm1))
+                  {
+                    vertex_descriptor vd = target(h, tm1);
+                    if (extreme_vertex_per_cc_1[patch_id]==null_v || get(vpm1,extreme_vertex_per_cc_1[patch_id])<get(vpm1,vd))
+                      extreme_vertex_per_cc_1[patch_id]=vd;
+                  }
+                }
+
+                extreme_vertex_per_cc_2.assign(nb_patches_tm2, null_v);
+                for (face_descriptor fd : faces(tm2))
+                {
+                  std::size_t patch_id = tm2_patch_ids[get(fids2, fd)];
+                  if (!coplanar_patches_of_tm2.test(patch_id)) continue;
+                  halfedge_descriptor hd=halfedge(fd, tm2);
+                  for (halfedge_descriptor h : CGAL::halfedges_around_face(hd, tm2))
+                  {
+                    vertex_descriptor vd = target(h, tm2);
+                    if (extreme_vertex_per_cc_2[patch_id]==null_v || get(vpm2,extreme_vertex_per_cc_2[patch_id])<get(vpm2,vd))
+                      extreme_vertex_per_cc_2[patch_id]=vd;
+                  }
+                }
+              }
+
+              const std::size_t patch_id2=coplanar_tm1_to_coplanar_tm2[patch_id];
+              CGAL_assertion(patch_id2!=NID);
+
+              bool is_oo_tm1 = ::CGAL::Polygon_mesh_processing::internal::is_outward_oriented(extreme_vertex_per_cc_1[patch_id], tm1, parameters::vertex_point_map(vpm1)),
+                   is_oo_tm2 = ::CGAL::Polygon_mesh_processing::internal::is_outward_oriented(extreme_vertex_per_cc_2[patch_id2], tm2, parameters::vertex_point_map(vpm2));
+
+              if (is_oo_tm1==is_oo_tm2)
+              {
                 coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
+                coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id2);
+                patch_status_not_set_tm2.reset( patch_id2 );
+              }
             }
             else
             {
@@ -2073,6 +2130,34 @@ public:
     //store the patch description in a container to avoid recomputing it several times
     Patches1 patches_of_tm1(tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1);
     Patches2 patches_of_tm2(tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
+
+    // report input coplanar faces
+    if (coplanar_patches_of_tm1.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm1.find_first();
+                 i < coplanar_patches_of_tm1.npos;
+                 i = coplanar_patches_of_tm1.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm1[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm1);
+        }
+      }
+    }
+    if (coplanar_patches_of_tm2.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm2.find_first();
+                 i < coplanar_patches_of_tm2.npos;
+                 i = coplanar_patches_of_tm2.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm2[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm2);
+        }
+      }
+    }
 
     // for each boolean operation, define two bitsets of patches contributing
     // to the result
@@ -2458,7 +2543,7 @@ public:
               typedef std::pair<halfedge_descriptor, halfedge_descriptor> Hedge_pair;
               std::vector< Hedge_pair> hedges_to_link;
               typename CGAL::Halfedge_around_target_iterator<TriangleMesh> hit, end;
-              boost::tie(hit,end) = halfedges_around_target(vd, tm1);
+              std::tie(hit,end) = halfedges_around_target(vd, tm1);
               for(; hit!=end; ++hit)
               {
                 // look for a border halfedge incident to the non-manifold vertex that will not be

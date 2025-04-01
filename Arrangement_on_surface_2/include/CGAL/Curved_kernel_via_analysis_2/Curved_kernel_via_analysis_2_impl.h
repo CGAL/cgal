@@ -64,7 +64,7 @@ public:
             BaseCKvA::Curved_kernel_via_analysis_2> Functor_base;
     };
 
-    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
+    //!\name Embedded types to fulfill \c AosTraits_2 concept
 
     //! type of curve that can be analyzed
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
@@ -245,14 +245,14 @@ public:
     };
 
 public:
-    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
+    //!\name Embedded types to fulfill \c AosTraits_2 concept
     //!@{
 
     typedef internal::Point_2< Self > Point_2;
 
     typedef internal::Arc_2< Self > Arc_2;
 
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    //! type of weakly x-monotone arc for \c AosTraits_2
     typedef Arc_2 X_monotone_curve_2;
 
     //!@}

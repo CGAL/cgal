@@ -1191,7 +1191,7 @@ private:
 
     if(refining)
     {
-      // If we are re-using the triangulation, change the label of the extra elements
+      // If we are reusing the triangulation, change the label of the extra elements
       // that we have added to ensure a manifold result back to external ("manifold" -> "outside")
       reset_manifold_labels();
 

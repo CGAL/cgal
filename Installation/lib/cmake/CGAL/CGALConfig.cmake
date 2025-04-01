@@ -199,7 +199,7 @@ endforeach()
 if (NOT TARGET CGAL::CGAL_Basic_viewer)
   add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
     set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
 endif()
 
@@ -214,6 +214,6 @@ if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
       TARGET CGAL
       APPEND PROPERTY
           INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
-  ) # do not use set_target_properties to avoid overwritting
+  ) # do not use set_target_properties to avoid overwriting
 endif()
 

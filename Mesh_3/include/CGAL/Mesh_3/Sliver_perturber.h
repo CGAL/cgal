@@ -816,7 +816,7 @@ operator()(Visitor visitor)
 #endif
 
   running_time_.stop();
-  helper_.reset_cache();//in case we re-use caches in another operation
+  helper_.reset_cache();//in case we reuse caches in another operation
                                // after this perturbation
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE

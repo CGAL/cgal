@@ -16,17 +16,15 @@
 
 /*!
 \addtogroup PkgAlgebraicKernelDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKernelD}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Peñaranda, and Monique Teillaud}
-\cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
+\cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementation  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
 \cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKernelDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.6}
-\cgalPkgDependsOn{Some models depend on \ref thirdpartyRS3.}
 \cgalPkgBib{cgal:bht-ak}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
@@ -100,8 +98,4 @@
 - `CGAL::Algebraic_kernel_d_1<Coeff>`
 - `CGAL::Algebraic_kernel_d_2<Coeff>`
 
-- `CGAL::Algebraic_kernel_rs_gmpz_d_1`
-- `CGAL::Algebraic_kernel_rs_gmpq_d_1`
-
 */
-

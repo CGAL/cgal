@@ -206,16 +206,15 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     result_type
-    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
-               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    operator()(const Vector_3& ba1, const Vector_3& bc1,
+               const Vector_3& ba2, const Vector_3& bc2) const
     {
-      using FT = typename K::FT;
-      const Vector_3 ba1 = a1 - b1;
-      const Vector_3 bc1 = c1 - b1;
-      const Vector_3 ba2 = a2 - b2;
-      const Vector_3 bc2 = c2 - b2;
-      const FT sc_prod_1 = ba1 * bc1;
-      const FT sc_prod_2 = ba2 * bc2;
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const FT sc_prod_1 = scalar_product(ba1, bc1);
+      const FT sc_prod_2 = scalar_product(ba2, bc2);
+
       // Reminder: cos(angle) = scalar_product(ba, bc) / (length(ba)*length(bc))
       // cosine is decreasing on 0, pi
       // thus angle1 < angle2 is equivalent to cos(angle1) > cos(angle2)
@@ -223,24 +222,34 @@ namespace CommonKernelFunctors {
         if(sc_prod_2 >= 0) {
           // the two cosine are >= 0, we can compare the squares
           // (square(x) is increasing when x>=0
-          return CGAL::compare(CGAL::square(sc_prod_2)*
-                               ba1.squared_length()*bc1.squared_length(),
-                               CGAL::square(sc_prod_1)*
-                               ba2.squared_length()*bc2.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1),
+                               CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2));
         } else {
           return SMALLER;
         }
       } else {
         if(sc_prod_2 < 0) {
           // the two cosine are < 0, square(x) is decreasing when x<0
-          return CGAL::compare(CGAL::square(sc_prod_1)*
-                               ba2.squared_length()*bc2.squared_length(),
-                               CGAL::square(sc_prod_2)*
-                               ba1.squared_length()*bc1.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2),
+                               CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1));
         } else {
           return LARGER;
         }
       }
+    }
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+
+      const Vector_3 ba1 = vector(b1, a1);
+      const Vector_3 bc1 = vector(b1, c1);
+      const Vector_3 ba2 = vector(b2, a2);
+      const Vector_3 bc2 = vector(b2, c2);
+
+      return this->operator()(ba1, bc1, ba2, bc2);
     }
 
     result_type
@@ -928,15 +937,14 @@ namespace CommonKernelFunctors {
     Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
+      return internal::compare_squared_distance(p, q, K(), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
     Needs_FT<result_type>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(internal::squared_distance(p, q, K()),
-                           internal::squared_distance(r, s, K()));
+      return internal::compare_squared_distance(p, q, K(), internal::squared_distance(r, s, K()));
     }
   };
 
@@ -956,22 +964,14 @@ namespace CommonKernelFunctors {
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
 
-     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+     double product = to_double(approximate_sqrt(scalar_product(u,u) * scalar_product(v,v)));
 
      if(product == 0)
        return 0;
 
      // cosine
      double dot = to_double(scalar_product(u,v));
-     double cosine = dot / product;
-
-     if(cosine > 1.){
-       cosine = 1.;
-     }
-     if(cosine < -1.){
-       cosine = -1.;
-     }
-
+     double cosine = std::clamp(dot / product, -1., 1.);
      return std::acos(cosine) * 180./CGAL_PI;
    }
 
@@ -1084,7 +1084,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -1099,7 +1099,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const

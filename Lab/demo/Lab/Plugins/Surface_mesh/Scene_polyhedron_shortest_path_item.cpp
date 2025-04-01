@@ -562,7 +562,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(
   std::vector<face_descriptor> listOfFaces;
   listOfFaces.reserve(CGAL::num_faces(*polyhedron()));
   face_iterator current, end;
-  for (boost::tie(current, end) = CGAL::faces(*polyhedron()); current != end; ++current)
+  for (std::tie(current, end) = CGAL::faces(*polyhedron()); current != end; ++current)
   {
     listOfFaces.push_back(*current);
   }

@@ -562,7 +562,7 @@ function template computes the offset of a given polygon \f$ P\f$ by a
 rational radius \f$ r\f$ in an exact manner. The input polygon \f$
 P\f$ must be either simple or degenerate consisting of two vertices
 (representing a line segment). The `traits` argument must model the
-concept `ArrangementTraits_2` and it should be capable of handling
+concept `AosTraits_2` and it should be capable of handling
 conic arcs in an exact manner---using an instance of the
 `Arr_conic_traits_2` class template with the number types provided by
 the \core library is the preferred option; see \ref arr_sssectr_conic
@@ -611,7 +611,7 @@ edges of which are line segments and circular arcs of radius \f$ r\f$.
 
 The inset can be computed using the convolution method traversing the
 polygon in a <I>clockwise</I> order (as oppose to the
-<I>counterclockwise</I> order applied in the case of ofsetting a polygon).
+<I>counterclockwise</I> order applied in the case of offsetting a polygon).
 As with the (outer) offset functions, the Minkowski-sum package contains two
 functions for insetting a simple polygon, namely,
 `approximated_inset_2(P, r, eps, oi)` and `inset_polygon_2(P, r, traits, oi)`.
@@ -631,7 +631,7 @@ Similarly, the function template
 \link inset_polygon_2() `inset_polygon_2(P, r, traits, oi)` \endlink
 computes the exact inset of \f$ P\f$ with radius \f$ r\f$, and returns
 its output through the given output iterator `oi`. The `traits` parameter
-must model the concept `ArrangementTraits_2` and it should be capable of
+must model the concept `AosTraits_2` and it should be capable of
 handling conic arcs in an exact manner, whereas the value-type of `oi`
 must be an instance of `Gps_traits_2::Polygon_2`.
 
@@ -647,7 +647,7 @@ The package also provides overloaded versions of the functions
  and
 \link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
 that accept a <I>polygon with holes</I>
-\f$ P\f$ and compute its offset. This ofset is obtain by computing the
+\f$ P\f$ and compute its offset. This offset is obtain by computing the
 outer offset of the outer boundary of \f$ P\f$'s, and computing the inner
 offsets of the holes of \f$ P\f$. The former polygon defines the output
 boundary of \f$ P \oplus B_r\f$, and the latter define the holes within

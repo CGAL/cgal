@@ -642,6 +642,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_FACE,v_1,f_2,tm1,tm2,true,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -677,6 +679,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_VERTEX,h_2,v_1,tm2,tm1,false,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -724,6 +728,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_VERTEX,v_2,v_1,tm2,tm1,true,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -1278,7 +1284,7 @@ class Intersection_of_triangle_meshes
             it_seg13->second.get_segments(f1f3_segments);
 
             /// TODO AUTOREF_TAG shall we ignore tangency points?
-            /// with the current code, Node_id_set::size()==1 is ignored as we only drop semgents
+            /// with the current code, Node_id_set::size()==1 is ignored as we only drop segments
             /// Actually it might be that it is not a tangency point if the third segment was considered!
             /// so not handling it is a bug
 

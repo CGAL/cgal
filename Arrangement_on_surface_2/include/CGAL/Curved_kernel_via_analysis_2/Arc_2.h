@@ -571,7 +571,7 @@ public:
                           compare_xy_2_object()(p, q, true) != CGAL::EQUAL);
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(p, -1, c);
-        _check_pt_arcno_and_coprimality(p, -1, c);
+        _check_pt_arcno_and_coprimality(q, -1, c);
         _fix_curve_ends_order();
     }
 
@@ -2015,7 +2015,7 @@ protected:
      * boundary implies equality
      *
      * \param p first endpoint
-     * \param q second endpint
+     * \param q second endpoint
      * \param equal_x \c true indicates to skip the comparison by x
      * \param only_x \c true indicates to report only the comparison by x
      * \returns the result of the queried comparison

@@ -565,7 +565,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qdebug << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -612,6 +612,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else{
       pluginsStatus_map[name] = loader.errorString();
+      if(verbose)
+        qdebug << "\n#### Error: " << loader.errorString();
 
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
@@ -663,15 +665,7 @@ void MainWindow::loadPlugins()
     }
   }
   QString env_path = qgetenv("LAB_DEMO_PLUGINS_PATH");
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
   QChar separator = QDir::listSeparator();
-#else
-#if defined(_WIN32)
-  QChar separator = ';';
-#else
-  QChar separator = ':';
-#endif
-#endif
   if(!env_path.isEmpty()) {
 #if defined(_WIN32)
     QString path = qgetenv("PATH");
@@ -2404,8 +2398,12 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    CGAL::qglviewer::Vec min(static_cast<float>(bbox.xmin())+viewer->offset().x, static_cast<float>(bbox.ymin())+viewer->offset().y, static_cast<float>(bbox.zmin())+viewer->offset().z),
-        max(static_cast<float>(bbox.xmax())+viewer->offset().x, static_cast<float>(bbox.ymax())+viewer->offset().y, static_cast<float>(bbox.zmax())+viewer->offset().z);
+    CGAL::qglviewer::Vec min{static_cast<float>(bbox.xmin()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymin()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmin()) + viewer->offset().z};
+    CGAL::qglviewer::Vec max{static_cast<float>(bbox.xmax()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymax()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmax()) + viewer->offset().z};
     viewer->setSceneBoundingBox(min, max);
     viewerShow(static_cast<float>(min.x), static_cast<float>(min.y), static_cast<float>(min.z),
                static_cast<float>(max.x), static_cast<float>(max.y), static_cast<float>(max.z));
@@ -2652,17 +2650,10 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().horizontalAdvance("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_View_")));
-#else
-  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
-  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
-  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
-#endif
 }
 
 void MainWindow::reset_default_loaders()

@@ -14,7 +14,7 @@ fi
 git=git
 if hub --version 2> /dev/null > /dev/null; then
     case "$(hub --version)" in
-	*hub\ version*) git=hub;;
+        *hub\ version*) git=hub;;
     esac
 fi
 
@@ -63,11 +63,11 @@ if [ -d build ] && \
     cmake_output=$(cmake build 2>&1)
     cmake_exit_code=$?
     if [ "$cmake_exit_code" -ne 0 ]; then
-	echo 'CMake error:'
-	printf '%s\n' "${cmake_output}"
-	exit 1
+        echo 'CMake error:'
+        printf '%s\n' "${cmake_output}"
+        exit 1
     else
-	echo OK
+        echo OK
     fi
 else
     echo '.. Skip the CMake test (please configure a build/ CMake binary directory,'
@@ -206,7 +206,7 @@ fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\n", $2; }' | xargs file -N | grep "text" | grep -E -v "UTF-8|ASCII|CSV|XML|EPS|FIG|assembler source|Perl script|from flex")
+txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\n", $2; }' | xargs file -N | grep "text" | grep -E -v "UTF-8|ASCII|CSV|XML|EPS|FIG|JSON|pixmap|magic|assembler source|Perl script|from flex")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}

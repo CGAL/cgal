@@ -1,8 +1,67 @@
 # Release History
 
+
+## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
+
+### General Changes
+- The minimal supported version of Boost is now 1.74.0.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
+- Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
+- Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
+- Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+  to know faces in the output meshes that are corresponding to input coplanar faces.
+
+### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
+- Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
+
+
+### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
+-   **Breaking change**: Classes based on the RS Library are no longer provided.
+
+### [BGL](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+-   Added the function `CGAL::Euler::remove_degree_2_vertex()`, which enables users to remove vertices which have exactly two incident edges.
+
+### [2D Arrangements](https://doc.cgal.org/6.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
+-   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
+-   Fixed a bug in the extensions of vertex and halfedge types of the DCEL when used to instantiate Arrangement_with_history_2 or similar arrangement classes that derive from Arrangement_2.
+-   Renamed the prefix of the names of all concepts in the Arrangement_on_surface_2 package from "Arrangement" to "Aos".
+-   Renamed the old concept `AosApproximateTraits_2` to `AosApproximatePointTraits_2` to make room for the new concept `AosApproximateTraits_2`. This concept requires the provision of a functor called `Approximate_2` that has an operator that approximates the coordinates of a point.
+-   Introduced a new concept called `AosApproximateTraits_2`. It refines the concept `AosApproximatePointTraits_2`. This concept requires the provision of a functor called `Approximate_2`. In addition to an operator that approximates the coordinates of a point, it also requires the provision of (i) an operator that approximates a points, and (ii) an operator that approximates a curve.
+-   Changed all "typedef" style statements in the user manual to "using" style. (Observe that a similar update to the examples has already been made in a previous release.)
+-   Fixed do_intersect() of a 2D Arrangement and a curve.
+
+### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
+
+-   Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generates initial points,
+  - `initial_points` : enables the user to specify a `Range` of initial points.
+-   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
+
+### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
+
+-  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
+   by `subconstraints()` has changed from `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+   The old range type is now returned by a new function named `subconstraints_and_contexts()`.
+
+### [Polygon Repair](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonRepair)
+
+-   Add a the non-zero rule, as well as functions to compute the conservative inner and outer hull of similar polygons.
+
+### Triangulations
+-   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
+
+
+## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
+
+### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
+-   Made the implicit function thread-safe so that the parallel version of `make_mesh_3()` can be used.
+
 ## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 
-Release date: June 2024
+Release date: September 2024
 
 ### General Changes
 
@@ -13,6 +72,8 @@ Release date: June 2024
   - LLVM Clang version 15.0.7 or later (on Linux)
   - Apple Clang compiler versions 10.0.1, 12.0.5, and 15.0.0 (on macOS)
 - The minimal supported version of Boost is now 1.72.0.
+- GMP/MPFR are no longer mandatory to use CGAL, [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
+  can be used instead.
 - The CGAL `Core` library is no longer based on GMP, but on
   [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
   Either GMP backend or Boost backend can be used.
@@ -144,10 +205,6 @@ Release date: June 2024
     to the [`GenericMap`](https://doc.cgal.org/6.0/Combinatorial_map/classGenericMap.html)
     concept, which enables users to insert an edge between two different faces in order to create faces with holes.
 
--   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
-- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
-
-
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 
 - **Breaking change**:
@@ -225,6 +282,14 @@ Release date: June 2024
     as well as the class `Triangle_accessor`. These were no longer used for several releases.
 -   **Breaking change**: Removed the class templates `CGAL::Gray_image_mesh_domain_3`, `CGAL::Implicit_mesh_domain_3`,
     and `CGAL::Labeled_image_mesh_domain_3`, which were deprecated since CGAL-4.13.
+-   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
+- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
+
+
+### [3D Surface Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesher3)
+
+-   This package is deprecated and the package [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3) should
+    be used instead.
 
 ### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
 
@@ -1909,7 +1974,7 @@ Release date: April 2018
     after the observer is notified that the edge has been removed. This is
     symmetric (opposite) to the order of notification when an edge is inserted.
 
-    The user can restore old (non-symmetric) behaviour by defining the macro:
+    The user can restore old (non-symmetric) behavior by defining the macro:
 
     `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
 
@@ -3364,7 +3429,7 @@ Release date: October 2013
 #### CGAL and Boost Property Maps
 
 -   The `key_type` of the property maps provided by CGAL used to be an
-    iterator. In order to be more easily re-used, the `key_type` has
+    iterator. In order to be more easily reused, the `key_type` has
     been changed to be the `value_type` of the iterator. The packages
     that have been updated to match these changes are **Point Set
     Processing** and **Surface Reconstruction from Point Sets**.
@@ -3450,7 +3515,7 @@ Release date: October 2013
     vertices which would move of very small displacements.
 -   Introduce new data structures and options for speed-up and
     compacity. Note that `Compact_mesh_cell_base_3` and
-    `Mesh_vertex_base_3` are now our favoured implementations of the
+    `Mesh_vertex_base_3` are now our favored implementations of the
     concepts MeshCellBase\_3 and MeshVertexBase\_3.
 -   Introduce a new constructor for `Polyhedral_mesh_domain_3` that
     takes a bounding polyhedron to be meshed along with a polyhedral
@@ -4561,9 +4626,9 @@ fixes for this release.
 -   The new macro CGAL\_NO\_DEPRECATED\_CODE can be defined to disable
     deprecated code, helping users discover if they rely on code that
     may be removed in subsequent releases.
--   Assertion behaviour: It is not possible anymore to set the CONTINUE
+-   Assertion behavior: It is not possible anymore to set the CONTINUE
     mode for assertion failures. Functions that allow to change the
-    assertion behaviour are now declared in
+    assertion behavior are now declared in
     `<CGAL/assertions_behaviour.h>`.
 -   Qt3 based demos are still there but the documentation has been
     removed as the CGAL::Qt\_Widget will be deprecated.
@@ -4933,7 +4998,7 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
         allows users to extend the DCEL of the underlying arrangement.
     -   Added a function template called connect\_holes() that connects
         the holes in a given polygon with holes, turning it into a
-        sequence of points, where the holes are connceted to the outer
+        sequence of points, where the holes are connected to the outer
         boundary using zero-width passages.
     -   Added a non-const function member to General\_polygon\_set\_2
         that obtains the underlying arrangement.
@@ -5112,7 +5177,7 @@ static runtime (/ML).
 -   2D Placement of Streamlines (new package)
     Visualizing vector fields is important for many application domains.
     A good way to do it is to generate streamlines that describe the
-    flow behaviour. This package implements the "Farthest Point Seeding"
+    flow behavior. This package implements the "Farthest Point Seeding"
     algorithm for placing streamlines in 2D vector fields. It generates
     a list of streamlines corresponding to an input flow using a
     specified separating distance. The algorithm uses a Delaunay
@@ -5134,7 +5199,7 @@ static runtime (/ML).
     structures. The package supports exact or inexact operations on
     primitives which move along polynomial trajectories.
 -   Smallest Enclosing Ellipsoid (new package)
-    This algorithm is new in the chapter Geometric Optimisation.
+    This algorithm is new in the chapter Geometric Optimization.
 -   2D Arrangement (major revision)
     This package can be used to construct, maintain, alter, and display
     arrangements in the plane. Once an arrangement is constructed, the
@@ -5149,9 +5214,9 @@ static runtime (/ML).
     construction history of the arrangement, such that it is possible to
     obtain the originating curve of an arrangement subcurve.
 
--   Geometric Optimisation (major revision)
+-   Geometric Optimization (major revision)
     The underlying QP solver which is the foundation for several
-    algorithms in the Geometric Optimisation chapter has been completely
+    algorithms in the Geometric Optimization chapter has been completely
     rewritten.
 -   3D Triangulation (new functionality)
     Regular\_triangulation\_3 now offers vertex removal.
@@ -5477,7 +5542,7 @@ The following functionality has been added or changed:
         Face\_handle or Vertex\_handle.
     -   New classes Triangulation\_vertex\_base\_with\_info\_2 (and 3)
         and Triangulation\_face\_base\_with\_info\_2 (and 3) to make
-        easier the customisation of base classes in most cases.
+        easier the customization of base classes in most cases.
 -   2D Triangulation
     -   Regular triangulation provides an easy access to hidden points.
     -   The Triangulation\_hierarchy\_2, which provide an efficient
@@ -5979,7 +6044,7 @@ kernels themselves can be used as traits classes in many instances.
     -   The traits class requirements have been changed.
     -   The simplicity test has a completely new implementation.
     -   Properties like convexity, simplicity and area can now be cached
-        by polygons. You need to set a flag to select this behaviour.
+        by polygons. You need to set a flag to select this behavior.
 
 
 
@@ -6152,7 +6217,7 @@ The following functionality has been added:
     stored within a class, debugging is easier using this kernel. This
     kernel can also be faster in some cases than the reference-counted
     Cartesian kernel.
--   New optimisation algorithms
+-   New optimization algorithms
     -   Min\_annulus\_d - Algorithm for computing the smallest enclosing
         annulus of points in arbitrary dimension
     -   Polytope\_distance\_d - Algorithm for computing the (squared)
@@ -6209,7 +6274,7 @@ The following functionality has been added:
     triangulations.
 -   Triangulations in 3D were added, both Delaunay triangulations and
     regular triangulations.
--   Min\_quadrilateral optimisations have been added. These are
+-   Min\_quadrilateral optimizations have been added. These are
     algorithms to compute the minimum enclosing rectangle/parallelogram
     (arbitrary orientation) and the minimum enclosing strip of a convex
     point set.

@@ -1000,7 +1000,7 @@ private:
 *
 * computes the interpolated corrected curvatures across the mesh `pmesh`.
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
-* can choose which quantites to compute.
+* can choose which quantities to compute.
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
@@ -1090,7 +1090,7 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 * \ingroup PMP_corrected_curvatures_grp
 * computes the interpolated corrected curvatures at a vertex `v`.
 * By providing mean, Gaussian and/or principal curvature and direction property maps as named parameters, the user
-* can choose which quantites to compute.
+* can choose which quantities to compute.
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *

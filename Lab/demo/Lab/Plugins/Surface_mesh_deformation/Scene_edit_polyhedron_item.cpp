@@ -1572,7 +1572,7 @@ void Scene_edit_polyhedron_item_priv::read_roi(const char* file_name, Mesh* mesh
   std::vector<mesh_vd> all_vertices;
   all_vertices.reserve(num_vertices(fs.get_deform_mesh(mesh)->halfedge_graph()));
   mesh_vi vb, ve;
-  for(boost::tie(vb, ve) = vertices(fs.get_deform_mesh(mesh)->halfedge_graph()); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fs.get_deform_mesh(mesh)->halfedge_graph()); vb != ve; ++vb) {
     all_vertices.push_back(*vb);
   }
   // read roi
@@ -1731,7 +1731,7 @@ void Scene_edit_polyhedron_item::update_normals() {
 void Scene_edit_polyhedron_item::set_all_vertices_as_roi()
 {
   boost::graph_traits<SMesh>::vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(*surface_mesh()); vb != ve; ++vb)
+  for(std::tie(vb, ve) = vertices(*surface_mesh()); vb != ve; ++vb)
   {
     insert_roi_vertex<SMesh>(*vb, surface_mesh());
   }
