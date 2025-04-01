@@ -176,6 +176,7 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::c3t3_changed()
 {
+  d->c3t3.rescan_after_load_of_triangulation();
   triangulation_changed();
 }
 
