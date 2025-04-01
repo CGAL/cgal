@@ -27,7 +27,7 @@ namespace Polygon_mesh {
 
     \brief Sorting of polygon mesh faces with respect to their area.
 
-    `Items` of faces in a polygon mesh are sorted in descending order of area.
+    `Items` of faces in a polygon mesh are sorted in decreasing area.
 
     \tparam GeomTraits
     a model of `Kernel`

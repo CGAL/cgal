@@ -260,7 +260,7 @@ namespace Polygon_mesh {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps each face to a std::size_t
+      This function creates an empty property map that maps each face to a `std::size_t`.
     */
     Region_index_map region_index_map() {
       return get(CGAL::dynamic_face_property_t<std::size_t>(), m_face_graph);
@@ -288,8 +288,7 @@ namespace Polygon_mesh {
       its normal and the plane's normal is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query
-      `Item` of the query face
+      \param query item of the query face
 
       The last parameter is not used in this implementation.
 

@@ -214,8 +214,7 @@ namespace Point_set {
       its normal and the line's normal is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query
-      item of the query point
+      \param query item of the query point
 
       The last parameter is not used in this implementation.
 
