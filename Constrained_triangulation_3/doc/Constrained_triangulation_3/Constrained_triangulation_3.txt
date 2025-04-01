@@ -42,7 +42,9 @@ their common faces of lower dimension:
 - two edges can only intersect at a common vertex which is also in the PLC;
 - two facets can only intersect at a common edge or vertex which is also in the PLC.
 
-\todo add an image of a PLC
+\cgalFigureBegin{plc_fig, plc.png}
+A Piecewise Linear Complex, made of planar faces, connected by edges and vertices.
+\cgalFigureEnd
 
 \subsection CT_3_CDT Conforming Delaunay Triangulation
 
