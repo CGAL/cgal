@@ -8,6 +8,10 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau
 
+\image html vase_cdt.png
+\image latex vase_cdt.png
+<BR>
+
 \section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
 This package implements the construction of a 3D conforming Delaunay triangulation,

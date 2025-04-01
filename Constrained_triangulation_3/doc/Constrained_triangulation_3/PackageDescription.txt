@@ -25,12 +25,10 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3 "3D Triangulations"}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\noop \cgalPkgDemo{DEMO 2,demo2.zip}
-
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \todo Add more description in cgalPkgDesc.
-\todo Add a demo
 
 
 \cgalPkgDescriptionEnd
