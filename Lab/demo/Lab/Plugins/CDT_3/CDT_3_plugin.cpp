@@ -80,7 +80,7 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
         const auto cdt_tr = CGAL::convert_to_triangulation_3(cdt);
         auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
         item_tr.set_infinite_vertex(inf_v);
-        triangulation_item->triangulation_changed();
+        triangulation_item->c3t3_changed();
 
         triangulation_item->setParent(mesh_item->parent());
         triangulation_item->setName("CDT of " + mesh_item->name());
@@ -100,7 +100,7 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
         auto inf_v =
             item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
         item_tr.set_infinite_vertex(inf_v);
-        triangulation_item->triangulation_changed();
+        triangulation_item->c3t3_changed();
 
         triangulation_item->setParent(soup_item->parent());
         triangulation_item->setName("CDT of " + soup_item->name());
