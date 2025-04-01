@@ -1756,7 +1756,7 @@ private:
   static auto region(const CDT_2& cdt_2, CDT_2_face_handle fh)
   {
     std::vector<CDT_2_face_handle> fh_region;
-    const auto cdt_2_dual_graph = dual(cdt_2.tds());
+    const auto cdt_2_dual_graph = CGAL::dual(cdt_2.tds());
     const boost::filtered_graph dual(
         cdt_2_dual_graph,
         +[](CDT_2_edge edge) { // the `+` forces conversion of the lambda to a function pointer
