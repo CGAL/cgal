@@ -78,6 +78,16 @@ Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
 Steiner points are added on input edges and input facets
 of the PLC to make it tetrahedralizable.
 
+Figure \cgalFigureRef{plc2cdt_fig} shows an example of a conforming constrained
+Delaunay triangulation constructed from a PLC.
+
+
+\cgalFigureBegin{plc2cdt_fig, plc_to_cdt.png}
+Left : PLC (360 vertices);
+Middle : CCDT (2452 vertices);
+Right : the same CCDT seen with cutplane.
+\cgalFigureEnd
+
 
 \section CT_3_api API
 
