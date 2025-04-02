@@ -1129,10 +1129,10 @@ void MainWindow::open(QString filename)
     ok=true;
     break;
   case 0:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), all_items, &ok);
     break;
   default:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), selected_items, &ok);
   }
   //viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }

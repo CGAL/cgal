@@ -189,17 +189,17 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
     auto geom_traits_np = parameters::get_parameter(np, internal_np::geom_traits);
     using Geom_traits_np_type = decltype(geom_traits_np);
     if constexpr (!std::is_same_v<Geom_traits_np_type, internal_np::Param_not_found>) {
-      return Geom_traits_np_type{};
+      return static_cast<Geom_traits_np_type*>(nullptr);
     } else {
       using Point = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *points.begin()))>;
       using Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
-      return Kernel{};
+      return static_cast<Kernel*>(nullptr);
     }
   };
 
-  using Geom_traits = decltype(get_geom_traits_type());
-  using CDT =
-      typename CGAL::Default::Get<Triangulation, Conforming_constrained_Delaunay_triangulation_3<Geom_traits>>::type;
+  using Geom_traits = std::remove_pointer_t<decltype(get_geom_traits_type())>;
+  using Default_CDT = Conforming_constrained_Delaunay_triangulation_3<Geom_traits>;
+  using CDT = typename CGAL::Default::Get<Triangulation, Default_CDT>::type;
   CDT cdt(points, polygons, np);
   auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
