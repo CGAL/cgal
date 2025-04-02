@@ -29,11 +29,11 @@ namespace Box_intersection_d {
 template<class NT_, int N>
 class Box_with_index_d: public Box_d< NT_, N, ID_EXPLICIT> {
 protected:
-    size_t m_index;
+    std::size_t m_index;
 public:
     typedef Box_d< NT_, N, ID_EXPLICIT> Base;
     typedef NT_                      NT;
-    typedef size_t                   ID;
+    typedef std::size_t                   ID;
 
     Box_with_index_d() {}
     Box_with_index_d( ID i) : m_index(i) {}
@@ -47,8 +47,7 @@ public:
 }
 
 template <class PointsRange , class PolylineRange>
-void double_snap_rounding_2_disjoint(PointsRange &pts,
-		                                 PolylineRange &polylines)
+void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 {
   using Point_2 = std::remove_cv_t<typename std::iterator_traits<typename PointsRange::iterator>::value_type>;
   using Kernel = typename Kernel_traits<Point_2>::Kernel;
@@ -58,20 +57,20 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   using PBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
   using SBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
 
-  auto comp_by_x=[&](size_t ai, size_t bi){
+  auto comp_by_x=[&](std::size_t ai, std::size_t bi){
     return compare(pts[ai].x(),pts[bi].x())==SMALLER;
   };
-  auto comp_by_y=[&](size_t ai, size_t bi){
+  auto comp_by_y=[&](std::size_t ai, std::size_t bi){
     return compare(pts[ai].y(),pts[bi].y())==SMALLER;
   };
   // Total order is required to using set
-  auto comp_by_x_first=[&](size_t ai, size_t bi){
+  auto comp_by_x_first=[&](std::size_t ai, std::size_t bi){
     Comparison_result res=compare(pts[ai].x(),pts[bi].x());
     if(res==EQUAL)
       return compare(pts[ai].y(),pts[bi].y())==SMALLER;
     return res==SMALLER;
   };
-  auto comp_by_y_first=[&](size_t ai, size_t bi){
+  auto comp_by_y_first=[&](std::size_t ai, std::size_t bi){
     Comparison_result res=compare(pts[ai].y(),pts[bi].y());
     if(res==EQUAL)
       return compare(pts[ai].x(),pts[bi].x())==SMALLER;
@@ -85,11 +84,11 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   // Sorted the points may perform exact computations and thus refine the intervals of the coordinates values
   // This refine ensures that the order of the points will be preserved when rounded
   // However, except for this reason these sets are unused
-  using Iterator_set_x = typename std::set<size_t, decltype(comp_by_x_first)>::iterator;
-  using Iterator_set_y = typename std::set<size_t, decltype(comp_by_y_first)>::iterator;
-  std::set<size_t, decltype(comp_by_x_first)> p_sort_by_x(comp_by_x_first);
-  std::set<size_t, decltype(comp_by_y_first)> p_sort_by_y(comp_by_y_first);
-  for(size_t i=0; i!=pts.size(); ++i)
+  using Iterator_set_x = typename std::set<std::size_t, decltype(comp_by_x_first)>::iterator;
+  using Iterator_set_y = typename std::set<std::size_t, decltype(comp_by_y_first)>::iterator;
+  std::set<std::size_t, decltype(comp_by_x_first)> p_sort_by_x(comp_by_x_first);
+  std::set<std::size_t, decltype(comp_by_y_first)> p_sort_by_y(comp_by_y_first);
+  for(std::size_t i=0; i!=pts.size(); ++i)
   {
     p_sort_by_x.insert(i);
     p_sort_by_y.insert(i);
@@ -98,9 +97,9 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   //Prepare boxes for box_intersection_d
   std::vector<PBox> points_boxes;
   std::vector<SBox> segs_boxes;
-  for(size_t i=0; i<pts.size(); ++i)
+  for(std::size_t i=0; i<pts.size(); ++i)
     points_boxes.emplace_back(pts[i].bbox(),i);
-  for(size_t i=0; i<polylines.size(); ++i)
+  for(std::size_t i=0; i<polylines.size(); ++i)
     segs_boxes.emplace_back(pts[polylines[i][0]].bbox()+pts[polylines[i][1]].bbox(),i);
 
   // Bound the maximum squared distance between a point and its rounded value
@@ -111,10 +110,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
 
   // Callback used for box_intersection_d
   auto callback=[&](PBox &bp, SBox &bseg){
-    size_t pi=bp.index();
-    size_t si=bseg.index();
-    size_t si1=polylines[bseg.index()][0];
-    size_t si2=polylines[bseg.index()][1];
+    std::size_t pi=bp.index();
+    std::size_t si=bseg.index();
+    std::size_t si1=polylines[bseg.index()][0];
+    std::size_t si2=polylines[bseg.index()][1];
 
     if((pi==si1) || (pi==si2))
       return;
@@ -144,14 +143,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
 #endif
 
   do{
-    size_t size_before=pts.size();
+    std::size_t size_before=pts.size();
     CGAL::box_intersection_d(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
     points_boxes.clear();
     // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
 #ifdef DOUBLE_2D_SNAP_VERBOSE
     std::cout << points_boxes.size()-size_before << " subdivisions performed" << std::endl;
 #endif
-    for(size_t i=size_before; i<pts.size(); ++i)
+    for(std::size_t i=size_before; i<pts.size(); ++i)
       points_boxes.emplace_back(pts[i].bbox(),i);
   } while(points_boxes.size()!=0);
 
@@ -165,14 +164,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
 
     // Sort the subdivision points on the polyline along the original vector
     Vector_2 ref(pts[polyline[0]], pts[polyline[1]]);
-    auto sort_along_ref=[&](size_t pi, size_t qi){
+    auto sort_along_ref=[&](std::size_t pi, std::size_t qi){
       Vector_2 v(pts[pi], pts[qi]);
       if(is_zero(ref.x()))
         return is_positive(v.y()*ref.y());
       return is_positive(v.x()*ref.x());
     };
-    size_t ps=polyline[0];
-    size_t pt=polyline[1];
+    std::size_t ps=polyline[0];
+    std::size_t pt=polyline[1];
     std::sort(polyline.begin(), polyline.end(), sort_along_ref);
     CGAL_assertion((polyline[0]==ps) && (polyline[polyline.size()-1]==pt));
   }
@@ -190,11 +189,11 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Remove duplicate points" << std::endl;
 #endif
-  std::vector< size_t > unique_points(p_sort_by_x.begin(),p_sort_by_x.end());
+  std::vector< std::size_t > unique_points(p_sort_by_x.begin(),p_sort_by_x.end());
   std::sort(unique_points.begin(),unique_points.end(),comp_by_x_first);
   std::vector<Point_2> new_pts;
-  std::vector<size_t> old_to_new_index(pts.size());
-  for(size_t i=0; i!=pts.size(); ++i){
+  std::vector<std::size_t> old_to_new_index(pts.size());
+  for(std::size_t i=0; i!=pts.size(); ++i){
     if(i==0 || (pts[unique_points[i]]!=pts[unique_points[i-1]]))
       new_pts.push_back(pts[unique_points[i]]);
     old_to_new_index[unique_points[i]]=new_pts.size()-1;
@@ -202,9 +201,9 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
 
   std::swap(pts, new_pts);
   for (auto& polyline : polylines) {
-    std::vector<size_t> updated_polyline;
-    for (size_t i=0; i<polyline.size(); ++i) {
-        size_t new_pi=old_to_new_index[polyline[i]];
+    std::vector<std::size_t> updated_polyline;
+    for (std::size_t i=0; i<polyline.size(); ++i) {
+        std::size_t new_pi=old_to_new_index[polyline[i]];
         if(i==0 || (new_pi!=updated_polyline[updated_polyline.size()-1]))
           updated_polyline.push_back(new_pi);
         assert(new_pi<pts.size());
@@ -219,16 +218,16 @@ void double_snap_rounding_2_disjoint(PointsRange &pts,
   //The order may have changed (Example: (1,1)<(1,2)<(1+e,1)), we recompute it
   p_sort_by_x.clear();
   p_sort_by_y.clear();
-  for(size_t i=0; i!=pts.size(); ++i)
+  for(std::size_t i=0; i!=pts.size(); ++i)
   {
     p_sort_by_x.insert(i);
     p_sort_by_y.insert(i);
   }
 
   for(auto &poly: polylines){
-    std::vector<size_t> updated_polyline;
+    std::vector<std::size_t> updated_polyline;
     updated_polyline.push_back(poly[0]);
-    for(size_t i=1; i!=poly.size(); ++i){
+    for(std::size_t i=1; i!=poly.size(); ++i){
       if(pts[poly[i-1]].x()==pts[poly[i]].x()){
         Iterator_set_x start, end;
         // Get all vertices between the two endpoints along x order
@@ -290,7 +289,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   std::set<Point_2> unique_point_set;
   std::map<Point_2, int> point_to_index;
   std::vector<Point_2> pts;
-  std::vector< std::vector< size_t> > polylines;
+  std::vector< std::vector< std::size_t> > polylines;
 
   // Transform range of the segments in the range of points and polyline of indexes
   for(typename std::vector<Segment_2>::iterator it=segs.begin(); it!=segs.end(); ++it)
@@ -312,8 +311,8 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 
   for(InputIterator it=segs.begin(); it!=segs.end(); ++it)
   {
-    size_t index1 = point_to_index[it->source()];
-    size_t index2 = point_to_index[it->target()];
+    std::size_t index1 = point_to_index[it->source()];
+    std::size_t index2 = point_to_index[it->target()];
     polylines.push_back({index1, index2});
   }
 
@@ -328,7 +327,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   output.clear();
   for(auto &poly: polylines){
     Polyline new_line;
-    for(size_t pi: poly)
+    for(std::size_t pi: poly)
       new_line.push_back(pts[pi]);
     output.push_back(new_line);
   }
@@ -360,7 +359,7 @@ typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	inpu
   std::set<Point_2> unique_point_set;
   std::map<Point_2, int> point_to_index;
   std::vector<Point_2> pts;
-  std::vector< std::vector< size_t> > polylines;
+  std::vector< std::vector< std::size_t> > polylines;
 
   for(typename std::vector<Segment_2>::iterator it=segs.begin(); it!=segs.end(); ++it)
   {
@@ -381,8 +380,8 @@ typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	inpu
 
   for(InputIterator it=segs.begin(); it!=segs.end(); ++it)
   {
-    size_t index1 = point_to_index[it->source()];
-    size_t index2 = point_to_index[it->target()];
+    std::size_t index1 = point_to_index[it->source()];
+    std::size_t index2 = point_to_index[it->target()];
     polylines.push_back({index1, index2});
   }
 
@@ -394,10 +393,10 @@ typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	inpu
 #endif
 
   // Output a range of segments while removing duplicate ones
-  std::set< std::pair<size_t,size_t> > set_out_segs;
+  std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
   output.clear();
   for(auto &poly: polylines){
-    for(size_t i=1; i<poly.size(); ++i)
+    for(std::size_t i=1; i<poly.size(); ++i)
       set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
   }
   for(auto &pair: set_out_segs)
