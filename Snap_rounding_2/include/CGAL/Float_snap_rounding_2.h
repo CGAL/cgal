@@ -146,9 +146,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
     std::size_t size_before=pts.size();
     CGAL::box_intersection_d(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
     points_boxes.clear();
+    points_boxes.reserve(pts.size()-size_before);
     // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
 #ifdef DOUBLE_2D_SNAP_VERBOSE
-    std::cout << points_boxes.size()-size_before << " subdivisions performed" << std::endl;
+    std::cout << pts.size()-size_before << " subdivisions performed" << std::endl;
 #endif
     for(std::size_t i=size_before; i<pts.size(); ++i)
       points_boxes.emplace_back(pts[i].bbox(),i);
