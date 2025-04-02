@@ -149,7 +149,7 @@ Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulati
 (Middle-Right) Input PLC segmented according to sharp edges;
 (Right) The corresponding conforming constrained Delaunay triangulation using the segmentation.
 \cgalFigureEnd
-#camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349
+<!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
 
 \subsection CT_3_example_remesh Remeshing a conforming constrained Delaunay triangulation
