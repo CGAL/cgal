@@ -23,7 +23,7 @@
 namespace CGAL {
 
 // Forward declaration for normal check
-template<typename Point_3, typename Vector_3>
+template<typename Point_3, typename Vector_3 = typename Kernel_traits<Point_3>::Kernel::Vector_3>
 class Point_set_3;
 
 namespace Shape_detection {
