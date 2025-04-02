@@ -35,6 +35,7 @@
 #include <CGAL/Real_timer.h>
 #endif
 
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/value_type.hpp>
 
