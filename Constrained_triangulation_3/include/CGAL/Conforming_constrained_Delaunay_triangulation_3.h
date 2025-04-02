@@ -708,8 +708,8 @@ public:
           polyline.pop_back();
           auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
           auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
-          cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
-                                           face_index ? *face_index : -1);
+          face_index = cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
+                                                        face_index ? *face_index : -1);
         }
       }
     } else {
