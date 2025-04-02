@@ -7,13 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s)     : Sven Oesau
-//
-//******************************************************************************
-// File Description :
-// class Poisson_mesh_domain_3. See class description.
-//******************************************************************************
 
 #ifndef CGAL_POISSON_MESH_DOMAIN_3_H
 #define CGAL_POISSON_MESH_DOMAIN_3_H
@@ -38,7 +32,6 @@ namespace CGAL {
     the basic operations to implement intersection tests and intersection computations through a bisection
     method.This parameter must be instantiated with a model of the concept `BisectionGeometricTraits_3`.
 
- This class is a model of concept `MeshDomain_3`.
 \cgalModels{MeshDomain_3}
 
 \sa `CGAL::Labeled_mesh_domain_3`
@@ -111,16 +104,15 @@ public:
   typedef CGAL::Poisson_reconstruction_function<BGT> Function;
 #endif
 
-
   Function poisson_function;
+
 /// \name Creation
 /// @{
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
    *
    * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
    *                         or a bounding `Iso_cuboid_3`
-   * \tparam NamedParameters
-   *  a sequence of \ref bgl_namedparameters "Named Parameters"
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
    * \param function the Poisson reconstruction function
    * \param bounding_object the bounding object bounding the meshable space.
@@ -144,7 +136,7 @@ public:
 #endif // DOXYGEN_RUNNING
   )
     : Base(make_implicit_to_labeling_function_wrapper<BGT>(function), bounding_object, np),
-    poisson_function(function)
+      poisson_function(function)
   {}
 
   /*!  \brief Construction from a function, a bounding object and a relative error bound.
@@ -171,14 +163,14 @@ public:
 #endif // DOXYGEN_RUNNING
   )
     : Base(make_implicit_to_labeling_function_wrapper<BGT>(function), function.bounding_sphere(), np),
-    poisson_function(function)
+      poisson_function(function)
   {}
 ///@}
 
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
   Poisson_mesh_domain_3(const CGAL_NP_CLASS& np)
-      : Base(np)
+    : Base(np)
   {}
 
   // Overload handling parameters passed with operator=
@@ -188,11 +180,11 @@ public:
            typename ... NP>
   Poisson_mesh_domain_3(const Function& function,
                         const CGAL_NP_CLASS_1& np1,
-                        const CGAL_NP_CLASS_2&  np2,
+                        const CGAL_NP_CLASS_2& np2,
                         const NP& ... nps)
-      : Base(internal_np::combine_named_parameters(
-            CGAL::parameters::function(make_implicit_to_labeling_function_wrapper<BGT>(function)), np1, np2, nps...)),
-        poisson_function(function)
+    : Base(internal_np::combine_named_parameters(
+          CGAL::parameters::function(make_implicit_to_labeling_function_wrapper<BGT>(function)), np1, np2, nps...)),
+      poisson_function(function)
   {}
 #endif
 
@@ -205,12 +197,10 @@ public:
    * function.  The domain to be discretized is assumed to be the domain where
    * the function has negative values.
    *
-   * The method takes as argument a bounding sphere which is required to
-   * circumscribe the surface and to have its center inside the domain.
-   *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
-   *                         or a bounding `Iso_cuboid_3`
+   *                         or a bounding `Iso_cuboid_3` which is required to circumscribe
+   *                         the surface and to have its center inside the domain.
    *
    * \param function the Poisson reconstruction function
    * \param bounding_object object bounding the meshable domain and its center is inside the domain.
@@ -236,33 +226,32 @@ public:
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
+
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param),
-Null_functor()); auto construct_surface_patch_index_ = choose_parameter(get_parameter(np,
-internal_np::surface_patch_index), Null_functor());
-    namespace p = CGAL::parameters;
-    return Poisson_mesh_domain_3
-            (function,
+    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
+    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+
+    return Poisson_mesh_domain_3(function,
              bounding_object,
-              CGAL::parameters::relative_error_bound(relative_error_bound_)
-              .function(make_implicit_to_labeling_function_wrapper<BGT>(function))
-              .p_rng(p_rng_)
-              .null_subdomain_index(Base::create_null_subdomain_index(null_subdomain_index_))
-              .construct_surface_patch_index(Base::create_construct_surface_patch_index(construct_surface_patch_index_)));
+             CGAL::parameters::relative_error_bound(relative_error_bound_)
+             .function(make_implicit_to_labeling_function_wrapper<BGT>(function))
+             .p_rng(p_rng_)
+             .null_subdomain_index(Base::create_null_subdomain_index(null_subdomain_index_))
+             .construct_surface_patch_index(Base::create_construct_surface_patch_index(construct_surface_patch_index_)));
   }
 /// @}
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
   {
-    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value,
-      "Value for required parameter not found"); static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS,
-internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
-
     using parameters::get_parameter;
-    return create_Poisson_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
-                                       parameters::get_parameter(np, internal_np::bounding_object_param),
+
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
+
+    return create_Poisson_mesh_domain(get_parameter(np, internal_np::function_param),
+                                       get_parameter(np, internal_np::bounding_object_param),
                                        np);
   }
 
@@ -271,8 +260,8 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
            typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
            typename ... NP>
   static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS_1& np1,
-                                                           const CGAL_NP_CLASS_2&  np2,
-                                                           const NP& ... nps)
+                                                          const CGAL_NP_CLASS_2& np2,
+                                                          const NP& ... nps)
   {
     return create_Poisson_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
@@ -343,12 +332,12 @@ internal_np::bounding_object_param_t>::value, "Value for required parameter not 
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // Should only happen during initial point generation.
+      // Should only be able to happen during initial point generation.
       if(label_at_p1 == label_at_p2)
         return Intersection();
 
       // Else lets find a point (by bisection)
-      // Bisection ends when the point is near than error bound from surface
+      // Bisection ends when the point is nearer from surface than the error bound
       while(true) {
         if(c1 == c2) {
           if(c1_is_inf) {

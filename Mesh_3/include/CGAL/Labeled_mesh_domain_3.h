@@ -7,13 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
-//
-//******************************************************************************
-// File Description :
-// class Labeled_mesh_domain_3. See class description.
-//******************************************************************************
+
 
 #ifndef CGAL_LABELED_MESH_DOMAIN_3_H
 #define CGAL_LABELED_MESH_DOMAIN_3_H
@@ -875,17 +870,15 @@ public:
    * function.  The domain to be discretized is assumed to be the domain where
    * the function has negative values.
    *
-   * The method takes as argument a bounding sphere which is required to
-   * circumscribe the surface and to have its center inside the domain.
-   *
    * \tparam Function a type compatible with the signature `FT(Point_3)`: it takes a point as argument,
    *                  and returns a scalar value. That object must be model of `CopyConstructible`
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
-   *                         or a bounding `Iso_cuboid_3`
+   *                         or a bounding `Iso_cuboid_3` which is required to circumscribe
+   *                         the surface and to have its center inside the domain.
    *
    * \param function the implicit function
-   * \param bounding_object object boundint the meshable domain and its center is inside the domain.
+   * \param bounding_object object bounding the meshable domain and its center is inside the domain.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    *
    * \cgalNamedParamsBegin
@@ -1196,7 +1189,7 @@ public:
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // Should only happen during initial point generation.
+      // Should only be able to happen during initial point generation.
       if( value_at_p1 == value_at_p2 )
       {
         return Intersection();
