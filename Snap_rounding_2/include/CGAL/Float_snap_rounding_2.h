@@ -13,8 +13,9 @@
 #ifndef CGAL_FLOAT_SNAP_ROUNDING_2_H
 #define CGAL_FLOAT_SNAP_ROUNDING_2_H
 
-
+#ifdef DOUBLE_2D_SNAP_VERBOSE
 #include <iostream>
+#endif
 #include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
