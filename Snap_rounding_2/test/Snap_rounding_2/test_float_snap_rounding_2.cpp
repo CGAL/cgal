@@ -72,25 +72,6 @@ void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
             test_almost_indentical_segments(r, nb_segments, Vector_2(x1,y1), Vector_2(x2,y2));
 }
 
-void test_data(){
-  std::vector<Segment_2> segs;
-  std::vector<Segment_2> out;
-
-  segs.emplace_back(Point_2( 0.353288537902858912, 0.0229645738916604246 ),
-                    Point_2( 0.353619283885096169, 0.0230228644565691754 ));
-  segs.emplace_back(Point_2( 0.353619283885096169, 0.0230228644565691754 ),
-                    Point_2( 0.354002104897765901, 0.0214915804089364851 ));
-  segs.emplace_back(Point_2( 0.354002104897765901, 0.0214915804089364851 ),
-                    Point_2( 0.354002107499122531, 0.0214915700035099161 ));
-  segs.emplace_back(Point_2( 0.354002107499122531, 0.0214915700035099161 ),
-                    Point_2( 0.353288537902858912, 0.0229645738916604246 ));
-  segs.emplace_back(Point_2( 0.354002107499122531, 0.0214915700035098953 ),
-                    Point_2( 0.354002104897765901, 0.0214915804089364851 ));
-
-  CGAL::compute_snap_subcurves_2(segs.begin(), segs.end(), out);
-  assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
-}
-
 int main(int argc,char *argv[])
 {
   CGAL::Random rp;
