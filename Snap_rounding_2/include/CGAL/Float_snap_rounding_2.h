@@ -42,50 +42,8 @@ public:
     Box_with_index_d( const Bbox_2& b, ID i) : Base( b), m_index(i) {}
     Box_with_index_d( const Bbox_3& b, ID i) : Base( b), m_index(i) {}
     ID  index() const { return m_index; }
-    // ID  id() const { return m_index; }
 };
 
-// Generic template signature of boxes, specialized for ID_FROM_HANDLE policy
-#if 0
-template<class NT_, int N, class Handle_, class IdPolicy = ID_FROM_INDEX>
-class Box_with_index_d : public Box_d< NT_, N, IdPolicy> {
-protected:
-    size_t m_index;
-public:
-    typedef Box_d< NT_, N, IdPolicy> Base;
-    typedef NT_                      NT;
-    typedef size_t                   ID;
-
-    Box_with_index_d() {}
-    Box_with_index_d( ID i) : m_index(i) {}
-    Box_with_index_d( bool complete, ID i): Base(complete), m_index(i) {}
-    Box_with_index_d(NT l[N], NT h[N], ID i) : Base( l, h), m_index(i) {}
-    Box_with_index_d( const Bbox_2& b, ID i) : Base( b), m_index(i) {}
-    Box_with_index_d( const Bbox_3& b, ID i) : Base( b), m_index(i) {}
-    ID  index() const { return m_index; }
-};
-
-// Specialization for ID_FROM_INDEX policy
-template<class NT_, int N>
-class Box_with_index_d<NT_, N, Handle_, ID_FROM_INDEX>
-    : public Box_d< NT_, N, ID_NONE> {
-protected:
-    size_t m_index;
-public:
-    typedef Box_d< NT_, N, ID_NONE> Base;
-    typedef NT_                      NT;
-    typedef size_t                   ID;
-
-    Box_with_index_d() {}
-    Box_with_index_d( ID i) : m_index(i) {}
-    Box_with_index_d( bool complete, ID i): Base(complete), m_index(i) {}
-    Box_with_index_d(NT l[N], NT h[N], ID i) : Base( l, h), m_index(i) {}
-    Box_with_index_d( const Bbox_2& b, ID i) : Base( b), m_index(i) {}
-    Box_with_index_d( const Bbox_3& b, ID i) : Base( b), m_index(i) {}
-    ID  index() const { return m_index; }
-    ID  id() const { return m_index; }
-};
-#endif
 }
 
 template <class PointsRange , class PolylineRange>
