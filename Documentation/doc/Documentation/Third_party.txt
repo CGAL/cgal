@@ -288,6 +288,8 @@ for more information.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
 If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
+\attention In the master branch of \ceres `glog` was dropped as a dependecy and `abseil` was added instead. It is not compatible with \visualstudio 2017 or earlier versions.
+
 \subsection thirdpartyGLPK GLPK
 
 \glpk (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
@@ -311,7 +313,7 @@ The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.or
 \osqp (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
 
 In \cgal, \osqp provides an optional solver for the quadratic programming used in the \ref PkgShapeRegularization package.
-In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`.
+In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`. \cgal is compatible with \osqp version 1.0.0.
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 

@@ -666,7 +666,6 @@ View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1
 In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain.
 The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
 the volume delimited by this surface is also considered as inside the domain.
-previous subsection.
 
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
@@ -678,7 +677,10 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
 
 The following code creates a polyhedral domain, with only one polyhedron,
-and no "bounding polyhedron", so the volumetric part of the domain will be empty.
+and no "bounding polyhedron". The volumetric part of the domain may be empty
+and should not be meshed.
+In this case, it is recommended to use the `CGAL::parameters::surface_only()` parameter
+to speedup the meshing of the surface only.
 This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}

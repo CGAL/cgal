@@ -55,7 +55,7 @@ bool is_pullout_direction
 {
   //NOT CHECKED AT ALL
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(pgn, traits));
 
   auto e_it = pgn.edges_begin();
   auto cc_in_between = traits.counterclockwise_in_between_2_object();
@@ -137,7 +137,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
   typedef typename Polygon_2::Edge_const_iterator       Edge_iter;
 
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(pgn, traits));
 
   Edge_iter e_it = pgn.edges_begin();
   auto segment_outer_circle =

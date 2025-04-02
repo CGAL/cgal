@@ -1568,7 +1568,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-             const typename GeometryTraits_2::X_monotone_curve_2& c,
+             const typename GeometryTraits_2::Curve_2& c,
              const PointLocation& pl, std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
@@ -1607,7 +1607,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     // Check whether the isolated point lies inside a face (otherwise,
     // it coincides with a vertex or an edge).
     auto obj = pl.locate(*iso_p);
-    if (std::get_if<Face_const_handle>(&x_obj) != nullptr) return true;
+    if (std::get_if<Face_const_handle>(&obj) != nullptr) return true;
   }
 
   // If we reached here, the curve does not intersect the arrangement.

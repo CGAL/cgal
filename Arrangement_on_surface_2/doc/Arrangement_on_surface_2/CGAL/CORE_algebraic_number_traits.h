@@ -12,16 +12,16 @@ public:
   /// \name Types
   /// @{
 
-  //! The integer number type.
+  /// The integer number type.
   typedef CORE::BigInt                    Integer;
 
-  //! The rational number type.
+  /// The rational number type.
   typedef CORE::BigRat                    Rational;
 
-  //! The polynomial type.
+  /// The polynomial type.
   typedef CORE::Polynomial<Integer>       Polynomial;
 
-  //! The algebraic number type.
+  /// The algebraic number type.
   typedef CORE::Expr                      Algebraic;
 
   /// @}

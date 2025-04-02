@@ -11,7 +11,7 @@ a type that represents a general polygon and another one that represents
 general polygon with holes. It also requires operations that operate on these
 types.
 
-\cgalRefines{ArrangementDirectionalXMonotoneTraits_2}
+\cgalRefines{AosDirectionalXMonotoneTraits_2}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
@@ -19,7 +19,7 @@ types.
 \cgalHasModels{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
 \cgalHasModelsEnd
 
-\sa `ArrangementDirectionalXMonotoneTraits_2`
+\sa `AosDirectionalXMonotoneTraits_2`
 
 */
 

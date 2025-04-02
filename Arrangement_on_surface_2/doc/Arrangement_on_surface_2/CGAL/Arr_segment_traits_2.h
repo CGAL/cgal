@@ -3,12 +3,12 @@ namespace CGAL {
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The traits class `Arr_segment_traits_2` is a model of the
- * `ArrangementTraits_2` concept, which allows the construction and maintenance
+ * `AosTraits_2` concept, which allows the construction and maintenance
  * of arrangements of line segments. It is parameterized with a
  * \cgal-kernel model that is templated in turn with a number type. To avoid
  * numerical errors and robustness problems, the number type should support
  * exact rational arithmetic; that is, the number type should support the
- * arithmetic operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$
+ * arithmetic operations \f$+\f$, \f$-\f$, \f$\times\f$ and \f$\div\f$
  * carried out without loss of precision.
  *
  * For example, instantiating the traits template with kernels that support
@@ -30,7 +30,7 @@ namespace CGAL {
  * endpoints only, while the traits class needs to store extra data with its
  * segments, in order to efficiently operate on them. Nevertheless, the nested
  * `X_monotone_curve_2` and `Curve_2` types (in this case both types refer to
- * the same class, as <I>every</I> line segment is (weakly) \f$ x\f$-monotone)
+ * the same class, as <I>every</I> line segment is (weakly) \f$x\f$-monotone)
  * can however be converted to the type `Kernel::Segment_2`.
  *
  * `Arr_segment_traits_2` achieves faster running times than the
@@ -47,75 +47,75 @@ namespace CGAL {
  * `Arr_non_caching_segment_traits_2` traits-class.
  *
  * While `Arr_segment_traits_2` models the concept
- * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of the
+ * `AosDirectionalXMonotoneTraits_2`, the implementation of the
  * `Are_mergeable_2` operation does not enforce the input curves to have the
  * same direction as a precondition. Moreover, `Arr_segment_traits_2` supports
  * the merging of curves of opposite directions.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosDirectionalXMonotoneTraits_2}
  */
 template <typename Kernel>
 class Arr_segment_traits_2 : public Kernel {
 public:
+  /// \name Types
+  /// @{
 
-  //! \name Types
-  //! @{
-
-  //! the segment type.
+  /// the segment type.
   typedef typename Kernel::Segment_2            Segment_2;
 
-  //! the line type.
+  /// the line type.
   typedef typename Kernel::Line_2               Line_2;
 
-  //! the point type.
+  /// the point type.
   typedef typename Kernel::Point_2              Point_2;
 
-  //! @}
+  /// @}
 
   /*! The `X_monotone_curve_2` class nested within the traits class is
    * used to represent segments.
    */
   class X_monotone_curve_2 {
   public:
-    //! \name Creation
-    //! @{
+    /// \name Creation
+    /// @{
 
     /*! constructs default. */
     X_monotone_curve_2();
 
-    //! @}
+    /// @}
 
-    //! \name Access Functions
-    //! @{
+    /// \name Access Functions
+    /// @{
 
-    //! obtains the (lexicographically) left endpoint.
+    /// obtains the (lexicographically) left endpoint.
     const Point_2& left() const;
 
-    //! obtains the (lexicographically) right endpoint.
+    /// obtains the (lexicographically) right endpoint.
     const Point_2& right() const;
 
-    //! obtains the supporting line.
+    /// obtains the supporting line.
     const Line_2& line() const;
 
-    //! determines whether the curve is vertical.
+    /// determines whether the curve is vertical.
     bool is_vertical() const;
 
-    //! determines whether the curve is directed lexicographic from left to right
+    /// determines whether the curve is directed lexicographic from left to right
     bool is_directed_right() const;
 
-    //! @}
+    /// @}
   };
 
-  //! The curve type.
+  /// The curve type.
   typedef X_monotone_curve_2                    Curve_2;
 
-  //! A functor that trims curves.
+  /// A functor that trims curves.
   class Trim_2 {
   public:
-    //! \name Creation
-    //! @{
+    /// \name Creation
+    /// @{
 
-    /*! trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given \f$x\f$-monotone curve to an from `src` to `tgt`.
+     *
      * \ pre `src` and `tgt` lies on the curve
      */
     X_monotone_curve_2(const X_monotone_curve_2& xcv,
@@ -123,6 +123,6 @@ public:
 
     //! @}
   } /* end Arr_segment_traits_2::Trim_2 */
-
 }; /* end Arr_segment_traits_2 */
+
 } /* end namespace CGAL */
