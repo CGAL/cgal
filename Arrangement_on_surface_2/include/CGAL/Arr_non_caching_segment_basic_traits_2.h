@@ -25,8 +25,8 @@
 
 /*! \file The basic non-caching segment traits-class for the arrangement
  * package. This traits class handles \f$x\f$-monotone non-intersecting
- * segments.  It is a model of the ArrangementBasicTraits_2 concept. The class
- * is templated by a kernel and inherits from it all the types and many of the
+ * segments. It is a model of the AosBasicTraits_2 concept. The class is
+ * templated by a kernel and inherits from it all the types and many of the
  * functors required by the concept it models.
  */
 
@@ -41,7 +41,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementBasicTraits_2 concept that handles \f$x\f$-monotone
+ * A model of the AosBasicTraits_2 concept that handles \f$x\f$-monotone
  * non-intersecting line segments.
  */
 template <class T_Kernel>

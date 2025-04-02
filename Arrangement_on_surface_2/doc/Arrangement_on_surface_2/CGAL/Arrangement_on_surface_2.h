@@ -5,11 +5,11 @@ namespace CGAL {
  * \anchor arr_refaos
  *
  * An object `aos` of the class `Arrangement_on_surface_2` represents the
- * subdivision induced by a set of \f$ x\f$-monotone curves and isolated points
+ * subdivision induced by a set of \f$x\f$-monotone curves and isolated points
  * into maximally connected cells. The arrangement is represented as a
  * doubly-connected edge-list (<span class="textsc">Dcel</span>) such that each
  * <span class="textsc">Dcel</span> vertex is associated with a point of the
- * plane and each edge is associated with an \f$ x\f$-monotone curve whose
+ * plane and each edge is associated with an \f$x\f$-monotone curve whose
  * interior is disjoint from all other edges and vertices. Recall that an
  * arrangement edge is always comprised of a pair of twin <span
  * class="textsc">Dcel</span> halfedges.
@@ -18,21 +18,21 @@ namespace CGAL {
  * <UL>
  * <LI>The `GeometryTraits` template-parameter should be substituted by
  * a model of a geometry traits. The minimal requirements are defined by the
- * `ArrangementBasicTraits_2` concept. A model of this concept defines
- * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
- * `ArrangementBasicTraits_2::X_monotone_curve_2` and
- * `ArrangementBasicTraits_2::Point_2`, respectively, and supports basic
+ * `AosBasicTraits_2` concept. A model of this concept defines
+ * the types of \f$x\f$-monotone curves and two-dimensional points, namely
+ * `AosBasicTraits_2::X_monotone_curve_2` and
+ * `AosBasicTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
  * <LI>The `TopologyTraits` template-parameter should be substituted by a
- * class that is a model of the `ArrangementTopologyTraits` concept.
+ * class that is a model of the `AosTopologyTraits` concept.
  * </UL>
  *
  * The available traits classes and <span class="textsc">Dcel</span> classes are
  * described below.
 
- * \sa `ArrangementDcel`
+ * \sa `AosDcel`
  * \sa `Arr_default_dcel<Traits>`
- * \sa `ArrangementBasicTraits_2`
+ * \sa `AosBasicTraits_2`
  * \sa `CGAL::overlay()`
 
  * Insertion Functions
@@ -62,10 +62,10 @@ public:
   /// \name Types
   /// @{
 
-  /*! the geometry traits class in use. */
+  /// the geometry traits class in use.
   typedef GeometryTraits                              Geometry_traits_2;
 
-  /*! the topology traits class in use. */
+  /// the topology traits class in use.
   typedef TopologyTraits                                Topology_traits;
 
   /*! a private type used as an abbreviation of the
@@ -78,18 +78,18 @@ public:
    */
   typedef typename Topology_traits::Dcel                Dcel;
 
-  /*! the point type, as defined by the traits class. */
+  /// the point type, as defined by the traits class.
   typedef typename Geometry_traits_2::Point_2           Point_2;
 
-  /*! the \f$ x\f$-monotone curve type, as defined by the traits class. */
+  /// the \f$x\f$-monotone curve type, as defined by the traits class.
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  /*! the size type (equivalent to `size_t`). */
+  /// the size type (equivalent to `std::size_t`).
   typedef typename Dcel::Size                           Size;
 
   /*! \ingroup PkgArrangementOnSurface2DCEL
-   * An object \f$ v\f$ of the class `Vertex` represents an arrangement vertex,
-   * that is a \f$ 0\f$-dimensional cell, associated with a point on the
+   * An object \f$v\f$ of the class `Vertex` represents an arrangement vertex,
+   * that is a \f$0\f$-dimensional cell, associated with a point on the
    * ambient surface.
    */
   class Vertex : public typename Dcel::Vertex {
@@ -137,14 +137,14 @@ public:
      */
     const typename Traits::Point_2& point() const;
 
-    /*! obtains the placement of the \f$ x\f$-coordinate in the parameter space,
+    /*! obtains the placement of the \f$x\f$-coordinate in the parameter space,
      * that is, either the left boundary-side, the interior, or the right
      * boundary-side. If the vertex lies on an identified vertical side, the
      * return value is non-deterministic.
      */
     Arr_parameter_space parameter_space_in_x() const;
 
-    /*! obtains the placement of the \f$ y\f$-coordinate in the parameter space,
+    /*! obtains the placement of the \f$y\f$-coordinate in the parameter space,
      * that is, either the bottom boundary-side, the interior, or the top
      * boundary-side. If the vertex lies on an identified horizontal side, the
      * return value is non-deterministic.
@@ -152,17 +152,16 @@ public:
     Arr_parameter_space parameter_space_in_y() const;
 
     /// @}
-
   }; /* end Vertex */
 
   /*! \ingroup PkgArrangementOnSurface2DCEL
-   * An object \f$ e\f$ of the class `Halfedge` represents a halfedge in the
+   * An object \f$e\f$ of the class `Halfedge` represents a halfedge in the
    * arrangement. A halfedge is directed from its <I>source</I> vertex
    * to its <I>target</I> vertex, and has an <I>incident face</I> lying to
    * its left. Each halfedge has a <I>twin</I> halfedge directed in the
    * opposite direction, where the pair of twin halfedges form together
-   * an arrangement edge, that is, a \f$ 1\f$-dimensional cell, associated
-   * with planar \f$ x\f$-monotone curve.
+   * an arrangement edge, that is, a \f$1\f$-dimensional cell, associated
+   * with planar \f$x\f$-monotone curve.
    *
    * Halfedges are stored in doubly-connected lists and form chains. These
    * chains define the inner and outer boundaries of connected components.
@@ -221,7 +220,7 @@ public:
      */
     Ccb_halfedge_circulator ccb();
 
-    /*! obtains the \f$ x\f$-monotone curve associated with `e`.
+    /*! obtains the \f$x\f$-monotone curve associated with `e`.
      * \pre `e` is not a fictitious halfedge.
      */
     const typename Traits::X_monotone_curve_2& curve() const;
@@ -372,7 +371,7 @@ public:
   /// Mutable
   /// @{
 
-  /*! a handle to an arrangement vertex. */
+  /// a handle to an arrangement vertex.
   typedef unspecified_type Vertex_handle;
 
   /*! a handle to a halfedge.
@@ -380,7 +379,7 @@ public:
    */
   typedef unspecified_type Halfedge_handle;
 
-  /*! a handle to an arrangement face. */
+  /// a handle to an arrangement face.
   typedef unspecified_type Face_handle;
 
   /*! a bidirectional iterator over the
@@ -458,7 +457,7 @@ public:
    */
   typedef unspecified_type Halfedge_const_handle;
 
-  /*! a handle to an arrangement face. */
+  /// a handle to an arrangement face.
   typedef unspecified_type Face_const_handle;
 
   /*! a bidirectional iterator over the
@@ -791,7 +790,7 @@ public:
    * \pre `c` must not be an unbounded curve.
    * \pre `v1` and `v2` are associated with `c`'s endpoints.
    * \pre If `v1` and `v2` are already connected by an edge, this edge
-   * represents an \f$ x\f$-monotone curve that is interior-disjoint from `c`).
+   * represents an \f$x\f$-monotone curve that is interior-disjoint from `c`).
    */
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& c,
                                      Vertex_handle v1,
@@ -878,12 +877,17 @@ public:
    * fictitious halfedge that should contain the vertex at infinity that
    * corresponds to the unbounded left end of `c`.  The function returns a
    * handle for one of the new halfedges directed (lexicographically) from right
-   * to left.  \pre The interior of `c` is disjoint from all existing
-   * arrangement vertices and edges. `c` must have a bounded right endpoint and
-   * an unbounded left end.  \pre `pred->target()` is associated with the right
-   * endpoint of `c`, and `c` should be inserted after `pred` in a clockwise
-   * order around this vertex.  \pre `fict_pred` is a fictitious halfedge that
-   * contains the unbounded left end of `c`.
+   * to left.
+   *
+   * \pre The interior of `c` is disjoint from all existing arrangement vertices
+   * and edges. `c` must have a bounded right endpoint and an unbounded left
+   * end.
+   *
+   * \pre `pred->target()` is associated with the right endpoint of `c`, and `c`
+   * should be inserted after `pred` in a clockwise order around this vertex.
+   *
+   * \pre `fict_pred` is a fictitious halfedge that contains the unbounded left
+   * end of `c`.
   */
   Halfedge_handle insert_from_right_vertex(const X_monotone_curve_2& c,
                                            Halfedge_handle pred,
@@ -899,7 +903,7 @@ public:
    * vertices and edges.
    * \pre `pred1->target()` and `v2` are associated with `c`'s endpoints.
    * \pre If `pred1->target` and `v2` are already connected by an edge, this
-   * edge represents an \f$ x\f$-monotone curve that is interior-disjoint from
+   * edge represents an \f$x\f$-monotone curve that is interior-disjoint from
    * `c`).
    */
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& c,
@@ -918,7 +922,7 @@ public:
    * \pre `pred1->target()` and `pred2->target()` are associated with `c`'s
    * endpoints.
    * \pre If `pred1->target` and `pred2->target()` are already connected by an
-   * edge, this edge represents an \f$ x\f$-monotone curve that is
+   * edge, this edge represents an \f$x\f$-monotone curve that is
    * interior-disjoint from `c`).
    */
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& c,
@@ -943,7 +947,7 @@ public:
    */
   Face_handle remove_isolated_vertex(Vertex_handle v);
 
-  /*! sets `c` to be the \f$ x\f$-monotone curve associated with the edge `e`.
+  /*! sets `c` to be the \f$x\f$-monotone curve associated with the edge `e`.
    * The function obtains a handle for the modified edge (same as `e`).
    * \pre `c` is geometrically equivalent to the curve currently associated
    * with `e`.
@@ -967,10 +971,11 @@ public:
 
   /*! merges the edges represented by `e1` and `e2` into
    * a single edge, associated with the given merged curve `c`.  Denote `e1`'s
-   * end-vertices as \f$ u_1\f$ and \f$ v\f$, while `e2`'s end-vertices are
-   * denoted \f$ u_2\f$ and \f$ v\f$. The function removes the common vertex \f$
-   * v\f$ returns a handle for one of the merged halfedges, directed from \f$
-   * u_1\f$ to \f$ u_2\f$.
+   * end-vertices as \f$u_1\f$ and \f$v\f$, while `e2`'s end-vertices are
+   * denoted \f$u_2\f$ and \f$v\f$. The function removes the common vertex
+   * \f$v\f$ returns a handle for one of the merged halfedges, directed from
+   * \f$u_1\f$ to \f$u_2\f$.
+   *
    * \pre `e1` and `e2` share a common end-vertex, such that the two other
    * end-vertices of the two edges are associated with `c`'s endpoints.
    * \pre `e1` and `e2` have the same direction.
@@ -986,7 +991,7 @@ public:
    * whether they should be left as isolated vertices in the arrangement.
    * If the operation causes two faces to merge, the merged face is returned.
    * Otherwise, the face to which the edge was incident is returned.
-  */
+   */
   Face_handle remove_edge(Halfedge_handle e,
                           bool remove_source = true,
                           bool remove_target = true);
@@ -1008,43 +1013,43 @@ public:
   bool is_valid() const;
 
   /// @}
-
 }; /* end Arrangement_on_surface_2 */
+
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Insert
- * The function `%insert` inserts one or more curves or \f$ x\f$-monotone
+ * The function `%insert` inserts one or more curves or \f$x\f$-monotone
  * curves into a given arrangement, where no restrictions are imposed on the
- * inserted curves. If an inserted curve is not \f$ x\f$-monotone curve, it is
- * subdivided into \f$ x\f$-monotone subcurves (and perhaps isolated points),
+ * inserted curves. If an inserted curve is not \f$x\f$-monotone curve, it is
+ * subdivided into \f$x\f$-monotone subcurves (and perhaps isolated points),
  * which are inserted into the arrangement.
  *
  * \cgalHeading{Requirements}
  *
  * <UL>
- * <LI>If the curve is \f$ x\f$-monotone curve then The instantiated
- * `Traits` class must model the `ArrangementXMonotoneTraits_2`
- * concept. In case that the curve is not \f$ x\f$-monotone then the
+ * <LI>If the curve is \f$x\f$-monotone curve then The instantiated
+ * `Traits` class must model the `AosXMonotoneTraits_2`
+ * concept. In case that the curve is not \f$x\f$-monotone then the
  * instantiated `Traits` class must model the
- * `ArrangementTraits_2` concept. That is, it should define the
- * `Curve_2` type, and support its subdivision into \f$ x\f$-monotone
+ * `AosTraits_2` concept. That is, it should define the
+ * `Curve_2` type, and support its subdivision into \f$x\f$-monotone
  * subcurves (and perhaps isolated points).
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 
 /// @{
 
 /*! Inserts the given curve `c` into the arrangement `arr`.  `c` is subdivided
- * into \f$ x\f$-monotone subcurves (and perhaps isolated points). Each subcurve
+ * into \f$x\f$-monotone subcurves (and perhaps isolated points). Each subcurve
  * is in turn inserted into the arrangement by locating its left endpoint and
  * computing its zone until reaching the right endpoint.
  *
  * The given point-location object `pl` is used to locate the left endpoints of
- * the \f$ x\f$-monotone curves. By default, the function uses the "walk along
+ * the \f$x\f$-monotone curves. By default, the function uses the "walk along
  * line" point-location strategy - namely an instance of the class
  * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits, TopologyTraits> >`.
  *
@@ -1070,7 +1075,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
             typename Arr_point_location_result<Arrangement_on_surface_2<GeometryTraits, TopologyTraits> >::type obj);
 
 
-/*! Aggregately inserts the curves or \f$ x\f$-monotone curves in the range
+/*! Aggregately inserts the curves or \f$x\f$-monotone curves in the range
  * `[first,last)` into the arrangement `arr` using the sweep-line framework.
  * \param arr the target arrangement.
  * \param first the iterator to the first element in the range of curves.
@@ -1090,7 +1095,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  * arrangement's edges or vertices.
  *
  * If the give curve is not an \f$x\f$-monotone curve then the function
- * subdivides the given curve into \f$ x\f$-monotone subcurves and isolated
+ * subdivides the given curve into \f$x\f$-monotone subcurves and isolated
  * vertices . Each subcurve is in turn checked for intersection.  The function
  * uses the zone algorithm to check if the curve intersects the
  * arrangement. First, the curve's left endpoint is located. Then, its zone is
@@ -1104,7 +1109,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  * `Arr_walk_along_line_point_location<Arrangement_on_surface_2<GeometryTraits,
  * TopologyTraits> >`.
  *
- * Checks if the given curve or \f$ x\f$-monotone curve `c` intersects
+ * Checks if the given curve or \f$x\f$-monotone curve `c` intersects
  * edges or vertices of the existing arrangement `arr`.
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
@@ -1112,14 +1117,14 @@ void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  * \cgalHeading{Requirements}
  *
  * <UL>
- * <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeometryTraits`
- * class must model the `ArrangementXMonotoneTraits_2` concept. If
+ * <LI>If `c` is \f$x\f$-monotone then the instantiated `GeometryTraits`
+ * class must model the `AosXMonotoneTraits_2` concept. If
  * `c` is a curve then the instantiated `GeometryTraits` class must
- * model the `ArrangementTraits_2` concept. That is, it should
+ * model the `AosTraits_2` concept. That is, it should
  * define the `Curve_2` type, and support its subdivision into
- * \f$ x\f$-monotone subcurves (and perhaps isolated points).
+ * \f$x\f$-monotone subcurves (and perhaps isolated points).
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits, typename Curve,
@@ -1129,7 +1134,7 @@ bool do_intersect(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
- * Inserts a given \f$ x\f$-monotone curve into a given arrangement, where the
+ * Inserts a given \f$x\f$-monotone curve into a given arrangement, where the
  * given curve and the existing arrangement edges (more precisely, the curves
  * geometric mappings of the edges) must be pairwise disjoint in their
  * interiors, and the interior of the input curve must not contain existing
@@ -1153,9 +1158,9 @@ bool do_intersect(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the restricted
- * `ArrangementBasicTraits_2` concept, as no intersections are computed.
+ * `AosBasicTraits_2` concept, as no intersections are computed.
  * <LI>The point-location object `pl` must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits,
@@ -1168,7 +1173,7 @@ insert_non_intersecting_curve
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
- * Inserts a set of \f$ x\f$-monotone curves in a given range into a given
+ * Inserts a set of \f$x\f$-monotone curves in a given range into a given
  * arrangement. The insertion is performed in an aggregated manner using the
  * sweep-line algorithm. The input curves and the existing arrangement edges
  * (more precisely, the curves geometric mappings of the edges) must be pairwise
@@ -1181,7 +1186,7 @@ insert_non_intersecting_curve
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementBasicTraits_2` concept, as no intersections are computed.
+ * `AosBasicTraits_2` concept, as no intersections are computed.
  * <LI>`InputIterator::value_type` must be `Traits::X_monotone_curve_2`
  * </UL>
  */
@@ -1210,12 +1215,12 @@ void insert_non_intersecting_curves
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementXMonotoneTraits_2` concept. Not all expressions listed
+ * `AosXMonotoneTraits_2` concept. Not all expressions listed
  * by this concept are required. In fact the traits class must model the
- * `ArrangementBasicTraits_2` concept, and support the splitting
+ * `AosBasicTraits_2` concept, and support the splitting
  * functionality.
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits,
@@ -1231,7 +1236,7 @@ insert_point(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  *
  * Invokes the member function `arr.is_valid()` to verify the topological
  * correctness of the arrangement. Then it performs additional validity
- * tests. It checks that all \f$ x\f$-monotone curves associated with
+ * tests. It checks that all \f$x\f$-monotone curves associated with
  * arrangement edges are pairwise disjoint in their interior. Then it makes sure
  * that all holes and all isolated vertices are located within the proper
  * arrangement faces. Note that the test carried out by this function may take a
@@ -1254,8 +1259,8 @@ bool is_valid
  * its endpoints become isolated, they are removed as well. The call
  * `remove_edge(arr, e)` is equivalent to the call `arr.remove_edge (e, true,
  * true)`. However, this free function requires that `Traits` be a model of the
- * refined concept `ArrangementXMonotoneTraits_2`, which requires merge
- * operations on \f$ x\f$-monotone curves. If one of the end-vertices of the
+ * refined concept `AosXMonotoneTraits_2`, which requires merge
+ * operations on \f$x\f$-monotone curves. If one of the end-vertices of the
  * given edge becomes redundant after the edge is removed (see `remove_vertex()`
  * for the definition of a redundant vertex), it is removed, and its incident
  * edges are merged.  If the edge-removal operation causes two faces to merge,
@@ -1266,10 +1271,10 @@ bool is_valid
  *
  * <UL>
  * <LI>The instantiated traits class must model the concept
- * `ArrangementXMonotoneTraits_2`.
+ * `AosXMonotoneTraits_2`.
  * </UL>
  */
-template<typename GeometryTraits, typename TopologyTraits>
+template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_surface_2<GeometryTraits, TopologyTraits>::Face_handle
 remove_edge
 (Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
@@ -1288,9 +1293,9 @@ remove_edge
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementXMonotoneTraits_2` concept. Not all expressions listed
+ * `AosXMonotoneTraits_2` concept. Not all expressions listed
  * by this concept are required. In fact the traits class must model the
- * `ArrangementBasicTraits_2` concept and support the merging
+ * `AosBasicTraits_2` concept and support the merging
  * functionality.
  * </UL>
  */
@@ -1324,9 +1329,9 @@ bool remove_vertex
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  * \pre The instantiated `GeometryTraits` class must model the
- *      `ArrangementXMonotoneTraits_2` concept.
+ *      `AosXMonotoneTraits_2` concept.
  * \pre The point-location object `pl`, must model the
- *      `ArrangementPointLocation_2` concept.
+ *      `AosPointLocation_2` concept.
  * \pre Dereferencing `oi` must yield a polymorphic object of type
  *      `std::variant<Arrangement_on_surface_2::Vertex_handle, Arrangement_on_surface_2::Halfedge_handle, Arrangement_on_surface_2::Face_handle>`.
  *

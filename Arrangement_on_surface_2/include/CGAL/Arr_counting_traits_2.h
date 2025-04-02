@@ -316,7 +316,7 @@ public:
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
-    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
      * into a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its value type is a variant
