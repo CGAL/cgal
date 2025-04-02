@@ -119,7 +119,7 @@ The following example reads a point set, creates a Poisson implicit function and
 The computed implicit functions can be iso-contoured to reconstruct a
 surface by using the \cgal 3D mesh generator :
 
-`make_mesh_3()` with the `surface_only()` parameter for using parallel Mesh_3 
+`make_mesh_3()` with the `surface_only()` parameter for using parallel Mesh_3
 
 The parameter `Tag` affects the behavior of `make_mesh_3()`:
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold surface without boundary.
