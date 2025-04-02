@@ -929,12 +929,11 @@ public:
 /// @}
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS &np)
   {
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
 
-    using parameters::get_parameter;
     return create_implicit_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
                                        parameters::get_parameter(np, internal_np::bounding_object_param),
                                        np);

@@ -243,8 +243,7 @@ public:
 /// @}
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
-  {
+  static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const CGAL_NP_CLASS& np) {
     using parameters::get_parameter;
 
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
