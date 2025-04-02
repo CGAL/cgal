@@ -21,11 +21,6 @@
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
 namespace CGAL {
-
-// Forward declaration for normal check
-template<typename Point_3, typename Vector_3 = typename Kernel_traits<Point_3>::Kernel::Vector_3>
-class Point_set_3;
-
 namespace Shape_detection {
 namespace Point_set {
 
@@ -142,8 +137,10 @@ namespace Point_set {
       m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
     {
       CGAL_precondition(input_range.size() > 0);
-      if constexpr (std::is_convertible_v<InputRange, Point_set_3<typename Traits::Point_3>>)
+#ifdef CGAL_POINT_SET_3_H
+      if constexpr (std::is_convertible_v<InputRange, Point_set_3<typename Traits::Point_3, typename Traits::Vector_3> >)
         CGAL_precondition(input_range.has_normal_map());
+#endif
 
       using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
       using Item_map = typename NP_helper::type;

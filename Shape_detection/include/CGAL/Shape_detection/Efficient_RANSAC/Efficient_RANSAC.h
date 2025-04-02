@@ -42,11 +42,6 @@
 //---------------------
 
 namespace CGAL {
-
-// Forward declaration for normal check
-template<typename Point_3, typename Vector_3 = typename Kernel_traits<Point_3>::Kernel::Vector_3>
-class Point_set_3;
-
 namespace Shape_detection {
 
 /*!
@@ -287,8 +282,10 @@ public:
           Normal_map normal_map = Normal_map()
           ///< Property map to access the normal of an input point.
   ) {
-    if constexpr (std::is_convertible_v<Input_range, Point_set_3<Point>>)
+#ifdef CGAL_POINT_SET_3_H
+    if constexpr (std::is_convertible_v<Input_range, Point_set_3<typename Traits::Point_3, typename Traits::Vector_3> >)
       CGAL_precondition(input_range.has_normal_map());
+#endif
 
     m_point_pmap = point_map;
     m_normal_pmap = normal_map;
