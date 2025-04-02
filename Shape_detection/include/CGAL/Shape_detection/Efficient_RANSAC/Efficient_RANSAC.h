@@ -18,8 +18,6 @@
 
 #include <CGAL/Random.h>
 
-#include <CGAL/Point_set_3.h>
-
 #include <CGAL/Shape_detection/Efficient_RANSAC/Octree.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Plane.h>
@@ -44,6 +42,11 @@
 //---------------------
 
 namespace CGAL {
+
+// Forward declaration for normal check
+template<typename Point_3, typename Vector_3>
+class Point_set_3;
+
 namespace Shape_detection {
 
 /*!
@@ -285,7 +288,7 @@ public:
           ///< Property map to access the normal of an input point.
   ) {
     if constexpr (std::is_convertible_v<Input_range, Point_set_3<Point>>)
-      CGAL_assertion(input_range.has_normal_map());
+      CGAL_precondition(input_range.has_normal_map());
 
     m_point_pmap = point_map;
     m_normal_pmap = normal_map;
