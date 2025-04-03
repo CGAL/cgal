@@ -511,23 +511,16 @@ class Conforming_constrained_Delaunay_triangulation_3_impl;
 
 #endif // not DOXYGEN_RUNNING
 
-template <typename Traits,
-          typename Triangulation =
-              Triangulation_3<Traits,
-                              Triangulation_data_structure_3<Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits>,
-                                                             Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits>>>>
-class Conforming_constrained_Delaunay_triangulation_3;
-
 /*!
  * \ingroup PkgCT_3Classes
  * \brief This class template represents a 3D conforming constrained Delaunay triangulation.
  *
- * It contains a data member of type `Triangulation` and provides additional functionality for handling
+ * It contains a data member of type `Tr` and provides additional functionality for handling
  * polygonal constraints during the triangulation process.
  *
  * \tparam Traits is the geometric traits class and must be a model of `ConformingConstrainedDelaunayTriangulationTraits_3`.
- * \tparam Triangulation is the underlying triangulation class.
- *         It must be an instance of the `CGAL::Triangulation_3` class template with the same `Traits` template parameter.
+ * \tparam Tr is the underlying triangulation class.
+ *         It must be `CGAL::Default` or an instance of the `CGAL::Triangulation_3` class template with the same `Traits` template parameter.
  *         Its `Vertex` type must be a model of `ConformingConstrainedDelaunayTriangulationVertexBase_3`,
  *         and its `Cell` type must be a model of `ConformingConstrainedDelaunayTriangulationCellBase_3`.
  *         <br>
@@ -535,8 +528,18 @@ class Conforming_constrained_Delaunay_triangulation_3;
  *         `Triangulation_data_structure_3<Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits>, Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
  *
  */
-template <typename Traits, typename Triangulation>
-class Conforming_constrained_Delaunay_triangulation_3 {
+template <typename Traits, typename Tr = CGAL::Default>
+class Conforming_constrained_Delaunay_triangulation_3
+{
+public:
+  /** The internal triangulation type*/
+  using Triangulation = typename CGAL::Default::Get<Tr,
+          Triangulation_3<Traits,
+            Triangulation_data_structure_3<Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits>,
+                                           Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits>>>
+          >::type;
+
+private:
   using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation::Triangulation_data_structure>;
   static_assert(std::is_base_of_v<Triangulation, DT_3>);
   // static_assert(CGAL::is_nothrow_movable_v<DT_3>);
@@ -3891,14 +3894,16 @@ protected:
 
 /*!
 * \addtogroup PkgCT_3Functions
-* \brief creates a triangulation for Tetrahedral remeshing
-* \tparam Traits traits
-* \tparam Tr triangulation
+* \brief creates a triangulation that can be used for Tetrahedral remeshing
+* \tparam Traits 	is the geometric traits class of `ccdt`
+* \tparam Tr is the type of triangulation to which `ccdt` is converted
 *
-* \param ccdt triangulation
+* \param ccdt the triangulation to be converted
+* \return a triangulation of type `CGAL::Triangulation_3` that can be used for Tetrahedral remeshing
 */
 template <typename Traits, typename Tr>
-CGAL::Triangulation_3<Traits, typename Tr::Triangulation_data_structure>
+CGAL::Triangulation_3<Traits,
+  typename Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>::Triangulation::Triangulation_data_structure>
 convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt)
 {
   auto tmp = std::move(ccdt).convert_for_remeshing();
