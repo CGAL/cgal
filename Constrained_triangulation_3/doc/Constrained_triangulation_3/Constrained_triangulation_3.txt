@@ -15,7 +15,7 @@ namespace CGAL {
 \section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
 This package implements the construction of a 3D conforming Delaunay triangulation,
-constrained to a set of faces of a surface polygon mesh.
+constrained to a set of faces of a Piecewise Linear Complex.
 
 For any Piecewise Linear Complex (PLC) in 3D,
 the algorithm builds a Constrained Delaunay triangulation conforming to this PLC.
@@ -100,7 +100,7 @@ Right : the same CCDT seen with cutplane.
 \subsection CT_3_api_classes Classes
 
 This package provides one main class `Conforming_constrained_Delaunay_triangulation_3`
-that represents a 3D conforming Delaunay triangulation.
+that represents a 3D conforming constrained Delaunay triangulation.
 The class is templated by the geometric traits class and the underlying triangulation class.
 The other classes that are provided are secondary classes that define the
 vertex and cell types and metadata that constitute the triangulation.
