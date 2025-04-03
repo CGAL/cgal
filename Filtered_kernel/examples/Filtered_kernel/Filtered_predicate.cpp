@@ -16,9 +16,9 @@ struct My_orientation_2
   typedef typename K::RT            RT;
   typedef typename K::Point_2       Point_2;
 
-  typedef typename K::Orientation   result_type;
+  typedef typename K::Orientation   Orientation;
 
-  result_type
+  Orientation
   operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
   {
     RT prx = p.x() - r.x();

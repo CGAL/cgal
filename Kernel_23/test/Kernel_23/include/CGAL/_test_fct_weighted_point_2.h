@@ -152,8 +152,6 @@ _test_fct_weighted_point_2(const R& )
   assert( CGAL::squared_radius_smallest_orthogonal_circle(wp3, wp8) == RT(1) );
   assert( CGAL::squared_radius_smallest_orthogonal_circle(wp1_b, wp3_b) == RT(-3));
 
-  std::cout << CGAL::weighted_circumcenter(wp_00, wp_10, wp_01) << std::endl;
-
   using CGAL::testsuite::approx_equal;
   assert( approx_equal(CGAL::squared_radius_smallest_orthogonal_circle(wp1, wp3, wp5),
                        CGAL::squared_radius(p1, p3, p5)) );
