@@ -369,7 +369,7 @@ void _test_bounded_side(const K &k) {
     }
   }
 
-  // we dont need to test bounded_side(Circle, Circular_arc_point) because
+  // we don't need to test bounded_side(Circle, Circular_arc_point) because
   // bounded_side(Circle, Circular_arc_point) = bounded_side(Sphere, Circular_arc_point) +
   //         has_on_3(supporting_plane, circular_arc_point) which has already been tested
   std::cout << "Testing bounded_side(Circle, Point)..." << std::endl;
