@@ -112,17 +112,14 @@ private:
 };
 
 template <typename PolygonRange,typename Map>
-struct Wrapp_id_visitor
+struct Wrapp_id_visitor : public Autorefinement::Default_visitor
 {
   Wrapp_id_visitor(PolygonRange* tr, Map* map):triangles(tr), map_newtriangles(map){}
-  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
-  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void new_subtriangle(std::size_t tgt_id, std::size_t src_id)
   {
     CGAL_SCOPED_LOCK(map_mutex);
     (*map_newtriangles)[(*triangles)[src_id].id()].push_back(tgt_id);
   }
-  inline void delete_triangle(std::size_t /*src_id*/) {}
 
 private:
   PolygonRange* triangles;

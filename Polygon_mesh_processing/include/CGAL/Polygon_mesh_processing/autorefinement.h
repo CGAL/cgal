@@ -90,6 +90,10 @@ struct Default_visitor
   inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void delete_triangle(std::size_t /*src_id*/) {}
+
+  // Not documented
+  template< typename Triangle>
+  inline void internal_new_subtriangle(Triangle& /*new_t*/ , const Triangle& /*old_t*/) {}
 };
 
 } // end of Autorefinement visitor
@@ -1505,6 +1509,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
               { triangle_buffer[ti][0]->second,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
+            visitor.new_subtriangle(soup_triangles_out[offset + ti], soup_triangle[tri_inter_ids_inverse[new_triangles[ti].second]]);
           }
         }
     );
@@ -1562,6 +1567,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
               { triangle_buffer[ti][0]->second,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
+            visitor.internal_new_subtriangle(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
           }
         }
     );
@@ -1580,6 +1586,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       soup_triangles_out.push_back({ get_point_id(t_and_id.first[0]),
                                      get_point_id(t_and_id.first[1]),
                                      get_point_id(t_and_id.first[2]) });
+      visitor.internal_new_subtriangle(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
     }
   }
 
