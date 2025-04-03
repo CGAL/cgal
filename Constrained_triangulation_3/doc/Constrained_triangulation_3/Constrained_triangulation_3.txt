@@ -170,8 +170,10 @@ The following example shows how to remesh a conforming constrained Delaunay tria
 \cgalExample{Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp }
 
 
-\section CT_3_design Design and Implementation History
+\section CT_3_design Implementation History
 
-\todo implementation history
+The first version of this package was implemented by Laurent Rineau, and published in 2025 in CGAL 6.1. It is based on the theoretical foundation provided by Hang Si's work on meshing algorithms
+\cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
+
 */
 } /* namespace CGAL */
