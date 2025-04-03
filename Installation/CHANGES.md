@@ -9,7 +9,10 @@
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
-
+-   Added the function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+    to remesh triangle meshes. This remeshing algorithm uses clustering on polygonal meshes as to
+    approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
+    sharp features and corners.
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
@@ -29,6 +32,11 @@
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
 
+### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
+
+-   Added a new named parameter for `CGAL::Subdivision_method_3::Loop_subdivision()` and
+    `CGAL::Subdivision_method_3::CatmullClark_subdivision()`, which enables users to subdivide
+    a mesh without modifying its geometry.
 
 ### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
 
