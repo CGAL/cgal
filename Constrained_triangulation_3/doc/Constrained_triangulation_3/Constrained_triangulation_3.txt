@@ -116,7 +116,7 @@ are provided to create a `Conforming_constrained_Delaunay_triangulation_3` objec
 
 \subsection CT_3_example_ccdt Build a Conforming Constrained Delaunay Triangulation
 
-The following example shows how to use the helper constructor function
+The following example demonstrates how to use the helper constructor function
 `make_conforming_constrained_Delaunay_triangulation_3()` to create a
 conforming constrained Delaunay triangulation from a given PLC.
 
@@ -127,7 +127,7 @@ conforming constrained Delaunay triangulation from a given PLC.
 
 It is also possible to create a conforming constrained Delaunay triangulation
 from a polygon soup, i.e., a set of polygons for which the connectivity is not known a priori.
-This example shows an example of building such a triangulation.
+This example demonstrates how to build such a triangulation.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
@@ -138,7 +138,7 @@ When the user knows a priori the set of patch ids that he wants to attach to fac
 can be used and kept valid through the construction of the conforming constrained
 Delaunay triangulation.
 
-The following examples shows an example of how to detect surface patches separated by sharp edges,
+The following example demonstrates how to detect surface patches separated by sharp edges
 and use this surface segmentation in the tetrahedrization process.
 
 When this parameter is used, the 3D triangulation constrained faces indices (available with
@@ -162,7 +162,7 @@ Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulati
 \subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
 Once the triangulation is built, it is possible to remesh it using the
-`CGAL::tetrahedral_isotropic_remeshing()` function from the \ref PkgTetrahedralRemeshing package,
+`CGAL::tetrahedral_isotropic_remeshing()` function from the \ref PkgTetrahedralRemeshing package
 to improve the quality of the mesh or adapt it to a given sizing field.
 
 The following example shows how to remesh a conforming constrained Delaunay triangulation.
