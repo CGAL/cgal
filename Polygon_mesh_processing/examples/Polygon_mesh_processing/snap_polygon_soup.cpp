@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 
     CGAL::Real_timer t;
     t.start();
-#if 1
+#if 0
     Track_visitor visitor;
     bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
 #else

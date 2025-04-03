@@ -287,10 +287,10 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
                         }
                         );
     } else
-#else
+#endif
     for (Point_3 &p : points)
       p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
-#endif
+
     repair_polygon_soup(points, triangles, np);
 
     // Get all intersecting triangles
@@ -372,14 +372,14 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
                         }
                         );
     } else
-#else
+#endif
     for (Point_3 &p : points)
     {
       Point_3 p_snap = snap_p(p);
       if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
         p = p_snap;
     }
-#endif
+
 
 #elif 1
     // Version where points in a voxel are rounded to the closest point
@@ -530,7 +530,6 @@ bool polygon_soup_snap_rounding(PointRange &soup_points,
     size_t id=0;
     for(typename PolygonRange::iterator it=soup_triangles.begin(); it!=soup_triangles.end(); ++it)
       indexes_soup_triangles.emplace_back((*it), id++);
-    std::cout << "Test 0" << std::endl;
 
     bool res=polygon_soup_snap_rounding_impl(soup_points, indexes_soup_triangles, np);
 
