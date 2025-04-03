@@ -68,7 +68,7 @@ centered at the origin, then we take the convex hull of this set of points
 and use this as our polyhedron. Finally, we calculate Wachspress coordinates
 for all of these 250 points.
 
-\cgalExample{Barycentric_coordinates_3/wachspress_coordinates.cpp}
+\cgalExample{Barycentric_coordinates_3/wachspress_coordinates_3.cpp}
 
 \subsection dh_3_example Discrete Harmonic Coordinates
 
@@ -78,7 +78,7 @@ at the boundary, we calculate discrete harmonic coordinates. In this example,
 we use the fast with edge cases algorithm because it treats points very close
 to the boundaries.
 
-\cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp}
+\cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates_3.cpp}
 
 \subsection mv_3_example Mean Value Coordinates
 
@@ -91,7 +91,7 @@ the polyhedron's kernel (shown in blue).
 Example's point pattern.
 \cgalFigureEnd
 
-\cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}
+\cgalExample{Barycentric_coordinates_3/mean_value_coordinates_3.cpp}
 
 \subsection shape_deform_example_3 Shape deformation
 
@@ -106,7 +106,7 @@ deformed sphere vertices.
 The shape on the left is deformed into the shape on the right.
 \cgalFigureEnd
 
-\cgalExample{Barycentric_coordinates_3/shape_deformation.cpp}
+\cgalExample{Barycentric_coordinates_3/shape_deformation_3.cpp}
 
 \section gbc_3_degeneracies Edge Cases
 

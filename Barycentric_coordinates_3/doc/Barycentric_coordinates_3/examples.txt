@@ -1,7 +1,7 @@
 /*!
 \example Barycentric_coordinates_3/tetrahedron_coordinates.cpp
-\example Barycentric_coordinates_3/wachspress_coordinates.cpp
-\example Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp
-\example Barycentric_coordinates_3/mean_value_coordinates.cpp
-\example Barycentric_coordinates_3/shape_deformation.cpp
+\example Barycentric_coordinates_3/wachspress_coordinates_3.cpp
+\example Barycentric_coordinates_3/discrete_harmonic_coordinates_3.cpp
+\example Barycentric_coordinates_3/mean_value_coordinates_3.cpp
+\example Barycentric_coordinates_3/shape_deformation_3.cpp
 */
