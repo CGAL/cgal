@@ -3892,10 +3892,11 @@ protected:
 
 #endif // DOXYGEN_RUNNING
 
+
 /*!
 * \addtogroup PkgCT_3Functions
 * \brief creates a triangulation that can be used for Tetrahedral remeshing
-* \tparam Traits 	is the geometric traits class of `ccdt`
+* \tparam Traits is the geometric traits class of `ccdt`
 * \tparam Tr is the type of triangulation to which `ccdt` is converted
 *
 * \param ccdt the triangulation to be converted
