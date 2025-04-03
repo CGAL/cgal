@@ -143,8 +143,8 @@ and use this surface segmentation in the tetrahedrization process.
 
 When this parameter is used, the 3D triangulation constrained faces indices (available with
 `face_constraint_index()` in `Conforming_constrained_Delaunay_triangulation_cell_data_3`)
-are set to the corresponding patch ids.
-When it is not used, the face indices are set to the values available in the patch map.
+are set to the corresponding patch ids from this map.
+When it is not used, the face indices are set to different indices for each input facet.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 
