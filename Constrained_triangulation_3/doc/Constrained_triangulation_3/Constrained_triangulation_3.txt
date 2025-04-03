@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor userchapterct3
 
 \cgalAutoToc
-\author Laurent Rineau
+\author Laurent Rineau and Jane Tournois
 
 \image html vase_cdt.png
 \image latex vase_cdt.png
@@ -140,6 +140,11 @@ Delaunay triangulation.
 
 The following examples shows an example of how to detect surface patches separated by sharp edges,
 and use this surface segmentation in the tetrahedrization process.
+
+When this parameter is used, the 3D triangulation constrained faces indices (available with
+`face_constraint_index()` in `Conforming_constrained_Delaunay_triangulation_cell_data_3`)
+are set to the corresponding patch ids.
+When it is not used, the face indices are set to the values available in the patch map.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 
