@@ -21,7 +21,7 @@ namespace tests{
 
   template<typename FT>
   FT get_tolerance() {
-    return FT(1) / FT(10000000000);
+    return FT(1.0) / FT(10000000000.0);
   }
 
   template<typename Kernel, typename Mesh>
@@ -91,11 +91,11 @@ namespace tests{
 
     using FT = typename Kernel::FT;
 
-    std::size_t num_coords = coords.size();
+    unsigned int num_coords = coords.size();
     assert(num_coords != 0);
 
     for(auto& coord : coords)
-      assert(coord == FT(1)/FT(num_coords));
+      assert(coord == FT(1.0)/FT(num_coords));
   }
 
   template<typename Kernel>

@@ -31,7 +31,7 @@ void test_overloads() {
   std::vector<FT> mv_coordinates_tetrahedron;
 
   //Check for barycenter
-  mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)),
+  mv_tetrahedron(Point_3(FT(0.25), FT(0.25), FT(0.25)),
    std::back_inserter(mv_coordinates_tetrahedron));
   tests::test_barycenter<Kernel>(mv_coordinates_tetrahedron);
 

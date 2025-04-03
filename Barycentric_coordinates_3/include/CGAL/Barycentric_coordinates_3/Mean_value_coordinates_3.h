@@ -318,7 +318,7 @@ private:
       for(std::size_t i = 0; i < 3; i++){
 
         if(*vertex_itr == vertex)
-          vertex_idx = i;
+          vertex_idx = int(i);
 
         const Vector_3 p = m_construct_vector_3(query, get(m_vertex_to_point_map, *vertex_itr));
         query_vertex_vectors[i] = p;
