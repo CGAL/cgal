@@ -28,6 +28,7 @@ CGAL_add_named_parameter(use_binary_mode_t, use_binary_mode, use_binary_mode)
 CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
+CGAL_add_named_parameter(edge_weight_t, edge_weight, edge_weight_map)
 
 CGAL_add_named_parameter(vertex_output_iterator_t, vertex_output_iterator, vertex_output_iterator)
 CGAL_add_named_parameter(face_output_iterator_t, face_output_iterator, face_output_iterator)
