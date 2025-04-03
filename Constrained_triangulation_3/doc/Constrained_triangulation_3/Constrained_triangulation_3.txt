@@ -112,7 +112,7 @@ are provided to create a `Conforming_constrained_Delaunay_triangulation_3` objec
 
 \section CT_3_examples Examples
 
-\subsection CT_3_example_ccdt Build a conforming constrained Delaunay triangulation
+\subsection CT_3_example_ccdt Build a Conforming Constrained Delaunay Triangulation
 
 The following example shows how to use the helper constructor function
 `make_conforming_constrained_Delaunay_triangulation_3()` to create a
@@ -121,7 +121,7 @@ conforming constrained Delaunay triangulation from a given PLC.
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
 
-\subsection CT_3_example_ccdt_soup Build a conforming constrained Delaunay triangulation from a polygon soup
+\subsection CT_3_example_ccdt_soup Build a Conforming Constrained Delaunay Triangulation from a Polygon Soup
 
 It is also possible to create a conforming constrained Delaunay triangulation
 from a polygon soup, i.e., a set of polygons for which the connectivity is not known a priori.
@@ -130,7 +130,7 @@ This example shows an example of building such a triangulation.
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 
-\subsection CT_3_example_ccdt_fpmap Build a conforming constrained Delaunay triangulation with known face patches
+\subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Face Patches
 
 When the user knows a priori the set of patch ids that he wants to attach to faces, this information
 can be used and kept valid through the construction of the conforming constrained
@@ -152,7 +152,7 @@ Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulati
 <!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
 
-\subsection CT_3_example_remesh Remeshing a conforming constrained Delaunay triangulation
+\subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
 Once the triangulation is built, it is possible to remesh it using the
 `CGAL::tetrahedral_isotropic_remeshing()` function from the \ref PkgTetrahedralRemeshing package,
