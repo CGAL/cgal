@@ -681,11 +681,13 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{use_compact_clipper}
-  *     \cgalParamDescription{If `false`, the parts of `pm` coplanar with `plane` will not be part of the output.
-  *                           Always `true` if `clip_volume` is `true`.}
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `pm`.}
   *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`true`}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false` (overwriting any value provided)}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{clip_volume}
@@ -696,13 +698,11 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `pm`.}
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{If `false`, the parts of `pm` coplanar with `plane` will not be part of the output.
+  *                           Always `true` if `clip_volume` is `true`.}
   *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
-  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
-  *                     and `clip_volume` to `false` (overwriting any value provided)}
+  *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
   *    \cgalParamNBegin{do_not_triangulate_faces}
@@ -714,7 +714,7 @@ clip(TriangleMesh& tm,
   *
   * \cgalNamedParamsEnd
   *
-  * @return `true` 
+  * @return `true`
   *
   * @see `split()`
   */
@@ -854,15 +854,6 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
-  *                           and `iso_cuboid` will be checked for self-intersections
-  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
   *   \cgalParamNBegin{clip_volume}
   *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
   *                           the volume \link coref_def_subsec bounded \endlink by `tm`
@@ -877,6 +868,15 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{allow_self_intersections}
   *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
   *     \cgalParamType{Boolean}
@@ -885,6 +885,7 @@ bool clip(PolygonMesh& pm,
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -1161,15 +1162,6 @@ void split(PolygonMesh& pm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
-  *                           and `iso_cuboid` will be checked for self-intersections
-  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
   *   \cgalParamNBegin{clip_volume}
   *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
   *                           the volume \link coref_def_subsec bounded \endlink by `tm`
@@ -1184,7 +1176,16 @@ void split(PolygonMesh& pm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  * *   \cgalParamNBegin{allow_self_intersections}
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_self_intersections}
   *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
@@ -1192,6 +1193,7 @@ void split(PolygonMesh& pm,
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
