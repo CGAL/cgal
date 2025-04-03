@@ -6,6 +6,12 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
+### 2D Triangulations on Hyperbolic Surfaces (new package)
+-   This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
+    It offers functions for the generation of the triangulation from a convex fundamental domain,
+    the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation
+    in the Poincaré disk. A method is offered that generates such domains in genus two.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
