@@ -1134,7 +1134,7 @@ CGAL_Kernel_obj(Point_3)
   return Object();
 }
 
-// This functor selects the i'th element in a vector of T2's
+// This functor selects the i-th element in a vector of T2's
 template <typename T2>
 struct Ith_for_intersection {
   typedef T2 result_type;

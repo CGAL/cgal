@@ -94,6 +94,7 @@
 \package_listing{Skin_surface_3}
 \package_listing{SMDS_3}
 \package_listing{Mesh_3}
+\package_listing{Isosurfacing_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
 \package_listing{Alpha_wrap_3}

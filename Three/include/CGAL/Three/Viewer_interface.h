@@ -223,7 +223,7 @@ public:
   //! Customizable from the MainWindow or the SubViewer menu.
   virtual float total_pass() = 0;
 Q_SIGNALS:
-  //!Emit this to signal that the `id`th item has been picked.
+  //!Emit this to signal that the `id`-th item has been picked.
   void selected(int id);
   //!Emit this to require a contextual menu to appear at `global_pos`.
   void requestContextMenu(QPoint global_pos);
