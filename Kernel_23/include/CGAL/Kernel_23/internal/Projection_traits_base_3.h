@@ -374,6 +374,7 @@ template <class Traits>
 class Compare_xy_along_axis
 {
   // private members
+  typedef typename Traits::Comparison_result Comparison_result;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
   Vector_3 base1, base2;
@@ -384,8 +385,6 @@ public:
     CGAL_PROFILER("Construct Compare_xy_along_axis")
     CGAL_TIME_PROFILER("Construct Compare_xy_along_axis")
   }
-
-  typedef Comparison_result result_type;
 
   Comparison_result operator()(const Point& p, const Point& q) const
   {
