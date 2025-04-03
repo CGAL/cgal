@@ -11,10 +11,13 @@
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
 - Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
   to know faces in the output meshes that are corresponding to input coplanar faces.
+-   Added the function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+    to remesh triangle meshes. This remeshing algorithm uses clustering on polygonal meshes as to
+    approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
+    sharp features and corners.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
 - Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
-
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
@@ -39,6 +42,12 @@
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
 -   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
+
+### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
+
+-   Added a new named parameter for `CGAL::Subdivision_method_3::Loop_subdivision()` and
+    `CGAL::Subdivision_method_3::CatmullClark_subdivision()`, which enables users to subdivide
+    a mesh without modifying its geometry.
 
 ### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
 

@@ -102,6 +102,10 @@ CGAL_add_named_parameter(vertex_mean_curvature_t, vertex_mean_curvature, vertex_
 CGAL_add_named_parameter(vertex_Gaussian_curvature_t, vertex_Gaussian_curvature, vertex_Gaussian_curvature)
 CGAL_add_named_parameter(vertex_principal_curvatures_and_directions_t, vertex_principal_curvatures_and_directions, vertex_principal_curvatures_and_directions)
 CGAL_add_named_parameter(ball_radius_t, ball_radius, ball_radius)
+CGAL_add_named_parameter(gradation_factor_t, gradation_factor, gradation_factor)
+CGAL_add_named_parameter(use_postprocessing_qem_t, use_postprocessing_qem, use_postprocessing_qem)
+CGAL_add_named_parameter(use_qem_based_energy_t, use_qem_based_energy, use_qem_based_energy)
+CGAL_add_named_parameter(vertex_count_ratio_t, vertex_count_ratio, vertex_count_ratio)
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
@@ -170,6 +174,7 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -381,6 +386,9 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
+
+// List of named parameters used in the package ' 3D Surface Subdivision Methods'
+CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
 
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)

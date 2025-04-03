@@ -67,6 +67,7 @@ Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
 Polygon_mesh_processing/autorefinement Polygon Mesh Processing - Autorefinement
+Polygon_mesh_processing/acvd Polygon Mesh Processing - ACVD remeshing
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
