@@ -3,6 +3,13 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+### 2D Triangulations on Hyperbolic Surfaces (new package)
+
+-   This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
+    It offers functions for the generation of the triangulation from a convex fundamental domain,
+    the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation
+    in the Poincaré disk. A method is offered that generates such domains in genus two.
+
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
