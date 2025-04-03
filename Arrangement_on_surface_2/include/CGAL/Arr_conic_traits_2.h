@@ -128,7 +128,11 @@ private:
 public:
   /*! Default constructor.
    */
-  Arr_conic_traits_2() {}
+  Arr_conic_traits_2()
+   : m_rat_kernel(std::make_shared<Rat_kernel>()),
+     m_alg_kernel(std::make_shared<Alg_kernel>()),
+     m_nt_traits(std::make_shared<Nt_traits>())
+  {}
 
   /*! Construct from resources.
    */
