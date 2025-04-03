@@ -124,7 +124,7 @@ struct Orthogonal_cut_plane_traits
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edge_is_marked_map}
- *     \cgalParamDescription{a property map filled by this function that puts `true` for all intersection edges of faces
+ *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
  *                           of `pm` and `plane`, and `false` for all other edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
@@ -163,8 +163,8 @@ struct Orthogonal_cut_plane_traits
  *
  *  \cgalNamedParamsEnd
  *
- *  \sa split()
- *  \sa clip()
+ *  \sa `split()`
+ *  \sa `clip()`
  *
  */
 template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>

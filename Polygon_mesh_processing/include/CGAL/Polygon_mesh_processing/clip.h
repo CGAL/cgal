@@ -590,6 +590,7 @@ generic_clip_impl(
   *     \cgalParamExtra{This option has an effect only if a surface and not a volume is clipped,
   *                     (i.e., if `clip_volume` is `false` or if `tm` is open).}
   *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{do_not_modify}
   *     \cgalParamDescription{(`np_c` only) if `true`, `clipper` will not be modified.}
   *     \cgalParamType{Boolean}
@@ -653,7 +654,7 @@ clip(TriangleMesh& tm,
   * \cgalNamedParamsBegin
   *
   *   \cgalParamNBegin{concurrency_tag}
-  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamDescription{a tag indicating if the task should be performed using one or several threads.}
   *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
   *     \cgalParamDefault{`CGAL::Sequential_tag`}
   *   \cgalParamNEnd
@@ -682,7 +683,7 @@ clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `pm`.}
+  *     \cgalParamDescription{If `true`, self-intersections in `pm` are accepted.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
@@ -878,7 +879,7 @@ bool clip(PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamDescription{If `true`, self-intersections in `tm` are accepted.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
@@ -1186,7 +1187,7 @@ void split(PolygonMesh& pm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamDescription{If `true`, self-intersections in `tm` are accepted.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
