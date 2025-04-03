@@ -833,7 +833,7 @@ public:
     * This function allows the underlying triangulation to be moved out of this object.
     * Example usage:
     * \snippet{trimleft} remesh_constrained_Delaunay_triangulation_3.cpp move ccdt to tr
-    * After calling this function, `cdt` will be empty and `tr` will be move-constructed from the underlying triangulation, avoiding any copy.
+    * After calling this function, `ccdt` will be empty and `tr` will be move-constructed from the underlying triangulation, avoiding any copy.
     *
     * \note This function is available only when the object is an rvalue.
     * \post After this function is called, the object is in a state equivalent to that of a default-constructed object.
