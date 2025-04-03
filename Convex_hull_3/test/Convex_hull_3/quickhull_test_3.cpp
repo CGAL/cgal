@@ -97,7 +97,7 @@ void test_small_hull()
   points.push_back(Point_3(1,3,2));
 
   Polyhedron_3 polyhedron1;
-  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron1, Traits());
+  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron1, CGAL::parameters::geom_traits(Traits()));
   assert( polyhedron1.size_of_vertices() == 5 &&
            polyhedron1.size_of_facets() == 6 );
   Polyhedron_3 polyhedron2;
@@ -117,7 +117,7 @@ void test_coplanar_hull()
   points.push_back(Point_3(1.5,0.5,0));
   points.push_back(Point_3(0.5,1.1,0));
   Polyhedron_3 polyhedron;
-  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron, Traits());
+  CGAL::convex_hull_3(points.begin(), points.end(), polyhedron, CGAL::parameters::geom_traits(Traits()));
   assert( polyhedron.is_valid() );
   assert( polyhedron.size_of_facets() == 4 );
   assert( polyhedron.is_pure_triangle() );

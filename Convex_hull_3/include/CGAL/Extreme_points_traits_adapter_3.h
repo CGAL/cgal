@@ -75,7 +75,10 @@ class Extreme_points_traits_adapter_3
   PointPropertyMap vpm_;
 
 public:
-  Extreme_points_traits_adapter_3(const PointPropertyMap& vpmap,
+Extreme_points_traits_adapter_3()
+{}
+
+Extreme_points_traits_adapter_3(const PointPropertyMap& vpmap,
                                   Base_traits base = Base_traits())
     :
       Base_traits(base), vpm_(vpmap)
