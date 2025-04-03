@@ -34,7 +34,11 @@ create_single_source_cgal_program("test_triangulation_serialization_3.cpp")
 create_single_source_cgal_program("test_dt_deterministic_3.cpp")
 create_single_source_cgal_program("test_Triangulation_with_transform_iterator.cpp")
 create_single_source_cgal_program("test_Triangulation_with_zip_iterator.cpp")
-# create_single_source_cgal_program("debug_segment_traverser_in_2D.cpp") #TODO: debug
+create_single_source_cgal_program("debug_segment_traverser_in_2D.cpp")
+
+if(CGAL_ENABLE_TESTING)
+  set_tests_properties("execution   of  debug_segment_traverser_in_2D" PROPERTIES DISABLED TRUE)
+endif()
 
 include(CGAL_setup_tl-excepted)
 # CDT_3: C++20 for structured bindings
