@@ -172,5 +172,6 @@ The following example shows how to remesh a conforming constrained Delaunay tria
 
 \section CT_3_design Design and Implementation History
 
+\todo implementation history
 */
 } /* namespace CGAL */
