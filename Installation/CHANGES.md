@@ -6,6 +6,13 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
+### 3D Isosurfacing (new package)
+
+-   This package provides algorithms to extract isosurfaces from different inputs. The input is represented
+    as a 3D domain and can be an implicit function or a Cartesian grid. The output is an indexed face
+    set that stores an isosurface in the form of a surface mesh. The provided algorithms include Marching Cubes,
+    topologically correct Marching Cubes, and Dual Contouring.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
