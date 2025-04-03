@@ -407,7 +407,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_subdirectory(implicit_functions)
 
-  add_dependencies(CDT_3  IO_surface_meshes detect_sharp_edges_plugin)
+  add_dependencies(CDT_3  IO_surface_meshes detect_sharp_edges_plugin polylines_io_plugin selection_plugin)
   add_dependencies(Mesh_3 IO_surface_meshes)
 
   #
