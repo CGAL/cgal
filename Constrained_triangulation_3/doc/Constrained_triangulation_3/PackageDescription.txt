@@ -15,20 +15,23 @@
 \cgalPkgPicture{cdt3-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Rineau}
-\cgalPkgDesc{This package allows to build and handle 3D constrained Delaunay triangulations.}
+\cgalPkgAuthors{Laurent Rineau and Jane Tournois}
+\cgalPkgDesc{This package implements the construction of a 3D Constrained Delaunay triangulation,
+conforming to a set of faces of a 3D Piecewise Linear Complex.
+The algorithm builds such a triangulation. The constrained triangulation does not always exist,
+and it may be necessary
+to add Steiner points to the PLC to make it tetrahedralizable.
+}
 \cgalPkgManuals{Chapter_CT_3,PkgCT_3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.1}
 \cgalPkgDependsOn{\ref PkgTriangulation3 "3D Triangulations"}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgBib{cgal:rt-cdt3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
-
-\todo Add more description in cgalPkgDesc.
 
 
 \cgalPkgDescriptionEnd
