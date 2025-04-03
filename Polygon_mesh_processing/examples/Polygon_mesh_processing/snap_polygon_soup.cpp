@@ -1,4 +1,4 @@
-// #define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+#define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
 // #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
 // TODO delete those verbose line macro before release
 
@@ -23,7 +23,7 @@ typedef CGAL::Simple_cartesian<double> Cartesian;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-struct Track_visitor
+struct Track_visitor : PMP::Autorefinement::Default_visitor
 {
   // inline void number_of_output_triangles(std::size_t nbt) { std::cout << "total number of triangles: " << nbt << std::endl;}
   inline void number_of_output_triangles(std::size_t /*nbt*/) {}
@@ -62,7 +62,7 @@ struct Example{
 
     CGAL::Real_timer t;
     t.start();
-#if 0
+#if 1
     Track_visitor visitor;
     bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
 #else
