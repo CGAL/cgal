@@ -1,14 +1,16 @@
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/tetrahedral_remeshing.h>
 
 #include <algorithm>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
+using Tr = CDT::Triangulation;
 
-// static_assert(CGAL::is_nothrow_movable_v<CDT>);
 
 int main(int argc, char* argv[])
 {
@@ -31,15 +33,23 @@ int main(int argc, char* argv[])
   assert(cdt.number_of_constrained_facets() == cdt2.number_of_constrained_facets());
   assert(cdt.number_of_constrained_facets() > mesh.num_faces());
 
-  auto tr = std::move(cdt).triangulation();
-  assert(0 == cdt.triangulation().number_of_vertices());
-  assert(tr.number_of_vertices() == cdt2.triangulation().number_of_vertices());
+  Tr tr = CGAL::convert_to_triangulation_3(std::move(cdt));
+
+  CGAL::tetrahedral_isotropic_remeshing(tr, 2.,
+                                        CGAL::parameters::number_of_iterations(3)
+                                        .remesh_boundaries(false));
+
+  std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
   auto nb = 0u;
-  for([[maybe_unused]] auto _ : cdt2.constrained_facets()) {
-    ++nb;
+  for(auto f : tr.finite_facets())
+  {
+    const Tr::Cell_handle c = f.first;
+    const int i = f.second;
+    if(c->ccdt_3_data().is_facet_constrained(i))
+      ++nb;
   }
   assert(nb == nb_cstr_facets);
-  assert(nb == std::distance(cdt2.constrained_facets_begin(), cdt2.constrained_facets_end()));
 
+  return EXIT_SUCCESS;
 }
