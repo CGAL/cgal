@@ -14,8 +14,10 @@ namespace CGAL {
 
 \section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
-This package implements the construction of a 3D conforming Delaunay triangulation,
-constrained to a set of faces of a Piecewise Linear Complex.
+This package implements the construction of a 3D Constrained Delaunay triangulation,
+conforming to a set of faces of a Piecewise Linear Complex.
+The set of input polygonal constraints given as a PLC is meant to be represented as a
+sub-complex of the triangulation.
 
 For any Piecewise Linear Complex (PLC) in 3D,
 the algorithm builds a Constrained Delaunay triangulation conforming to this PLC.
