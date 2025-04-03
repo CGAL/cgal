@@ -80,6 +80,8 @@ namespace CCC_internal {
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
+    static void restore_erase_counter(Element*, unsigned int) {}
+    template <typename Element>
     static void increment_erase_counter(Element &) {}
   };
 
@@ -96,9 +98,21 @@ namespace CCC_internal {
     }
 
     template <typename Element>
+    static unsigned int erase_counter(Element* e)
+    {
+      return e->erase_counter();
+    }
+
+    template <typename Element>
     static void set_erase_counter(Element &e, unsigned int c)
     {
       e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void restore_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
     }
 
     template <typename Element>
@@ -350,7 +364,7 @@ public:
       CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
-    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
+    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);
     new (ret) value_type(args...);
     EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
@@ -390,9 +404,10 @@ private:
 
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
-
+    auto erase_counter = EraseCounterStrategy::erase_counter(*x);
+    auto ptr = &*x;
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
-
+    EraseCounterStrategy::set_erase_counter(ptr, erase_counter);
     put_on_free_list(&*x, fl);
   }
 public:
