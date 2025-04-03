@@ -381,7 +381,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     }
 
 
-#elif 1
+#elif 0
     // Version where points in a voxel are rounded to the closest point
 
     // Group the points of the vertices of the intersecting triangles by their voxel
@@ -430,7 +430,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
       }
     }
 
-#else
+#elif 0
     // Version where points in a voxel are rounded to their barycenter.
 
     // Group the points of the vertices of the intersecting triangles by their voxel
@@ -479,6 +479,16 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
         }
       }
     }
+#elif 0 //Zhou et al. version with round on float
+    for (auto &pair : pairs_of_intersecting_triangles)
+    {
+      for (size_t pi : triangles[pair.first])
+        points[pi]=Point_3( (float) to_double(points[pi].x()), (float) to_double(points[pi].y()), (float) to_double(points[pi].z()));
+      for (size_t pi : triangles[pair.second])
+        points[pi]=Point_3( (float) to_double(points[pi].x()), (float) to_double(points[pi].y()), (float) to_double(points[pi].z()));
+    }
+#else //Naive version
+    //Nothing
 #endif
 
 
