@@ -458,8 +458,8 @@ acvd_impl(TriangleMesh& tmesh,
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
   const double vertex_count_ratio = choose_parameter(get_parameter(np, internal_np::vertex_count_ratio), 0.1);
-  // TODO: (possible optimization to save memory) if qem is not used use std::conditionnal to store and compute less things in QEMClusterData
-  // TODO: (possible optimization to save memort) use a std::array to store quadrics and assemble the Eigen matric only at the end
+  // TODO: (possible optimization to save memory) if qem is not used use std::conditional to store and compute less things in QEMClusterData
+  // TODO: (possible optimization to save memort) use a std::array to store quadrics and assemble the Eigen matrix only at the end
 
   std::size_t nb_vertices = vertices(tmesh).size();
 
@@ -1236,7 +1236,7 @@ acvd_impl(TriangleMesh& tmesh,
         add_edge(descriptors[p.first], descriptors[p.second], graph);
       }
 
-      // TODO: (possible optimisation) add an id to vertices in Graph and use a random acccess pmap
+      // TODO: (possible optimization) add an id to vertices in Graph and use a random access pmap
       std::map<typename Graph::vertex_descriptor, int> the_map;
 
       if (boost::connected_components(graph, boost::make_assoc_property_map(the_map)) > 1)
