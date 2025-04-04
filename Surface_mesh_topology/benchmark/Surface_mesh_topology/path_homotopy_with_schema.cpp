@@ -112,7 +112,7 @@ int main(int argc, char** argv)
   {
     if (i!=0)
     {
-      random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
+      random=CGAL::Random(random.get_int(0, (std::numeric_limits<int>::max)()));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<": ";
 
