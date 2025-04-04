@@ -89,7 +89,7 @@ namespace boost::foreach {
   struct is_lightweight_proxy<CGAL::Iterator_range<T>> : boost::mpl::true_ {};
 }
 
-#if CGAL_CXX20
+#if CGAL_CXX20 && __cpp_lib_ranges >= 201911L
 #  include <ranges>
 
   template<typename I>
