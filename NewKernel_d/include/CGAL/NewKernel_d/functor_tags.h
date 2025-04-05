@@ -157,7 +157,6 @@ namespace CGAL {
         CGAL_DECL_OBJ(Hyperplane, Object);
         CGAL_DECL_OBJ(Ray, Object);
         CGAL_DECL_OBJ(Iso_box, Object);
-        CGAL_DECL_OBJ(Bbox, Object);
         CGAL_DECL_OBJ(Aff_transformation, Object);
         CGAL_DECL_OBJ(Weighted_point, Object);
 #undef CGAL_DECL_OBJ_
@@ -314,6 +313,7 @@ namespace CGAL {
         //CGAL_DECL_MISC(Construct_vector_cartesian_const_iterator);
         CGAL_DECL_MISC(Point_dimension);
         CGAL_DECL_MISC(Vector_dimension);
+        CGAL_DECL_MISC(Construct_bbox);
         CGAL_DECL_MISC(Linear_base); // Find a more appropriate category?
 #undef CGAL_DECL_MISC
 
