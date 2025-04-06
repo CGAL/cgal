@@ -1,4 +1,3 @@
-
 // Needed for lloyd_optimize_mesh_2 which does it too late
 // (and we don't want to spend the time on finding out who
 // includes the header file that sets it too a value too low
@@ -60,28 +59,28 @@ struct FaceInfo2
 };
 
 template <class CDT>
-void
-mark_domains(CDT& ct,
-             typename CDT::Face_handle start,
-             int index,
-             std::list<typename CDT::Edge>& border )
-{
-  if(start->info().nesting_level != -1){
+void mark_domains(CDT& cdt, 
+                  typename CDT::Cell_handle start,
+                  int index, 
+                  std::list<typename CDT::Facet>& border) {
+  if(start->info().nesting_level != -1) {
     return;
   }
-  std::list<typename CDT::Face_handle> queue;
+  std::list<typename CDT::Cell_handle> queue;
   queue.push_back(start);
-  while(! queue.empty()){
-    typename CDT::Face_handle fh = queue.front();
+  while(!queue.empty()) {
+    typename CDT::Cell_handle cell = queue.front();
     queue.pop_front();
-    if(fh->info().nesting_level == -1){
-      fh->info().nesting_level = index;
-      for(int i = 0; i < 3; i++){
-        typename CDT::Edge e(fh,i);
-        typename CDT::Face_handle n = fh->neighbor(i);
-        if(n->info().nesting_level == -1){
-          if(ct.is_constrained(e)) border.push_back(e);
-          else queue.push_back(n);
+    if(cell->info().nesting_level == -1) {
+      cell->info().nesting_level = index;
+      for(int i = 0; i < 4; i++) {
+        typename CDT::Facet facet(cell, i);
+        typename CDT::Cell_handle neighbor = cell->neighbor(i);
+        if(neighbor->info().nesting_level == -1) {
+          if(cdt.is_constrained(facet)) 
+            border.push_back(facet);
+          else 
+            queue.push_back(neighbor);
         }
       }
     }
@@ -89,20 +88,19 @@ mark_domains(CDT& ct,
 }
 
 template <class CDT>
-void
-mark_nested_domains(CDT& cdt)
-{
-  for(typename CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); ++it){
+void mark_nested_domains(CDT& cdt) {
+  for(typename CDT::All_cells_iterator it = cdt.all_cells_begin(); 
+      it != cdt.all_cells_end(); ++it) {
     it->info().nesting_level = -1;
   }
-  std::list<typename CDT::Edge> border;
-  mark_domains(cdt, cdt.infinite_face(), 0, border);
-  while(! border.empty()){
-    typename CDT::Edge e = border.front();
+  std::list<typename CDT::Facet> border;
+  mark_domains(cdt, cdt.infinite_cell(), 0, border);
+  while(!border.empty()) {
+    typename CDT::Facet facet = border.front();
     border.pop_front();
-    typename CDT::Face_handle n = e.first->neighbor(e.second);
-    if(n->info().nesting_level == -1){
-      mark_domains(cdt, n, e.first->info().nesting_level+1, border);
+    typename CDT::Cell_handle neighbor = facet.first->neighbor(facet.second);
+    if(neighbor->info().nesting_level == -1) {
+      mark_domains(cdt, neighbor, facet.first->info().nesting_level+1, border);
     }
   }
 }
@@ -439,6 +437,16 @@ public Q_SLOTS:
 
 private:
   QAction* actionMesh_2_;
+
+  std::vector<QColor> colors;
+  colors.resize(2); // For non-constrained (0) and constrained (1) facets
+  colors[0] = CGAL::IO::black(); 
+  colors[1] = CGAL::IO::green(); 
+
+  std::vector<QColor> domain_colors;
+  domain_colors.resize(2); // For outside (0) and inside (1) domains
+  domain_colors[0] = CGAL::IO::white();
+  domain_colors[1] = CGAL::IO::blue();
 
 }; // end Mesh_2_plugin
 

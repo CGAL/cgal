@@ -468,9 +468,7 @@ struct Update_vertex_from_CDT_3 {
 }; // end struct Update_vertex
 
 struct Update_cell_from_CDT_3 {
-
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-
   template <typename C1,typename C2>
   void operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(1);

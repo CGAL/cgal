@@ -62,6 +62,49 @@ struct Graphics_scene_options_constrained_triangulation_2:
   };
 };
 
+// In the Update_cell_from_CDT_3 struct in C3t3_io_plugin.cpp
+struct Update_cell_from_CDT_3 {
+  typedef Fake_mesh_domain::Surface_patch_index Sp_index;
+  template <typename C1, typename C2>
+  void operator()(const C1& c1, C2& c2) {
+    // Preserve the actual subdomain index based on nesting level
+    // instead of setting all to 1
+    c2.set_subdomain_index(c1.info().nesting_level + 1);
+    
+    // Set surface patch indices for constrained facets
+    for(int i = 0; i < 4; ++i) {
+      if(c1.constrained_facet[i])
+        c2.set_surface_patch_index(i, 1); // Use index 1 for constrained facets
+      else
+        c2.set_surface_patch_index(i, 0); // Use index 0 for non-constrained facets
+    }
+  }
+};
+
+// In the visualization code where colors are defined
+// This is likely in the CDT_3 plugin's draw or display method
+std::vector<QColor> colors;
+colors.resize(2); // For non-constrained (0) and constrained (1) facets
+colors[0] = CGAL::IO::black(); 
+colors[1] = CGAL::IO::green(); 
+
+std::vector<QColor> domain_colors;
+domain_colors.resize(2); // For outside (0) and inside (1) domains
+domain_colors[0] = CGAL::IO::white();
+domain_colors[1] = CGAL::IO::blue();
+
+// For faces (triangles)
+QColor color = colors[cell->surface_patch_index(index)];
+f_colors.push_back((float)color.redF());
+f_colors.push_back((float)color.greenF());
+f_colors.push_back((float)color.blueF());
+
+// For cells (tetrahedra)
+QColor cell_color = domain_colors[cell->subdomain_index()];
+cell_colors.push_back((float)cell_color.redF());
+cell_colors.push_back((float)cell_color.greenF());
+cell_colors.push_back((float)cell_color.blueF());
+
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
