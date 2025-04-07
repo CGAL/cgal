@@ -19,7 +19,7 @@ This \cgal component implements two algorithms for shape detection:
 
 \section Shape_detection_RANSAC Efficient RANSAC
 
-From an unstructured point set with unoriented normals, this algorithm detects a set of shapes (see Figure \cgalFigureRef{Efficient_RANSAC_overview}).
+From an unstructured point set with unoriented normals, this algorithm detects a set of shapes (see \cgalFigureRef{Efficient_RANSAC_overview}).
 Five types of primitive shapes are provided by this package: plane, sphere, cylinder, cone, and torus. Other primitive shapes can be easily added
 by the user (see Section \ref Shape_detection_RANSACExample_with_custom_shapes).
 
@@ -67,7 +67,7 @@ A high value of `epsilon` leads to the detection of fewer large shapes and hence
 A low value of `epsilon` yields a more detailed detection, but may lead to either lower coverage or over-segmentation.
 Over-segmentation translates into detection of fragmented shapes when `epsilon` is within or below the noise level.
 When the input point set is made of free-form parts, a higher tolerance `epsilon` enables to detect more primitive shapes that approximate some of the free-form surfaces.
-The impact of this parameter is depicted by Figure \cgalFigureRef{Efficient_RANSAC_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Shape_detection_RANSACPerformance.
+The impact of this parameter is depicted by \cgalFigureRef{Efficient_RANSAC_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Shape_detection_RANSACPerformance.
 
 \cgalFigureBegin{Efficient_RANSAC_parameter_epsilon_variation, Efficient_RANSAC/epsilon_variation2.png}
 Impact of the epsilon parameter over the levels of detail of the detection.
@@ -84,7 +84,7 @@ the points covered by a shape are mapped to a 2D parameter space chosen to minim
 This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster.
 The parameter `cluster_epsilon` defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\f$ `cluster_epsilon` are considered adjacent.
 For non-developable shapes, the connected components are identified by computing a neighboring graph in 3D and walking in the graph.
-The impact of the parameter `cluster_epsilon` is depicted in Figure \cgalFigureRef{Efficient_RANSAC_parameter_connectivity}.
+The impact of the parameter `cluster_epsilon` is depicted in \cgalFigureRef{Efficient_RANSAC_parameter_connectivity}.
 
 \cgalFigureBegin{Efficient_RANSAC_parameter_connectivity, Efficient_RANSAC/varying_connectivity.png}
 The parameter `cluster_epsilon` controls the connectivity of the points covered by a detected shape.
@@ -207,10 +207,10 @@ which is used by the example \ref Shape_detection/efficient_RANSAC_with_custom_s
 
 The running time and detection performance of the Efficient RANSAC depend on the chosen parameters.
 A selective error tolerance parameter leads to higher running time and fewer shapes, as many shape candidates are generated to find the largest shape.
-We plot the detection performance against the `epsilon` error tolerance parameter for detecting planes in a complex scene with 5M points (see Figure \cgalFigureRef{Efficient_RANSAC_performance_epsilon}).
+We plot the detection performance against the `epsilon` error tolerance parameter for detecting planes in a complex scene with 5M points (see \cgalFigureRef{Efficient_RANSAC_performance_epsilon}).
 The `probability` parameter controls the endurance when searching for the largest candidate at each iteration.
 It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes, and increases the running time.
-We plot the performance against the `probability` parameter (see Figure \cgalFigureRef{Efficient_RANSAC_performance_probability}).
+We plot the performance against the `probability` parameter (see \cgalFigureRef{Efficient_RANSAC_performance_probability}).
 
 \cgalFigureBegin{Efficient_RANSAC_performance_epsilon, Efficient_RANSAC/epsilon_graph.png}
 The graph depicts the number of detected shapes (purple) and the coverage (green), that is the ratio assignedPoints / totalPoints, against the `epsilon` tolerance parameter.
@@ -358,7 +358,7 @@ The right choice of the parameters above plays an important role in producing a 
 For example, if we consider the fuzzy sphere neighborhood, when `sphere_radius` is too large, we have fewer regions,
 and the details are not clearly separated. Meanwhile, if `sphere_radius` is too small, we produce more regions,
 and the point set may be over-segmented. Consider a 2D map of an intersection of streets in a city as
-in Figure \cgalFigureRef{Region_growing_parameter_sphere_radius_variation}. Each region is painted with
+in \cgalFigureRef{Region_growing_parameter_sphere_radius_variation}. Each region is painted with
 a unique color. As `sphere_radius` increases, the details become less clear.
 When `sphere_radius` = 0.3 (c), the best visual result is produced.
 
@@ -379,7 +379,7 @@ The first two parameters are used by the functions `RegionType::is_part_of_regio
 while the third parameter is used by the function `RegionType::is_valid_region()` from the `RegionType` concept.
 
 The right choice of `maximum_distance` and `maximum_angle` parameters is also very important.
-For example, Figure \cgalFigureRef{Region_growing_parameter_max_angle_variation} shows that the
+For example, \cgalFigureRef{Region_growing_parameter_max_angle_variation} shows that the
 roof top of the house can be distinguished as two planes (painted in blue and dark red) when `maximum_angle`
 is strict enough (c), or it can be recognized as only one plane (painted in pale yellow) in the other case (b).
 
@@ -403,7 +403,7 @@ Typical usage of the Region Growing component consists of five steps:
 -# Postprocess.
 
 Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We then color all points
-from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_2}).
+from the found regions and save them in a file (see \cgalFigureRef{Region_growing_on_point_set_2}).
 A point set with normals is stored in `std::vector`.
 
 \cgalExample{Shape_detection/region_growing_lines_on_point_set_2.cpp}
@@ -417,7 +417,7 @@ The following example shows a similar example, this time detecting circles inste
 \paragraph Shape_detection_RegionGrowingPoints_example_3D_planes Detecting 3D Planes
 
 If we are given a 3D point set, then the example below shows how to detect 3D planes using the K nearest neighbors search.
-We color all points from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3}).
+We color all points from the found regions and save them in a file (see \cgalFigureRef{Region_growing_on_point_set_3}).
 The example also shows how to retrieve all points, which are not assigned to any region, and how to use a custom output iterator.
 A point set with normals is stored in `CGAL::Point_set_3`.
 
@@ -484,7 +484,7 @@ In particular, it provides
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
 all mesh faces, which have been added to the region so far, and controls the quality of this fit.
 
-This component accepts any model of the concept `FaceListGraph` as a polygon mesh. Figure \cgalFigureRef{Region_growing_on_surface_mesh}
+This component accepts any model of the concept `FaceListGraph` as a polygon mesh. \cgalFigureRef{Region_growing_on_surface_mesh}
 gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm
 for detecting 3D planes on `CGAL::Surface_mesh`.
 
@@ -573,7 +573,7 @@ The Efficient RANSAC algorithm is very quick, however, since it is not determini
 Instead, the region growing algorithm usually takes longer to complete, but it may provide better quality output in the presence of large scenes
 with numerous small details. Since it iterates throughout all items of the scene, there are fewer chances to miss a shape.
 In addition, it is deterministic (for a given input and a given set of parameters, it always returns the same output,
-whereas the Efficient RANSAC algorithm is randomized and so the output may vary at each run), see Figure \cgalFigureRef{Shape_detection_comparison}.
+whereas the Efficient RANSAC algorithm is randomized and so the output may vary at each run), see \cgalFigureRef{Shape_detection_comparison}.
 
 \cgalFigureBegin{Shape_detection_comparison, Efficient_RANSAC/comparison.png}
 Comparison of the Efficient RANSAC and region growing algorithms.

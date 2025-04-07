@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Point_set_processing_3_Tests)
 
 # Find CGAL
@@ -23,6 +23,7 @@ endif()
 create_single_source_cgal_program( "read_test.cpp" )
 create_single_source_cgal_program( "test_read_write_point_set.cpp" )
 create_single_source_cgal_program( "test_deprecated_io_point_set.cpp" )
+create_single_source_cgal_program( "test_poisson_eliminate.cpp" )
 create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
 create_single_source_cgal_program( "analysis_test.cpp" )
 create_single_source_cgal_program( "remove_outliers_test.cpp" )

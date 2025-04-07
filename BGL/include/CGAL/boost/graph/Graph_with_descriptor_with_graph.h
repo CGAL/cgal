@@ -310,7 +310,7 @@ edge(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::ver
   CGAL_assertion(in_same_graph(v,w));
   bool b;
   g_edge_descriptor ed;
-  boost::tie(ed,b) = edge(u.descriptor, v.descriptor, *w.graph);
+  std::tie(ed,b) = edge(u.descriptor, v.descriptor, *w.graph);
   return std::make_pair(edge_descriptor(ed,*w.graph),b);
 }
 
@@ -320,7 +320,7 @@ CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_gra
 vertices(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::vertex_iterator b,e;
-  boost::tie(b,e) = vertices(*w.graph);
+  std::tie(b,e) = vertices(*w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::V2V(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::V2V(*w.graph)));
 }
@@ -330,7 +330,7 @@ CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_gra
 edges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::edge_iterator b,e;
-  boost::tie(b,e) = edges(*w.graph);
+  std::tie(b,e) = edges(*w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
 }
@@ -342,7 +342,7 @@ out_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >
 {
   CGAL_assertion(in_same_graph(v,w));
   typename boost::graph_traits<Graph>::out_edge_iterator b,e;
-  boost::tie(b,e) = out_edges(v.descriptor, *w.graph);
+  std::tie(b,e) = out_edges(v.descriptor, *w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
 }
@@ -354,7 +354,7 @@ in_edges(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >:
 {
   CGAL_assertion(in_same_graph(v,w));
   typename boost::graph_traits<Graph>::in_edge_iterator b,e;
-  boost::tie(b,e) = in_edges(v.descriptor, *w.graph);
+  std::tie(b,e) = in_edges(v.descriptor, *w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::E2E(*w.graph)));
 }
@@ -557,7 +557,7 @@ halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
   bool b;
   CGAL_assertion(in_same_graph(u,w));
   CGAL_assertion(in_same_graph(v,w));
-  boost::tie(hd,b) = halfedge(u.descriptor, v.descriptor, *w.graph);
+  std::tie(hd,b) = halfedge(u.descriptor, v.descriptor, *w.graph);
   return std::make_pair(halfedge_descriptor(hd,*w.graph),b);
 }
 
@@ -621,7 +621,7 @@ CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_gra
 halfedges(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::halfedge_iterator b,e;
-  boost::tie(b,e) = halfedges(*w.graph);
+  std::tie(b,e) = halfedges(*w.graph);
   return std::make_pair(boost::make_transform_iterator(b, typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::H2H(*w.graph)),
                         boost::make_transform_iterator(e, typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::H2H(*w.graph)));
 }
@@ -661,7 +661,7 @@ CGAL::Iterator_range<typename boost::graph_traits<Graph_with_descriptor_with_gra
 faces(const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typename boost::graph_traits<Graph>::face_iterator b,e;
-  boost::tie(b,e) = faces(*w.graph);
+  std::tie(b,e) = faces(*w.graph);
   return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::F2F(*w.graph)),
                         boost::make_transform_iterator(e,typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::F2F(*w.graph)));
 }

@@ -40,12 +40,12 @@ template < typename Kernel >
 class Coplanar_orientation_3
   : public Kernel::Coplanar_orientation_3
 {
+  typedef typename Kernel::Orientation              Orientation;
   typedef typename Kernel::Point_3                  Point_3;
+
   typedef typename Kernel::Coplanar_orientation_3   Base;
 
 public:
-  typedef Orientation result_type;
-
   Orientation operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
       return opti_coplanar_orientationC3(

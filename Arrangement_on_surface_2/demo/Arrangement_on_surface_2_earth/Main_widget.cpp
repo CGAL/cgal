@@ -1,4 +1,4 @@
-// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
+// Copyright (c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -140,7 +140,7 @@ void Main_widget::initializeGL() {
   for (auto& [country_name, triangle_points] : country_triangles_map) {
     auto country_triangles = std::make_unique<Triangles>(triangle_points);
     auto color = QVector4D(rndm(), rndm(), rndm(), 1);
-    auto m = std::max(color.x(), std::max(color.y(), color.z()));
+    auto m = (std::max)(color.x(), (std::max)(color.y(), color.z()));
     color /= m;
     color *= m_dimming_factor;
     color.setW(1);

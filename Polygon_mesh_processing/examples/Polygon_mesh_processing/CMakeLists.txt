@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -62,6 +62,8 @@ create_single_source_cgal_program("soup_autorefinement.cpp")
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("acvd_remeshing_example.cpp")
+  target_link_libraries(acvd_remeshing_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example.cpp")
   target_link_libraries(hole_filling_example PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example_SM.cpp")

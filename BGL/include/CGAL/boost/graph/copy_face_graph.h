@@ -178,6 +178,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   }
 
   // detect if there are some non-manifold umbrellas and fix missing halfedge target pointers
+  std::map<sm_vertex_descriptor, std::vector<tm_halfedge_descriptor>> nm_umbrella_map;
   typedef typename std::vector<tm_edge_descriptor>::iterator edge_iterator;
   for (edge_iterator it=new_edges.begin(); it!=new_edges.end(); ++it)
   {
@@ -199,16 +200,37 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
             // we recover tm_v using the halfedge associated to the target vertex of
             // the halfedge in sm corresponding to nh_t. This is working because we
             // set the vertex halfedge pointer to the "same" halfedges.
-            tm_vertex_descriptor tm_v =
-              target( get(hs_to_ht, halfedge(target(get(ht_to_hs, nh_t), sm), sm)), tm);
-            for(tm_halfedge_descriptor ht : halfedges_around_target(nh_t, tm))
-              set_target(ht, tm_v, tm);
+
+            sm_vertex_descriptor vs = target(get(ht_to_hs, nh_t), sm);
+            sm_halfedge_descriptor hs = halfedge(vs, sm);
+            if (hs == boost::graph_traits<SourceMesh>::null_halfedge())
+            {  // special case for Face_filtered_graph with a non-manifold input with not all umbrellas selected
+              nm_umbrella_map[vs].push_back(nh_t);
+            }
+            else
+            {
+              tm_vertex_descriptor tm_v = target( get(hs_to_ht, hs), tm);
+              for(tm_halfedge_descriptor ht : halfedges_around_target(nh_t, tm))
+                set_target(ht, tm_v, tm);
+            }
           }
           nh_t = opposite(nh_t, tm);
         }
       }
       break;
     }
+  }
+
+  for (const auto& vs_and_hts : nm_umbrella_map)
+  {
+    sm_vertex_descriptor v_sm = vs_and_hts.first;
+    tm_vertex_descriptor v_tm = add_vertex(tm);
+    *v2v++=std::make_pair(v_sm, v_tm);
+    set_halfedge(v_tm, vs_and_hts.second.front(), tm);
+    put(tm_vpm, v_tm, conv(get(sm_vpm, v_sm)));
+
+    for (tm_halfedge_descriptor h_tm : vs_and_hts.second)
+      set_target(h_tm, v_tm, tm);
   }
 }
 
