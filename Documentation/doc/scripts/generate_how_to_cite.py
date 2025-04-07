@@ -278,7 +278,9 @@ def main():
         encoding="utf-8",
     )
     k = 2
+    citeDic = {}
     for line in f:
+        foundDouble=False
         match = pattern.match(line)
         if match:
             pkg = match.group(1)
@@ -304,6 +306,10 @@ def main():
                 match = pattern_bib.match(pkg_line)
                 if match:
                     bib = match.group(1)
+                    if bib in citeDic:
+                        foundDouble=True
+                    else:
+                        citeDic[bib] = pkg
                     continue
             assert len(bib) > 0, "Did you forget a \\cgalPkgBib{} in %r?" % filename
             assert len(authors) > 0, (
@@ -312,6 +318,11 @@ def main():
             assert len(anchor) > 0, (
                 "Did you forget the anchor in \\cgalPkgDescriptionBegin{} in %r?"
                 % filename
+            )
+            assert not foundDouble, (
+                """Multiple use of citation name '{}' package '{}'
+                first occurence package '{}'
+                """.format(bib,pkg,citeDic[bib])
             )
             result_txt += gen_txt_entry(title, authors, bib, anchor, k)
             # convert title and author to bibtex format
