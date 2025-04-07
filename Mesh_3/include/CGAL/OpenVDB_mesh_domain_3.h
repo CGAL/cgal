@@ -13,6 +13,8 @@
 #ifndef CGAL_MESH_3_OPENVDB_MESH_DOMAIN_3_H
 #define CGAL_MESH_3_OPENVDB_MESH_DOMAIN_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Bbox_3.h>
 
