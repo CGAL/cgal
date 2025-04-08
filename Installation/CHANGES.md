@@ -6,20 +6,38 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
+
 ### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
 - This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
   to create a conforming constrained Delaunay triangulation in 3D, which can be represented by the new
   class template `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+
+### 2D Triangulations on Hyperbolic Surfaces (new package)
+-   This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
+    It offers functions for the generation of the triangulation from a convex fundamental domain,
+    the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation
+    in the Poincaré disk. A method is offered that generates such domains in genus two.
+
+### 3D Isosurfacing (new package)
+
+-   This package provides algorithms to extract isosurfaces from different inputs. The input is represented
+    as a 3D domain and can be an implicit function or a Cartesian grid. The output is an indexed face
+    set that stores an isosurface in the form of a surface mesh. The provided algorithms include Marching Cubes,
+    topologically correct Marching Cubes, and Dual Contouring.
+
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
 - Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
   to know faces in the output meshes that are corresponding to input coplanar faces.
+-   Added the function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
+    to remesh triangle meshes. This remeshing algorithm uses clustering on polygonal meshes as to
+    approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
+    sharp features and corners.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
 - Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
-
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
@@ -45,6 +63,12 @@
   - `initial_points` : enables the user to specify a `Range` of initial points.
 -   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
 
+### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
+
+-   Added a new named parameter for `CGAL::Subdivision_method_3::Loop_subdivision()` and
+    `CGAL::Subdivision_method_3::CatmullClark_subdivision()`, which enables users to subdivide
+    a mesh without modifying its geometry.
+
 ### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
 
 -  **Breaking change**: In the class template `Constrained_triangulation_plus_2`, the value type of the range returned
@@ -58,6 +82,11 @@
 ### Triangulations
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
 
+
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.1/Manual/packages.html#PkgBGL)
+
+-   Added the function `dijkstra_shortest_path()` which computes the geometrically shortest sequence of halfedges between two vertices.
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
