@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgCT_3Concepts
+\ingroup PkgConstrainedTriangulation3Concepts
 \cgalConcept
 
 The concept `ConformingConstrainedDelaunayTriangulationCellBase_3` refines the concept
