@@ -6,6 +6,11 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
+### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgCT_3) (new package)
+- This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`  
+  to create a conforming constrained Delaunay triangulation in 3D, which can be represented by the new 
+  class template `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
