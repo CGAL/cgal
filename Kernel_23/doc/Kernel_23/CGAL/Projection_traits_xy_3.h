@@ -72,7 +72,7 @@ typedef Line_3<K> Line_2;
 /// constructors required to build the dual Voronoi diagram. The
 /// functors operate on the 2D projection of their arguments. They
 /// come with preconditions that projections of the arguments are
-/// non-degenerate, eg. a line segment does not project on a single
+/// non-degenerate, e.g. a line segment does not project on a single
 /// point, two points do not project on the same point, etc. In the
 /// following, we specify the choice of the `z`-coordinate in case a
 /// new point is constructed.

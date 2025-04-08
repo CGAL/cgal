@@ -31,17 +31,16 @@ template < typename K_base >
 class Equal_3
   : public K_base::Equal_3
 {
+  typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Vector_3  Vector_3;
+
   typedef typename K_base::Equal_3   Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type operator()(const Point_3 &p, const Point_3& q) const
+  Boolean operator()(const Point_3& p, const Point_3& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -62,7 +61,7 @@ public:
   }
 
 
-  result_type operator()(const Vector_3 &p, const Vector_3& q) const
+  Boolean operator()(const Vector_3& p, const Vector_3& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -83,7 +82,7 @@ public:
   }
 
 
-  result_type operator()(const Vector_3 &p, const Null_vector &q) const
+  Boolean operator()(const Vector_3& p, const Null_vector& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);

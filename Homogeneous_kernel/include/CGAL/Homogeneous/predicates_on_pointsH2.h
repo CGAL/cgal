@@ -24,7 +24,7 @@ namespace CGAL {
 
 template < class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 equal_xy(const PointH2<R>& p,
          const PointH2<R>& q)
 {
@@ -39,7 +39,7 @@ equal_xy(const PointH2<R>& p,
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Oriented_side
+typename R::Oriented_side
 _where_wrt_L_wedge( const PointH2<R>& p, const PointH2<R>& q )
 {
   Sign xs = CGAL_NTS sign( q.hx()*p.hw() - p.hx()*q.hw() );  // sign( qx - px )
@@ -53,7 +53,7 @@ _where_wrt_L_wedge( const PointH2<R>& p, const PointH2<R>& q )
 }
 
 template <class RT>
-Comparison_result
+typename Compare<RT>::result_type
 compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
                          const Quotient<RT>& pwt,
                          const RT& qhx, const RT& qhy, const RT& qhw,
@@ -82,7 +82,7 @@ compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
 
 
 template <class RT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, RT>::type
 power_testH2( const RT &phx, const RT &phy, const RT &phw, const Quotient<RT> &pwt,
               const RT &qhx, const RT &qhy, const RT &qhw, const Quotient<RT> &qwt,
               const RT &rhx, const RT &rhy, const RT &rhw, const Quotient<RT> &rwt,
@@ -129,7 +129,7 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const Quotient<RT> &p
 
 
 template <class RT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, RT>::type
 power_testH2( const RT &phx, const RT &phy, const RT &phw, const Quotient<RT> &pwt,
               const RT &qhx, const RT &qhy, const RT &qhw, const Quotient<RT> &qwt,
               const RT &thx, const RT &thy, const RT &thw, const Quotient<RT> &twt)
@@ -180,7 +180,7 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const Quotient<RT> &p
 // Unused, undocumented, un-functorized.
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_deltax_deltay(const PointH2<R>& p,
                       const PointH2<R>& q,
                       const PointH2<R>& r,

@@ -42,12 +42,12 @@ public:
   typedef typename K::Sphere_3               Sphere_3;
   typedef typename K::Periodic_3_offset_3    Offset;
 
+  typedef typename K::Orientation            Orientation;
+
 public:
   const Iso_cuboid_3 * const _dom;
 
 public:
- typedef typename Base::result_type  result_type;
-
  Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
                           const Orientation_3_base& o3b)
    : Base(o3b), _dom(dom)
@@ -55,7 +55,7 @@ public:
 
   using Base::operator();
 
-  result_type
+  Orientation
   operator()(const Point_3 &p, const Point_3 &q,
              const Point_3 &r, const Point_3 &s) const
   {
@@ -157,7 +157,7 @@ public:
       return Base::operator()(p, q, r, s);
   }
 
-  result_type
+  Orientation
   operator()(const Point_3 &p, const Point_3 &q,
              const Point_3 &r, const Point_3 &s,
              const Offset &o_p, const Offset &o_q,

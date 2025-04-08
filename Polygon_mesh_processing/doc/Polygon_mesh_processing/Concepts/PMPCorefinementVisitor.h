@@ -46,7 +46,7 @@ public:
   void before_edge_split(halfedge_descriptor h, const Triangle_mesh& tm);
   /// called when a new split is done. The target of `hnew` is a new split vertex. There is only one call per edge.
   void edge_split(halfedge_descriptor hnew, const Triangle_mesh& tm);
-  /// called when the split of the halfedge `h` passed at the later call to `before_edge_split()` is finished.
+  /// called when the split of the halfedge `h` passed at the latter call to `before_edge_split()` is finished.
   void after_edge_split();
   ///  called when a new edge has been added to triangulate a face. The face triangulated is `f_split`
   ///  in the last call to `before_subface_creations(f_split, tm)`. There is only one call per edge.

@@ -870,18 +870,11 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& had_to_use_exact) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     // The function is a different file to be able to be used where there is
     // no triangulation (namely, the domains of Periodic_3_mesh_3).
-    return ::CGAL::P3T3::internal::construct_periodic_point(p, had_to_use_exact, geom_traits());
-  }
-
-  Periodic_point_3 construct_periodic_point(const Point_3& p) const
-  {
-    bool useless = false;
-    return construct_periodic_point(p, useless);
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, geom_traits());
   }
 
   // ---------------------------------------------------------------------------

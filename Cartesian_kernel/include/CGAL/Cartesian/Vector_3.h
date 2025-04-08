@@ -142,15 +142,15 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator==(const VectorC3<R> &v, const VectorC3<R> &w)
 {
-  return w.x() == v.x() && w.y() == v.y() && w.z() == v.z();
+  return CGAL_AND_3(w.x() == v.x(), w.y() == v.y(), w.z() == v.z());
 }
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator!=(const VectorC3<R> &v, const VectorC3<R> &w)
 {
   return !(v == w);
@@ -158,16 +158,15 @@ operator!=(const VectorC3<R> &v, const VectorC3<R> &w)
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator==(const VectorC3<R> &v, const Null_vector &)
 {
-  return CGAL_NTS is_zero(v.x()) && CGAL_NTS is_zero(v.y()) &&
-         CGAL_NTS is_zero(v.z());
+  return CGAL_AND_3(CGAL_NTS is_zero(v.x()), CGAL_NTS is_zero(v.y()), CGAL_NTS is_zero(v.z()));
 }
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator==(const Null_vector &n, const VectorC3<R> &v)
 {
   return v == n;
@@ -175,7 +174,7 @@ operator==(const Null_vector &n, const VectorC3<R> &v)
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator!=(const VectorC3<R> &v, const Null_vector &n)
 {
   return !(v == n);
@@ -183,7 +182,7 @@ operator!=(const VectorC3<R> &v, const Null_vector &n)
 
 template < class R >
 inline
-bool
+typename R::Boolean
 operator!=(const Null_vector &n, const VectorC3<R> &v)
 {
   return !(v == n);

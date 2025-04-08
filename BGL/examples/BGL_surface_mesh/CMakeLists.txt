@@ -9,6 +9,7 @@ create_single_source_cgal_program("seam_mesh.cpp")
 create_single_source_cgal_program("write_inp.cpp")
 create_single_source_cgal_program("surface_mesh_dual.cpp")
 create_single_source_cgal_program("connected_components.cpp")
+create_single_source_cgal_program("shortest_path.cpp")
 
 find_package(METIS QUIET)
 include(CGAL_METIS_support)

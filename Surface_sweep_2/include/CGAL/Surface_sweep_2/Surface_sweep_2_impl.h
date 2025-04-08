@@ -480,7 +480,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
   leftCurve->set_hint(this->m_statusLine.end());
 
   if (! remove_for_good) {
-    // the subcurve is not removed for good, so we dont need to intersect
+    // the subcurve is not removed for good, so we don't need to intersect
     // its neighbors after its removal.
     CGAL_SS_PRINT_ERASE(*sliter);
     this->m_statusLine.erase(sliter);
