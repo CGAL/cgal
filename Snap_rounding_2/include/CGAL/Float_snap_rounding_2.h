@@ -24,6 +24,59 @@
 #include <vector>
 
 namespace CGAL {
+
+template<typename Kernel_>
+struct Float_snap_rounding_traits_2{
+  typedef Kernel_ Kernel;
+
+  typedef typename Kernel::FT        FT;
+  typedef typename Kernel::Point_2   Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Vector_2  Vector_2;
+
+  typedef typename Kernel::Less_x_2  Less_x_2;
+  typedef typename Kernel::Less_y_2  Less_y_2;
+  typedef typename Kernel::Less_xy_2 Less_xy_2;
+  typedef typename Kernel::Less_yx_2 Less_yx_2;
+  typedef typename Kernel::Equal_2   Equal_2;
+
+  typedef typename Kernel::Construct_source_2 Construct_source_2;
+  typedef typename Kernel::Construct_target_2 Construct_target_2;
+
+  struct Squared_round_bound_2{
+    double operator()(const FT &x){
+      double b=std::nextafter(to_interval(x).second - to_interval(x).first, std::numeric_limits<double>::infinity());
+      return b*b;
+    }
+    double operator()(const Point_2 &p){
+      return (*this)(p.x())+(*this)(p.y());
+    }
+  };
+
+  Squared_round_bound_2 squared_round_bound_2_object(){
+    return Squared_round_bound_2();
+  }
+
+  typedef typename Kernel::Compare_squared_distance_2  Compare_squared_distance_2;
+  Compare_squared_distance_2 compare_squared_distance_2_object(){
+    return Kernel::squared_distance_2_object();
+  }
+
+  // typedef typename Base_kernel::Segment_2                   Segment_2;
+  // typedef typename Base_kernel::Iso_rectangle_2             Iso_rectangle_2;
+  // typedef typename Base_kernel::Vector_2                    Vector_2;
+  // typedef typename Base_kernel::Line_2                      Line_2;
+  // typedef typename Base_kernel::Aff_transformation_2        Aff_transformation_2;
+  // typedef typename Base_kernel::Direction_2                 Direction_2;
+  // typedef typename Base_kernel::Construct_vertex_2          Construct_vertex_2 ;
+  // typedef typename Base_kernel::Construct_segment_2         Construct_segment_2 ;
+  // typedef typename Base_kernel::Construct_iso_rectangle_2   Construct_iso_rectangle_2;
+  // typedef typename Base_kernel::Compare_y_2                 Compare_y_2;
+
+
+
+};
+
 namespace Box_intersection_d {
 
 template<class NT_, int N>
@@ -46,35 +99,48 @@ public:
 
 }
 
-template <class PointsRange , class PolylineRange>
+template <class Traits, class PointsRange , class PolylineRange>
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 {
-  using Point_2 = std::remove_cv_t<typename std::iterator_traits<typename PointsRange::iterator>::value_type>;
-  using Kernel = typename Kernel_traits<Point_2>::Kernel;
+  using Kernel =    typename Traits::Kernel;
+  using Point_2 =   typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using Vector_2  = typename Traits::Vector_2;
+
   using Comparison_result = typename Kernel::Comparison_result;
-  using Segment_2 =  typename Kernel::Segment_2;
-  using Vector_2 =  typename Kernel::Vector_2;
+
   using PBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
   using SBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
 
-  auto comp_by_x=[&](std::size_t ai, std::size_t bi){
-    return compare(pts[ai].x(),pts[bi].x())==SMALLER;
+  using Less_x_2 = typename Traits::Less_x_2;
+  using Less_y_2 = typename Traits::Less_y_2;
+  using Less_xy_2 = typename Traits::Less_xy_2;
+  using Less_yx_2 = typename Traits::Less_yx_2;
+  using Equal_2 = typename Traits::Equal_2;
+
+  using Construct_source_2 = typename Traits::Construct_source_2;
+  using Construct_target_2 = typename Traits::Construct_target_2;
+
+  using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
+  using Squared_round_bound_2 = typename Traits::Squared_round_bound_2;
+
+  Compare_squared_distance_2 csq_dist_2;
+  Squared_round_bound_2 round_bound;
+  Construct_source_2 source;
+  Construct_target_2 target;
+  Equal_2 equal;
+
+  auto Less_indexes_x_2=[&](size_t i, size_t j){
+    return Less_x_2()(pts[i], pts[j]);
   };
-  auto comp_by_y=[&](std::size_t ai, std::size_t bi){
-    return compare(pts[ai].y(),pts[bi].y())==SMALLER;
+  auto Less_indexes_y_2=[&](size_t i, size_t j){
+    return Less_y_2()(pts[i], pts[j]);
   };
-  // Total order is required to using set
-  auto comp_by_x_first=[&](std::size_t ai, std::size_t bi){
-    Comparison_result res=compare(pts[ai].x(),pts[bi].x());
-    if(res==EQUAL)
-      return compare(pts[ai].y(),pts[bi].y())==SMALLER;
-    return res==SMALLER;
+  auto Less_indexes_xy_2=[&](size_t i, size_t j){
+    return Less_xy_2()(pts[i], pts[j]);
   };
-  auto comp_by_y_first=[&](std::size_t ai, std::size_t bi){
-    Comparison_result res=compare(pts[ai].y(),pts[bi].y());
-    if(res==EQUAL)
-      return compare(pts[ai].x(),pts[bi].x())==SMALLER;
-    return res==SMALLER;
+  auto Less_indexes_yx_2=[&](size_t i, size_t j){
+    return Less_yx_2()(pts[i], pts[j]);
   };
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -84,10 +150,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
   // Sorted the points may perform exact computations and thus refine the intervals of the coordinates values
   // This refine ensures that the order of the points will be preserved when rounded
   // However, except for this reason these sets are unused
-  using Iterator_set_x = typename std::set<std::size_t, decltype(comp_by_x_first)>::iterator;
-  using Iterator_set_y = typename std::set<std::size_t, decltype(comp_by_y_first)>::iterator;
-  std::set<std::size_t, decltype(comp_by_x_first)> p_sort_by_x(comp_by_x_first);
-  std::set<std::size_t, decltype(comp_by_y_first)> p_sort_by_y(comp_by_y_first);
+  using Iterator_set_x = typename std::set<std::size_t, decltype(Less_indexes_xy_2)>::iterator;
+  using Iterator_set_y = typename std::set<std::size_t, decltype(Less_indexes_yx_2)>::iterator;
+  std::set<std::size_t, decltype(Less_indexes_xy_2)> p_sort_by_x(Less_indexes_xy_2);
+  std::set<std::size_t, decltype(Less_indexes_yx_2)> p_sort_by_y(Less_indexes_yx_2);
   for(std::size_t i=0; i!=pts.size(); ++i)
   {
     p_sort_by_x.insert(i);
@@ -100,20 +166,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
   for(std::size_t i=0; i<pts.size(); ++i)
     points_boxes.emplace_back(pts[i].bbox(),i);
   for(std::size_t i=0; i<polylines.size(); ++i)
-    segs_boxes.emplace_back(pts[polylines[i][0]].bbox()+pts[polylines[i][1]].bbox(),i);
-
-  // Bound the maximum squared distance between a point and its rounded value
-  auto round_bound=[](Point_2& p){
-    return std::pow(std::nextafter(p.x().approx().sup(),std::numeric_limits<double>::infinity())-p.x().approx().inf(),2)+
-           std::pow(std::nextafter(p.y().approx().sup(),std::numeric_limits<double>::infinity())-p.y().approx().inf(),2);
-  };
+    segs_boxes.emplace_back(pts[polylines[i][0]].bbox()+pts[polylines[i][polylines[i].size()-1]].bbox(),i);
 
   // Callback used for box_intersection_d
   auto callback=[&](PBox &bp, SBox &bseg){
     std::size_t pi=bp.index();
     std::size_t si=bseg.index();
     std::size_t si1=polylines[bseg.index()][0];
-    std::size_t si2=polylines[bseg.index()][1];
+    std::size_t si2=polylines[bseg.index()][polylines[bseg.index()].size()-1];
 
     if((pi==si1) || (pi==si2))
       return;
@@ -122,11 +182,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
     Segment_2 seg(pts[polylines[bseg.index()][0]], pts[polylines[bseg.index()][1]]);
 
     // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
-    double bound=16*(std::max)(round_bound(pts[pi]), (std::max)(round_bound(pts[si1]), round_bound(pts[si2])));
+    double bound = round_bound(pts[pi]);
+    for(size_t i=0; i<polylines[bseg.index()].size(); ++i)
+      bound = (std::max)(bound, round_bound(pts[polylines[bseg.index()][i]]));
+    bound*=16;
 
     // If the segment is closed to the vertex, we subdivide it at same x coordinate that this vertex
-    if(possibly(Kernel().compare_squared_distance_2_object()(p, seg, bound)!=CGAL::LARGER) &&
-       compare(seg.source().x(),p.x())!=compare(seg.target().x(),p.x()))
+    if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER) &&
+       compare(source(seg).x(),p.x())!=compare(target(seg).x(),p.x()))
     {
       pts.emplace_back(p.x(), seg.supporting_line().y_at_x(p.x()));
       auto pair=p_sort_by_x.insert(pts.size()-1);
@@ -184,18 +247,18 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
     p=Point_2(to_double(p.x()), to_double(p.y()));
 
   //The order of the points on an axis must be preserved for the correctness of the algorithm
-  CGAL_assertion(std::is_sorted(p_sort_by_x.begin(),p_sort_by_x.end(),comp_by_x));
-  CGAL_assertion(std::is_sorted(p_sort_by_y.begin(),p_sort_by_y.end(),comp_by_y));
+  CGAL_assertion(std::is_sorted(p_sort_by_x.begin(),p_sort_by_x.end(),Less_indexes_x_2));
+  CGAL_assertion(std::is_sorted(p_sort_by_y.begin(),p_sort_by_y.end(),Less_indexes_y_2));
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Remove duplicate points" << std::endl;
 #endif
   std::vector< std::size_t > unique_points(p_sort_by_x.begin(),p_sort_by_x.end());
-  std::sort(unique_points.begin(),unique_points.end(),comp_by_x_first);
+  std::sort(unique_points.begin(),unique_points.end(),Less_indexes_xy_2);
   std::vector<Point_2> new_pts;
   std::vector<std::size_t> old_to_new_index(pts.size());
   for(std::size_t i=0; i!=pts.size(); ++i){
-    if(i==0 || (pts[unique_points[i]]!=pts[unique_points[i-1]]))
+    if(i==0 || !equal(pts[unique_points[i]],pts[unique_points[i-1]]))
       new_pts.push_back(pts[unique_points[i]]);
     old_to_new_index[unique_points[i]]=new_pts.size()-1;
   }
@@ -232,7 +295,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
       if(pts[poly[i-1]].x()==pts[poly[i]].x()){
         Iterator_set_x start, end;
         // Get all vertices between the two endpoints along x order
-        if(comp_by_x_first(poly[i-1],poly[i])){
+        if(Less_indexes_xy_2(poly[i-1],poly[i])){
           start=p_sort_by_x.upper_bound(poly[i-1]);
           end=p_sort_by_x.lower_bound(poly[i]);
         } else {
@@ -247,7 +310,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
       if(pts[poly[i-1]].y()==pts[poly[i]].y()){
         Iterator_set_y start, end;
         // Get all vertices between the two endpoints along y order
-        if(comp_by_y_first(poly[i-1],poly[i])){
+        if(Less_indexes_yx_2(poly[i-1],poly[i])){
           start=p_sort_by_y.upper_bound(poly[i-1]);
           end=p_sort_by_y.lower_bound(poly[i]);
         } else {
@@ -277,6 +340,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   using Segment_2 = std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>;
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename OutputContainer::iterator>::value_type>;
   using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
+  using Kernel = typename Kernel_traits<Point_2>::Kernel;
 
   std::vector<Segment_2> segs(input_begin, input_end);
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -318,7 +382,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   }
 
   // Main algorithm
-  double_snap_rounding_2_disjoint(pts, polylines);
+  double_snap_rounding_2_disjoint<Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -341,11 +405,12 @@ TODO doc
 */
 template <class InputIterator , class OutputContainer>
 typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	input_begin,
-		                                                  InputIterator  	input_end,
-		                                                  OutputContainer&  output)
+		                                                        InputIterator  	input_end,
+		                                                        OutputContainer&  output)
 {
   using Segment_2 = std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>;
   using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
+  using Kernel = typename Kernel_traits<Point_2>::Kernel;
 
   std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -387,7 +452,7 @@ typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	inpu
   }
 
   // Main algorithm
-  double_snap_rounding_2_disjoint(pts, polylines);
+  double_snap_rounding_2_disjoint<Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;

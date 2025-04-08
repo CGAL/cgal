@@ -78,7 +78,6 @@ int main(int argc,char *argv[])
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  test_data();
   test_fully_random(r,2000);
   test_multi_almost_indentical_segments(r,200);
   return(0);
