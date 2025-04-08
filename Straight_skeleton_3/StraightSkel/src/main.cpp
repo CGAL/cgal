@@ -366,7 +366,7 @@ int main(int argc, const char* argv[]) {
             }
         }
 
-        polyhedron->initializeAllIDs();
+        // polyhedron->initializeAllIDs();
 
         // @todo implement lazy perturbations where we only perturb if we encounter an issue?
         // - Would cost more (detection of simultaneous events, etc.)

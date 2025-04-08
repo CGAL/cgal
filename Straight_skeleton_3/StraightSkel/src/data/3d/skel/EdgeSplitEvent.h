@@ -42,6 +42,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const EdgeSplitEvent& other) const;
 protected:
     EdgeSplitEvent();
     NodeSPtr node_;

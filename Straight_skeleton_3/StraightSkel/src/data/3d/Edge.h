@@ -66,6 +66,7 @@ public:
     Segment3SPtr segment() const;
     Line3SPtr line() const;
 
+    VertexSPtr other(VertexSPtr vertex) const;
     FacetSPtr other(FacetSPtr facet) const;
     VertexSPtr src(FacetSPtr facet_l) const;
     VertexSPtr dst(FacetSPtr facet_l) const;

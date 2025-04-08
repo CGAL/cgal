@@ -166,4 +166,10 @@ bool TetrahedronEvent::isObsolete() const {
     return false;
 }
 
+bool TetrahedronEvent::operator==(const TetrahedronEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (edge_begin_.lock() == other.edge_begin_.lock());
+}
+
 } } }

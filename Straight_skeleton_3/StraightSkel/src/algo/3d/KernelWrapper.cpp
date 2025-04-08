@@ -298,6 +298,7 @@ static CGAL::FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT&
     const CGAL::FT& c3 = plane_3->c();
     const CGAL::FT& d3 = plane_3->d();
 
+// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
                                   << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"

@@ -44,6 +44,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const VertexEvent& other) const;
 protected:
     VertexEvent();
     NodeSPtr node_;

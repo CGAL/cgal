@@ -141,4 +141,14 @@ bool EdgeMergeEvent::isObsolete() const {
     return false;
 }
 
+bool EdgeMergeEvent::operator==(const EdgeMergeEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (facet_.lock() == other.facet_.lock()) &&
+           ((edge1_.lock() == other.edge1_.lock() &&
+             edge2_.lock() == other.edge2_.lock()) ||
+            (edge1_.lock() == other.edge2_.lock() &&
+             edge2_.lock() == other.edge1_.lock()));
+}
+
 } } }

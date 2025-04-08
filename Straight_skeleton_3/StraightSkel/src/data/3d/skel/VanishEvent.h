@@ -33,6 +33,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const VanishEvent& other) const;
 protected:
     VanishEvent();
 

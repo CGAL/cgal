@@ -134,5 +134,13 @@ bool SurfaceEvent::isObsolete() const {
     return false;
 }
 
+bool SurfaceEvent::operator==(const SurfaceEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           ((edge1_.lock() == other.edge1_.lock() &&
+             edge2_.lock() == other.edge2_.lock()) ||
+            (edge1_.lock() == other.edge2_.lock() &&
+             edge2_.lock() == other.edge1_.lock()));
+}
 
 } } }

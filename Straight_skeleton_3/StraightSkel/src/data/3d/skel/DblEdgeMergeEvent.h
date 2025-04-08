@@ -50,6 +50,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const DblEdgeMergeEvent& other) const;
 protected:
     DblEdgeMergeEvent();
     NodeSPtr node_;

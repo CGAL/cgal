@@ -104,10 +104,8 @@ std::string PolyhedronSplitEvent::toString() const {
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(edgeA=" << edge1->getID() << "[" << edge1->getVertexSrc()->getID() << "-"
-                                                 << edge1->getVertexDst()->getID() << "]"
-         << "; edgeB=" << edge2->getID() << "[" << edge2->getVertexSrc()->getID() << "-"
-                                                << edge2->getVertexDst()->getID() << "])";
+    sstr << "\t(edgeA=" << edge1->toString() << ")"
+         << "; edgeB=" << edge2->toString() << ")";
     return sstr.str();
 }
 
@@ -131,6 +129,15 @@ bool PolyhedronSplitEvent::isObsolete() const {
     }
 
     return false;
+}
+
+bool PolyhedronSplitEvent::operator==(const PolyhedronSplitEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           ((edge1_.lock() == other.edge1_.lock() &&
+             edge2_.lock() == other.edge2_.lock()) ||
+            (edge1_.lock() == other.edge2_.lock() &&
+             edge2_.lock() == other.edge1_.lock()));
 }
 
 } } }

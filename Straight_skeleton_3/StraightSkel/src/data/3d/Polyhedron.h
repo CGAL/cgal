@@ -91,6 +91,10 @@ protected:
     std::list<FacetSPtr> facets_;
     int id_;
     std::string description_;
+
+    int next_vertex_id_ = 0;
+    int next_edge_id_ = 0;
+    int next_facet_id_ = 0;
 };
 
 } }

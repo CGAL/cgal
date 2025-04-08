@@ -41,6 +41,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const TetrahedronEvent& other) const;
 protected:
     TetrahedronEvent();
     NodeSPtr node_;

@@ -126,6 +126,7 @@ PolyhedronSPtr Polyhedron::clone() const {
 }
 
 void Polyhedron::addVertex(VertexSPtr vertex) {
+    vertex->setID(next_vertex_id_++);
     std::list<VertexSPtr>::iterator it = vertices_.insert(vertices_.end(), vertex);
     vertex->setPolyhedron(shared_from_this());
     vertex->setPolyhedronListIt(it);
@@ -172,6 +173,7 @@ VertexSPtr Polyhedron::findVertex(VertexSPtr needle) {
 }
 
 void Polyhedron::addEdge(EdgeSPtr edge) {
+    edge->setID(next_edge_id_++);
     std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
     edge->setPolyhedron(shared_from_this());
     edge->setPolyhedronListIt(it);
@@ -230,6 +232,7 @@ EdgeSPtr Polyhedron::findEdge(EdgeSPtr needle) {
 }
 
 void Polyhedron::addFacet(FacetSPtr facet) {
+    facet->setID(next_facet_id_++);
     std::list<FacetSPtr>::iterator it_f = facets_.insert(facets_.end(), facet);
     facet->setPolyhedronListIt(it_f);
     facet->setPolyhedron(shared_from_this());

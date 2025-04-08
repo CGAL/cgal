@@ -98,5 +98,10 @@ bool VanishEvent::isObsolete() const {
     return false;
 }
 
+bool VanishEvent::operator==(const VanishEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           // && (edge_.lock() == other.edge_.lock()) // because of multiple reps...
+           (*(node_->getPoint()) == *(other.node_->getPoint()));
+}
 
 } } }

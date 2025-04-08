@@ -123,8 +123,8 @@ std::string SplitMergeEvent::toString() const {
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(vertex1=" << vertex_1->getID() << ")\n";
-    sstr << "\t(vertex2=" << vertex_2->getID() << ")\n";
+    sstr << "\t(vertex1=" << vertex_1->toString() << ")\n";
+    sstr << "\t(vertex2=" << vertex_2->toString() << ")\n";
     sstr << "\t(facet1=" << facet_1->getID() << ")\n";
     sstr << "\t(facet2=" << facet_2->getID() << ")";
     return sstr.str();
@@ -150,6 +150,19 @@ bool SplitMergeEvent::isObsolete() const {
   }
 
   return false;
+}
+
+bool SplitMergeEvent::operator==(const SplitMergeEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           ((facet_1_.lock() == other.facet_1_.lock() &&
+             facet_2_.lock() == other.facet_2_.lock()) ||
+            (facet_1_.lock() == other.facet_2_.lock() &&
+             facet_2_.lock() == other.facet_1_.lock())) &&
+           ((vertex_1_.lock() == other.vertex_1_.lock() &&
+             vertex_2_.lock() == other.vertex_2_.lock()) ||
+            (vertex_1_.lock() == other.vertex_2_.lock() &&
+             vertex_2_.lock() == other.vertex_1_.lock()));
 }
 
 } } }

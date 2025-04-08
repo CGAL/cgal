@@ -135,9 +135,10 @@ FacetSPtr Edge::getFacetSrc() const {
   FacetSPtr result = FacetSPtr();
   VertexSPtr vertex_src = getVertexSrc();
   if (vertex_src->degree() == 3) {
-      result = getFacetL()->next(vertex_src);
+      if (getFacetL()) {
+          result = getFacetL()->next(vertex_src);
+      }
   }
-  DEBUG_SPTR(result);
   return result;
 }
 
@@ -145,9 +146,10 @@ FacetSPtr Edge::getFacetDst() const {
   FacetSPtr result = FacetSPtr();
   VertexSPtr vertex_dst = getVertexDst();
   if (vertex_dst->degree() == 3) {
-      result = getFacetR()->next(vertex_dst);
+      if (getFacetR()) {
+          result = getFacetR()->next(vertex_dst);
+      }
   }
-  DEBUG_SPTR(result);
   return result;
 }
 
@@ -196,6 +198,16 @@ Segment3SPtr Edge::segment() const {
 Line3SPtr Edge::line() const {
     return KernelFactory::createLine3(
             vertex_src_->getPoint(), vertex_dst_->getPoint());
+}
+
+VertexSPtr Edge::other(VertexSPtr vertex) const {
+    VertexSPtr result = VertexSPtr();
+    if (vertex == vertex_src_) {
+        result = vertex_dst_;
+    } else if (vertex == vertex_dst_) {
+        result = vertex_src_;
+    }
+    return result;
 }
 
 FacetSPtr Edge::other(FacetSPtr facet) const {
@@ -259,6 +271,27 @@ FacetSPtr Edge::right(VertexSPtr vertex_src) const {
 
 EdgeSPtr Edge::next(FacetSPtr facet) const {
     EdgeSPtr result = EdgeSPtr();
+
+    VertexSPtr vertex_dst = dst(facet);
+    std::list<EdgeWPtr>::const_iterator it_e = vertex_dst->edges().begin();
+    while (it_e != vertex_dst->edges().end()) {
+        EdgeWPtr edge_wptr = *it_e++;
+        if (edge_wptr.expired()) {
+            continue;
+        }
+
+        EdgeSPtr edge = EdgeSPtr(edge_wptr);
+        if (edge->src(facet) == vertex_dst) {
+            result = edge;
+            break;
+        }
+    }
+
+    DEBUG_SPTR(result);
+    return result;
+
+#if 0
+    EdgeSPtr result = EdgeSPtr();
     std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
     while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e;
@@ -287,9 +320,31 @@ EdgeSPtr Edge::next(FacetSPtr facet) const {
     }
     DEBUG_SPTR(result);
     return result;
+#endif
 }
 
 EdgeSPtr Edge::prev(FacetSPtr facet) const {
+    EdgeSPtr result = EdgeSPtr();
+
+    VertexSPtr vertex_src = src(facet);
+    std::list<EdgeWPtr>::const_iterator it_e = vertex_src->edges().begin();
+    while (it_e != vertex_src->edges().end()) {
+        EdgeWPtr edge_wptr = *it_e++;
+        if (edge_wptr.expired()) {
+            continue;
+        }
+
+        EdgeSPtr edge = EdgeSPtr(edge_wptr);
+        if (edge->dst(facet) == vertex_src) {
+            result = edge;
+            break;
+        }
+    }
+
+    DEBUG_SPTR(result);
+    return result;
+
+#if 0
     EdgeSPtr result = EdgeSPtr();
     std::list<EdgeSPtr>::const_reverse_iterator it_e = facet->edges().rbegin();
     while (it_e != facet->edges().rend()) {
@@ -319,6 +374,7 @@ EdgeSPtr Edge::prev(FacetSPtr facet) const {
     }
     DEBUG_SPTR(result);
     return result;
+#endif
 }
 
 EdgeSPtr Edge::next(VertexSPtr vertex) const {
@@ -629,12 +685,10 @@ double Edge::angleTo(EdgeSPtr edge) const {
 std::string Edge::toString() const {
     std::string result("Edge(");
     if (id_ != -1) {
-        result += "id=" + util::StringFactory::fromInteger(id_) + ",\n     ";
+        result += "id=" + util::StringFactory::fromInteger(id_);
     } else {
-        // result += util::StringFactory::fromPointer(this) + ",";
+        // result += util::StringFactory::fromPointer(this);
     }
-    result += "src=" + vertex_src_->toString() + ",\n     ";
-    result += "dst=" + vertex_dst_->toString();
     if (!facet_l_.expired()) {
         result += ", l=";
         if (getFacetL()->getID() != -1) {
@@ -650,6 +704,29 @@ std::string Edge::toString() const {
         } else {
             // result += util::StringFactory::fromPointer(getFacetR().get());
         }
+    }
+    // scr and dst faces
+    if (getFacetSrc()) {
+        result += ", s=";
+        if (getFacetSrc()->getID() != -1) {
+            result += util::StringFactory::fromInteger(getFacetSrc()->getID());
+        } else {
+            // result += util::StringFactory::fromPointer(getFacetSrc().get());
+        }
+    }
+    if (getFacetDst()) {
+        result += ", d=";
+        if (getFacetDst()->getID() != -1) {
+            result += util::StringFactory::fromInteger(getFacetDst()->getID());
+        } else {
+            // result += util::StringFactory::fromPointer(getFacetDst().get());
+        }
+    }
+    if (vertex_src_) {
+      result += ",\n     src=" + vertex_src_->toString();
+    }
+    if (vertex_dst_) {
+      result += ",\n     dst=" + vertex_dst_->toString();
     }
     result += ")";
     return result;

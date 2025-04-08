@@ -214,4 +214,21 @@ bool DblEdgeMergeEvent::isObsolete() const {
     return false;
 }
 
+bool DblEdgeMergeEvent::operator==(const DblEdgeMergeEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           ((facet_1_.lock() == other.facet_1_.lock() &&
+             edge_11_.lock() == other.edge_11_.lock() &&
+             edge_12_.lock() == other.edge_12_.lock() &&
+             facet_2_.lock() == other.facet_2_.lock() &&
+             edge_21_.lock() == other.edge_21_.lock() &&
+             edge_22_.lock() == other.edge_22_.lock()) ||
+            (facet_1_.lock() == other.facet_2_.lock() &&
+             edge_11_.lock() == other.edge_21_.lock() &&
+             edge_12_.lock() == other.edge_22_.lock() &&
+             facet_2_.lock() == other.facet_1_.lock() &&
+             edge_21_.lock() == other.edge_11_.lock() &&
+             edge_22_.lock() == other.edge_12_.lock()));
+}
+
 } } }

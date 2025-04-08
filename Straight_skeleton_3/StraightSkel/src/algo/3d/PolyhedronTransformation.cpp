@@ -237,9 +237,10 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
 {
     DEBUG_PRINT("~~~~ Shift [in place] by " << offset);
 
-    std::ofstream shift_out("results/last_shift.polylines.txt");
-    shift_out.precision(17);
+    // std::ofstream shift_out("results/last_shift.polylines.txt");
+    // shift_out.precision(17);
 
+    // @speed shift planes once and recompute point and edge positions from this
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -273,7 +274,7 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
         data->setOffsetVertex(vertex); // @todo trick
 
         // std::cout << *old_point << " to " << *new_point << std::endl;
-        shift_out << "2 " << *old_point << " " << *new_point << std::endl;
+        // shift_out << "2 " << *old_point << " " << *new_point << std::endl;
     }
 
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
@@ -304,25 +305,19 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         facet->setPlane(offset_plane);
     }
-
-    // @fixme this very likely changes IDs of elements (e.g. if a vertex got removed, everything
-    // afterwards will shift).
-    // That shouldn't be an issue as long as IDs are informative, but if the IDs are
-    // used in the future, e.g. for events, then that will be an issue
-    polyhedron->initializeAllIDs();
 }
 
-// @todo plenty of needless recomputations:
+// @speed plenty of needless recomputations:
 // - when we do shiftPoint for adjacent points
 // - when we call shiftPoint, and then call shiftPlane later on
 // - ...
-// @todo get rid of recompute_positions, seems unused now
+// @speed get rid of recompute_positions, seems obsolete now
 PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,
                                                      const bool recompute_positions)
 {
-    std::ofstream shift_out("results/last_shift.polylines.txt");
-    shift_out.precision(17);
+    // std::ofstream shift_out("results/last_shift.polylines.txt");
+    // shift_out.precision(17);
 
     PolyhedronSPtr result = Polyhedron::create();
 
@@ -358,7 +353,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         result->addVertex(offset_vertex);
 
         // std::cout << *old_point << " to " << *new_point << std::endl;
-        shift_out << "2 " << *old_point << " " << *new_point << std::endl;
+        // shift_out << "2 " << *old_point << " " << *new_point << std::endl;
     }
 
     // Now, deal with degree 1 vertices.
@@ -406,7 +401,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             result->addVertex(offset_vertex);
 
             // std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
-            shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
+            // shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
         } else {
             CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
         }
@@ -753,7 +748,6 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
             // We need the normalization because we will shift the base plane.
             facet->normalizePlaneCoefficients();
             facet->storePlaneCoefficients();
-
             facet->perturbPlaneCoefficients();
         }
 
@@ -763,6 +757,8 @@ PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
         // for vertices to remain on the planes of their incident facets
         randMovePoints(polyhedron);
     }
+
+    DEBUG_PRINT("Done with perturbation");
 
     return polyhedron;
 }

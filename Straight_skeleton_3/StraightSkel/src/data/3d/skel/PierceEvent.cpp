@@ -131,4 +131,11 @@ bool PierceEvent::isObsolete() const {
   return false;
 }
 
+bool PierceEvent::operator==(const PierceEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (facet_.lock() == other.facet_.lock()) &&
+           (vertex_.lock() == other.vertex_.lock());
+}
+
 } } }

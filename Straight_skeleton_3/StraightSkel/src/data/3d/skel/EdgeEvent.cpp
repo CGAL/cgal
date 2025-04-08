@@ -104,5 +104,11 @@ bool EdgeEvent::isObsolete() const {
     return false;
 }
 
+bool EdgeEvent::operator==(const EdgeEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (edge_.lock() == other.edge_.lock());
+}
+
 
 } } }

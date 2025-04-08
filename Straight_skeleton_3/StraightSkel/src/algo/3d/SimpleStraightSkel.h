@@ -35,11 +35,11 @@
 
 namespace std {
 template <>
-struct hash<std::array<std::size_t, 4>> {
-    size_t operator()(const std::array<std::size_t, 4>& arr) const {
+struct hash<std::array<int, 4>> {
+    size_t operator()(const std::array<int, 4>& arr) const {
         size_t seed = 0;
         for (std::size_t value : arr) {
-            boost::hash_combine(seed, value); // Use boost::hash_combine
+            boost::hash_combine(seed, value);
         }
         return seed;
     }
@@ -317,10 +317,30 @@ public:
                                  PQ& queue);
 
     /**
+     * Split Merge event
+     */
+    void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
+                                 PolyhedronSPtr polyhedron,
+                                 const bool use_canonical_event_reps,
+                                 const CGAL::FT current_offset,
+                                 CGAL::FT& offset_of_nearest_event,
+                                 PQ& queue);
+    void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+                                 const CGAL::FT current_offset,
+                                 CGAL::FT& offset_of_nearest_event,
+                                 PQ& queue);
+
+    /**
      * Split event on the surface.
      * Edges do not need to be reflex.
      */
-    void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
+    void collectSurfaceEvent(EdgeSPtr edge_1,
+                             EdgeSPtr edge_2,
+                             PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& offset_of_nearest_event,
+                             PQ& queue);
+     void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                               PolyhedronSPtr polyhedron,
                               const CGAL::FT current_offset,
                               CGAL::FT& offset_of_nearest_event,
@@ -334,6 +354,12 @@ public:
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
+    void collectPolyhedronSplitEvent(EdgeSPtr edge_1,
+                                     EdgeSPtr edge_2,
+                                     PolyhedronSPtr polyhedron,
+                                     const CGAL::FT current_offset,
+                                     CGAL::FT& offset_of_nearest_event,
+                                     PQ& queue);
     void collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
                                       PolyhedronSPtr polyhedron,
                                       const CGAL::FT current_offset,
@@ -343,20 +369,6 @@ public:
                                       const CGAL::FT current_offset,
                                       CGAL::FT& offset_of_nearest_event,
                                       PQ& queue);
-
-    /**
-     * Split Merge event
-     */
-     void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
-                                  PolyhedronSPtr polyhedron,
-                                  const bool use_canonical_event_reps,
-                                  const CGAL::FT current_offset,
-                                  CGAL::FT& offset_of_nearest_event,
-                                  PQ& queue);
-     void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
-                                 const CGAL::FT current_offset,
-                                 CGAL::FT& offset_of_nearest_event,
-                                 PQ& queue);
 
     /**
      * This event occurs when two edges collide.
@@ -422,13 +434,6 @@ public:
      * It links all adjacent arcs and sheets to this node.
      */
     void appendEventNode(NodeSPtr node);
-
-    static PolyhedronSPtr soup_to_polyhedron(const std::vector<Point3>& points,
-                                             const std::vector<std::vector<std::size_t> >& triangles,
-                                             const std::vector<Plane3SPtr>& planes,
-                                             const std::vector<CGAL::FT>& speeds);
-
-    void tagFacetsWithStepID(const std::set<FacetSPtr>& facets);
 
     PolyhedronSPtr shiftToEventOffset(PolyhedronSPtr polyhedron,
                                       const CGAL::FT start_offset,
@@ -513,7 +518,6 @@ protected:
 
     StraightSkeletonSPtr skel_result_;
 
-
     std::vector<Plane3SPtr> basePlanes_;
 
     int step_id_;
@@ -522,11 +526,12 @@ protected:
     std::set<EdgeSPtr> post_op_edges_;
     std::set<FacetSPtr> post_op_facets_;
 
+    std::set<VertexSPtr> post_op_vertices_VV_;
     std::set<VertexSPtr> post_op_vertices_pierce_;
     std::set<EdgeSPtr> post_op_edges_edgesplit_;
 
 #ifndef CGAL_SS3_NO_CACHING
-    std::unordered_map<std::array<std::size_t, 4>,
+    std::unordered_map<std::array<int, 4>,
                        std::pair<Point3SPtr, CGAL::FT> > intersectionCache_;
 #endif
 };

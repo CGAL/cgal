@@ -125,6 +125,12 @@ public:
                     const AbstractEventSPtr& eventB) const
     {
       if (eventA->getOffset() == eventB->getOffset()) {
+          if (eventA->getType() == eventB->getType()) { // @fixme get rid of that and IDs directly?
+              // Give priority to newer (higher) IDs. The point is that if an event has been updated
+              // to a different type and appears multiple (non-zombie) times, it will be processed
+              // with the updated type.
+              return eventA->getID() < eventB->getID();
+          }
           return (eventA->getType() > eventB->getType());
       }
 

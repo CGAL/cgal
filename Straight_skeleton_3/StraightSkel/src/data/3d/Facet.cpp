@@ -542,7 +542,6 @@ int Facet::getBasePlaneID() const {
     return this->basePlaneId_;
 }
 
-// @todo proper names (with 'id')
 void Facet::setBasePlaneID(int planeId) {
     this->basePlaneId_ = planeId;
 }
@@ -569,7 +568,6 @@ bool Facet::initPlane() {
     }
     if (!result) {
         Point3SPtr point_prev;
-#if 1
         std::vector<Point3SPtr> points;
         std::list<VertexSPtr>::iterator it_v = vertices_.begin();
         while (it_v != vertices_.end()) {
@@ -598,28 +596,6 @@ bool Facet::initPlane() {
             result = true;
           }
         }
-#else // old code; issues with collinear points
-        Point3SPtr points[3];
-        unsigned int i = 0;
-        std::list<VertexSPtr>::iterator it_v = vertices_.begin();
-        while (i < 3 && it_v != vertices_.end()) {
-            VertexSPtr vertex = *it_v++;
-            Point3SPtr point = vertex->getPoint();
-            if (point_prev != point) {
-                points[i] = point;
-                i++;
-            }
-            point_prev = point;
-        }
-        if (i >= 3) {
-            Plane3SPtr plane = KernelFactory::createPlane3(
-                    points[0], points[1], points[2]);
-            if (plane) {
-                plane_ = plane;
-                result = true;
-            }
-        }
-#endif
     }
 
     CGAL_assertion(result);
@@ -697,44 +673,42 @@ void Facet::perturbPlaneCoefficients()
         // std::cout << "seed = " << s << std::endl;
         static std::mt19937 gen(s);
 
-#if 1
+        // @todo make this a config parameter
+#if 1 // standard
         static std::uniform_real_distribution<> rdist(1e-10, 1e-9);
+#else // can help debug because things become more visible, but can create SI in the input!
+        static std::uniform_real_distribution<> rdist(1e-2, 1e-1);
+#endif
 
         // Since we are perturbing, we might as well collapse the DAG of 'v'.
         // the point is also that once 'nv' is a double, its interval will be a singleton,
         // and we will have access to static filters
-        exact(v);
-        CGAL::FT step = rdist(gen);
-        CGAL::FT nv = CGAL::to_double(v + step);
+        double step = rdist(gen);
+        double nv = CGAL::to_double(v) + step;
         return nv;
-#else
-        static std::uniform_real_distribution<> rdist(0, 1);
-
-        // Since we are perturbing, we might as well collapse the DAG of 'v'.
-        exact(v);
-        double dv = CGAL::to_double(v);
-        double u = std::nextafter(dv, std::numeric_limits<double>::max()) - dv; // @todo v.approx() already gave that
-        std::cout << "dv u " << dv << " " << u << std::endl;
-        CGAL_assertion(!CGAL::is_zero(u));
-
-        return CGAL::FT{dv} + CGAL::FT{rdist(gen)} * 0.05 * CGAL::FT{u};
-#endif
     };
 
-    CGAL::FT na = nudge(plane_->a());
-    CGAL::FT nb = nudge(plane_->b());
-    CGAL::FT nc = nudge(plane_->c());
-    CGAL::FT nd = nudge(plane_->d()); // @todo do not nudge 'd'? (mind the 'to_double()')
+    double na = nudge(plane_->a());
+    double nb = nudge(plane_->b());
+    double nc = nudge(plane_->c());
+    double nd = nudge(plane_->d()); // @todo do not nudge 'd'? (mind the 'to_double()')
 
-    CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
+    double n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
 
     // @todo if it's zero, re-nudge differently
-    CGAL_assertion(!is_zero(n));
+    CGAL_assertion(n != 0);
 
-    // @todo cast to_double() *after* the normalization?
-    // the downside is that we won't have a^2 + b^2 + c^2 == 1
-    // but then again, who does
+#if 0
     plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
+#else
+    // cast to_double() *after* the normalization
+    // the downside is that we won't have a^2 + b^2 + c^2 == 1
+    // but then again, who does...
+    plane_ = KernelFactory::createPlane3(CGAL::to_double(na/n),
+                                         CGAL::to_double(nb/n),
+                                         CGAL::to_double(nc/n),
+                                         CGAL::to_double(nd/n));
+#endif
 
 #ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << plane_->a() << " to " << na << std::endl;

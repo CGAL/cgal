@@ -29,6 +29,7 @@ public:
     static ConstOffsetEventSPtr create(CGAL::FT offset);
     CGAL::FT getOffset() const override;
     void setOffset(CGAL::FT offset);
+    bool operator==(const ConstOffsetEvent& other) const;
 protected:
     ConstOffsetEvent();
     ConstOffsetEvent(CGAL::FT offset);

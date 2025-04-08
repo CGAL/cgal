@@ -42,6 +42,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const FlipVertexEvent& other) const;
 protected:
     FlipVertexEvent();
     NodeSPtr node_;

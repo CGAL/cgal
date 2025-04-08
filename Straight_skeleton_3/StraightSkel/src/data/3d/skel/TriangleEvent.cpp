@@ -147,4 +147,11 @@ bool TriangleEvent::isObsolete() const {
     return false;
 }
 
+bool TriangleEvent::operator==(const TriangleEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (facet_.lock() == other.facet_.lock()) &&
+           (edge_begin_.lock() == other.edge_begin_.lock());
+}
+
 } } }

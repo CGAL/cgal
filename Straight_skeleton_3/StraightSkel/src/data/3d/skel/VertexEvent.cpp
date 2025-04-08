@@ -125,10 +125,10 @@ std::string VertexEvent::toString() const {
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
-    sstr << "\t(facet A=" << facet_1->getID()
-         << "; vertex A=" << vertex_1->toString() << ")\n";
-    sstr << "\t(facet B=" << facet_2->getID()
-         << "; vertex B2=" << vertex_2->toString() << ")";
+    sstr << "\t(facet A=" << facet_1->getID() << "\n"
+         << "\t vertex A=" << vertex_1->toString() << ")\n";
+    sstr << "\t(facet B=" << facet_2->getID() << "\n"
+         << "\t vertex B2=" << vertex_2->toString() << ")";
     return sstr.str();
 }
 
@@ -152,6 +152,19 @@ bool VertexEvent::isObsolete() const {
     }
 
     return false;
+}
+
+bool VertexEvent::operator==(const VertexEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           ((facet_1_.lock() == other.facet_1_.lock() &&
+             facet_2_.lock() == other.facet_2_.lock()) ||
+            (facet_1_.lock() == other.facet_2_.lock() &&
+             facet_2_.lock() == other.facet_1_.lock())) &&
+           ((vertex_1_.lock() == other.vertex_1_.lock() &&
+             vertex_2_.lock() == other.vertex_2_.lock()) ||
+            (vertex_1_.lock() == other.vertex_2_.lock() &&
+             vertex_2_.lock() == other.vertex_1_.lock()));
 }
 
 } } }

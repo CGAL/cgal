@@ -214,11 +214,12 @@ bool OBJFile::save(const std::string& filename,
                    const bool do_triangulate,
                    const bool convert_to_double)
 {
+   // @fixme make the use of Ids optional so that it doesn't mess with downstream stuff
+
     DEBUG_PRINT(" -- Save OBJ " << filename << " --");
     DEBUG_PRINT("    do_triangulate: " << std::boolalpha << do_triangulate << "\n"
              << "    convert_to_double: " << convert_to_double);
 
-    polyhedron->initializeAllIDs();
     // std::cout << polyhedron->toString() << std::endl;
 
     using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
@@ -240,35 +241,46 @@ bool OBJFile::save(const std::string& filename,
     if (ofs.is_open()) {
         WriteLock l(polyhedron->mutex());
 
+        // Find the maximum vertex ID
+        int max_vertex_id = -1;
+        for (const auto& vertex : polyhedron->vertices()) {
+            max_vertex_id = std::max(max_vertex_id, vertex->getID());
+        }
+
+        // Create a vector of size max_vertex_id + 1
+        std::vector<VertexSPtr> vertex_map(max_vertex_id + 1, nullptr);
+        for (const auto& vertex : polyhedron->vertices()) {
+            vertex_map[vertex->getID()] = vertex;
+        }
+
+        // Write vertices
+        for (int id = 0; id <= max_vertex_id; ++id) {
+            if (vertex_map[id]) {
+                VertexSPtr vertex = vertex_map[id];
+                if (convert_to_double) {
+                    ofs << "v " << CGAL::to_double(vertex->getX()) << " "
+                                << CGAL::to_double(vertex->getY()) << " "
+                                << CGAL::to_double(vertex->getZ()) << "\n";
+                } else {
+                    ofs << "v " << vertex->getX().exact() << " "
+                                << vertex->getY().exact() << " "
+                                << vertex->getZ().exact() << "\n";
+                }
+            } else {
+                ofs << "v 0 0 0\n";
+            }
+        }
+
+        // Map vertex pointers to their IDs for facet writing
         std::map<VertexSPtr, std::size_t> v_ids;
-        std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-        while (it_v != polyhedron->vertices().end()) {
-            VertexSPtr vertex = *it_v++;
-            unsigned int id = vertex->getID();
-
-            evaluate(vertex->getX());
-            evaluate(vertex->getY());
-            evaluate(vertex->getZ());
-
-            if(convert_to_double)
-            {
-              ofs << "v " << CGAL::to_double(vertex->getX()) << " "
-                          << CGAL::to_double(vertex->getY()) << " "
-                          << CGAL::to_double(vertex->getZ()) << "\n";
-            }
-            else
-            {
-              ofs << "v " << vertex->getX().exact() << " "
-                          << vertex->getY().exact() << " "
-                          << vertex->getZ().exact() << "\n";
-            }
-
-            v_ids[vertex] = id + 1;
+        for (const auto& vertex : polyhedron->vertices()) {
+            v_ids[vertex] = vertex->getID() + 1;
         }
 
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
+            CGAL_assertion(facet->getID() != -1);
 
             bool do_triangulate_face = do_triangulate;
             if (facet->edges().size() < 3)

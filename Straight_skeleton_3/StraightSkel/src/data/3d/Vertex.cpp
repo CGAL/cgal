@@ -387,12 +387,38 @@ std::list<FacetWPtr>& Vertex::facets() {
 }
 
 VertexSPtr Vertex::next(FacetSPtr facet) const {
+    VertexSPtr result = VertexSPtr(); // @fixme nullptr & whatnot
+
+    if (facet->vertices().size() == 1) { // @fixme what's the point of this loop...
+        VertexSPtr vertex = *facet->vertices().begin();
+        CGAL_assertion(vertex == shared_from_this());
+        return vertex;
+    }
+
+    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
+    while (it_e != edges_.end()) {
+        EdgeWPtr edge_wptr = *it_e++;
+        if (edge_wptr.expired()) {
+            continue;
+        }
+
+        EdgeSPtr edge = EdgeSPtr(edge_wptr);
+        if (edge->src(facet) == shared_from_this()) {
+            result = edge->dst(facet);
+            break;
+        }
+    }
+
+    DEBUG_SPTR(result);
+    return result;
+
+# if 0
     VertexSPtr result = VertexSPtr();
     std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
     while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v;
         if (vertex == shared_from_this()) {
-            if (facet->vertices().size() == 1) {
+            if (facet->vertices().size() == 1) { // @fixme what's the point of this loop...
                 result = vertex;
             }
             break;
@@ -420,6 +446,7 @@ VertexSPtr Vertex::next(FacetSPtr facet) const {
     }
     DEBUG_SPTR(result);
     return result;
+#endif
 }
 
 VertexSPtr Vertex::prev(FacetSPtr facet) const {
@@ -603,6 +630,7 @@ std::string Vertex::toString() const {
             if (!facet_wptr.expired()) {
                 result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
                 result += " (" + std::to_string(FacetSPtr(facet_wptr)->getBasePlaneID()) + ")";
+                CGAL_warning(FacetSPtr(facet_wptr)->getBasePlaneID() == FacetSPtr(facet_wptr)->getID());
             }
         }
         result += " }";

@@ -33,6 +33,7 @@ public:
     WeakPtr(const std::weak_ptr<T>& r) : std::weak_ptr<T>(r) {}
     WeakPtr(const std::shared_ptr<T>& r) : std::weak_ptr<T>(r) {}
 
+    // @fixme returns true for two expired pointers, which is probably not great
     bool operator==(const std::weak_ptr<T>& other) const {
         bool result = (this->expired() && other.expired());
         if (!this->expired() && !other.expired()) {

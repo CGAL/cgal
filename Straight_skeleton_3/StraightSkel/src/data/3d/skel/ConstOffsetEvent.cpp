@@ -51,4 +51,8 @@ void ConstOffsetEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 
+bool ConstOffsetEvent::operator==(const ConstOffsetEvent& other) const {
+    return (this->offset_ == other.offset_);
+}
+
 } } }

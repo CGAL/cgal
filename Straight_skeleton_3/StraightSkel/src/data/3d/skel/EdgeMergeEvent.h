@@ -40,6 +40,7 @@ public:
     std::string toString() const override;
     bool isValid() const override;
     bool isObsolete() const override;
+    bool operator==(const EdgeMergeEvent& other) const;
 protected:
     EdgeMergeEvent();
     NodeSPtr node_;

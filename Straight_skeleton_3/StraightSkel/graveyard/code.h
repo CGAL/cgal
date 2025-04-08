@@ -5014,3 +5014,157 @@ void Polyhedron::rebuild(const std::list<FacetSPtr>& facets) {
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+bool Facet::initPlane() {
+  bool result = false;
+  std::list<TriangleSPtr>::iterator it_t = triangles_.begin();
+  while (it_t != triangles_.end()) {
+      TriangleSPtr triangle = *it_t++;
+      Plane3SPtr plane = triangle->plane();
+      if (plane) {
+          plane_ = plane;
+          result = true;
+          break;
+      }
+  }
+  if (!result) {
+      Point3SPtr point_prev;
+      Point3SPtr points[3];
+      unsigned int i = 0;
+      std::list<VertexSPtr>::iterator it_v = vertices_.begin();
+      while (i < 3 && it_v != vertices_.end()) {
+          VertexSPtr vertex = *it_v++;
+          Point3SPtr point = vertex->getPoint();
+          if (point_prev != point) {
+              points[i] = point;
+              i++;
+          }
+          point_prev = point;
+      }
+      if (i >= 3) {
+          Plane3SPtr plane = KernelFactory::createPlane3(
+                  points[0], points[1], points[2]);
+          if (plane) {
+              plane_ = plane;
+              result = true;
+          }
+      }
+  }
+
+  CGAL_assertion(result);
+  return result;
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+static PolyhedronSPtr soup_to_polyhedron(const std::vector<Point3>& points,
+  const std::vector<std::vector<std::size_t> >& triangles,
+  const std::vector<Plane3SPtr>& planes,
+  const std::vector<CGAL::FT>& speeds);
+
+
+
+
+// belongs somewhere else, probably
+PolyhedronSPtr SimpleStraightSkel::soup_to_polyhedron(const std::vector<Point3>& points,
+  const std::vector<std::vector<std::size_t> >& triangles,
+  const std::vector<Plane3SPtr>& planes,
+  const std::vector<CGAL::FT>& speeds) {
+PolyhedronSPtr result = Polyhedron::create();
+
+unsigned int vertex_id_new = 0;
+for (const Point3& p : points) {
+Point3SPtr point = KernelFactory::createPoint3(p);
+VertexSPtr vertex = Vertex::create(point);
+vertex->setID(vertex_id_new++);
+result->addVertex(vertex);
+}
+
+unsigned int facet_id_new = 0;
+for (std::size_t tid=0; tid<triangles.size(); ++tid) {
+const std::vector<std::size_t>& t = triangles[tid];
+CGAL_assertion(t.size() == 3); // @tmp could handle more, but no need right now
+VertexSPtr poly_vertices[3];
+for (unsigned int i = 0; i < 3; i++) {
+poly_vertices[i] = *(std::next(result->vertices().begin(), t[i]));
+}
+
+FacetSPtr facet = Facet::create(3, poly_vertices);
+facet->setID(facet_id_new++);
+facet->setPlane(planes[tid]);
+Triangle::create(facet, poly_vertices);
+
+data::_3d::skel::SkelFacetDataSPtr data;
+if (facet->hasData()) {
+data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+} else {
+data = data::_3d::skel::SkelFacetData::create(facet);
+}
+data->setSpeed(speeds[tid]);
+
+result->addFacet(facet);
+}
+
+CGAL_postcondition(result->vertices().size() == points.size());
+CGAL_postcondition(result->facets().size() == triangles.size());
+
+return result;
+}
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+void tagFacetsWithStepID(const std::set<FacetSPtr>& facets);
+
+void SimpleStraightSkel::tagFacetsWithStepID(const std::set<FacetSPtr>& facets)
+{
+    std::cout << "Tag facets:";
+    for (FacetSPtr f : facets) {
+        std::cout << " " << f->getID();
+    }
+    std::cout << " with step ID " << step_id_ << std::endl;
+
+    for(FacetSPtr facet : facets) {
+        if (facet->hasData()) {
+            std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->setStepID(step_id_);
+        }
+    }
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+
+
+
+
+
+

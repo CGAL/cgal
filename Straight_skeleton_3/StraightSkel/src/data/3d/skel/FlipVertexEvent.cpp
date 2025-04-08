@@ -124,7 +124,7 @@ std::string FlipVertexEvent::toString() const {
     sstr << "FlipVertexEvent\n";
     sstr << "\t(ID=" << getID() << "; step ID=" << getStepID() << ")\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
-    sstr << "\t(vertex A=" << vertex_1->getID() << "; vertex B=" << vertex_2->getID() << ")\n";
+    sstr << "\t(vertex A=" << vertex_1->toString() << "; vertex B=" << vertex_2->toString() << ")\n";
     sstr << "\t(facet A=" << facet_1->getID() << "; facet B=" << facet_2->getID() << ")";
     return sstr.str();
 }
@@ -149,6 +149,18 @@ bool FlipVertexEvent::isObsolete() const {
   }
 
   return false;
+}
+
+bool FlipVertexEvent::operator==(const FlipVertexEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           ((facet_1_.lock() == other.facet_1_.lock() &&
+             facet_2_.lock() == other.facet_2_.lock()) ||
+            (facet_1_.lock() == other.facet_2_.lock() &&
+             facet_2_.lock() == other.facet_1_.lock())) &&
+           ((vertex_1_.lock() == other.vertex_1_.lock() &&
+             vertex_2_.lock() == other.vertex_2_.lock()) ||
+            (vertex_1_.lock() == other.vertex_2_.lock() &&
+             vertex_2_.lock() == other.vertex_1_.lock()));
 }
 
 } } }

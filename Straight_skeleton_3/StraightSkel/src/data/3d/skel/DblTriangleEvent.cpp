@@ -139,5 +139,10 @@ bool DblTriangleEvent::isObsolete() const {
     return false;
 }
 
+bool DblTriangleEvent::operator==(const DblTriangleEvent& other) const {
+    return (node_->getOffset() == other.node_->getOffset()) &&
+           (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+           (edge_.lock() == other.edge_.lock());
+}
 
 } } }
