@@ -23,10 +23,10 @@
 namespace CGAL {
 
 /*!
-  \addtogroup PkgCT_3Functions
+  \addtogroup PkgConstrainedTriangulation3Functions
   @{
 
-  Free Functions for Creating Conforming Constrained Delaunay Triangulations  {#PkgCT_3Functions}
+  Free Functions for Creating Conforming Constrained Delaunay Triangulations  {#PkgConstrainedTriangulation3Functions}
   ==========================================================================
 
   Each of the following functions create a 3D conforming constrained Delaunay triangulation
@@ -206,7 +206,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
   return remeshing_cdt;
 }
 
-/// @} // end group PkgCT_3Functions
+/// @} // end group PkgConstrainedTriangulation3Functions
 } // end namespace CGAL
 
 #endif // CGAL_MAKE_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H

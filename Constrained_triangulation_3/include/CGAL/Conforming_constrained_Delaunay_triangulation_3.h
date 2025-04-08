@@ -512,7 +512,7 @@ class Conforming_constrained_Delaunay_triangulation_3_impl;
 #endif // not DOXYGEN_RUNNING
 
 /*!
- * \ingroup PkgCT_3Classes
+ * \ingroup PkgConstrainedTriangulation3Classes
  * \brief This class template represents a 3D conforming constrained Delaunay triangulation.
  *
  * It contains a data member of type `Tr` and provides additional functionality for handling
@@ -3894,13 +3894,13 @@ protected:
 
 
 /*!
-* \addtogroup PkgCT_3Functions
-* \brief creates a triangulation that can be used for Tetrahedral remeshing
+* \addtogroup PkgConstrainedTriangulation3Functions
+* \brief creates a triangulation that can be used for tetrahedral remeshing
 * \tparam Traits is the geometric traits class of `ccdt`
 * \tparam Tr is the type of triangulation to which `ccdt` is converted
 *
 * \param ccdt the triangulation to be converted
-* \return a triangulation of type `CGAL::Triangulation_3` that can be used for Tetrahedral remeshing
+* \return a triangulation of type `CGAL::Triangulation_3` that can be used for tetrahedral remeshing
 */
 template <typename Traits, typename Tr>
 CGAL::Triangulation_3<Traits,

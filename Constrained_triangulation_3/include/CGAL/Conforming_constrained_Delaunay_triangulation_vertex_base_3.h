@@ -23,7 +23,7 @@
 namespace CGAL {
 
 /**
- * @ingroup PkgCT_3Classes
+ * @ingroup PkgConstrainedTriangulation3Classes
  * @brief Vertex base class for the 3D conforming constrained Delaunay triangulation.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
