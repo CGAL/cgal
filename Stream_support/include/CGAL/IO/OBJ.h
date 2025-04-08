@@ -14,23 +14,23 @@
 #ifndef CGAL_IO_OBJ_H
 #define CGAL_IO_OBJ_H
 
-#include <CGAL/IO/OBJ/File_writer_wavefront.h>
 #include <CGAL/IO/Generic_writer.h>
-#include <CGAL/IO/io.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront.h>
 #include <CGAL/IO/helpers.h>
+#include <CGAL/IO/io.h>
 
 #include <CGAL/Container_helper.h>
 
-#include <boost/range/value_type.hpp>
 #include <CGAL/Named_function_parameters.h>
+#include <boost/range/value_type.hpp>
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <type_traits>
+#include <vector>
 
 namespace CGAL {
 
@@ -41,41 +41,48 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
+template <typename PointRange,
+          typename PolygonRange,
+          typename VertexNormalOutputIterator,
+          typename VertexTextureOutputIterator,
+          typename VertexNormalIndexOutputIterator,
+          typename VertexTextureIndexOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              VertexNormalOutputIterator,
-              VertexTextureOutputIterator,
-              const bool verbose = false)
-{
-  if(!is.good())
-  {
+              VertexNormalOutputIterator vn_out,
+              VertexTextureOutputIterator vt_out,
+              VertexNormalIndexOutputIterator vn_id_out,
+              VertexTextureIndexOutputIterator vt_id_out,
+              const bool verbose = false) {
+  if(!is.good()) {
     if(verbose)
-      std::cerr<<"File doesn't exist."<<std::endl;
+      std::cerr << "File doesn't exist." << std::endl;
     return false;
   }
 
-  typedef typename boost::range_value<PointRange>::type                               Point;
+  typedef typename boost::range_value<PointRange>::type Point;
+  typedef typename Kernel::Point_2 Texture;
+  typedef typename Kernel::Vector_3 Normal;
+  typedef typename Kernel::FT FT;
 
   set_ascii_mode(is); // obj is ASCII only
 
   int mini(1), maxi(-1);
   std::string s;
   Point p;
-
+  int normal_count = 0;
+  int texture_count = 0;
   std::string line;
   bool tex_found(false), norm_found(false);
-  while(getline(is, line))
-  {
+  while(getline(is, line)) {
     // get last non-whitespace, non-null character
     auto last = std::find_if(line.rbegin(), line.rend(), [](char c) { return c != '\0' && !std::isspace(c); });
     if(last == line.rend())
       continue; // line is empty or only whitespace
 
     // keep reading lines as long as the last non-whitespace, non-null character is a backslash
-    while(last != line.rend() && *last == '\\')
-    {
+    while(last != line.rend() && *last == '\\') {
       // remove everything from the backslash (included)
       line = line.substr(0, line.size() - (last - line.rbegin()) - 1);
 
@@ -93,86 +100,93 @@ bool read_OBJ(std::istream& is,
     if(!(iss >> s))
       continue;
 
-    if(s == "v")
-    {
-      if(!(iss >> p))
-      {
+    if(s == "v") {
+      if(!(iss >> p)) {
         if(verbose)
           std::cerr << "error while reading OBJ vertex." << std::endl;
         return false;
       }
 
       points.push_back(p);
-    }
-    else if(s == "vt")
-    {
+    } else if(s == "vt") {
       tex_found = true;
-    }
-    else if(s == "vn")
-    {
+      texture_count++;
+      double u = 0.0, v = 0.0;
+      iss >> u >> v;
+      *vt_out++ = Texture(FT(u), FT(v));
+    } else if(s == "vn") {
       norm_found = true;
-    }
-    else if(s == "f")
-    {
-      int i;
+      normal_count++;
+      double nx = 0.0;
+      double ny = 0.0;
+      double nz = 0.0;
+      iss >> nx >> ny >> nz;
+      *vn_out++ = Normal(FT(nx), FT(ny), FT(nz));
+    } else if(s == "f") {
+      std::string vertex_token;
       polygons.emplace_back();
-      while(iss >> i)
-      {
-        if(i < 1)
-        {
+      while(iss >> vertex_token) {
+
+        std::istringstream token_stream(vertex_token);
+        std::string v_str, vt_str, vn_str;
+
+        std::getline(token_stream, v_str, '/');
+        std::getline(token_stream, vt_str, '/');
+        std::getline(token_stream, vn_str, '/');
+
+        int i = std::stoi(v_str);
+
+        if(i < 1) {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
           polygons.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
           if(i < mini)
             mini = i;
-        }
-        else
-        {
+        } else {
           const std::size_t n = polygons.back().size();
           ::CGAL::internal::resize(polygons.back(), n + 1);
           polygons.back()[n] = i - 1;
-          if(i-1 > maxi)
-            maxi = i-1;
+          if(i - 1 > maxi)
+            maxi = i - 1;
         }
 
         // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
         // so skip to the next vertex, but be tolerant about which whitespace is used
-        if (!std::isspace(iss.peek())) {
-          std::string ignoreme;
-          iss >> ignoreme;
+        if(!vt_str.empty()) {
+          int vti = std::stoi(vt_str);
+          *vt_id_out++ = (vti < 0) ? static_cast<int>(texture_count) + vti : vti - 1;
+        }
+
+        // Normal index
+        if(!vn_str.empty()) {
+          int vni = std::stoi(vn_str);
+          *vn_id_out++ = (vni < 0) ? static_cast<int>(normal_count) + vni : vni - 1;
         }
       }
 
-      if(iss.bad())
-      {
+      if(iss.bad()) {
         if(verbose)
           std::cerr << "error while reading OBJ face." << std::endl;
         return false;
       }
-    }
-    else if(s.front() == '#')
-    {
+    } else if(s.front() == '#') {
       // this is a commented line, ignored
-    }
-    else if(s == "vp" ||
-            // Display
-            s == "bevel" || s == "lod" || s == "ctech" || s == "c_interp" || s == "usemap" || s == "usemtl" ||
-            s == "stech" || s == "d_interp" || s == "mtllib" || s == "shadow_obj" || s == "trace_obj" ||
-            // groups
-            s == "o" || s == "g" || s == "s" ||
-            // Free
-            s == "p" || s == "cstype" || s == "deg" || s == "step" || s == "bmat" || s == "con" ||
-            s == "curv" || s == "curv2" || s == "surf" || s == "parm" || s == "trim" || s == "hole" ||
-            s == "scrv" || s == "sp" || s == "end" ||
-            s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
-            s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
-            // superseded statements
-            s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
+    } else if(s == "vp" ||
+              // Display
+              s == "bevel" || s == "lod" || s == "ctech" || s == "c_interp" || s == "usemap" || s == "usemtl" ||
+              s == "stech" || s == "d_interp" || s == "mtllib" || s == "shadow_obj" || s == "trace_obj" ||
+              // groups
+              s == "o" || s == "g" || s == "s" ||
+              // Free
+              s == "p" || s == "cstype" || s == "deg" || s == "step" || s == "bmat" || s == "con" || s == "curv" ||
+              s == "curv2" || s == "surf" || s == "parm" || s == "trim" || s == "hole" || s == "scrv" || s == "sp" ||
+              s == "end" || s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
+              s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
+              // superseded statements
+              s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
     {
       // valid, but unsupported
-    }
-    else
-    {
+    } else {
       if(verbose)
         std::cerr << "Error: unrecognized line: " << s << std::endl;
       return false;
@@ -184,15 +198,13 @@ bool read_OBJ(std::istream& is,
   if(tex_found && verbose)
     std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
-  if(points.empty() || polygons.empty())
-  {
+  if(points.empty() || polygons.empty()) {
     if(verbose)
       std::cerr << "warning: empty file?" << std::endl;
     return false;
   }
 
-  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
-  {
+  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size())) {
     if(verbose)
       std::cerr << "error: invalid face index" << std::endl;
     return false;
@@ -238,15 +250,14 @@ bool read_OBJ(std::istream& is,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+                  ,
+              std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
-              )
-{
+) {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return internal::read_OBJ(is, points, polygons,
-                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                            verbose);
+  return internal::read_OBJ(is, points, polygons, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), verbose);
 }
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
@@ -283,10 +294,10 @@ bool read_OBJ(const std::string& fname,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+                  ,
+              std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
-              )
-{
+) {
   std::ifstream is(fname);
   CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, points, polygons, np);
@@ -315,7 +326,8 @@ bool read_OBJ(const std::string& fname,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{stream_precision}
- *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output
+ * stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
@@ -323,18 +335,16 @@ bool read_OBJ(const std::string& fname,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+                   ,
+               std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
-               )
-{
+) {
   set_ascii_mode(os); // obj is ASCII only
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons, np);
@@ -359,7 +369,8 @@ bool write_OBJ(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{stream_precision}
- *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output
+ * stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
  *   \cgalParamNEnd
@@ -367,18 +378,16 @@ bool write_OBJ(std::ostream& os,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
+                   ,
+               std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
-               )
-{
+) {
   std::ofstream os(fname);
   CGAL::IO::set_mode(os, CGAL::IO::ASCII);
 

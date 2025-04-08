@@ -10,6 +10,8 @@
 typedef CGAL::Simple_cartesian<double>                Kernel;
 typedef Kernel::Point_3                               Point;
 typedef std::vector<std::size_t>                      Face;
+typedef Kernel::Point_2 Texture;
+typedef Kernel::Vector_3 Normal;
 
 int main(int argc, char** argv)
 {
@@ -17,6 +19,10 @@ int main(int argc, char** argv)
 
   std::vector<Point> points;
   std::vector<Face> polygons;
+  std::vector<Normal> normals;
+  std::vector<Texture> UVcoords;
+  std::vector<int> normal_indices;
+  std::vector<int> texture_indices;
 
   bool ok = CGAL::IO::read_OBJ(obj_file, points, polygons, CGAL::parameters::verbose(true));
   assert(ok);
@@ -25,6 +31,20 @@ int main(int argc, char** argv)
   if(argc == 1)
     assert(points.size() == 434 && polygons.size() == 864);
 
+  points.clear();
+  polygons.clear();
+
+  // Check for internal read_OBJ with normal and texture coordinates reading capapbility
+  std::ifstream input(obj_file);
+  ok = CGAL::IO::internal::read_OBJ(input, points, polygons, std::back_inserter(normals), std::back_inserter(UVcoords),
+                                    std::back_inserter(normal_indices), std::back_inserter(texture_indices), true);
+  assert(ok);
+  std::cout << points.size() << " points " << polygons.size() << " polygons " << normals.size() << " normals "
+            << UVcoords.size() << " texture coords" << std::endl;
+
+  if(argc == 1)
+    assert(points.size() == 434 && polygons.size() == 864 && normals.size() == 242 && UVcoords.size() == 627);
+  
   points.clear();
   polygons.clear();
   std::string obj_string(obj_file);
