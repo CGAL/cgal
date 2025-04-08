@@ -6,7 +6,7 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
-### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgCT_3) (new package)
+### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
 - This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
   to create a conforming constrained Delaunay triangulation in 3D, which can be represented by the new
   class template `CGAL::Conforming_constrained_Delaunay_triangulation_3`.

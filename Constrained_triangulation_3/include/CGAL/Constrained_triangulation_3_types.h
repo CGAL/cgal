@@ -19,7 +19,7 @@
 namespace CGAL {
 
 /**
- * @ingroup PkgCT_3Classes
+ * @ingroup PkgConstrainedTriangulation3Classes
  * \brief Signed integral type to store the index of constraints.
  * @see `Conforming_constrained_Delaunay_triangulation_cell_data_3`
  * @see `Conforming_constrained_Delaunay_triangulation_vertex_base_3`
