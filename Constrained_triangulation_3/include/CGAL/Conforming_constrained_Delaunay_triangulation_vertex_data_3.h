@@ -145,7 +145,7 @@ public:
 
 } // namespace CGAL
 
-#if CGAL_CXX20
+#if CGAL_CXX20 && __cpp_concepts >= 201911L
 #  include <concepts>
 
   static_assert(std::regular<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_data_3>);
