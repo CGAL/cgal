@@ -1452,7 +1452,7 @@ used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
-The `apply_iterative_snap_rounding` option for autorefinement were implemented during 2025. This was implemented by Léo Valque and Sylvain Lazard. The implementation is based on \cgalCite{lazard:hal-04907149}.
+The `apply_iterative_snap_rounding` option for autorefinement was implemented in 2025, by Léo Valque, based on his work with Sylvain Lazard \cgalCite{lazard:hal-04907149}.
 
 */
 } /* namespace CGAL */
