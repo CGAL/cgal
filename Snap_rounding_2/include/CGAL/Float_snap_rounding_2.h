@@ -53,6 +53,15 @@ struct Float_snap_rounding_traits_2{
     }
   };
 
+  struct Round_2{
+    double operator()(const FT &x){
+      return to_double(x);
+    }
+    Point_2 operator()(const Point_2 &p){
+      return Point_2((*this)(p.x()),(*this)(p.y()));
+    }
+  };
+
   Squared_round_bound_2 squared_round_bound_2_object(){
     return Squared_round_bound_2();
   }
@@ -109,6 +118,8 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 
   using Comparison_result = typename Kernel::Comparison_result;
 
+  using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
+
   using PBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
   using SBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
 
@@ -123,12 +134,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 
   using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
   using Squared_round_bound_2 = typename Traits::Squared_round_bound_2;
+  using Round_2 = typename Traits::Round_2;
 
   Compare_squared_distance_2 csq_dist_2;
   Squared_round_bound_2 round_bound;
   Construct_source_2 source;
   Construct_target_2 target;
   Equal_2 equal;
+  Round_2 round;
 
   auto Less_indexes_x_2=[&](size_t i, size_t j){
     return Less_x_2()(pts[i], pts[j]);
@@ -172,19 +185,21 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
   auto callback=[&](PBox &bp, SBox &bseg){
     std::size_t pi=bp.index();
     std::size_t si=bseg.index();
-    std::size_t si1=polylines[bseg.index()][0];
-    std::size_t si2=polylines[bseg.index()][polylines[bseg.index()].size()-1];
+
+    Polyline& pl=polylines[bseg.index()];
+    std::size_t si1=pl[0];
+    std::size_t si2=pl[pl.size()-1];
 
     if((pi==si1) || (pi==si2))
       return;
 
     Point_2& p= pts[bp.index()];
-    Segment_2 seg(pts[polylines[bseg.index()][0]], pts[polylines[bseg.index()][1]]);
+    Segment_2 seg(pts[pl[0]], pts[pl[1]]);
 
     // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
     double bound = round_bound(pts[pi]);
-    for(size_t i=0; i<polylines[bseg.index()].size(); ++i)
-      bound = (std::max)(bound, round_bound(pts[polylines[bseg.index()][i]]));
+    for(size_t i=0; i<pl.size(); ++i)
+      bound = (std::max)(bound, round_bound(pts[pl[i]]));
     bound*=16;
 
     // If the segment is closed to the vertex, we subdivide it at same x coordinate that this vertex
@@ -221,30 +236,30 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Form the polylines" << std::endl;
 #endif
-  for(auto &polyline: polylines)
+  for(auto &pl: polylines)
   {
-    if(polyline.size()==2)
+    if(pl.size()==2)
       continue;
 
     // Sort the subdivision points on the polyline along the original vector
-    Vector_2 ref(pts[polyline[0]], pts[polyline[1]]);
+    Vector_2 ref(pts[pl[0]], pts[pl[1]]);
     auto sort_along_ref=[&](std::size_t pi, std::size_t qi){
       Vector_2 v(pts[pi], pts[qi]);
       if(is_zero(ref.x()))
         return is_positive(v.y()*ref.y());
       return is_positive(v.x()*ref.x());
     };
-    std::size_t ps=polyline[0];
-    std::size_t pt=polyline[1];
-    std::sort(polyline.begin(), polyline.end(), sort_along_ref);
-    CGAL_assertion((polyline[0]==ps) && (polyline[polyline.size()-1]==pt));
+    std::size_t ps=pl[0];
+    std::size_t pt=pl[1];
+    std::sort(pl.begin(), pl.end(), sort_along_ref);
+    CGAL_assertion((pl[0]==ps) && (pl[pl.size()-1]==pt));
   }
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Round" << std::endl;
 #endif
   for(auto &p: pts)
-    p=Point_2(to_double(p.x()), to_double(p.y()));
+    p=round(p);
 
   //The order of the points on an axis must be preserved for the correctness of the algorithm
   CGAL_assertion(std::is_sorted(p_sort_by_x.begin(),p_sort_by_x.end(),Less_indexes_x_2));
@@ -404,9 +419,9 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 TODO doc
 */
 template <class InputIterator , class OutputContainer>
-typename OutputContainer::iterator compute_snap_subcurves_2(InputIterator  	input_begin,
-		                                                        InputIterator  	input_end,
-		                                                        OutputContainer&  output)
+typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	input_begin,
+		                                                           InputIterator  	input_end,
+		                                                           OutputContainer&  output)
 {
   using Segment_2 = std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>;
   using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
