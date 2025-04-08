@@ -285,12 +285,6 @@ namespace CGAL {
       std::fill(coords_, coords_ + 2*dim, FT(0));
     }
 
-    Kd_tree_rectangle()
-      : coords_(0), dim(0), max_span_coord_(-1)
-    {
-}
-
-
     explicit
     Kd_tree_rectangle(const Kd_tree_rectangle& r)
       : coords_(new FT[2*r.dim]), dim(r.dim),

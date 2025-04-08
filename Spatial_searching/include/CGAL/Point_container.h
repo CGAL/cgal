@@ -232,7 +232,7 @@ public:
 
   // building the container from a sequence of Point_d*
   Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox()
+    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d)
   {
     tbox = bbox;
     built_coord = max_span_coord();
