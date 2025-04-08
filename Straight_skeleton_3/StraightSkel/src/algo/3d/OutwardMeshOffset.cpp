@@ -15,6 +15,7 @@
 #include "algo/Controller.h"
 #include "data/3d/Polyhedron.h"
 #include "algo/3d/PolyhedronTransformation.h"
+#include "algo/3d/SelfIntersection.h"
 #include "algo/3d/SimpleStraightSkel.h"
 #include "db/3d/PLYFile.h"
 
@@ -318,13 +319,20 @@ run(const char* mesh_filename,
     // apply the perturbation
     polyhedron = perturb(polyhedron);
 
-    // Failure here is likely from a bad perturbation (after all, there is a probabily
-    // epsilon that we create something that is degenerate).
+    // Failure here is likely from a bad perturbation (after all, there is a epsilon
+    // probability that we create something that is degenerate).
     // @todo try again with another perturbation, or smarter (iterative) perturbation
     if (!polyhedron || !polyhedron->isConsistent()) {
         std::cerr << "Error: failed to build polyhedron (bad perturbation?)" << std::endl;
         return false;
     }
+
+#if 0 // this could be kept, but I don't want to pay the heavy runtime cost for now
+    if (SelfIntersection::hasSelfIntersectingSurface(polyhedron)) {
+        std::cerr << "Error: input has self intersections (post perturbation)" << std::endl;
+        return false;
+    }
+#endif
 
     // run the skeleton code
     algo::ControllerSPtr controller = { };
