@@ -522,6 +522,7 @@ bool polygon_soup_snap_rounding(PointRange &soup_points,
     bool res=polygon_soup_snap_rounding_impl(soup_points, indexes_soup_triangles, np);
 
     soup_triangles.clear();
+    soup_triangles.reserve(indexes_soup_triangles.size());
     for(const Indexes_range<Triangle> &t: indexes_soup_triangles)
       soup_triangles.push_back({t[0],t[1],t[2]});
     return res;
