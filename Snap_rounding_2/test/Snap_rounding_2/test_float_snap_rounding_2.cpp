@@ -36,7 +36,7 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
 
   CGAL::Real_timer t;
   t.start();
-  CGAL::compute_snap_subcurves_2(segs.begin(), segs.end(), out);
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
   t.stop();
 
   std::cout << t.time() << "sec" << std::endl;
@@ -56,7 +56,7 @@ void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector
 
   CGAL::Real_timer t;
   t.start();
-  CGAL::compute_snap_subcurves_2(segs.begin(), segs.end(), out);
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
   t.stop();
 
   std::cout << t.time() << "sec" << std::endl;
