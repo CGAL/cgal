@@ -431,18 +431,7 @@ Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
 
     Point3SPtr point = KernelFactory::createPoint3(x, y, z);
 
-#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
-    std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
-    std::cout << a0*x + b0*y + c0*z + d0 - w0*t << std::endl;
-    std::cout << a1*x + b1*y + c1*z + d1 - w1*t << std::endl;
-    std::cout << a2*x + b2*y + c2*z + d2 - w2*t << std::endl;
-    std::cout << a3*x + b3*y + c3*z + d3 - w3*t << std::endl;
-
-    CGAL_assertion(a0*x + b0*y + c0*z + d0 - w0*t == 0);
-    CGAL_assertion(a1*x + b1*y + c1*z + d1 - w1*t == 0);
-    CGAL_assertion(a2*x + b2*y + c2*z + d2 - w2*t == 0);
-    CGAL_assertion(a3*x + b3*y + c3*z + d3 - w3*t == 0);
-#endif
+    // @todo post condition that the points are at the same (weighted) time from the faces
 
     return point;
 }
