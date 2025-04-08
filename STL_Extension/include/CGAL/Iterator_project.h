@@ -139,7 +139,7 @@ public:
   }
 
 template <typename It>
-#if defined(BOOST_MSVC) && (BOOST_MSVC <= 1920)
+#if defined(BOOST_MSVC)
   difference_type
 #else
 
