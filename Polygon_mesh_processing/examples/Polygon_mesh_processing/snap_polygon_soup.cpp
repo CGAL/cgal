@@ -1,5 +1,7 @@
 #define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
 // #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
+// #define PMP_ROUNDING_VERTICES_NAIVE_SNAP
+// #define PMP_ROUNDING_VERTICES_FLOAT_SNAP
 // TODO delete those verbose line macro before release
 
 #include <CGAL/Simple_cartesian.h>

@@ -322,56 +322,10 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
 #endif
 
-#if 1
-    // Version where points are rounded to the center of their voxel.
+#if defined(PMP_ROUNDING_VERTICES_NAIVE_SNAP)
+    // Nothing
 
-    // Get all the snap version of the points of the vertices of the intersecting triangles
-    // Note: points will not be modified here, they will be modified in the next for loop
-
-    //TODO: TBB version of this for loop
-
-    std::vector<Point_3> snap_points;
-    snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
-
-    for (auto &pair : pairs_of_intersecting_triangles)
-    {
-      for (size_t pi : triangles[pair.first])
-        snap_points.emplace_back(snap_p(points[pi]));
-      for (size_t pi : triangles[pair.second])
-        snap_points.emplace_back(snap_p(points[pi]));
-    }
-
-#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
-    std::cout << "Snap the coordinates of the vertices close-by the previous ones" << std::endl;
-#endif
-
-    std::sort(snap_points.begin(), snap_points.end());
-    snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
-
-    // If the snapped version of a point correspond to one of the previous point, we snap it
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(parallel_execution)
-    {
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
-                        [&](const tbb::blocked_range<size_t>& r){
-                          for(size_t pi = r.begin(); pi != r.end(); ++pi){
-                            Point_3 p_snap=snap_p(points[pi]);
-                            if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
-                              points[pi] = p_snap;
-                          }
-                        }
-                        );
-    } else
-#endif
-    for (Point_3 &p : points)
-    {
-      Point_3 p_snap = snap_p(p);
-      if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
-        p = p_snap;
-    }
-
-
-#elif 0
+#elif defined(PMP_ROUNDING_VERTICES_CLOSEST_POINT_SNAP)
     // Version where points in a voxel are rounded to the closest point
 
     // Group the points of the vertices of the intersecting triangles by their voxel
@@ -420,7 +374,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
       }
     }
 
-#elif 0
+#elif defined(PMP_ROUNDING_VERTICES_BARYCENTER_SNAP)
     // Version where points in a voxel are rounded to their barycenter.
 
     // Group the points of the vertices of the intersecting triangles by their voxel
@@ -469,7 +423,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
         }
       }
     }
-#elif 0 //Zhou et al. version with round on float
+#elif defined(PMP_ROUNDING_VERTICES_FLOAT_SNAP)
     for (auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
@@ -477,8 +431,53 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
       for (size_t pi : triangles[pair.second])
         points[pi]=Point_3( (float) to_double(points[pi].x()), (float) to_double(points[pi].y()), (float) to_double(points[pi].z()));
     }
-#else //Naive version
-    //Nothing
+#else // Default Version
+    // Version where points are rounded to the center of their voxel.
+
+    // Get all the snap version of the points of the vertices of the intersecting triangles
+    // Note: points will not be modified here, they will be modified in the next for loop
+
+    //TODO: TBB version of this for loop
+
+    std::vector<Point_3> snap_points;
+    snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
+
+    for (auto &pair : pairs_of_intersecting_triangles)
+    {
+      for (size_t pi : triangles[pair.first])
+        snap_points.emplace_back(snap_p(points[pi]));
+      for (size_t pi : triangles[pair.second])
+        snap_points.emplace_back(snap_p(points[pi]));
+    }
+
+#ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
+    std::cout << "Snap the coordinates of the vertices close-by the previous ones" << std::endl;
+#endif
+
+    std::sort(snap_points.begin(), snap_points.end());
+    snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
+
+    // If the snapped version of a point correspond to one of the previous point, we snap it
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(parallel_execution)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
+                        [&](const tbb::blocked_range<size_t>& r){
+                          for(size_t pi = r.begin(); pi != r.end(); ++pi){
+                            Point_3 p_snap=snap_p(points[pi]);
+                            if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
+                              points[pi] = p_snap;
+                          }
+                        }
+                        );
+    } else
+#endif
+    for (Point_3 &p : points)
+    {
+      Point_3 p_snap = snap_p(p);
+      if (std::binary_search(snap_points.begin(), snap_points.end(), p_snap))
+        p = p_snap;
+    }
 #endif
 
     repair_triangle_soup(points, triangles, np);
