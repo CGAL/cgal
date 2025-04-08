@@ -142,9 +142,9 @@ public :
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget, &GeneratorWidget::visibilityChanged,
             this, &Basic_generator_plugin::on_tab_changed);
-    connect(dock_widget->prismCheckBox, &QCheckBox::stateChanged,
+    connect(dock_widget->prismCheckBox, &QCheckBox::checkStateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
-    connect(dock_widget->pyramidCheckBox, &QCheckBox::stateChanged,
+    connect(dock_widget->pyramidCheckBox, &QCheckBox::checkStateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
   }
 
