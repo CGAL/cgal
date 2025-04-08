@@ -137,12 +137,12 @@ public:
     Self tmp = *this;
     return tmp += -n;
   }
-  
+
 template <typename It>
 #if defined(BOOST_MSVC) && (BOOST_MSVC <= 1920)
   difference_type
 #else
-  
+
   std::enable_if_t<std::is_convertible_v<iterator_category, std::random_access_iterator_tag>
                    && std::is_convertible_v<const It&, const Self&>,
                    difference_type>
