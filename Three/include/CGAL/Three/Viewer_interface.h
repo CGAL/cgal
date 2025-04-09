@@ -223,7 +223,7 @@ public:
   //! Customizable from the MainWindow or the SubViewer menu.
   virtual float total_pass() = 0;
 Q_SIGNALS:
-  //!Emit this to signal that the `id`th item has been picked.
+  //!Emit this to signal that the `id`-th item has been picked.
   void selected(int id);
   //!Emit this to require a contextual menu to appear at `global_pos`.
   void requestContextMenu(QPoint global_pos);
@@ -286,7 +286,7 @@ public:
   virtual QVector4D* clipBox() const =0;
   virtual bool isClipping() const = 0;
   //!  A vector indicating the scaling factors to apply to the scene when displaying it.
-  //!  It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
+  //!  It can be useful when a scene is very large along one of its coordinates, making it hard to visualize it.
   virtual const QVector3D& scaler() const = 0;
 
   virtual void showEntireScene() = 0;

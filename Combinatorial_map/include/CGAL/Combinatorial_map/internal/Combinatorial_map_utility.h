@@ -159,7 +159,7 @@ namespace CGAL
     };
 
     //count the number of time a given type have been found
-    //within a tuple, until reaching position the k'th type of the tuple.
+    //within a tuple, until reaching position the k-th type of the tuple.
     //dim is the total size of the tuple
     template <class Type,int k,class T,
               int dim=CGAL::internal::My_length<T>::value-1>
@@ -191,7 +191,7 @@ namespace CGAL
     };
 
     //count the number of time a type different from Type have been found
-    //within a tuple, until reaching position the k'th type of the tuple.
+    //within a tuple, until reaching position the k-th type of the tuple.
     //dim is the total size of the tuple
     template <class Type, int k,class T,
               int dim=CGAL::internal::My_length<T>::value-1>
@@ -339,7 +339,7 @@ namespace CGAL
     };
 
     //Same as Foreach_static excepted that Functor
-    //is called for case k only if the k'th type in the tuple
+    //is called for case k only if the k-th type in the tuple
     //is different from Void. Note that to the converse of Foreach_static
     //Functor are called from n =0 to k
     template <class Functor,class T,int n=0, int startn=0>
@@ -365,7 +365,7 @@ namespace CGAL
     };
 
     //Same as Foreach_static_restricted excepted that Functor
-    //is called for case k only if the k'th type in the tuple
+    //is called for case k only if the k-th type in the tuple
     //is different from Void and k!=j.
     template <class Functor,int j,class T,int n=0>
     struct Foreach_static_restricted_except;

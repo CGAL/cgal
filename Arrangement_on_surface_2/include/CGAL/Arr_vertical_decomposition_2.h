@@ -117,7 +117,7 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    *
    * If the type Vgt2 is the same as the type Gt2, use a
    * reference to Gt2 to avoid constructing a new one.  Otherwise,
-   * instantiate a local variable of the former and provide the later as a
+   * instantiate a local variable of the former and provide the latter as a
    * single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
