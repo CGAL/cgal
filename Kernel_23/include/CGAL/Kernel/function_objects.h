@@ -276,7 +276,7 @@ namespace CommonKernelFunctors {
       }
     }
 
-    result_type
+    Comparison_result
     operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
                const Point_3& a2, const Point_3& b2, const Point_3& c2,
                const FT& cosine) const
@@ -937,7 +937,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3            Plane_3;
     typename K::Construct_plane_3 construct_plane;
   public:
-    typedef typename K::Comparison_result  result_type;
 
   public:
     template <class T1, class T2>
@@ -955,7 +954,7 @@ namespace CommonKernelFunctors {
     }
 
 
-    Needs_FT<result_type>
+    Needs_FT<Comparison_result>
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& query, const FT& sqd) const
     {
       Plane_3 plane = construct_plane(p,q,r);
