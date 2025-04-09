@@ -138,18 +138,20 @@ public:
     return tmp += -n;
   }
 
-template <typename It>
 #if defined(BOOST_MSVC)
-  difference_type
+  difference_type operator- (const Self& i) const {
+    return nt - i.nt;
+  }
 #else
 
+template <typename It>
   std::enable_if_t<std::is_convertible_v<iterator_category, std::random_access_iterator_tag>
                    && std::is_convertible_v<const It&, const Self&>,
                    difference_type>
-#endif
-      operator- (const It& i) const {
+  operator- (const It& i) const {
     return nt - i.nt;
   }
+#endif
 
   reference operator[]( difference_type n) const {
     Self tmp = *this;
