@@ -395,7 +395,7 @@ circumscribing ball whose interior does not contain
 any vertex of the triangulation.
 
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined. Note however that the CGAL implementation computes a
+uniquely defined. Note however that the %CGAL implementation computes a
 unique triangulation even in these cases.
 
 When a new point `p` is inserted into a Delaunay triangulation, the
@@ -488,7 +488,7 @@ than inserting the same points one by one.
 
 The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
 `CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
-the concept `TriangulationDataStructure_` which is instantiated with a vertex
+the concept `TriangulationDataStructure` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits_` must be a model of the concept
