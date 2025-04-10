@@ -37,24 +37,19 @@ namespace CGAL {
 \sa `CGAL::Labeled_mesh_domain_3`
 \sa `CGAL::make_mesh_3()`
 */
-template<class BGT,
-         class Subdomain_index_ = int,
-         class Surface_patch_index_ = std::pair<Subdomain_index_,
-                                                Subdomain_index_> >
+template<class BGT>
 class Poisson_mesh_domain_3
-    : public Labeled_mesh_domain_3<BGT,
-                                                  Subdomain_index_,
-                                                  Surface_patch_index_>
+    : public Labeled_mesh_domain_3<BGT>
 {
 public:
-  using Base = Labeled_mesh_domain_3<BGT, Subdomain_index_, Surface_patch_index_>;
+  using Base = Labeled_mesh_domain_3<BGT>;
   typedef typename Base::Subdomain Subdomain;
+  typedef typename Base::Subdomain_index Subdomain_index;
+  typedef typename Base::Surface_patch_index Surface_patch_index;
+  typedef typename Base::Intersection Intersection;
 
   // Type of indexes for cells of the input complex
-  typedef Surface_patch_index_ Surface_patch_index;
   typedef std::optional<Surface_patch_index> Surface_patch;
-  typedef Subdomain_index_ Subdomain_index;
-  typedef typename Base::Intersection Intersection;
 
   // Type of indexes to characterize the lowest dimensional face of the input
   // complex on which a vertex lie
@@ -217,10 +212,10 @@ public:
    */
   template<typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Poisson_mesh_domain_3 create_Poisson_mesh_domain(const Function& function,
-                                                           const Bounding_object& bounding_object,
-                                                           const CGAL_NP_CLASS& np = parameters::default_values()
+                                                          const Bounding_object& bounding_object,
+                                                          const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                                                           ,typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
+                                                          ,typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
 #endif
 )
   {
@@ -277,15 +272,14 @@ public:
    */
   struct Construct_intersection
   {
-    Construct_intersection(const Poisson_mesh_domain_3& domain)
-      : r_domain_(domain) {}
+    Construct_intersection(const Poisson_mesh_domain_3& domain) : domain_(domain) {}
 
     Intersection operator()(const Segment_3& s) const
     {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       CGAL_precondition(r_domain_.do_intersect_surface_object()(s) != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      return this->operator()(s.source(),s.target());
+      return this->operator()(s.source(), s.target());
     }
 
     Intersection operator()(const Ray_3& r) const
@@ -305,6 +299,9 @@ public:
      * because it drives bisection cuts.
      * Indeed, the returned point is the first intersection of `[a,b]`
      * with a subdomain surface.
+     *
+     * The difference from the Labeled_mesh_domain_3::Construct_intersection is that
+     * the underlying Delaunay triangulation in the Poisson function is used for the bisection.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
     {
@@ -323,8 +320,8 @@ public:
       typename Function::Cell_handle c1, c2;
       bool c1_is_inf, c2_is_inf;
 
-      std::tie(value_at_p1, c1, c1_is_inf) = r_domain_.poisson_function.special_func(p1);
-      std::tie(value_at_p2, c2, c2_is_inf) = r_domain_.poisson_function.special_func(p2);
+      std::tie(value_at_p1, c1, c1_is_inf) = domain_.poisson_function.special_func(p1);
+      std::tie(value_at_p2, c2, c2_is_inf) = domain_.poisson_function.special_func(p2);
 
       Subdomain_index label_at_p1 = (value_at_p1 < 0) ? 1 : 0;
       Subdomain_index label_at_p2 = (value_at_p2 < 0) ? 1 : 0;
@@ -343,19 +340,19 @@ public:
             std::cout << "Intersection(): c1 == c2 and inf!" << std::endl;
             return Intersection();
           } else {
-            const Surface_patch_index sp_index = r_domain_.make_surface_index(label_at_p1, label_at_p2);
-            const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+            const Surface_patch_index sp_index = domain_.make_surface_index(label_at_p1, label_at_p2);
+            const Index index = domain_.index_from_surface_patch_index(sp_index);
             return Intersection(Point_3(ORIGIN + ((value_at_p2 * (p1 - ORIGIN)) - (value_at_p1 * (p2 - ORIGIN))) /
                                                   (value_at_p2 - value_at_p1)), index, 2);
           }
         }
         mid = midpoint(p1, p2);
         // If the two points are enough close, then we return midpoint
-        if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_ )
+        if ( squared_distance(p1, p2) < domain_.squared_error_bound_ )
         {
           CGAL_assertion(value_at_p1 * value_at_p2 <= 0);
-          const Surface_patch_index sp_index = r_domain_.make_surface_index(label_at_p1, label_at_p2);
-          const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+          const Surface_patch_index sp_index = domain_.make_surface_index(label_at_p1, label_at_p2);
+          const Index index = domain_.index_from_surface_patch_index(sp_index);
           return Intersection(mid, index, 2);
         }
 
@@ -363,7 +360,7 @@ public:
         FT value_at_mid;
         typename Function::Cell_handle c_at_mid;
         bool c_is_inf;
-        std::tie(value_at_mid, c_at_mid, c_is_inf) = r_domain_.poisson_function.special_func(mid);
+        std::tie(value_at_mid, c_at_mid, c_is_inf) = domain_.poisson_function.special_func(mid);
         Subdomain_index label_at_mid = (value_at_mid < 0) ? 1 : 0;
 
         // Else we must go on
@@ -371,7 +368,7 @@ public:
         // change p2 if f(p1)!=f(p2).
         // That allows us to find the first intersection from a of [a,b] with
         // a surface.
-        if(label_at_p1 != label_at_mid && !(r_domain_.null(label_at_p1) && r_domain_.null(label_at_mid)))
+        if(label_at_p1 != label_at_mid && !(domain_.null(label_at_p1) && domain_.null(label_at_mid)))
         {
           p2 = mid;
           value_at_p2 = value_at_mid;
@@ -390,16 +387,15 @@ public:
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
-      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
-      if(clipped)
-        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
+      const auto clipped = CGAL::intersection(query, domain_.bbox_);
+      if (clipped)
+        if (const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
 
       return Intersection();
     }
 
-  private:
-    const Poisson_mesh_domain_3& r_domain_;
+    const Poisson_mesh_domain_3& domain_;
   };
 
   // Returns Construct_intersection object
