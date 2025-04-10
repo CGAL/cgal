@@ -114,6 +114,14 @@ target_link_libraries(mesh_polyhedral_complex PRIVATE CGAL::Eigen3_support)
 create_single_source_cgal_program("mesh_polyhedral_complex_sm.cpp")
 target_link_libraries(mesh_polyhedral_complex_sm PRIVATE CGAL::Eigen3_support)
 
+find_package(OpenVDB CONFIG)
+if(TARGET OpenVDB::openvdb)
+  create_single_source_cgal_program("mesh_openvdb_surface.cpp")
+  target_link_libraries(mesh_openvdb_surface
+                               PUBLIC OpenVDB::openvdb  CGAL::Eigen3_support
+                               PRIVATE OpenVDB::openvdb)
+endif()
+
 if(TARGET CGAL::CGAL_ImageIO)
   if(VTK_FOUND)
     create_single_source_cgal_program("mesh_3D_gray_vtk_image.cpp")
