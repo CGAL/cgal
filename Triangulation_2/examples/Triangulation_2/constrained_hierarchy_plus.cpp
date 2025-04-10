@@ -31,7 +31,7 @@ main( )
 
   int count = 0;
   using Sc = Triangulation::Subconstraint;
-  for ([[maybe_unused]] const Sc& sc :  cdt.subconstraints()) {
+  for (const Sc& sc :  cdt.subconstraints()) {
     ++count;
   }
   std::cout << "The number of resulting constrained edges is  ";
