@@ -127,7 +127,7 @@ which is the case for point queries.
 The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
 distance. The second one is a specialization for incremental neighbor
-searching and distance browsing. Both require extendes nodes.
+searching and distance browsing. Both require extended nodes.
 
 `Orthogonal_k_neighbor_search<Traits,
 OrthogonalDistance, Splitter, SpatialTree>`
@@ -175,9 +175,13 @@ because in general the query time will be less than using the default value.
 Instead of using the default splitting rule `Sliding_midpoint` described below,
 a user may, depending upon the data, select
 one from the following splitting rules,
-which determine how a separating hyperplane is computed. Every splitter has
+which determine how a separating hyperplane is computed. Some splitter have
 degenerated worst cases, which may lead to a linear tree and a stack overflow.
 Switching the splitting rule to one of a different kind will solve the problem.
+The `Median_of_rectangle` and `Median_of_max_spread` are robust sliders that will
+neither lead to a linear tree nor to a stack overflow. The `Median_of_rectangle`
+splitter will detect if the data in a node is degenerated and applies the
+`Median_of_max_spread` rule for that node to avoid a linear tree.
 
 <DL>
 
