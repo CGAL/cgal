@@ -958,25 +958,29 @@ public:
                            get_offset(n, 2), get_offset(n, 3));
 
     typename EKernel::Point_3 dp;
+    typename EKernel::Compute_x_3 compute_x = etraits.compute_x_3_object();
+    typename EKernel::Compute_y_3 compute_y = etraits.compute_y_3_object();
+    typename EKernel::Compute_z_3 compute_z = etraits.compute_z_3_object();
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
+    transl_wc1.x() += 1;
     for(;;) /* while not in */
     {
       // can safely perform a construction here because the kernel has exact constructions
       dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
 
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc1.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc1.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc1.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc1.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc1.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc1.z() -= 1;
       else
         break;
@@ -987,18 +991,17 @@ public:
     for(;;) /* while not in */
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
-
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc2.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc2.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc2.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc2.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc2.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc2.z() -= 1;
       else
         break;
