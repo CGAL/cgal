@@ -32,6 +32,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/container/small_vector.hpp>
 
+#ifdef CGAL_DEBUG_DECIMATION
+#include <CGAL/IO/polygon_soup_io.h>
+#endif
+
 #include <algorithm>
 #include <unordered_map>
 
@@ -243,7 +247,7 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
   Point_ref_3 s = get(vpm, target(next(opposite(h, tm), tm), tm) );
 
   if (coplanar_cos_threshold==-1)
-    return coplanar(p, q, r, s);
+    return coplanar(p, q, r, s) && coplanar_orientation(p, q, r, s)!=CGAL::POSITIVE;
   else
   {
     typename Kernel::Compare_dihedral_angle_3 pred;
@@ -848,6 +852,10 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
 
   if (!is_polygon_soup_a_polygon_mesh(faces))
   {
+#ifdef CGAL_DEBUG_DECIMATION
+    CGAL::IO::write_polygon_soup("soup.off", corners, faces);
+    std::cout << "the output is not a valid polygon mesh!" << std::endl;
+#endif
     return false;
   }
 
