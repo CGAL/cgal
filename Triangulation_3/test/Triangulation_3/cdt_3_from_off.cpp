@@ -26,7 +26,7 @@
 #include <string>
 #include <string_view>
 
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #include <ranges>
 #endif
 
@@ -512,7 +512,7 @@ int go(Mesh mesh, CDT_options options) {
     {
       std::ofstream dump(options.output_filename);
       dump.precision(17);
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
       cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_facet_constrained(f);
       }));
@@ -568,7 +568,7 @@ int go(Mesh mesh, CDT_options options) {
   start_time = std::chrono::high_resolution_clock::now();
   CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
   {
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
     auto [min_sq_distance, min_edge] = (std::ranges::min)(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
 #else
@@ -680,7 +680,7 @@ int go(Mesh mesh, CDT_options options) {
         for(auto& polyline: polylines) {
           assert(polyline.front() == polyline.back());
           polyline.pop_back();
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
           face_index = cdt.insert_constrained_face(
             polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
             false,

@@ -461,7 +461,7 @@ bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3
 
 namespace CGAL {
 
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 template <typename Polygon, typename Kernel>
 concept Polygon_3 = std::ranges::common_range<Polygon>
       && (std::is_convertible_v<std::ranges::range_value_t<Polygon>,
