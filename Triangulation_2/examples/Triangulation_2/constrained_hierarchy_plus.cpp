@@ -17,6 +17,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS,Itag> CDT;
 typedef CGAL::Triangulation_hierarchy_2<CDT>             CDTH;
 typedef CGAL::Constrained_triangulation_plus_2<CDTH>     Triangulation;
 
+typedef Triangulation::Vertex_handle                     Vertex_handle;
 typedef Triangulation::Point                             Point;
 
 int
@@ -32,6 +33,7 @@ main( )
   int count = 0;
   using Sc = Triangulation::Subconstraint;
   for (const Sc& sc :  cdt.subconstraints()) {
+    std::cout << sc.first->point() << " - " << sc.second->point() << std::endl;
     ++count;
   }
   std::cout << "The number of resulting constrained edges is  ";
