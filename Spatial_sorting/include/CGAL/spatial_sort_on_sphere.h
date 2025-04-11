@@ -14,6 +14,8 @@
 #ifndef CGAL_SPATIAL_SORT_ON_SPHERE_H
 #define CGAL_SPATIAL_SORT_ON_SPHERE_H
 
+#include <random>
+
 #include <CGAL/spatial_sort.h>
 #include <CGAL/hilbert_sort_on_sphere.h>
 #include <CGAL/Hilbert_policy_tags.h>
@@ -38,8 +40,8 @@ void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator en
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::difference_type Diff_t;
 
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin, end, rng);
 
   if (threshold_hilbert==0) threshold_hilbert=4;
