@@ -101,8 +101,7 @@ namespace CGAL {
       // So, if needed, create a copy of the range of faces, and triangulate it on the fly.
 
       // create a non-deleting pointer to `faces` (with a null deleter)
-      using Deleter_function = void(Faces*);
-      using Deleter = Deleter_function*; // function pointer type
+      using Deleter = std::function<void(Faces*)>; // function pointer type
       using Ptr = std::unique_ptr<Faces, Deleter>;
       auto null_deleter = +[](Faces *) {};
       Ptr triangle_faces_ptr{&faces, null_deleter};
