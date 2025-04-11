@@ -54,7 +54,7 @@ void detect(Polygon_mesh &mesh, FT max_distance, FT max_angle, std::size_t min_r
   region_growing.detect(std::back_inserter(regions));
   std::cout << regions.size() << " regions found" << std::endl;
 
-  const Region_growing::Region_map& map = region_growing.region_map();
+  const typename Region_growing::Region_map& map = region_growing.region_map();
 
   for (std::size_t i = 0; i < regions.size(); i++)
     for (auto& item : regions[i].second) {
