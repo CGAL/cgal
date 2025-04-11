@@ -121,7 +121,7 @@ vertex of `fh`, on an edge of `fh`, inside `fh` in case it is a finite face,
 or it may be outside the convex hull.
 The function writes this information in the non-const parameter `lt` of type `Locate_type`.
 And it additionally writes into the non-const parameter `li`, the locate index,
-the index of the vertex or edge in face `fh, in case `lt` is `Delaunay::VERTEX`  or
+the index of the vertex or edge in face `fh` , in case `lt` is `Delaunay::VERTEX`  or
 `Delaunay::EDGE`.  If `lt` is `Delaunay::FACE` or `Delaunay::OUTSIDE_CONVEX_HULL`
 the locate index has no meaning.
 
