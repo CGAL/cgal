@@ -21,7 +21,7 @@ of three-dimensional closed-form, generalized barycentric coordinates defined fo
 In particular, this package includes an implementation of Wachspress, discrete harmonic, mean value, and
 one extra function to calculate barycentric coordinates with respect to tetrahedra. In this implementation,
 we restrict our polyhedra to convex ones with triangular faces, although some of the coordinates may
-accept more general shapes.
+accept more general shapes. The calculated coordinates are not normalized.
 
 
 \section gbc_3_interface Software Design
