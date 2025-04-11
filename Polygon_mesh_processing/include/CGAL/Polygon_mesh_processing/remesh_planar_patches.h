@@ -1678,7 +1678,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, do_not_triangulate_faces);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, true, do_not_triangulate_faces);
 }
 
 template <class TriangleMesh>
