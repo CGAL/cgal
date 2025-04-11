@@ -78,7 +78,7 @@ namespace CGAL {
         std::cerr << "Warning: cannot read polygon soup" << std::endl;
       return return_error();
     }
-    using Traits = typename PMP_internal::GetPolygonGeomTraits<Points, Faces, NamedParameters>::type;
+    using Traits = typename GetPolygonGeomTraits<Points, Faces, NamedParameters>::type;
 
     auto traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
