@@ -3620,13 +3620,15 @@ public:
   {
     this->is_Delaunay = false;
     faces_region_numbers.resize(face_constraint_misses_subfaces.size());
-    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+    for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end;
+        ++i)
+    {
       CDT_2& cdt_2 = face_cdt_2[i];
       fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
     if(this->debug_input_faces()) {
-      for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+      for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
         dump_face(i);
       }
     }
@@ -3636,7 +3638,7 @@ public:
     bool the_process_made_progress = false;
     while(i != npos) {
       try {
-        if(restore_face(i)) {
+        if(restore_face(static_cast <CDT_3_signed_index>(i))) {
           face_constraint_misses_subfaces_reset(i);
         } else {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
