@@ -232,7 +232,7 @@ public:
   */
   Efficient_RANSAC(Traits t = Traits())
           : m_traits(t), m_direct_octrees(nullptr), m_global_octree(nullptr), m_num_subsets(0),
-            m_num_available_points(0), m_num_total_points(0), m_valid_iterators(false), m_extracted_shapes(std::make_shared<std::vector<std::shared_ptr<Shape> > >()) {
+            m_num_available_points(0), m_num_total_points(0), m_extracted_shapes(std::make_shared<std::vector<std::shared_ptr<Shape> > >()), m_valid_iterators(false) {
   }
 
   /*!
