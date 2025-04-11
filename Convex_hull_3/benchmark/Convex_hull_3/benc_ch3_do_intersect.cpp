@@ -163,6 +163,44 @@ private:
 
   }
 
+  void Tet_stretched(int N)
+  {
+    std::cout << "Tetrahedrons streched" << std::endl;
+    std::cout << "Do intersect of package Intersection_3" << std::endl;
+    CGAL::Real_timer t;
+    t.start();
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point()+V(-1,1,0);
+      P p1 = random_point()+V(-1,1,0);
+      P p2 = random_point()+V(1,-1,0);
+      P p3 = random_point()+V(1,-1,0);
+
+      P q0 = random_point()+V(-1,-1,0);
+      P q1 = random_point()+V(-1,-1,0);
+      P q2 = random_point()+V(1,1,0);
+      P q3 = random_point()+V(1,1,0);
+
+      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+    }
+    t.stop();
+    std::cout << t.time() << " sec" << std::endl;
+
+    std::cout << "Do intersect of Convex Hull" << std::endl;
+    t.reset();
+    t.start();
+    for(int i=0; i<N; ++i)
+    {
+      PR a({random_point()+V(-1,1,0),  random_point()+V(-1,1,0),  random_point()+V(1,-1,0), random_point()+V(1,-1,0)});
+      PR b({random_point()+V(-1,-1,0), random_point()+V(-1,-1,0), random_point()+V(1,1,0),  random_point()+V(1,1,0)});
+
+      CGAL::Convex_hull_3::predicates_impl::sphericalDisjoint(a, b, 0);
+    }
+    t.stop();
+    std::cout << t.time() << " sec" << std::endl << std::endl;
+
+  }
+
   void Tet_shift(int N)
   {
     std::cout << "Tetrahedrons that do not intersect" << std::endl;
@@ -197,7 +235,7 @@ private:
       CGAL::Convex_hull_3::predicates_impl::sphericalDisjoint(a, b, 0);
     }
     t.stop();
-    std::cout << t.time() << " sec" << std::endl;
+    std::cout << t.time() << " sec\n" << std::endl;
 
   }
 
@@ -208,6 +246,7 @@ public:
     Tet_tet(1000);
     Tet_mirror(1000);
     Tet_shift(1000);
+    Tet_stretched(1000);
     std::cout << std::endl;
   }
 };

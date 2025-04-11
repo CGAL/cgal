@@ -35,6 +35,8 @@ namespace predicates_impl
 
 template <class Vector_3>
 Vector_3 LInf_normalize(const Vector_3 &v){
+  if(v==NULL_VECTOR)
+    return v;
   auto l=(max)(abs(v.x()), (max)(abs(v.y()),abs(v.z())));
   return v/l;
 }
@@ -81,9 +83,9 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                   // return (*this)[0].north_ + (*this)[1].north_; //Old, need that both north_ was L2 normalized
                } break;
       default : {
-                  Vector_3 avg;
+                  Vector_3 avg(NULL_VECTOR);
                   for( const SphericalPolygonElement<Vector_3> & v : *this )
-                    avg = avg + v.vertex_;
+                    avg += v.vertex_;
                   return avg;
                 } break;
     }
