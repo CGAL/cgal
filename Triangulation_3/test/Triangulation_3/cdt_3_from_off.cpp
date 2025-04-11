@@ -25,7 +25,11 @@
 #include <fstream>
 #include <string>
 #include <string_view>
+
+#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #include <ranges>
+#endif
+
 #include <optional>
 #include <chrono>
 
