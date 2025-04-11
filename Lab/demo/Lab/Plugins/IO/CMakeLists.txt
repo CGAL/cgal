@@ -26,7 +26,7 @@ cgal_lab_plugin(nef_io_plugin Nef_io_plugin KEYWORDS Viewer)
 target_link_libraries(nef_io_plugin PRIVATE scene_nef_polyhedron_item)
 
 cgal_lab_plugin(off_plugin OFF_io_plugin
-  KEYWORDS Viewer Mesh_3 PointSetProcessing Classification PMP)
+  KEYWORDS Viewer Mesh_3 PointSetProcessing Classification PMP IO_surface_meshes)
 target_link_libraries(off_plugin PRIVATE scene_polygon_soup_item scene_points_with_normal_item scene_surface_mesh_item)
 
 cgal_lab_plugin(off_to_nef_plugin OFF_to_nef_io_plugin KEYWORDS Viewer)
@@ -38,10 +38,10 @@ target_link_libraries(polylines_io_plugin PRIVATE scene_polylines_item)
 cgal_lab_plugin(wkt_plugin WKT_io_plugin KEYWORDS Viewer PointSetProcessing Mesh_3)
 target_link_libraries(wkt_plugin PRIVATE scene_polylines_item)
 
-cgal_lab_plugin(stl_plugin STL_io_plugin KEYWORDS Viewer PMP)
+cgal_lab_plugin(stl_plugin STL_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
 target_link_libraries(stl_plugin PRIVATE scene_surface_mesh_item scene_polygon_soup_item)
 
-cgal_lab_plugin(surf_io_plugin Surf_io_plugin KEYWORDS Viewer PMP)
+cgal_lab_plugin(surf_io_plugin Surf_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
 target_link_libraries(surf_io_plugin PRIVATE scene_surface_mesh_item)
 
 cgal_lab_plugin(lcc_io_plugin lcc_io_plugin KEYWORDS Viewer)
@@ -50,7 +50,7 @@ target_link_libraries(lcc_io_plugin PRIVATE scene_lcc_item)
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
-  cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP)
+  cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
   target_link_libraries(om_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_selection_item)
   target_link_libraries(om_plugin PRIVATE CGAL::OpenMesh_support)
 else()
@@ -71,7 +71,7 @@ endif()
 
 if(VTK_FOUND AND VTK_LIBRARIES)
   message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
-  cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
+  cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer IO_surface_meshes)
   target_link_libraries(vtk_plugin
       PRIVATE
       scene_surface_mesh_item
@@ -91,7 +91,7 @@ endif()
 cgal_lab_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PRIVATE scene_points_with_normal_item)
 
-cgal_lab_plugin(ply_plugin PLY_io_plugin KEYWORDS Viewer PointSetProcessing Classification PMP)
+cgal_lab_plugin(ply_plugin PLY_io_plugin KEYWORDS Viewer PointSetProcessing Classification PMP IO_surface_meshes)
 target_link_libraries(ply_plugin PRIVATE scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
 if (TARGET CGAL::LASLIB_support)
   cgal_lab_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
@@ -119,7 +119,7 @@ if(3MF_LIBRARIES
    AND 3MF_INCLUDE_DIR
    AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
   include_directories(${3MF_INCLUDE_DIR})
-  cgal_lab_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
+  cgal_lab_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP IO_surface_meshes)
   target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
   target_compile_definitions(io_3mf_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
