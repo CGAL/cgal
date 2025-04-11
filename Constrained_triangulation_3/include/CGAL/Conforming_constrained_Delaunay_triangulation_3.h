@@ -59,10 +59,10 @@
 #include <optional>
 #include <unordered_map>
 #include <vector>
-#if __has_include(<ranges>)
+#if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif
-#if __has_include(<format>)
+#if CGAL_CXX20 && __has_include(<format>)
 #  include <format>
 #  include <concepts>
 #elif CGAL_DEBUG_CDT_3
