@@ -106,7 +106,7 @@ it is used only for distance computations.
 \warning Having degenerate primitives in the AABB-tree is not recommended as the underlying
 predicates and constructions of the traits class might not be able to handle them.
 For example if one is using `CGAL::AABB_traits` with a Kernel from \cgal,
-having degenerate triangles or segments in the AABB-tree will results in an undefined
+having degenerate triangles or segments in the AABB-tree will result in an undefined
 behavior or a crash.
 
 \section aabb_tree_examples Examples
@@ -197,8 +197,8 @@ The AABB tree example folder contains three examples of trees
 constructed with custom primitives. In \ref AABB_tree/AABB_custom_example.cpp "AABB_custom_example.cpp"
 the primitive contains triangles which are defined by three pointers
 to custom points. In \ref AABB_tree/AABB_custom_triangle_soup_example.cpp "AABB_custom_triangle_soup_example.cpp" all input
-triangles are stored into a single array so as to form a triangle
-soup. The primitive internally uses a `boost::iterator_adaptor` so as
+triangles are stored into a single array to form a triangle
+soup. The primitive internally uses a `boost::iterator_adaptor`
 to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
 and `AABBPrimitive::reference_point()`) required by the primitive concept. In
 \ref AABB_tree/AABB_custom_indexed_triangle_set_example.cpp "AABB_custom_indexed_triangle_set_example.cpp" the input is an indexed
@@ -213,7 +213,7 @@ contains a set of polyhedron triangle facets. We measure the tree
 construction time, the memory occupancy and the number of queries per
 second for a variety of intersection and distance queries. The machine
 used is a PC running Windows XP64 with an Intel CPU Core2 Extreme
-clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is
+clocked at 3.06 GHz with 4GB of RAM. By default, the kernel used is
 `Simple_cartesian<double>` (the fastest in our experiments). The
 program has been compiled with Visual C++ 2005 compiler with the O2
 option which maximizes speed.
@@ -244,7 +244,7 @@ internal KD-tree). It increases to approximately 150 bytes per
 primitive when constructing the internal KD-tree with one reference
 point per primitive (the default mode when calling the function
 `AABB_tree::accelerate_distance_queries()`). Note that the polyhedron
-facet primitive primitive stores only one facet handle as primitive id
+facet primitive stores only one facet handle as primitive id
 and computes on the fly a 3D triangle from the facet handle stored
 internally. When explicitly storing a 3D triangle in the primitive the
 tree occupies approximately 140 bytes per primitive instead of 60
@@ -340,7 +340,7 @@ inside the bounding box.
 
 The experiments described above are neither exhaustive nor conclusive
 as we have chosen one specific case where the input primitives are the
-facets of a triangle surface polyhedron. Nevertheless we now provide
+facets of a triangle surface polyhedron. Nevertheless, we now provide
 some general observations and advises about how to put the AABB tree
 to use with satisfactory performances. While the tree construction
 times and memory occupancy do not fluctuate much in our experiments
