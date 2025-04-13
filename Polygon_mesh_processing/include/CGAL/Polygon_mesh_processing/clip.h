@@ -516,6 +516,34 @@ generic_clip_impl(
   functor(CGAL::Emptyset_iterator(), false, true);
 }
 
+
+
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+template <class PolygonMesh, class Clip_visitor>
+struct Visitor_wrapper_for_triangulate_face
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+
+  Clip_visitor& clip_visitor;
+  const PolygonMesh& pm;
+
+  Visitor_wrapper_for_triangulate_face(const PolygonMesh& pm, Clip_visitor& clip_visitor)
+    : pm(pm)
+    , clip_visitor(clip_visitor)
+  {}
+
+  void before_subface_creations(face_descriptor /* f_split */) {}
+  void after_subface_creations() {}
+
+  void after_subface_created(face_descriptor f_new)
+  {
+    clip_visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+    clip_visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, f_new, pm);
+  }
+};
+#endif
+
 } // end of internal namespace
 
 /**
@@ -667,7 +695,10 @@ clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
   *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
   *   \cgalParamNEnd
@@ -731,6 +762,7 @@ bool clip(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference     ;
 
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
@@ -738,6 +770,13 @@ bool clip(PolygonMesh& pm,
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
+
+
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  Default_visitor default_visitor;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::concurrency_tag_t,
@@ -769,15 +808,14 @@ bool clip(PolygonMesh& pm,
                                           .do_not_triangulate_faces(!triangulate)
                                           .throw_on_self_intersection(!allow_self_intersections &&
                                                                       throw_on_self_intersection)
+                                          .visitor(visitor)
                                           .concurrency_tag(Concurrency_tag()));
-
 
   if (allow_self_intersections)
     clip_volume=false;
 
   if (clip_volume && !is_closed(pm)) clip_volume=false;
   if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
-
 
   auto fcc = get(dynamic_face_property_t<std::size_t>(), pm);
 
@@ -815,10 +853,22 @@ bool clip(PolygonMesh& pm,
 
     for (halfedge_descriptor h : borders)
     {
+      visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
       Euler::fill_hole(h, pm);
+      visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
       if (triangulate)
-        triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits));
+      {
+        if constexpr (!has_visitor)
+          triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits));
+        else
+        {
+          using Base_visitor = std::remove_cv_t<std::remove_reference_t<Visitor_ref>>;
+          internal::Visitor_wrapper_for_triangulate_face<PolygonMesh, Base_visitor> visitor_wrapper(pm, visitor);
+          triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits).visitor(visitor_wrapper));
+        }
+      }
 #endif
     }
   }
@@ -1051,7 +1101,10 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and vertices.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd

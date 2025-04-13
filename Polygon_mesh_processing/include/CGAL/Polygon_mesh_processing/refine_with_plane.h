@@ -32,12 +32,38 @@ namespace Polygon_mesh_processing {
 template <class PolygonMesh>
 struct Default_cut_visitor
 {
-  /// called before splitting an edge
-  void before_edge_split(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, PolygonMesh&) {}
-  /// called after an edge split, `h` = the new halfedge pointing to the new vertex
-  void edge_split(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, PolygonMesh&) {}
-  /// gives access to all the vertex that are on the cutting plane
-  void vertices_on_cut(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>&, PolygonMesh&){}
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  /// @name Functions used for tracking face splits
+  /// @{
+  void before_subface_creations(face_descriptor /* f_split */, const PolygonMesh& /* pm */){}
+  void after_subface_creations(const PolygonMesh& /* pm */){}
+  void before_subface_created(const PolygonMesh& /* pm */){}
+  void after_subface_created(face_descriptor /* f_new */, const PolygonMesh& /* pm */){}
+  /// @}
+
+  /// @name Functions used for tracking edge splits and edge creation
+  /// @{
+  void before_edge_split(halfedge_descriptor, PolygonMesh&) {}
+  void edge_split(halfedge_descriptor, PolygonMesh&) {}
+  void after_edge_split(){}
+  void add_retriangulation_edge(halfedge_descriptor h, const PolygonMesh& pm){}
+  /// @}
+
+  /// @name Functions used when a new vertex is created
+  ///@{
+  void intersection_point_detected(std::size_t /* i_id */,
+                                   int /* sdim */,
+                                   halfedge_descriptor /* h_e */,
+                                   halfedge_descriptor /* h_f */,
+                                   const PolygonMesh& /* tm_e */,
+                                   const PolygonMesh& /* tm_f */,
+                                   bool /* is_target_coplanar */,
+                                   bool /* is_source_coplanar */){}
+  void new_vertex_added(std::size_t /* i_id */, vertex_descriptor /* v */, const PolygonMesh& /* pm */) {}
+  ///@}
 };
 
 // TODO: doc me or hide me in the np
@@ -223,6 +249,8 @@ void refine_with_plane(PolygonMesh& pm,
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
@@ -284,6 +312,8 @@ void refine_with_plane(PolygonMesh& pm,
       break;
       case ON_ORIENTED_BOUNDARY:
         at_least_one_on=true;
+        visitor.intersection_point_detected(on_obnd.size(), 2, halfedge(v, pm), boost::graph_traits<PolygonMesh>::null_halfedge(),
+                                            pm, pm, true, false);
         on_obnd.push_back(v);
     }
   }
@@ -326,13 +356,17 @@ void refine_with_plane(PolygonMesh& pm,
       else
         if (get(vertex_os, tgt)!=CGAL::ON_ORIENTED_BOUNDARY &&
             get(vertex_os, src)!=get(vertex_os, tgt))
+        {
+          visitor.intersection_point_detected(on_obnd.size()+inters.size(), 2, halfedge(e, pm), boost::graph_traits<PolygonMesh>::null_halfedge(),
+                                              pm, pm, false, false);
           inters.push_back(e);
+        }
     }
   }
 
   if (all_in || all_out)
   {
-    visitor.vertices_on_cut(on_obnd, pm);
+    //visitor.vertices_on_cut(on_obnd, pm);
     return;
   }
 
@@ -358,6 +392,7 @@ void refine_with_plane(PolygonMesh& pm,
   }
 
   //TODO: parallel for
+  std::size_t vid=on_obnd.size();
   for (edge_descriptor e : inters)
   {
     halfedge_descriptor h = halfedge(e, pm);
@@ -368,8 +403,10 @@ void refine_with_plane(PolygonMesh& pm,
     visitor.before_edge_split(h, pm);
     h = CGAL::Euler::split_edge(h, pm);
     put(vpm, target(h, pm), ip);
+    visitor.new_vertex_added(vid, target(h,pm), pm);
     put(vertex_os, target(h, pm), ON_ORIENTED_BOUNDARY);
     visitor.edge_split(h, pm);
+    visitor.after_edge_split();
     if (was_marked)
       put(ecm, edge(h, pm), true);
 
@@ -378,9 +415,10 @@ void refine_with_plane(PolygonMesh& pm,
     h=prev(opposite(h,pm),pm);
     if (!is_border(h, pm))
       splitted_faces[face(h, pm)].push_back(h);
+    ++vid;
   }
 
-  visitor.vertices_on_cut(on_obnd, pm);
+  // visitor.vertices_on_cut(on_obnd, pm);
 
   // collect faces to be cut that have one vertex on the cut plane
   for (vertex_descriptor v : on_obnd)
@@ -403,12 +441,17 @@ void refine_with_plane(PolygonMesh& pm,
 
     CGAL_assertion( nb_hedges%2 ==0 );
 
+    visitor.before_subface_creations(f_and_hs.first, pm);
+
     if (nb_hedges==2)
     {
       halfedge_descriptor h1=f_and_hs.second[0], h2=f_and_hs.second[1];
       CGAL_assertion(next(h1,pm)!=h2 && next(h2,pm)!=h1); // the edge does not already exist
+      visitor.before_subface_created(pm);
       halfedge_descriptor res = CGAL::Euler::split_face(h1, h2, pm);
+      visitor.after_subface_created(face(res, pm), pm);
       put(edge_is_marked, edge(res, pm), true);
+      visitor.add_retriangulation_edge(res, pm);
 
       if (triangulate)
       {
@@ -418,6 +461,7 @@ void refine_with_plane(PolygonMesh& pm,
           halfedge_descriptor newh =
             CGAL::Euler::split_face(res, next(next(res, pm), pm), pm);
           put(edge_is_marked, edge(newh, pm), false);
+          visitor.add_retriangulation_edge(newh, pm);
         }
         else
         {
@@ -425,8 +469,10 @@ void refine_with_plane(PolygonMesh& pm,
           if (!is_triangle(res, pm))
           {
             // TODO: take the criteria in triangulate_faces ?
+            visitor.before_subface_created(pm);
             halfedge_descriptor newh =
               CGAL::Euler::split_face(res, next(next(res, pm), pm), pm);
+            visitor.after_subface_created(face(newh, pm), pm);
             put(edge_is_marked, edge(newh, pm), false);
           }
         }
@@ -447,10 +493,19 @@ void refine_with_plane(PolygonMesh& pm,
       {
         halfedge_descriptor h1=f_and_hs.second[i], h2=f_and_hs.second[i+1];
         CGAL_assertion(next(h1,pm)!=h2 && next(h2,pm)!=h1); // the edge does not already exist
+        visitor.before_subface_created(pm);
         halfedge_descriptor res = CGAL::Euler::split_face(h1, h2, pm);
+        if constexpr (has_visitor)
+        {
+          if (face(h1,pm)!=face(h2,pm))
+            visitor.after_subface_created(face(res, pm), pm);
+        }
         put(edge_is_marked, edge(res, pm), true);
+        visitor.add_retriangulation_edge(res, pm);
       }
     }
+
+    visitor.after_subface_creations(pm);
   }
 }
 
