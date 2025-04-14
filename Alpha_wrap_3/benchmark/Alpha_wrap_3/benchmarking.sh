@@ -65,7 +65,7 @@ mkdir -p $3/Performance/log
 mkdir -p $3/Quality/log
 mkdir -p $3/charts
 
-find $2 -mindepth 1 | parallel -j$6 compute_benchmark_data $1 $3 $4 $5 $7 :::
+find "$2" -mindepth 1 | parallel -j"$6" compute_benchmark_data "$1" "$3" "$4" "$5" "$7" {}
 
 python3 $1/Alpha_wrap_3/benchmark/Alpha_wrap_3/Robustness/generate_robustness_benchmark_charts.py -i $3/Robustness/results/$7 -o $3/Robustness -a $4 -c $7
 
