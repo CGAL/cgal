@@ -1699,10 +1699,9 @@ private:
       {
         set_status(hf, MESH_BORDER); //only 1 or 2 of the listed halfedges
                                      //will survive face removal, but status will be correct
-
-        halfedge_descriptor hfo = opposite(hf, mesh_);
-        if(status(hfo) != MESH_BORDER)
-          set_status(hfo, PATCH_BORDER);
+        set_status(opposite(hf, mesh_), PATCH_BORDER); //idem
+                                     //some of them will not survive but setting status
+                                     //is cheaper then checking which should be set
       }
       CGAL::Euler::remove_face(h, mesh_);
     }
