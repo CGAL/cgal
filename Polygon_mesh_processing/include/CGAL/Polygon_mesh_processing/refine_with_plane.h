@@ -429,7 +429,7 @@ void refine_with_plane(PolygonMesh& pm,
       if (is_border(h, pm)) continue;
       Oriented_side prev_ori = get(vertex_os, source(h, pm)),
                     next_ori = get(vertex_os, target(next(h, pm), pm));
-      if ( prev_ori == ON_ORIENTED_BOUNDARY || next_ori == ON_ORIENTED_BOUNDARY) continue; // skip full edge
+      if (prev_ori == ON_ORIENTED_BOUNDARY || next_ori == ON_ORIENTED_BOUNDARY) continue; // skip full edge
       if (prev_ori!=next_ori) splitted_faces[face(h, pm)].push_back(h); // skip tangency point
     }
   }
@@ -449,7 +449,7 @@ void refine_with_plane(PolygonMesh& pm,
       CGAL_assertion(next(h1,pm)!=h2 && next(h2,pm)!=h1); // the edge does not already exist
       visitor.before_subface_created(pm);
       halfedge_descriptor res = CGAL::Euler::split_face(h1, h2, pm);
-      visitor.after_subface_created(face(res, pm), pm);
+      visitor.after_subface_created(face(h2, pm), pm);
       put(edge_is_marked, edge(res, pm), true);
       visitor.add_retriangulation_edge(res, pm);
 
@@ -458,9 +458,10 @@ void refine_with_plane(PolygonMesh& pm,
         if (!is_triangle(res, pm))
         {
           // TODO: take the criteria in triangulate_faces ?
+          visitor.before_subface_created(pm);
           halfedge_descriptor newh =
             CGAL::Euler::split_face(res, next(next(res, pm), pm), pm);
-          put(edge_is_marked, edge(newh, pm), false);
+          visitor.after_subface_created(face(opposite(newh, pm), pm), pm);
           visitor.add_retriangulation_edge(newh, pm);
         }
         else
@@ -472,8 +473,8 @@ void refine_with_plane(PolygonMesh& pm,
             visitor.before_subface_created(pm);
             halfedge_descriptor newh =
               CGAL::Euler::split_face(res, next(next(res, pm), pm), pm);
-            visitor.after_subface_created(face(newh, pm), pm);
-            put(edge_is_marked, edge(newh, pm), false);
+            visitor.after_subface_created(face(opposite(newh, pm), pm), pm);
+            visitor.add_retriangulation_edge(newh, pm);
           }
         }
       }
@@ -498,10 +499,10 @@ void refine_with_plane(PolygonMesh& pm,
         if constexpr (has_visitor)
         {
           if (face(h1,pm)!=face(h2,pm))
-            visitor.after_subface_created(face(res, pm), pm);
+            visitor.after_subface_created(face(h2, pm), pm);
+          visitor.add_retriangulation_edge(res, pm);
         }
-        put(edge_is_marked, edge(res, pm), true);
-        visitor.add_retriangulation_edge(res, pm);
+        // put(edge_is_marked, edge(res, pm), true);
       }
     }
 

@@ -905,6 +905,237 @@ void test_new_clip()
   }
 }
 
+struct Clip_and_split_visitor
+{
+  using halfedge_descriptor = typename boost::graph_traits<Surface_mesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<Surface_mesh>::face_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<Surface_mesh>::vertex_descriptor;
+
+  Surface_mesh& sm;
+  Surface_mesh::Property_map<Surface_mesh::Face_index, int> fid_map;
+  Surface_mesh::Property_map<Surface_mesh::Vertex_index, int> vid_map;
+  Surface_mesh::Property_map<Surface_mesh::Halfedge_index, int> hid_map;
+
+  int fid=-1;
+  int hid=-1;
+  std::size_t nbf=0;
+  std::size_t nbe=0;
+  std::size_t nb_input_v=sm.number_of_vertices();
+  std::size_t nb_input_v_on=0;
+  std::size_t nb_new_v_on=0;
+
+  Clip_and_split_visitor(Surface_mesh& sm)
+    : sm(sm)
+  {
+    bool is_new=false;
+    std::tie(fid_map, is_new)=sm.add_property_map<Surface_mesh::Face_index,int>("f:id", -1);
+    assert(is_new);
+    int i=0; for (auto f : faces(sm)) put(fid_map, f, i++);
+    std::tie(vid_map, is_new)=sm.add_property_map<Surface_mesh::Vertex_index,int>("v:id", -1);
+    assert(is_new);
+    i=0; for (auto v : vertices(sm)) put(vid_map, v, i++);
+    std::tie(hid_map, is_new)=sm.add_property_map<Surface_mesh::Halfedge_index,int>("h:id", -1);
+    assert(is_new);
+    i=0;
+    for (auto e : edges(sm))
+    {
+      auto h = halfedge(e, sm);
+      put(hid_map, opposite(h, sm), i);
+      put(hid_map, h, i++);
+    }
+  }
+
+  void before_subface_creations(face_descriptor f_split, const Surface_mesh& pm)
+  {
+    fid=get(fid_map, f_split);
+    assert(fid!=-1);
+    assert(&pm==&sm);
+  }
+  void after_subface_creations(const Surface_mesh& pm)
+  {
+    assert(&pm==&sm);
+  }
+  void before_subface_created(const Surface_mesh& pm)
+  {
+    nbf=sm.number_of_faces();
+    assert(&pm==&sm);
+  }
+  void after_subface_created(face_descriptor f_new, const Surface_mesh& pm)
+  {
+    assert(&pm==&sm);
+    assert(get(fid_map, f_new)==-1);
+    put(fid_map, f_new, fid);
+    assert(nbf+1==sm.number_of_faces());
+  }
+
+  void before_edge_split(halfedge_descriptor h, Surface_mesh& pm)
+  {
+    hid=get(hid_map, h);
+    assert(hid!=-1);
+    assert(&pm==&sm);
+    nbe=sm.number_of_edges();
+  }
+  void edge_split(halfedge_descriptor hnew, Surface_mesh& pm)
+  {
+    assert(&pm==&sm);
+    assert(get(hid_map, hnew)==-1);
+    assert(hid!=-1);
+    put(hid_map, hnew, hid);
+    put(hid_map, opposite(hnew, sm), hid);
+    assert(nbe+1==sm.number_of_edges());
+  }
+  void after_edge_split()
+  {
+    assert(nbe+1==sm.number_of_edges());
+  }
+  void add_retriangulation_edge(halfedge_descriptor hnew, const Surface_mesh& pm)
+  {
+    assert(get(hid_map, hnew)==-1);
+    put(hid_map, hnew, -2);
+    put(hid_map, opposite(hnew, sm), -2);
+    assert(&pm==&sm);
+  }
+
+  void intersection_point_detected(std::size_t /* i_id */,
+                                   int /* sdim */,
+                                   halfedge_descriptor h_e,
+                                   halfedge_descriptor h_f,
+                                   const Surface_mesh& tm_e,
+                                   const Surface_mesh& tm_f,
+                                   bool is_target_coplanar,
+                                   bool is_source_coplanar)
+  {
+    assert(is_source_coplanar==false);
+    assert(h_f==boost::graph_traits<Surface_mesh>::null_halfedge());
+    assert(h_e!=boost::graph_traits<Surface_mesh>::null_halfedge());
+    if (!is_target_coplanar)
+      ++nb_new_v_on;
+    else
+      ++nb_input_v_on;
+    assert(&tm_e==&sm);
+    assert(&tm_f==&sm);
+  }
+
+  void new_vertex_added(std::size_t id, vertex_descriptor v, const Surface_mesh& pm)
+  {
+    assert(&pm==&sm);
+    assert(get(vid_map, v)==-1);
+    put(vid_map, v, nb_input_v+id-nb_input_v_on);
+  }
+
+  void before_face_copy(face_descriptor f, const Surface_mesh& src, const Surface_mesh& tgt)
+  {
+    assert(f==boost::graph_traits<Surface_mesh>::null_face());
+    assert(&src==&sm);
+    assert(&tgt==&sm);
+  }
+
+  void after_face_copy(face_descriptor fsrc, const Surface_mesh& src, face_descriptor ftgt, const Surface_mesh& tgt)
+  {
+    assert(fsrc==boost::graph_traits<Surface_mesh>::null_face());
+    assert(ftgt!=boost::graph_traits<Surface_mesh>::null_face());
+    //assert(get(fid_map, ftgt)==-1);
+    put(fid_map, ftgt, -2);
+    assert(&src==&sm);
+    assert(&tgt==&sm);
+    for (auto h : halfedges_around_face(halfedge(ftgt, sm), sm))
+    {
+      if (get(hid_map, h)==-1)
+        put(hid_map, h, -2);
+    }
+  }
+
+  void before_edge_duplicated(halfedge_descriptor h, Surface_mesh& tm)
+  {
+    hid = get(hid_map, h);
+    assert(hid!=-1);
+    assert(&tm==&sm);
+  }
+
+  void after_edge_duplicated(halfedge_descriptor h, halfedge_descriptor new_hedge, Surface_mesh& tm)
+  {
+    assert(hid==get(hid_map, h));
+    assert(&tm==&sm);
+    put(hid_map, new_hedge, hid);
+    put(hid_map, opposite(new_hedge, sm), hid);
+  }
+
+  void before_vertex_copy(vertex_descriptor v, Surface_mesh& src, Surface_mesh& tgt)
+  {
+    assert(&src==&sm);
+    assert(&tgt==&sm);
+    assert(get(vid_map, v)!=-1);
+  }
+  void after_vertex_copy(vertex_descriptor v, Surface_mesh& src, vertex_descriptor nv, Surface_mesh& tgt)
+  {
+    assert(&src==&sm);
+    assert(&tgt==&sm);
+    assert(get(vid_map, v)!=-1);
+    put(vid_map, nv, get(vid_map, v));
+  }
+
+
+
+  void check()
+  {
+    for (auto f :faces(sm))
+    {
+      if (get(fid_map, f)==-1) std::cout << sm.point(source(halfedge(f, sm), sm)) << " " << sm.point(target(halfedge(f, sm), sm)) << " " << sm.point(target(next(halfedge(f, sm), sm), sm)) << "\n";
+      assert(get(fid_map, f)!=-1);
+    }
+    for (auto h :halfedges(sm))
+    {
+      if (get(hid_map, h)==-1)
+        std::cout << sm.point(source(h, sm)) << " " << sm.point(target(h,sm)) << "\n";
+      assert(get(hid_map, h)!=-1);
+    }
+    std::size_t nbv_max=nb_input_v+nb_new_v_on;
+    for (auto v :vertices(sm))
+      assert(get(vid_map, v)!=-1 && get(vid_map, v)<(int)nbv_max);
+  }
+
+};
+
+void test_clip_and_split_with_plane_visitor()
+{
+  auto test_clip =[](std::string fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
+  {
+    std::cout << "   testing with clip " << fname << " vs " << plane << " (" << triangulate << "," << clip_volume << ")\n";
+    Surface_mesh sm;
+    std::ifstream(fname) >> sm;
+    Clip_and_split_visitor visitor(sm);
+    visitor.check();
+    PMP::clip(sm, plane, params::visitor(std::ref(visitor)).do_not_triangulate_faces(!triangulate).clip_volume(clip_volume));
+    std::ofstream ("/tmp/out.off") << sm;
+    visitor.check();
+  };
+
+  auto test_split =[](std::string fname, const K::Plane_3& plane, bool triangulate)
+  {
+    std::cout << "   testing with split" << fname << " vs " << plane << " (" << triangulate << ")\n";
+    Surface_mesh sm;
+    std::ifstream(fname) >> sm;
+    Clip_and_split_visitor visitor(sm);
+    visitor.check();
+    PMP::split(sm, plane, params::visitor(std::ref(visitor)).do_not_triangulate_faces(!triangulate));
+    visitor.check();
+  };
+
+  auto test = [&](std::string fname, const K::Plane_3& plane)
+  {
+    test_clip(fname, plane, true, true);
+    test_clip(fname, plane, true, false);
+    test_clip(fname, plane, false, false);
+    test_clip(fname, plane, false, true);
+    test_split(fname, plane, false);
+    test_split(fname, plane, true);
+  };
+
+  test(CGAL::data_file_path("meshes/torus_quad.off"), K::Plane_3(0,0,1,0));
+  test(CGAL::data_file_path("meshes/elephant.off"), K::Plane_3(0.137304, -0.293668, 0.945995, 0));
+
+}
+
 int main()
 {
   std::cout << "Surface Mesh" << std::endl;
@@ -932,6 +1163,9 @@ int main()
   std::cout << "Done!" << std::endl;
   std::cout << "running test_new_clip with Polyhedron\n";
   test_new_clip<Polyhedron>();
+  std::cout << "Done!" << std::endl;
+  std::cout << "running test_clip_and_split_with_plane_visitor\n";
+  test_clip_and_split_with_plane_visitor();
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }

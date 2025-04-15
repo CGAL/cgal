@@ -522,24 +522,39 @@ generic_clip_impl(
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
 template <class PolygonMesh, class Clip_visitor>
 struct Visitor_wrapper_for_triangulate_face
+  : public ::CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
+//TODO: @afabri --> I shouldn't be the one doing the inheritance...
+//TODO: @afabri --> nothing on edge?
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
   Clip_visitor& clip_visitor;
   const PolygonMesh& pm;
+  std::vector<face_descriptor> triangulation_faces;
 
   Visitor_wrapper_for_triangulate_face(const PolygonMesh& pm, Clip_visitor& clip_visitor)
     : pm(pm)
     , clip_visitor(clip_visitor)
   {}
 
-  void before_subface_creations(face_descriptor /* f_split */) {}
-  void after_subface_creations() {}
+  void before_subface_creations(face_descriptor f_split)
+  {
+    CGAL_assertion(triangulation_faces.empty());
+    triangulation_faces.push_back(f_split);
+  }
+  void after_subface_creations()
+  {
+    for (face_descriptor f : triangulation_faces)
+    {
+      clip_visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+      clip_visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, f, pm);
+    }
+    triangulation_faces.clear();
+  }
 
   void after_subface_created(face_descriptor f_new)
   {
-    clip_visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
-    clip_visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, f_new, pm);
+    triangulation_faces.push_back(f_new);
   }
 };
 #endif
@@ -808,8 +823,10 @@ bool clip(PolygonMesh& pm,
                                           .do_not_triangulate_faces(!triangulate)
                                           .throw_on_self_intersection(!allow_self_intersections &&
                                                                       throw_on_self_intersection)
-                                          .visitor(visitor)
+                                          .visitor(std::ref(visitor))
                                           .concurrency_tag(Concurrency_tag()));
+
+  CGAL_assertion(is_valid_polygon_mesh(pm));
 
   if (allow_self_intersections)
     clip_volume=false;
@@ -853,15 +870,14 @@ bool clip(PolygonMesh& pm,
 
     for (halfedge_descriptor h : borders)
     {
-      visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
-      Euler::fill_hole(h, pm);
-      visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
-
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
       if (triangulate)
       {
+        Euler::fill_hole(h, pm); // visitor call done in the triangulation visitor
         if constexpr (!has_visitor)
+        {
           triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits));
+        }
         else
         {
           using Base_visitor = std::remove_cv_t<std::remove_reference_t<Visitor_ref>>;
@@ -869,7 +885,14 @@ bool clip(PolygonMesh& pm,
           triangulate_face(face(h,pm), pm, parameters::vertex_point_map(vpm).geom_traits(traits).visitor(visitor_wrapper));
         }
       }
+      else
 #endif
+      {
+        visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+        Euler::fill_hole(h, pm);
+        visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+      }
+
     }
   }
 
@@ -1141,6 +1164,7 @@ void split(PolygonMesh& pm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -1164,12 +1188,10 @@ void split(PolygonMesh& pm,
   if (triangulate && !is_triangle_mesh(pm))
     triangulate = false;
 
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::visitor_t,
-    NamedParameters,
-    Corefinement::Default_visitor<PolygonMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  Default_visitor default_visitor;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
   refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
                                           .edge_is_marked_map(ecm)
@@ -1177,10 +1199,11 @@ void split(PolygonMesh& pm,
                                           .geom_traits(traits)
                                           .do_not_triangulate_faces(!triangulate)
                                           .throw_on_self_intersection(throw_on_self_intersection)
-                                          .concurrency_tag(Concurrency_tag()));
+                                          .concurrency_tag(Concurrency_tag())
+                                          .visitor(std::ref(visitor)));
 
   //split mesh along marked edges
-  internal::split_along_edges(pm, ecm, vpm, uv);
+  internal::split_along_edges(pm, ecm, vpm, visitor);
 }
 
 
