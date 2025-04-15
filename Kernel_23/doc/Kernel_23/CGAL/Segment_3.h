@@ -92,7 +92,7 @@ returns the squared length of `s`.
 Kernel::FT squared_length() const;
 
 /*!
-returns the vector `s.target()` - `s`.`source()`.
+returns the vector `s.target()` - `s.source()`.
 */
 Vector_3<Kernel> to_vector() const;
 
