@@ -230,7 +230,8 @@ namespace Polygon_mesh {
           std::vector<typename GeomTraits::Triangle_3> triangles;
           internal::triangulate_face<GeomTraits>(pts, triangles);
           for (const typename GeomTraits::Triangle_3& tr : triangles)
-            m_scores[idx++] += approximate_sqrt(squared_area(tr[0], tr[1], tr[2]));
+            m_scores[idx] += approximate_sqrt(squared_area(tr[0], tr[1], tr[2]));
+          ++idx;
         }
       }
     }
