@@ -8,7 +8,10 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_3/predicates.h>
 
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_soup_io.h>
+
+#include <CGAL/optimal_bounding_box.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
@@ -251,6 +254,46 @@ public:
   }
 };
 
+template <typename K>
+void bench_on_data(const std::string &f1, const std::string &f2){
+  typedef typename K::Point_3                                               Point_3;
+  typedef CGAL::Surface_mesh<Point_3>                              Mesh;
+
+  std::vector<typename K::Point_3> pts1, pts2;
+  std::vector<boost::container::small_vector<std::size_t, 3>> trs1, trs2;
+  if (!CGAL::IO::read_polygon_soup(f1, pts1, trs1))
+  {
+    std::cerr << "Cannot read " << f1 << "\n";
+  }
+  if (!CGAL::IO::read_polygon_soup(f2, pts2, trs2))
+  {
+    std::cerr << "Cannot read " << f2 << "\n";
+  }
+
+  CGAL::Real_timer t;
+  t.start();
+  Mesh hull1, hull2;
+  CGAL::convex_hull_3(pts1.begin(), pts1.end(), hull1);
+  CGAL::convex_hull_3(pts2.begin(), pts2.end(), hull2);
+  t.stop();
+  std::cout << "Computing convex hulls: " << t.time() << " sec" << std::endl;
+  std::cout << "Convex hull size:" << vertices(hull1).size() << ", " << vertices(hull2).size() << "\n" << std::endl;
+  t.reset();
+
+  t.start();
+  std::array<Point_3, 8> obb1, obb2;
+  CGAL::oriented_bounding_box(hull1, obb1, CGAL::parameters::use_convex_hull(false));
+  CGAL::oriented_bounding_box(hull2, obb2, CGAL::parameters::use_convex_hull(false));
+  t.stop();
+  std::cout << "Computing Obbs: " << t.time() << " sec\n" << std::endl;
+  t.reset();
+
+  t.start();
+  CGAL::Convex_hull_3::do_intersect<K>(hull1, hull2);
+  t.stop();
+  std::cout << "Do intersect: " << t.time() << " sec\n" << std::endl;
+}
+
 int main(int argc, char** argv)
 {
   std::cout.precision(17);
@@ -259,12 +302,16 @@ int main(int argc, char** argv)
   std::cout << "3D Distance tests" << std::endl;
 
   CGAL::Random rp;
-  CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
-  std::cout << "random seed = " << r.get_seed() << std::endl;
+  // CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
+  // std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // Test<CGAL::Simple_cartesian<double> >(r).run();
   // Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
-  Test<CGAL::Exact_predicates_exact_constructions_kernel>(r).run();
+  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
+
+  const std::string f1 = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::string f2 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/sphere.off");
+  bench_on_data<CGAL::Exact_predicates_inexact_constructions_kernel>(f1,f2);
 
   std::cout << "Done!" << std::endl;
 

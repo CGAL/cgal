@@ -6,6 +6,7 @@
 #include <CGAL/Convex_hull_3/predicates.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <vector>
 #include <fstream>
