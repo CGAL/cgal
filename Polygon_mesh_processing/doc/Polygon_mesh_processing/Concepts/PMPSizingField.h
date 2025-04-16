@@ -16,6 +16,7 @@ class PMPSizingField{
 public:
 
 /// @name Types
+///  These types are used for the documentation of the functions of the concept and not needed implementation wise.
 /// @{
 
 /// Vertex descriptor type
@@ -38,27 +39,30 @@ typedef unspecified_type FT;
 /// @name Functions
 /// @{
 
-/// a function that returns the sizing value at `v`.
-FT at(const vertex_descriptor v) const;
+/// returns the sizing value at `v` (used during tangential relaxation).
+FT at(const vertex_descriptor v, const PolygonMesh& pmesh) const;
 
-/// a function controlling edge split and edge collapse,
-/// returning the ratio of the current edge length and the local target edge length between
-/// the points of `va` and `vb` in case the current edge is too long, and `std::nullopt` otherwise.
+/// returns the ratio of the current edge squared length and the local target edge squared length between
+/// the points of `va` and `vb` in case the current edge is too long, and `std::nullopt` otherwise
+/// (used for triggering edge splits and preventing some edge collapses).
 std::optional<FT> is_too_long(const vertex_descriptor va,
-                              const vertex_descriptor vb) const;
+                              const vertex_descriptor vb,
+                              const PolygonMesh& pmesh) const;
 
-/// a function controlling edge collapse by returning the ratio of the squared length of `h` and the
-/// local target edge length if it is too short, and `std::nullopt` otherwise.
+/// returns the ratio of the squared length of `h` and the
+/// local target edge squared length if it is too short, and `std::nullopt` otherwise
+/// (used for triggering edge collapses).
 std::optional<FT> is_too_short(const halfedge_descriptor h,
                                const PolygonMesh& pmesh) const;
 
-/// a function returning the location of the split point of the edge of `h`.
+/// returns the position of the new vertex created when splitting the edge of `h`.
 Point_3 split_placement(const halfedge_descriptor h,
                         const PolygonMesh& pmesh) const;
 
-/// a function that updates the sizing field value at the vertex `v`.
-void update(const vertex_descriptor v,
-            const PolygonMesh& pmesh);
+/// function called after the addition of the split vertex `v` in `pmesh`.
+/// This function can be used for example to update a pre-computed sizing field.
+void register_split_vertex(const vertex_descriptor v,
+                           const PolygonMesh& pmesh);
 
 /// @}
 };

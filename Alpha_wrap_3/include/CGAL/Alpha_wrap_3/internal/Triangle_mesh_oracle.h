@@ -135,7 +135,7 @@ public:
     if(is_empty(tmesh))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (TM)" << std::endl;
 #endif
       return;
     }
@@ -153,7 +153,12 @@ public:
     for(face_descriptor f : faces(tmesh))
     {
       if(Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, np))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate face " << f << std::endl;
+#endif
         continue;
+      }
 
       const Point_ref p0 = get(vpm, source(halfedge(f, tmesh), tmesh));
       const Point_ref p1 = get(vpm, target(halfedge(f, tmesh), tmesh));
@@ -163,6 +168,12 @@ public:
 
       Splitter_base::split_and_insert_datum(tr, this->tree(), this->geom_traits());
     }
+
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of a facet that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
 
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Tree: " << this->tree().size() << " primitives (" << num_faces(tmesh) << " faces in input)" << std::endl;

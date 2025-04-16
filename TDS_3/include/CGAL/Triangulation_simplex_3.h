@@ -19,6 +19,7 @@
 
 #include <CGAL/assertions.h>
 #include <algorithm>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -42,7 +43,7 @@ public:
 
   // Constructors
 
-  // Default constructor initialises to undefined simplex:
+  // Default constructor initializes to undefined simplex:
   Triangulation_simplex_3() : ref(-1), ch() { }
 
   Triangulation_simplex_3(Vertex_handle vh) {
@@ -280,6 +281,57 @@ operator<< (std::ostream& os,
   return os;
 }
 
+template < typename TriangulationDataStructure_3, typename Tag >
+struct Output_rep<Triangulation_simplex_3<TriangulationDataStructure_3>, Tag >
+{
+  using TDS = TriangulationDataStructure_3;
+  using Simplex = Triangulation_simplex_3<TriangulationDataStructure_3>;
+  using Vertex_handle = typename Simplex::Vertex_handle;
+  using Edge = typename Simplex::Edge;
+  using Facet = typename Simplex::Facet;
+  using Cell_handle = typename Simplex::Cell_handle;
+
+  Simplex simplex;
+  Tag tag;
+
+  std::ostream& operator()(std::ostream& os) const {
+    auto display_vert = [&](auto v) {
+      return CGAL::IO::oformat(v, tag);
+    };
+    switch(simplex.dimension()) {
+      case 0: {
+        os << "vertex " << display_vert(static_cast<Vertex_handle>(simplex));
+        break;
+      }
+      case 1: {
+        const auto [c, index1, index2] = static_cast<Edge>(simplex);
+        os << "edge "
+           << display_vert(c->vertex(index1)) << " - "
+           << display_vert(c->vertex(index2));
+        break;
+      }
+      case 2: {
+        const auto [c, index] = static_cast<Facet>(simplex);
+        os << "facet "
+           << display_vert(c->vertex(TDS::vertex_triple_index(index, 0))) << " - "
+           << display_vert(c->vertex(TDS::vertex_triple_index(index, 1))) << " - "
+           << display_vert(c->vertex(TDS::vertex_triple_index(index, 2)));
+        break;
+      }
+      case 3: {
+        const auto c = static_cast<Cell_handle>(simplex);
+        os << "cell "
+           << display_vert(c->vertex(0)) << " - "
+           << display_vert(c->vertex(1)) << " - "
+           << display_vert(c->vertex(2)) << " - "
+           << display_vert(c->vertex(3));
+        break;
+      }
+      default: CGAL_assume(false);
+    }
+    return os;
+  }
+};
 
 } //namespace CGAL
 

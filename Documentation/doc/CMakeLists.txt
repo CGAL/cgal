@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Documentation NONE)
-
-# Minimal version of CMake:
 
 # Check whether this cmake script is the top level one
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -26,8 +24,22 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
+cmake_minimum_required(VERSION 3.18...3.31) # for list(SORT ... COMPARE NATURAL)
+
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+if (NOT Python3_EXECUTABLE)
+  message(FATAL_ERROR "Cannot build the documentation without Python3!")
+  return()
+endif()
+
+message(VERBOSE "Using Python version ${Python3_VERSION}: ${Python3_EXECUTABLE}")
+
+if(NOT DOXYGEN_FOUND)
+  message(WARNING "Cannot build the documentation without Doxygen!")
+  return()
+endif()
 
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
@@ -67,6 +79,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(NOT EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     return()
   endif()
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
 
   set(CGAL_DOC_PACKAGE_DEFAULTS
       ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
@@ -154,6 +167,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endforeach()
   else()
     if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
       file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
     endif()
   endif()
@@ -263,7 +277,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.10.0")
+set(CGAL_DOC_RESOURCE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
@@ -271,12 +285,47 @@ set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.10.0")
 #select only the version number (not the commit hash)
 string(REPLACE " " ";" DOXYGEN_VERSION ${DOXYGEN_VERSION})
 list(GET DOXYGEN_VERSION 0 DOXYGEN_VERSION)
+message(VERBOSE "Doxygen version ${DOXYGEN_VERSION}: ${DOXYGEN_EXECUTABLE}")
 
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
-  set(CGAL_DOC_RESOURCE_DIR
-      "${CMAKE_CURRENT_LIST_DIR}/resources/${DOXYGEN_VERSION}")
+# The Doxygen version is search in that sorted list (to find the index for which the version is less or equal)
+set(CGAL_DOXYGEN_RESOURCES_VERSIONS 1.8.13 1.9.6 1.10.0)
+list(SORT CGAL_DOXYGEN_RESOURCES_VERSIONS COMPARE NATURAL)
+
+# The GLOB is here to check that the list in CGAL_DOXYGEN_RESOURCES_VERSIONS is correct.
+# CGAL_DOXYGEN_RESOURCES_DIRS is also used below.
+file(GLOB CGAL_DOXYGEN_RESOURCES_DIRS
+    RELATIVE "${CGAL_DOC_RESOURCE_PREFIX_DIR}"
+    "${CGAL_DOC_RESOURCE_PREFIX_DIR}/*")
+list(SORT CGAL_DOXYGEN_RESOURCES_DIRS COMPARE NATURAL)
+
+if(NOT CGAL_DOXYGEN_RESOURCES_DIRS STREQUAL CGAL_DOXYGEN_RESOURCES_VERSIONS)
+  message(WARNING "The directories in ${CGAL_DOC_RESOURCE_PREFIX_DIR} do not match the expected versions:\n"
+                  "    [${CGAL_DOXYGEN_RESOURCES_DIRS}] vs [${CGAL_DOXYGEN_RESOURCES_VERSIONS}]")
+endif()
+
+function(CGAL_insert_in_sorted_list list_name value)
+  set(list ${${list_name}})
+  if(NOT value IN_LIST list)
+    list(APPEND list "${value}")
+    list(SORT list COMPARE NATURAL)
+  endif()
+  set(${list_name} ${list} PARENT_SCOPE)
+endfunction()
+
+if(DOXYGEN_VERSION IN_LIST CGAL_DOXYGEN_RESOURCES_DIRS)
+  list(FIND CGAL_DOXYGEN_RESOURCES_DIRS "${DOXYGEN_VERSION}" DOXYGEN_VERSION_INDEX)
 else()
-  set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_DIR_DEFAULT}")
+  CGAL_insert_in_sorted_list(CGAL_DOXYGEN_RESOURCES_DIRS ${DOXYGEN_VERSION})
+  list(FIND CGAL_DOXYGEN_RESOURCES_DIRS ${DOXYGEN_VERSION} DOXYGEN_VERSION_INDEX)
+  math(EXPR DOXYGEN_VERSION_INDEX "${DOXYGEN_VERSION_INDEX} - 1")
+endif()
+list(GET CGAL_DOXYGEN_RESOURCES_DIRS "${DOXYGEN_VERSION_INDEX}" CGAL_DOC_RESOURCE_DIR)
+
+set(CGAL_DOC_RESOURCE_DIR "${CGAL_DOC_RESOURCE_PREFIX_DIR}/${CGAL_DOC_RESOURCE_DIR}")
+if(NOT EXISTS "${CGAL_DOC_RESOURCE_DIR}")
+  message(FATAL_ERROR "Doxygen resources for version ${DOXYGEN_VERSION} not found")
+else()
+  message(VERBOSE "Using Doxygen resources from ${CGAL_DOC_RESOURCE_DIR}")
 endif()
 
 set(CGAL_DOC_BIBLIO_DIR "${CMAKE_CURRENT_LIST_DIR}/biblio")
@@ -353,6 +402,10 @@ configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
                ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
+
+if (BE_QUIET)
+  file(APPEND ${CGAL_DOC_DOXY_DEFAULT} "WARN_LOGFILE=doxygen.log\n")
+endif()
 
 # pkglist_filter gets the path to the pkglist_filter of this source
 # directory.

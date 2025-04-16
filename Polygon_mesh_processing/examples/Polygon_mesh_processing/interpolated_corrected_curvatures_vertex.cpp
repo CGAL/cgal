@@ -6,17 +6,18 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
+#include <string>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
-typedef CGAL::Surface_mesh<Epic_kernel::Point_3> Surface_Mesh;
-typedef boost::graph_traits<Surface_Mesh>::vertex_descriptor vertex_descriptor;
+typedef CGAL::Surface_mesh<Epic_kernel::Point_3>            Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor        vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
   // instantiating and reading mesh
-  Surface_Mesh smesh;
+  Mesh smesh;
   const std::string filename = (argc > 1) ?
     argv[1] :
     CGAL::data_file_path("meshes/sphere.off");
@@ -47,4 +48,5 @@ int main(int argc, char* argv[])
       << ", GC = " << g << "\n"
       << ", PC = [ " << p.min_curvature << " , " << p.max_curvature << " ]\n";
   }
+  return 0;
 }

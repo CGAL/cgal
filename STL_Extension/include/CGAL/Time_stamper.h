@@ -28,18 +28,25 @@ constexpr size_t rounded_down_log2(size_t n)
 template <typename T>
 struct Time_stamper
 {
+  static constexpr bool has_timestamp = true;
+
+  static bool is_valid(const T* pt) {
+    return pt != nullptr && pt->time_stamp() != std::size_t(-2);
+  }
+
   static void initialize_time_stamp(T* pt) {
     pt->set_time_stamp(std::size_t(-1));
   }
 
   template <typename time_stamp_t>
   static void set_time_stamp(T* pt, time_stamp_t& time_stamp_) {
+    CGAL_assertion(is_valid(pt));
     if(pt->time_stamp() == std::size_t(-1)) {
       const std::size_t new_ts = time_stamp_++;
       pt->set_time_stamp(new_ts);
     }
     else {
-      // else: the time stamp is re-used
+      // else: the time stamp is reused
 
       // Enforces that the time stamp is greater than the current value.
       // That is used when a TDS_3 is copied: in that case, the
@@ -61,18 +68,28 @@ struct Time_stamper
 
   static std::size_t time_stamp(const T* pt)
   {
+    CGAL_assertion(is_valid(pt));
     if(pt == nullptr){
       return std::size_t(-1);
     }
     return pt->time_stamp();
   }
 
-  static auto display_id(const T* pt)
+  static void restore_timestamp(T* pt, std::size_t ts)
   {
-    return std::string("#") + std::to_string(pt->time_stamp());
+    pt->set_time_stamp(ts);
+  }
+
+  static auto display_id(const T* pt, int offset = 0)
+  {
+    if(pt == nullptr)
+      return std::string("nullptr");
+    else
+      return std::string("#") + std::to_string(pt->time_stamp() + offset);
   }
 
   static std::size_t hash_value(const T* p) {
+    CGAL_assertion(nullptr== p || is_valid(p));
     if(nullptr == p)
       return std::size_t(-1);
     else
@@ -92,6 +109,7 @@ struct Time_stamper
 template <typename T>
 struct No_time_stamp
 {
+  static constexpr bool has_timestamp = false;
 public:
   template <typename time_stamp_t>
   static void set_time_stamp(T*, time_stamp_t&)  {}
@@ -107,7 +125,11 @@ public:
     return 0;
   }
 
-  static auto display_id(const T* pt)
+  static void restore_timestamp(T*, std::size_t)
+  {
+  }
+
+  static auto display_id(const T* pt, int)
   {
     return static_cast<const void*>(pt);
   }

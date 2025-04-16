@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -18,6 +18,9 @@
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_2_H
 #define CGAL_CKVA_CURVE_RENDERER_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #ifndef CGAL_AK_ENABLE_DEPRECATED_INTERFACE
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 1
@@ -218,7 +221,7 @@ private:
     //! returns \c true when the precision limit for a specified number type is
     //! reached
     typename Renderer_traits::Precision_limit limit;
-    //! maximum level of subdivision dependending on specified number type
+    //! maximum level of subdivision depending on specified number type
     static const unsigned MAX_SUBDIVISION_LEVEL =
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
 
@@ -862,7 +865,7 @@ void draw(const Arc_2& arc,
             get_pixel_coords(l, y_clip, pix_beg);
             get_pixel_coords(ptmp->left, it->second ? engine.y_max_r :
                 engine.y_min_r, pix_end);
-            if(CGAL_ABS(ptmp->left - l) <= engine.pixel_w_r*2) {
+            if(CGAL_ABS(Rational(ptmp->left - l)) <= engine.pixel_w_r*2) {
 
                 Coordinate_2 xy(Coordinate_1(pt), *support, arc.arcno());
                 Rational _;

@@ -661,7 +661,7 @@ struct Boolean_property_map
     return pm.set_ptr->count(k) != 0;
   }
 
-  friend void put(Boolean_property_map<Set>& pm, const key_type& k, bool v)
+  friend void put(Boolean_property_map<Set> pm, const key_type& k, bool v)
   {
     CGAL_assertion(pm.set_ptr!=nullptr);
     if (v)
@@ -725,7 +725,7 @@ make_cartesian_converter_property_map(Vpm vpm)
 
 /// \ingroup PkgPropertyMapRef
 /// A property map with `std::size_t` as key-type that can be used
-/// to access the i'th element in a container with random access.
+/// to access the i-th element in a container with random access.
 /// \cgalModels{LvaluePropertyMap constness being than of `Container`.}
 template<typename Container>
 class Random_access_property_map

@@ -52,9 +52,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
-          std::enable_if_t< boost::mpl::and_< boost::mpl::and_< std::is_convertible<Tx, RT>,
-                                                                         std::is_convertible<Ty, RT> >,
-                                                       std::is_convertible<Tz, RT> >::value >* = 0)
+          std::enable_if_t<std::is_convertible_v<Tx, RT> &&
+                           std::is_convertible_v<Ty, RT> &&
+                           std::is_convertible_v<Tz, RT>>* = 0)
     : base(x, y, z) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)
@@ -90,8 +90,8 @@ public:
   Direction_3 direction() const;
   Point_3     transform( const Aff_transformation_3 & t) const;
 
-  bool  operator==( const PointH3<R>& p) const;
-  bool  operator!=( const PointH3<R>& p) const;
+  typename R::Boolean operator==( const PointH3<R>& p) const;
+  typename R::Boolean operator!=( const PointH3<R>& p) const;
 };
 
 
@@ -175,7 +175,7 @@ PointH3<R>::direction() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
   return base == p.base;
@@ -183,7 +183,7 @@ PointH3<R>::operator==( const PointH3<R> & p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
 

@@ -19,7 +19,6 @@
 #include <CGAL/Compact_container.h>
 #include <queue>
 #include <type_traits>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 

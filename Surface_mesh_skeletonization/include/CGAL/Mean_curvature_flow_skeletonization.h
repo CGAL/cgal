@@ -344,7 +344,7 @@ double diagonal_length(const Bbox_3& bbox)
 double init_min_edge_length()
 {
   vertex_iterator vb, ve;
-  boost::tie(vb, ve) = vertices(m_tmesh);
+  std::tie(vb, ve) = vertices(m_tmesh);
   Vertex_to_point v_to_p(m_tmesh_point_pmap);
   Bbox_3 bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
                              boost::make_transform_iterator(ve, v_to_p));
@@ -528,6 +528,7 @@ public:
   /// after a number of `contract_geometry()`, keeping the specified
   /// vertices fixed in place.
   /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
+  ///
   /// \cgalAdvancedEnd
   template<class InputIterator>
   void set_fixed_vertices(InputIterator begin, InputIterator end)

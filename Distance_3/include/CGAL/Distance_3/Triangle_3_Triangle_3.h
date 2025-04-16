@@ -207,22 +207,70 @@ squared_distance(const typename K::Triangle_3& tr1,
   FT sqd_q2 = CGAL::squared_distance(vertex(tr2, 1), tr1);
   FT sqd_r2 = CGAL::squared_distance(vertex(tr2, 2), tr1);
 
-  const FT m = std::min({sqd_p1, sqd_q1, sqd_r1, sqd_p2, sqd_q2, sqd_r2});
+  const FT m = (std::min)({sqd_p1, sqd_q1, sqd_r1, sqd_p2, sqd_q2, sqd_r2});
 
   return m;
 #endif
 }
 
-} // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Triangle_3<K>& tr1,
-                 const Triangle_3<K>& tr2)
+template <typename K>
+typename K::Comparison_result
+compare_squared_distance_disjoint(const typename K::Triangle_3& tr1,
+                                  const typename K::Triangle_3& tr2,
+                                  const K& k,
+                                  const typename K::FT& d2)
 {
-  return K().compute_squared_distance_3_object()(tr1, tr2);
+  typedef typename K::Segment_3                                           Segment_3;
+
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
+
+  typename K::Comparison_result res(LARGER);
+
+  // The tiangle are supposed to be disjoint
+  assert(!do_intersect(tr1, tr2));
+
+  for(int i=0; i<3; ++i)
+  {
+    //Compare the distance between edges
+    for(int j=0; j<3; ++j)
+    {
+      typename K::Comparison_result temp_res_ss=csq_dist(Segment_3(vertex(tr1, i%3), vertex(tr1, (i+1)%3)),Segment_3(vertex(tr2, j%3), vertex(tr2, (j+1)%3)),d2);
+      if(certainly(temp_res_ss==SMALLER))
+        return SMALLER;
+      res=smaller_of(res, temp_res_ss);
+    }
+
+    //Compare the distance between vertices and triangles
+    typename K::Comparison_result temp_res_v_pl= csq_dist(vertex(tr1, i), tr2,d2);
+    if(certainly(temp_res_v_pl==SMALLER))
+      return SMALLER;
+    res=smaller_of(res, temp_res_v_pl);
+
+    temp_res_v_pl= csq_dist(vertex(tr2, i), tr1,d2);
+    if(certainly(temp_res_v_pl==SMALLER))
+      return SMALLER;
+    res=smaller_of(res, temp_res_v_pl);
+  }
+  return res;
+
 }
+
+template <typename K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Triangle_3& tr1,
+                         const typename K::Triangle_3& tr2,
+                         const K& k,
+                         const typename K::FT& d2){
+    //TODO did something more intelligent (sq_dist and csq_dist does not exist for Segment-Triangle)
+    if(tr1.is_degenerate() || tr2.is_degenerate())
+      return compare(squared_distance(tr1,tr2, k), d2);
+    if(do_intersect(tr1, tr2))
+      return compare(typename K::FT(0), d2);
+    return compare_squared_distance_disjoint(tr1, tr2, k, d2);
+}
+
+} // namespace internal
 
 } // namespace CGAL
 

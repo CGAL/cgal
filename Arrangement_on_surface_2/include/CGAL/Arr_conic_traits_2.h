@@ -125,11 +125,15 @@ private:
                                         // intersection points.
 
 public:
-  /*! Default constructor.
+  /*! constructs default.
    */
-  Arr_conic_traits_2() {}
+  Arr_conic_traits_2()
+   : m_rat_kernel(std::make_shared<Rat_kernel>()),
+     m_alg_kernel(std::make_shared<Alg_kernel>()),
+     m_nt_traits(std::make_shared<Nt_traits>())
+  {}
 
-  /*! Construct from resources.
+  /*! constructs from resources.
    */
   Arr_conic_traits_2(Shared_rat_kernel rat_kernel,
                      Shared_alg_kernel alg_kernel,
@@ -139,19 +143,19 @@ public:
     m_nt_traits(nt_traits)
   {}
 
-  /*! Obtain the rational kernel.
+  /*! obtains the rational kernel.
    */
   Shared_rat_kernel rat_kernel() const { return m_rat_kernel; }
 
-  /*! Obtain the algebraic kernel.
+  /*! obtains the algebraic kernel.
    */
   Shared_alg_kernel alg_kernel() const { return m_alg_kernel; }
 
-  /*! Obtain the nt traits.
+  /*! obtains the nt traits.
    */
   Shared_nt_traits nt_traits() const { return m_nt_traits; }
 
-  /*! Obtain the next conic index. */
+  /*! obtains the next conic index. */
   static size_t get_index() {
 #ifdef CGAL_NO_ATOMIC
     static size_t index;
@@ -171,7 +175,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Compare_x_2(const Traits& traits) : m_traits(traits) {}
@@ -179,7 +183,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compare the x-coordinates of two points.
+    /*! compares the \f$x\f$-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
@@ -190,7 +194,7 @@ public:
     { return m_traits.m_alg_kernel->compare_x_2_object()(p1, p2); }
   };
 
-  /*! Obtain a Compare_x_2 functor object. */
+  /*! obtains a `Compare_x_2` functor object. */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(*this); }
 
   class Compare_xy_2 {
@@ -200,7 +204,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Compare_xy_2(const Traits& traits) : m_traits(traits) {}
@@ -208,7 +212,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compares two points lexigoraphically: by x, then by y.
+    /*! compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return `LARGER` if `x(p1) > x(p2)`, or if `x(p1) = x(p2)` and `y(p1) > y(p2)`;
@@ -219,12 +223,12 @@ public:
     { return m_traits.m_alg_kernel->compare_xy_2_object()(p1, p2); }
   };
 
-  /*! Obtain a Compare_xy_2 functor object. */
+  /*! obtains a `Compare_xy_2` functor object. */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(*this); }
 
   class Construct_min_vertex_2 {
   public:
-    /*! Obtain the left endpoint of an x-monotone arc.
+    /*! obtains the left endpoint of an \f$x\f$-monotone arc.
      * \param cv The arc.
      * \return The left endpoint.
      */
@@ -232,13 +236,13 @@ public:
     { return xcv.left(); }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! obtains a `Construct_min_vertex_2` functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
   class Construct_max_vertex_2 {
   public:
-    /*! Obtain the right endpoint of the x-monotone arc.
+    /*! obtains the right endpoint of the \f$x\f$-monotone arc.
      * \param cv The arc.
      * \return The right endpoint.
      */
@@ -246,13 +250,13 @@ public:
     { return xcv.right(); }
   };
 
-  /*! Obtain a Construct_max_vertex_2 functor object. */
+  /*! obtains a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(); }
 
   class Is_vertical_2 {
   public:
-    /*! Check whether a given x-monotone arc is a vertical segment.
+    /*! checks whether a given \f$x\f$-monotone arc is a vertical segment.
      * \param cv The vertical segment.
      * \return `true` if the arc is a vertical segment; `false` otherwise.
      */
@@ -260,7 +264,7 @@ public:
     { return cv.is_vertical(); }
   };
 
-  /*! Obtain an Is_vertical_2 functor object. */
+  /*! obtains an `Is_vertical_2` functor object. */
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
   class Compare_y_at_x_2 {
@@ -270,7 +274,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Compare_y_at_x_2(const Traits& traits) : m_traits(traits) {}
@@ -278,7 +282,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Return the location of a given point with respect to an input arc.
+    /*! returns the location of a given point with respect to an input arc.
      * \param xcv The arc.
      * \param p The point.
      * \pre `p` is in the \f$x\f$-range of `xcv`.
@@ -292,8 +296,8 @@ public:
 
       if (xcv.is_vertical()) {
         // A special treatment for vertical segments:
-        // In case p has the same x c-ordinate of the vertical segment, compare
-        // it to the segment endpoints to determine its position.
+        // In case p has the same \f$x\f$-coordinate of the vertical segment,
+        // compare it to the segment endpoints to determine its position.
         Comparison_result res1 = cmp_y(p, xcv.left());
         Comparison_result res2 = cmp_y(p, xcv.right());
         return (res1 == res2) ? res1 : EQUAL;
@@ -302,7 +306,8 @@ public:
       // Check whether the point is exactly on the curve.
       if (m_traits.contains_point(xcv, p)) return EQUAL;
 
-      // Obtain a point q on the x-monotone arc with the same x coordinate as p.
+      // Obtain a point q on the \f$x\f$-monotone arc with the same
+      // \f$x\f$-coordinate as p.
       Point_2 q;
 
       auto cmp_x = m_traits.m_alg_kernel->compare_x_2_object();
@@ -318,12 +323,13 @@ public:
         }
       }
 
-      // Compare p with the a point of the curve with the same x coordinate.
+      // Compare p with the a point of the curve with the same
+      // \f$x\f$-coordinate.
       return cmp_y(p, q);
     }
   };
 
-  /*! Obtain a Compare_y_at_x_2 functor object. */
+  /*! obtains a `Compare_y_at_x_2` functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this); }
 
@@ -334,7 +340,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Compare_y_at_x_left_2(const Traits& traits) : m_traits(traits) {}
@@ -342,7 +348,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compares the \f$y\f$ value of two \f$x\f$-monotone arcs immediately
+    /*! compares the \f$y\f$ value of two \f$x\f$-monotone arcs immediately
      * to the left of their intersection point.
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
@@ -374,7 +380,7 @@ public:
     }
 
   private:
-    /*! Compare two arcs immediately to the leftt of their intersection point.
+    /*! compares two arcs immediately to the leftt of their intersection point.
      * \param xcv1 The first compared arc.
      * \param xcv2 The second compared arc.
      * \param p The reference intersection point.
@@ -470,14 +476,14 @@ public:
                xcv2.test_flag(X_monotone_curve_2::FACING_UP))
         return SMALLER;
 
-      // Compute the second-order derivative by y and act according to it.
+      // Compute the second-order derivative by \f$y\f$ and act according to it.
       xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
       xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
 
       Comparison_result slope_res =
         CGAL::compare(slope2_numer*slope1_denom, slope1_numer*slope2_denom);
 
-      // If necessary, use the third-order derivative by y.
+      // If necessary, use the third-order derivative by \f$y\f$.
       if (slope_res == EQUAL) {
         // \todo Check this!
         xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
@@ -501,7 +507,7 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(*this); }
 
@@ -512,7 +518,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Compare_y_at_x_right_2(const Traits& traits) : m_traits(traits) {}
@@ -520,7 +526,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Compares the `y` value of two \f$x\f$-monotone arcs immediately
+    /*! compares the `y` value of two \f$x\f$-monotone arcs immediately
      * to the right of their intersection point.
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
@@ -552,7 +558,7 @@ public:
     }
 
   private:
-  /*! Compare two arcs immediately to the right of their intersection point.
+  /*! compares two arcs immediately to the right of their intersection point.
    * \param xcv1 The first compared arc.
    * \param xcv2 The second compared arc.
    * \param p The reference intersection point.
@@ -643,14 +649,14 @@ public:
     else if (xcv1.test_flag(X_monotone_curve_2::FACING_DOWN) &&
              xcv2.test_flag(X_monotone_curve_2::FACING_UP)) return SMALLER;
 
-    // Compute the second-order derivative by y and act according to it.
+    // Compute the second-order derivative by \f$y\f$ and act according to it.
     xcv1.derive_by_y_at(p, 2, slope1_numer, slope1_denom);
     xcv2.derive_by_y_at(p, 2, slope2_numer, slope2_denom);
 
     Comparison_result slope_res =
       CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom);
 
-    // If necessary, use the third-order derivative by y.
+    // If necessary, use the third-order derivative by \f$y\f$.
     if (slope_res == EQUAL) {
       // \todo Check this!
       xcv1.derive_by_y_at(p, 3, slope1_numer, slope1_denom);
@@ -671,7 +677,7 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(*this); }
 
@@ -682,7 +688,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Equal_2(const Traits& traits) : m_traits(traits) {}
@@ -690,7 +696,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Check whether two \f$x\f$-monotone curves are the same (have the same
+    /*! checks whether two \f$x\f$-monotone curves are the same (have the same
      * graph).
      * \param xcv1 The first curve.
      * \param xcv2 The second curve.
@@ -703,7 +709,7 @@ public:
       return equals(xcv1, xcv2);
     }
 
-    /*! Check whether two points are the same.
+    /*! checks whether two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return `true` if the two point are the same; `false` otherwise.
@@ -714,7 +720,7 @@ public:
     }
 
   private:
-    /*! Check whether two arcs are equal (have the same graph).
+    /*! checks whether two arcs are equal (have the same graph).
      * \param xcv1 The first compared arc.
      * \param xcv2 The second compared arc.
      * \return `true` if the two arcs have the same graph; `false` otherwise.
@@ -747,7 +753,7 @@ public:
     }
   };
 
-  /*! Obtain an Equal_2 functor object. */
+  /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
   //@}
 
@@ -755,11 +761,11 @@ public:
   //@{
 
   /*! A function object that obtains the parameter space of a geometric
-   * entity along the \f$x-\f$xaxis.
+   * entity along the \f$x\f$x-axis.
    */
   class Parameter_space_in_x_2 {
   public:
-    /*! Obtains the parameter space at the end of an arc along the \f$x\f$-axis.
+    /*! obtains the parameter space at the end of an arc along the \f$x\f$-axis.
      * \param xcv The arc.
      * \param ce The arc end indicator:
      *    `ARR_MIN_END`&mdash;the minimal end of `xcv` or
@@ -777,7 +783,7 @@ public:
       return ARR_INTERIOR;
     }
 
-    /*! Obtains the parameter space at a point along the \f$x\f$-axis.
+    /*! obtains the parameter space at a point along the \f$x\f$-axis.
      * \param p The point.
      * \return the parameter space at `p`.
      */
@@ -785,16 +791,16 @@ public:
     { return ARR_INTERIOR; }
   };
 
-  /*! Obtain a Parameter_space_in_x_2 function object */
+  /*! obtains a `Parameter_space_in_x_2` function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
 
   /*! A function object that obtains the parameter space of a geometric
-   * entity along the y-axis
+   * entity along the \f$y\f$-axis
    */
   class Parameter_space_in_y_2 {
   public:
-    /*! Obtains the parameter space at the end of an arc along the \f$y\f$-axis .
+    /*! obtains the parameter space at the end of an arc along the \f$y\f$-axis .
      * Note that if the arc end coincides with a pole, then unless the arc
      * coincides with the identification curve, the arc end is considered to
      * be approaching the boundary, but not on the boundary.
@@ -817,7 +823,7 @@ public:
       return ARR_INTERIOR;
     }
 
-    /*! Obtains the parameter space at a point along the \f$y\f$-axis.
+    /*! obtains the parameter space at a point along the \f$y\f$-axis.
      * \param p The point.
      * \return The parameter space at `p`.
      */
@@ -825,7 +831,7 @@ public:
     { return ARR_INTERIOR; }
   };
 
-  /*! Obtain a Parameter_space_in_y_2 function object */
+  /*! obtains a `Parameter_space_in_y_2` function object */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
@@ -835,7 +841,7 @@ public:
   //@{
 
   /*! \class Make_x_monotone_2
-   * A functor for subdividing curves into x-monotone curves.
+   * A functor for subdividing curves into \f$x\f$-monotone curves.
    */
   class Make_x_monotone_2 {
   protected:
@@ -844,7 +850,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Make_x_monotone_2(const Traits& traits) : m_traits(traits) {}
@@ -852,7 +858,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Subdivide a given conic arc into \f$x\f$-monotone sub arcs
+    /*! subdivides a given conic arc into \f$x\f$-monotone sub arcs
      * and insert them to a given output iterator.
      * \param cv The arc.
      * \param oi the output iterator for the result. Its dereference type is a
@@ -874,17 +880,17 @@ public:
       Alg_point_2 vtan_ps[2];
       auto n_vtan_ps = m_traits.vertical_tangency_points(cv, vtan_ps);
       if (n_vtan_ps == 0) {
-        // In case the given curve is already x-monotone:
+        // In case the given curve is already \f$x\f$-monotone:
         *oi++ = ctr_xcv(cv, conic_id);
         return oi;
       }
 
-      // Split the conic arc into x-monotone sub-curves.
+      // Split the conic arc into \f$x\f$-monotone sub-curves.
       if (cv.is_full_conic()) {
         // Make sure we have two vertical tangency points.
         CGAL_assertion(n_vtan_ps == 2);
 
-        // In case the curve is a full conic, split it into two x-monotone
+        // In case the curve is a full conic, split it into two \f$x\f$-monotone
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
         *oi++ = ctr_xcv(cv, vtan_ps[0], vtan_ps[1], conic_id);
@@ -892,8 +898,8 @@ public:
       }
       else {
         if (n_vtan_ps == 1) {
-          // Split the arc into two x-monotone sub-curves: one going from the
-          // arc source to ps[0], and the other from ps[0] to the target.
+          // Split the arc into two \f$x\f$-monotone sub-curves: one going from
+          // the arc source to ps[0], and the other from ps[0] to the target.
           *oi++ = ctr_xcv(cv, cv.source(), vtan_ps[0], conic_id);
           *oi++ = ctr_xcv(cv, vtan_ps[0], cv.target(), conic_id);
         }
@@ -924,7 +930,7 @@ public:
             ind_second = 0;
           }
 
-          // Split the arc into three x-monotone sub-curves.
+          // Split the arc into three \f$x\f$-monotone sub-curves.
           *oi++ = ctr_xcv(cv, cv.source(),
                           vtan_ps[ind_first],
                           conic_id);
@@ -942,7 +948,7 @@ public:
     }
   };
 
-  /*! Obtain a Make_x_monotone_2 functor object. */
+  /*! obtains a `Make_x_monotone_2` functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(*this); }
 
@@ -953,7 +959,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Split_2(const Traits& traits) : m_traits(traits) {}
@@ -961,7 +967,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Split a given \f$x\f$-monotone arc at a given point into two sub-arcs.
+    /*! splits a given \f$x\f$-monotone arc at a given point into two sub-arcs.
      * \param xcv The arc to split
      * \param p The split point.
      * \param xcv1 Output: The left resulting sub-arc (`p` is its right endpoint).
@@ -973,7 +979,7 @@ public:
     { split(xcv, p, xcv1, xcv2); }
 
   private:
-    /*! Split the arc into two at a given split point.
+    /*! splits the arc into two at a given split point.
      * \param p The split point.
      * \param xcv1 Output: The first resulting arc, lying to the left of `p`.
      * \param xcv2 Output: The first resulting arc, lying to the right of `p`.
@@ -1017,7 +1023,7 @@ public:
 
   };
 
-  /*! Obtain a Split_2 functor object. */
+  /*! obtains a `Split_2` functor object. */
   Split_2 split_2_object() const { return Split_2(*this); }
 
   class Intersect_2 {
@@ -1027,7 +1033,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor.
+    /*! constructs.
      * \param traits The traits.
      */
     Intersect_2(const Traits& traits) : m_traits(traits) {}
@@ -1035,7 +1041,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Find the intersections of the two given curves and insert them to the
+    /*! finds the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
      * \param cv1 The first arc.
@@ -1050,7 +1056,7 @@ public:
     { return intersect(xcv1, xcv2, m_traits.m_inter_map, oi); }
 
   private:
-    /*! Compute the overlap with a given arc, which is supposed to have the same
+    /*! computes the overlap with a given arc, which is supposed to have the same
      * supporting conic curve as this arc.
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
@@ -1107,7 +1113,7 @@ public:
       return false;
     }
 
-    /*! Intersect the supporing conic curves of this arc and the given arc.
+    /*! intersects the supporting conic curves of this arc and the given arc.
      * \param arc The arc to intersect with.
      * \param inter_list The list of intersection points.
      */
@@ -1133,7 +1139,7 @@ public:
       if (xcv2.is_special_segment()) {
         // The second arc is a special segment (a*x + b*y + c = 0).
         if (xcv1.is_special_segment()) {
-          // Both arc are sepcial segment, so they have at most one intersection
+          // Both arc are special segments, so they have at most one intersection
           // point.
           const auto* extra_data1 = xcv1.extra_data();
           const auto* extra_data2 = xcv2.extra_data();
@@ -1152,7 +1158,7 @@ public:
         else {
           const auto* extra_data2 = xcv2.extra_data();
 
-          // Compute the x-coordinates of the intersection points.
+          // Compute the \f$x\f$-coordinates of the intersection points.
           n_xs = compute_resultant_roots(*nt_traits,
                                          xcv1.alg_r(), xcv1.alg_s(),
                                          xcv1.alg_t(), xcv1.alg_u(),
@@ -1164,7 +1170,7 @@ public:
                                          xs);
           CGAL_assertion(n_xs <= 2);
 
-          // Compute the y-coordinates of the intersection points.
+          // Compute the \f$y\f$-coordinates of the intersection points.
           n_ys = compute_resultant_roots(*nt_traits,
                                          xcv1.alg_s(), xcv1.alg_r(),
                                          xcv1.alg_t(), xcv1.alg_v(),
@@ -1178,7 +1184,7 @@ public:
         }
       }
       else {
-        // Compute the x-coordinates of the intersection points.
+        // Compute the \f$x\f$-coordinates of the intersection points.
         n_xs = compute_resultant_roots(*nt_traits,
                                        xcv1.r(), xcv1.s(), xcv1.t(),
                                        xcv1.u(), xcv1.v(), xcv1.w(),
@@ -1189,7 +1195,7 @@ public:
                                        xs);
         CGAL_assertion(n_xs <= 4);
 
-        // Compute the y-coordinates of the intersection points.
+        // Compute the \f$y\f$-coordinates of the intersection points.
         n_ys = compute_resultant_roots(*nt_traits,
                                        xcv1.s(), xcv1.r(), xcv1.t(),
                                        xcv1.v(), xcv1.u(), xcv1.w(),
@@ -1202,8 +1208,8 @@ public:
       }
 
       // Pair the coordinates of the intersection points. As the vectors of
-      // x and y-coordinates are sorted in ascending order, we output the
-      // intersection points in lexicographically ascending order.
+      // \f$x\f$- and \f$y\f$-coordinates are sorted in ascending order, we
+      // output the intersection points in lexicographically ascending order.
       Multiplicity mult;
       int i, j;
 
@@ -1249,9 +1255,9 @@ public:
         else {
           CGAL_assertion((n_xs == 2) && (n_ys == 2));
 
-          // The x-coordinates and the y-coordinates are given in ascending
-          // order. If the slope of the segment is positive, we pair the
-          // coordinates as is - otherwise, we swap the pairs.
+          // The \f$x\f$-coordinates and the \f$y\f$-coordinates are given in
+          // ascending order. If the slope of the segment is positive, we pair
+          // the coordinates as is; otherwise, we swap the pairs.
           int ind_first_y(0), ind_second_y(1);
 
           const auto* extra_data2 = xcv2.extra_data();
@@ -1298,7 +1304,7 @@ public:
       }
     }
 
-    /*! Compute the intersections with the given arc.
+    /*! computes the intersections with the given arc.
      * \param arc The given intersecting arc.
      * \param inter_map Maps conic pairs to lists of their intersection points.
      * \param oi The output iterator.
@@ -1315,7 +1321,8 @@ public:
         X_monotone_curve_2 overlap;
 
         if (compute_overlap(xcv1, xcv2, overlap)) {
-          // There can be just a single overlap between two x-monotone arcs:
+          // There can be just a single overlap between two \f$x\f$-monotone
+          // arcs:
           *oi++ = overlap;
           return oi;
         }
@@ -1382,7 +1389,7 @@ public:
       }
 
       // Go over the list of intersection points and report those that lie on
-      // both x-monotone arcs.
+      // both \f$x\f$-monotone arcs.
       for (auto iter = inter_list.begin(); iter != inter_list.end(); ++iter) {
         if (m_traits.is_between_endpoints(xcv1, (*iter).first) &&
             m_traits.is_between_endpoints(xcv2, (*iter).first))
@@ -1395,7 +1402,7 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an `Intersect_2` functor object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
@@ -1405,7 +1412,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits (in case it has state)
      */
     Are_mergeable_2(const Traits& traits) : m_traits(traits) {}
@@ -1413,7 +1420,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Check whether it is possible to merge two given x-monotone curves.
+    /*! checks whether it is possible to merge two given \f$x\f$-monotone curves.
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
      * \return `true` if the two curves are mergeable; that is, they are
@@ -1425,7 +1432,7 @@ public:
     { return can_merge_with(xcv1, xcv2); }
 
   private:
-    /*! Check whether it is possible to merge the arc with the given arc.
+    /*! checks whether it is possible to merge the arc with the given arc.
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
      * \return `true` if it is possible to merge the two arcs;
@@ -1444,12 +1451,12 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object. */
+  /*! obtains an `Are_mergeable_2` functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
   /*! \class Merge_2
-   * A functor that merges two x-monotone arcs into one.
+   * A functor that merges two \f$x\f$-monotone arcs into one.
    */
   class Merge_2 {
   protected:
@@ -1458,7 +1465,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits (in case it has state)
      */
     Merge_2(const Traits& traits) : m_traits(traits) {}
@@ -1466,7 +1473,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Merge two given x-monotone curves into a single curve (segment).
+    /*! merges two given \f$x\f$-monotone curves into a single curve (segment).
      * \param xcv1 The first arc.
      * \param xcv2 The second arc.
      * \param xcv The merged arc.
@@ -1482,7 +1489,7 @@ public:
     }
 
   private:
-    /*! Merge the current arc with the given arc.
+    /*! merges the current arc with the given arc.
      * \param xcv1 The first arc to merge with.
      * \param xcv2 The second arc to merge with.
      * \pre The two arcs are mergeable.
@@ -1507,12 +1514,12 @@ public:
     }
   };
 
-  /*! Obtain a Merge_2 functor object. */
+  /*! obtains a `Merge_2` functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
 
   //@}
 
-  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
+  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks \
    * point-location strategy and the drawing function.
    */
   //@{
@@ -1527,7 +1534,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Approximate_curve_length_2(const Traits& traits) : m_traits(traits) {}
@@ -1535,7 +1542,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Obtain an approximation of the length of a curve.
+    /*! obtains an approximation of the length of a curve.
      * \param xcv The curve.
      * \return An approximation of the length of `xcv`.
      */
@@ -1548,7 +1555,7 @@ public:
     }
 
   private:
-    /*! Obtain the segment length.
+    /*! obtains the segment length.
      */
     double segment_length(const X_monotone_curve_2& xcv) {
       auto min_vertex = m_traits.construct_min_vertex_2_object();
@@ -1588,7 +1595,7 @@ public:
       return tmp/2.0 + b_sqr*std::log((4.0*a + tmp)/b)/(8.0*a);
     }
 
-    /*! Obtain the parabolic arc length.
+    /*! obtains the parabolic arc length.
      */
     double parabola_length(const X_monotone_curve_2& xcv) {
       double r_m, t_m, s_m, u_m, v_m, w_m;
@@ -1645,7 +1652,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Approximate_2(const Traits& traits) : m_traits(traits) {}
@@ -1653,12 +1660,12 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const {
       CGAL_precondition((i == 0) || (i == 1));
@@ -1667,12 +1674,12 @@ public:
       else return CGAL::to_double(p.y());
     }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
     { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
@@ -1688,7 +1695,7 @@ public:
     }
 
   private:
-    /*! Handle segments.
+    /*! handles segments.
      */
     template <typename OutputIterator>
     OutputIterator approximate_segment(const X_monotone_curve_2& xcv,
@@ -1707,7 +1714,7 @@ public:
       return oi;
     }
 
-    /*! Transform a point. In particular, rotate the canonical point
+    /*! transforms a point. In particular, rotate the canonical point
      * (`xc`,`yc`) by an angle, the sine and cosine of which are `sint` and
      * `cost`, respectively, and translate by (`cx`,`cy`).
      */
@@ -1719,12 +1726,12 @@ public:
       y = xc*sint + yc*cost + cy;
     }
 
-    /*! Handle ellipses.
+    /*! handles ellipses.
      * The general equation of an ellipse is:
      *   r·𝑥^2 + s·𝑦^2 + t·𝑥·𝑦 + u·𝑥 + v·𝑦 + w = 0
      * where 4·r·s−t^2 > 0
      * We eliminate t so that the x·y term vanishes, applying an inverse
-     * rotation. Then, we compute the radi and the center. Finaly, we rotate
+     * rotation. Then, we compute the radi and the center. Finally, we rotate
      * back. The angle of rotation is given by:
      *   𝑡𝑎𝑛(2𝜃) = 𝐵 / (𝐴−𝐶)
      * Then
@@ -1763,7 +1770,8 @@ public:
      *   𝐶𝑦 = 𝐶𝑥′·𝑠𝑖𝑛𝜃 + 𝐶𝑦′·𝑐𝑜𝑠𝜃
      *
      * The parametric formula of an ellipse centered at the origin with major
-     * axis parallel to the x-axis and minor axis parallel to the y-axis is:
+     * axis parallel to the \f$x\f$-axis and minor axis parallel to the
+     * \f$y\f$-axis is:
      *  𝑥(𝛼) = a·𝑐𝑜𝑠(𝛼)
      *  𝑦(𝛼) = b·𝑠𝑖𝑛(𝛼)
      * where a is the major radius and b is the minor radius.
@@ -1826,7 +1834,7 @@ public:
       return oi;
     }
 
-    /*! Add either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbilc point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -1876,7 +1884,7 @@ public:
       return oi;
     }
 
-    /*! Compute the elliptic point given the parameter t and the transform
+    /*! computes the elliptic point given the parameter t and the transform
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
@@ -1886,7 +1894,7 @@ public:
       y = b * std::sin(t);
     }
 
-    /*! Handle parabolas.
+    /*! handles parabolas.
      * The arc-length closed form can be found here:
      * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
      */
@@ -1936,7 +1944,7 @@ public:
       return oi;
     }
 
-    /*! Add either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbilc point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -1986,7 +1994,7 @@ public:
       return oi;
     }
 
-    /*! Compute the parabolic point given the parameter t and the transform
+    /*! computes the parabolic point given the parameter t and the transform
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
@@ -1995,7 +2003,7 @@ public:
       y = 2.0*a*t;
     }
 
-    /*! Handle hyperbolas.
+    /*! handles hyperbolas.
      */
     template <typename OutputIterator>
     OutputIterator approximate_hyperbola(const X_monotone_curve_2& xcv,
@@ -2037,7 +2045,7 @@ public:
       return oi;
     }
 
-    /*! Compute the hyperbolic point given the parameter t and the transform
+    /*! computes the hyperbolic point given the parameter t and the transform
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
@@ -2048,7 +2056,7 @@ public:
     }
   };
 
-  /*! Obtain an Approximate_2 functor object. */
+  /*! obtains an `Approximate_2` functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
 
   //! Functor
@@ -2058,7 +2066,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Construct_x_monotone_curve_2(const Traits& traits) : m_traits(traits) {}
@@ -2066,7 +2074,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Construct an \f$x\f$-monotone arc from a conic arc.
+    /*! constructs an \f$x\f$-monotone arc from a conic arc.
      * \param cv The given curve.
      * \pre cv is \f$x\f$-monotone.
      */
@@ -2077,7 +2085,7 @@ public:
       return xcv;
     }
 
-    /*! Construct an \f$x\f$-monotone arc from a conic arc.
+    /*! constructs an \f$x\f$-monotone arc from a conic arc.
      * \param xcv The given curve.
      * \param id The ID of the base curve.
      */
@@ -2088,7 +2096,7 @@ public:
       return xcv;
     }
 
-    /*! Construct an \f$x\f$-monotone sub-arc from a conic arc.
+    /*! constructs an \f$x\f$-monotone sub-arc from a conic arc.
      * \param cv The given (base) arc.
      * \param source The source point.
      * \param target The target point.
@@ -2107,7 +2115,7 @@ public:
       return xcv;
     }
 
-    /*! Return an \f$x\f$-monotone curve connecting the two given endpoints.
+    /*! returns an \f$x\f$-monotone curve connecting the two given endpoints.
      * \param source The first point.
      * \param target The second point.
      * \pre `source` and `target` must not be the same.
@@ -2140,7 +2148,7 @@ public:
       return xcv;
     }
 
-    /*! Construct a special segment of a given line connecting to given
+    /*! constructs a special segment of a given line connecting to given
      * endpoints.
      * \param a, b, c The coefficients of the supporting line (`ax + by + c = 0`).
      * \param source The source point.
@@ -2180,7 +2188,7 @@ public:
     }
 
   private:
-    /*! Determine whether the arc is \f$x\f$-monotone.
+    /*! determines whether the arc is \f$x\f$-monotone.
      */
     bool is_x_monotone(const Curve_2& cv) const {
       // Collect vertical tangency points.
@@ -2189,7 +2197,7 @@ public:
       return (res == 0);
     }
 
-    /*! Determine whether the arc is \f$y\f$-monotone.
+    /*! determines whether the arc is \f$y\f$-monotone.
      */
     bool is_y_monotone(const Curve_2& cv) const {
       // Collect horizontal tangency points.
@@ -2200,7 +2208,7 @@ public:
 
   };
 
-  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
   { return Construct_x_monotone_curve_2(*this); }
 
@@ -2212,7 +2220,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Construct_curve_2(const Traits& traits) : m_traits(traits) {}
@@ -2220,11 +2228,11 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Construct an empty curve.
+    /*! constructs an empty curve.
      */
     Curve_2 operator()() const { return Curve_2(); }
 
-    /*! Construct a conic arc which is the full conic:
+    /*! constructs a conic arc which is the full conic:
      *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * \pre The conic C must be an ellipse (so `4rs - t^2 > 0`).
      */
@@ -2248,7 +2256,7 @@ public:
       return arc;
     }
 
-    /*! Construct a conic arc that lies on the conic:
+    /*! constructs a conic arc that lies on the conic:
      *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * \param orient The orientation of the arc (clockwise or counterclockwise).
      * \param source The source point.
@@ -2260,7 +2268,7 @@ public:
                        const Rational& u, const Rational& v, const Rational& w,
                        Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       const auto alg_kernel = m_traits.m_alg_kernel;
       CGAL_precondition_code(auto eq = alg_kernel->compare_xy_2_object());
       CGAL_precondition(eq(source, target) != EQUAL);
@@ -2273,7 +2281,7 @@ public:
       return arc;
     }
 
-    /*! Construct a conic arc that is a circular arc from given three points.
+    /*! constructs a conic arc that is a circular arc from given three points.
      * \param p1 The arc source.
      * \param p2 A point in the interior of the arc.
      * \param p3 The arc target.
@@ -2297,7 +2305,7 @@ public:
       Point_2 target(nt_traits->convert(x3), nt_traits->convert(y3));
       arc.set_endpoints(source, target);
 
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy = alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
@@ -2324,7 +2332,7 @@ public:
       const bool points_collinear = (CGAL::sign(D) == ZERO);
 
       if (points_collinear) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2354,7 +2362,7 @@ public:
       return arc;
     }
 
-    /*! Construct a conic arc from given five points, specified by the
+    /*! constructs a conic arc from given five points, specified by the
      * points p1, p2, p3, p4 and p5.
      * \param p1 The source point of the given arc.
      * \param p2,p3,p4 Points lying on the conic arc, between p1 and p5.
@@ -2381,7 +2389,7 @@ public:
          orient_f(p3, p4, p5) == COLLINEAR);
 
       if (point_collinear) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2439,13 +2447,13 @@ public:
           ! m_traits.is_strictly_between_endpoints(arc, mp3) ||
           ! m_traits.is_strictly_between_endpoints(arc, mp4))
       {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
       return arc;
     }
 
-    /*! Construct a conic arc that lies on a conic given by its coefficients:
+    /*! constructs a conic arc that lies on a conic given by its coefficients:
      *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
      * The source and the target are specified by the intersection of the
      * conic with:
@@ -2496,7 +2504,7 @@ public:
       double min_dist = -1;
       Integer aux_coeffs[6];
       for (int k = 1; k <= 2; ++k) {
-        // Get the integer coefficients of the k'th auxiliary conic curve.
+        // Get the integer coefficients of the k-th auxiliary conic curve.
         aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
         aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
         aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
@@ -2511,8 +2519,8 @@ public:
                        (CGAL::sign(aux_coeffs[1]) == ZERO) &&
                        (CGAL::sign(aux_coeffs[2]) == ZERO)) ? 1 : 2;
 
-        // Compute the x- and y-coordinates of intersection points of the base
-        // conic and the k'th auxiliary conic.
+        // Compute the \f$x\f$- and \f$y\f$-coordinates of intersection points
+        // of the base conic and the k-th auxiliary conic.
         int n_xs = compute_resultant_roots(*nt_traits,
                                            base_coeffs[0], base_coeffs[1],
                                            base_coeffs[2],
@@ -2589,7 +2597,7 @@ public:
         }
 
         if (! found) {
-          arc.reset_flags();          // inavlid arc
+          arc.reset_flags();          // invalid arc
           return arc;
         }
       }
@@ -2597,7 +2605,7 @@ public:
       // Make sure that the source and the target are not the same.
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       if (cmp_xy(arc.source(), arc.target()) == EQUAL) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2606,7 +2614,7 @@ public:
       return arc;
     }
 
-    /*! Return a segment connecting the two given endpoints.
+    /*! returns a segment connecting the two given endpoints.
      * \param source The source point.
      * \param target The target point.
      * \pre `source` and `target` must not be the same.
@@ -2626,7 +2634,7 @@ public:
       return cv;
     }
 
-    /*! Construct a conic arc from a given line segment.
+    /*! constructs a conic arc from a given line segment.
      * \param seg The line segment with rational endpoints.
      */
     Curve_2 operator()(const Rat_segment_2& seg) const {
@@ -2646,7 +2654,7 @@ public:
       cv.set_source(Point_2(nt_traits->convert(x1), nt_traits->convert(y1)));
       cv.set_target(Point_2(nt_traits->convert(x2), nt_traits->convert(y2)));
 
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy = rat_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
@@ -2681,7 +2689,7 @@ public:
       return cv;
     }
 
-    /*! Construct a conic arc that is a full circle.
+    /*! constructs a conic arc that is a full circle.
      * \param circ The circle with rational center and rational squared radius.
      */
     Curve_2 operator()(const Rat_circle_2& circ) const {
@@ -2695,7 +2703,7 @@ public:
       Rational y0 = center.y();
       Rational r_sqr = rat_kernel->compute_squared_radius_2_object()(circ);
 
-      // Produce the correponding conic: if the circle center is (x0,y0)
+      // Produce the corresponding conic: if the circle center is (x0,y0)
       // and its squared radius is R^2, that its equation is:
       //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
       // Note that this equation describes a curve with a negative (clockwise)
@@ -2716,7 +2724,7 @@ public:
       return cv;
     }
 
-    /*! Construct a conic arc that lies on a given circle:
+    /*! constructs a conic arc that lies on a given circle:
      *   `C: (x - x0)^2 + (y - y0)^2 = R^2`
      * \param orient The orientation of the circle.
      * \param source The source point.
@@ -2726,7 +2734,7 @@ public:
      */
     Curve_2 operator()(const Rat_circle_2& circ, Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy =
                                m_traits.m_alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
@@ -2743,7 +2751,7 @@ public:
       Rational y0 = center.y();
       Rational r_sqr = rat_kernel->compute_squared_radius_2_object()(circ);
 
-      // Produce the correponding conic: if the circle center is (x0,y0)
+      // Produce the corresponding conic: if the circle center is (x0,y0)
       // and it squared radius is R^2, that its equation is:
       //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
       // Since this equation describes a curve with a negative (clockwise)
@@ -2781,7 +2789,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_curve_2 functor object. */
+  /*! obtains a `Construct_curve_2` functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_curve_2(*this); }
   //@}
@@ -2791,7 +2799,7 @@ public:
 
   class Compare_endpoints_xy_2 {
   public:
-    /*! Compare the endpoints of an $x$-monotone curve lexicographically.
+    /*! compares the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
      * \param cv The curve.
      * \return SMALLER if the curve is directed right;
@@ -2801,13 +2809,13 @@ public:
     { return (cv.is_directed_right()) ? SMALLER : LARGER; }
   };
 
-  /*! Obtain a Compare_endpoints_xy_2 functor object. */
+  /*! obtains a `Compare_endpoints_xy_2` functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
-    /*! Construct an opposite x-monotone (with swapped source and target).
+    /*! constructs an opposite \f$x\f$-monotone (with swapped source and target).
      * \param cv The curve.
      * \return The opposite curve.
      */
@@ -2815,7 +2823,7 @@ public:
     { return cv.flip(); }
   };
 
-  /*! Obtain a Construct_opposite_2 functor object. */
+  /*! obtains a `Construct_opposite_2` functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
 
@@ -2826,7 +2834,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Trim_2(const Traits& traits) : m_traits(traits) {}
@@ -2834,8 +2842,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*!\brief
-     * Returns a trimmed version of an cv
+    /*! returns a trimmed version of an cv
      *
      * \param xcv The arc
      * \param src the new first endpoint
@@ -2853,7 +2860,7 @@ public:
                              m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
-      // Check  whether source and taget are two distinct points and they lie
+      // Check  whether source and target are two distinct points and they lie
       // on the line.
       CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
@@ -2866,7 +2873,7 @@ public:
     }
 
   private:
-    /*! Trim the arc given its new endpoints.
+    /*! trims the arc given its new endpoints.
      * \param ps The new source point.
      * \param pt The new target point.
      * \return The new trimmed arc.
@@ -2917,7 +2924,7 @@ public:
     }
   };
 
-  /*! Obtain a Trim_2 functor object. */
+  /*! obtains a `Trim_2` functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 
@@ -2931,7 +2938,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits The traits.
      */
     Construct_bbox_2(const Traits& traits) : m_traits(traits) {}
@@ -2939,7 +2946,7 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
-    /*! Obtain a bounding box for the conic arc.
+    /*! obtains a bounding box for the conic arc.
      * \return The bounding box.
      */
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
@@ -2983,7 +2990,7 @@ public:
         }
       }
       else {
-        // Use the source and target to initialize the exterme points.
+        // Use the source and target to initialize the extreme points.
         bool source_left =
           CGAL::to_double(xcv.source().x()) < CGAL::to_double(xcv.target().x());
         x_min = (source_left) ?
@@ -3002,7 +3009,8 @@ public:
           CGAL::to_double(xcv.target().y()) :
           CGAL::to_double(xcv.source().y());
 
-        // Go over the vertical tangency points and try to update the x-points.
+        // Go over the vertical tangency points and try to update the
+        // \f$x\f$-points.
         Alg_point_2 tan_ps[2];
         auto n_tan_ps = m_traits.vertical_tangency_points(xcv, tan_ps);
         for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
@@ -3012,7 +3020,8 @@ public:
             x_max = CGAL::to_double(tan_ps[i].x());
         }
 
-        // Go over the horizontal tangency points and try to update the y-points.
+        // Go over the horizontal tangency points and try to update the
+        // \f$y\f$-points.
         n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps);
         for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
           if (CGAL::to_double(tan_ps[i].y()) < y_min)
@@ -3027,12 +3036,12 @@ public:
     }
   };
 
-  /*! Obtain a Bbox_2 functor object. */
+  /*! obtains a `Bbox_2` functor object. */
   Construct_bbox_2 construct_bbox_2_object() const
   { return Construct_bbox_2(*this); }
   //@}
 
-  /*! Set the properties of a conic arc (for the usage of the constructors).
+  /*! sets the properties of a conic arc (for the usage of the constructors).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
    *                   of \f$x^2\f$, \f$y^2\f$, \f$x \cdot y\f$, \f$x\f$, \f$y\f$
    *                   and the free coefficient resp.
@@ -3077,7 +3086,7 @@ public:
     if (! is_on_supporting_conic(cv, source) ||
         ! is_on_supporting_conic(cv, target))
     {
-      cv.reset_flags();            // inavlid arc
+      cv.reset_flags();            // invalid arc
       return;
     }
 
@@ -3098,7 +3107,7 @@ public:
                         m_nt_traits->convert(v)) * p_mid.y() +
                        m_nt_traits->convert(w)) != ZERO)
         {
-          cv.reset_flags();    // inavlid arc
+          cv.reset_flags();    // invalid arc
           return;
         }
 
@@ -3109,7 +3118,7 @@ public:
       }
       else {
         // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
+        // - if it is positive, the conic is an ellipse,
         // - if it is negative, the conic is a hyperbola,
         // - if it is zero, the conic is a parabola.
         CGAL::Sign sign_conic = CGAL::sign(4*r*s - t*t);
@@ -3126,7 +3135,7 @@ public:
           bool finite_at_x = (points_at_x(cv, p_mid, ps) > 0);
           bool finite_at_y = (points_at_y(cv, p_mid, ps) > 0);
           if (! finite_at_x && ! finite_at_y) {
-            cv.reset_flags();              // inavlid arc
+            cv.reset_flags();              // invalid arc
             return;
           }
         }
@@ -3138,7 +3147,7 @@ public:
     cv.reset_flag(Curve_2::IS_FULL_CONIC);     // not a full conic
   }
 
-  /*! Set the properties of a conic arc that is really a full curve
+  /*! sets the properties of a conic arc that is really a full curve
    * (that is, an ellipse).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
    *                   of \f$x^2\f$, \f$y^2\f$, \f$x \cdot y\f$, \f$x\f$, \f$y\f$
@@ -3192,10 +3201,10 @@ public:
       cv.set_flag(Curve_2::IS_VALID);
       cv.set_flag(Curve_2::IS_FULL_CONIC);
     }
-    else cv.reset_flags();            // inavlid arc
+    else cv.reset_flags();            // invalid arc
   }
 
-  /*! Check whether the given point lies on the supporting conic of the arc.
+  /*! checks whether the given point lies on the supporting conic of the arc.
    * \param p The query point.
    * \return true if p lies on the supporting conic; (false) otherwise.
    */
@@ -3214,7 +3223,7 @@ public:
     return (CGAL::sign(val) == ZERO);
   }
 
-  /*! Check whether the given point is between the source and the target.
+  /*! checks whether the given point is between the source and the target.
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
    * \return `true` if the point is between the two endpoints;
@@ -3229,7 +3238,7 @@ public:
     else return is_strictly_between_endpoints(cv, p);
   }
 
-  /*! Check whether the given point is strictly between the source and the
+  /*! checks whether the given point is strictly between the source and the
    * target (but not any of them).
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
@@ -3267,23 +3276,24 @@ public:
       Comparison_result res2;
 
       if (m_alg_kernel->compare_x_2_object()(source, target) == EQUAL) {
-        // In case of a vertical segment - just check whether the y coordinate
-        // of p is between those of the source's and of the target's.
+        // In case of a vertical segment - just check whether the
+        // \f$y\f$-coordinate of p is between those of the source's and of the
+        // target's.
         auto cmp_y = m_alg_kernel->compare_y_2_object();
         res1 = cmp_y(p, source);
         res2 = cmp_y(p, target);
       }
       else {
-        // Otherwise, since the segment is x-monotone, just check whether the
-        // x coordinate of p is between those of the source's and of the
-        // target's.
+        // Otherwise, since the segment is \f$x\f$-monotone, just check whether
+        // the \f$x\f$-coordinate of p is between those of the source's and of
+        // the target's.
         auto cmp_x = m_alg_kernel->compare_x_2_object();
         res1 = cmp_x(p, source);
         res2 = cmp_x(p, target);
       }
 
-      // If p is not in the (open) x-range (or y-range) of the segment, it
-      // cannot be contained in the segment.
+      // If p is not in the (open) \f$x\f$-range (or \f$y\f$-range) of the
+      // segment, it cannot be contained in the segment.
       if ((res1 == EQUAL) || (res2 == EQUAL) || (res1 == res2)) return false;
 
       // Perform an orientation test: This is crucial for segment of line
@@ -3300,7 +3310,7 @@ public:
       return (orient_f(source, p, target) == RIGHT_TURN);
   }
 
-  /*! Build the data for hyperbolic arc, contaning the characterization of the
+  /*! builds the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   void build_hyperbolic_arc_data(Curve_2& cv) const {
@@ -3316,9 +3326,9 @@ public:
     //                sqrt((r - s)^2 + t^2)
     //
     const int or_fact = (cv.orientation() == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = m_nt_traits->convert(or_fact * cv.r());
-    const Algebraic s = m_nt_traits->convert(or_fact * cv.s());
-    const Algebraic t = m_nt_traits->convert(or_fact * cv.t());
+    const Algebraic r = m_nt_traits->convert(Integer(or_fact * cv.r()));
+    const Algebraic s = m_nt_traits->convert(Integer(or_fact * cv.s()));
+    const Algebraic t = m_nt_traits->convert(Integer(or_fact * cv.t()));
     const Algebraic cos_2phi = (r - s) / m_nt_traits->sqrt((r-s)*(r-s) + t*t);
     const Algebraic zero = 0;
     const Algebraic one = 1;
@@ -3363,8 +3373,8 @@ public:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = m_nt_traits->convert(or_fact * cv.u());
-    const Algebraic v = m_nt_traits->convert(or_fact * cv.v());
+    const Algebraic u = m_nt_traits->convert(Integer(or_fact * cv.u()));
+    const Algebraic v = m_nt_traits->convert(Integer(or_fact * cv.v()));
     const Algebraic det = 4*r*s - t*t;
     Algebraic x0, y0;
 
@@ -3393,16 +3403,18 @@ public:
     CGAL_assertion(side == cv.sign_of_extra_data(target.x(), target.y()));
   }
 
-  /*! Find the x coordinates of the underlying conic at a given y coordinate.
-   * \param y The y coordinate.
-   * \param xs The output x coordinates.
-   * \pre The vector xs must be allocated at the size of 2.
-   * \return The number of x coordinates computed (either 0, 1 or 2).
+  /*! finds the \f$x\f$-coordinates of the underlying conic at a given
+   * \f$y\f$-coordinate.
+   * \param y The \f$y\f$-coordinate.
+   * \param xs The output \f$x\f$-coordinates.
+   * \pre The vector `xs` must be allocated at the size of 2.
+   * \return The number of \f$x\f$-coordinates computed (either 0, 1 or 2).
    */
   int conic_get_x_coordinates(const Curve_2& cv,
                               const Algebraic& y, Algebraic* xs) const {
-    // Solve the quadratic equation for a given y and find the x values:
-    //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
+    // Solve the quadratic equation for a given \f$y\f$ and find the \f$x\f$
+    // values:
+    // \f$r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0\f$
     Algebraic A = m_nt_traits->convert(cv.r());
     Algebraic B = m_nt_traits->convert(cv.t())*y + m_nt_traits->convert(cv.u());
     Algebraic C =
@@ -3412,16 +3424,18 @@ public:
     return solve_quadratic_equation(A, B, C, xs[0], xs[1]);
   }
 
-  /*! Find the y coordinates of the underlying conic at a given x coordinate.
-   * \param x The x coordinate.
-   * \param ys The output y coordinates.
-   * \pre The vector ys must be allocated at the size of 2.
-   * \return The number of y coordinates computed (either 0, 1 or 2).
+  /*! finds the \f$y\f$-coordinates of the underlying conic at a given
+   * \f$x\f$-coordinate.
+   * \param x The \f$x\f$-coordinate.
+   * \param ys The output \f$y\f$-coordinates.
+   * \pre The vector `ys` must be allocated at the size of 2.
+   * \return The number of \f$y\f$-coordinates computed (either 0, 1 or 2).
    */
   int conic_get_y_coordinates(const Curve_2& cv,
                               const Algebraic& x, Algebraic* ys) const {
-    // Solve the quadratic equation for a given x and find the y values:
-    //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
+    // Solve the quadratic equation for a given \f$x\f$ and find the \f$y\f$
+    // values:
+    // \f$s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0\f$
     Algebraic A = m_nt_traits->convert(cv.s());
     Algebraic B = m_nt_traits->convert(cv.t())*x + m_nt_traits->convert(cv.v());
     Algebraic C =
@@ -3431,7 +3445,7 @@ public:
     return solve_quadratic_equation(A, B, C, ys[0], ys[1]);
   }
 
-  /*! Solve the given quadratic equation: Ax^2 + B*x + C = 0.
+  /*! solves the given quadratic equation: Ax^2 + B*x + C = 0.
    * \param x_minus The root obtained from taking -sqrt(discriminant).
    * \param x_plus The root obtained from taking -sqrt(discriminant).
    * \return The number of disticnt solutions to the equation.
@@ -3468,14 +3482,14 @@ public:
     return 2;
   }
 
-  /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
+  /*! computes a point on an arc with the same \f$x\f$-coordiante as the given
    * point.
    * \param p The given point.
    * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
    * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
    */
   Point_2 point_at_x(const X_monotone_curve_2& xcv, const Point_2& p) const {
-    // Make sure that p is in the x-range of the arc.
+    // Make sure that p is in the \f$x\f$-range of the arc.
     CGAL_precondition(! xcv.is_vertical());
 
     CGAL_precondition_code(auto cmp_x = m_alg_kernel->compare_x_2_object());
@@ -3493,14 +3507,14 @@ public:
       return Point_2(p.x(), y);
     }
 
-    // Compute the y-coordinate according to the degree of the supporting
+    // Compute the \f$y\f$-coordinate according to the degree of the supporting
     // conic curve.
     Algebraic y;
 
     if (xcv.degree_mask() == X_monotone_curve_2::degree_1_mask()) {
-      // In case of a linear curve, the y-coordinate is a simple linear
+      // In case of a linear curve, the \f$y\f$-coordinate is a simple linear
       // expression of x(p) (note that v is not 0 as the arc is not vertical):
-      //   y = -(u*x(p) + w) / v
+      // \f$y = -(u*x(p) + w) / v\f$
       y = -(xcv.alg_u()*p.x() + xcv.alg_w()) / xcv.alg_v();
     }
     else if (xcv.orientation() == COLLINEAR) {
@@ -3514,8 +3528,8 @@ public:
     else {
       CGAL_assertion(xcv.degree_mask() == X_monotone_curve_2::degree_2_mask());
 
-      // In this case the y-coordinate is one of solutions to the quadratic
-      // equation:
+      // In this case the \f$y\f$-coordinate is one of solutions to the
+      // quadratic equation:
       //  s*y^2 + (t*x(p) + v)*y + (r*x(p)^2 + u*x(p) + w) = 0
       Algebraic A = xcv.alg_s();
       Algebraic B = xcv.alg_t()*p.x() + xcv.alg_v();
@@ -3545,14 +3559,14 @@ public:
     return Point_2(p.x(), y);
   }
 
-  /*! Find all points on the arc with a given \f$x\f$-coordinate.
+  /*! finds all points on the arc with a given \f$x\f$-coordinate.
    * \param p A placeholder for the \f$x\f$-coordinate.
    * \param ps The point on the arc at `x(p)`.
    * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
   int points_at_x(const Curve_2& cv, const Point_2& p, Alg_point_2* ps) const {
-    // Get the y coordinates of the points on the conic.
+    // Get the \f$y\f$-coordinates of the points on the conic.
     Algebraic ys[2];
     int n = conic_get_y_coordinates(cv, p.x(), ys);
 
@@ -3569,14 +3583,14 @@ public:
     return m;
   }
 
-  /*! Find all points on the arc with a given \f$y\f$-coordinate.
+  /*! finds all points on the arc with a given \f$y\f$-coordinate.
    * \param p A placeholder for the \f$y\f$-coordinate.
    * \param ps The point on the arc at `x(p)`.
    * \pre The vector `ps` should be allocated at the size of 2.
    * \return The number of points found.
    */
   int points_at_y(const Curve_2& cv, const Point_2& p, Alg_point_2* ps) const {
-    // Get the y coordinates of the points on the conic.
+    // Get the \f$y\f$-coordinates of the points on the conic.
     Algebraic xs[2];
     int n = conic_get_x_coordinates(cv, p.y(), xs);
 
@@ -3593,7 +3607,7 @@ public:
     return m;
   }
 
-  /*! Set the properties of the x-monotone conic arc (for the usage of the
+  /*! sets the properties of the \f$x\f$-monotone conic arc (for the usage of the
    * constructors).
    */
   void set_x_monotone(X_monotone_curve_2& xcv) const {
@@ -3650,8 +3664,8 @@ public:
 
     xcv.set_flag(X_monotone_curve_2::DEGREE_2);
 
-    // Compute a midpoint between the source and the target and get the y-value
-    // of the arc at its x-coordiante.
+    // Compute a midpoint between the source and the target and get the
+    // \f$y\f$-value of the arc at its \f$x\f$-coordiante.
     Point_2 p_mid =
       m_alg_kernel->construct_midpoint_2_object()(xcv.source(), xcv.target());
     Algebraic ys[2];
@@ -3660,12 +3674,12 @@ public:
 
     CGAL_assertion(n_ys != 0);
 
-    // Check which solution lies on the x-monotone arc.
+    // Check which solution lies on the \f$x\f$-monotone arc.
     Point_2 p_arc_mid(p_mid.x(), ys[0]);
 
     if (is_strictly_between_endpoints(xcv, p_arc_mid)) {
       // Mark that we should use the -sqrt(disc) root for points on this
-      // x-monotone arc.
+      // \f$x\f$-monotone arc.
       xcv.reset_flag(X_monotone_curve_2::PLUS_SQRT_DISC_ROOT);
     }
     else {
@@ -3674,15 +3688,16 @@ public:
       CGAL_assertion(is_strictly_between_endpoints(xcv, p_arc_mid));
 
       // Mark that we should use the +sqrt(disc) root for points on this
-      // x-monotone arc.
+      // \f$x\f$-monotone arc.
       xcv.set_flag(X_monotone_curve_2::PLUS_SQRT_DISC_ROOT);
     }
 
-    // Check whether the conic is facing up or facing down:
-    // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that connects its two end-points (x1,y1) and (x2,y2).
-    // To do that, we find the y coordinate of a point on the arc whose x
-    // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
+    // Check whether the conic is facing up or facing down: Check whether the
+    // arc (which is \f$x\f$-monotone of degree 2) lies above or below the
+    // segment that connects its two end-points (x1,y1) and (x2,y2).  To do
+    // that, we find the \f$y\f$-coordinate of a point on the arc whose
+    // \f$x\f$ coordinate is \f$x(x1+x2)/2\f$x and compare it to
+    // \f$x(y1+y2)/2\f$x.
     auto cmp_y = m_alg_kernel->compare_y_2_object();
     Comparison_result res = cmp_y(p_arc_mid, p_mid);
 
@@ -3692,7 +3707,7 @@ public:
     else if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::FACING_DOWN);
   }
 
-  /*! Check whether the two arcs have the same supporting conic.
+  /*! checks whether the two arcs have the same supporting conic.
    * \param xcv1 The first comparedb arc.
    * \param xcv2 The secind compared arc.
    * \return `true` if the two supporting conics are the same.
@@ -3752,8 +3767,8 @@ public:
             CGAL::compare(xcv1.w() * factor2, xcv2.w() * factor1) == EQUAL);
   }
 
-  /*! Check whether the given point lies on the arc.
-   * \param p The qury point.
+  /*! checks whether the given point lies on the arc.
+   * \param p The query point.
    * \param (true) if p lies on the arc; (false) otherwise.
    */
   bool contains_point(const X_monotone_curve_2& xcv, const Point_2& p) const {
@@ -3778,7 +3793,7 @@ public:
     return is_between_endpoints(xcv, p);
   }
 
-  /*! Find the vertical tangency points of the undelying conic.
+  /*! finds the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -3788,11 +3803,12 @@ public:
     // vertical tangency points.
     if (CGAL::sign(cv.s()) == ZERO) return 0;
 
-    // We are interested in the x coordinates where the quadratic equation:
-    //  s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0
-    // has a single solution (obviously if s = 0, there are no such points).
-    // We therefore demand that the discriminant of this equation is zero:
-    //  (t*x + v)^2 - 4*s*(r*x^2 + u*x + w) = 0
+    // We are interested in the \f$x\f$-coordinates where the quadratic
+    // equation:
+    // \f$s*y^2 + (t*x + v)*y + (r*x^2 + u*x + w) = 0\f$
+    // has a single solution (obviously if \f$s = 0\f$, there are no such
+    // points). We therefore demand that the discriminant of this equation is
+    // zero: \f$(t*x + v)^2 - 4*s*(r*x^2 + u*x + w) = 0\f$.
     const Integer two(2);
     const Integer four(4);
     Algebraic xs[2];
@@ -3803,32 +3819,33 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*v - four*s*u,
-                                                              v*v - four*s*w,
+    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(Integer(t*t - four*r*s),
+                                                              Integer(two*t*v - four*s*u),
+                                                              Integer(v*v - four*s*w),
                                                               xs);
     auto n_xs = static_cast<int>(xs_end - xs);
 
-    // Find the y-coordinates of the vertical tangency points.
+    // Find the \f$y\f$-coordinates of the vertical tangency points.
     Algebraic ys[2];
     Algebraic* ys_end;
     int n_ys;
 
     if (CGAL::sign(cv.t()) == ZERO) {
-      // The two vertical tangency points have the same y coordinate:
-      ys[0] = m_nt_traits->convert(-v) / m_nt_traits->convert(two*s);
+      // The two vertical tangency points have the same \f$y\f$-coordinate:
+      ys[0] = m_nt_traits->convert(Integer(- v)) / m_nt_traits->convert(Integer(two * s));
       n_ys = 1;
     }
     else {
-      ys_end = m_nt_traits->solve_quadratic_equation(four*r*s*s - s*t*t,
-                                                     four*r*s*v - two*s*t*u,
-                                                     r*v*v - t*u*v +
-                                                     t*t*w,
+      ys_end = m_nt_traits->solve_quadratic_equation(Integer(four*r*s*s - s*t*t),
+                                                     Integer(four*r*s*v - two*s*t*u),
+                                                     Integer((r*v*v - t*u*v) + (t*t*w)),
                                                      ys);
+
       n_ys = static_cast<int>(ys_end - ys);
     }
 
-    // Pair the x and y coordinates and obtain the vertical tangency points.
+    // Pair the \f$x\f$- and \f$y\f$-coordinates and obtain the vertical
+    // tangency points.
     int n(0);
 
     for (int i = 0; i < n_xs; ++i) {
@@ -3837,7 +3854,7 @@ public:
       }
       else {
         for (int j = 0; j < n_ys; ++j) {
-          if (CGAL::compare(m_nt_traits->convert(two*s) * ys[j],
+          if (CGAL::compare(m_nt_traits->convert(Integer(two*s)) * ys[j],
                             -(m_nt_traits->convert(t) * xs[i] +
                               m_nt_traits->convert(v))) == EQUAL)
           {
@@ -3852,7 +3869,7 @@ public:
     return n;
   }
 
-  /*! Calculate the vertical tangency points of the arc.
+  /*! calculates the vertical tangency points of the arc.
    * \param vpts The vertical tangency points.
    * \pre The vpts vector should be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -3876,7 +3893,7 @@ public:
     return m;
   }
 
-  /*! Find the horizontal tangency points of the undelying conic.
+  /*! finds the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.
@@ -3889,11 +3906,11 @@ public:
     // vertical tangency points.
     if (CGAL::sign(cv.r()) == ZERO) return 0;
 
-    // We are interested in the y coordinates were the quadratic equation:
-    //  r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0
-    // has a single solution (obviously if r = 0, there are no such points).
-    // We therefore demand that the discriminant of this equation is zero:
-    //  (t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0
+    // We are interested in the \f$y\f$-coordinates were the quadratic equation:
+    // \f$r*x^2 + (t*y + u)*x + (s*y^2 + v*y + w) = 0\f$
+    // has a single solution (obviously if \f$r = 0\f$, there are no such
+    // points). We therefore demand that the discriminant of this equation is
+    // zero: \f$(t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0\f$
     const Integer two(2);
     const Integer four(4);
     Algebraic ys[2];
@@ -3904,18 +3921,21 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* ys_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*u - four*r*v,
-                                                              u*u - four*r*w,
-                                                              ys);
+    Algebraic* ys_end = m_nt_traits->template
+      solve_quadratic_equation<Integer>(t*t - four*r*s,
+                                        two*t*u - four*r*v,
+                                        u*u - four*r*w,
+                                        ys);
     auto n = static_cast<int>(ys_end - ys);
 
-    // Compute the x coordinates and construct the horizontal tangency points.
+    // Compute the \f$x\f$-coordinates and construct the horizontal tangency
+    // points.
     for (int i = 0; i < n; ++i) {
-      // Having computed y, x is the single solution to the quadratic equation
-      // above, and since its discriminant is 0, x is simply given by:
+      // Having computed \f$y\f$, \f$x\f$ is the single solution to the
+      // quadratic equation above, and since its discriminant is 0, \f$x\f$ is
+      // simply given by:
       Algebraic x = -(m_nt_traits->convert(t)*ys[i] + m_nt_traits->convert(u)) /
-        m_nt_traits->convert(two*r);
+        m_nt_traits->convert(Integer(two*r));
       ps[i] = Point_2(x, ys[i]);
     }
 
@@ -3923,7 +3943,7 @@ public:
     return n;
   }
 
-  /*! Calculate the horizontal tangency points of the arc.
+  /*! calculates the horizontal tangency points of the arc.
    * \param hpts The horizontal tangency points.
    * \pre The hpts vector should be allocated at the size of 2.
    * \return The number of horizontal tangency points.
@@ -3949,7 +3969,7 @@ public:
     return m;
   }
 
-  /*! Apply the inverse of the rotation given by the sin and cosine of the
+  /*! applies the inverse of the rotation given by the sin and cosine of the
    * rotation angle to the given conic arc.
    */
   void inverse_conic(const X_monotone_curve_2& xcv,
@@ -3971,7 +3991,7 @@ public:
     w_m = w;
   }
 
-  /*! Obtain (i) the rotation that yields the given conic arc when applied
+  /*! obtains (i) the rotation that yields the given conic arc when applied
    * to the canonical arc, and (ii) the canonical arc.
    * \param[in] arc the given arc
    * \param[out] r_m the coefficients of the canonical conic.
@@ -4016,7 +4036,7 @@ public:
     inverse_conic(xcv, cost, sint, r_m, s_m, t_m, u_m, v_m, w_m);
   }
 
-  /*! Inverse transform a point. In particular, inversly rotate the point
+  /*! inverses transform a point. In particular, inversly rotate the point
    * (`x`,`y`) by an angle, the sine and cosine of which are `sint` and
    * `cost`, respectively, and translate by (`-cx`,`-cy`).
    */
@@ -4028,7 +4048,7 @@ public:
     yc = -x*sint + y*cost - cy;
   }
 
-  /*! Handle parabolas.
+  /*! handles parabolas.
    * The arc-length closed form can be found here:
    * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
    */
@@ -4099,7 +4119,7 @@ public:
     // std::cout << "center: " << cx << "," << cy << std::endl;
   }
 
-  /*! Handle ellipses.
+  /*! handles ellipses.
    */
   void approximate_ellipse(const X_monotone_curve_2& xcv,
                            double& r_m, double& t_m, double& s_m,
@@ -4177,7 +4197,7 @@ public:
     // std::cout << "ts,tt: " << ts << "," << tt << std::endl;
   }
 
-  /*! Handle hyperbolas.
+  /*! handles hyperbolas.
    */
   void approximate_hyperbola(const X_monotone_curve_2& xcv,
                              double& r_m, double& t_m, double& s_m,
@@ -4200,7 +4220,7 @@ public:
     //           << ") => (" << xt << "," << yt << ")"
     //           << std::endl;
 
-    // If the hyperbola conjugate axis is the Y-axis, add
+    // If the hyperbola conjugate axis is the \f$Y\f$-axis, add
     canonical_conic(xcv, r_m, s_m, t_m, u_m, v_m, w_m, cost, sint);
     // std::cout << r_m << "," << s_m << "," << t_m << ","
     //           << u_m << "," << v_m << "," << w_m << std::endl;
@@ -4259,7 +4279,7 @@ public:
     // Compute the radi of the hyperbola:
     ts = std::asinh(ys_t/b);
     tt = std::asinh(yt_t/b);
-    assert(std::signbit(xs_t) == std::signbit(xt_t));
+    CGAL_assertion(std::signbit(xs_t) == std::signbit(xt_t));
 
     if (std::signbit(xs_t)) a = -a;
   }

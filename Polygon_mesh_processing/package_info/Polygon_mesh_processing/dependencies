@@ -3,6 +3,7 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -30,6 +31,7 @@ Solver_interface
 Spatial_searching
 Spatial_sorting
 Stream_support
+Subdivision_method_3
 TDS_2
 TDS_3
 Triangulation_2

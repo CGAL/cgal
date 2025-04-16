@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_TIME_STAMP_H
 #define CGAL_PROPERTIES_SURFACE_MESH_TIME_STAMP_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 #ifndef DOXYGEN_RUNNING
 
@@ -76,7 +79,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_time_stamp_t)
 inline get(CGAL::vertex_time_stamp_t, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
-  return smesh. template property_map<vertex_descriptor,std::size_t>("v:time_stamp").first;
+  return smesh. template property_map<vertex_descriptor,std::size_t>("v:time_stamp").value();
 }
 
 template <typename P>
@@ -92,7 +95,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::halfedge_time_stamp_t)
 inline get(CGAL::halfedge_time_stamp_t, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::halfedge_descriptor halfedge_descriptor;
-  return smesh. template property_map<halfedge_descriptor,std::size_t>("h:time_stamp").first;
+  return smesh. template property_map<halfedge_descriptor,std::size_t>("h:time_stamp").value();
 }
 
 template <typename P>
@@ -108,7 +111,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::face_time_stamp_t)
 inline get(CGAL::face_time_stamp_t, const Surface_mesh<P> & smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template property_map<face_descriptor,std::size_t>("v:time_stamp").first;
+  return smesh. template property_map<face_descriptor,std::size_t>("v:time_stamp").value();
 }
 } // namespace CGAL
 

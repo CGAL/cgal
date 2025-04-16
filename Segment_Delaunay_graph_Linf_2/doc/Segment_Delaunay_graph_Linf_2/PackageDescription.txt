@@ -4,7 +4,6 @@
 
 /*!
 \addtogroup PkgSegmentDelaunayGraphLinf2Ref
-\todo check generated documentation
 
 \cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSegmentDelaunayGraphLinf2}
 \cgalPkgPicture{sdglinf-small.png}

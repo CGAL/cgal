@@ -33,6 +33,7 @@
 
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
@@ -44,6 +45,7 @@
 
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/range/has_range_iterator.hpp>
 
 #include <type_traits>
 
@@ -67,6 +69,8 @@ template<class VertexPointMap,class Base_traits> class Extreme_points_traits_ada
 
 namespace Convex_hull_3 {
 namespace internal {
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Collinear_3, Collinear_3, false)
 
 // wrapper used as a MutableFaceGraph to extract extreme points
 template <class OutputIterator>
@@ -962,7 +966,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   }
   CGAL_assertion(num_vertices(P)>=3);
   typename boost::graph_traits<Polyhedron>::vertex_iterator b,e;
-  boost::tie(b,e) = vertices(P);
+  std::tie(b,e) = vertices(P);
   if (num_vertices(P) == 3){
     typename boost::property_map<Polyhedron, vertex_point_t>::type vpmap  = get(CGAL::vertex_point, P);
     typedef typename Traits::Triangle_3                Triangle_3;
@@ -992,7 +996,8 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 template <class InputIterator, class PolygonMesh, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    PolygonMesh& polyhedron,
-                   const Traits& traits)
+                   const Traits& traits,
+                   std::enable_if_t<Convex_hull_3::internal::Has_nested_type_Collinear_3<Traits>::value>* = 0)
 {
   typedef typename Traits::Point_3                Point_3;
   typedef std::list<Point_3>                      Point_3_list;

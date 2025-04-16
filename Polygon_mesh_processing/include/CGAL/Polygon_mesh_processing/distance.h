@@ -21,8 +21,8 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Named_function_parameters.h>
@@ -747,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1116,7 +1116,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   spatial_sort(points_cpy.begin(), points_cpy.end());
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_traits_3<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
   Tree_traits tgt/*(gt)*/;
@@ -1449,6 +1449,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+
 #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << " -- Bounded Hausdorff --" << std::endl;
   std::cout << "error bound: " << error_bound << std::endl;
@@ -1483,7 +1485,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
                                      infinity_value, sq_initial_bound, sq_distance_bound);
 
-  // Find candidate triangles in TM1, which might realise the Hausdorff bound.
+  // Find candidate triangles in TM1, which might realize the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
 
@@ -1570,7 +1572,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
-    // i.e. if its upper bound is higher than the currently known best lower bound
+    // i.e., if its upper bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user-given error.
     const auto& triangle_bounds = triangle_and_bounds.bounds;
@@ -1645,9 +1647,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     }
 
     // Subdivide the triangle into four smaller triangles.
-    const Point_3 v01 = CGAL::midpoint(v0, v1);
-    const Point_3 v02 = CGAL::midpoint(v0, v2);
-    const Point_3 v12 = CGAL::midpoint(v1, v2);
+    const Point_3 v01 = midpoint(v0, v1);
+    const Point_3 v02 = midpoint(v0, v2);
+    const Point_3 v12 = midpoint(v1, v2);
     const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
                                                       Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
 
@@ -2007,8 +2009,8 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TM1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TM2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2024,7 +2026,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
-  using TMF_traits    = AABB_traits<Kernel, TMF_primitive>;
+  using TMF_traits    = AABB_traits_3<Kernel, TMF_primitive>;
   using TMF_tree      = AABB_tree<TMF_traits>;
   using TM1_wrapper   = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
   using TM2_wrapper   = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
@@ -2283,8 +2285,8 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2372,17 +2374,19 @@ typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+  auto squared_distance = Kernel().compute_squared_distance_3_object();
   // If all edge lengths of the triangle are below the error bound,
   // return the maximum of the distances of the three points to TM2 (via TM2_tree).
-  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, p1),
-                                                             CGAL::squared_distance(p0, p2)),
-                                                             CGAL::squared_distance(p1, p2));
+  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(squared_distance(p0, p1),
+                                                             squared_distance(p0, p2)),
+                                                             squared_distance(p1, p2));
 
   if(max_squared_edge_length < sq_error_bound)
   {
-    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, tm2_tree.closest_point(p0)),
-                                   CGAL::squared_distance(p1, tm2_tree.closest_point(p1))),
-                                   CGAL::squared_distance(p2, tm2_tree.closest_point(p2)));
+    return (CGAL::max)((CGAL::max)(squared_distance(p0, tm2_tree.closest_point(p0)),
+                                   squared_distance(p1, tm2_tree.closest_point(p1))),
+                                   squared_distance(p2, tm2_tree.closest_point(p2)));
   }
 
   // Else subdivide the triangle and proceed recursively.
@@ -2415,7 +2419,7 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
   using TM2_tree = AABB_tree<TM2_traits>;
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;

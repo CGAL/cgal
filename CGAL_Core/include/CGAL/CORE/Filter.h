@@ -92,7 +92,7 @@ public:
             CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }
-  /// return the sign of fitered value.
+  /// return the sign of filtered value.
   /** (Note: must call isOK() to check whether the sign is ok
       before call this function.) */
   int sign() const {
@@ -137,8 +137,8 @@ public:
   }
   /// division
   filteredFp operator/ (const filteredFp& x) const {
-    if (x.fpVal == 0.0)
-      core_error("possible zero divisor!", __FILE__, __LINE__, false);
+    CGAL_CORE_warning_msg(x.fpVal != 0.0, "possible zero divisor!");
+
     double xxx = core_abs(x.fpVal) / x.maxAbs - (x.ind+1)*CORE_EPS + DBL_MIN;
     if (xxx > 0) {
       double val =  fpVal / x.fpVal;
@@ -149,8 +149,8 @@ public:
   }
   /// square root
   filteredFp sqrt () const {
-    if (fpVal < 0.0)
-      core_error("possible negative sqrt!", __FILE__, __LINE__, false);
+
+    CGAL_CORE_warning_msg( !(fpVal < 0.0), "possible negative sqrt!");
     if (fpVal > 0.0) {
       double val = std::sqrt(fpVal);
       return filteredFp(val,  ( maxAbs / fpVal ) * val, 1 + ind);

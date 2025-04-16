@@ -18,7 +18,6 @@
 #include <CGAL/Compact_container_with_index.h>
 
 #include <queue>
-#include <boost/mpl/if.hpp>
 
 #include <type_traits>
 
@@ -68,24 +67,24 @@ namespace CGAL {
   class CMap_dart_iterator;
 
   template < typename Map_,bool Const>
-  class CMap_dart_iterator<Map_, Const, Tag_false>: public boost::mpl::if_c< Const,
+  class CMap_dart_iterator<Map_, Const, Tag_false>: public std::conditional_t< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type
+      typename Map_::Dart_container::iterator>
     //public internal::CC_iterator<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    typedef typename boost::mpl::if_c< Const,
+    typedef std::conditional_t< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;
+          typename Map_::Dart_container::iterator> Base;
     // typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
 
-    typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_descriptor,
-                                       typename Map_::Dart_descriptor>::type
+    typedef std::conditional_t< Const,
+                                typename Map_::Dart_const_descriptor,
+                                typename Map_::Dart_descriptor>
                                      Dart_descriptor;
-    typedef typename boost::mpl::if_c< Const, const Map_, Map_>::type Map;
+    typedef std::conditional_t< Const, const Map_, Map_> Map;
 
     typedef std::input_iterator_tag iterator_category;
     typedef typename Base::value_type value_type;
@@ -163,7 +162,7 @@ namespace CGAL {
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_descriptor adart, unsigned int ai, unsigned int aj,
-                      typename Map::size_type amark) const
+                      size_type amark) const
     { return
         !mmap->is_marked(mmap->beta(adart, ai, aj), amark);
     }
@@ -180,25 +179,24 @@ namespace CGAL {
 
   template < typename Map_,bool Const >
   class CMap_dart_iterator<Map_, Const, Tag_true>:
-      /*public boost::mpl::if_c< Const,
+      /*public std::conditional_t< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type*/
+      typename Map_::Dart_container::iterator>*/
     public internal::CC_iterator_with_index<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    /*typedef typename boost::mpl::if_c< Const,
+    /*typedef std::conditional_t< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;*/
+          typename Map_::Dart_container::iterator> Base;*/
     typedef internal::CC_iterator_with_index<typename Map_::Dart_container,Const> Base;
 
-    typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_descriptor,
-                                       typename Map_::Dart_descriptor>::type
+    typedef std::conditional_t< Const,
+                                typename Map_::Dart_const_descriptor,
+                                typename Map_::Dart_descriptor>
                                      Dart_descriptor;
-    typedef typename boost::mpl::if_c< Const, const Map_,
-                                       Map_>::type Map;
+    typedef std::conditional_t< Const, const Map_, Map_> Map;
 
     typedef std::input_iterator_tag iterator_category;
     typedef typename Base::value_type value_type;
@@ -208,6 +206,8 @@ namespace CGAL {
 
     /// true iff this iterator is basic
     typedef Tag_true Basic_iterator;
+
+    typedef typename Map::size_type size_type;
 
   public:
     /// Main constructor.
@@ -263,7 +263,7 @@ namespace CGAL {
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
-    bool is_unmarked(Dart_descriptor adart, unsigned int ai, unsigned amark) const
+    bool is_unmarked(Dart_descriptor adart, unsigned int ai, size_type amark) const
     { return !mmap->is_marked(mmap->beta(adart,ai), amark); }
 
     /// test if adart->beta(ai)->beta(aj) exists
@@ -272,7 +272,7 @@ namespace CGAL {
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_descriptor adart, unsigned int ai, unsigned int aj,
-                      unsigned amark) const
+                    size_type amark) const
     { return !mmap->is_marked(mmap->beta(adart, ai, aj), amark); }
 
   protected:

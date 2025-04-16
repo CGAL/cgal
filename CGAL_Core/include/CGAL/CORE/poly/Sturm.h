@@ -69,7 +69,7 @@ public:
                 //     the array seq is not used!
                 //     Hence, one must test these special cases
   Polynomial<NT> * seq;      // array of polynomials of length "len+1"
-  Polynomial<NT> g;//GCD of input polynomial P and it's derivative P'
+  Polynomial<NT> g;//GCD of input polynomial P and its derivative P'
   NT cont;//Content of the square-free part of input polynomial P
   //Thus P = g * cont * seq[0]
   static const int N_STOP_ITER = 10000;    // Stop IterE after this many iterations.
@@ -607,8 +607,7 @@ public:
       if (ff == 0) {
         NEWTON_DIV_BY_ZERO = true;
         del = 0;
-        core_error("Zero divisor in Newton Iteration",
-                __FILE__, __LINE__, false);
+        CGAL_CORE_warning_msg(false, "Zero divisor in Newton Iteration");
         return 0;
       }
 
@@ -680,8 +679,7 @@ public:
       stepsize++; // heuristic
     } while ((del != 0) && ((del.uMSB() >= -prec) && (count >0))) ;
 
-    if (count == 0) core_error("newtonIterE: reached count=0",
-                            __FILE__, __LINE__, true);
+    CGAL_assertion_msg(count != 0, "newtonIterE: reached count=0");
     del = BigFloat(core_abs(del.m()), err, del.exp() );
     del.makeCeilExact();
     return val;

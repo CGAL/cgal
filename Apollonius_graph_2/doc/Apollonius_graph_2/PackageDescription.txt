@@ -3,7 +3,6 @@
 /// \ingroup PkgApolloniusGraph2Ref
 /*!
 \addtogroup PkgApolloniusGraph2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2}
 \cgalPkgPicture{CircleVoronoi.png}
 \cgalPkgSummaryBegin

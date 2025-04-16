@@ -27,7 +27,6 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Container_helper.h>
@@ -38,7 +37,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
@@ -423,7 +421,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   if(nb_components_to_keep == 0)
   {
-    CGAL::clear(pmesh);
+    remove_all_elements(pmesh);
     return num;
   }
 

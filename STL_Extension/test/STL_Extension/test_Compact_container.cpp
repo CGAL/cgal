@@ -18,7 +18,6 @@ template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base
 {
-  Node_1() {} // // it is important `time_stamp_` is not initialized
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -49,7 +48,7 @@ struct Node_1
   }
   ///@}
   int m_erase_counter;
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 class Node_2
@@ -305,10 +304,10 @@ int main()
   typedef Node_1<CGAL::Tag_false> T2;
   typedef CGAL::Compact_container<T2> C2; // without timestamps
 
-  typedef CGAL::Compact_container<T2,
+  typedef CGAL::Compact_container<T1,
                                   CGAL::Default,
                                   CGAL::Default,
-                                  CGAL::Time_stamper<T2> > C4;
+                                  CGAL::Time_stamper<T1> > C4;
                                           //    with timestamps
 
   typedef Node_2 T3;
@@ -337,7 +336,7 @@ int main()
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! std::is_base_of<CGAL::Time_stamper<T2>,
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
      C4::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;

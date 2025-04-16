@@ -486,9 +486,9 @@ public:
       // and NT would be changed by NTX
       typedef typename Fraction_traits<NTX>::Is_fraction Is_fraction;
       typedef typename Coercion_traits<NT,NTX>::Type Type;
-      typedef typename ::boost::mpl::if_c<
-      ::std::is_same<Type,NT>::value, Is_fraction, CGAL::Tag_false
-        >::type If_decomposable_AND_Type_equals_NT;
+      typedef std::conditional_t<
+      std::is_same_v<Type,NT>, Is_fraction, CGAL::Tag_false
+        > If_decomposable_AND_Type_equals_NT;
 
       return sign_at_(x,If_decomposable_AND_Type_equals_NT());
     }

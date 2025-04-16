@@ -48,7 +48,10 @@ int main(int argc, char** argv)
            <<" homotopic with path p2 (green)."<<std::endl;
 
   if (draw)
-  { CGAL::draw(lcc, {p1, p2}); }
+  {
+    auto cycles={p1, p2};
+    CGAL::draw(lcc, cycles);
+  }
 
   return EXIT_SUCCESS;
 }

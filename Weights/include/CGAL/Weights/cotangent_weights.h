@@ -17,6 +17,7 @@
 #include <CGAL/Weights/utils.h>
 
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
@@ -304,7 +305,7 @@ public:
 // This class is using a special clamped version of the cotangent weights.
 // This version is currently used in:
 // Polygon_mesh_processing -> fair.h
-// Polyhedron demo -> Hole_filling_plugin.cpp
+// CGAL Lab -> Hole_filling_plugin.cpp
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename GeomTraits>
@@ -343,7 +344,6 @@ public:
     return cotangent_weight_calculator(he);
   }
 
-private:
   FT voronoi(const vertex_descriptor v0) const
   {
     auto squared_length_3 = m_traits.compute_squared_length_3_object();
@@ -353,10 +353,11 @@ private:
     for (const halfedge_descriptor he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh))
     {
       CGAL_assertion(v0 == target(he, m_pmesh));
-      CGAL_assertion(CGAL::is_triangle(he, m_pmesh));
 
       if (is_border(he, m_pmesh))
         continue;
+
+      CGAL_assertion(CGAL::is_triangle(he, m_pmesh));
 
       const vertex_descriptor v1 = source(he, m_pmesh);
       const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);

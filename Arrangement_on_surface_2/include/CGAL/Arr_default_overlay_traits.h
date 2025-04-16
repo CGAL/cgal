@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_H
@@ -23,7 +24,6 @@
  * Definition of default overlay-traits classes.
  */
 
-#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
 

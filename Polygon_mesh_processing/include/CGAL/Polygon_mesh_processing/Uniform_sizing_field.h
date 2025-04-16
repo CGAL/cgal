@@ -102,12 +102,12 @@ private:
   }
 
 public:
-  FT at(const vertex_descriptor /* v */) const
+  FT at(const vertex_descriptor /* v */, const PolygonMesh& /* pmesh */) const
   {
     return m_size;
   }
 
-  std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
+  std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb, const PolygonMesh& /* pmesh */) const
   {
     const FT sqlen = sqlength(va, vb);
     if (sqlen > m_sq_long)
@@ -133,7 +133,7 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
-  void update(const vertex_descriptor /* v */, const PolygonMesh& /* pmesh */)
+  void register_split_vertex(const vertex_descriptor /* v */, const PolygonMesh& /* pmesh */)
   {}
 
 private:

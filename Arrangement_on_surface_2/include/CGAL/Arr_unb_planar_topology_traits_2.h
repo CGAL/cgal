@@ -23,6 +23,7 @@
  */
 
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_insertion_helper.h>
@@ -123,20 +124,20 @@ public:
   ///! \name Construction methods.
   //@{
 
-  /*! Construct Default. */
+  /*! constructs Default. */
   Arr_unb_planar_topology_traits_2();
 
-  /*! Constructor with a geometry-traits class. */
+  /*! constructs with a geometry-traits class. */
   Arr_unb_planar_topology_traits_2(const Gt2* tr);
 
-  /*! Assign the contents of another topology-traits class. */
+  /*! assigns the contents of another topology-traits class. */
   void assign(const Self& other);
   //@}
 
   ///! \name Accessing the DCEL and constructing iterators.
   //@{
 
-  /*! Determine whether the DCEL reprsenets an empty structure. */
+  /*! determines whether the DCEL reprsenets an empty structure. */
   bool is_empty_dcel() const
   {
     // An empty arrangement contains just two four vertices at infinity
@@ -145,44 +146,44 @@ public:
             this->m_dcel.size_of_halfedges() == 8);
   }
 
-  /*! Check whether the given vertex is concrete (associated with a point). */
+  /*! checks whether the given vertex is concrete (associated with a point). */
   bool is_concrete_vertex(const Vertex* v) const
   { return (! v->has_null_point()); }
 
-  /*! Obtain the number of concrete vertices.
+  /*! obtains the number of concrete vertices.
    * \return All vertices not lying at infinity are concrete.
    */
   Size number_of_concrete_vertices() const
   { return (this->m_dcel.size_of_vertices() - n_inf_verts); }
 
-  /*! Check if the given vertex is valid (not a fictitious one). */
+  /*! checks if the given vertex is valid (not a fictitious one). */
   bool is_valid_vertex(const Vertex* v) const
   {
     return (! v->has_null_point() ||
             ((v != v_bl) && (v != v_tl) && (v != v_br) && (v != v_tr)));
   }
 
-  /*! Obtain the number of valid vertices.
+  /*! obtains the number of valid vertices.
    * \return All vertices, except the four fictitious one, are valid.
    */
   Size number_of_valid_vertices() const
   { return (this->m_dcel.size_of_vertices() - 4); }
 
-  /*! Check whether the given halfedge is valid (not a fictitious one). */
+  /*! checks whether the given halfedge is valid (not a fictitious one). */
   bool is_valid_halfedge(const Halfedge* he) const
   { return (! he->has_null_curve()); }
 
-  /*! Obtain the number of valid halfedges.
+  /*! obtains the number of valid halfedges.
    * \return the number of valid halfedges, not including fictitious halfedges.
    * Note that each vertex at infinity induces two fictitious halfedges
    */
   Size number_of_valid_halfedges() const
   { return (this->m_dcel.size_of_halfedges() - 2*n_inf_verts); }
 
-  /*! Check whether the given face is valid (not a fictitious one). */
+  /*! checks whether the given face is valid (not a fictitious one). */
   bool is_valid_face (const Face* f) const { return (! f->is_fictitious()); }
 
-  /*! Obtain the number of valid faces.
+  /*! obtains the number of valid faces.
    * \return the number of valid faces, not including ficitious DCEL faces.
    */
   Size number_of_valid_faces() const
@@ -258,15 +259,15 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Initialize an empty DCEL structure.
+  /*! initializes an empty DCEL structure.
    */
   void init_dcel();
 
-  /*! Make the necessary updates after the DCEL structure have been updated.
+  /*! makes the necessary updates after the DCEL structure have been updated.
    */
   void dcel_updated();
 
-  /*! Check if the given vertex is associated with the given curve end.
+  /*! checks if the given vertex is associated with the given curve end.
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
@@ -279,8 +280,8 @@ public:
                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
 
-  /*! Given a curve end with boundary conditions and a face that contains the
-   * interior of the curve, find a place for a boundary vertex that will
+  /*! givens a curve end with boundary conditions and a face that contains the
+   * interior of the curve, finds a place for a boundary vertex that will
    * represent the curve end along the face boundary.
    * \param f The face.
    * \param cv The x-monotone curve.
@@ -298,7 +299,7 @@ public:
                         Arr_parameter_space ps_x,
                         Arr_parameter_space ps_y);
 
-  /*! Locate the predecessor halfedge for the given curve around a given
+  /*! locates the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -320,7 +321,7 @@ public:
     return (nullptr);
   }
 
-  /*! Locate a DCEL feature that contains the given unbounded curve end.
+  /*! locates a DCEL feature that contains the given unbounded curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
    * \param ps_x The boundary condition of the curve end in x.
@@ -336,7 +337,7 @@ public:
                    Arr_parameter_space ps_x,
                    Arr_parameter_space ps_y);
 
-  /*! Split a fictitious edge using the given vertex.
+  /*! splits a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
    * \param v The split vertex.
    * \pre e is a fictitious halfedge.
@@ -345,19 +346,19 @@ public:
    */
   Halfedge* split_fictitious_edge(Halfedge* e, Vertex* v);
 
-  /*! Determine whether the given face is unbounded.
+  /*! determines whether the given face is unbounded.
    * \param f The face.
    * \return Whether f is unbounded.
    */
   bool is_unbounded(const Face* f) const;
 
-  /*! Determine whether the given boundary vertex is redundant.
+  /*! determines whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
    */
   bool is_redundant(const Vertex* v) const;
 
-  /*! Erase the given redundant vertex by merging a fictitious edge.
+  /*! erases the given redundant vertex by merging a fictitious edge.
    * The function does not free the vertex v itself.
    * \param v The vertex.
    * \pre v is a redundant vertex.
@@ -365,12 +366,12 @@ public:
    */
   Halfedge* erase_redundant_vertex(Vertex* v);
 
-    //! reference_face (const version).
-  /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+  //! reference_face (const version).
+  /*! returns a reference face of the arrangement.  All reference faces of
+   * arrangements of the same type have a common point.
+   *
+   * \return A pointer to the reference face.
+   */
   const Face* reference_face() const
   {
     CGAL_assertion(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
@@ -378,10 +379,10 @@ public:
   }
 
   //! reference_face (non-const version).
-  /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
+  /*! returns a reference face of the arrangement.  All reference faces of
+   * arrangements of the same type have a common point.
+   *
+   * \return A pointer to the reference face.
   */
   Face* reference_face()
   {
@@ -397,41 +398,41 @@ public:
   /*! This function is used by the "walk" point-location strategy. */
   const Face* initial_face() const { return fict_face; }
 
-  /*! Obtain the fictitious face (const version). */
+  /*! obtains the fictitious face (const version). */
   const Face* fictitious_face() const { return fict_face; }
 
-  /*! Obtain the fictitious face (non-const version). */
+  /*! obtains the fictitious face (non-const version). */
   Face* fictitious_face() { return fict_face; }
 
-  /*! Obtain the bottom-left fictitious vertex (const version). */
+  /*! obtains the bottom-left fictitious vertex (const version). */
   const Vertex* bottom_left_vertex() const { return (v_bl); }
 
-  /*! Obtain the bottom-left fictitious vertex (non-const version). */
+  /*! obtains the bottom-left fictitious vertex (non-const version). */
   Vertex* bottom_left_vertex() { return (v_bl); }
 
-  /*! Obtain the top-left fictitious vertex (const version). */
+  /*! obtains the top-left fictitious vertex (const version). */
   const Vertex* top_left_vertex() const { return (v_tl); }
 
-  /*! Obtain the top-left fictitious vertex (non-const version). */
+  /*! obtains the top-left fictitious vertex (non-const version). */
   Vertex* top_left_vertex() { return (v_tl); }
 
-  /*! Obtain the bottom-right fictitious vertex (const version). */
+  /*! obtains the bottom-right fictitious vertex (const version). */
   const Vertex* bottom_right_vertex() const { return (v_br); }
 
-  /*! Obtain the bottom-right fictitious vertex (non-const version). */
+  /*! obtains the bottom-right fictitious vertex (non-const version). */
   Vertex* bottom_right_vertex() { return (v_br); }
 
-  /*! Obtain the top-right fictitious vertex (const version). */
+  /*! obtains the top-right fictitious vertex (const version). */
   const Vertex* top_right_vertex() const { return (v_tr); }
 
-  /*! Obtain the top-right fictitious vertex (non-const version). */
+  /*! obtains the top-right fictitious vertex (non-const version). */
   Vertex* top_right_vertex() { return (v_tr); }
   //@}
 
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*! Compare the given vertex (which may lie at infinity) and the given point.
+  /*! compares the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -439,7 +440,7 @@ public:
   virtual Comparison_result compare_x(const Point_2& p,
                                       const Vertex* v) const;
 
-  /*! Compare the given vertex (which may lie at infinity) and the given point.
+  /*! compares the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
@@ -447,7 +448,7 @@ public:
   virtual Comparison_result compare_xy(const Point_2& p,
                                        const Vertex* v) const;
 
-  /*! Compare the relative y-position of the given point and the given edge
+  /*! compares the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
@@ -463,7 +464,7 @@ protected:
   /// \name Auxiliary functions.
   //@{
 
-  /*! Obtain the curve associated with a boundary vertex.
+  /*! obtains the curve associated with a boundary vertex.
    * \param v The vertex as infinity.
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
@@ -472,7 +473,7 @@ protected:
    */
   const X_monotone_curve_2* _curve(const Vertex* v, Arr_curve_end& ind) const;
 
-  /*! Check whether the given infinite curve end lies on the given fictitious
+  /*! checks whether the given infinite curve end lies on the given fictitious
    * halfedge.
    * \param cv The curve.
    * \param ind Whether we refer to the minimal or maximal end of cv.

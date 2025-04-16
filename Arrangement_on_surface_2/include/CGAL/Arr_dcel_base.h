@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 (based on old version by: Iddo Hanniel and Oren Nechushtan)
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            (based on old version by: Iddo Hanniel and Oren Nechushtan)
 
 #ifndef CGAL_ARR_DCEL_BASE_H
 #define CGAL_ARR_DCEL_BASE_H
@@ -23,11 +24,12 @@
  * peripheral records.
  */
 
-#include <CGAL/basic.h>
-#include <CGAL/Arr_enums.h>
 #include <list>
 #include <map>
-#include <CGAL/N_step_adaptor_derived.h>
+
+#include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
+#include <CGAL/iterator.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
@@ -38,24 +40,24 @@ namespace CGAL {
 
 inline void* _clean_pointer(const void* p)
 {
-  static_assert(sizeof(void*) == sizeof(size_t));
-  const size_t  mask = ~1;
-  const size_t  val = (reinterpret_cast<size_t>(p) & mask);
+  static_assert(sizeof(void*) == sizeof(std::size_t));
+  const std::size_t mask = ~1;
+  const std::size_t val = (reinterpret_cast<std::size_t>(p) & mask);
 
   return (reinterpret_cast<void*>(val));
 }
 
 inline void* _set_lsb(const void* p)
 {
-  const size_t  mask = 1;
-  const size_t  val = (reinterpret_cast<size_t>(p) | mask);
+  const std::size_t  mask = 1;
+  const std::size_t  val = (reinterpret_cast<std::size_t>(p) | mask);
   return (reinterpret_cast<void*>( val));
 }
 
 inline bool _is_lsb_set(const void* p)
 {
-  const size_t  mask = 1;
-  const size_t  val = reinterpret_cast<size_t>(p);
+  const std::size_t  mask = 1;
+  const std::size_t  val = reinterpret_cast<std::size_t>(p);
   return ((val & mask) != 0);
 }
 
@@ -80,13 +82,13 @@ protected:
   char pss[2];  // The x and y parameter spaces (condensed in two bytes).
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_vertex_base() :
     p_inc(nullptr),
     p_pt(nullptr)
   { pss[0] = pss[1] = static_cast<char>(CGAL::ARR_INTERIOR); }
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_vertex_base() {}
 
   // Access/modification for pointer squatting
@@ -94,35 +96,35 @@ public:
   void set_inc(void * inc) const
   { const_cast<Arr_vertex_base&>(*this).p_inc = inc; }
 
-  /*! Check if the point pointer is nullptr. */
+  /*! checks if the point pointer is nullptr. */
   bool has_null_point() const { return (p_pt == nullptr); }
 
-  /*! Obtain the point (const version). */
+  /*! obtains the point (const version). */
   const Point& point() const
   {
     CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
-  /*! Obtain the point (non-const version). */
+  /*! obtains the point (non-const version). */
   Point& point()
   {
     CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
-  /*! Set the point (may be a nullptr point). */
+  /*! sets the point (may be a nullptr point). */
   void set_point(Point* p) { p_pt = p; }
 
-  /*! Obtain the boundary type in x. */
+  /*! obtains the boundary type in x. */
   Arr_parameter_space parameter_space_in_x() const
   { return (Arr_parameter_space(pss[0])); }
 
-  /*! Obtain the boundary type in y. */
+  /*! obtains the boundary type in y. */
   Arr_parameter_space parameter_space_in_y() const
   { return (Arr_parameter_space(pss[1])); }
 
-  /*! Set the boundary conditions of the vertex. */
+  /*! sets the boundary conditions of the vertex. */
   void set_boundary(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     pss[0] = static_cast<char>(ps_x);
@@ -130,7 +132,7 @@ public:
     return;
   }
 
-  /*! Assign from another vertex. */
+  /*! assigns from another vertex. */
   virtual void assign(const Arr_vertex_base<Point>& v)
   {
     p_pt = v.p_pt;
@@ -168,7 +170,7 @@ protected:
   X_monotone_curve* p_cv; // The associated x-monotone curve.
 
 public:
-  /*! Default constructor */
+  /*! constructs default */
   Arr_halfedge_base() :
     p_opp(nullptr),
     p_prev(nullptr),
@@ -178,27 +180,27 @@ public:
     p_cv(nullptr)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_halfedge_base() {}
 
-  /*! Check if the curve pointer is nullptr. */
+  /*! checks if the curve pointer is nullptr. */
   bool has_null_curve() const { return (p_cv == nullptr); }
 
-  /*! Obtain the x-monotone curve (const version). */
+  /*! obtains the x-monotone curve (const version). */
   const X_monotone_curve& curve() const
   {
     CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
-  /*! Obtain the x-monotone curve (non-const version). */
+  /*! obtains the x-monotone curve (non-const version). */
   X_monotone_curve& curve()
   {
     CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
-  /*! Set the x-monotone curve. */
+  /*! sets the x-monotone curve. */
   void set_curve(X_monotone_curve* c)
   {
     p_cv = c;
@@ -210,13 +212,12 @@ public:
     opp->p_cv = c;
   }
 
-  /*! Assign from another halfedge. */
+  /*! assigns from another halfedge. */
   virtual void assign(const Arr_halfedge_base<X_monotone_curve>& he)
   { p_cv = he.p_cv; }
 };
 
-/*!
- * Base face class.
+/*! Base face class.
  */
 class Arr_face_base
 {
@@ -246,27 +247,27 @@ protected:
   Isolated_vertices_container  iso_verts;  // The isolated vertices inside
                                            // the face.
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_face_base() : flags(0) {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_face_base() {}
 
-  /*! Check if the face is unbounded. */
+  /*! checks if the face is unbounded. */
   bool is_unbounded() const { return ((flags & IS_UNBOUNDED) != 0); }
 
-  /*! Set the face as bounded or unbounded. */
+  /*! sets the face as bounded or unbounded. */
   void set_unbounded(bool unbounded)
   { flags = (unbounded) ? (flags | IS_UNBOUNDED) : (flags & ~IS_UNBOUNDED); }
 
-  /*! Check if the face is fictitious. */
+  /*! checks if the face is fictitious. */
   bool is_fictitious() const { return ((flags & IS_FICTITIOUS) != 0); }
 
-  /*! Set the face as fictitious or valid. */
+  /*! sets the face as fictitious or valid. */
   void set_fictitious(bool fictitious)
   { flags = (fictitious) ? (flags | IS_FICTITIOUS) : (flags & ~IS_FICTITIOUS); }
 
-  /*! Assign from another face. */
+  /*! assigns from another face. */
   virtual void assign(const Arr_face_base& f) { flags = f.flags; }
 };
 
@@ -291,38 +292,38 @@ public:
   typedef Arr_halfedge<V,H,F>         Halfedge;
   typedef Arr_isolated_vertex<V,H,F>  Isolated_vertex;
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_vertex() {}
 
-  /*! Check if the vertex is isolated. */
+  /*! checks if the vertex is isolated. */
   bool is_isolated() const
   {
     // Note that we use the LSB of the p_inc pointer as a Boolean flag.
     return (_is_lsb_set(this->p_inc));
   }
 
-  /*! Obtain an incident halfedge (const version). */
+  /*! obtains an incident halfedge (const version). */
   const Halfedge* halfedge() const
   {
     CGAL_precondition(! is_isolated());
     return (reinterpret_cast<const Halfedge*>(this->p_inc));
   }
 
-  /*! Obtain an incident halfedge (non-const version). */
+  /*! obtains an incident halfedge (non-const version). */
   Halfedge* halfedge()
   {
     CGAL_precondition(! is_isolated());
     return (reinterpret_cast<Halfedge*>(this->p_inc));
   }
 
-  /*! Set an incident halfedge (for non-isolated vertices). */
+  /*! sets an incident halfedge (for non-isolated vertices). */
   void set_halfedge(Halfedge* he)
   {
     // Set the halfedge pointer and reset the LSB.
     this->p_inc = he;
   }
 
-  /*! Obtain the isolated vertex information (const version). */
+  /*! obtains the isolated vertex information (const version). */
   const Isolated_vertex* isolated_vertex() const
   {
     CGAL_precondition(is_isolated());
@@ -330,14 +331,14 @@ public:
                                                      (this->p_inc)));
   }
 
-  /*! Obtain the isolated vertex information (non-const version). */
+  /*! obtains the isolated vertex information (non-const version). */
   Isolated_vertex* isolated_vertex()
   {
     CGAL_precondition(is_isolated());
     return (reinterpret_cast<Isolated_vertex*>(_clean_pointer(this->p_inc)));
   }
 
-  /*! Set the isolated vertex information. */
+  /*! sets the isolated vertex information. */
   void set_isolated_vertex(Isolated_vertex* iv)
   {
     // Set the isolated vertex-information pointer and set its LSB.
@@ -360,20 +361,20 @@ public:
   typedef Arr_outer_ccb<V,H,F>  Outer_ccb;
   typedef Arr_inner_ccb<V,H,F>  Inner_ccb;
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_halfedge() {}
 
-  /*! Obtain the opposite halfedge (const version). */
+  /*! obtains the opposite halfedge (const version). */
   const Halfedge* opposite () const
   { return (reinterpret_cast<const Halfedge*>(this->p_opp)); }
 
-  /*! Obtain the opposite halfedge (non-const version). */
+  /*! obtains the opposite halfedge (non-const version). */
   Halfedge* opposite() { return (reinterpret_cast<Halfedge*>(this->p_opp)); }
 
   /*! Sets the opposite halfedge. */
   void set_opposite(Halfedge* he) { this->p_opp = he; }
 
-  /*! Obtain the direction of the halfedge. */
+  /*! obtains the direction of the halfedge. */
   Arr_halfedge_direction direction() const
   {
     // Note that we use the LSB of the p_v pointer as a Boolean flag.
@@ -381,7 +382,7 @@ public:
     else return (ARR_RIGHT_TO_LEFT);
   }
 
-  /*! Set the direction of the edge (and of its opposite halfedge). */
+  /*! sets the direction of the edge (and of its opposite halfedge). */
   void set_direction(Arr_halfedge_direction dir)
   {
     Halfedge* opp = reinterpret_cast<Halfedge*>(this->p_opp);
@@ -396,43 +397,43 @@ public:
     }
   }
 
-  /*! Obtain the previous halfedge along the chain (const version). */
+  /*! obtains the previous halfedge along the chain (const version). */
   const Halfedge* prev() const
   { return (reinterpret_cast<const Halfedge*>(this->p_prev)); }
 
-  /*! Obtain the previous halfedge along the chain (const version). */
+  /*! obtains the previous halfedge along the chain (const version). */
   Halfedge* prev() { return (reinterpret_cast<Halfedge*>(this->p_prev)); }
 
-  /*! Set the previous halfedge along the chain. */
+  /*! sets the previous halfedge along the chain. */
   void set_prev(Halfedge* he)
   {
     this->p_prev = he;
     he->p_next = this;
   }
 
-  /*! Obtain the next halfedge along the chain (const version). */
+  /*! obtains the next halfedge along the chain (const version). */
   const Halfedge* next() const
   { return (reinterpret_cast<const Halfedge*>(this->p_next)); }
 
-  /*! Obtain the next halfedge along the chain (const version). */
+  /*! obtains the next halfedge along the chain (const version). */
   Halfedge* next() { return (reinterpret_cast<Halfedge*>(this->p_next)); }
 
-  /*! Set the next halfedge along the chain. */
+  /*! sets the next halfedge along the chain. */
   void set_next(Halfedge* he)
   {
     this->p_next = he;
     he->p_prev = this;
   }
 
-  /*! Obtain the target vertex (const version). */
+  /*! obtains the target vertex (const version). */
   const Vertex* vertex() const
   { return (reinterpret_cast<const Vertex*>(_clean_pointer(this->p_v))); }
 
-  /*! Obtain the target vertex (non-const version). */
+  /*! obtains the target vertex (non-const version). */
   Vertex* vertex()
   { return (reinterpret_cast<Vertex*>(_clean_pointer(this->p_v))); }
 
-  /*! Set the target vertex. */
+  /*! sets the target vertex. */
   void set_vertex(Vertex* v)
   {
     // Set the vertex pointer, preserving the content of the LSB.
@@ -440,10 +441,10 @@ public:
     else this->p_v = v;
   }
 
-  /*! Check whether the halfedge lies on the boundary of an outer CCB. */
+  /*! checks whether the halfedge lies on the boundary of an outer CCB. */
   bool is_on_outer_ccb() const { return (!_is_lsb_set(this->p_comp)); }
 
-  /*! Obtain an incident outer CCB (const version).
+  /*! obtains an incident outer CCB (const version).
    * \pre The edge does not lie on an inner CCB.
    */
   const Outer_ccb* outer_ccb() const
@@ -452,7 +453,7 @@ public:
     return (reinterpret_cast<const Outer_ccb*>(this->p_comp));
   }
 
-  /*! Obtain an incident outer CCB (non-const version).
+  /*! obtains an incident outer CCB (non-const version).
    * \pre The edge does not lie on an inner CCB.
    */
   Outer_ccb* outer_ccb()
@@ -461,17 +462,17 @@ public:
     return (reinterpret_cast<Outer_ccb*>(this->p_comp));
   }
 
-  /*! Set the incident outer CCB. */
+  /*! sets the incident outer CCB. */
   void set_outer_ccb(Outer_ccb *oc)
   {
     // Set the component pointer and reset its LSB.
     this->p_comp = oc;
   }
 
-  /*! Check whether the halfedge lies on the boundary of an inner CCB. */
+  /*! checks whether the halfedge lies on the boundary of an inner CCB. */
   bool is_on_inner_ccb() const { return (_is_lsb_set(this->p_comp)); }
 
-  /*! Obtain an incident inner CCB (const version).
+  /*! obtains an incident inner CCB (const version).
    * \pre The edge lies on an inner CCB.
    */
   const Inner_ccb* inner_ccb() const
@@ -491,7 +492,7 @@ public:
     return valid;
   }
 
-  /*! Obtain an incident inner CCB (non-const version).
+  /*! obtains an incident inner CCB (non-const version).
    * \pre The edge lies on an inner CCB.
    */
   Inner_ccb* inner_ccb()
@@ -517,7 +518,7 @@ public:
     return reinterpret_cast<Inner_ccb*>(_clean_pointer(this->p_comp));
   }
 
-  /*! Set the incident inner CCB. */
+  /*! sets the incident inner CCB. */
   void set_inner_ccb(const Inner_ccb *ic)
   {
     // Set the component pointer and set its LSB.
@@ -551,7 +552,7 @@ private:
 
 public:
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_face()
   {}
 
@@ -563,20 +564,20 @@ public:
                            _Const_ccb_to_halfedge_cast>
                                                     Outer_ccb_const_iterator;
 
-  /*! Obtain the number of outer CCBs the face has. */
-  size_t number_of_outer_ccbs() const { return (this->outer_ccbs.size()); }
+  /*! obtains the number of outer CCBs the face has. */
+  std::size_t number_of_outer_ccbs() const { return (this->outer_ccbs.size()); }
 
-  /*! Obtain an iterator for the first outer CCB of the face. */
+  /*! obtains an iterator for the first outer CCB of the face. */
   Outer_ccb_iterator outer_ccbs_begin() { return (this->outer_ccbs.begin()); }
 
-  /*! Obtain a past-the-end iterator for the outer CCBs inside the face. */
+  /*! obtains a past-the-end iterator for the outer CCBs inside the face. */
   Outer_ccb_iterator outer_ccbs_end() { return (this->outer_ccbs.end()); }
 
-  /*! Obtain an const iterator for the first outer CCB inside the face. */
+  /*! obtains an const iterator for the first outer CCB inside the face. */
   Outer_ccb_const_iterator outer_ccbs_begin() const
   { return (this->outer_ccbs.begin()); }
 
-  /*! Obtain a const past-the-end iterator for the outer CCBs inside the face. */
+  /*! obtains a const past-the-end iterator for the outer CCBs inside the face. */
   Outer_ccb_const_iterator outer_ccbs_end() const
   { return (this->outer_ccbs.end()); }
 
@@ -599,20 +600,20 @@ public:
   typedef Inner_ccb_iterator                        Hole_iterator;
   typedef Inner_ccb_const_iterator                  Hole_const_iterator;
 
-  /*! Obtain the number of inner CCBs the face has. */
-  size_t number_of_inner_ccbs() const { return (this->inner_ccbs.size()); }
+  /*! obtains the number of inner CCBs the face has. */
+  std::size_t number_of_inner_ccbs() const { return (this->inner_ccbs.size()); }
 
-  /*! Obtain an iterator for the first inner CCB of the face. */
+  /*! obtains an iterator for the first inner CCB of the face. */
   Inner_ccb_iterator inner_ccbs_begin() { return (this->inner_ccbs.begin()); }
 
-  /*! Obtain a past-the-end iterator for the inner CCBs inside the face. */
+  /*! obtains a past-the-end iterator for the inner CCBs inside the face. */
   Inner_ccb_iterator inner_ccbs_end() { return (this->inner_ccbs.end()); }
 
-  /*! Obtain an const iterator for the first inner CCB inside the face. */
+  /*! obtains an const iterator for the first inner CCB inside the face. */
   Inner_ccb_const_iterator inner_ccbs_begin() const
   { return (this->inner_ccbs.begin()); }
 
-  /*! Obtain a const past-the-end iterator for the inner CCBs inside the face. */
+  /*! obtains a const past-the-end iterator for the inner CCBs inside the face. */
   Inner_ccb_const_iterator inner_ccbs_end() const
   { return (this->inner_ccbs.end()); }
 
@@ -645,7 +646,7 @@ public:
   }
 
   // Backward compatibility:
-  size_t number_of_holes() const { return number_of_inner_ccbs(); }
+  std::size_t number_of_holes() const { return number_of_inner_ccbs(); }
   Hole_iterator holes_begin() { return inner_ccbs_begin(); }
   Hole_iterator holes_end() { return inner_ccbs_end(); }
   Hole_const_iterator holes_begin() const { return inner_ccbs_begin(); }
@@ -667,23 +668,23 @@ public:
     typename F::Isolated_vertex_iterator::iterator_category>
                                               Isolated_vertex_const_iterator;
 
-  /*! Obtain the number of isloated vertices inside the face. */
-  size_t number_of_isolated_vertices() const
+  /*! obtains the number of isloated vertices inside the face. */
+  std::size_t number_of_isolated_vertices() const
   { return (this->iso_verts.size()); }
 
-  /*! Obtain an iterator for the first isloated vertex inside the face. */
+  /*! obtains an iterator for the first isloated vertex inside the face. */
   Isolated_vertex_iterator isolated_vertices_begin()
   { return (this->iso_verts.begin()); }
 
-  /*! Obtain a past-the-end iterator for the isloated vertices inside the face. */
+  /*! obtains a past-the-end iterator for the isloated vertices inside the face. */
   Isolated_vertex_iterator isolated_vertices_end()
   { return (this->iso_verts.end()); }
 
-  /*! Obtain an const iterator for the first isloated vertex inside the face. */
+  /*! obtains an const iterator for the first isloated vertex inside the face. */
   Isolated_vertex_const_iterator isolated_vertices_begin() const
   { return (this->iso_verts.begin()); }
 
-  /*! Obtain a const past-the-end iterator for the isloated vertices inside the
+  /*! obtains a const past-the-end iterator for the isloated vertices inside the
    * face. */
   Isolated_vertex_const_iterator isolated_vertices_end() const
   { return (this->iso_verts.end()); }
@@ -734,47 +735,47 @@ private:
   bool iter_is_not_singular;
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_outer_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arr_outer_ccb(const Arr_outer_ccb& other) :
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iter = other.iter; }
 
-  /*! Obtain a halfedge along the component (const version). */
+  /*! obtains a halfedge along the component (const version). */
   const Halfedge* halfedge() const { return (*iter); }
 
-  /*! Obtain a halfedge along the component (non-const version). */
+  /*! obtains a halfedge along the component (non-const version). */
   Halfedge* halfedge() { return (*iter); }
 
-  /*! Set a representative halfedge for the component. */
+  /*! sets a representative halfedge for the component. */
   void set_halfedge(Halfedge* he) { *iter = he; }
 
-  /*! Obtain the incident face (const version). */
+  /*! obtains the incident face (const version). */
   const Face* face() const { return (p_f); }
 
-  /*! Obtain the incident face (non-const version). */
+  /*! obtains the incident face (non-const version). */
   Face* face() { return (p_f); }
 
-  /*! Set the incident face. */
+  /*! sets the incident face. */
   void set_face(Face* f) { p_f = f; }
 
-  /*! Obtain the iterator (const version). */
+  /*! obtains the iterator (const version). */
   Outer_ccb_iterator iterator() const
   {
     CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
-  /*! Obtain the iterator (non-const version). */
+  /*! obtains the iterator (non-const version). */
   Outer_ccb_iterator iterator()
   {
     CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
-  /*! Set the outer CCB iterator. */
+  /*! sets the outer CCB iterator. */
   void set_iterator(Outer_ccb_iterator it)
   {
     iter = it;
@@ -811,71 +812,71 @@ private:
   } status;
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_inner_ccb() : status(ITER_IS_SINGULAR) { f_or_icc.f = nullptr; }
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arr_inner_ccb(const Arr_inner_ccb& other) :
     f_or_icc(other.f_or_icc), status(other.status)
   { if (other.status == ITER_IS_NOT_SINGULAR) iter = other.iter; }
 
-  /*! Obtain a halfedge along the component (const version). */
+  /*! obtains a halfedge along the component (const version). */
   const Halfedge* halfedge() const
   {
     CGAL_assertion(is_valid());
     return (*iter);
   }
 
-  /*! Obtain a halfedge along the component (non-const version). */
+  /*! obtains a halfedge along the component (non-const version). */
   Halfedge* halfedge()
   {
     CGAL_assertion(is_valid());
     return (*iter);
   }
 
-  /*! Set a representative halfedge for the component. */
+  /*! sets a representative halfedge for the component. */
   void set_halfedge(Halfedge *he)
   {
     CGAL_assertion(is_valid());
     *iter = he;
   }
 
-  /*! Obtain the incident face (const version). */
+  /*! obtains the incident face (const version). */
   const Face* face() const
   {
     CGAL_assertion(status != INVALID);
     return f_or_icc.f;
   }
 
-  /*! Obtain the incident face (non-const version). */
+  /*! obtains the incident face (non-const version). */
   Face* face()
   {
     CGAL_assertion(status != INVALID);
     return f_or_icc.f;
   }
 
-  /*! Set the incident face. */
+  /*! sets the incident face. */
   void set_face(Face* f)
   {
     CGAL_assertion(status != INVALID);
     f_or_icc.f = f;
   }
 
-  /*! Obtain the iterator (const version). */
+  /*! obtains the iterator (const version). */
   Inner_ccb_iterator iterator() const
   {
     CGAL_assertion(status == ITER_IS_NOT_SINGULAR);
     return (iter);
   }
 
-  /*! Obtain the iterator (non-const version). */
+  /*! obtains the iterator (non-const version). */
   Inner_ccb_iterator iterator()
   {
     CGAL_assertion(status == ITER_IS_NOT_SINGULAR);
     return (iter);
   }
 
-  /*! Set the inner CCB iterator. */
+  /*! sets the inner CCB iterator. */
   void set_iterator(Inner_ccb_iterator it)
   {
     CGAL_assertion(is_valid());
@@ -883,17 +884,17 @@ public:
     status = ITER_IS_NOT_SINGULAR;
   }
 
-  /*! Check validity */
+  /*! checks validity */
   bool is_valid() const { return (status != INVALID); }
 
-  /*! Obtain the next CCB to primary chain. */
+  /*! obtains the next CCB to primary chain. */
   Arr_inner_ccb* next() const
   {
     CGAL_assertion(status == INVALID);
     return f_or_icc.icc;
   }
 
-  /*! Set the next CCB to primary chain. */
+  /*! sets the next CCB to primary chain. */
   void set_next(Arr_inner_ccb* next)
   {
     status = INVALID;
@@ -919,38 +920,38 @@ private:
   bool iter_is_not_singular;
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_isolated_vertex() : p_f(nullptr), iter_is_not_singular(false) {}
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arr_isolated_vertex(const Arr_isolated_vertex& other) :
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iv_it = other.iv_it; }
 
-  /*! Obtain the containing face (const version). */
+  /*! obtains the containing face (const version). */
   const Face* face() const { return (p_f); }
 
-  /*! Obtain the containing face (non-const version). */
+  /*! obtains the containing face (non-const version). */
   Face* face() { return (p_f); }
 
-  /*! Set the incident face, the one that contains the isolated vertex. */
+  /*! sets the incident face, the one that contains the isolated vertex. */
   void set_face(Face* f) { p_f = f; }
 
-  /*! Obtain the isolated vertex iterator (const version). */
+  /*! obtains the isolated vertex iterator (const version). */
   Isolated_vertex_iterator iterator() const
   {
     CGAL_assertion(iter_is_not_singular);
     return (iv_it);
   }
 
-  /*! Obtain the isolated vertex iterator (non-const version). */
+  /*! obtains the isolated vertex iterator (non-const version). */
   Isolated_vertex_iterator iterator()
   {
     CGAL_assertion(iter_is_not_singular);
     return (iv_it);
   }
 
-  /*! Set the isolated vertex iterator. */
+  /*! sets the isolated vertex iterator. */
   void set_iterator(Isolated_vertex_iterator iv)
   {
     iv_it = iv;
@@ -985,13 +986,13 @@ protected:
   typedef In_place_list<Inner_ccb, false>        Inner_ccb_list;
   typedef In_place_list<Isolated_vertex, false>  Iso_vert_list;
 
-    typedef std::allocator_traits<Allocator> Allocator_traits;
-    typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Face>            Face_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Face>            Face_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1001,7 +1002,6 @@ public:
   typedef std::bidirectional_iterator_tag                iterator_category;
 
 protected:
-
   Vertex_list         vertices;             // The vertices container.
   Halfedge_list       halfedges;            // The halfedges container.
   Face_list           faces;                // The faces container.
@@ -1033,40 +1033,40 @@ public:
                                                       Edge_const_iterator;
 
 private:
-  // Copy constructor - not supported.
+  // Copy constructor not supported.
   Arr_dcel_base(const Self&);
 
-  // Assignment operator - not supported.
+  // Assignment operator not supported.
   Self& operator=(const Self&);
 
 public:
   /// \name Construction and destruction.
   //@{
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_dcel_base() {}
 
-  /*! Destructor. */
+  /*! destructs. */
   ~Arr_dcel_base() { delete_all(); }
   //@}
 
   /// \name The DCEL size.
   //@{
-  /*! Obtain the number of DCEL vertices. */
+  /*! obtains the number of DCEL vertices. */
   Size size_of_vertices() const { return (vertices.size()); }
 
-  /*! Obtain the number of DCEL halfedges (twice the number of edges). */
+  /*! obtains the number of DCEL halfedges (twice the number of edges). */
   Size size_of_halfedges() const { return (halfedges.size()); }
 
-  /*! Obtain the number of DCEL faces. */
+  /*! obtains the number of DCEL faces. */
   Size size_of_faces() const { return (faces.size()); }
 
-  /*! Obtain the number of outer CCBs. */
+  /*! obtains the number of outer CCBs. */
   Size size_of_outer_ccbs() const { return (out_ccbs.size()); }
 
-  /*! Obtain the number of inner CCBs. */
+  /*! obtains the number of inner CCBs. */
   Size size_of_inner_ccbs() const { return (in_ccbs.size()); }
 
-  /*! Obtain the number of isolated vertices. */
+  /*! obtains the number of isolated vertices. */
   Size size_of_isolated_vertices() const { return (iso_verts.size()); }
   //@}
 
@@ -1139,7 +1139,7 @@ public:
 
   // \name Creation of new DCEL features.
   //@{
-  /*! Create a new vertex. */
+  /*! creates a new vertex. */
   Vertex* new_vertex()
   {
     Vertex* v = vertex_alloc.allocate(1);
@@ -1148,7 +1148,7 @@ public:
     return v;
   }
 
-  /*! Create a new pair of opposite halfedges. */
+  /*! creates a new pair of opposite halfedges. */
   Halfedge* new_edge()
   {
     // Create two new halfedges.
@@ -1162,7 +1162,7 @@ public:
     return (h1);
   }
 
-  /*! Create a new face. */
+  /*! creates a new face. */
   Face* new_face()
   {
     Face* f = face_alloc.allocate(1);
@@ -1171,7 +1171,7 @@ public:
     return(f);
   }
 
-  /*! Create a new outer CCB. */
+  /*! creates a new outer CCB. */
   Outer_ccb* new_outer_ccb()
   {
     Outer_ccb* oc = out_ccb_alloc.allocate(1);
@@ -1180,7 +1180,7 @@ public:
     return (oc);
   }
 
-  /*! Create a new inner CCB. */
+  /*! creates a new inner CCB. */
   Inner_ccb* new_inner_ccb()
   {
     Inner_ccb* ic = in_ccb_alloc.allocate(1);
@@ -1189,7 +1189,7 @@ public:
     return (ic);
   }
 
-  /*! Create a new isolated vertex. */
+  /*! creates a new isolated vertex. */
   Isolated_vertex* new_isolated_vertex()
   {
     Isolated_vertex* iv = iso_vert_alloc.allocate(1);
@@ -1302,7 +1302,7 @@ public:
   }
   //@}
 
-  /*! Assign our DCEL the contents of another DCEL.
+  /*! assigns our DCEL the contents of another DCEL.
    */
   void assign(const Self& dcel)
   {
@@ -1502,7 +1502,7 @@ public:
   }
 
 protected:
-  /*! Create a new halfedge. */
+  /*! creates a new halfedge. */
   Halfedge* _new_halfedge()
   {
     Halfedge* h = halfedge_alloc.allocate(1);
@@ -1511,7 +1511,7 @@ protected:
     return (h);
   }
 
-  /*! Delete an existing halfedge. */
+  /*! deletes an existing halfedge. */
   void _delete_halfedge(Halfedge* h)
   {
     halfedges.erase(h);
@@ -1520,7 +1520,7 @@ protected:
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

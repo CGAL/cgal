@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -13,6 +13,9 @@
 
 #ifndef CGAL_NEF_2_POLYNOMIAL_H
 #define CGAL_NEF_2_POLYNOMIAL_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/kernel_assertions.h>

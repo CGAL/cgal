@@ -19,6 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -170,6 +171,16 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`false`}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{allow_move_functor}
+*     \cgalParamDescription{A function object used to determinate if a vertex move should
+*                           be allowed or not during the relaxation step.}
+*     \cgalParamType{Functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)`
+*                    returning `true`
+*                    if the vertex `v` can be moved from `src` to `tgt`;
+*                    `%Point_3` being the value type of the vertex point map }
+*     \cgalParamDefault{If not provided, all moves are allowed.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{do_project}
 *     \cgalParamDescription{whether vertices should be reprojected on the input surface after creation or displacement}
 *     \cgalParamType{Boolean}
@@ -267,6 +278,9 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     ) ) );
 
+  auto shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
+                                     internal::Allow_all_moves());
+
 #if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
   {
@@ -322,7 +336,7 @@ void isotropic_remeshing(const FaceRange& faces
      remesher.collapse_short_edges(sizing, collapse_constraints);
     if(do_flip)
       remesher.flip_edges_for_valence_and_shape();
-    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing);
+    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE

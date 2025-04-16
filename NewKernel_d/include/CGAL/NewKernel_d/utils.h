@@ -38,7 +38,7 @@ template <class T, class No, bool=internal::has_type<T>::value /*false*/>
 struct Has_type_different_from : std::false_type {};
 template <class T, class No>
 struct Has_type_different_from <T, No, true>
-: boost::mpl::not_<std::is_same<typename T::type, No> > {};
+: std::bool_constant<!std::is_same_v<typename T::type, No>> {};
 
 
         template <class T> struct Wrap_type { typedef T type; };
@@ -145,11 +145,11 @@ struct Has_type_different_from <T, No, true>
 #define CGAL_KD_DEFAULT_FUNCTOR(Tg,Name,ReqTyp,ReqFun) \
     template <class K, class O> \
     struct Get_functor<K, Tg, O, \
-      typename boost::mpl::if_c< \
+      std::conditional_t< \
         Provides_functor_i<K, Tg, O>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
-      , int, void>::type> \
+      , int, void>> \
     { \
       typedef CGAL_STRIP_PAREN_ Name type; \
       typedef K Bound_kernel; \
@@ -159,11 +159,11 @@ struct Has_type_different_from <T, No, true>
 #define CGAL_KD_DEFAULT_TYPE(Tg,Name,ReqTyp,ReqFun) \
     template <class K> \
     struct Get_type<K, Tg, \
-      typename boost::mpl::if_c< \
+      std::conditional_t< \
         Provides_type_i<K, Tg>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
-      , int, void>::type> \
+      , int, void>> \
     { \
       typedef CGAL_STRIP_PAREN_ Name type; \
       typedef K Bound_kernel; \

@@ -17,10 +17,11 @@
 #include <CGAL/Straight_skeleton_2/debug.h>
 #include <CGAL/Straight_skeleton_2/test.h>
 
+#include <CGAL/Default.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <optional>
 
@@ -36,12 +37,10 @@ struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
-                                                   , std::is_same<FT,Interval_nt_advanced>
-                                                   >
-                                  , Tag_true
-                                  , Tag_false
-                                  >::type type ;
+  typedef std::conditional_t< std::is_same_v<FT,double> || std::is_same_v<FT,Interval_nt_advanced>
+                              , Tag_true
+                              , Tag_false
+                              > type ;
 } ;
 
 template <class K>
@@ -196,8 +195,8 @@ struct Default_return_polygon_type // Polygon type supports holes
                                       typename Kernel_traits<typename boost::range_value<
                                         typename Polygon::Polygon_2>::type>::Kernel,
                                       OfK>::value,
-                                    typename Polygon::Polygon_2, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+                                    typename Polygon::Polygon_2, // same kernel
+                                    CGAL::Polygon_2<OfK> /*different kernel*/ >::type type;
 };
 
 template <typename Polygon, typename OfK>
@@ -206,9 +205,13 @@ struct Default_return_polygon_type<Polygon, OfK, false> // Polygon type does NOT
   typedef typename std::conditional<std::is_same<
                                       typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
                                       OfK>::value,
-                                    Polygon, // correct kernel
-                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+                                    Polygon, // same kernel
+                                    CGAL::Polygon_2<OfK> /*different kernel*/ >::type type;
 };
+
+template <typename OfKPolygon, typename InKPolygon, typename OfK>
+using Polygon_return_type = typename CGAL::Default::Get<OfKPolygon,
+                                                        typename Default_return_polygon_type<InKPolygon, OfK>::type>::type;
 
 // The return type of create_interior/exterior_skeleton_and_offset_polygons_with_holes_2:
 // - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type should be the same
@@ -236,6 +239,10 @@ struct Default_return_polygon_with_holes_type<Polygon, OfK, false> // Polygon ty
                                     CGAL::Polygon_with_holes_2<OfK>, // correct kernel but no holes
                                     CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
 };
+
+template <typename OfKPolygon, typename InKPolygon, typename OfK>
+using Polygon_with_holes_return_type = typename CGAL::Default::Get<OfKPolygon,
+                                                                   typename Default_return_polygon_with_holes_type<InKPolygon, OfK>::type>::type;
 
 } // namespace CGAL_SS_i
 

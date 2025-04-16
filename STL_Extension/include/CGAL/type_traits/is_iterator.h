@@ -35,14 +35,13 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
 //provide all 5 nested types provided by iterator_traits
 template <class T>
 struct is_iterator_
-  : public boost::mpl::or_<
-             boost::mpl::and_<
-               has_iterator_category<T>,
-               has_value_type<T>,
-               has_difference_type<T>,
-               has_pointer<T>,
-               has_reference<T> >,
-               std::is_pointer<T> >
+  : public std::bool_constant<
+             ( has_iterator_category<T>::value &&
+               has_value_type<T>::value &&
+               has_difference_type<T>::value &&
+               has_pointer<T>::value &&
+               has_reference<T>::value) ||
+               std::is_pointer_v<T> >
 { };
 
 template <class T, class U, bool = is_iterator_<T>::value>

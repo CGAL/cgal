@@ -246,6 +246,22 @@ unspecified_type no_features();
 /*!
  * \ingroup PkgMesh3Parameters
  *
+ * The function `parameters::surface_only()`
+ * enables the meshing algorithm
+ * to mesh the input surface only and not take the volume into account.
+ *
+ * When this option is enabled, the output mesh has no cells in the 3D complex,
+ * only facets, edges and vertices.
+ * Full-3D optimization steps such as mesh perturbation and mesh exudation are automatically disabled.
+ *
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::refine_mesh_3()`
+ */
+unspecified_type surface_only();
+
+/*!
+ * \ingroup PkgMesh3Parameters
+ *
  * The function `parameters::no_lloyd()` enables the user to tell the mesh generation functions
  * `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done.
  *
@@ -451,6 +467,90 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
 template <class NamedParameters = parameters::Default_named_parameters>
 unspecified_type perturb(const Named_function_parameters& np = parameters::default_values());
 
+/*!
+ * \ingroup PkgMesh3Parameters
+ *
+ * The function `parameters::initial_points_generator()` enables the user to specify a functor that follows
+ * the `InitialPointsGenerator_3` concept to the mesh generation function `make_mesh_3()`. This functor is called
+ * for the initialization of the meshing process, by inserting well-distributed surface vertices.
+ * If this parameter is not specified, the default behavior
+ * is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
+ *
+ * Initialization is considered to be complete if the triangulation is a 3D triangulation
+ * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
+ * input surface).
+ *
+ * If one dimensional features are requested, their initialization is performed first.
+ * If provided, the points of `parameters::initial_points()` are inserted next.
+ * Then, `parameters::initial_points_generator()` is used to generate more initial points
+ * and complete the initialization.
+ * If the generator does not generate enough points for the initialization to be complete,
+ * the domain's `construct_initial_points_object()` will be called to generate enough input points.
+ *
+ * \tparam InitialPointsGenerator a model of the `InitialPointsGenerator_3` concept
+ *
+ * @param generator an instance of `InitialPointsGenerator`
+ *
+ * \cgalHeading{Example}
+ *
+ * \snippet mesh_3D_image_with_image_initialization.cpp Meshing
+ *
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::parameters::initial_points()`
+ * \sa `MeshDomain_3::Construct_initial_points`
+ *
+ */
+template <typename InitialPointsGenerator>
+unspecified_type initial_points_generator(const InitialPointsGenerator& generator);
+
+/*!
+ * \ingroup PkgMesh3Parameters
+ *
+ * The function `parameters::initial_points()` enables the user to specify a container, model of `Range`, that contains
+ * initial points constructed on surfaces,
+ * to be used in the `make_mesh_3()` function for mesh generation. Items in the container are
+ * tuple-like objects containing a `Weighted_point_3`, an `int`, and a `MeshDomain::Index`,
+ * where `Weighted_point_3` represents the position and the weight of the point,
+ * `int` the dimension of the minimal subcomplex on which the point lies,
+ * and `MeshDomain::Index` the corresponding subcomplex index.
+ * These initial points are inserted after one dimensional features initialization.
+ *
+ * Initialization is considered to be complete if the triangulation is a 3D triangulation
+ * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
+ * input surface).
+ *
+ * If the parameter `parameters::initial_points_generator()` is set,
+ * the points from this parameter will be inserted before calling the initial points generator.
+ *
+ * If after the insertion of initial points (possibly together with the input generator),
+ * the initialization is not complete,
+ * the domain's `construct_initial_points_object()` will be called.
+ *
+ * \tparam MeshDomain a model of `MeshDomain_3`
+ * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+ * \tparam InitialPointsRange a model of `Range` containing tuple-like objects of
+ *    `C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index`.
+ *
+ * @param initial_points an instance of `InitialPointsRange`
+ *
+ * \cgalHeading{Example}
+ *
+ * \code{.cpp}
+ * // Create the initial_points vector
+ * std::vector<std::tuple<K::Weighted_point_3, int, Mesh_domain::Index>> initial_points;
+ * // Perform mesh generation from a labeled image with initial points
+ * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
+ *                               criteria,
+ *                               parameters::initial_points(std::cref(initial_points))); // Use std::cref to avoid a copy
+ * \endcode
+ *
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::parameters::initial_points_generator()`
+ * \sa `MeshDomain_3::Construct_initial_points`
+ *
+ */
+template <typename MeshDomain, typename C3t3, typename InitialPointsRange>
+unspecified_type initial_points(const InitialPointsRange& initial_points);
 } /* namespace parameters */
 
 } /* namespace CGAL */

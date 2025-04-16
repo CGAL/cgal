@@ -39,7 +39,7 @@ public:
   {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : base(CGAL::make_array(sp, ep))
+    : base{sp, ep}
   {}
 
   const Point_2 &

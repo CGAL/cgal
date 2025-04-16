@@ -1,11 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
-#include <iostream>
-#include <fstream>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Aff_transformation_3.h>
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <iostream>
+#include <fstream>
 
 
 namespace PMP = CGAL::Polygon_mesh_processing;

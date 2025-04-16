@@ -37,6 +37,19 @@ points, but little more. Especially, computed values are not cached.
 That is, when the `Polygon_2::is_simple()` member function is called
 twice or more, the result is computed each time anew.
 
+\section secPolygonWithHole Polygons with Holes and Multipolygons with Holes
+
+This package also provides classes to represent polygons with holes and multipolygons with holes.
+
+For polygons with holes, these are `Polygon_with_holes_2` and `General_polygon_with_holes_2`. They can store a polygon that represents
+the outer boundary and a sequence of polygons that represent the holes.
+
+For multipolygons with holes, there is `Multipolygon_with_holes_2`.
+It stores a sequence of polygons with holes.
+
+These classes do not add any semantic requirements on the simplicity
+or orientation of their boundary polygons.
+
 \section secPolygonExamples Examples
 
 \subsection subsecPolygon The Polygon Class
@@ -45,6 +58,13 @@ The following example creates a polygon and illustrates the usage of
 some member functions.
 
 \cgalExample{Polygon/Polygon.cpp}
+
+\subsection SubsectionPolygonRepair_Multipolygon The Multipolygon with Holes Class
+
+The following example shows the creation of a multipolygon with holes and the traversal
+of the polygons in it.
+
+\cgalExample{Polygon/multipolygon.cpp}
 
 \cgalFigureBegin{polygon2_algo,pgn_algos.png}
 A polygon and some points
@@ -82,7 +102,8 @@ vertices. It additionally provides a member function `Polygon_2::vertices()` tha
 
 \subsection subsecPolygonDraw Draw a Polygon
 
-A polygon can be visualized by calling the \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink function as shown in the following example. This function opens a new window showing the given polygon. A call to this function is blocking, that is the program continues as soon as the user closes the window (a version exists for polygon with holes, cf. \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink).
+A polygon can be visualized by calling the \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink function as shown in the following example. This function opens a new window showing the given polygon. A call to this function is blocking, that is the program continues as soon as the user closes the window. Versions for polygons with holes and multipolygons with holes also exist, cf. \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink and \link PkgDrawMultipolygonWithHoles2
+CGAL::draw<MPH>() \endlink.
 
 \cgalExample{Polygon/draw_polygon.cpp}
 
@@ -94,15 +115,4 @@ Result of the run of the draw_polygon program. A window shows the polygon and al
 \cgalFigureEnd
 
 */
-
-\section secPolygonWithHole Polygons with Holes
-
-This package also provides two classes to represent polygons with holes,
-namely `Polygon_with_holes_2` and `General_polygon_with_holes_2`. They
-can store a polygon that represents the outer boundary and a sequence
-of polygons that represent the holes.
-
-These classes do not add any semantic requirements on the simplicity
-or orientation of their boundary polygons.
-
 }

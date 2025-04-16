@@ -22,159 +22,80 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-// Forward declaration
-template<typename T, typename PR, typename PM>
-class Orthtree;
-/// \endcond
-
 namespace Orthtrees {
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Node>
-Node next_sibling(Node n) {
-
-  // Passing null returns the first node
-  if (n.is_null())
-    return Node();
-
-  // If this node has no parent, it has no siblings
-  if (n.parent().is_null())
-    return Node();
-
-  // Find out which child this is
-  std::size_t index = n.local_coordinates().to_ulong();
-
-  constexpr static int degree = Node::Degree::value;
-  // Return null if this is the last child
-  if (int(index) == degree - 1)
-    return Node();
-
-  // Otherwise, return the next child
-  return n.parent()[index + 1];
-}
-
-template <typename Node>
-Node next_sibling_up(Node n) {
-
-  if (n.is_null())
-    return Node();
-
-  Node up = n.parent();
-
-  while (!up.is_null()) {
-
-    if (!next_sibling(up).is_null())
-      return next_sibling(up);
-
-    up = up.parent();
-  }
-
-  return Node();
-}
-
-template <typename Node>
-Node deepest_first_child(Node n) {
-
-  if (n.is_null())
-    return Node();
-
-  // Find the deepest child on the left
-  Node first = n;
-  while (!first.is_leaf())
-    first = first[0];
-  return first;
-}
-
-template <typename Node>
-Node first_child_at_depth(Node n, std::size_t depth) {
-
-  if (n.is_null())
-    return Node();
-
-  std::stack<Node> todo;
-  todo.push(n);
-
-  if (n.depth() == depth)
-    return n;
-
-  while (!todo.empty())
-  {
-    Node node = todo.top();
-    todo.pop();
-
-    if (node.depth() == depth)
-      return node;
-
-    if (!node.is_leaf())
-      for (int i = 0; i < Node::Degree::value; ++ i)
-        todo.push(node[std::size_t(Node::Degree::value - 1 - i)]);
-  }
-
-  return Node();
-}
-
-/// \endcond
 
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a preorder traversal.
 
+  \tparam Tree an instance of `Orthtree`
+
   A preorder traversal starts from the root towards the leaves.
 
   \cgalModels{OrthtreeTraversal}
  */
+template <typename Tree>
 struct Preorder_traversal {
+private:
 
-  template <typename Node>
-  Node first(Node root) const {
-    return root;
+  const Tree& m_orthtree;
+
+public:
+
+  using Node_index = typename Tree::Node_index;
+
+  Preorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+
+  Node_index first_index() const {
+    return m_orthtree.root();
   }
 
-  template <typename Node>
-  Node next(Node n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
-    if (n.is_leaf()) {
+    if (m_orthtree.is_leaf(n)) {
 
-      Node next = next_sibling(n);
+      auto next = m_orthtree.next_sibling(n);
 
-      if (next.is_null())
-        return next_sibling_up(n);
+      if (!next)
+        next = m_orthtree.next_sibling_up(n);
 
       return next;
 
+    } else {
+      return m_orthtree.child(n, 0);
     }
-    else // Return the first child of this node
-      return n[0];
   }
+
 };
 
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a postorder traversal.
 
+  \tparam Tree an instance of `Orthtree`
+
   A postorder traversal starts from the leaves towards the root.
 
   \cgalModels{OrthtreeTraversal}
  */
+template <typename Tree>
 struct Postorder_traversal {
+private:
 
-  template <typename Node>
-  Node first(Node root) const {
+  const Tree& m_orthtree;
 
-    return deepest_first_child(root);
+public:
+
+  using Node_index = typename Tree::Node_index;
+
+  Postorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+
+  Node_index first_index() const {
+    return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
-  template <typename Node>
-  Node next(Node n) const {
-
-    Node next = deepest_first_child(next_sibling(n));
-
-    if (next.is_null())
-      next = n.parent();
-
-    return next;
+  std::optional<Node_index> next_index(Node_index n) const {
+    return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
 
@@ -182,27 +103,37 @@ struct Postorder_traversal {
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal on leaves only.
 
-  All non-leave nodes are ignored.
+  \tparam Tree an instance of `Orthtree`
+
+  All non-leaf nodes are ignored.
 
   \cgalModels{OrthtreeTraversal}
  */
+template <typename Tree>
 struct Leaves_traversal {
+private:
 
-  template <typename Node>
-  Node first(Node root) const {
+  const Tree& m_orthtree;
 
-    return deepest_first_child(root);
+public:
+
+  using Node_index = typename Tree::Node_index;
+
+  Leaves_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+
+  Node_index first_index() const {
+    return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
-  template <typename Node>
-  Node next(Node n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
-    Node next = deepest_first_child(next_sibling(n));
+    if (m_orthtree.next_sibling(n))
+      return m_orthtree.deepest_first_child(*m_orthtree.next_sibling(n));
 
-    if (next.is_null())
-      next = deepest_first_child(next_sibling_up(n));
+    if (m_orthtree.next_sibling_up(n))
+      return m_orthtree.deepest_first_child(*m_orthtree.next_sibling_up(n));
 
-    return next;
+    return {};
   }
 };
 
@@ -210,52 +141,57 @@ struct Leaves_traversal {
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal of a specific depth level.
 
-  All trees at another depth are ignored. If the selected depth is
+  \tparam Tree an instance of `Orthtree`
+
+  All tree nodes at another depth are ignored. If the selected depth is
   higher than the maximum depth of the orthtree, no node will be traversed.
 
   \cgalModels{OrthtreeTraversal}
  */
+template <typename Tree>
 struct Level_traversal {
-
 private:
 
-  const std::size_t depth;
+  const Tree& m_orthtree;
+  const std::size_t m_depth;
 
 public:
+
+  using Node_index = typename Tree::Node_index;
 
   /*!
     constructs a `depth`-level traversal.
   */
-  Level_traversal (std::size_t depth) : depth(depth) { }
+  Level_traversal(const Tree& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
 
-  template <typename Node>
-  Node first(Node root) const {
-    return first_child_at_depth(root, depth);
+  Node_index first_index() const {
+    // assumes the tree has at least one child at m_depth
+    return *m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
   }
 
-  template <typename Node>
-  Node next(Node n) const {
-    std::cerr << depth << " ";
-    Node next = next_sibling(n);
+  std::optional<Node_index> next_index(Node_index n) const {
 
-    if (next.is_null())
-    {
-      Node up = n;
-      do
-      {
-        up = next_sibling_up(up);
-        if (up.is_null())
-          return Node();
-        next = first_child_at_depth(up, depth);
-      }
-      while (next.is_null());
+    auto next = m_orthtree.next_sibling(n);
+
+    if (!next) {
+
+      auto up = n;
+      do {
+
+        if (!m_orthtree.next_sibling_up(up))
+          return {};
+
+        up = *m_orthtree.next_sibling_up(up);
+        next = m_orthtree.first_child_at_depth(up, m_depth);
+
+      } while (!next);
     }
 
     return next;
   }
 };
 
-} // Orthtree
+} // Orthtrees
 } // CGAL
 
 #endif //CGAL_ORTHTREE_TRAVERSALS_H

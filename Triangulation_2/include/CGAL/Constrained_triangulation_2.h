@@ -30,35 +30,11 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/tags.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+#include <CGAL/NT_converter.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-#  include <CGAL/IO/io.h>
-#  include <CGAL/Compact_container.h>
-#  include <iostream>
-namespace CGAL {
-
-struct With_point_tag {};
-
-template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
-  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
-{
-  using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
-  using Base::Base;
-
-  std::ostream& operator()(std::ostream& out) const {
-    return Base::operator()(out) << "= " << this->it->point();
-  }
-};
-} // namespace CGAL
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
 namespace CGAL {
 
@@ -75,7 +51,7 @@ struct CGAL_DEPRECATED No_intersection_tag :
 
 namespace internal {
 
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#if defined(CGAL_CDT_2_DEBUG_INTERSECTIONS) || defined(CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2)
   struct Indentation_level {
     int n;
     Indentation_level() : n(0) {}
@@ -92,13 +68,14 @@ namespace internal {
     };
     Exit_guard open_new_scope() { return Exit_guard(*this); }
   } cdt_2_indent_level;
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS || CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
 
 template <typename K>
 struct Itag {
-  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag>::type type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal
@@ -330,11 +307,11 @@ public:
 #if 1
   template <class Segment_2>
   static decltype(auto) get_source(const Segment_2& segment){
-    return segment.source();
+    return segment[0];
   }
   template <class Segment_2>
   static decltype(auto) get_target(const Segment_2& segment){
-    return segment.target();
+    return segment[1];
   }
 
   static const Point& get_source(const Constraint& cst){
@@ -367,13 +344,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // if the segment (or a subpart of the segment) that we are trying to constraint is already
     // present in the triangulation and is already marked as constrained,
     // then this is an intersection
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-      if(dimension() == 1) {
-        if(fr->is_constrained(2))
-          throw Intersection_of_constraints_exception();
-      } else {
-        if(fr->is_constrained(i))
-          throw Intersection_of_constraints_exception();
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+      if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+        throw Intersection_of_constraints_exception();
       }
     }
 
@@ -726,7 +699,7 @@ template < class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
-// insert a point p, whose localisation is known (lt, f, i)
+// insert a point p, whose localization is known (lt, f, i)
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
 {
@@ -749,7 +722,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value)
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
       throw Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -765,7 +738,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
       int i;
       if(this->is_edge(vp.first, vp.second, fh,i)){
         fh->set_constraint(i,true);
-        boost::tie(fh,i) = mirror_edge(Edge(fh,i));
+        std::tie(fh,i) = mirror_edge(Edge(fh,i));
         fh->set_constraint(i,true);
       }
     }
@@ -842,7 +815,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
   internal::Indentation_level::Exit_guard exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   while(! stack.empty()){
-    boost::tie(vaa,vbb) = stack.top();
+    std::tie(vaa,vbb) = stack.top();
     stack.pop();
     CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -851,7 +824,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
               << " , " << display_vertex(vbb)
               << " ) remaining stack size: "
               << stack.size() << '\n';
-    CGAL_assertion(this->is_valid());
+    CGAL_assertion(this->is_valid(true));
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
     Vertex_handle vi;
 
@@ -862,13 +835,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // if the segment (or a subpart of the segment) that we are trying to constraint is already
       // present in the triangulation and is already marked as constrained,
       // then this is an intersection
-      if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-        if(dimension() == 1) {
-          if(fr->is_constrained(2))
-            throw Intersection_of_constraints_exception();
-        } else {
-          if(fr->is_constrained(i))
-            throw Intersection_of_constraints_exception();
+      if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+        if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+          throw Intersection_of_constraints_exception();
         }
       }
 

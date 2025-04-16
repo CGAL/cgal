@@ -26,7 +26,6 @@
 #include <CGAL/Surface_sweep_2/Arr_batched_pl_ss_visitor.h>
 
 #include <vector>
-#include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
@@ -114,13 +113,13 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    *
    * If the type Bgt2 is the same as the type Gt2, use a reference to Gt2
    * to avoid constructing a new one.  Otherwise, instantiate a local variable
-   * of the former and provide the later as a single parameter to the
+   * of the former and provide the latter as a single parameter to the
    * constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Bgt2>, const Bgt2&, Bgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Bgt2>, const Bgt2&, Bgt2>
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

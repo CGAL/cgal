@@ -29,8 +29,8 @@ namespace internal
 template <typename Traits>
 struct Cartesian_ranges
 {
-  typedef typename Traits::Point_d Point;
-  typedef typename Traits::Cartesian_const_iterator_d Cartesian_const_iterator;
+  using Point = typename Traits::Point_d;
+  using Cartesian_const_iterator = typename Traits::Cartesian_const_iterator_d;
 
   using Range_single = CGAL::Iterator_range<Cartesian_const_iterator>;
 

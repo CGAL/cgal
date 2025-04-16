@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_DIAGRAM_1_H
 #define CGAL_ENVELOPE_DIAGRAM_1_H
@@ -26,7 +27,7 @@ namespace CGAL {
  * A minimization (or a maximization) diagram that represents the lower (or the
  * upper) envelope of a set of curves in the plane.
  */
-template <class Traits_, class Allocator = CGAL_ALLOCATOR(int) >
+template <typename Traits_, typename Allocator = CGAL_ALLOCATOR(int) >
 class Envelope_diagram_1 {
 public:
   typedef Traits_                                   Traits_2;
@@ -37,228 +38,138 @@ public:
   typedef typename Curve_container::const_iterator  Curve_const_iterator;
   typedef std::size_t                               Size;
 
-  /*!
-   * Representation of a diagram vertex, which stores the point it represents
+  /*! Representation of a diagram vertex, which stores the point it represents
    * and a list of all curves that pass at that point.
    */
   class Edge;
 
   class Vertex {
   private:
-    Point_2          _p;
-    Curve_container  _cvs;
+    Point_2 _p;
+    Curve_container _cvs;
     Edge* _leftP;
     Edge* _rightP;
 
   public:
     /*! Constructor. */
-    Vertex () :
+    Vertex() :
       _leftP(nullptr),
       _rightP(nullptr)
     {}
 
     /*! Constructor with a point. */
-    Vertex (const Point_2& p) :
+    Vertex(const Point_2& p) :
       _p(p),
       _leftP(nullptr),
       _rightP(nullptr)
     {}
 
     /*! Get the point. */
-    const Point_2& point () const
-    {
-      return (_p);
-    }
+    const Point_2& point() const { return _p; }
 
     /*! Get the number of curves associated with the vertex. */
-    Size number_of_curves () const
-    {
-      return (_cvs.size());
-    }
+    Size number_of_curves() const { return _cvs.size(); }
 
     /*! Get the range of curves associated with the vertex. */
-    Curve_const_iterator curves_begin () const
-    {
-      return (_cvs.begin());
-    }
+    Curve_const_iterator curves_begin() const { return _cvs.begin(); }
 
-    Curve_const_iterator curves_end () const
-    {
-      return (_cvs.end());
-    }
+    Curve_const_iterator curves_end() const { return _cvs.end(); }
 
     /*! Get the left edge (const version). */
-    const Edge* left () const
-    {
-      return (_leftP);
-    }
+    const Edge* left() const { return _leftP; }
 
     /*! Get the left edge (non-const version). */
-    Edge* left ()
-    {
-      return (_leftP);
-    }
+    Edge* left() { return _leftP; }
 
     /*! Get the right edge (const version). */
-    const Edge* right () const
-    {
-      return (_rightP);
-    }
+    const Edge* right() const { return _rightP; }
 
     /*! Get the right edge (non-const version). */
-    Edge* right ()
-    {
-      return (_rightP);
-    }
+    Edge* right() { return _rightP; }
 
     /*! Set the point. */
-    void set_point (const Point_2& p)
-    {
-      _p = p;
-    }
+    void set_point (const Point_2& p) { _p = p; }
 
     /*! Clear the list of curves. */
-    void clear_curves ()
-    {
-      _cvs.clear();
-    }
+    void clear_curves() { _cvs.clear(); }
 
     /*! Associate a new curve with the vertex. */
-    void add_curve (const X_monotone_curve_2& cv)
-    {
-      _cvs.push_back (cv);
-    }
+    void add_curve(const X_monotone_curve_2& cv) { _cvs.push_back(cv); }
 
     /*! Associate a range of new curves with the vertex. */
-    void add_curves (Curve_const_iterator begin, Curve_const_iterator end)
-    {
-      Curve_const_iterator  iter;
-
-      for (iter = begin; iter != end; ++iter)
-        _cvs.push_back (*iter);
-    }
+    void add_curves(Curve_const_iterator begin, Curve_const_iterator end)
+    { for (auto iter = begin; iter != end; ++iter) _cvs.push_back(*iter); }
 
     /*! Set the left edge. */
-    void set_left (Edge* e)
-    {
-      _leftP = e;
-    }
+    void set_left(Edge* e) { _leftP = e; }
 
     /*! Get the right edge. */
-    void set_right (Edge* e)
-    {
-      _rightP = e;
-    }
+    void set_right(Edge* e) { _rightP = e; }
   };
 
-  /*!
-   * Representation of a diagram edge, which represents an interval and
+  /*! Representation of a diagram edge, which represents an interval and
    * stores all curves that form the envelope on it (usually there's just one
    * curve or zero curves, unless the input contains overlapping curves).
    */
-  class Edge
-  {
+  class Edge {
   private:
-    Curve_container  _cvs;
+    Curve_container _cvs;
     Vertex* _leftP;
     Vertex* _rightP;
 
   public:
     /*! Constructor. */
-    Edge () :
+    Edge() :
       _leftP(nullptr),
       _rightP(nullptr)
     {}
 
     /*! Check if the edge represents an empty interval. */
-    bool is_empty () const
-    {
-      return (_cvs.empty());
-    }
+    bool is_empty() const { return _cvs.empty(); }
 
     /*! Get the number of curves associated with the edge. */
-    Size number_of_curves () const
-    {
-      return (_cvs.size());
-    }
+    Size number_of_curves() const { return _cvs.size(); }
 
-    /*!
-     * Get a representative x-monotone curve.
+    /*! Get a representative x-monotone curve.
      * \pre The edge does not represent an empty interval.
      */
-    const X_monotone_curve_2& curve () const
-    {
-      CGAL_precondition (! _cvs.empty());
+    const X_monotone_curve_2& curve() const {
+      CGAL_precondition(! _cvs.empty());
       return (*(_cvs.begin()));
     }
 
     /*! Get the range of curves associated with the edge. */
-    Curve_const_iterator curves_begin () const
-    {
-      return (_cvs.begin());
-    }
+    Curve_const_iterator curves_begin() const { return _cvs.begin(); }
 
-    Curve_const_iterator curves_end () const
-    {
-      return (_cvs.end());
-    }
+    Curve_const_iterator curves_end() const { return _cvs.end(); }
 
     /*! Get the left vertex (const version). */
-    const Vertex* left () const
-    {
-      return (_leftP);
-    }
+    const Vertex* left() const { return _leftP; }
 
     /*! Get the left vertex (const version). */
-    Vertex* left ()
-    {
-      return (_leftP);
-    }
+    Vertex* left() { return _leftP; }
 
     /*! Get the right vertex (const version). */
-    const Vertex* right () const
-    {
-      return (_rightP);
-    }
+    const Vertex* right() const { return _rightP; }
 
     /*! Get the right vertex (non-const version). */
-    Vertex* right ()
-    {
-      return (_rightP);
-    }
+    Vertex* right() { return _rightP; }
 
     /*! Clear the list of curves. */
-    void clear_curves ()
-    {
-      _cvs.clear();
-    }
+    void clear_curves() { _cvs.clear(); }
 
     /*! Associate a new curve with the edge. */
-    void add_curve (const X_monotone_curve_2& cv)
-    {
-      _cvs.push_back (cv);
-    }
+    void add_curve(const X_monotone_curve_2& cv) { _cvs.push_back (cv); }
 
     /*! Associate a range of new curves with the edge. */
-    void add_curves (Curve_const_iterator begin, Curve_const_iterator end)
-    {
-      Curve_const_iterator  iter;
-
-      for (iter = begin; iter != end; ++iter)
-        _cvs.push_back (*iter);
-    }
+    void add_curves(Curve_const_iterator begin, Curve_const_iterator end)
+    { for (auto iter = begin; iter != end; ++iter) _cvs.push_back (*iter); }
 
     /*! Set the left vertex. */
-    void set_left (Vertex* v)
-    {
-      _leftP = v;
-    }
+    void set_left(Vertex* v) { _leftP = v; }
 
     /*! Get the right vertex. */
-    void set_right (Vertex* v)
-    {
-      _rightP = v;
-    }
+    void set_right(Vertex* v) { _rightP = v; }
   };
 
   typedef Vertex*                        Vertex_handle;
@@ -267,7 +178,6 @@ public:
   typedef const Edge*                    Edge_const_handle;
 
 private:
-
   // Vertex allocator.
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
@@ -280,143 +190,111 @@ private:
   Edge* _rightmostP;                  // The rightmost edge of the diagram
                                       // (representing the range to +oo).
 
-  Vertex_allocator  vertex_alloc;     // An allocator for vertices.
-  Edge_allocator    edge_alloc;       // An allocator for edges.
+  Vertex_allocator vertex_alloc;      // An allocator for vertices.
+  Edge_allocator edge_alloc;          // An allocator for edges.
 
 public:
-
-  /*!
-   * Constructor.
+  /*! Constructor.
+   * An empty diagram contains one (empty) edge, representing (-oo, +oo):
    */
-  Envelope_diagram_1 ()
-  {
-    // An empty diagram contains one (empty) edge, representing (-oo, +oo):
-    _leftmostP = _rightmostP = new_edge();
+  Envelope_diagram_1() { _leftmostP = _rightmostP = new_edge(); }
+
+  /*! Move constructor.
+   */
+  Envelope_diagram_1(Envelope_diagram_1&& other) {
+    _leftmostP = other._leftmostP;
+    _rightmostP = other._rightmostP;
+    other._leftmostP = other._rightmostP = new_edge();
   }
 
-  /*!
-   * Destructor.
+  /*! Move assignment operator.
    */
-  ~Envelope_diagram_1 ()
-  {
-    _free();
+  Envelope_diagram_1& operator=(Envelope_diagram_1&& other) {
+    _leftmostP = other._leftmostP;
+    _rightmostP = other._rightmostP;
+    other._leftmostP = other._rightmostP = new_edge();
+    return *this;
   }
 
-  /*!
-   * Get the leftmost edge of the diagram (const version).
+  /*! Destructor.
    */
-  Edge_const_handle leftmost () const
-  {
-    return (_leftmostP);
-  }
+  ~Envelope_diagram_1() { _free(); }
 
-  /*!
-   * Get the leftmost edge of the diagram (non-const version).
+  /*! Get the leftmost edge of the diagram (const version).
    */
-  Edge_handle leftmost ()
-  {
-    return (_leftmostP);
-  }
+  Edge_const_handle leftmost() const { return _leftmostP; }
 
-  /*!
-   * Get the rightmost edge of the diagram (const version).
+  /*! Get the leftmost edge of the diagram (non-const version).
    */
-  Edge_const_handle rightmost () const
-  {
-    return (_rightmostP);
-  }
+  Edge_handle leftmost() { return _leftmostP; }
 
-  /*!
-   * Get the rightmost edge of the diagram (non-const version).
+  /*! Get the rightmost edge of the diagram (const version).
    */
-  Edge_handle rightmost ()
-  {
-    return (_rightmostP);
-  }
+  Edge_const_handle rightmost() const { return _rightmostP; }
 
-  /*!
-   * Clear the diagram.
+  /*! Get the rightmost edge of the diagram (non-const version).
    */
-  void clear ()
-  {
+  Edge_handle rightmost() { return _rightmostP; }
+
+  /*! Clear the diagram.
+   */
+  void clear() {
     _free();
 
     // An empty diagram contains one (empty) edge, representing (-oo, +oo):
     _leftmostP = _rightmostP = new_edge();
   }
 
-  /*!
-   * Set the leftmost edge.
+  /*! Set the leftmost edge.
    */
-  void set_leftmost (Edge_handle e)
-  {
-    _leftmostP = e;
-  }
+  void set_leftmost(Edge_handle e) { _leftmostP = e; }
 
-  /*!
-   * Set the rightmost edge.
+  /*! Set the rightmost edge.
    */
-  void set_rightmost (Edge_handle e)
-  {
-    _rightmostP = e;
-  }
+  void set_rightmost(Edge_handle e) { _rightmostP = e; }
 
-  /*! Create a new vertex. */
-  Vertex_handle new_vertex (const Point_2& p)
-  {
+  /*! Create a new vertex.
+   */
+  Vertex_handle new_vertex(const Point_2& p) {
     Vertex* v = vertex_alloc.allocate (1);
     std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
     return (v);
   }
 
-  /*! Create a new edge. */
-  Edge_handle new_edge ()
-  {
+  /*! Create a new edge.
+   */
+  Edge_handle new_edge() {
     Edge* e = edge_alloc.allocate (1);
     std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
     return (e);
   }
 
-  /*! Delete an existing vertex. */
-  void delete_vertex (Vertex_handle v)
-  {
+  /*! Delete an existing vertex.
+   */
+  void delete_vertex(Vertex_handle v) {
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
     vertex_alloc.deallocate (v, 1);
   }
 
-  /*! Delete an existing edge. */
-  void delete_edge (Edge_handle e)
-  {
+  /*! Delete an existing edge.
+   */
+  void delete_edge(Edge_handle e) {
     std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
     edge_alloc.deallocate (e, 1);
   }
 
 private:
-  /*!
-   * Free all diagram elements.
+  /*! Free all diagram elements.
    */
-  void _free ()
-  {
-    Vertex* v;
+  void _free() {
     Edge* e = _leftmostP;
-
     while (e != nullptr) {
-      // Get a pointer to the next vertex.
-      v = e->right();
+      Vertex* v = e->right();
+      delete_edge(e);
+      if (v == nullptr) break;
 
-      // Free the edge and update it to be the next one after v.
-      delete_edge (e);
-
-      if (v != nullptr) {
-        e = v->right();
-
-        // Free the current vertex.
-        delete_vertex (v);
-      }
-      else
-      {
-        e = nullptr;
-      }
+      e = v->right();
+      delete_vertex(v);
     }
 
     _leftmostP = nullptr;

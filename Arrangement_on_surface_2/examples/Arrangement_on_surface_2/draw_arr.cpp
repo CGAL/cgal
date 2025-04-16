@@ -100,13 +100,24 @@ int main() {
             << arr.number_of_faces() << std::endl;
 
   std::size_t id(0);
-  CGAL::draw(arr, [&] (Arrangement_2::Face_const_handle) -> CGAL::IO::Color {
-                    float h = 360.0f * id++ / arr.number_of_faces();
-                    float s = 0.5;
-                    float v = 0.5;
-                    auto [r, g, b] = hsv_to_rgb(h, s, v);
-                    return CGAL::IO::Color(r,g,b);
-                  }, "hsv colors", true);
 
-  return EXIT_SUCCESS;
+ CGAL::Graphics_scene_options<Arrangement_2,
+                              typename Arrangement_2::Vertex_const_handle,
+                              typename Arrangement_2::Halfedge_const_handle,
+                              typename Arrangement_2::Face_const_handle> gso;
+ gso.colored_face=[](const Arrangement_2&, Arrangement_2::Face_const_handle) -> bool
+ { return true; };
+
+ gso.face_color=[&id](const Arrangement_2& arr, Arrangement_2::Face_const_handle) -> CGAL::IO::Color
+ {
+   float h = 360.0f * id++ / arr.number_of_faces();
+   float s = 0.5;
+   float v = 0.5;
+   auto [r, g, b] = hsv_to_rgb(h, s, v);
+   return CGAL::IO::Color(r,g,b);
+ };
+
+ CGAL::draw(arr, gso, "hsv colors");
+
+ return EXIT_SUCCESS;
 }

@@ -1,6 +1,7 @@
 #include <list>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/test_macros.h>
+#include <type_traits>
 
 using namespace std;
 typedef list<int>::iterator Iterator;
@@ -24,6 +25,10 @@ int main() {
     H1[it1] = 2;
     CGAL_TEST(H1[it1]==2);
     CGAL_TEST(H2[it1]==-1);
+    static_assert(std::is_nothrow_move_constructible_v<decltype(H1)>);
+    auto H1_moved = std::move(H1);
+    CGAL_TEST(H1_moved[it1]==2);
+    CGAL_TEST(H1[it1]==H1.default_value());
     H1.clear();
     H2.clear(-2);
     H2[it1] = 2;
@@ -67,6 +72,7 @@ int main() {
     CGAL_TEST(get(H4_pmap, L.begin()) == 0);
 
     typedef CGAL::Unique_hash_map<int, int, Integer_hash_function>  Int_hmap;
+    static_assert(std::is_nothrow_move_constructible_v<Int_hmap>);
     typedef boost::associative_property_map<Int_hmap>               Int_pmap;
     Int_hmap H5(-1);
     Int_pmap H5_pmap(H5);

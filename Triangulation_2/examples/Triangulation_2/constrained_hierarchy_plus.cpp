@@ -23,22 +23,23 @@ int
 main( )
 {
   Triangulation cdt;
-  std::cout << "Inserting a grid 5 x 5 of  constraints " << std::endl;
+  std::cout << "Inserting a grid 5 x 5 of 10 intersecting constraints " << std::endl;
     for (int i = 1; i < 6; ++i)
     cdt.insert_constraint( Point(0,i), Point(6,i));
     for (int j = 1; j < 6; ++j)
     cdt.insert_constraint( Point(j,0), Point(j,6));
 
   int count = 0;
-  for (Triangulation::Subconstraint_iterator scit = cdt.subconstraints_begin();
-       scit != cdt.subconstraints_end();
-       ++scit)  ++count;
+  using Sc = Triangulation::Subconstraint;
+  for ([[maybe_unused]] const Sc& sc :  cdt.subconstraints()) {
+    ++count;
+  }
   std::cout << "The number of resulting constrained edges is  ";
   std::cout <<  count << std::endl;
 
   //verbose mode of is_valid ; shows the number of vertices at each  level
   std::cout << "The number of vertices at successive levels" << std::endl;
-  assert(cdt.is_valid(true));
+  bool valid = cdt.is_valid(true);
 
-  return 0;
+  return valid ? 0 : 1;
 }

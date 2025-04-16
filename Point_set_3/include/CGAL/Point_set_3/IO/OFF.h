@@ -94,12 +94,6 @@ bool read_OFF(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::read_OFF()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set.
@@ -190,12 +184,6 @@ bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::write_OFF()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_off_point_set(std::ostream& os, ///< output stream.
                                          const CGAL::Point_set_3<Point, Vector>& point_set) ///< point set

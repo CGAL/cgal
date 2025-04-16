@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -21,6 +21,9 @@
 #ifndef CGAL_CKVA_CURVE_RENDERER_FACADE_H
 #define CGAL_CKVA_CURVE_RENDERER_FACADE_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 // do not compile curve renderer code (for fast debugging)
 //#define CGAL_CKVA_DUMMY_RENDERER
 
@@ -29,7 +32,7 @@
 // whether to use exact rational arithmetic
 #define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-// this turns on a signleton curve renderer
+// this turns on a singleton curve renderer
 // (not recommended for multi-threaded applications)
 //#define CGAL_CKVA_USE_STATIC_RENDERER
 

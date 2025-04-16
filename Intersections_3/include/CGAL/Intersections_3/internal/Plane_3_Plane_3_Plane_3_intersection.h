@@ -84,9 +84,12 @@ intersection(const typename K::Plane_3& plane1,
                                                   typename K::Line_3,
                                                   typename K::Plane_3> > result_type;
 
-  typedef typename K::Point_3      Point_3;
   typedef typename K::Line_3       Line_3;
   typedef typename K::Plane_3      Plane_3;
+
+  auto res = intersection_point(plane1,plane2,plane3, k);
+  if (res)
+    return result_type(*res);
 
   // Intersection between plane1 and plane2 can either be
   // a line, a plane, or empty.
@@ -97,26 +100,19 @@ intersection(const typename K::Plane_3& plane1,
   {
     if(const Line_3* l = intersect_get<Line_3>(o12))
     {
-      // either point or line
-      typename Intersection_traits<K, Plane_3, Line_3>::result_type
-          v = internal::intersection(plane3, *l, k);
-      if(v)
-      {
-        if(const Point_3* p = intersect_get<Point_3>(v))
-          return result_type(*p);
-        else if(const Line_3* l = intersect_get<Line_3>(v))
-          return result_type(*l);
-      }
+      if (internal::do_intersect(*l, plane3, k))
+        return result_type(*l);
     }
-    else if(const Plane_3 *pl = intersect_get<Plane_3>(o12))
+    else
     {
+      CGAL_assertion(intersect_get<Plane_3>(o12) != nullptr);
       // either line or plane
       typename Intersection_traits<K, Plane_3, Plane_3>::result_type
-          v = internal::intersection(plane3, *pl, k);
+          v = internal::intersection(plane3, plane1, k);
       if(v)
       {
-        if(const Plane_3* p = intersect_get<Plane_3>(v))
-          return result_type(*p);
+        if( intersect_get<Plane_3>(v)!=nullptr)
+          return result_type(plane1);
         else if(const Line_3* l = intersect_get<Line_3>(v))
           return result_type(*l);
       }

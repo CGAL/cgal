@@ -103,20 +103,10 @@ other but never both.
 
 \subsection installation_boost Boost Libraries
 
-\subsubsection inst_boost_1_70_plus Version 1.70 and Later
-Starting from \boost 1.70, the cmake config mode can be used for configuring the \boost version
+Starting from \boost 1.72, the cmake config mode can be used for configuring the \boost version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
 `BoostConfig.cmake`. For example if you manually installed \boost 1.77 with `--prefix=<path>`,
 then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
-
-\subsubsection inst_boost_up_2_1_69 Version 1.69 and Earlier
-
-\warning If you have a version of Boost greater than 1.69 already installed on your system, and you want to configure and compile with an earlier version of Boost, then you will need to set the CMake variable `Boost_NO_BOOST_CMAKE` to `ON` (otherwise the `FindBoost.cmake` module of CMake will start searching for `BoostConfig.cmake`, and ignore the `BOOST_ROOT` variable).
-
-In most cases, if \boost is not automatically found, setting the `BOOST_ROOT`
-variable is enough. If it is not, you can specify the header and library
-directories individually. You can also provide the full pathname to a specific compiled library
-if it cannot be found in the library directory or its name is non-standard.
 
 By default, when \boost binary libraries are needed, the shared versions
 are used if present. You can set the variable
@@ -127,17 +117,6 @@ On Windows, if you link with \boost shared libraries, you must ensure that
 the `.dll` files are found by the dynamic linker, at run time.
 For example, you can add the path to the \boost `.dll` to the
 `PATH` environment variable.
-
-| Variable              | Description                                                           | Type        |
-| :-                    | :-                    | :-             |
-| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either \cgalFootnoteCode{BOOST_ROOT} or \cgalFootnoteCode{BOOSTROOT}} | Root directory of your \boost installation | Either CMake or Environment |
-| `Boost_INCLUDE_DIR`   | Directory containing the `boost/version.hpp` file  | CMake |
-| `BOOST_INCLUDEDIR`    | Idem | Environment |
-| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \boost libraries  | CMake |
-| `BOOST_LIBRARYDIR`    | Idem | Environment |
-| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \boost library | CMake |
-| `Boost_(xyz)_LIBRARY_DEBUG` | Full pathname to a debug build of the compiled 'xyz' \boost library | CMake |
-
 
 \subsection installation_gmp GMP and MPFR Libraries
 

@@ -385,10 +385,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-             std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >::value
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
          >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);

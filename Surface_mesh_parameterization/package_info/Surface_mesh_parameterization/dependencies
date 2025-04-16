@@ -1,5 +1,4 @@
 Algebraic_foundations
-Arithmetic_kernel
 BGL
 Box_intersection_d
 Cartesian_kernel
@@ -18,7 +17,6 @@ Number_types
 Polygon_mesh_processing
 Profiling_tools
 Property_map
-Random_numbers
 STL_Extension
 Solver_interface
 Spatial_sorting

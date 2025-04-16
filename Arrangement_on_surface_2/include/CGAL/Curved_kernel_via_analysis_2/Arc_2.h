@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h
  *\brief defines class \c Arc_2 that represents an arc on a curve that
@@ -568,7 +571,7 @@ public:
                           compare_xy_2_object()(p, q, true) != CGAL::EQUAL);
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(p, -1, c);
-        _check_pt_arcno_and_coprimality(p, -1, c);
+        _check_pt_arcno_and_coprimality(q, -1, c);
         _fix_curve_ends_order();
     }
 
@@ -2012,7 +2015,7 @@ protected:
      * boundary implies equality
      *
      * \param p first endpoint
-     * \param q second endpint
+     * \param q second endpoint
      * \param equal_x \c true indicates to skip the comparison by x
      * \param only_x \c true indicates to report only the comparison by x
      * \returns the result of the queried comparison

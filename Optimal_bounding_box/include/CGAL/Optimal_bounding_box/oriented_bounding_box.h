@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Default.h>
@@ -35,6 +36,7 @@
 #include <CGAL/Real_timer.h>
 #endif
 
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/value_type.hpp>
 

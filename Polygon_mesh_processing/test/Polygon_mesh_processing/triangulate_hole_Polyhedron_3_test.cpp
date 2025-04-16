@@ -1,6 +1,8 @@
 //#define POLY
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
+
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>
 #else
@@ -10,8 +12,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Weights/uniform_weights.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 #include <vector>
@@ -245,8 +248,8 @@ void test_triangulate_refine_and_fair_hole(const std::string file_name, bool use
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_hole(const std::string file_name, bool use_cdt) {
-  std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
+void test_output_iterators_triangulate_hole(const std::string file_name, bool use_cdt) {
+  std::cout << "test_output_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
@@ -277,8 +280,8 @@ void test_ouput_iterators_triangulate_hole(const std::string file_name, bool use
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
-  std::cout << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
+void test_output_iterators_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
+  std::cout << "test_output_iterators_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
   Polyhedron poly, poly_2;
@@ -404,10 +407,10 @@ int main()
     test_triangulate_and_refine_hole(it->c_str(), false);
     test_triangulate_refine_and_fair_hole(it->c_str(), true);
     test_triangulate_refine_and_fair_hole(it->c_str(), false);
-    test_ouput_iterators_triangulate_and_refine_hole(it->c_str(), true);
-    test_ouput_iterators_triangulate_and_refine_hole(it->c_str(), false);
-    test_ouput_iterators_triangulate_hole(it->c_str(), true);
-    test_ouput_iterators_triangulate_hole(it->c_str(), false);
+    test_output_iterators_triangulate_and_refine_hole(it->c_str(), true);
+    test_output_iterators_triangulate_and_refine_hole(it->c_str(), false);
+    test_output_iterators_triangulate_hole(it->c_str(), true);
+    test_output_iterators_triangulate_hole(it->c_str(), false);
     test_triangulate_hole_weight(it->c_str(), true, 0);
     test_triangulate_hole_weight(it->c_str(), false, 0);
     std::cout << "------------------------------------------------" << std::endl;

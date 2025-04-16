@@ -16,7 +16,13 @@
 \cgalInclude{CGAL/draw_polygon_with_holes_2.h}
 */
 /// \defgroup PkgDrawPolygonWithHoles2 Draw a 2D Polygon with Holes
-/// \ingroup PkgPolygon2Ref
+
+/*!
+  \code
+  #include <CGAL/draw_multipolygon_with_holes_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawMultipolygonWithHoles2 Draw a 2D Multipolygon with Holes
 
 /*!
 \addtogroup PkgPolygon2Ref
@@ -42,11 +48,13 @@
 \cgalCRPSection{Concepts}
 - `PolygonTraits_2`
 - `GeneralPolygonWithHoles_2`
+- `MultipolygonWithHoles_2`
 
 \cgalCRPSection{Classes}
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
 - `CGAL::General_polygon_with_holes_2<Polygon>`
+- `CGAL::Multipolygon_with_holes_2<PolygonTraits_2,Container>`
 
 \cgalCRPSection{Global Functions}
 - `CGAL::area_2()`
@@ -66,5 +74,8 @@
 
 \cgalCRPSection{Draw a Polygon_with_holes_2}
 - \link  PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink
+
+\cgalCRPSection{Draw a Multipolygon_with_holes_2}
+- \link  PkgDrawMultipolygonWithHoles2 CGAL::draw<MPH>() \endlink
 
 */

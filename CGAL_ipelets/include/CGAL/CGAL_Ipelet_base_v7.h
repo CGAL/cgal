@@ -645,12 +645,11 @@ public:
     template<class iterator>
     void
     draw_in_ipe(const iterator begin,const iterator end,const Iso_rectangle_2& bbox,bool make_grp=true,bool deselect_all=false,
-     std::enable_if_t<  boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                         std::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                                > > > >::value
+     std::enable_if_t<  std::is_same_v<typename std::iterator_traits<iterator>::value_type,Point_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Segment_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circle_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                     >* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)

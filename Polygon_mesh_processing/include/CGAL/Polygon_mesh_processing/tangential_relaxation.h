@@ -112,7 +112,7 @@ struct Allow_all_moves{
 *   \cgalParamNBegin{allow_move_functor}
 *     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
 *     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
-*                    if the vertex `v` can be moved from `src` to `tgt`; `Point_3` being the value type of the vertex point map }
+*                    if the vertex `v` can be moved from `src` to `tgt`; `%Point_3` being the value type of the vertex point map }
 *     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
@@ -288,9 +288,9 @@ void tangential_relaxation(const VertexRange& vertices,
 
             const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
             const double face_weight = tri_area
-                                       / (1. / 3. * (sizing.at(v)
-                                                   + sizing.at(v1)
-                                                   + sizing.at(v2)));
+                                       / (1. / 3. * (sizing.at(v, tm)
+                                                   + sizing.at(v1, tm)
+                                                   + sizing.at(v2, tm)));
             weight += face_weight;
 
             const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));

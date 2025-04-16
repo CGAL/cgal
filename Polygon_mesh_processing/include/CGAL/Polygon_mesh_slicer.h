@@ -17,7 +17,7 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/tuple.h>
 
@@ -30,7 +30,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <variant>
-#include <boost/mpl/if.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -42,14 +41,14 @@ namespace CGAL {
 /// a triangulated surface mesh.
 ///
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
-/// \tparam Traits a model of `AABBGeomTraits`
+/// \tparam Traits a model of `AABBGeomTraits_3`
 /// \tparam VertexPointMap a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
 /// \tparam AABBTree must be an instantiation of `CGAL::AABB_tree` able to handle
 ///         the edges of `TriangleMesh`, having its `edge_descriptor` as primitive id.
-///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
+///         The default is `CGAL::AABB_tree<CGAL::AABB_traits_3<
 ///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
 ///         predicates and constructions in case the functor is called with a plane
@@ -77,14 +76,14 @@ template<class TriangleMesh,
   class Traits,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
-                       AABB_traits<Traits,
+                       AABB_traits_3<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
-                                                                typename boost::mpl::if_<
-                                                                  typename std::is_same<
+                                                                std::conditional_t<
+                                                                  std::is_same_v<
                                                                     VertexPointMap,
-                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
+                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >,
                                                                   Default,
-                                                                  VertexPointMap>::type> > >,
+                                                                  VertexPointMap>>>>,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {

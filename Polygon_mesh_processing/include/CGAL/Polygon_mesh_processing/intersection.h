@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
@@ -28,8 +28,8 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>
@@ -1110,7 +1110,7 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
                        const GT& gt)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
 
   AABBTree tree1(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
@@ -1427,18 +1427,16 @@ bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
                   const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const std::enable_if_t<
-                    ! boost::mpl::or_<
-                      typename std::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
-                      typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
-                      typename boost::has_range_iterator<
+                , const std::enable_if_t<!(
+                      std::is_same_v<TriangleMesh, Polyline> || // Added to please MSVC 2015
+                      !boost::has_range_iterator<Polyline>::value || // not a range
+                      boost::has_range_iterator<
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          std::false_type
-                        >::type
-                      >::type // not a range of a range
-                    >::value
+                          std::false_type>::type
+                        >::value
+                    )
                   >* = 0
 #endif
                  )
@@ -1467,7 +1465,7 @@ struct Mesh_callback
   typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -1714,7 +1712,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}

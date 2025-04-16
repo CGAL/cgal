@@ -24,7 +24,6 @@
 #include <CGAL/Surface_sweep_2/Arr_vert_decomp_ss_visitor.h>
 
 #include <vector>
-#include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
@@ -118,13 +117,13 @@ decompose(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    *
    * If the type Vgt2 is the same as the type Gt2, use a
    * reference to Gt2 to avoid constructing a new one.  Otherwise,
-   * instantiate a local variable of the former and provide the later as a
+   * instantiate a local variable of the former and provide the latter as a
    * single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Vgt2>, const Vgt2&, Vgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Vgt2>, const Vgt2&, Vgt2>
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

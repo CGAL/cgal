@@ -41,9 +41,9 @@ namespace CGAL {
 
   /**
    * Static data structure for efficient
-   * intersection and distance computations in 3D. It builds a
+   * intersection and distance computations in 2D and 3D. It builds a
    * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
-   * of 3D geometric objects, and can receive intersection and distance
+   * of geometric objects, and can receive intersection and distance
    * queries, provided that the corresponding predicates are
    * implemented in the traits class AABBTraits.
    * An instance of the class `AABBTraits` is internally stored.
@@ -74,9 +74,8 @@ namespace CGAL {
     /// Number type returned by the distance queries.
     typedef typename AABBTraits::FT FT;
 
-
-    /// Type of 3D point.
-    typedef typename AABBTraits::Point_3 Point;
+    /// Type of point.
+    typedef typename AABBTraits::Point Point;
 
     /// Type of input primitive.
     typedef typename AABBTraits::Primitive Primitive;
@@ -86,7 +85,7 @@ namespace CGAL {
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
     typedef typename AABBTraits::Bounding_box Bounding_box;
-    /// 3D Point and Primitive Id type
+    /// Point and Primitive Id type
     typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
     /// \deprecated
     typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
@@ -125,7 +124,7 @@ namespace CGAL {
     Self& operator=(const Self&) = delete;
 
     /**
-     * @brief Builds the data structure from a sequence of primitives.
+     * @brief builds the data structure from a sequence of primitives.
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
@@ -300,7 +299,7 @@ public:
 
     /// returns the intersection and  primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
@@ -331,7 +330,7 @@ public:
 
     /// returns the primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
@@ -552,7 +551,7 @@ public:
         traits.intersection(query, singleton_data());
         break;
       default: // if(size() >= 2)
-        root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
+        root_node()->traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
 

@@ -5,15 +5,18 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Michael Kerber    <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
 
-#ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
-#define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+#ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS_H
+#define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/disable_warnings.h>
 
@@ -30,11 +33,10 @@
 
 namespace CGAL {
 
-template< class Coefficient_ >
+template <class Coefficient_>
 class Arr_algebraic_segment_traits_2 {
 
 public:
-
     enum Site_of_point {
         POINT_IN_INTERIOR = 0,
         MIN_ENDPOINT = -1,
@@ -54,16 +56,15 @@ public:
 
     typedef  CGAL::Arr_algebraic_segment_traits_2<Coefficient> Self;
 
-    // Default constructor
+    // constructs default
     Arr_algebraic_segment_traits_2 () {}
 
 
-    // Copy constructor
+    // constructs copy
     Arr_algebraic_segment_traits_2 (const  Self& /* s */) { /* No state...*/}
 
-    // Assignment operator
-    const Self& operator= (const Self& s)
-        {return s;}
+    // assigns
+    const Self& operator= (const Self& s) { return s; }
 
     // public types
 
@@ -72,7 +73,7 @@ public:
 
     typedef typename Algebraic_kernel_d_2::Polynomial_2 Polynomial_2;
 
-    /// public types for ArrangementTraits_2
+    /// public types for AosTraits_2
 
     typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_2;
 
@@ -610,11 +611,7 @@ public:
         return Construct_curve_2(&CKvA_2::instance());
     }
 
-
-
-
-
-/*
+  /*
 
   // additional functionality (for not introducing a "general" arc)
 
@@ -647,12 +644,12 @@ public:
 
   };
 
-*/
+  */
 
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+#endif

@@ -84,7 +84,7 @@ public:
     double min_sdf = (std::numeric_limits<double>::max)();
     // If there is any facet which has no sdf value, assign average sdf value of its neighbors
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       double sdf_value = get(sdf_values, *facet_it);
       CGAL_assertion(sdf_value == -1 || sdf_value >= 0); // validity check
@@ -130,7 +130,7 @@ public:
     double min_sdf = (std::numeric_limits<double>::max)();
     double max_sdf = -min_sdf;
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       double sdf_value = get(sdf_values, *facet_it);
       max_sdf = (std::max)(sdf_value, max_sdf);
@@ -147,7 +147,7 @@ public:
   std::pair<double, double> linear_normalize_sdf_values(const Polyhedron& mesh,
       SDFPropertyMap sdf_values) {
     double min_sdf, max_sdf;
-    boost::tie(min_sdf, max_sdf) = min_max_value(mesh, sdf_values);
+    std::tie(min_sdf, max_sdf) = min_max_value(mesh, sdf_values);
 
     if(min_sdf == max_sdf) {
       CGAL_warning_msg(min_sdf == max_sdf, "Linear normalization is not applicable!");
@@ -156,7 +156,7 @@ public:
 
     const double max_min_dif = max_sdf - min_sdf;
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       put(sdf_values, *facet_it, (get(sdf_values, *facet_it) - min_sdf) / max_min_dif);
     }
@@ -297,7 +297,7 @@ public:
                                     AlphaExpansionImplementationTag());
     std::vector<std::size_t>::iterator label_it = labels.begin();
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend;
         ++facet_it, ++label_it) {
       put(segment_pmap, *facet_it, *label_it); // fill with cluster-ids
@@ -324,8 +324,8 @@ private:
 
     CGAL_precondition( (! (face(edge,mesh)==boost::graph_traits<Polyhedron>::null_face()))
                        && (! (face(opposite(edge,mesh),mesh)==boost::graph_traits<Polyhedron>::null_face())) );
-    const Point a = get(vertex_point_pmap,target(edge,mesh));
-    const Point b = get(vertex_point_pmap,target(prev(edge,mesh),mesh));
+    const Point a = get(vertex_point_pmap,source(edge,mesh));
+    const Point b = get(vertex_point_pmap,target(edge,mesh));
     const Point c = get(vertex_point_pmap,target(next(edge,mesh),mesh));
     const Point d = get(vertex_point_pmap,target(next(opposite(edge,mesh),mesh),mesh));
     // As far as I check: if, say, dihedral angle is 5, this returns 175,
@@ -354,7 +354,7 @@ private:
                                 std::vector<double>& normalized_sdf_values) {
     normalized_sdf_values.reserve(num_faces(mesh));
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       double log_normalized = log(get(sdf_values, *facet_it) * CGAL_NORMALIZATION_ALPHA +
                                   1) / log(CGAL_NORMALIZATION_ALPHA + 1);
@@ -398,7 +398,7 @@ private:
     std::map<face_descriptor, std::size_t> facet_index_map;
     std::size_t facet_index = 0;
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend;
         ++facet_it, ++facet_index) {
       facet_index_map[*facet_it] = facet_index;
@@ -407,7 +407,7 @@ private:
     const double epsilon = 5e-6;
     // edges and their weights. pair<std::size_t, std::size_t> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     edge_iterator edge_it, eend;
-    for(boost::tie(edge_it,eend) = edges(mesh);
+    for(std::tie(edge_it,eend) = edges(mesh);
         edge_it != eend; ++edge_it) {
       halfedge_descriptor hd = halfedge(*edge_it,mesh);
       halfedge_descriptor ohd = opposite(hd,mesh);
@@ -461,7 +461,7 @@ private:
     std::size_t segment_id = number_of_clusters;
     std::vector<std::pair<std::size_t, double> > segments_with_average_sdf_values;
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       if(get(segments, *facet_it) <
           number_of_clusters) { // not visited by depth_first_traversal
@@ -488,7 +488,7 @@ private:
     }
     // make one-pass on facets. First make segment-id zero based by subtracting number_of_clusters
     //                        . Then place its sorted index to pmap
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       std::size_t segment_id = get(segments, *facet_it) - number_of_clusters;
       put(segments, *facet_it, segment_id_to_sorted_id_map[segment_id]);

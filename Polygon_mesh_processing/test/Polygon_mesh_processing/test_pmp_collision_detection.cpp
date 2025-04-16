@@ -1,8 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Rigid_triangle_mesh_collision_detection.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/Rigid_triangle_mesh_collision_detection.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>

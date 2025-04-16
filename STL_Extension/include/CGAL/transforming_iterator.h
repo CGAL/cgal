@@ -12,7 +12,6 @@
 #ifndef CGAL_TRANSFORMING_ITERATOR_H
 #define CGAL_TRANSFORMING_ITERATOR_H
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <CGAL/Default.h>
 #include <utility>
@@ -55,10 +54,8 @@ class transforming_iterator_helper
         typedef typename Default::Get<Val,std::remove_cv_t<std::remove_reference_t<reference_>>>::type value_type;
 
         // Crappy heuristic. If we have *it that returns a Weighted_point and F that returns a reference to the Point contained in the Weighted_point it takes as argument, we do NOT want the transformed iterator to return a reference to the temporary *it. On the other hand, if *it returns an int n, and F returns a reference to array[n] it is not so good to lose the reference. This probably should be done elsewhere and should at least be made optional...
-        typedef typename boost::mpl::if_<
-          boost::mpl::or_<std::is_reference<Iter_ref>,
-                          std::is_integral<Iter_ref> >,
-          reference_, value_type>::type reference;
+        typedef std::conditional_t<std::is_reference_v<Iter_ref> || std::is_integral_v<Iter_ref>,
+                                   reference_, value_type> reference;
 
         public:
         typedef boost::iterator_adaptor<

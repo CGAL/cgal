@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/face_extension.cpp
 // Extending the arrangement-face records.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arr_observer.h>
 
@@ -18,9 +17,10 @@ private:
 
 public:
   Face_index_observer(Ex_arrangement& arr) :
-    CGAL::Arr_observer<Ex_arrangement>(arr), n_faces(0)
+    CGAL::Arr_observer<Ex_arrangement>(arr),
+    n_faces(0)
   {
-    CGAL_precondition (arr.is_empty());
+    CGAL_precondition(arr.is_empty());
     arr.unbounded_face()->set_data (0);
   }
 

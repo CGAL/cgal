@@ -15,11 +15,16 @@
 #define CGAL_SURFACE_SWEEP_2_IMPL_H
 
 #include <CGAL/license/Surface_sweep_2.h>
+#include <set>
+#include <vector>
 
 /*! \file
  *
  * Member-function definitions of the Surface_sweep_2 class-template.
  */
+
+#include <algorithm>
+#include <set>
 
 namespace CGAL {
 namespace Surface_sweep_2 {
@@ -298,6 +303,14 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
 template <typename Vis>
 void Surface_sweep_2<Vis>::_handle_right_curves()
 {
+
+  for(Event_subcurve_iterator sc_it = this->m_currentEvent->right_curves_begin(),
+                              sc_it_end = this->m_currentEvent->right_curves_end();
+                              sc_it!=sc_it_end; ++sc_it)
+  {
+    (*sc_it)->reset_left_event();
+  }
+
   CGAL_SS_PRINT_START("handling right curves at (");
   CGAL_SS_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_SS_PRINT_TEXT(")");
@@ -467,7 +480,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
   leftCurve->set_hint(this->m_statusLine.end());
 
   if (! remove_for_good) {
-    // the subcurve is not removed for good, so we dont need to intersect
+    // the subcurve is not removed for good, so we don't need to intersect
     // its neighbors after its removal.
     CGAL_SS_PRINT_ERASE(*sliter);
     this->m_statusLine.erase(sliter);
@@ -475,7 +488,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
     return;
   }
 
-  // the subcurve will be removed for good from the stauts line, we need
+  // the subcurve will be removed for good from the status line, we need
   // to check for intersection between his two neighbors (below and above him)
   // but we need to make sure that its not the first or last subcurve
   // at the status line.
@@ -565,10 +578,12 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       Event* left_event = first_parent->left_event();
       Event* right_event = first_parent->right_event();
 
-      if (! second_parent->is_start_point(left_event))
-        left_event->add_curve_to_left(second_parent);
-      else
-        left_event->remove_curve_from_right(second_parent);
+      if (left_event != nullptr) {
+        if (! second_parent->is_start_point(left_event))
+          left_event->add_curve_to_left(second_parent);
+        else
+          left_event->remove_curve_from_right(second_parent);
+      }
 
       CGAL_SS_PRINT_CURVE(c1);
       CGAL_SS_PRINT_TEXT(" + ");
@@ -588,7 +603,8 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 
       // add the overlapping curve kept of the right of the left end
       right_event->add_curve_to_left(first_parent);
-      _add_curve_to_right(left_event, first_parent);
+      if (left_event != nullptr)
+        _add_curve_to_right(left_event, first_parent);
 
       this->m_visitor->found_overlap(c1, c2, first_parent);
 
@@ -746,7 +762,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
     Multiplicity multiplicity = 0;
     const Intersection_point* xp_point = std::get_if<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
-      Point_2 xp = xp_point->first;
+      auto xp = xp_point->first;
       multiplicity = xp_point->second;
       CGAL_SS_PRINT_TEXT("Found an intersection point");
       CGAL_SS_PRINT_EOL();
@@ -811,13 +827,13 @@ void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
     }
     else {
       if ((multiplicity % 2) == 1) {
-        // The mutiplicity of the intersection point is odd: Swap their
+        // The multiplicity of the intersection point is odd: Swap their
         // order to the right of this point.
         std::swap(c1,c2);
         e->add_curve_pair_to_right(c1, c2);
       }
       else {
-        // The mutiplicity of the intersection point is even, so they
+        // The multiplicity of the intersection point is even, so they
         // maintain their order to the right of this point.
         CGAL_assertion((multiplicity % 2) == 0);
         e->add_curve_pair_to_right(c1, c2);
@@ -903,7 +919,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       left_event = c1->left_event();
     }
     else {
-      Point_2 left_end =
+      auto left_end =
         this->m_traits->construct_min_vertex_2_object()(overlap_cv);
       left_event = this->_push_event(left_end, Event::DEFAULT, ARR_INTERIOR,
                                      ARR_INTERIOR).first;
@@ -924,7 +940,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   }
   else {
     auto max_vertex = this->m_traits->construct_max_vertex_2_object();
-    Point_2 right_end = max_vertex(overlap_cv);
+    auto right_end = max_vertex(overlap_cv);
     right_event = this->_push_event(right_end, Event::DEFAULT, ARR_INTERIOR,
                                     ARR_INTERIOR).first;
   }

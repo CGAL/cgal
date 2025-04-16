@@ -35,6 +35,7 @@
 #include <CGAL/Triangulation_2/internal/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 
 #include <CGAL/double.h>
 
@@ -171,7 +172,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   class Finite_faces_iterator
@@ -186,7 +187,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Filter_iterator<All_edges_iterator,
@@ -213,8 +214,10 @@ public:
   typedef typename Tds::Vertex_handles         All_vertex_handles;
   typedef typename Tds::Edges                  All_edges;
 
-  typedef Iterator_range<Prevent_deref<Finite_faces_iterator> >    Finite_face_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator,
+                                       const Face_handle&>>   Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&>> Finite_vertex_handles;
   typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
   typedef Iterator_range<Point_iterator>                           Points;
 
@@ -433,6 +436,81 @@ protected:
 
   bool has_inexact_negative_orientation(const Point &p, const Point &q,
                                         const Point &r) const;
+
+
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const T& ) const
+{
+  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x());
+  const double py = to_double(get_approx(p).y());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).y());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).y());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const ::CGAL::internal::Projection_traits_3<T,0>& ) const
+{  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).y());
+  const double py = to_double(get_approx(p).z());
+  const double qx = to_double(get_approx(q).y());
+  const double qy = to_double(get_approx(q).z());
+  const double rx = to_double(get_approx(r).y());
+  const double ry = to_double(get_approx(r).z());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const ::CGAL::internal::Projection_traits_3<T,1>& ) const
+{  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x());
+  const double py = to_double(get_approx(p).z());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).z());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).z());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+
 
 public:
   Face_handle
@@ -710,10 +788,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-             std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >::value
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
          >* = NULL)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -1389,7 +1465,7 @@ template <class Gt, class Tds >
 typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
-  // insert a point p, whose localisation is known (lt, f, i)
+  // insert a point p, whose localization is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
     return(insert_first(p));
@@ -3154,6 +3230,7 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
   return c;
 }
 
+
 template <class Gt, class Tds >
 inline
 bool
@@ -3161,22 +3238,8 @@ Triangulation_2<Gt, Tds>::
 has_inexact_negative_orientation(const Point &p, const Point &q,
                                  const Point &r) const
 {
-  // So that this code works well with Lazy_kernel
-  internal::Static_filters_predicates::Get_approx<Point> get_approx;
-
-  const double px = to_double(get_approx(p).x());
-  const double py = to_double(get_approx(p).y());
-  const double qx = to_double(get_approx(q).x());
-  const double qy = to_double(get_approx(q).y());
-  const double rx = to_double(get_approx(r).x());
-  const double ry = to_double(get_approx(r).y());
-
-  const double pqx = qx - px;
-  const double pqy = qy - py;
-  const double prx = rx - px;
-  const double pry = ry - py;
-
-  return ( determinant(pqx, pqy, prx, pry) < 0);
+  Gt gt;
+  return projection_traits_has_inexact_negative_orientation(p,q,r,gt);
 }
 #endif
 
@@ -3206,7 +3269,7 @@ typename Triangulation_2<Gt, Tds>::Finite_face_handles
 Triangulation_2<Gt, Tds>::
 finite_face_handles() const
 {
-  return make_prevent_deref_range(finite_faces_begin(),finite_faces_end());
+  return { finite_faces_begin(), finite_faces_end() };
 }
 
 template <class Gt, class Tds >
@@ -3235,7 +3298,7 @@ typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
 Triangulation_2<Gt, Tds>::
 finite_vertex_handles() const
 {
-  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+  return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template <class Gt, class Tds >
@@ -3610,13 +3673,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  Comparison_result res = geom_traits().compare_x_2_object()(construct_point(p),
-                                                             construct_point(q));
-  if(res == EQUAL){
-    return geom_traits().compare_y_2_object()(construct_point(p),
-                                              construct_point(q));
-  }
-  return res;
+  return geom_traits().compare_xy_2_object()(construct_point(p),
+                                             construct_point(q));
 }
 
 template <class Gt, class Tds >

@@ -25,7 +25,6 @@
 
 #include <vector>
 #include <optional>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits.hpp>
 
@@ -242,13 +241,13 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
    * If the type Ovl_gt2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
-   * the later as a single parameter to the constructor.
+   * the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt_adaptor_2, Ovl_gt2>,
-                           const Ovl_gt2&, Ovl_gt2>::type
+  std::conditional_t<std::is_same_v<Gt_adaptor_2, Ovl_gt2>,
+                     const Ovl_gt2&, Ovl_gt2>
     ex_traits(*traits_adaptor);
 
   Ovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);

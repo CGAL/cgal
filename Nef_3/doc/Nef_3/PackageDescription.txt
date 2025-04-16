@@ -11,7 +11,6 @@
 
 /*!
 \addtogroup PkgNef3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3}
 \cgalPkgPicture{Nef_3-teaser.png}
 \cgalPkgSummaryBegin
@@ -24,7 +23,7 @@
 \cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
