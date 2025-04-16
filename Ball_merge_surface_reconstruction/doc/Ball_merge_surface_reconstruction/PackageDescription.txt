@@ -26,8 +26,7 @@ and large areas of missing data.}
 \cgalCRPSection{Concepts}
 
 \cgalCRPSection{Functions}
-- `CGAL::ball_merge_surface_reconstruction_local()`
-- `CGAL::ball_merge_surface_reconstruction_global()`
+- `CGAL::ball_merge_surface_reconstruction()`
 
 \cgalCRPSection{Class}
 - `CGAL::Ball_merge_surface_reconstruction`

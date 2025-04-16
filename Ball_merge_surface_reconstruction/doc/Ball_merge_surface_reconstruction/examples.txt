@@ -1,5 +1,3 @@
 /*!
-\example Ball_merge_surface_reconstruction/ball_merge_reconstruction_global.cpp
-\example Ball_merge_surface_reconstruction/ball_merge_reconstruction_local.cpp
 \example Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp
 */

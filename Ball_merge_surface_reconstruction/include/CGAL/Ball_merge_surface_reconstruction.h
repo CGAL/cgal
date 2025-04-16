@@ -287,6 +287,7 @@ public:
     }
   }
 
+#ifndef DOXYGEN_RUNNING
   /*!
    *
    * creates a triangle soup approximating the surface with sample points passed to `build_triangulation()`,
@@ -333,6 +334,7 @@ public:
     set_parameters(delta, eta, 0);
     set_triangle_indices_hull1(out_triangles);
   }
+#endif
 
   /*!
    *
@@ -348,11 +350,13 @@ public:
    * \param out_triangles2 is the output parameter storing the second resulting mesh
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
+   * \return the delta value used for the reconstruction
+   *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{delta}
    *     \cgalParamDescription{the value of \f$ \delta \f$}
    *     \cgalParamType{double}
-   *     \cgalParamDefault{1.7}
+   *     \cgalParamDefault{Value iteratively estimated, as described in \ref secBMSRPar}
    *   \cgalParamNEnd
    *
    * \cgalNamedParamsEnd
@@ -360,24 +364,75 @@ public:
    */
   template <class NamedParameters = parameters::Default_named_parameters,
             class TripleIndexRange>
-  void global_reconstruction(TripleIndexRange& out_triangles1,
-                             TripleIndexRange& out_triangles2,
-                             const NamedParameters& np = parameters::default_values())
+  double reconstruction(TripleIndexRange& out_triangles1,
+                        TripleIndexRange& out_triangles2,
+                        const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
-    if (dt3.dimension()!=3) return;
+    if (dt3.dimension()!=3) return 0;
 
-    const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+    if constexpr (!is_default_parameter<NamedParameters, internal_np::delta_t>::value)
+    {
+      const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
 
-    set_parameters(delta, 0, 1);
-    set_triangle_indices_hull1(out_triangles1);
-    set_triangle_indices_hull2(out_triangles2);
+      set_parameters(delta, 0, 1);
+      set_triangle_indices_hull1(out_triangles1);
+      set_triangle_indices_hull2(out_triangles2);
+
+      return delta;
+    }
+    else
+    {
+      double delta = 2.;
+      std::size_t nb_pt_prev=0;
+      bool first=true;
+
+      do
+      {
+        set_parameters(delta, 0, 1);
+
+        std::vector<std::array<std::size_t, 3> > out_triangles;
+        set_triangle_indices_hull1(out_triangles);
+
+        std::set<std::size_t> indices_used;
+        for (auto t : out_triangles)
+        {
+          indices_used.insert(t[0]);
+          indices_used.insert(t[1]);
+          indices_used.insert(t[2]);
+        }
+
+        std::size_t nb_pt=indices_used.size();
+
+        std::cout << "delta = " << delta << "\n";
+        std::cout << "nb_pt = " << nb_pt << "\n";
+
+        if (!first && nb_pt_prev > nb_pt &&  (nb_pt_prev-nb_pt)  < 0.1*dt3.number_of_vertices())
+        {
+          delta+=0.01;
+          break;
+        }
+
+        delta-=0.01;
+
+        nb_pt_prev=nb_pt;
+        first = false;
+      }
+      while(true);
+
+      set_triangle_indices_hull1(out_triangles1);
+      set_triangle_indices_hull2(out_triangles2);
+
+      return delta;
+    }
   }
 
 };
 
+#ifndef DOXYGEN_RUNNING
 /*!
  *
  * \ingroup PkgBallMergeRef
@@ -437,6 +492,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
   bmsr.build_triangulation(points);
   bmsr.local_reconstruction(out_triangles, np);
 }
+#endif
 
 /*! \ingroup PkgBallMergeRef
  *
@@ -453,11 +509,13 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  * \param out_triangles2 is the output parameter storing the second resulting mesh
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
+ * \return the delta value used for the reconstruction
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{delta}
  *     \cgalParamDescription{the value of \f$ \delta \f$}
  *     \cgalParamType{double}
- *     \cgalParamDefault{1.7}
+ *     \cgalParamDefault{Value iteratively estimated, as described in \ref secBMSRPar}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{concurrency_tag}
  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
@@ -476,10 +534,10 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
 template <class NamedParameters = parameters::Default_named_parameters,
           class PointRange,
           class TripleIndexRange>
-void ball_merge_surface_reconstruction_global(const PointRange& points,
-                                              TripleIndexRange& out_triangles1,
-                                              TripleIndexRange& out_triangles2,
-                                              const NamedParameters& np = parameters::default_values())
+double ball_merge_surface_reconstruction(const PointRange& points,
+                                         TripleIndexRange& out_triangles1,
+                                         TripleIndexRange& out_triangles2,
+                                         const NamedParameters& np = parameters::default_values())
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t, NamedParameters,
@@ -488,7 +546,9 @@ void ball_merge_surface_reconstruction_global(const PointRange& points,
 
   Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.build_triangulation(points);
-  bmsr.global_reconstruction(out_triangles1, out_triangles2, np);
+  double delta = bmsr.reconstruction(out_triangles1, out_triangles2, np);
+
+  return delta;
 }
 
 
