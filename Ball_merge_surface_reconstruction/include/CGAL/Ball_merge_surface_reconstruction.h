@@ -179,7 +179,7 @@ public:
 
     m_cell_groups.clear();
     m_cell_groups.assign(m_dt3.number_of_cells(), 0);
-    if (m_option == 1){//If the user opted for global algorithm
+    if (m_option == GLOBAL){//If the user opted for global algorithm
       for (Cell_handle cell : m_dt3.finite_cell_handles())
       {
         if (m_cell_groups[cell->info()] == 0){//If the cell label is not altered
@@ -212,7 +212,7 @@ public:
     std::vector<bool> visited(m_dt3.number_of_cells(),false);
     for (Cell_handle cell : m_dt3.finite_cell_handles()){
       for (int i = 0; i < 4; ++i){
-        if (m_option == 1){
+        if (m_option == GLOBAL){
           //If global, write the cell details of the largest group to the PLY file
           if (m_cell_groups[cell->info()] == m_maingroup && (m_cell_groups[cell->neighbor(i)->info()] != m_maingroup || m_dt3.is_infinite(cell->neighbor(i)))){
             //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
@@ -250,7 +250,7 @@ public:
   template <class TripleIndexRange>
   void set_triangle_indices_hull2(TripleIndexRange& meshFaceIndices) const
   {
-    CGAL_assertion(m_option==1);
+    CGAL_assertion(m_option==GLOBAL);
 
     using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
     for (Cell_handle cell : m_dt3.finite_cell_handles())
@@ -427,9 +427,6 @@ public:
         }
 
         std::size_t nb_pt=indices_used.size();
-
-        std::cout << "delta = " << delta << "\n";
-        std::cout << "nb_pt = " << nb_pt << "\n";
 
         if (!first && nb_pt_prev > nb_pt &&  (nb_pt_prev-nb_pt)  < 0.1*m_dt3.number_of_vertices())
         {
