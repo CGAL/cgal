@@ -421,7 +421,7 @@ public:
         nb_pt_prev=nb_pt;
         first = false;
       }
-      while(true);
+      while(delta>1);
 
       set_triangle_indices_hull1(out_triangles1);
       set_triangle_indices_hull2(out_triangles2);
