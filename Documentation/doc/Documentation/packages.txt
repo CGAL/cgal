@@ -129,7 +129,11 @@
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
+
+\cgalPackageSection{PartTopology,Topology}
+
 \package_listing{Surface_mesh_topology}
+\package_listing{HDVF}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 

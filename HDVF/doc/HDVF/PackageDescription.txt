@@ -1,0 +1,37 @@
+// PRETTY HDVF should equal the project title in Doxyfile.in
+
+/// \defgroup PkgHDVFRef Homological Discrete Vector Fields Reference
+/// \defgroup PkgHDVFConcepts Concepts
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFAlgorithmClasses Algorithm Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFTraitsClasses Traits Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFMiscellaneous Miscellaneous
+/// \ingroup PkgHDVFRef
+
+/*!
+\cgalPkgDescriptionBegin{HDVF,PkgHDVF}
+\cgalPkgPicture{pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Alexa Bac}
+\cgalPkgDesc{
+The package provides ... }
+\cgalPkgManuals{Chapter_HDVS,PkgHDVFRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{X.X}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgBib{cgal:b-hdvf}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/
