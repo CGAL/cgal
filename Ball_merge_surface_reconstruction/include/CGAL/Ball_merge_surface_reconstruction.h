@@ -75,6 +75,8 @@ namespace CGAL {
 template <typename Traits, typename ConcurrencyTag>
 class Ball_merge_surface_reconstruction
 {
+  enum Rec_option { LOCAL=0, GLOBAL=1};
+
 #ifndef DOXYGEN_RUNNING
   typedef CGAL::Triangulation_vertex_base_with_info_3<std::size_t, Traits> Vb;
   typedef CGAL::Triangulation_cell_base_with_info_3<unsigned int, Traits, CGAL::Delaunay_triangulation_cell_base_3<Traits>> Cb;
@@ -82,13 +84,13 @@ class Ball_merge_surface_reconstruction
   typedef CGAL::Delaunay_triangulation_3<Traits, Tds> Delaunay;
   typedef typename Delaunay::Point Point;
   typedef typename Delaunay::Cell_handle Cell_handle;
-  int group = 1, gcount = 0, maxg = 0, maingroup, max1 = 0;
-  double par, bbdiaglen;
-  Bbox_3 bbox;
-  std::vector<int> cell_groups;
-  int secondgroup;
-  int option = 0,eta=0;
-  Delaunay dt3;
+  int m_group = 1, m_gcount = 0, m_maingroup=0, m_secondgroup=0;
+  double m_delta, m_eta, m_bbdiaglen;
+
+  std::vector<int> m_cell_groups;
+  Rec_option m_option = GLOBAL;
+
+  Delaunay m_dt3;
 
   double distance(const Point& p1, const Point& p2) const
   { return std::sqrt(typename Traits::Compute_squared_distance_3()(p1,p2)); }
@@ -98,29 +100,30 @@ class Ball_merge_surface_reconstruction
   // AF Find a better name and an enum for the return type
   bool _function(Cell_handle fh1, Cell_handle fh2) const
   {
-    Point p1 = dt3.dual(fh1); //p1 is the circumcenter of the first cell
-    Point p2 = dt3.dual(fh2); //p2 is the circumcenter of the second cell
+    Point p1 = m_dt3.dual(fh1); //p1 is the circumcenter of the first cell
+    Point p2 = m_dt3.dual(fh2); //p2 is the circumcenter of the second cell
     double d = distance(p1, p2); //distance between the circumcenters
     double a = distance(fh1->vertex(0)->point(), p1);//circumradius of circumsphere of the first cell
     double b = distance(fh2->vertex(0)->point(), p2);//circumradius of circumsphere of the second cell
-    if ((a + b - d) > a * par || (a + b - d) > b * par)//Check whether the IR is less than a user given parameter
+    if ((a + b - d) > a * m_delta || (a + b - d) > b * m_delta)//Check whether the IR is less than a user given parameter
       return true;
     return false;
   }
 
   //Function to recursively group all the cells that are mergeable from the cell fh with user specified parameter
-  void regroup(const Delaunay& dt3, Cell_handle fh)
+  void regroup(Cell_handle fh)
   {
     std::queue<Cell_handle> q; //A queue to do the grouping
     q.push(fh); //The cell itself is mergeable
     while (!q.empty()){ //A traversal
       fh = q.front();
       q.pop();
-      cell_groups[fh->info()] = group; //A label
-      ++gcount;
+      m_cell_groups[fh->info()] = m_group; //A label
+      ++m_gcount;
       for (int i = 0; i < 4; ++i){ //For each neighbor
-        if ((!dt3.is_infinite(fh->neighbor(i)))&&(cell_groups[fh->neighbor(i)->info()] == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR          fh->neighbor(i)->info() = group;//If mergeable, then change the label
-          cell_groups[fh->neighbor(i)->info()] = group;//If mergeable, then change the label
+        if ((!m_dt3.is_infinite(fh->neighbor(i)))&&(m_cell_groups[fh->neighbor(i)->info()] == 0 && _function(fh, fh->neighbor(i)) == 1)){
+          //If it is unlabeled and can be merged - using the function that computes IR
+          m_cell_groups[fh->neighbor(i)->info()] = m_group;//If mergeable, then change the label
           q.push(fh->neighbor(i));//Push it into the traversal list
         }
       }
@@ -130,7 +133,7 @@ class Ball_merge_surface_reconstruction
   //Function to check whether a triangle made by three points has an edge greater than bbdiag/(user defined paramter - 200 by default) - used for filtering long triangles in local ballmerge
   int bblen(const Point& a, const Point& b, const Point& c) const
   {
-    if (distance(a, b) * eta > bbdiaglen || distance(c, b) * eta > bbdiaglen || distance(a, c) * eta > bbdiaglen)
+    if (distance(a, b) * m_eta > m_bbdiaglen || distance(c, b) * m_eta > m_bbdiaglen || distance(a, c) * m_eta > m_bbdiaglen)
       return 0;
     return 1;
   }
@@ -138,17 +141,17 @@ class Ball_merge_surface_reconstruction
 public:
 
 
-  void set_parameters(double par_, double eta_, int option)
+  void set_parameters(double delta_, double eta_, Rec_option option)
   {
-    par = par_;
-    eta = eta_;
-    option = option;
+    m_delta = delta_;
+    m_eta = eta_;
+    m_option = option;
   }
 
 // void flood_from_infinity(std::vector<bool> &outside, int group) const
 // {
 //   std::vector<Cell_handle> queue;
-//     queue.push_back(dt3.infinite_cell());
+//     queue.push_back(m_dt3.infinite_cell());
 //     while(!queue.empty())
 //     {
 //       Cell_handle cell = queue.back();
@@ -157,23 +160,61 @@ public:
 //       outside[cell->info()]=true;
 //       for(int i=0;i<4;++i)
 //       {
-//         if(cell_groups[cell->neighbor(i)->info()] == group) continue;
+//         if(m_cell_groups[cell->neighbor(i)->info()] == group) continue;
 //         if (!outside[cell->neighbor(i)->info()])
 //           queue.push_back(cell->neighbor(i));
 //       }
 //     }
 // }
 
+  void run_reconstruction()
+  {
+    m_group = 1;
+    m_gcount = 0;
+    m_maingroup=-1;
+    m_secondgroup=-1;
+
+    int maxg = 0;
+    int max1 = 0;
+
+    m_cell_groups.clear();
+    m_cell_groups.assign(m_dt3.number_of_cells(), 0);
+    if (m_option == 1){//If the user opted for global algorithm
+      for (Cell_handle cell : m_dt3.finite_cell_handles())
+      {
+        if (m_cell_groups[cell->info()] == 0){//If the cell label is not altered
+          m_cell_groups[cell->info()] = m_group;//Assign a label
+          regroup(cell);//Group all the mergeable cells
+          if (maxg < m_gcount){
+            //Remember the largest group - based on the number of tetrahedra in the group
+            max1 = maxg;
+            m_secondgroup = m_maingroup;//To remember the second largest group
+            maxg = m_gcount;
+            m_maingroup = m_group;
+          }
+          else if (max1 < m_gcount && m_gcount != maxg){
+            max1 = m_gcount;
+            m_secondgroup = m_group;//To remember the second largest group
+          }
+          m_gcount = 0;
+          ++m_group;//Update the label for next cell
+        }
+      }
+    }
+
+
+  }
+
   template <class TripleIndexRange>
   void set_triangle_indices_hull1(TripleIndexRange& meshFaceIndices) const
   {
     using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
-    std::vector<bool> visited(dt3.number_of_cells(),false);
-    for (Cell_handle cell : dt3.finite_cell_handles()){
+    std::vector<bool> visited(m_dt3.number_of_cells(),false);
+    for (Cell_handle cell : m_dt3.finite_cell_handles()){
       for (int i = 0; i < 4; ++i){
-        if (option == 1){
+        if (m_option == 1){
           //If global, write the cell details of the largest group to the PLY file
-          if (cell_groups[cell->info()] == maingroup && (cell_groups[cell->neighbor(i)->info()] != maingroup || dt3.is_infinite(cell->neighbor(i)))){
+          if (m_cell_groups[cell->info()] == m_maingroup && (m_cell_groups[cell->neighbor(i)->info()] != m_maingroup || m_dt3.is_infinite(cell->neighbor(i)))){
             //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
             TripleIndex indices;
             CGAL::internal::resize(indices, 3);
@@ -189,7 +230,7 @@ public:
         {
           if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
             //If the triangle crosses our bbdiagonal based criteria
-            if (dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
+            if (m_dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
               //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
               visited[cell->info()]=true;
               TripleIndex indices;
@@ -209,11 +250,13 @@ public:
   template <class TripleIndexRange>
   void set_triangle_indices_hull2(TripleIndexRange& meshFaceIndices) const
   {
+    CGAL_assertion(m_option==1);
+
     using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
-    for (Cell_handle cell : dt3.finite_cell_handles())
+    for (Cell_handle cell : m_dt3.finite_cell_handles())
     {
       for (int i = 0; i < 4; ++i)
-        if (cell_groups[cell->info()] == secondgroup && (dt3.is_infinite(cell->neighbor(i)) || cell_groups[cell->neighbor(i)->info()] != secondgroup))
+        if (m_cell_groups[cell->info()] == m_secondgroup && (m_dt3.is_infinite(cell->neighbor(i)) || m_cell_groups[cell->neighbor(i)->info()] != m_secondgroup))
         {
           //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
           TripleIndex indices;
@@ -238,52 +281,28 @@ public:
   template <class PointRange>
   void build_triangulation(const PointRange& points)
   {
-    dt3.clear();
+    m_dt3.clear();
 
-    bbox = bbox_3(points.begin(), points.end());
+    Bbox_3 bbox = bbox_3(points.begin(), points.end());
 
-    bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
+    m_bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
     std::vector<std::size_t> vids(points.size());
     std::iota(vids.begin(), vids.end(), 0);
 
     if constexpr (std::is_same<ConcurrencyTag, Parallel_tag>::value) {
       typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
-      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+      m_dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
                  boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())),
                  &locking_ds);
     } else {
-      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+      m_dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
                  boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())));//Sequential Delaunay computation
     }
     unsigned int cell_id=0;
-    for (Cell_handle ch : dt3.all_cell_handles())
+    for (Cell_handle ch : m_dt3.all_cell_handles())
     {
       ch->info()=cell_id++;
-    }
-
-    cell_groups.assign(dt3.number_of_cells(), 0);
-    if (option == 1){//If the user opted for global algorithm
-      for (Cell_handle cell : dt3.finite_cell_handles())
-      {
-        if (cell_groups[cell->info()] == 0){//If the cell label is not altered
-          cell_groups[cell->info()] = group;//Assign a label
-          regroup(dt3, cell);//Group all the mergeable cells
-          if (maxg < gcount){
-            //Remember the largest group - based on the number of tetrahedra in the group
-            max1 = maxg;
-            secondgroup = maingroup;//To remember the second largest group
-            maxg = gcount;
-            maingroup = group;
-          }
-          else if (max1 < gcount && gcount != maxg){
-            max1 = gcount;
-            secondgroup = group;//To remember the second largest group
-          }
-          gcount = 0;
-          ++group;//Update the label for next cell
-        }
-      }
     }
   }
 
@@ -326,12 +345,12 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    if (dt3.dimension()!=3) return;
+    if (m_dt3.dimension()!=3) return;
 
     const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
     const double eta = choose_parameter(get_parameter(np, internal_np::eta), 200.);
 
-    set_parameters(delta, eta, 0);
+    set_parameters(delta, eta, LOCAL);
     set_triangle_indices_hull1(out_triangles);
   }
 #endif
@@ -372,13 +391,14 @@ public:
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-    if (dt3.dimension()!=3) return 0;
+    if (m_dt3.dimension()!=3) return 0;
 
     if constexpr (!is_default_parameter<NamedParameters, internal_np::delta_t>::value)
     {
-      const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+      const double delta = get_parameter(np, internal_np::delta);
 
-      set_parameters(delta, 0, 1);
+      set_parameters(delta, 0, GLOBAL);
+      run_reconstruction();
       set_triangle_indices_hull1(out_triangles1);
       set_triangle_indices_hull2(out_triangles2);
 
@@ -392,7 +412,8 @@ public:
 
       do
       {
-        set_parameters(delta, 0, 1);
+        set_parameters(delta, 0, GLOBAL);
+        run_reconstruction();
 
         std::vector<std::array<std::size_t, 3> > out_triangles;
         set_triangle_indices_hull1(out_triangles);
@@ -410,7 +431,7 @@ public:
         std::cout << "delta = " << delta << "\n";
         std::cout << "nb_pt = " << nb_pt << "\n";
 
-        if (!first && nb_pt_prev > nb_pt &&  (nb_pt_prev-nb_pt)  < 0.1*dt3.number_of_vertices())
+        if (!first && nb_pt_prev > nb_pt &&  (nb_pt_prev-nb_pt)  < 0.1*m_dt3.number_of_vertices())
         {
           delta+=0.01;
           break;
