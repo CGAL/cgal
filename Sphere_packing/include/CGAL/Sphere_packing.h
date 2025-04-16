@@ -11,8 +11,8 @@
 // Author(s) : Rene Weller
 //
 
-#ifndef CGAL_SPHEERE_PACKINGH_H_
-#define CGAL_SPHEERE_PACKINGH_H_
+#ifndef CGAL_SPHERE_PACKINGH_H_
+#define CGAL_SPHERE_PACKINGH_H_
 
 #include <CGAL/license/Sphere_packing.h>
 
@@ -23,11 +23,12 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSpherePackingRef
+
 
 
 
 /**
+ * \ingroup PkgSpherePackingAlgorithmClasses
  * \brief Sphere packing class.
  *
  * This class is a placeholder for the Sphere Packing package.
@@ -49,4 +50,4 @@ class Sphere_packing
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_SPHEERE_PACKINGH_H_
+#endif // CGAL_SPHERE_PACKINGH_H_

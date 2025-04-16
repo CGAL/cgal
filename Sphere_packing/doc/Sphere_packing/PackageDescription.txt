@@ -13,6 +13,8 @@
 /// \ingroup PkgSpherePackingRef
 
 /*!
+
+\addtogroup PkgSpherePackingRef
 \cgalPkgDescriptionBegin{SpherePacking, PkgSpherePacking}
 \cgalPkgPicture{pkg-small.png}
 
