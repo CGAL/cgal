@@ -21,7 +21,7 @@
 \cgalPkgAuthors{Alexa Bac}
 \cgalPkgDesc{
 The package provides ... }
-\cgalPkgManuals{Chapter_HDVS,PkgHDVFRef}
+\cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
