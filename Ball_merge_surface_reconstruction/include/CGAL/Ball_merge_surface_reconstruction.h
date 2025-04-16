@@ -209,10 +209,11 @@ public:
   void set_triangle_indices_hull1(TripleIndexRange& meshFaceIndices) const
   {
     using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
-    std::vector<bool> visited(m_dt3.number_of_cells(),false);
-    for (Cell_handle cell : m_dt3.finite_cell_handles()){
-      for (int i = 0; i < 4; ++i){
-        if (m_option == GLOBAL){
+
+    if (m_option == GLOBAL)
+    {
+      for (Cell_handle cell : m_dt3.finite_cell_handles()){
+        for (int i = 0; i < 4; ++i){
           //If global, write the cell details of the largest group to the PLY file
           if (m_cell_groups[cell->info()] == m_maingroup && (m_cell_groups[cell->neighbor(i)->info()] != m_maingroup || m_dt3.is_infinite(cell->neighbor(i)))){
             //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
@@ -226,19 +227,27 @@ public:
             meshFaceIndices.push_back(indices);
           }
         }
-        else if (!visited[cell->neighbor(i)->info()])
-        {
-          if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
-            //If the triangle crosses our bbdiagonal based criteria
-            if (m_dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
-              //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
-              visited[cell->info()]=true;
-              TripleIndex indices;
-              CGAL::internal::resize(indices, 3);
-              for (int j = 0; j < 3; ++j){
-                indices[j] = cell->vertex((i + 1 + j) % 4)->info();
+      }
+    }
+    else
+    {
+      std::vector<bool> visited(m_dt3.number_of_cells(),false);
+      for (Cell_handle cell : m_dt3.finite_cell_handles()){
+        for (int i = 0; i < 4; ++i){
+          if (!visited[cell->neighbor(i)->info()])
+          {
+            if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
+              //If the triangle crosses our bbdiagonal based criteria
+              if (m_dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
+                //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
+                visited[cell->info()]=true;
+                TripleIndex indices;
+                CGAL::internal::resize(indices, 3);
+                for (int j = 0; j < 3; ++j){
+                  indices[j] = cell->vertex((i + 1 + j) % 4)->info();
+                }
+                meshFaceIndices.push_back(indices);
               }
-              meshFaceIndices.push_back(indices);
             }
           }
         }
