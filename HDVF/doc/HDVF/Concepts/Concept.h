@@ -1,2 +1,14 @@
+/*!
+\ingroup PkgHDVFConcepts
+\cgalConcept
 
-class Concept{};
+The concept `Concept` represents ...
+
+\cgalHasModelsBegin
+\cgalHasModelsBare{`CGAL::Class<XXX>`}
+\cgalHasModelsEnd
+
+*/
+class Concept
+{
+};
