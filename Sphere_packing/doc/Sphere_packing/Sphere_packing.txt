@@ -1,0 +1,29 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_SpherePacking
+
+\cgalAutoToc
+\author Rene Weller
+
+This chapter describes the ...
+
+\section secSpherePackingDefinitions Definitions
+
+Section on definitions here ...
+
+\section secSpherePackingExamples Examples
+
+\subsection secSpherePackingFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{ }
+
+\cgalFigureBegin{figPck,bench.png}
+Left: ...
+\cgalFigureEnd
+
+*/
+} /* namespace CGAL */

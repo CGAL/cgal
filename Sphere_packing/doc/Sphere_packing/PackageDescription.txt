@@ -1,0 +1,40 @@
+
+/// \defgroup PkgSpherePackingRef Sphere Packing Reference
+/// \defgroup PkgSpherePackingConcepts Concepts
+/// \ingroup PkgSpherePackingRef
+
+/// \defgroup PkgSpherePackingAlgorithmClasses Algorithm Classes
+/// \ingroup PkgSpherePackingRef
+
+/// \defgroup PkgSpherePackingTraitsClasses Traits Classes
+/// \ingroup PkgSpherePackingRef
+
+/// \defgroup PkgSpherePackingMiscellaneous Miscellaneous
+/// \ingroup PkgSpherePackingRef
+
+/*!
+\cgalPkgDescriptionBegin{SpherePacking, PkgSpherePacking}
+\cgalPkgPicture{pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Rene Weller}
+\cgalPkgDesc{
+The SpherePacking provides ... }
+\cgalPkgManuals{Chapter_SpherePacking,PkgSpherePackingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:w-sp}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Classes}
+- `CGAL::Sphere_packing`
+*/

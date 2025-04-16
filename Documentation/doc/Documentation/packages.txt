@@ -149,6 +149,7 @@
 \package_listing{Polytope_distance_d}
 \package_listing{Principal_component_analysis}
 \package_listing{Optimal_bounding_box}
+\package_listing{Sphere_packing}
 
 \cgalPackageSection{PartInterpolation,Interpolation}
 
