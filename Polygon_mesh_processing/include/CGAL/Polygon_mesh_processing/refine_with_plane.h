@@ -49,7 +49,7 @@ struct Default_cut_visitor
   void before_edge_split(halfedge_descriptor, PolygonMesh&) {}
   void edge_split(halfedge_descriptor, PolygonMesh&) {}
   void after_edge_split(){}
-  void add_retriangulation_edge(halfedge_descriptor h, const PolygonMesh& pm){}
+  void add_retriangulation_edge(halfedge_descriptor, const PolygonMesh&){}
   /// @}
 
   /// @name Functions used when a new vertex is created
