@@ -533,8 +533,8 @@ struct Visitor_wrapper_for_triangulate_face
   std::vector<face_descriptor> triangulation_faces;
 
   Visitor_wrapper_for_triangulate_face(const PolygonMesh& pm, Clip_visitor& clip_visitor)
-    : pm(pm)
-    , clip_visitor(clip_visitor)
+    : clip_visitor(clip_visitor)
+    , pm(pm)
   {}
 
   void before_subface_creations(face_descriptor f_split)
