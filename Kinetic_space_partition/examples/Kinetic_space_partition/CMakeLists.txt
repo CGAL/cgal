@@ -9,15 +9,16 @@ find_package(CGAL REQUIRED)
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Eigen3 3.1.0 REQUIRED)
-if(Eigen3_FOUND)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
   message(STATUS "Found Eigen")
-  include(CGAL_Eigen_support)
 
   set(targets kinetic_partition)
 
   foreach(target ${targets})
     create_single_source_cgal_program("${target}.cpp")
-    target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 else()
   message(ERROR "This program requires the Eigen library, and will not be compiled.")
