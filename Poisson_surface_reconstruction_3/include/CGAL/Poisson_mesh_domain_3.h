@@ -30,7 +30,7 @@ namespace CGAL {
 
 \tparam BGT is a geometric traits class that provides
     the basic operations to implement intersection tests and intersection computations through a bisection
-    method.This parameter must be instantiated with a model of the concept `BisectionGeometricTraits_3`.
+    method. This parameter must be instantiated with a model of the concept `BisectionGeometricTraits_3`.
 
 \cgalModels{MeshDomain_3}
 
@@ -39,7 +39,9 @@ namespace CGAL {
 */
 template<class BGT>
 class Poisson_mesh_domain_3
+#ifndef DOXYGEN_RUNNING
     : public Labeled_mesh_domain_3<BGT>
+#endif
 {
 public:
   using Base = Labeled_mesh_domain_3<BGT>;
@@ -264,11 +266,7 @@ public:
   /*
    * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
-   * The integer `dimension` is set to the dimension of the lowest
-   * dimensional face in the input complex containing the returned point, and
-   * `index` is set to the index to be stored at a mesh vertex lying
-   * on this face.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    */
   struct Construct_intersection
   {

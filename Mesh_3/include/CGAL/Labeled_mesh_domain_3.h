@@ -1131,11 +1131,7 @@ public:
   /*
    * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
-   * The integer `dimension` is set to the dimension of the lowest
-   * dimensional face in the input complex containing the returned point, and
-   * `index` is set to the index to be stored at a mesh vertex lying
-   * on this face.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    */
   struct Construct_intersection
   {

@@ -119,9 +119,9 @@ The following example reads a point set, creates a Poisson implicit function and
 The computed implicit functions can be iso-contoured to reconstruct a
 surface by using the \ref PkgMesh3 :
 
-`make_mesh_3()` with the `surface_only()` parameter for using parallel Mesh_3
+`make_mesh_3()` with the `surface_only()` parameter to only mesh the surface
 
-The parameter `Tag` affects the behavior of `make_mesh_3()`:
+The following `Tag` parameters affect the behavior of `make_mesh_3()`:
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold surface without boundary.
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be manifold and may have boundaries.
 - `Non_manifold_tag`: the output mesh has no guarantee and hence is outputted as a polygon soup.
