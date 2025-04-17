@@ -20,7 +20,7 @@ Then it verify that
 #include <cassert>
 
 // If you want to use a viewer, you can use qglviewer.
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
@@ -76,11 +76,11 @@ void create_positive_loop_24(Path_on_surface<SM>& p, unsigned int n)
   {
     p.extend_straight_positive((10*n)-1);
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
   /* std::vector<Path_on_surface<SM> > v;
   v.push_back(p);
   CGAL::draw(p.get_mesh(), v, "Title"); */
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
     assert(p.is_closed());
   }

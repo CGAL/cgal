@@ -22,7 +22,7 @@ create_single_source_cgal_program("simplex.cpp")
 
 create_single_source_cgal_program("draw_triangulation_3.cpp")
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_triangulation_3 PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_triangulation_3 PRIVATE CGAL::CGAL_Basic_viewer_Qt)
 else()
   message(STATUS "NOTICE: The example 'draw_triangulation_3' requires Qt6, and will not be compiled.")
 endif()

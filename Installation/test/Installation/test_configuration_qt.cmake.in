@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(test_configuration)
 find_package(CGAL COMPONENTS Qt6)
-add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+add_definitions(-DCGAL_USE_BASIC_VIEWER_QT -DQT_NO_KEYWORDS)
 
 get_filename_component(CGAL_DIR_PATH "${CGAL_DIR}/CMakeConfig.cmake" DIRECTORY)
 get_filename_component(CGAL_GIVEN_DIR_PATH "${CGAL_GIVEN_DIR}/CMakeConfig.cmake" DIRECTORY)

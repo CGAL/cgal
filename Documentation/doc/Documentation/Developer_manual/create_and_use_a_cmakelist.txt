@@ -43,7 +43,7 @@ This section describes a minimal example of a program that uses \cgal and Qt6 fo
 
 
 \skip if(CGAL_Qt6_FOUND)
-\until target_link_libraries(draw_surface_mesh PRIVATE CGAL::CGAL_Basic_viewer)
+\until target_link_libraries(draw_surface_mesh PRIVATE CGAL::CGAL_Basic_viewer_Qt)
 \skip endif
 \until #end of the file
 

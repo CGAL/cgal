@@ -30,9 +30,9 @@ namespace CGAL {
  * `CGAL::Multipolygon_with_holes_2` class. A call to this function is blocking, that
  * is the program continues as soon as the user closes the window. This function
  * requires `CGAL_Qt6`, and is only available if the macro
- * `CGAL_USE_BASIC_VIEWER` is defined.  Linking with the cmake target
- * `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition
- * `CGAL_USE_BASIC_VIEWER`.
+ * `CGAL_USE_BASIC_VIEWER_QT` is defined.  Linking with the cmake target
+ * `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition
+ * `CGAL_USE_BASIC_VIEWER_QT`.
  * \tparam PH an instance of the `CGAL::Multipolygon_with_holes_2` class.
  * \param aph the multipolygon with holes to draw.
  */
@@ -44,7 +44,7 @@ void draw(const MPH& aph);
 
 #endif
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT) || defined(CGAL_USE_BASIC_VIEWER) 
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
 
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
@@ -207,6 +207,6 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
 
 } // End namespace CGAL
 
-#endif // CGAL_USE_BASIC_VIEWER_QT || CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #endif // CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H

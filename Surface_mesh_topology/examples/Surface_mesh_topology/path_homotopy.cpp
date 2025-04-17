@@ -4,7 +4,7 @@
 #include <CGAL/Path_on_surface.h>
 
 /* If you want to use a viewer, you can use qglviewer. */
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
@@ -167,7 +167,7 @@ int main(int argc, char** argv)
     if (!res)
     { errors_seeds.push_back(random.get_seed()); }
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     if (draw)
     { CGAL::draw(lcc, paths); }
 #endif

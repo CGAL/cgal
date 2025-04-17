@@ -5,7 +5,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair/repair.h>
 #include <CGAL/IO/WKT.h>
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #include <CGAL/draw_multipolygon_with_holes_2.h>
 #endif
 
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
   CGAL::IO::read_polygon_WKT(in, pin);
 
   Multipolygon_with_holes_2 mp = CGAL::Polygon_repair::repair(pin, CGAL::Polygon_repair::Non_zero_rule());
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
   CGAL::draw(mp);
 #endif
 

@@ -24,5 +24,5 @@ endif()
 
 create_single_source_cgal_program("draw_point_set_3.cpp")
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_point_set_3 PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_point_set_3 PRIVATE CGAL::CGAL_Basic_viewer_Qt)
 endif()

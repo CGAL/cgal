@@ -10,7 +10,7 @@
 #include "Creation_of_test_cases_for_paths.h"
 
 /* If you want to use a viewer, you can use qglviewer. */
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
@@ -44,7 +44,7 @@ bool unit_test_canonize(Curves_on_surface_topology<LCC_3_cmap>& cst,
                         std::vector<Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
                         bool
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
                         draw
 #endif
                         , int testtorun)
@@ -70,13 +70,13 @@ bool unit_test_canonize(Curves_on_surface_topology<LCC_3_cmap>& cst,
       }
     }
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     if (draw)
     {
       std::string title="Test "+std::to_string(nbtests);
       CGAL::draw(paths[0].get_map(), paths, title.c_str());
     }
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #ifdef CGAL_TRACE_PATH_TESTS
     if (res) { std::cout<<std::endl; }

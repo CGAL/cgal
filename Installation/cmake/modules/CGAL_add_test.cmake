@@ -124,7 +124,7 @@ function(cgal_add_compilation_test exe_name)
   if(TARGET CGAL_Qt6_moc_and_resources) # if CGAL_Qt6 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
-    if( ("CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Basic_viewer" IN_LIST linked_libraries)
+    if( ("CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Basic_viewer_Qt" IN_LIST linked_libraries)
         AND NOT TARGET "compilation_of__CGAL_Qt6_moc_and_resources")
       # This custom target is useless. It is used only as a flag to
       # detect that the test has already been created.

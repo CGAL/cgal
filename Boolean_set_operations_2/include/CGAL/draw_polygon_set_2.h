@@ -166,7 +166,7 @@ void compute_elements(const PWH& pwh,
 
 } // End namespace draw_function_for_boolean_set_2
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT) || defined(CGAL_USE_BASIC_VIEWER)
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
 
 template <typename PolygonSet_2, typename GSOptions>
 class Polygon_set_2_basic_viewer_qt : public Basic_viewer
@@ -259,7 +259,7 @@ private:
   GSOptions& gso;
 };
 
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #define CGAL_PS2_TYPE CGAL::Polygon_set_2<T, C, D>
 
@@ -281,7 +281,7 @@ void add_to_graphics_scene(const CGAL_PS2_TYPE& ap2,
   draw_function_for_boolean_set_2::compute_elements(ap2, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 
 // Specialization of draw function.
 template<class T, class C, class D, class GSOptions>
@@ -319,7 +319,7 @@ void draw(const CGAL_PS2_TYPE& ps,
   draw(ps, gso, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER_QT || CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #undef CGAL_PS2_TYPE
 

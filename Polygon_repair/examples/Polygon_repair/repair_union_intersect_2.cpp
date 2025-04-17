@@ -3,7 +3,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #include <CGAL/draw_multipolygon_with_holes_2.h>
 #endif
 
@@ -41,7 +41,7 @@ main(int argc, char* argv[])
   {
     std::ofstream out("union.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     CGAL::draw(mpwh);
 #endif
   }
@@ -49,7 +49,7 @@ main(int argc, char* argv[])
   {
     std::ofstream out("intersection.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     CGAL::draw(mpwh);
 #endif
   }
@@ -64,7 +64,7 @@ main(int argc, char* argv[])
 
     std::ofstream out("joinn.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
-#ifdef CGAL_USE_BASIC_VIEWER
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     CGAL::draw(mpwh);
 #endif
   }

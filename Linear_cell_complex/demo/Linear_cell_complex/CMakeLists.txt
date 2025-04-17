@@ -40,7 +40,7 @@ if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
 
 else()
 
-  add_compile_definitions(CGAL_USE_BASIC_VIEWER QT_NO_KEYWORDS)
+  add_compile_definitions(CGAL_USE_BASIC_VIEWER_QT QT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
