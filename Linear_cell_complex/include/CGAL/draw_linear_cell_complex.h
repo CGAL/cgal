@@ -13,7 +13,7 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Linear_cell_complex_base.h>
@@ -289,8 +289,6 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
   add_to_graphics_scene(alcc, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function for a LCC, with a drawing graphics scene options.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
@@ -316,8 +314,6 @@ void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
   add_to_graphics_scene(alcc, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_LCC_TYPE
 
