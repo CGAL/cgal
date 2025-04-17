@@ -281,6 +281,12 @@ void bench_on_data(const std::string &f1, const std::string &f2){
   t.reset();
 
   t.start();
+  CGAL::Convex_hull_3::do_intersect<K>(hull1, hull2);
+  t.stop();
+  std::cout << "Do intersect: " << t.time() << " sec\n" << std::endl;
+  t.reset();
+
+  t.start();
   std::array<Point_3, 8> obb1, obb2;
   CGAL::oriented_bounding_box(hull1, obb1, CGAL::parameters::use_convex_hull(false));
   CGAL::oriented_bounding_box(hull2, obb2, CGAL::parameters::use_convex_hull(false));
@@ -289,9 +295,9 @@ void bench_on_data(const std::string &f1, const std::string &f2){
   t.reset();
 
   t.start();
-  CGAL::Convex_hull_3::do_intersect<K>(hull1, hull2);
+  CGAL::Convex_hull_3::do_intersect<K>(obb1, obb2);
   t.stop();
-  std::cout << "Do intersect: " << t.time() << " sec\n" << std::endl;
+  std::cout << "Do intersect with Obbs: " << t.time() << " sec\n" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -302,15 +308,15 @@ int main(int argc, char** argv)
   std::cout << "3D Distance tests" << std::endl;
 
   CGAL::Random rp;
-  // CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
+  CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   // std::cout << "random seed = " << r.get_seed() << std::endl;
 
   // Test<CGAL::Simple_cartesian<double> >(r).run();
-  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
-  // Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
+  // Test<CGAL::Exact_predicates_exact_constructions_kernel>(r).run();
 
-  const std::string f1 = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
-  const std::string f2 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/sphere.off");
+  const std::string f1 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/elephant.off");
+  const std::string f2 = (argc>3) ? argv[3] : CGAL::data_file_path("meshes/sphere.off");
   bench_on_data<CGAL::Exact_predicates_inexact_constructions_kernel>(f1,f2);
 
   std::cout << "Done!" << std::endl;
