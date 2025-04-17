@@ -93,19 +93,13 @@ public:
     m_draw_cylinder_edge(false),
     m_draw_sphere_vertex(false),
     m_draw_mesh_triangles(false),
-    m_geometry_feature_enabled(true),
     m_flat_shading(true),
     m_use_default_color(use_default_color),
     m_use_default_color_normal(false),
     m_display_face_normal(false),
     m_inverse_normal(inverse_normal),
+    m_geometry_feature_enabled(true),
     m_no_2D_mode(no_2D_mode),
-    m_size_vertices(1.0),
-    m_size_edges(1.0),
-    m_size_rays(1.0),
-    m_size_lines(1.0),
-    m_size_normals(0.2),
-    m_height_factor_normals(0.02),
     m_default_color_normal(220, 60, 20),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false)
@@ -166,6 +160,21 @@ public:
 
     if (inverse_normal)
     { reverse_all_normals(); }
+
+    if(!buf.empty())
+    {
+      auto& bbox=buf.bounding_box();
+      double d=CGAL::sqrt(CGAL::squared_distance
+                          (Local_point(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+                           Local_point(bbox.xmax(), bbox.ymax(), bbox.zmax())));
+      // std::cout<<"Length of the diagonal: "<<d<<std::endl;
+      m_size_vertices=1.5*d;
+      m_size_edges=d;
+      m_size_rays=m_size_edges;
+      m_size_lines=m_size_edges;
+      m_size_normals=d/3;
+      m_height_factor_normals=0.02;
+    }
   }
 
   ~Basic_viewer()
@@ -1867,13 +1876,12 @@ protected:
   // filled by users but by the basic viewer.
   std::vector<BufferType> m_array_for_clipping_plane;
 
-  double m_size_vertices;
-  double m_size_edges;
-  double m_size_rays;
-  double m_size_lines;
-  double m_size_normals;
-
-  double m_height_factor_normals;
+  double m_size_vertices=1.;
+  double m_size_edges=1.;
+  double m_size_rays=1.;
+  double m_size_lines=1.;
+  double m_size_normals=.2;
+  double m_height_factor_normals=.02;
 
   CGAL::IO::Color m_default_color_normal;
   QVector4D m_ambient_color;
