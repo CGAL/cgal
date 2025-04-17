@@ -203,6 +203,13 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
 endif()
 
+if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
+  add_library(CGAL::CGAL_Basic_viewer_Qt INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER_QT"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+endif()
+
 #warning: the order in this list has to match the enum in Exact_type_selector
 set(CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS GMP_BACKEND GMPXX_BACKEND BOOST_GMP_BACKEND BOOST_BACKEND LEDA_BACKEND MP_FLOAT_BACKEND Default)
 set(CGAL_CMAKE_EXACT_NT_BACKEND "Default" CACHE STRING "Setting for advanced users that what to change the default number types used in filtered kernels. Some options might not be working depending on how you configured your build.")
