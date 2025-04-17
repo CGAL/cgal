@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <vector>
 
@@ -199,30 +200,74 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 };
 
-template <class Vector_3, class Convex>
-const typename Kernel_traits<Vector_3>::Kernel::Point_3& extreme_point(const Convex& C, const Vector_3 dir) {
+template<class T, template<class> class U>
+inline constexpr bool is_instance_of_v = std::false_type{};
+
+template<template<class> class U, class V>
+inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
+
+
+template <class Converter, class Vector_3, class Convex>
+const typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point(const Convex& C, const Vector_3 dir) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
-  typename Convex::const_iterator argmax=C.begin();
-  FT tmax= Vector_3(ORIGIN, *argmax)*dir;
-  for(typename Convex::const_iterator it=C.begin()+1; it!=C.end(); ++it){
-    FT v=Vector_3(ORIGIN, *it)*dir;
-    if(compare(tmax, v)==SMALLER){
-      tmax=v;
-      argmax=it;
+  if constexpr(is_instance_of_v<Convex,Surface_mesh>){ // TODO can be more general
+    typename Convex::Vertex_index argmax=*C.vertices().begin();
+    FT tmax= Vector_3(ORIGIN, Converter()(C.point(argmax)))*dir;
+    while(true){
+      loop:;
+      for(auto v: vertices_around_target(argmax ,C)){
+        FT p=Vector_3(ORIGIN, Converter()(C.point(v)))*dir;
+        if(compare(tmax, p)==SMALLER){
+          tmax=p;
+          argmax=v;
+          goto loop; // repeat with the new vertex
+        }
+      }
+      // The argmax is a local maximum
+      return Converter()(C.point(argmax));
     }
+  } else {
+    typename Convex::const_iterator argmax=C.begin();
+    FT tmax= Vector_3(ORIGIN, *argmax)*dir;
+    for(typename Convex::const_iterator it=C.begin()+1; it!=C.end(); ++it){
+      FT v=Vector_3(ORIGIN, *it)*dir;
+      if(compare(tmax, v)==SMALLER){
+        tmax=v;
+        argmax=it;
+      }
+    }
+    return *argmax;
   }
-  return *argmax;
 }
 
 template <typename IK, typename OK, typename I2O>
 struct RangeConverter: public I2O{
-  template<typename PointRange>
-  std::vector<typename OK::Point_3> operator()(const PointRange &pts) const{
+  // template<class PointRange>
+  // std::vector<typename OK::Point_3> operator()(const PointRange &pts) const{
+  //   std::vector<typename OK::Point_3> out;
+  //   for(const typename IK::Point_3 &p: pts)
+  //     out.push_back(I2O()(p));
+  //   return out;
+  // }
+
+  template< typename P >
+  const Surface_mesh< P >& operator()(const Surface_mesh< P > &sm) const{
+    return sm;
+  }
+
+  std::vector<typename OK::Point_3> operator()(const std::vector<typename IK::Point_3> &pts) const{
     std::vector<typename OK::Point_3> out;
     for(const typename IK::Point_3 &p: pts)
       out.push_back(I2O()(p));
+    return out;
+  }
+
+  std::array<typename OK::Point_3, 8> operator()(const std::array<typename IK::Point_3, 8> &in) const{
+    std::array<typename OK::Point_3, 8> out;
+    for(size_t i=0; i<8; ++i)
+      out[i]=I2O()(in[i]);
     return out;
   }
 
@@ -231,7 +276,7 @@ struct RangeConverter: public I2O{
   }
 };
 
-template<typename K>
+template<typename K, typename Converter>
 struct Functor_spherical_disjoint{
   typedef typename K::Boolean  result_type;
 
@@ -244,8 +289,8 @@ struct Functor_spherical_disjoint{
     positiveBound.clear();
     unsigned long planeStatPerPair = 0;
     do {
-      Vector_3 dir = std::move(positiveBound.averageDirection());
-      Vector_3 sp = extreme_point(a, dir) - extreme_point(b, -dir);
+      Vector_3 dir = positiveBound.averageDirection();
+      Vector_3 sp = extreme_point<Converter>(a, dir) - extreme_point<Converter>(b, -dir);
       if(sp==NULL_VECTOR) return false;
       if(is_negative(sp * dir)) return true;
       if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return false;
@@ -263,26 +308,37 @@ struct Functor_spherical_disjoint{
 //   }
 // };
 
+struct IdentityConverter{
+  template<typename Object>
+  const Object& operator()(const Object &b){
+    return b;
+  }
+};
+
 template<typename K,
+         typename Converter=IdentityConverter,
          bool Has_filtered_predicates_ = CGAL::internal::Has_filtered_predicates<K>::value>
 struct Spherical_disjoint_traits;
 
-template<typename K>
-struct Spherical_disjoint_traits<K, false>{ //: Spherical_disjoint_traits_base<K>{
-  typedef Functor_spherical_disjoint<K> Spherical_disjoint;
+template<typename K, typename Converter>
+struct Spherical_disjoint_traits<K, Converter, false>{ //: Spherical_disjoint_traits_base<K>{
+  typedef Functor_spherical_disjoint<K, Converter> Spherical_disjoint;
   Spherical_disjoint spherical_disjoint_object() const {
-    return Functor_spherical_disjoint<K>();
+    return Spherical_disjoint();
   }
 };
-template<typename K>
-struct Spherical_disjoint_traits<K, true> {
-  // Exact traits is based on the exact kernel.
-  typedef Spherical_disjoint_traits<typename K::Exact_kernel> Exact_traits;
-  // Filtering traits is based on the filtering kernel.
-  typedef Spherical_disjoint_traits<typename K::Approximate_kernel> Filtering_traits;
+template<typename K, typename Converter>
+struct Spherical_disjoint_traits<K, Converter, true> {
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::Exact_kernel::Vector_3 EVector_3;
+  typedef typename K::Approximate_kernel::Vector_3 FVector_3;
 
   typedef typename K::C2E                C2E;
   typedef typename K::C2F                C2F;
+
+  typedef Spherical_disjoint_traits<typename K::Exact_kernel, C2E> Exact_traits;
+  typedef Spherical_disjoint_traits<typename K::Approximate_kernel, C2F> Filtering_traits;
+
   typedef Filtered_predicate<
               typename Exact_traits::Spherical_disjoint,
               typename Filtering_traits::Spherical_disjoint,
@@ -354,35 +410,42 @@ bool do_intersect(const PointRange1& r1, const PointRange2& r2,
                   const NamedParameters1 np1 = parameters::default_values(),
                   const NamedParameters2 np2 = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
+  // using parameters::choose_parameter;
+  // using parameters::get_parameter;
 
-  typedef Point_set_processing_3_np_helper<PointRange1, NamedParameters1> NP_helper1;
-  typedef typename NP_helper1::Const_point_map PointMap1;
-  typedef typename NP_helper1::Geom_traits Geom_traits;
+  // typedef Point_set_processing_3_np_helper<PointRange1, NamedParameters1> NP_helper1;
+  // typedef typename NP_helper1::Const_point_map PointMap1;
+  // typedef typename NP_helper1::Geom_traits Geom_traits;
 
-  typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
-  typedef typename NP_helper2::Const_point_map PointMap2;
+  // typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
+  // typedef typename NP_helper2::Const_point_map PointMap2;
 
-  typedef typename boost::property_traits<PointMap1>::value_type Point_3;
-  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
+  // typedef typename boost::property_traits<PointMap1>::value_type Point_3;
+  // CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
 
-  PointMap1 point_map1 = NP_helper1::get_const_point_map(r1, np1);
-  PointMap2 point_map2 = NP_helper2::get_const_point_map(r2, np2);
+  // PointMap1 point_map1 = NP_helper1::get_const_point_map(r1, np1);
+  // PointMap2 point_map2 = NP_helper2::get_const_point_map(r2, np2);
 
-  // TODO: avoid doing a copy
-  std::vector<typename Geom_traits::Point_3> a, b;
-  a.reserve(r1.size());
-  b.reserve(r2.size());
-  for (const auto& p : r1)
-    a.push_back(get(point_map1, p));
-  for (const auto& p : r2)
-    b.push_back(get(point_map2, p));
+  // // TODO: avoid doing a copy
+  // std::vector<typename Geom_traits::Point_3> a, b;
+  // a.reserve(r1.size());
+  // b.reserve(r2.size());
+  // for (const auto& p : r1)
+  //   a.push_back(get(point_map1, p));
+  // for (const auto& p : r2)
+  //   b.push_back(get(point_map2, p));
 
-  unsigned int max_nb_iterations = choose_parameter(get_parameter(np1, internal_np::number_of_iterations), 0);
+  // unsigned int max_nb_iterations = choose_parameter(get_parameter(np1, internal_np::number_of_iterations), 0);
 
 
-  return !predicates_impl::sphericalDisjoint(a, b, max_nb_iterations);
+  // return !predicates_impl::sphericalDisjoint(a, b, max_nb_iterations);
+  return !predicates_impl::sphericalDisjoint(r1, r2, 0);
+}
+
+template <class Kernel, class Mesh1, class Mesh2>
+bool do_intersect(const Mesh1& sm1, const Mesh2& sm2)
+{
+  return !predicates_impl::Spherical_disjoint_traits<Kernel>().spherical_disjoint_object()(sm1, sm2, 0);
 }
 
 template <class PointRange1, class PointRange2,
