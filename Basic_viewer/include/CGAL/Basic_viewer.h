@@ -13,6 +13,7 @@
 #ifndef CGAL_BASIC_VIEWER_H
 #define CGAL_BASIC_VIEWER_H
 
+#include <CGAL/license/GraphicsView.h>
 #include <CGAL/Graphics_scene.h>
 
 #if defined(CGAL_USE_BASIC_VIEWER_QT) 
