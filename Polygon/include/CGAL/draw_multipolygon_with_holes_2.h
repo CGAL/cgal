@@ -19,6 +19,7 @@
 #define CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
 
 #include <CGAL/Basic_viewer.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -47,7 +48,6 @@ void draw(const MPH& aph);
 #if defined(CGAL_USE_BASIC_VIEWER_QT)
 
 #include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Multipolygon_with_holes_2.h>
 
 namespace CGAL {
 

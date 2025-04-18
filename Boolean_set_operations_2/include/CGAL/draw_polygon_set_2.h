@@ -292,6 +292,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
   CGAL_USE(gso);
   CGAL_USE(title);
 
+#ifdef CGAL_USE_BASIC_VIEWER_QT
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -302,7 +303,6 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
   {
     using Ps = CGAL::Polygon_set_2<T, C, D>;
     using Viewer = Polygon_set_2_basic_viewer_qt<Ps, GSOptions>;
-#ifdef CGAL_USE_BASIC_VIEWER_QT
     CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
     const char* argv[2] = {"t2_viewer", nullptr};
@@ -310,8 +310,8 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
     Viewer basic_viewer(app.activeWindow(), ps, gso, title);
     basic_viewer.show();
     app.exec();
-#endif // CGAL_USE_BASIC_VIEWER_QT
   }
+#endif // CGAL_USE_BASIC_VIEWER_QT
 }
 
 template<class T, class C, class D>
