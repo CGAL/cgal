@@ -29,7 +29,7 @@ enum class CDT_3_cell_marker {
 };
 
 /*!
- * @ingroup PkgCT_3Classes
+ * @ingroup PkgConstrainedTriangulation3Classes
  * @brief Internal per-cell data for \cgal 3D conforming constrained Delaunay triangulations
  *
  * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.

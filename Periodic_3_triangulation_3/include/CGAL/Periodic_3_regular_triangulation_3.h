@@ -765,20 +765,13 @@ public:
   }
 
   // same as the base construct_periodic_point(), but for weighted points
-  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p,
-                                                            bool& had_to_use_exact) const
+  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
   {
     const Bare_point& bp = geom_traits().construct_point_3_object()(p);
-    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp, had_to_use_exact);
+    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp);
     return std::make_pair(geom_traits().construct_weighted_point_3_object()(
                             pbp.first, p.weight()),
                           pbp.second);
-  }
-
-  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
-  {
-    bool useless = false;
-    return construct_periodic_weighted_point(p, useless);
   }
 
 public:

@@ -250,7 +250,7 @@ unspecified_type no_features();
  * enables the meshing algorithm
  * to mesh the input surface only and not take the volume into account.
  *
- * When this option is enabled, the ouput mesh has no cells in the 3D complex,
+ * When this option is enabled, the output mesh has no cells in the 3D complex,
  * only facets, edges and vertices.
  * Full-3D optimization steps such as mesh perturbation and mesh exudation are automatically disabled.
  *

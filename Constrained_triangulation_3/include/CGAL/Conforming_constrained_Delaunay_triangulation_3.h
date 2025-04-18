@@ -59,10 +59,10 @@
 #include <optional>
 #include <unordered_map>
 #include <vector>
-#if __has_include(<ranges>)
+#if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif
-#if __has_include(<format>)
+#if CGAL_CXX20 && __has_include(<format>)
 #  include <format>
 #  include <concepts>
 #elif CGAL_DEBUG_CDT_3
@@ -461,7 +461,7 @@ bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3
 
 namespace CGAL {
 
-#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 template <typename Polygon, typename Kernel>
 concept Polygon_3 = std::ranges::common_range<Polygon>
       && (std::is_convertible_v<std::ranges::range_value_t<Polygon>,
@@ -512,7 +512,7 @@ class Conforming_constrained_Delaunay_triangulation_3_impl;
 #endif // not DOXYGEN_RUNNING
 
 /*!
- * \ingroup PkgCT_3Classes
+ * \ingroup PkgConstrainedTriangulation3Classes
  * \brief This class template represents a 3D conforming constrained Delaunay triangulation.
  *
  * It contains a data member of type `Tr` and provides additional functionality for handling
@@ -3620,13 +3620,15 @@ public:
   {
     this->is_Delaunay = false;
     faces_region_numbers.resize(face_constraint_misses_subfaces.size());
-    for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+    for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end;
+        ++i)
+    {
       CDT_2& cdt_2 = face_cdt_2[i];
       fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
     if(this->debug_input_faces()) {
-      for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+      for(CDT_3_signed_index i = 0, end = static_cast <CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
         dump_face(i);
       }
     }
@@ -3636,7 +3638,7 @@ public:
     bool the_process_made_progress = false;
     while(i != npos) {
       try {
-        if(restore_face(i)) {
+        if(restore_face(static_cast <CDT_3_signed_index>(i))) {
           face_constraint_misses_subfaces_reset(i);
         } else {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
@@ -3887,20 +3889,20 @@ protected:
     face_constraint_misses_subfaces[pos] = false;
   }
   static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
-  std::vector<std::size_t> faces_region_numbers;
+  std::vector<CDT_3_signed_index> faces_region_numbers;
 };
 
 #endif // DOXYGEN_RUNNING
 
 
 /*!
-* \addtogroup PkgCT_3Functions
-* \brief creates a triangulation that can be used for Tetrahedral remeshing
+* \addtogroup PkgConstrainedTriangulation3Functions
+* \brief creates a triangulation that can be used for tetrahedral remeshing
 * \tparam Traits is the geometric traits class of `ccdt`
 * \tparam Tr is the type of triangulation to which `ccdt` is converted
 *
 * \param ccdt the triangulation to be converted
-* \return a triangulation of type `CGAL::Triangulation_3` that can be used for Tetrahedral remeshing
+* \return a triangulation of type `CGAL::Triangulation_3` that can be used for tetrahedral remeshing
 */
 template <typename Traits, typename Tr>
 CGAL::Triangulation_3<Traits,

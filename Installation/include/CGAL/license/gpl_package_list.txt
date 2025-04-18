@@ -26,6 +26,7 @@ Hyperbolic_triangulation_2 2D Hyperbolic Delaunay Triangulations
 Inscribed_areas Inscribed Areas
 Interpolation 2D and Surface Function Interpolation
 Interval_skip_list Interval Skip List
+Isosurfacing_3 3D Isosurfacing
 Jet_fitting_3 Estimation of Local Differential Properties of Point-Sampled Surfaces
 Kinetic_surface_reconstruction Kinetic Surface Reconstruction
 Matrix_search Monotone and Sorted Matrix Search
@@ -68,6 +69,7 @@ Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
 Polygon_mesh_processing/autorefinement Polygon Mesh Processing - Autorefinement
+Polygon_mesh_processing/acvd Polygon Mesh Processing - ACVD remeshing
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
@@ -106,6 +108,7 @@ Three Three
 Triangulation_2 2D Triangulation
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
+Triangulation_on_hyperbolic_surface_2 2D Triangulations on Hyperbolic Surfaces
 Triangulation_on_sphere_2 2D Triangulation on Sphere
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor

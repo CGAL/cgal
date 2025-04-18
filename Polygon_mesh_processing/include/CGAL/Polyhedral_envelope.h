@@ -176,7 +176,7 @@ private:
     std::array<Point_3,3> triangle;
     std::array<ePoint_3,3> etriangle;
     ePlane_3 eplane;
-    std::array<eLine_3,3> elines;  // the i'th line is opposite to vertex i
+    std::array<eLine_3,3> elines;  // the i-th line is opposite to vertex i
     ePoint_3 n; // triangle[0] offsetted by the triangle normal
   };
 
@@ -995,7 +995,7 @@ private:
       return 0;
     }
     if (o1 * o2 * o3 == 0){
-      return 2; // means we dont know
+      return 2; // means we don't know
     }
     return 1;
   }
@@ -1233,7 +1233,7 @@ private:
             }
             // this was for a fast float check
             if (inter == 2)
-              { //we dont know if point exist or if inside of triangle
+              { //we don't know if point exist or if inside of triangle
                 cut[cutp[i]] = true;
                 cut[cutp[j]] = true;
                 continue;
