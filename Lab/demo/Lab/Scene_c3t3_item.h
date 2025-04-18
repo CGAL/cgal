@@ -1,8 +1,8 @@
 #ifndef SCENE_C3T3_ITEM_H
 #define SCENE_C3T3_ITEM_H
 
-#include "Scene_c3t3_item_config.h"
 #include "C3t3_type.h"
+#include "Scene_c3t3_item_config.h"
 
 #include <QVector>
 #include <QColor>

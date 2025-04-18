@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.16...3.31)
 project(Lab_Demo)
 include(FeatureSummary)
 
@@ -255,16 +255,26 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(scene_tetrahedra_item PRIVATE scene_c3t3_item)
 
 
+  # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
+  add_library(c3t3_type_pch OBJECT c3t3_type_pch_empty_source.cpp C3t3_type.h)
+  target_link_libraries(c3t3_type_pch PRIVATE CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui)
+  set_property(TARGET c3t3_type_pch PROPERTY POSITION_INDEPENDENT_CODE TRUE)
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(scene_c3t3_item PRIVATE CGAL::TBB_support)
-    target_link_libraries(scene_triangulation_3_item PRIVATE CGAL::TBB_support)
-    target_link_libraries(scene_tetrahedra_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(c3t3_type_pch PRIVATE CGAL::TBB_support)
   endif()
+  target_precompile_headers(c3t3_type_pch PRIVATE [["C3t3_type.h"]])
 
-  if(COMMAND target_precompile_headers)
-    # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
-    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
-  endif()
+  function(CGAL_Lab_target_use_c3t3_type target)
+    target_link_libraries(${target} PRIVATE c3t3_type_pch)
+    target_precompile_headers(${target} REUSE_FROM c3t3_type_pch)
+    if(TARGET CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+    endif()
+  endfunction(CGAL_Lab_target_use_c3t3_type)
+
+  CGAL_Lab_target_use_c3t3_type(scene_c3t3_item)
+  CGAL_Lab_target_use_c3t3_type(scene_triangulation_3_item)
+  CGAL_Lab_target_use_c3t3_type(scene_tetrahedra_item)
 
   add_item(scene_aff_transformed_item Plugins/PCA/Scene_aff_transformed_item.cpp)
 
