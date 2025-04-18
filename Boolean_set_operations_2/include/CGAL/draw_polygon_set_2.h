@@ -196,6 +196,8 @@ public:
     CGAL::qglviewer::Vec maxv(bbox.xmax(), bbox.ymax(), 0);
     auto diameter = (maxv - minv).norm();
     m_pixel_ratio = diameter / gso.height();
+
+    add_elements();
   }
 
   /*! Intercept the resizing of the window.
@@ -281,13 +283,15 @@ void add_to_graphics_scene(const CGAL_PS2_TYPE& ap2,
   draw_function_for_boolean_set_2::compute_elements(ap2, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
-
 // Specialization of draw function.
 template<class T, class C, class D, class GSOptions>
 void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
           const char* title = "Polygon_set_2 Basic Viewer")
 {
+  CGAL_USE(ps);
+  CGAL_USE(gso);
+  CGAL_USE(title);
+
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -298,6 +302,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
   {
     using Ps = CGAL::Polygon_set_2<T, C, D>;
     using Viewer = Polygon_set_2_basic_viewer_qt<Ps, GSOptions>;
+#ifdef CGAL_USE_BASIC_VIEWER_QT
     CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
     const char* argv[2] = {"t2_viewer", nullptr};
@@ -305,6 +310,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
     Viewer basic_viewer(app.activeWindow(), ps, gso, title);
     basic_viewer.show();
     app.exec();
+#endif // CGAL_USE_BASIC_VIEWER_QT
   }
 }
 
@@ -319,7 +325,6 @@ void draw(const CGAL_PS2_TYPE& ps,
   draw(ps, gso, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #undef CGAL_PS2_TYPE
 
