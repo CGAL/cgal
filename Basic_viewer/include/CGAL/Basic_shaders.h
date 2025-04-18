@@ -25,25 +25,25 @@ in highp   vec3 a_Normal;
 in mediump vec3 a_Color;
 
 out highp   vec4 vs_fP; // view space position
-out highp   vec4 ls_fP; // local space position 
+out highp   vec4 ls_fP; // local space position
 out highp   vec3 fN;
 out mediump vec4 fColor;
 
 uniform highp   mat4  u_Mvp;
 uniform highp   mat4  u_Mv;
 uniform mediump float u_PointSize;
-uniform mediump vec3  u_DefaultColor; 
-uniform         bool  u_UseDefaultColor; 
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
 
 void main(void)
-{ 
-  fColor = vec4(a_Color, 1.0); 
+{
+  fColor = vec4(a_Color, 1.0);
   if (u_UseDefaultColor)
   {
     fColor = vec4(u_DefaultColor, 1.0);
   }
 
-  vec4 pos = vec4(a_Pos, 1.0); 
+  vec4 pos = vec4(a_Pos, 1.0);
 
   ls_fP = pos;
   vs_fP = u_Mv * pos;
@@ -113,14 +113,14 @@ const char VERTEX_SOURCE_P_L[]=R"DELIM(
 in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
 
-out mediump vec4 fColor; 
-out highp   vec4 ls_fP; // local space 
+out mediump vec4 fColor;
+out highp   vec4 ls_fP; // local space
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
 uniform         bool  u_IsOrthographic;
-uniform mediump vec3  u_DefaultColor; 
-uniform         bool  u_UseDefaultColor; 
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
 
 bool EqualZero(float value)
 {
@@ -129,23 +129,23 @@ bool EqualZero(float value)
 
 void main(void)
 {
-  fColor = vec4(a_Color, 1.0); 
+  fColor = vec4(a_Color, 1.0);
   if (u_UseDefaultColor)
   {
     fColor = vec4(u_DefaultColor, 1.0);
   }
 
-  vec4 pos = vec4(a_Pos, 1.0); 
+  vec4 pos = vec4(a_Pos, 1.0);
 
   ls_fP  = pos;
 
   gl_Position  = u_Mvp * pos;
 
   float distance = gl_Position.w;
-  if (u_IsOrthographic) 
+  if (u_IsOrthographic)
   {
     distance = u_PointSize;
-  } 
+  }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
   gl_PointSize = u_PointSize / effectiveDistance * 5.0;
@@ -157,8 +157,8 @@ const char VERTEX_SOURCE_SHAPE[]=R"DELIM(
 in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
 
-out mediump vec4 gColor; 
-out highp   vec4 ls_fP; 
+out mediump vec4 gColor;
+out highp   vec4 ls_fP;
 
 uniform highp   mat4 u_Mvp;
 uniform mediump vec3 u_DefaultColor;
@@ -177,9 +177,9 @@ void main(void)
 )DELIM";
 
 const char GEOMETRY_SOURCE_SPHERE[]=R"DELIM(
-#version 150 
-layout(points) in; 
-layout(triangle_strip, max_vertices = 72) out; // max_vertices = (resolution+1) * 2 * latResolution 
+#version 150
+layout(points) in;
+layout(triangle_strip, max_vertices = 72) out; // max_vertices = (resolution+1) * 2 * latResolution
 
 #define PI 3.14159265358979323846
 
@@ -212,7 +212,7 @@ void drawSphere(in vec4 center, in float radius, in float resolution)
 
       float x2 = center.x + radius * sin(theta2) * cos(phi);
       float y2 = center.y + radius * sin(theta2) * sin(phi);
-      float z2 = center.z + radius * cos(theta2); 
+      float z2 = center.z + radius * cos(theta2);
       ls_fP = vec4(x2, y2, z2, 1.0);
       gl_Position = u_Mvp * ls_fP;
       EmitVertex();
@@ -226,16 +226,16 @@ void main(void)
   fColor = gColor[0];
 
   int resolution = 8;
-  vec4 center = gl_in[0].gl_Position; 
+  vec4 center = gl_in[0].gl_Position;
 
   drawSphere(center, u_Radius, resolution);
 }
 )DELIM";
 
 const char GEOMETRY_SOURCE_CYLINDER[]=R"DELIM(
-#version 150 
-layout(lines) in; 
-layout(triangle_strip, max_vertices = 22) out; 
+#version 150
+layout(lines) in;
+layout(triangle_strip, max_vertices = 22) out;
 
 #define PI 3.14159265358979323846
 
@@ -264,7 +264,7 @@ void drawCylinder(in vec3 u, in vec3 v, in vec4 bot, in vec4 top, in float radiu
     gl_Position = u_Mvp * ls_fP;
     EmitVertex();
   }
-  EndPrimitive(); 
+  EndPrimitive();
 }
 
 void main(void)
@@ -274,11 +274,11 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal 
-  
+  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal
+
   vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
-  // Axis vectors 
+  // Axis vectors
   vec3 u = normalize(cross(n, w));
   vec3 v = normalize(cross(n, u));
 
@@ -351,8 +351,8 @@ out VS_OUT {
   mediump vec4 color;
 } vs_out; // vertex shader output
 
-uniform mediump vec3 u_DefaultColor; 
-uniform         bool u_UseDefaultColor; 
+uniform mediump vec3 u_DefaultColor;
+uniform         bool u_UseDefaultColor;
 
 void main(void)
 {
@@ -368,16 +368,16 @@ void main(void)
 
 const char GEOMETRY_SOURCE_ARROW[]=R"DELIM(
 #version 150
-layout(lines) in; 
+layout(lines) in;
 layout(triangle_strip, max_vertices = 82) out; // max_vertices = resolution * 2 + 2 (cylinder) + resolution * 3 (disc) + resolution * 3 (cone)
 
 #define PI 3.14159265358979323846
 
 in VS_OUT {
-  mediump vec4 color; 
+  mediump vec4 color;
 } gs_in[]; // geometry shader input
 
-out mediump vec4 fColor; 
+out mediump vec4 fColor;
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_SceneRadius;
@@ -411,7 +411,7 @@ void drawTriangleFan(in vec3 u, in vec3 v, in vec4 center, in vec4 edge0, in flo
     yAxis = sinf*v.xyz;
     vec4 edge2 = vec4(edge0.xyz+xAxis.xyz+yAxis.xyz, 1.0);
     drawTriangle(center, edge1, edge2);
-  } 
+  }
 }
 
 void drawDisc(in vec3 u, in vec3 v, in vec4 center, in float radius, in int resolution)
@@ -439,7 +439,7 @@ void drawCylinder(in vec3 u, in vec3 v, in vec4 bot, in vec4 top, in float radiu
     gl_Position = u_Mvp * vec4(bot.xyz+xAxis.xyz+yAxis.xyz, 1.0);
     EmitVertex();
   }
-  EndPrimitive(); 
+  EndPrimitive();
 }
 
 void main(void)
@@ -449,10 +449,10 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal 
+  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal
   vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
-  // Axis vectors 
+  // Axis vectors
   vec3 u = normalize(cross(n, w));
   vec3 v = normalize(cross(n, u));
 
@@ -469,14 +469,14 @@ void main(void)
 
 const char GEOMETRY_SOURCE_LINE[]=R"DELIM(
 #version 150
-layout(lines) in; 
-layout(line_strip, max_vertices = 2) out; 
+layout(lines) in;
+layout(line_strip, max_vertices = 2) out;
 
 in VS_OUT {
   mediump vec4 color;
 } gs_in[]; // geometry shader input
 
-out mediump vec4 fColor; 
+out mediump vec4 fColor;
 
 uniform highp mat4 u_Mvp;
 
@@ -485,11 +485,11 @@ void main(void)
   fColor = gs_in[0].color;
 
   gl_Position = u_Mvp * gl_in[0].gl_Position;
-  EmitVertex(); 
-  gl_Position = u_Mvp * gl_in[1].gl_Position; 
-  EmitVertex(); 
+  EmitVertex();
+  gl_Position = u_Mvp * gl_in[1].gl_Position;
+  EmitVertex();
 
-  EndPrimitive(); 
+  EndPrimitive();
 }
 )DELIM";
 
@@ -515,28 +515,28 @@ out VS_OUT {
   mediump vec4  color;
   highp   vec3  normal;
 } vs_out; // vertex shader output
- 
+
 uniform highp   mat4 u_Mv;
 uniform mediump vec3 u_DefaultColor;
 uniform         bool u_UseDefaultColor;
 
 void main(void)
 {
-  vs_out.color = vec4(abs(normalize(a_Normal)), 1.0); 
+  vs_out.color = vec4(abs(normalize(a_Normal)), 1.0);
   if (u_UseDefaultColor)
   {
-    vs_out.color = vec4(u_DefaultColor, 1.0); 
+    vs_out.color = vec4(u_DefaultColor, 1.0);
   }
 
   mat3 normalMatrix = mat3(transpose(inverse(u_Mv)));
   vs_out.normal = normalize(vec3(vec4(normalMatrix * a_Normal, 0.0)));
-  
-  gl_Position = vec4(a_Pos, 1.0); 
+
+  gl_Position = vec4(a_Pos, 1.0);
 }
 )DELIM";
 
 const char GEOMETRY_SOURCE_NORMAL[]=R"DELIM(
-#version 150 
+#version 150
 layout (triangles) in;
 layout (line_strip, max_vertices = 6) out;
 
@@ -556,8 +556,8 @@ uniform bool          u_DisplayFaceNormal;
 
 void GenerateLine(int index)
 {
-  fColor = gs_in[index].color; 
-  
+  fColor = gs_in[index].color;
+
   ls_fP = gl_in[index].gl_Position;
   gl_Position = u_Projection * u_Mv * gl_in[index].gl_Position;
   EmitVertex();
@@ -579,7 +579,7 @@ void DrawVerticesNormal()
 
 void DrawFaceNormal()
 {
-  fColor = (gs_in[0].color + gs_in[1].color + gs_in[2].color) / 3; 
+  fColor = (gs_in[0].color + gs_in[1].color + gs_in[2].color) / 3;
   vec4 center = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position) / 3;
   ls_fP = center;
   gl_Position = u_Projection * u_Mv * center;
@@ -599,7 +599,7 @@ void main()
   {
     DrawFaceNormal();
   }
-  else 
+  else
   {
     DrawVerticesNormal();
   }
@@ -611,8 +611,8 @@ const char VERTEX_SOURCE_TRIANGLE[]=R"DELIM(
 in highp   vec3 a_Pos;
 
 out VS_OUT {
-  mediump vec4 color; 
-  highp   vec4 ls_fP; 
+  mediump vec4 color;
+  highp   vec4 ls_fP;
 } vs_out;
 
 uniform highp mat4 u_Mvp;
@@ -631,48 +631,48 @@ void main(void)
 const char GEOMETRY_SOURCE_TRIANGLE[]=R"DELIM(
 #version 150
 layout (triangles) in;
-layout (line_strip, max_vertices=4) out; 
+layout (line_strip, max_vertices=4) out;
 
 in VS_OUT {
-  mediump vec4 color; 
-  highp   vec4 ls_fP; 
+  mediump vec4 color;
+  highp   vec4 ls_fP;
 } gs_in[];
 
-out mediump vec4 fColor; 
-out highp   vec4 ls_fP; 
+out mediump vec4 fColor;
+out highp   vec4 ls_fP;
 
 void main(void)
 {
-  fColor = gs_in[0].color; 
+  fColor = gs_in[0].color;
   ls_fP = gs_in[0].ls_fP;
-  gl_Position = gl_in[0].gl_Position; 
-  EmitVertex(); 
+  gl_Position = gl_in[0].gl_Position;
+  EmitVertex();
 
   ls_fP = gs_in[1].ls_fP;
-  gl_Position = gl_in[1].gl_Position; 
-  EmitVertex(); 
+  gl_Position = gl_in[1].gl_Position;
+  EmitVertex();
 
   ls_fP = gs_in[2].ls_fP;
-  gl_Position = gl_in[2].gl_Position; 
-  EmitVertex(); 
+  gl_Position = gl_in[2].gl_Position;
+  EmitVertex();
 
   ls_fP = gs_in[0].ls_fP;
-  gl_Position = gl_in[0].gl_Position; 
-  EmitVertex(); 
+  gl_Position = gl_in[0].gl_Position;
+  EmitVertex();
 }
 )DELIM";
 
 const char VERTEX_SOURCE_LINE_WIDTH[]=R"DELIM(
 #version 150
 
-in highp   vec3 a_Pos; 
+in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
- 
+
 out VS_OUT {
-  mediump float pointSize; 
-  mediump vec4 color; 
-  highp   vec4 ls_fP; 
-} vs_out; 
+  mediump float pointSize;
+  mediump vec4 color;
+  highp   vec4 ls_fP;
+} vs_out;
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
@@ -690,7 +690,7 @@ void main(void)
   vec4 pos = vec4(a_Pos, 1.0);
 
   vs_out.ls_fP = pos;
-  vs_out.color = vec4(a_Color, 1.0); 
+  vs_out.color = vec4(a_Color, 1.0);
   if (u_UseDefaultColor)
   {
     vs_out.color = vec4(u_DefaultColor, 1.0);
@@ -699,10 +699,10 @@ void main(void)
   gl_Position  = u_Mvp * pos;
 
   float distance = gl_Position.w;
-  if (u_IsOrthographic) 
+  if (u_IsOrthographic)
   {
     distance = u_PointSize;
-  } 
+  }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
   vs_out.pointSize = u_PointSize / effectiveDistance;
@@ -714,29 +714,29 @@ const char GEOMETRY_SOURCE_LINE_WIDTH[]=R"DELIM(
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-in mediump vec4 g_Color[]; 
+in mediump vec4 g_Color[];
 
 in VS_OUT {
-  mediump float pointSize; 
-  mediump vec4 color; 
-  highp   vec4 ls_fP; 
-} gs_in[]; 
+  mediump float pointSize;
+  mediump vec4 color;
+  highp   vec4 ls_fP;
+} gs_in[];
 
-out mediump vec4 fColor; 
-out highp   vec4 ls_fP; 
+out mediump vec4 fColor;
+out highp   vec4 ls_fP;
 
-uniform mediump float u_PointSize; 
+uniform mediump float u_PointSize;
 uniform mediump vec2  u_Viewport;
 uniform highp   mat4  u_Mvp;
 
 vec2 ToScreenSpace(vec4 vertex)
 {
-  return vec2(vertex.xy / vertex.w) * u_Viewport; 
+  return vec2(vertex.xy / vertex.w) * u_Viewport;
 }
 
 vec4 ToWorldSpace(vec4 vertex)
 {
-  return vec4((vertex.xy * vertex.w) / u_Viewport, vertex.zw); 
+  return vec4((vertex.xy * vertex.w) / u_Viewport, vertex.zw);
 }
 
 void main(void)
@@ -745,24 +745,24 @@ void main(void)
   vec2 p1 = ToScreenSpace(gl_in[1].gl_Position);
   vec2 v0 = normalize(p1 - p0);
   vec2 n0 = vec2(-v0.y, v0.x) * u_PointSize * 0.5;
-  
+
   // line start
-  gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw)); 
+  gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
   fColor = gs_in[0].color;
   ls_fP = inverse(u_Mvp) * gl_Position;
   EmitVertex();
-  
+
   gl_Position = ToWorldSpace(vec4(p0 + n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
   fColor = gs_in[0].color;
   ls_fP = inverse(u_Mvp) * gl_Position;
   EmitVertex();
-  
+
   // line end
   gl_Position = ToWorldSpace(vec4(p1 - n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
   fColor = gs_in[1].color;
   ls_fP = inverse(u_Mvp) * gl_Position;
   EmitVertex();
-  
+
   gl_Position = ToWorldSpace(vec4(p1 + n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
   fColor = gs_in[1].color;
   ls_fP = inverse(u_Mvp) * gl_Position;

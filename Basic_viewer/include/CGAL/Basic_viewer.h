@@ -16,7 +16,7 @@
 #include <CGAL/license/GraphicsView.h>
 #include <CGAL/Graphics_scene.h>
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT) 
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
 #include <CGAL/Qt/Basic_viewer.h>
 // #elif defined(CGAL_USE_BASIC_VIEWER_GLFW)
 // #include <CGAL/GLFW/Basic_viewer.h>

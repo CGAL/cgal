@@ -81,48 +81,48 @@ public:
         m_default_color_line(0, 0, 0)
   {}
 
-  inline 
-  const CGAL::IO::Color &get_default_color_face() const 
+  inline
+  const CGAL::IO::Color &get_default_color_face() const
   { return m_default_color_face; }
 
-  inline 
-  const CGAL::IO::Color &get_default_color_point() const 
+  inline
+  const CGAL::IO::Color &get_default_color_point() const
   { return m_default_color_point; }
 
-  inline 
-  const CGAL::IO::Color &get_default_color_segment() const 
+  inline
+  const CGAL::IO::Color &get_default_color_segment() const
   { return m_default_color_segment; }
 
-  inline 
-  const CGAL::IO::Color &get_default_color_ray() const 
+  inline
+  const CGAL::IO::Color &get_default_color_ray() const
   { return m_default_color_ray; }
 
-  inline 
-  const CGAL::IO::Color &get_default_color_line() const 
+  inline
+  const CGAL::IO::Color &get_default_color_line() const
   { return m_default_color_line; }
 
   inline
   const Buffer_for_vao &get_buffer_for_points() const
   { return m_buffer_for_points; }
 
-  inline 
-  void set_default_color_face(const CGAL::IO::Color& c)  
+  inline
+  void set_default_color_face(const CGAL::IO::Color& c)
   { m_default_color_face = c; }
 
-  inline 
-  void set_default_color_point(const CGAL::IO::Color& c)  
+  inline
+  void set_default_color_point(const CGAL::IO::Color& c)
   { m_default_color_point = c; }
 
-  inline 
-  void set_default_color_segment(const CGAL::IO::Color& c)  
+  inline
+  void set_default_color_segment(const CGAL::IO::Color& c)
   { m_default_color_segment = c; }
 
-  inline 
-  void set_default_color_ray(const CGAL::IO::Color& c)  
+  inline
+  void set_default_color_ray(const CGAL::IO::Color& c)
   { m_default_color_ray = c; }
 
-  inline 
-  void set_default_color_line(const CGAL::IO::Color& c)  
+  inline
+  void set_default_color_line(const CGAL::IO::Color& c)
   { m_default_color_line = c; }
 
   inline

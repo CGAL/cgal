@@ -26,21 +26,21 @@ public:
   /// \name Setters
   /// @{
 
-  /// \brief Set size of vertices. 
+  /// \brief Set size of vertices.
   /// \param s The size of vertices.
   void size_vertices(float s);
 
-  /// \brief Set size of edges. 
+  /// \brief Set size of edges.
   /// \param s The size of edges.
-  void size_edges(float s); 
+  void size_edges(float s);
 
-  /// \brief Set size of rays. 
+  /// \brief Set size of rays.
   /// \param s The size of rays.
-  void size_rays(float s); 
+  void size_rays(float s);
 
-  /// \brief Set size of lines. 
+  /// \brief Set size of lines.
   /// \param s The size of lines.
-  void size_lines(float s); 
+  void size_lines(float s);
 
   /// \brief Enables or disables the drawing of vertices.
   /// \param b Set to `true` to enable, `false` to disable.
