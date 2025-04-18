@@ -884,13 +884,13 @@ protected:
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
 
 protected:
-  std::vector<BufferType>* m_pos_buffer;
-  std::vector<IndexType>* m_index_buffer;
-  std::vector<BufferType>* m_color_buffer;
-  mutable std::vector<BufferType>* m_flat_normal_buffer;
-  mutable std::vector<BufferType>* m_gouraud_normal_buffer;
+  std::vector<BufferType>* m_pos_buffer=nullptr;
+  std::vector<IndexType>* m_index_buffer=nullptr;
+  std::vector<BufferType>* m_color_buffer=nullptr;
+  mutable std::vector<BufferType>* m_flat_normal_buffer=nullptr;
+  mutable std::vector<BufferType>* m_gouraud_normal_buffer=nullptr;
 
-  CGAL::Bbox_3* m_bb;
+  CGAL::Bbox_3* m_bb=nullptr;
 
   bool m_zero_x; /// True iff all points have x==0
   bool m_zero_y; /// True iff all points have y==0
