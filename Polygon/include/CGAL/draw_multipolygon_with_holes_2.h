@@ -45,11 +45,11 @@ void draw(const MPH& aph);
 
 #endif
 
+namespace CGAL {
+
 #if defined(CGAL_USE_BASIC_VIEWER_QT)
 
 #include <CGAL/Qt/init_ogl_context.h>
-
-namespace CGAL {
 
 // Viewer class for Multipolygon_with_holes_2
 template <typename Multipolygon>
