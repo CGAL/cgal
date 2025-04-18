@@ -19,11 +19,9 @@ Section on definitions here ...
 
 The following example shows ...
 
-\cgalExample{ }
+\cgalExample{Sphere_packing/sphere_packing.cpp}
 
-\cgalFigureBegin{figPck,bench.png}
-Left: ...
-\cgalFigureEnd
+
 
 */
 } /* namespace CGAL */
