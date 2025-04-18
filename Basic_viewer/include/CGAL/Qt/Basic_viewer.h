@@ -98,8 +98,8 @@ public:
     m_use_default_color_normal(false),
     m_display_face_normal(false),
     m_inverse_normal(inverse_normal),
-    m_geometry_feature_enabled(true),
     m_no_2D_mode(no_2D_mode),
+    m_geometry_feature_enabled(true),
     m_default_color_normal(220, 60, 20),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false)
@@ -791,7 +791,7 @@ public:
     if (m_draw_mesh_triangles)
     {
 
-      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode)
+      auto renderer = [this, &clipPlane, &plane_point](float rendering_mode)
       {
         rendering_program_triangle.bind();
         rendering_program_triangle.setUniformValue("u_RenderingMode", rendering_mode);
@@ -1832,7 +1832,7 @@ protected:
     QScreen *screen;
     screen = QApplication::primaryScreen();
 
-    auto geom = screen->geometry();
+    // auto geom = screen->geometry();
     auto qpx_pixmap = screen->grabWindow(this->winId());
     qpx_pixmap.save(file_path);
   }
