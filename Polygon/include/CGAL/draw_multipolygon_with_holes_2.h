@@ -180,11 +180,17 @@ private:
   const Mpwh& m_mpwh;
 };
 
+#endif // CGAL_USE_BASIC_VIEWER_QT
+
 // Specialization of draw function.
 template<class T, class C>
 void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
           const char* title = "Multipolygon_with_holes_2 Basic Viewer")
 {
+  CGAL_USE(mpwh);
+  CGAL_USE(title);
+
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -203,10 +209,9 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
     mainwindow.show();
     app.exec();
   }
+#endif // CGAL_USE_BASIC_VIEWER_QT
 }
 
 } // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #endif // CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
