@@ -220,14 +220,17 @@ void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
   add_to_graphics_scene(p2t2, graphics_scene, gs_options);
 }
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
-
 // Specialization of draw function
 template<class Gt, class Tds, class GSOptions>
 void draw(const CGAL_P2T2_TYPE& ap2t2,
           GSOptions& gs_options,
           const char* title="2D Periodic Triangulation Viewer")
 {
+  CGAL_USE(ap2t2);
+  CGAL_USE(gs_options);
+  CGAL_USE(title);
+
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
   CGAL::Graphics_scene gs;
   add_to_graphics_scene(ap2t2, gs, gs_options);
   CGAL::Qt::QApplication_and_basic_viewer app(gs, title);
@@ -264,6 +267,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
     // Then we run the app
     app.run();
   }
+#endif // CGAL_USE_BASIC_VIEWER_QT
 }
 
 template<class Gt, class Tds>
@@ -277,8 +281,6 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
   draw(ap2t2, gs_options, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #undef CGAL_P2T2_TYPE
 
