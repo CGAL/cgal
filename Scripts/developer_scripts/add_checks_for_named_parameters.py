@@ -6,13 +6,16 @@ import re
 f=codecs.open(argv[1], encoding='utf-8')
 res=""
 np_name="np"
+
+modified=False
+
 while True:
   line = f.readline()
   if not line:
     break;
   res+=line
 
-  #possible np name
+  #possible np name (TODO: does not work if not on the same line)
   if re.search("bgl_namedparameters", line):
     m = re.search("[@\\\]param\s+([^ ]+)\s", line)
     if m:
@@ -67,10 +70,17 @@ while True:
               break # do we want to support comments?
 
         if add_macro:
-          res+=s+"\n"
+          res+=s+"\n\n"
+          res+=line
+          modified=True
         break;
 
-o=open("/tmp/out.h", 'w')
-o.write(res)
-o.close()
+f.close()
+if modified:
+  f=codecs.open(argv[1], encoding='utf-8', mode='w')
+  f.write(res)
+  f.close()
+  #o=open("/tmp/out.h", 'w')
+  #o.write(res)
+  #o.close()
 
