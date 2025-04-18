@@ -100,6 +100,7 @@ public:
     m_inverse_normal(inverse_normal),
     m_no_2D_mode(no_2D_mode),
     m_geometry_feature_enabled(true),
+    m_prev_scene_empty(true),
     m_default_color_normal(220, 60, 20),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false)
@@ -157,24 +158,6 @@ public:
       setWindowTitle(title);
 
     resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
-
-    if (inverse_normal)
-    { reverse_all_normals(); }
-
-    if(!buf.empty())
-    {
-      auto& bbox=buf.bounding_box();
-      double d=CGAL::sqrt(CGAL::squared_distance
-                          (Local_point(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                           Local_point(bbox.xmax(), bbox.ymax(), bbox.zmax())));
-      // std::cout<<"Length of the diagonal: "<<d<<std::endl;
-      m_size_vertices=1.5*d;
-      m_size_edges=d;
-      m_size_rays=m_size_edges;
-      m_size_lines=m_size_edges;
-      m_size_normals=d/3;
-      m_height_factor_normals=0.02;
-    }
   }
 
   ~Basic_viewer()
@@ -306,6 +289,9 @@ public:
   {
     initialize_buffers();
     update();
+    if(m_prev_scene_empty)
+    { initialize_vertices_and_edges_size(); }
+    m_prev_scene_empty=(m_scene.empty());
   }
 
   void reverse_all_normals()
@@ -1471,11 +1457,38 @@ protected:
 
     if (max_geometry_output_vertices < 128 || max_geometry_output_components < 1024)
     {
-      std::cout << "Cylinder edge and sphere vertex feature disabled! (max_geometry_output_vertices=" << max_geometry_output_vertices << ", max_geometry_output_components=" << max_geometry_output_components << ")\n";
+      std::cout << "Cylinder edge and sphere vertex feature disabled! (max_geometry_output_vertices="
+                << max_geometry_output_vertices << ", max_geometry_output_components="
+                << max_geometry_output_components << ")\n";
       m_geometry_feature_enabled = false;
     }
 
+    /// This code cannot be done in the constructor, because the Graphics_scene
+    /// is not yet created (cf. for example LCC demo).
+    if (m_inverse_normal)
+    { reverse_all_normals(); }
+
+    initialize_vertices_and_edges_size();
+
     this->showEntireScene();
+  }
+
+  void initialize_vertices_and_edges_size()
+  {
+    if(!m_scene.empty())
+    {
+      auto& bbox=m_scene.bounding_box();
+      double d=CGAL::sqrt(CGAL::squared_distance
+                          (Local_point(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+                           Local_point(bbox.xmax(), bbox.ymax(), bbox.zmax())));
+      // std::cout<<"Length of the diagonal: "<<d<<std::endl;
+      m_size_vertices=1.5*d;
+      m_size_edges=d;
+      m_size_rays=m_size_edges;
+      m_size_lines=m_size_edges;
+      m_size_normals=d/3;
+      m_height_factor_normals=0.02;
+    }
   }
 
   void generate_clipping_plane()
@@ -1860,6 +1873,7 @@ protected:
   bool m_inverse_normal;
   bool m_no_2D_mode;
   bool m_geometry_feature_enabled;
+  bool m_prev_scene_empty;
 
   enum {
     CLIPPING_PLANE_OFF = 0,
