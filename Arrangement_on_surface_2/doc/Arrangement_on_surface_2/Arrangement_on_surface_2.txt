@@ -1999,7 +1999,7 @@ operates in two-dimensional surfaces (not restricted to the plane),
 (ii) accepts various families of \f$x\f$-monotone curves (not only
 line segments), and (iii) handles overlaps. (Observe that the original
 algorithm did not handle overlaps. Handling overlaps is difficult,
-especially for polyline, as two polylines may overlap in more then one
+especially for polyline, as two polylines may overlap in more than one
 connected component.) The generic implementation serves as the
 foundation of a family of concrete operations described in the rest of
 this section, such as aggregately constructing an arrangement induced

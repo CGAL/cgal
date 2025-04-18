@@ -23,7 +23,7 @@
 namespace CGAL {
 
 /**
- * @ingroup PkgCT_3Classes
+ * @ingroup PkgConstrainedTriangulation3Classes
  * @brief Vertex base class for the 3D conforming constrained Delaunay triangulation.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
@@ -87,7 +87,7 @@ public:
       break;
     case CDT_3_vertex_type::STEINER_ON_EDGE:
       set_dimension(1);
-      set_index(ccdt_3_data().constrained_polyline_id(tr).index());
+      set_index(static_cast<int>(ccdt_3_data().constrained_polyline_id(tr).index()));
       break;
     case CDT_3_vertex_type::STEINER_IN_FACE:
       set_dimension(2);

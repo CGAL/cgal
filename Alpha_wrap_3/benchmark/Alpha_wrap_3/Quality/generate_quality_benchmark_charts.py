@@ -134,13 +134,13 @@ def main(argv):
       avg_diff_str = str(format(abs(avg_diff_to_goal), '.2f'))
       if key == "Mean_Min_Angle_(degree)" or key == "Mean_Max_Angle_(degree)":
         if avg_diff_to_goal < 0 :
-          title += "\nIn average we loose "
+          title += "\nIn average we lose "
         else :
           title += "\nIn average we gain "
         title += avg_diff_str + "° toward 60°"
       elif key == "Mean_Radius_Ratio" or key == "Mean_Edge_Ratio" or key == "Mean_Aspect_Ratio" :
         if avg_diff_to_goal < 0 :
-          title += "\nIn average we loose "
+          title += "\nIn average we lose "
         else :
           title += "\nIn average we gain "
         title += avg_diff_str + " of ratio toward 1"

@@ -26,6 +26,8 @@ namespace CGAL {
 template < class R_ >
 class Iso_cuboidC3
 {
+  typedef typename R_::Boolean              Boolean;
+  typedef typename R_::Bounded_side         Bounded_side;
   typedef typename R_::FT                   FT;
   typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
   typedef typename R_::Point_3              Point_3;
@@ -98,8 +100,8 @@ public:
                                     Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
 
-  typename R::Boolean   operator==(const Iso_cuboidC3& s) const;
-  typename R::Boolean   operator!=(const Iso_cuboidC3& s) const;
+  Boolean operator==(const Iso_cuboidC3& s) const;
+  Boolean operator!=(const Iso_cuboidC3& s) const;
 
   const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
@@ -118,11 +120,11 @@ public:
   }
 
   Bounded_side bounded_side(const Point_3& p) const;
-  typename R::Boolean           has_on(const Point_3& p) const;
-  typename R::Boolean           has_on_boundary(const Point_3& p) const;
-  typename R::Boolean           has_on_bounded_side(const Point_3& p) const;
-  typename R::Boolean           has_on_unbounded_side(const Point_3& p) const;
-  typename R::Boolean           is_degenerate() const;
+  Boolean has_on(const Point_3& p) const;
+  Boolean has_on_boundary(const Point_3& p) const;
+  Boolean has_on_bounded_side(const Point_3& p) const;
+  Boolean has_on_unbounded_side(const Point_3& p) const;
+  Boolean is_degenerate() const;
   const FT &   xmin() const;
   const FT &   ymin() const;
   const FT &   zmin() const;
@@ -267,7 +269,7 @@ Iso_cuboidC3<R>::volume() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename R::Bounded_side
 Iso_cuboidC3<R>::
 bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {

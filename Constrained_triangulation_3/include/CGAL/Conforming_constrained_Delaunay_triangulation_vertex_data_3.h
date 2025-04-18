@@ -23,7 +23,7 @@ namespace CGAL {
 
 #ifdef DOXYGEN_RUNNING
 /*!
- * @ingroup PkgCT_3Classes
+ * @ingroup PkgConstrainedTriangulation3Classes
  * @brief Internal per-vertex data for \cgal 3D conforming constrained Delaunay triangulations
  *
  * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.
@@ -145,7 +145,7 @@ public:
 
 } // namespace CGAL
 
-#if CGAL_CXX20
+#if CGAL_CXX20 && __cpp_concepts >= 201911L
 #  include <concepts>
 
   static_assert(std::regular<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_data_3>);

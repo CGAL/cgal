@@ -168,7 +168,7 @@ namespace CGAL {
         return begin_less_xyz_than_end() ? target() : source();
       }
 
-      const CGAL::Bbox_3 bbox() const {
+      CGAL::Bbox_3 bbox() const {
         return source().bbox() + target().bbox();
       }
 

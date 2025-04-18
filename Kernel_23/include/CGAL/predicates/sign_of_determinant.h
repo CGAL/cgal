@@ -30,6 +30,7 @@ typename Sgn<RT>::result_type
 sign_of_determinant( const RT& a00,  const RT& a01,
                         const RT& a10,  const RT& a11)
 {
+  typedef typename Sgn<RT>::result_type Sign;
   return enum_cast<Sign>(CGAL_NTS compare( a00*a11, a10*a01));
 }
 

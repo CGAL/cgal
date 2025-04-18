@@ -1697,7 +1697,7 @@ compute_facet_properties(const Facet& facet,
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       // In the following, std::get<2>(intersect) == 0 is a way to
       // test "intersect == Intersection()" (aka empty intersection), but
-      // the later does not work.
+      // the latter does not work.
       Surface_patch surface =
         (dimension(intersect) == 0) ? Surface_patch() :
         Surface_patch(
