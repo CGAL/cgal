@@ -115,11 +115,9 @@ The following example reads a point set, creates a Poisson implicit function and
 
 \subsection Poisson_surface_reconstruction_3Contouring Contouring
 
-
 The computed implicit functions can be iso-contoured to reconstruct a
-surface by using the \ref PkgMesh3 :
-
-`make_mesh_3()` with the `surface_only()` parameter to only mesh the surface
+surface by using the \ref PkgMesh3 component, and in particular the function
+`make_mesh_3()` with the `surface_only()` parameter to only mesh the surface.
 
 The following `Tag` parameters affect the behavior of `make_mesh_3()`:
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold surface without boundary.
