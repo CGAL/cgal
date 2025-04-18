@@ -14,6 +14,8 @@
 #ifndef CGAL_QT_BASIC_VIEWER_H
 #define CGAL_QT_BASIC_VIEWER_H
 
+#if defined(CGAL_USE_BASIC_VIEWER_QT)
+
 // TODO #include <CGAL/license/GraphicsView.h>
 #include <cstring>
 #include <iostream>
@@ -2030,5 +2032,7 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
 }
 
 } // End namespace CGAL
+
+#endif // CGAL_USE_BASIC_VIEWER_QT
 
 #endif // CGAL_QT_BASIC_VIEWER_H
