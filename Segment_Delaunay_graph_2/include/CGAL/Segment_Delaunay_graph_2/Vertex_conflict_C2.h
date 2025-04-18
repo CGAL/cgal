@@ -443,10 +443,6 @@ private:
 
 
 public:
-  typedef Site_2      argument_type;
-  typedef Sign        result_type;
-
-
   Sign operator()(const Site_2& p, const Site_2& q,
                   const Site_2& r, const Site_2& t) const
   {

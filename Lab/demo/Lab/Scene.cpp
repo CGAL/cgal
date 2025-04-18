@@ -1164,7 +1164,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     return true;
 }
 
-//todo : if a group is selected, don't treat it's children.
+//todo : if a group is selected, don't treat its children.
 bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
 {
   QVector<int> group_found;

@@ -264,7 +264,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * If the type C_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
@@ -319,7 +319,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * If the type C_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
@@ -372,7 +372,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * If the type Igt2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
@@ -972,7 +972,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * If the type Nxi_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).

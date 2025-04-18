@@ -1,0 +1,12 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+EXTRACT_PRIVATE = NO
+
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Triangulations on Hyperbolic Surfaces"
+
+IMAGE_PATH  +=  ${CGAL_PACKAGE_DOC_DIR}/fig/cover.svg
+
+# custom options for this package
+#EXTRACT_ALL                =  true
+#HIDE_UNDOC_MEMBERS         =  true
+#HIDE_UNDOC_CLASSES         =  true

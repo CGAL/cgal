@@ -1,0 +1,101 @@
+/// \defgroup PkgIsosurfacing3Ref 3D Isosurfacing Reference
+/// \defgroup PkgIsosurfacing3Concepts Concepts
+/// \ingroup PkgIsosurfacing3Ref
+
+/// \defgroup IS_Partitions_grp Space Partitioning Data Structures
+/// \ingroup PkgIsosurfacing3Ref
+///
+/// This group encapsulates classes that represent a spatial discretization of space,
+/// which will be the scaffolding for the construction of the isosurface.
+
+/// \defgroup IS_Partitions_helpers_grp Space Partitioning Data Structures Helpers
+/// \ingroup IS_Partitions_grp
+
+/// \defgroup IS_Fields_helpers_grp Value and Gradient Fields Helpers
+/// \ingroup PkgIsosurfacing3Ref
+///
+/// The following classes and functions are parameters or template parameters of value and gradient fields.
+
+/// \defgroup IS_Fields_grp Value and Gradient Fields
+/// \ingroup PkgIsosurfacing3Ref
+///
+/// The following classes represent the data that defines the isosurface.
+
+/// \defgroup IS_Domains_grp Isosurfacing Domains
+/// \ingroup PkgIsosurfacing3Ref
+///
+/// This group encapsulates the classes that can be used to represent a complete domain (partition
+/// and fields), to be used by the isosurfacing methods of this package.
+
+/// \defgroup IS_Domain_helpers_grp Isosurfacing Domain Helpers
+/// \ingroup IS_Domains_grp
+
+/// \defgroup IS_Methods_grp Isosurfacing Methods
+/// \ingroup PkgIsosurfacing3Ref
+
+/// \defgroup IS_IO_functions_grp I/O Functions
+/// \ingroup PkgIsosurfacing3Ref
+
+/*!
+\addtogroup PkgIsosurfacing3Ref
+\cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
+\cgalPkgPicture{isosurfacing3_ico.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Mael Rouxel-Labbé, Julian Stahl, Daniel Zint, and Pierre Alliez}
+\cgalPkgDesc{This package implements several grid-based isosurfacing algorithms (Marching Cubes,
+its topologically correct variant, and Dual Contouring) that enable generating surface meshes
+from 3D value and gradient fields. The methods are generic with respect to the definition
+of the grid and the fields, and all methods offer parallel implementations.
+The output is a polygon soup (i.e., a container of 3D point coordinates and indexed faces).}
+\cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.1}
+\cgalPkgBib{cgal:sz-mc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `IsosurfacingTraits_3`
+- `IsosurfacingPartition_3`
+- `IsosurfacingValueField_3`
+- `IsosurfacingGradientField_3`
+- `IsosurfacingInterpolationScheme_3`
+- `IsosurfacingEdgeIntersectionOracle_3`
+- `IsosurfacingDomain_3`
+- `IsosurfacingDomainWithGradient_3`
+
+\cgalCRPSection{Space Partitioning Data Structures}
+- `CGAL::Isosurfacing::Cartesian_grid_3`
+
+\cgalCRPSection{Value and Gradient Fields}
+- `CGAL::Isosurfacing::Value_function_3`
+- `CGAL::Isosurfacing::Gradient_function_3`
+- `CGAL::Isosurfacing::Finite_difference_gradient_3`
+- `CGAL::Isosurfacing::Interpolated_discrete_values_3`
+- `CGAL::Isosurfacing::Interpolated_discrete_gradients_3`
+- `CGAL::Isosurfacing::Trilinear_interpolation`
+
+\cgalCRPSection{Isosurfacing Domains Helpers}
+- `CGAL::Isosurfacing::Dichotomy_edge_intersection`
+- `CGAL::Isosurfacing::Linear_interpolation_edge_intersection`
+
+\cgalCRPSection{Isosurfacing Domains}
+- `CGAL::Isosurfacing::Marching_cubes_domain_3`
+- `CGAL::Isosurfacing::Dual_contouring_domain_3`
+- `CGAL::Isosurfacing::create_marching_cubes_domain_3()`
+- `CGAL::Isosurfacing::create_dual_contouring_domain_3()`
+
+\cgalCRPSection{Isosurfacing Methods}
+
+- `CGAL::Isosurfacing::marching_cubes()`
+- `CGAL::Isosurfacing::dual_contouring()`
+
+\cgalCRPSection{I/O}
+- `CGAL::Isosurfacing::IO::convert_image_to_grid()`
+- `CGAL::Isosurfacing::IO::convert_grid_to_image()`
+*/
