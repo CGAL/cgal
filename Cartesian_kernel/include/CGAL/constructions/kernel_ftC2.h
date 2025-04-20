@@ -338,47 +338,49 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC2(const FT &px, const FT &py,
                  const FT &qx, const FT &qy,
                  const FT &rx, const FT &ry,
-                 FT &x, FT &y )
+                 FT &num, FT &den)
 {
-  circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
-  FT r2 = CGAL_NTS square(x) + CGAL_NTS square(y);
-  x += px;
-  y += py;
-  return r2;
-}
+  // Translate r to origin to simplify the expression.
+  FT prx = px - rx;
+  FT pry = py - ry;
+  FT pr2 = CGAL_NTS square(prx) + CGAL_NTS square(pry);
+  FT qrx = qx - rx;
+  FT qry = qy - ry;
+  FT qr2 = CGAL_NTS square(qrx) + CGAL_NTS square(qry);
 
-template < class FT >
-CGAL_KERNEL_MEDIUM_INLINE
-FT
-squared_radiusC2(const FT &px, const FT &py,
-                 const FT &qx, const FT &qy,
-                 const FT &rx, const FT &ry)
-{
-  FT x, y;
-  circumcenter_translateC2<FT>(qx-px, qy-py, rx-px, ry-py, x, y);
-  return CGAL_NTS square(x) + CGAL_NTS square(y);
+  FT num_x = determinant(qry, qr2,
+                         pry, pr2);
+  FT num_y = determinant(qrx, qr2,
+                         prx, pr2);
+  FT dden = determinant(qrx, qry,
+                        prx, pry);
+
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template < class FT >
 inline
 FT
-squared_distanceC2( const FT &px, const FT &py,
-                    const FT &qx, const FT &qy)
+squared_distanceC2(const FT &px, const FT &py,
+                   const FT &qx, const FT &qy)
 {
   return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy);
 }
 
 template < class FT >
 inline
-FT
+void
 squared_radiusC2(const FT &px, const FT &py,
-                 const FT &qx, const FT &qy)
+                 const FT &qx, const FT &qy,
+                 FT &num, FT &den)
 {
-  return squared_distanceC2(px, py,qx, qy) / 4;
+  num = squared_distanceC2(px, py,qx, qy);
+  den = 4;
 }
 
 template < class FT >

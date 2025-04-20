@@ -34,6 +34,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;
+  using CartesianKernelFunctors::Compare_squared_radius_2;
   using CartesianKernelFunctors::Compare_squared_radius_3;
   using CartesianKernelFunctors::Collinear_3;
   using CartesianKernelFunctors::Construct_line_3;
