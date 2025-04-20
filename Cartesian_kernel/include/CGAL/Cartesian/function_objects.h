@@ -3177,6 +3177,10 @@ public:
     Point_2
     operator()(const Triangle_2& t, const Point_2& p) const
     { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
+
+    const Point_2&
+    operator()(const Point_2& p, const Point_2& q) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(p, q, K()); }
   };
 
 

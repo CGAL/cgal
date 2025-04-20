@@ -2948,6 +2948,14 @@ namespace CommonKernelFunctors {
       typename K::Construct_point_2 construct_point_2;
       return construct_point_2(a + scaled_vector(d, proj));
     }
+
+    const typename K::Point_2&
+    operator()(const typename K::Point_2& point,
+               const typename K::Point_2&,
+               const K&)
+    {
+      return point;
+    }
   };
 
   template <typename K>
