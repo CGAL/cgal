@@ -139,7 +139,7 @@ public:
         circumcenter_ = new Point(this->Cb::circumcenter(gt));
       } else {
         CGAL_expensive_assertion(
-          this->Cb::circumcenter(gt) == *circumcenter);
+          this->Cb::circumcenter(gt) == *circumcenter_);
       }
 
       return *circumcenter_;
