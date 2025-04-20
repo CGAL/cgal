@@ -4093,15 +4093,25 @@ public:
   typedef typename K::Point_2                  Point_2;
   typedef typename K::FT                       FT;
 
-  Point_2 operator() (const Weighted_point_2 & p,
-                          const Weighted_point_2 & q,
-                          const Weighted_point_2 & r) const
+  Point_2 operator()(const Weighted_point_2& p,
+                     const Weighted_point_2& q,
+                     const Weighted_point_2& r) const
   {
     CGAL_kernel_precondition( ! collinear(p.point(), q.point(), r.point()) );
     FT x,y;
     weighted_circumcenterC2(p.x(),p.y(),p.weight(),
                             q.x(),q.y(),q.weight(),
                             r.x(),r.y(),r.weight(),x,y);
+    return Point_2(x,y);
+  }
+
+  Point_2 operator()(const Weighted_point_2& p,
+                     const Weighted_point_2& q) const
+  {
+    CGAL_kernel_precondition( ! equal(p.point(), q.point()) );
+    FT x,y;
+    weighted_circumcenterC2(p.x(),p.y(),p.weight(),
+                            q.x(),q.y(),q.weight(),x,y);
     return Point_2(x,y);
   }
 };
