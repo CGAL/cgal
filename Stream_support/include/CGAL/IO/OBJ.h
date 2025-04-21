@@ -41,14 +41,20 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
+template <typename PointRange,
+          typename PolygonRange,
+          typename VertexNormalOutputIterator,
+          typename VertexTextureOutputIterator,
+          typename VertexNormalIndexOutputIterator,
+          typename VertexTextureIndexOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              VertexNormalOutputIterator,
-              VertexTextureOutputIterator,
-              const bool verbose = false)
-{
+              VertexNormalOutputIterator vn_out,
+              VertexTextureOutputIterator vt_out,
+              VertexNormalIndexOutputIterator vn_id_out,
+              VertexTextureIndexOutputIterator vt_id_out,
+              const bool verbose = false) {
   if(!is.good())
   {
     if(verbose)
@@ -57,12 +63,18 @@ bool read_OBJ(std::istream& is,
   }
 
   typedef typename boost::range_value<PointRange>::type                               Point;
+  typedef typename Kernel::Point_2                                                    Texture;
+  typedef typename Kernel::Vector_3                                                   Normal;
+  typedef typename Kernel::FT                                                         FT;
 
   set_ascii_mode(is); // obj is ASCII only
 
   int mini(1), maxi(-1);
   std::string s;
   Point p;
+
+  int normal_count = 0;
+  int texture_count = 0;
 
   std::string line;
   bool tex_found(false), norm_found(false);
@@ -107,10 +119,20 @@ bool read_OBJ(std::istream& is,
     else if(s == "vt")
     {
       tex_found = true;
+      texture_count++;
+      double u = 0.0, v = 0.0;
+      iss >> u >> v;
+      *vt_out++ = Texture(FT(u), FT(v));
     }
     else if(s == "vn")
     {
       norm_found = true;
+      normal_count++;
+      double nx = 0.0;
+      double ny = 0.0;
+      double nz = 0.0;
+      iss >> nx >> ny >> nz;
+      *vn_out++ = Normal(FT(nx), FT(ny), FT(nz));
     }
     else if(s == "f")
     {
@@ -118,6 +140,15 @@ bool read_OBJ(std::istream& is,
       polygons.emplace_back();
       while(iss >> i)
       {
+        std::istringstream token_stream(vertex_token);
+        std::string v_str, vt_str, vn_str;
+
+        std::getline(token_stream, v_str, '/');
+        std::getline(token_stream, vt_str, '/');
+        std::getline(token_stream, vn_str, '/');
+
+        int i = std::stoi(v_str);
+
         if(i < 1)
         {
           const std::size_t n = polygons.back().size();
@@ -135,11 +166,17 @@ bool read_OBJ(std::istream& is,
             maxi = i-1;
         }
 
-        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex, but be tolerant about which whitespace is used
-        if (!std::isspace(iss.peek())) {
-          std::string ignoreme;
-          iss >> ignoreme;
+        // We read vt and vn in the given format and then we move on to next vertex
+        // Texture index
+        if(!vt_str.empty()) {
+          int vti = std::stoi(vt_str);
+          *vt_id_out++ = (vti < 0) ? static_cast<int>(texture_count) + vti : vti - 1;
+        }
+
+        // Normal index
+        if(!vn_str.empty()) {
+          int vni = std::stoi(vn_str);
+          *vn_id_out++ = (vni < 0) ? static_cast<int>(normal_count) + vni : vni - 1;
         }
       }
 
@@ -244,9 +281,8 @@ bool read_OBJ(std::istream& is,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return internal::read_OBJ(is, points, polygons,
-                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                            verbose);
+  return internal::read_OBJ(is, points, polygons, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), verbose);
 }
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
