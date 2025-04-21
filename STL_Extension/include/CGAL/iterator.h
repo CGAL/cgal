@@ -1371,7 +1371,7 @@ public:
     return *this;
   }
 
-  template <typename T>
+  template <typename T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, Self>>>
   Self& operator=(const T& t) {
     this->assign(*this, t);
     return *this;
