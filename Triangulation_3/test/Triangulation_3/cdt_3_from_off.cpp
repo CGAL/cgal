@@ -25,7 +25,11 @@
 #include <fstream>
 #include <string>
 #include <string_view>
+
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #include <ranges>
+#endif
+
 #include <optional>
 #include <chrono>
 
@@ -508,9 +512,19 @@ int go(Mesh mesh, CDT_options options) {
     {
       std::ofstream dump(options.output_filename);
       dump.precision(17);
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
       cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_facet_constrained(f);
       }));
+#else
+      auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
+      auto it_end = cdt.finite_facets_end();
+      cdt.write_facets(dump, cdt,
+                        CGAL::make_range(
+                          boost::make_filter_iterator(is_facet_constrained,cdt.finite_facets_begin(), it_end),
+                          boost::make_filter_iterator(is_facet_constrained,it_end, it_end)));
+
+#endif
     }
     CGAL_CDT_3_TASK_END(output_task_handle);
   };
@@ -554,8 +568,20 @@ int go(Mesh mesh, CDT_options options) {
   start_time = std::chrono::high_resolution_clock::now();
   CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
   {
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
     auto [min_sq_distance, min_edge] = (std::ranges::min)(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
+#else
+    auto trsf = [&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); };
+    auto min_p = trsf(*cdt.finite_edges_begin());
+    for (auto ite=cdt.finite_edges_begin(); ite!=cdt.finite_edges_end(); ++ite)
+    {
+      auto p = trsf(*ite);
+      if (p < min_p)
+        p = min_p;
+    }
+    auto [min_sq_distance, min_edge]  = min_p;
+#endif
     auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
     auto vertices_of_min_edge = cdt.vertices(min_edge);
     if(!options.quiet) {
@@ -654,10 +680,17 @@ int go(Mesh mesh, CDT_options options) {
         for(auto& polyline: polylines) {
           assert(polyline.front() == polyline.back());
           polyline.pop_back();
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
           face_index = cdt.insert_constrained_face(
             polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
             false,
             face_index ? *face_index : -1);
+#else
+          face_index = cdt.insert_constrained_face( CGAL::Iterator_range(CGAL::make_transform_iterator_from_property_map(polyline.begin(), tr_vertex_pmap),
+                                                                         CGAL::make_transform_iterator_from_property_map(polyline.end(), tr_vertex_pmap)),
+            false,
+            face_index ? *face_index : -1);
+#endif
         }
       }
     } else {

@@ -480,7 +480,7 @@ The indexing of the vertices in the
 full cell is such that, if `f` was a full cell of maximal dimension in the
 initial complex, then `(f,v)`, in this order, is the corresponding full cell
 in the updated triangulation. A handle to `v` is returned
-(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
+(see \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre
 If the current dimension is -2 (empty triangulation), then `star`
 can be omitted (it is ignored), otherwise
@@ -541,7 +541,7 @@ void clear();
 /*!
 Contracts the
 `Face f` to a single vertex. Returns a handle to that vertex
-(see Figure \cgalFigureRef{triangulationfigcollapseface}).
+(see \cgalFigureRef{triangulationfigcollapseface}).
 \pre The boundary of the full cells incident to `f`
 is a topological sphere of dimension
 `tds`.`current_dimension()`-1).
@@ -561,7 +561,7 @@ This method does exactly the opposite of
 full cells not containing `star` are removed,
 full cells containing `star` but not `v` lose vertex `star`,
 full cells containing `star` and `v` lose vertex `v`
-(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
+(see \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation
 and `current_dimension() != -2`.

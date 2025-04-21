@@ -193,14 +193,14 @@ public:
 
   Bare_point canonicalize_point(const Bare_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // @fixme it might be dangerous to call robust_canonicalize() without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // 1-cover, so we can take a const&
@@ -430,9 +430,8 @@ public:
     typename Geom_traits::Compute_squared_distance_3 compute_sd =
       geom_traits().compute_squared_distance_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
 
@@ -474,8 +473,7 @@ public:
     typename Geom_traits::Construct_point_3 cp =
       geom_traits().construct_point_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
     Offset null_offset(0,0,0);
@@ -550,10 +548,9 @@ public:
       geom_traits().compare_power_distance_3_object();
 
     // Compute the offsets that would bring p, q, and r into the canonical domain
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), geom_traits());
+    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), geom_traits());
 
     // To compare pp(p, q) to pp(p, r), we first need to know the best offsets that minimize these distances
     auto get_offset_minimizing_power_product = [&](const Weighted_point& wp,
