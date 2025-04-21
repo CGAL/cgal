@@ -1,17 +1,17 @@
 /*!
-\defgroup PkgCT_3Ref 3D Constrained Triangulations Reference
+\defgroup PkgConstrainedTriangulation3Ref 3D Constrained Triangulations Reference
 
-\defgroup PkgCT_3Concepts Concepts
-\ingroup PkgCT_3Ref
+\defgroup PkgConstrainedTriangulation3Concepts Concepts
+\ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgCT_3Functions Function Templates
-\ingroup PkgCT_3Ref
+\defgroup PkgConstrainedTriangulation3Functions Function Templates
+\ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgCT_3Classes Classes and Class Templates
-\ingroup PkgCT_3Ref
+\defgroup PkgConstrainedTriangulation3Classes Classes and Class Templates
+\ingroup PkgConstrainedTriangulation3Ref
 
-\addtogroup PkgCT_3Ref
-\cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
+\addtogroup PkgConstrainedTriangulation3Ref
+\cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
 \cgalPkgPicture{cdt3-small.png}
 
 \cgalPkgSummaryBegin
@@ -22,7 +22,7 @@ The algorithm builds such a triangulation. The constrained triangulation does no
 and it may be necessary
 to add Steiner points to the PLC to make it tetrahedralizable.
 }
-\cgalPkgManuals{Chapter_CT_3,PkgCT_3Ref}
+\cgalPkgManuals{Chapter_CT_3,PkgConstrainedTriangulation3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

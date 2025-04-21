@@ -49,14 +49,6 @@ public:
 
   using Base::operator(); // for K::Weighted_point_3 to Point_3
 
-  template<typename F>
-  struct result : Base::template result<F> {};
-
-  template<typename F>
-  struct result<F(Weighted_point_3)> {
-    typedef Point_3 type;
-  };
-
   Point_3 operator()(const Weighted_point_3& wp) const {
     return std::make_pair(operator()(wp.first), wp.second /* offset */);
   }
@@ -75,8 +67,6 @@ class Functor_with_weighted_point_offset_pair_adaptor
   typedef typename Traits::Weighted_point_3       Weighted_point_3;
 
 public:
-  typedef typename Functor::result_type result_type;
-
   Functor_with_weighted_point_offset_pair_adaptor (const Functor & functor)
     : Functor_(functor)
   { }
@@ -84,54 +74,54 @@ public:
 public:
   using Functor::operator();
 
-  result_type operator() (const Point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2) const
+  decltype(auto) operator()(const Point_3& p0, const Weighted_point_3& p1,
+                            const Weighted_point_3& p2) const
   {
     return operator()(p0.first, p1.first, p2.first,
                       p0.second, p1.second, p2.second);
   }
 
   // bare points
-  result_type operator()(const Point_3& p0, const Point_3& p1) const {
+  decltype(auto) operator()(const Point_3& p0, const Point_3& p1) const {
     return operator()(p0.first, p1.first,
                       p0.second, p1.second);
   }
-  result_type operator()(const Point_3& p0, const Point_3& p1,
-                         const Point_3& p2) const {
+  decltype(auto) operator()(const Point_3& p0, const Point_3& p1,
+                            const Point_3& p2) const {
     return operator()(p0.first, p1.first, p2.first,
                       p0.second, p1.second, p2.second);
   }
-  result_type operator()(const Point_3& p0, const Point_3& p1,
-                         const Point_3& p2, const Point_3& p3) const {
+  decltype(auto) operator()(const Point_3& p0, const Point_3& p1,
+                            const Point_3& p2, const Point_3& p3) const {
     return operator()(p0.first, p1.first, p2.first, p3.first,
                       p0.second, p1.second, p2.second, p3.second);
   }
-  result_type operator()(const Point_3& p0, const Point_3& p1,
-                         const Point_3& p2, const Point_3& p3, const Point_3& p4) const {
+  decltype(auto) operator()(const Point_3& p0, const Point_3& p1,
+                            const Point_3& p2, const Point_3& p3, const Point_3& p4) const {
     return operator()(p0.first, p1.first, p2.first, p3.first, p4.first,
                       p0.second, p1.second, p2.second, p3.second, p4.second);
   }
 
   // weighted points
-  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1) const
+  decltype(auto) operator()(const Weighted_point_3& p0, const Weighted_point_3& p1) const
   {
     return operator()(p0.first, p1.first, p0.second, p1.second);
   }
-  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2) const
+  decltype(auto) operator()(const Weighted_point_3& p0, const Weighted_point_3& p1,
+                            const Weighted_point_3& p2) const
   {
     return operator()(p0.first, p1.first, p2.first,
                       p0.second, p1.second, p2.second);
   }
-  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2, const Weighted_point_3& p3) const
+  decltype(auto) operator()(const Weighted_point_3& p0, const Weighted_point_3& p1,
+                            const Weighted_point_3& p2, const Weighted_point_3& p3) const
   {
     return operator()(p0.first, p1.first, p2.first, p3.first,
                       p0.second, p1.second, p2.second, p3.second);
   }
-  result_type operator() (const Weighted_point_3& p0, const Weighted_point_3& p1,
-                          const Weighted_point_3& p2, const Weighted_point_3& p3,
-                          const Weighted_point_3& p4) const
+  decltype(auto) operator()(const Weighted_point_3& p0, const Weighted_point_3& p1,
+                            const Weighted_point_3& p2, const Weighted_point_3& p3,
+                            const Weighted_point_3& p4) const
   {
     return operator()(p0.first, p1.first, p2.first, p3.first, p4.first,
                       p0.second, p1.second, p2.second, p3.second, p4.second);

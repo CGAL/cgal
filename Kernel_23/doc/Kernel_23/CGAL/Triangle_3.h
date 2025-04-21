@@ -44,7 +44,7 @@ Test for inequality.
 bool operator!=(const Triangle_3<Kernel> &t2) const;
 
 /*!
-returns the i'th vertex modulo 3 of `t`.
+returns the i-th vertex modulo 3 of `t`.
 \cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;

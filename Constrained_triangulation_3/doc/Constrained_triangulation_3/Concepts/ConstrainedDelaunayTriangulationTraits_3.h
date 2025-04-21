@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgCT_3Concepts
+\ingroup PkgConstrainedTriangulation3Concepts
 \cgalConcept
 
 The concept `ConformingConstrainedDelaunayTriangulationTraits_3` specifies the requirements
