@@ -1136,14 +1136,14 @@ protected:
 
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[bufn].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
@@ -1156,14 +1156,14 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[bufn].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
@@ -1176,14 +1176,14 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[bufn].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
@@ -1196,14 +1196,14 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[bufn].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
@@ -1219,21 +1219,21 @@ protected:
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
     rendering_program_face.enableAttributeArray("a_Pos");
     rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(normals.data(), normals.size()*sizeof(float));
+    buffers[bufn].allocate(normals.data(), static_cast<int>(normals.size()*sizeof(float)));
     rendering_program_face.enableAttributeArray("a_Normal");
     rendering_program_face.setAttributeBuffer("a_Normal",GL_FLOAT,0,3);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
+    buffers[bufn].allocate(colors.data(), static_cast<int>(colors.size()*sizeof(float)));
     rendering_program_face.enableAttributeArray("a_Color");
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
