@@ -1304,20 +1304,36 @@ struct Output_to_nth_of_tuple_of_iterators {
   }
 };
 
+template <bool drop_value>
+struct Drop_output_iterator
+{
+  template <typename Tuple, typename T>
+  static void assign(Tuple&, const T&) {
+    // Drop the value... Only if `drop_value==true`.
+  }
+};
+
+template <>
+struct Drop_output_iterator<false>
+{
+  // fake assign, declared but not defined
+  template <typename Tuple>
+  static void assign(Tuple& tuple, Null_tag);
+};
+
 template <typename Values, typename OutputIterators, typename Indices, bool>
 struct Dispatch_output_iterator_aux;
 
-template <typename... V, typename... O, std::size_t... Indices, bool or_drop>
-struct Dispatch_output_iterator_aux<std::tuple<V...>, std::tuple<O...>, std::index_sequence<Indices...>, or_drop>
-    : public Output_to_nth_of_tuple_of_iterators<Indices, V, O>...
+template <typename... V, typename... O, std::size_t... Indices, bool drop_unknown_value_types>
+struct Dispatch_output_iterator_aux<std::tuple<V...>,
+                                    std::tuple<O...>,
+                                    std::index_sequence<Indices...>,
+                                    drop_unknown_value_types>
+    : public Output_to_nth_of_tuple_of_iterators<Indices, V, O>...,
+      public Drop_output_iterator<drop_unknown_value_types>
 {
   using Output_to_nth_of_tuple_of_iterators<Indices, V, O>::assign...;
-
-  template <typename Tuple, typename T>
-  static std::enable_if_t<or_drop, void>
-  assign(Tuple&, const T& ) {
-    // Drop the value... Only if `or_drop==true`.
-  }
+  using Drop_output_iterator<drop_unknown_value_types>::assign;
 
   template <typename Tuple>
   void tuple_dispatch(const Tuple& t) {
@@ -1328,10 +1344,10 @@ struct Dispatch_output_iterator_aux<std::tuple<V...>, std::tuple<O...>, std::ind
   }
 };
 
-template < typename... V, typename... O, bool or_drop >
-class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...>, or_drop >
+template < typename... V, typename... O, bool drop_unknown_value_types >
+class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types >
   : public Dispatch_output_iterator_aux< std::tuple<V...>, std::tuple<O...>,
-                                         std::make_index_sequence<sizeof...(O)>, or_drop >
+                                         std::make_index_sequence<sizeof...(O)>, drop_unknown_value_types >
   , public std::tuple<O...>
 {
   static_assert(sizeof...(V) == sizeof...(O),
@@ -1340,21 +1356,21 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...>, or_drop >
   static const int size = sizeof...(V);
 
 public:
+  using Iterator_tuple = std::tuple<O...>;
+  using Value_type_tuple = std::tuple<V...>;
 
-  typedef std::tuple<O...>               Iterator_tuple;
-  typedef std::tuple<V...>               Value_type_tuple;
-
-  typedef std::output_iterator_tag  iterator_category;
-  typedef void                      value_type;
-  typedef void                      difference_type;
-  typedef void                      pointer;
-  typedef void                      reference;
+  using iterator_category = std::output_iterator_tag;
+  using value_type = void;
+  using difference_type = void;
+  using pointer = void;
+  using reference = void;
 
 private:
-
-  typedef Dispatch_output_iterator Self;
-  typedef Dispatch_output_iterator_aux< std::tuple<V...>, std::tuple<O...>,
-                                        std::index_sequence_for<O...>, or_drop > Base;
+  using Self = Dispatch_output_iterator;
+  using Base = Dispatch_output_iterator_aux<std::tuple<V...>,
+                                            std::tuple<O...>,
+                                            std::index_sequence_for<O...>,
+                                            drop_unknown_value_types>;
 
 public:
 
