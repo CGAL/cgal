@@ -1316,9 +1316,9 @@ struct Drop_output_iterator
 template <>
 struct Drop_output_iterator<false>
 {
-  // fake assign, declared but not defined
+  // fake assign, declared but deleted
   template <typename Tuple>
-  static void assign(Tuple& tuple, Null_tag);
+  static void assign(Tuple& tuple, Null_tag) = delete;
 };
 
 template <typename Values, typename OutputIterators, typename Indices, bool>
@@ -1350,8 +1350,9 @@ class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...>, drop_unknow
                                          std::make_index_sequence<sizeof...(O)>, drop_unknown_value_types >
   , public std::tuple<O...>
 {
-  static_assert(sizeof...(V) == sizeof...(O),
-                "The number of explicit template parameters has to match the number of arguments");
+  static_assert(
+      sizeof...(V) == sizeof...(O),
+      "Dispatch_output_iterator: The number of value types (V...) must match the number of output iterators (O...).");
 
   static const int size = sizeof...(V);
 
@@ -1387,7 +1388,7 @@ public:
     return *this;
   }
 
-  template <typename T, typename = std::enable_if_t<!std::is_same_v<std::decay_t<T>, Self>>>
+  template <typename T, typename = std::enable_if_t<!std::is_convertible_v<T, Self>>>
   Self& operator=(const T& t) {
     this->assign(*this, t);
     return *this;
@@ -1415,8 +1416,8 @@ public:
 
   Self& operator=(const std::tuple<V...>& t)
   {
-    tuple_dispatch(t);
-    return *this;
+      this->tuple_dispatch(t);
+      return *this;
   }
 
   operator std::tuple<O&...>()
