@@ -375,12 +375,12 @@ public:
     Vertex_handle insert_in_face(const Face &); /* Concept */
     Vertex_handle insert_in_facet(const Facet &); /* Concept */
     template< typename Forward_iterator >
-    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, Facet); /* Concept */
+    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, const Facet&); /* Concept */
     template< typename Forward_iterator, typename OutputIterator >
-    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, Facet, OutputIterator); /* Concept */
+    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, const Facet&, OutputIterator); /* Concept */
 
     template< typename OutputIterator >
-    Full_cell_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
+    Full_cell_handle insert_in_tagged_hole(Vertex_handle, const Facet&, OutputIterator);
 
     Vertex_handle insert_increase_dimension(Vertex_handle=Vertex_handle()); /* Concept */
 
@@ -932,7 +932,7 @@ template <class Dim, class Vb, class Fcb >
 template < typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Full_cell_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_tagged_hole(Vertex_handle v, Facet f,
+::insert_in_tagged_hole(Vertex_handle v, const Facet& f,
                         OutputIterator new_full_cells)
 {
     CGAL_assertion_msg(is_boundary_facet(f), "starting facet should be on the hole boundary");
@@ -1034,7 +1034,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator, typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f,
+::insert_in_hole(Forward_iterator start, Forward_iterator end, const Facet& f,
                  OutputIterator out) /* Concept */
 {
     CGAL_expensive_precondition(
@@ -1053,7 +1053,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f) /* Concept */
+::insert_in_hole(Forward_iterator start, Forward_iterator end, const Facet& f) /* Concept */
 {
     Emptyset_iterator out;
     return insert_in_hole(start, end, f, out);
