@@ -138,7 +138,7 @@ protected: // DATA MEMBERS
     int dmax_, dcur_; // dimension of the current triangulation
     Vertex_container  vertices_;  // list of all vertices
     Full_cell_container full_cells_; // list of all full cells
-
+    mutable std::vector<Full_cell_handle> visited;
 private:
 
     void clean_dynamic_memory()
@@ -667,8 +667,10 @@ Triangulation_data_structure<Dim, Vb, Fcb>
                     TraversalPredicate & tp,
                     OutputIterator & out) const /* Concept */
 {
+    CGAL_precondition(visited.empty());
     std::queue<Full_cell_handle> queue;
     set_visited(start, true);
+    visited.push_back(start);
     queue.push(start);
     const int cur_dim = current_dimension();
     Facet ft;
@@ -684,6 +686,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             if( ! get_visited(n) )
             {
                 set_visited(n, true);
+                visited.push_back(n);
                 if( tp(Facet(s, i)) )
                     queue.push(n);
                 else
@@ -691,7 +694,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             }
         }
     }
-    clear_visited_marks(start);
+    for(auto fch : visited)
+        set_visited(fch, false);
+    visited.clear();
     return ft;
 }
 
