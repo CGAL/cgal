@@ -9,7 +9,13 @@
 #include <vector>
 
 typedef CGAL::Epick_d< CGAL::Dimension_tag<5> >  K;
-typedef CGAL::Triangulation<K>                        Triangulation;
+typedef CGAL::Triangulation_vertex<K>                                                     Vertex;
+typedef CGAL::Triangulation_ds_full_cell<void,CGAL::TDS_full_cell_mirror_storage_policy>  DS_full_cell;
+typedef CGAL::Triangulation_full_cell<K,CGAL::No_full_cell_data, DS_full_cell>            Full_cell;
+typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<5>,
+                                            Vertex,
+                                            Full_cell>                                    TDS;
+typedef CGAL::Triangulation<K,TDS>                                                        Triangulation;
 
 
 int main()
