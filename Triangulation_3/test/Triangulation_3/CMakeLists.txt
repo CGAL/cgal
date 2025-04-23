@@ -66,4 +66,3 @@ if(CGAL_ENABLE_TESTING)
     "execution   of  test_delaunay_3"
     PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
 endif()
-
