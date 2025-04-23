@@ -35,11 +35,13 @@ public:
              const Point_5 &r, const Point_5 &s,
              const Point_5 &t, const Point_5 &u) const
   {
-      CGAL_BRANCH_PROFILER_5("semi-static failures/attempts/calls to   : Orientation_5", tmp);
 
-      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4;
+    // return Base::operator()(p, q, r, s, t, u);
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_5", tmp);
 
-      if (fit_in_double(p.c0(), po) && fit_in_double(p.c1(), p1) &&
+      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4, t0, t1, t2, t3, t4, u0, u1, u2, u3, u4;
+
+      if (fit_in_double(p.c0(), p0) && fit_in_double(p.c1(), p1) &&
           fit_in_double(p.c2(), p2) && fit_in_double(p.c3(), p3) &&
           fit_in_double(p.c4(), p4) &&
           fit_in_double(q.c0(), q0) && fit_in_double(q.c1(), q1) &&
@@ -50,8 +52,15 @@ public:
           fit_in_double(r.c4(), r4) &&
           fit_in_double(s.c0(), s0) && fit_in_double(s.c1(), s1) &&
           fit_in_double(s.c2(), s2) && fit_in_double(s.c3(), s3) &&
-          fit_in_double(s.c4(), s4))
+          fit_in_double(s.c4(), s4) &&
+          fit_in_double(t.c0(), t0) && fit_in_double(t.c1(), t1) &&
+          fit_in_double(t.c2(), t2) && fit_in_double(t.c3(), t3) &&
+          fit_in_double(t.c4(), t4) &&
+          fit_in_double(u.c0(), u0) && fit_in_double(u.c1(), u1) &&
+          fit_in_double(u.c2(), u2) && fit_in_double(u.c3(), u3) &&
+          fit_in_double(u.c4(), u4))
       {
+        Orientation should_be = Base::operator()(p, q, r, s, t, u);
         double pq0;
         pq0 = (q0 - p0);
         double pq1;
@@ -252,21 +261,20 @@ public:
             eps = (2.22889232457534740153e-13 * ((((max1 * max2) * max3) * max4) * max5));
             if( (det > eps) )
             {
-                result = POSITIVE;
+              if(should_be != POSITIVE){
+                std::cout << "result should not be POSITIVE" << std::endl;
+              }
+                return POSITIVE;
             }
-            else
+
+            if( (det < -eps) )
             {
-                if( (det < -eps) )
-                {
-                    result = NEGATIVE;
-                }
-                else
-                {
-                    return Base::operator()(p, q, r, s, t, u);
-                }
+              if(should_be != NEGATIVE){
+                std::cout << "result should not be NEGATIVE" << std::endl;
+              }
+                return NEGATIVE;
             }
         }
-        return result;
       }
       return Base::operator()(p, q, r, s, t, u);
   }
