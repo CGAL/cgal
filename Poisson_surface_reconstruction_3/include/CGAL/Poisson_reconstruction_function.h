@@ -598,24 +598,24 @@ public:
   }
 #endif
 
-  boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
+  std::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
     Cell_handle& hint = get_hint();
     hint = m_tr->locate(p, hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
-      return boost::make_tuple(hint->vertex((i+1)&3)->f(),
-                               hint, true);
+      return std::make_tuple(hint->vertex((i+1)&3)->f(),
+                             hint, true);
     }
 
     FT a,b,c,d;
     barycentric_coordinates(p,hint,a,b,c,d);
-    return boost::make_tuple(a * hint->vertex(0)->f() +
-                             b * hint->vertex(1)->f() +
-                             c * hint->vertex(2)->f() +
-                             d * hint->vertex(3)->f(),
-                             hint, false);
+    return std::make_tuple(a * hint->vertex(0)->f() +
+                           b * hint->vertex(1)->f() +
+                           c * hint->vertex(2)->f() +
+                           d * hint->vertex(3)->f(),
+                           hint, false);
   }
   /// \endcond
 

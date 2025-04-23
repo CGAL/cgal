@@ -20,7 +20,7 @@ lot of cache misses, leading to non-optimal performance. This is the case
 for example when indices are stored inside the tree,
 or to a lesser extent when the points coordinates are stored
 in a dynamically allocated array (e.g., `Epick_d` with dynamic
-dimension) &mdash; we says "to a lesser extent" because the points
+dimension) &mdash; we say "to a lesser extent" because the points
 are re-created by the kd-tree in a cache-friendly order after its construction,
 so the coordinates are more likely to be stored in a near-optimal order on the
 heap. When `EnablePointsCache` is set to `Tag_true`, the points

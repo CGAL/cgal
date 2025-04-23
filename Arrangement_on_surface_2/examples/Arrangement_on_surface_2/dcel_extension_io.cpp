@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>

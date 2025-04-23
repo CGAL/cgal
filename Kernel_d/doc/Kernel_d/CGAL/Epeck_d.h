@@ -70,7 +70,7 @@ Point_d(double x0, double x1, ...);
 template<typename ForwardIterator>
 Point_d(ForwardIterator first, ForwardIterator end);
 
-/*! returns the i'th coordinate of a point.
+/*! returns the i-th coordinate of a point.
     \pre `i` is non-negative and less than the dimension. */
 double operator[](int i)const;
 

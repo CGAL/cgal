@@ -37,16 +37,13 @@ public:
   typedef Are_same_points_C2<K>        Are_same_points_2;
   typedef Are_same_segments_C2<K>      Are_same_segments_2;
 
-  typedef Boolean                      result_type;
-  struct argument_type {};
-
 private:
   Are_same_points_2    same_points;
   Are_same_segments_2  same_segments;
 
 public:
-  Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
-                       const Site_2& t, Sign sgn) const
+  Boolean operator()(const Site_2& q, const Site_2& s, const Site_2& r,
+                     const Site_2& t, Sign sgn) const
   {
     if ( t.is_segment() ) {
       return false;

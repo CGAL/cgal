@@ -53,9 +53,9 @@ int main (int, char**)
   map_added = pts.add_normal_map().second;
   assert (map_added);
   normal_map = pts.normal_map();
-  boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
+  std::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
   assert (map_added);
-  boost::tie (color_map, map_added) = pts.add_property_map<CGAL::IO::Color> ("color");
+  std::tie (color_map, map_added) = pts.add_property_map<CGAL::IO::Color> ("color");
   assert (map_added);
 
   for (std::size_t i = 0; i < 1000; ++ i)

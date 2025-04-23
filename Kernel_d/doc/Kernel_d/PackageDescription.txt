@@ -21,7 +21,6 @@
 
 /*!
 \addtogroup PkgKernelDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{dD Geometry Kernel,PkgKernelD}
 \cgalPkgPicture{hypercube.png}
 \cgalPkgSummaryBegin

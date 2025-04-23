@@ -23,11 +23,11 @@ template < typename K_base >
 class Side_of_oriented_circle_2
   : public K_base::Side_of_oriented_circle_2
 {
+  typedef typename K_base::Oriented_side                Oriented_side;
   typedef typename K_base::Point_2                      Point_2;
   typedef typename K_base::Side_of_oriented_circle_2    Base;
 
 public:
-
   Oriented_side operator()(const Point_2 &p, const Point_2 &q,
                            const Point_2 &r, const Point_2 &t) const
   {

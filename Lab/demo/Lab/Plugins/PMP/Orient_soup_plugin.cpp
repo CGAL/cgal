@@ -109,28 +109,28 @@ QList<QAction*> CGAL_Lab_orient_soup_plugin::actions() const {
       << actionClean;
 }
 
-void set_vcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
+void set_vcolors(SMesh* smesh, const std::vector<CGAL::IO::Color>& colors)
 {
   typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
-    smesh->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
+
+  SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors;
   bool created;
-  boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::IO::Color>("v:color",CGAL::IO::Color(0,0,0));
+  std::tie(vcolors, created) = smesh->add_property_map<vertex_descriptor,CGAL::IO::Color>("v:color",CGAL::IO::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
   for(vertex_descriptor vd : vertices(*smesh))
       vcolors[vd] = colors[color_id++];
 }
 
-void set_fcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
+void set_fcolors(SMesh* smesh, const std::vector<CGAL::IO::Color>& colors)
 {
   typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-    smesh->property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
+
+  SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors;
   bool created;
-   boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::IO::Color>("f:color",CGAL::IO::Color(0,0,0));
+  std::tie(fcolors, created) = smesh->add_property_map<face_descriptor,CGAL::IO::Color>("f:color",CGAL::IO::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
   for(face_descriptor fd : faces(*smesh))

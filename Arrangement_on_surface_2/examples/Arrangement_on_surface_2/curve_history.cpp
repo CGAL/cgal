@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/curve_history.cpp
 // Constructing an arrangement with curve history.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 

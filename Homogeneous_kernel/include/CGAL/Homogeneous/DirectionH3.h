@@ -66,10 +66,10 @@ public:
     : base( w >= RT(0) ? CGAL::make_array(x, y, z, w)
                        : CGAL::make_array<RT>(-x, -y, -z, -w) ) {}
 
-  bool  is_degenerate() const;
+  typename R::Boolean is_degenerate() const;
 
-  bool  operator==( const DirectionH3<R>& d) const;
-  bool  operator!=( const DirectionH3<R>& d) const;
+  typename R::Boolean operator==( const DirectionH3<R>& d) const;
+  typename R::Boolean operator!=( const DirectionH3<R>& d) const;
 
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
@@ -87,7 +87,7 @@ public:
 
 template <class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 DirectionH3<R>::operator==( const DirectionH3<R>& d) const
 {
   return ( ( hx()*d.hy() == hy()*d.hx() )
@@ -100,13 +100,13 @@ DirectionH3<R>::operator==( const DirectionH3<R>& d) const
 
 template <class R >
 inline
-bool
+typename R::Boolean
 DirectionH3<R>::operator!=( const DirectionH3<R>& d) const
 { return !operator==(d); }
 
 template <class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 DirectionH3<R>::is_degenerate() const
 { return ((hx() == RT(0)) && (hy() == RT(0)) && (hz() == RT(0))); }
 

@@ -598,7 +598,7 @@ public:
     /// \name Range Types
     ///
     /// Each range `R` in this section has a nested type `R::iterator`,
-    /// is convertible to `std::pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
+    /// is convertible to `std::pair<R::iterator,R::iterator>`, so that one can use `std::tie()`,
     /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
 
     ///@{
@@ -1828,7 +1828,7 @@ public:
         return opposite(prev(h));
     }
 
-    /// returns the i'th vertex of edge `e`, for `i=0` or `1`.
+    /// returns the i-th vertex of edge `e`, for `i=0` or `1`.
     Vertex_index vertex(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
@@ -1857,7 +1857,7 @@ public:
         return Halfedge_index(e.halfedge());
     }
 
-    /// returns the i'th halfedge of edge `e`, for `i=0` or `1`.
+    /// returns the i-th halfedge of edge `e`, for `i=0` or `1`.
     Halfedge_index halfedge(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);

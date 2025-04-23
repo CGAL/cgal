@@ -38,6 +38,85 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
+
+template<typename C3t3>
+bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
+                                           const typename C3t3::Cell_handle circ,
+                                           const typename C3t3::Triangulation::Geom_traits::Point_3& steiner,
+                                           const C3t3&)
+{
+  using Point = typename C3t3::Triangulation::Geom_traits::Point_3;
+
+  const auto v1 = e.first->vertex(e.second);
+  const auto v2 = e.first->vertex(e.third);
+
+  std::array<Point, 4> pts = {point(circ->vertex(0)->point()),
+                              point(circ->vertex(1)->point()),
+                              point(circ->vertex(2)->point()),
+                              point(circ->vertex(3)->point())};
+  // 1st half-cell
+  const int i1 = circ->index(v1);
+  const Point p1 = pts[i1];
+  pts[i1] = steiner;
+  if(CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+    return false;
+
+  // 2nd half-cell
+  pts[i1] = p1;
+  pts[circ->index(v2)] = steiner;
+  if(CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+    return false;
+
+  return true;
+}
+
+template <typename C3t3>
+std::optional<typename C3t3::Triangulation::Geom_traits::Point_3>
+construct_steiner_point(const typename C3t3::Edge& e,
+                        const C3t3& c3t3)
+{
+  using Cell_circulator = typename C3t3::Triangulation::Cell_circulator;
+  using Cell_handle = typename C3t3::Triangulation::Cell_handle;
+  using Point = typename C3t3::Triangulation::Geom_traits::Point_3;
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
+
+  const auto& gt = c3t3.triangulation().geom_traits();
+  const auto& tr = c3t3.triangulation();
+  const auto& p1 = point(e.first->vertex(e.second)->point());
+  const auto& p2 = point(e.first->vertex(e.third)->point());
+  const auto vec = gt.construct_vector_3_object()(p1, p2);
+
+  const std::array<FT, 6> coeff = {0.33, 0.66,    //1/3 and 2/3
+                                   0.3, 0.7,      // 0.5 +/- 0.2
+                                   0.25, 0.75};   // 0.5 +/- 0.25
+
+  std::size_t attempt_id = 0;
+  while(attempt_id < coeff.size())
+  {
+    Point steiner = gt.construct_translated_point_3_object()(
+        p1, gt.construct_scaled_vector_3_object()(vec, coeff[attempt_id]));
+    ++attempt_id;
+
+    bool steiner_successful = true;
+    Cell_circulator circ = tr.incident_cells(e);
+    Cell_circulator end = circ;
+    do
+    {
+      Cell_handle c = circ;
+      if(!positive_orientation_after_edge_split(e, c, steiner, c3t3))
+      {
+        steiner_successful = false;
+        break;
+      }
+    } while(++circ != end);
+
+    if(steiner_successful)
+      return steiner;
+  }
+
+  return std::nullopt;
+}
+
 template<typename C3t3, typename CellSelector>
 typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
                                         CellSelector cell_selector,
@@ -57,7 +136,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   const Vertex_handle v1 = e.first->vertex(e.second);
   const Vertex_handle v2 = e.first->vertex(e.third);
 
-  const Point m = tr.geom_traits().construct_midpoint_3_object()
+  Point m = tr.geom_traits().construct_midpoint_3_object()
     (point(v1->point()), point(v2->point()));
 
   //backup subdomain info of incident cells before making changes
@@ -78,8 +157,6 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
   // remove complex edge before splitting
   const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
-  if (dimension == 1)
-    c3t3.remove_from_complex(e);
 
   struct Cell_info {
     Subdomain_index subdomain_index_;
@@ -93,38 +170,37 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   boost::unordered_map<Facet, Facet_info, boost::hash<Facet>> facets_info;
 
   // check orientation and collect incident cells to avoid circulating twice
+  bool steiner_point_found = false;
   boost::container::small_vector<Cell_handle, 30> inc_cells;
   Cell_circulator circ = tr.incident_cells(e);
   Cell_circulator end = circ;
   do
   {
     inc_cells.push_back(circ);
-    if (tr.is_infinite(circ))
+    if (tr.is_infinite(circ) || steiner_point_found)
     {
       ++circ;
       continue;
     }
 
-    //1st half-cell
-    std::array<Point, 4> pts = { point(circ->vertex(0)->point()),
-                                 point(circ->vertex(1)->point()),
-                                 point(circ->vertex(2)->point()),
-                                 point(circ->vertex(3)->point()) };
-    const int i1 = circ->index(v1);
-    const Point p1 = pts[i1];
-    pts[i1] = m;
-    if(CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
-      return Vertex_handle();
-
-    //2nd half-cell
-    pts[i1] = p1;
-    pts[circ->index(v2)] = m;
-    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
-      return Vertex_handle();
-
+    const Cell_handle c = circ;
+    if(!positive_orientation_after_edge_split(e, c, m, c3t3))
+    {
+      const std::optional<Point> steiner = construct_steiner_point(e, c3t3);
+      if (steiner != std::nullopt)
+      {
+        m = *steiner;
+        steiner_point_found = true;
+      }
+      else
+        return Vertex_handle();
+    }
     ++circ;
   }
   while (circ != end);
+
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
 
   for(Cell_handle c : inc_cells)
   {
@@ -311,6 +387,9 @@ void split_long_edges(C3T3& c3t3,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   debug::dump_edges(long_edges, "long_edges.polylines.txt");
 
+  std::ofstream can_be_split_ofs("can_be_split_edges.polylines.txt");
+  std::ofstream split_failed_ofs("split_failed.polylines.txt");
+
   std::ofstream ofs("midpoints.off");
   ofs << "OFF" << std::endl;
   ofs << long_edges.size() << " 0 0" << std::endl;
@@ -335,7 +414,11 @@ void split_long_edges(C3T3& c3t3,
       auto [splittable, _] = can_be_split(edge, c3t3, protect_boundaries, cell_selector);
       if (!splittable)
         continue;
-
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+      else
+        can_be_split_ofs << "2 " << edge.first->vertex(edge.second)->point()
+                          << " " << edge.first->vertex(edge.third)->point() << std::endl;
+#endif
       visitor.before_split(tr, edge);
       Vertex_handle vh = split_edge(edge, cell_selector, c3t3);
 
@@ -343,6 +426,9 @@ void split_long_edges(C3T3& c3t3,
         visitor.after_split(tr, vh);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+      else
+        split_failed_ofs << "2 " << edge.first->vertex(edge.second)->point() << " "
+                         << edge.first->vertex(edge.third)->point() << std::endl;
       if (vh != Vertex_handle())
         ofs << vh->point() << std::endl;
 #endif
@@ -364,8 +450,9 @@ void split_long_edges(C3T3& c3t3,
   }//end loop on long_edges
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  if(ofs.is_open())
-    ofs.close();
+  if(can_be_split_ofs.is_open()) can_be_split_ofs.close();
+  if(split_failed_ofs.is_open()) split_failed_ofs.close();
+  if(ofs.is_open())              ofs.close();
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

@@ -268,7 +268,7 @@ as follows:
 A note on performance: The algorithm sorts and partitions the input
 sequences. It is clearly costly to copy a large box compared to a
 simple pointer. However, the algorithm benefits from memory locality
-in the later stages when it copies the boxes, while the pointers would
+in the latter stages when it copies the boxes, while the pointers would
 refer to boxes that become wildly scattered in memory. These two
 effects, copying costs and memory locality, counteract each other. For
 small box sizes, i.e., small dimension, memory locality wins and one

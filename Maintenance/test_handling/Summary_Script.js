@@ -171,7 +171,7 @@ function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
         $container.html(`<h2>Results of ${platform.name}</h2>`);
-        const tplArray = platform.tpl;
+        const tplArray = platform.third_party_libs;
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
             class: 'tpl-toggle-button',
@@ -192,14 +192,14 @@ function platformContainer(platforms) {
         $('<th>', { text: 'Library' }).appendTo($headerRow);
         $('<th>', { text: 'Version' }).appendTo($headerRow);
         $headerRow.appendTo($thead);
-        tplArray.forEach(tpl => {
+        tplArray.forEach(third_party_libs => {
             const $row = $('<tr>').append(
-                $('<td>').text(tpl.name),
-                $('<td>').text(tpl.version || 'N/A'),
+                $('<td>').text(third_party_libs.name),
+                $('<td>').text(third_party_libs.version || 'N/A'),
             ).appendTo($tbody);
             $row.addClass('tpl-row');
             $row.click(function() {
-                showVersionsForTPL(tpl.name);
+                showVersionsForTPL(third_party_libs.name);
             });
         });
         const letters = ['n', 'w', 'o', 'r'];
@@ -261,7 +261,7 @@ function showVersionsForTPL(tplName) {
     $modalTitle.text(`Versions of ${tplName} across platforms`);
     let tplFound = false;
     window.data.platforms.forEach(platform => {
-        const matchingTPL = platform.tpl.find(tpl => tpl.name === tplName);
+        const matchingTPL = platform.third_party_libs.find(third_party_libs => third_party_libs.name === tplName);
         if (matchingTPL) {
             tplFound = true;
             $modalBody.append(`

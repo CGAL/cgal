@@ -48,7 +48,7 @@ set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
 #
 
 function(CGAL_setup_CGAL_Core_dependencies target)
-  find_package( Boost 1.72 REQUIRED )
+  find_package( Boost 1.74 REQUIRED )
   if (NOT CGAL_DISABLE_GMP AND GMP_FOUND)
     use_CGAL_GMP_support(CGAL_Core INTERFACE)
   endif()

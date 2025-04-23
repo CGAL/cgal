@@ -25,8 +25,8 @@ int main(int argc, char* argv[])
   Mesh::Property_map<vertex_descriptor,std::string> name1, name2;
   bool created;
   sm1.add_property_map<vertex_descriptor,int>("v:weight",7812);
-  boost::tie(name1, created) = sm1.add_property_map<vertex_descriptor,std::string>("v:name","hello");
-  boost::tie(name2, created) = sm2.add_property_map<vertex_descriptor,std::string>("v:name","world");
+  std::tie(name1, created) = sm1.add_property_map<vertex_descriptor,std::string>("v:name","hello");
+  std::tie(name2, created) = sm2.add_property_map<vertex_descriptor,std::string>("v:name","world");
 
   sm1 += sm2;
 

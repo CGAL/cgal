@@ -1,7 +1,5 @@
 #include "config.h"
 
-#ifdef CGAL_LAB_DEMO_USE_SURFACE_MESHER
-
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include "ui_Offset_meshing_dialog.h"
 
@@ -761,5 +759,3 @@ inflate_mesh()
 }
 
 #include "Offset_meshing_plugin.moc"
-
-#endif // CGAL_LAB_DEMO_USE_SURFACE_MESHER

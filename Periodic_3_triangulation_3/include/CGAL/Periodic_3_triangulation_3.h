@@ -870,18 +870,11 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& had_to_use_exact) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     // The function is a different file to be able to be used where there is
     // no triangulation (namely, the domains of Periodic_3_mesh_3).
-    return ::CGAL::P3T3::internal::construct_periodic_point(p, had_to_use_exact, geom_traits());
-  }
-
-  Periodic_point_3 construct_periodic_point(const Point_3& p) const
-  {
-    bool useless = false;
-    return construct_periodic_point(p, useless);
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, geom_traits());
   }
 
   // ---------------------------------------------------------------------------
@@ -4414,7 +4407,7 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
   queue.push_back(std::make_pair(c1,c2));
 
   while(! queue.empty()) {
-    boost::tie(c1,c2) = queue.back();
+    std::tie(c1,c2) = queue.back();
     queue.pop_back();
 
     // Precondition: c1, c2 have been registered as well as their 4 vertices.

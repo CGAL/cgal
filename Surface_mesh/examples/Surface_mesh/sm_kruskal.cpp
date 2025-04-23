@@ -34,7 +34,7 @@ void kruskal(const Mesh& sm)
     "        point [ \n";
 
   vertex_iterator vb,ve;
-  for(boost::tie(vb, ve) = vertices(sm); vb!=ve; ++vb){
+  for(std::tie(vb, ve) = vertices(sm); vb!=ve; ++vb){
     std::cout <<  "        " << sm.point(*vb) << "\n";
   }
 

@@ -3756,7 +3756,7 @@ fill_modified_vertices(InputIterator cells_begin,
                        OutputIterator out) const
 {
   Vertex_set already_inserted_vertices;
-  // Dont insert vertex in out
+  // Don't insert vertex in out
   already_inserted_vertices.insert(vertex);
 
   for ( InputIterator it = cells_begin ; it != cells_end ; ++it )

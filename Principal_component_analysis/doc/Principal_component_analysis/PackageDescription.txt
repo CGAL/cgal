@@ -17,7 +17,6 @@
 
 /*!
 \addtogroup PkgPrincipalComponentAnalysisDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Principal Component Analysis,PkgPrincipalComponentAnalysisD}
 \cgalPkgPicture{teaserLeastSquaresFitting.png}
 \cgalPkgSummaryBegin

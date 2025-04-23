@@ -64,7 +64,7 @@ In std::cerr :
 Only the time needed to compute it. (it is useful to benchmark a lot of cases and redirect it on a .txt)
 
 ATTENTION:
-1) dont use ./example a b
+1) don't use ./example a b
 with 5 <= a <= 8  and 0 <= b <= 8, we cannot use the Circulartraits to handle the files
 2) The files have to be put on a folder name DXF where the program is located
 

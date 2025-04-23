@@ -25,7 +25,7 @@ operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
 OutputIterator res);
 
 /*!
-Computes the `i`th `x`-critical point of polynomial `p`.
+Computes the `i`-th `x`-critical point of polynomial `p`.
 */
 template < class OutputIterator >
 AlgebraicKernelForSpheres::Root_for_spheres_2_3

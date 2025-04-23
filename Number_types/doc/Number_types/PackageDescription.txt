@@ -30,7 +30,6 @@
 
 /*!
 \addtogroup PkgNumberTypesRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Number Types,PkgNumberTypes}
 \cgalPkgPicture{illustration.png}
 \cgalPkgSummaryBegin

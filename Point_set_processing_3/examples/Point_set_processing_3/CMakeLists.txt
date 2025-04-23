@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Point_set_processing_3_Examples)
 
 # Find CGAL
@@ -42,7 +42,9 @@ foreach(
   edge_aware_upsample_point_set_example
   structuring_example
   read_ply_points_with_colors_example
-  write_ply_points_example)
+  write_ply_points_example
+  poisson_eliminate_example
+  poisson_eliminate_from_mesh_example)
   create_single_source_cgal_program("${target}.cpp")
   target_link_libraries(${target} PRIVATE CGAL::CGAL)
 endforeach()

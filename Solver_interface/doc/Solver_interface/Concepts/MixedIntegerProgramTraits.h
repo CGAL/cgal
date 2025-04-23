@@ -39,6 +39,8 @@ public:
         */
         MixedIntegerProgramVariable(MixedIntegerProgramTraits* solver, Variable_type type, FT lb =, FT ub, const std::string& name, int idx);
 
+        /// @}
+
         /// \name Operations
         /// @{
 
@@ -130,6 +132,8 @@ public:
         the lower bound, upper bound, name, and index.
         */
         MixedIntegerProgramLinearConstraint(MixedIntegerProgramTraits* solver, FT lb, FT ub, const std::string& name, int idx);
+
+        /// @}
 
         /// \name Operations
         /// @{
@@ -237,6 +241,8 @@ public:
         and the objective sense.
         */
         MixedIntegerProgramLinearObjective(MixedIntegerProgramTraits* solver, Sense sense);
+
+        /// @}
 
         /// \name Operations
         /// @{

@@ -273,7 +273,7 @@ Returns the same facet seen from the other adjacent cell.
 Facet mirror_facet(Facet f) const;
 
 /*!
-Return the indexes of the `j`th vertex of the facet of a cell
+Return the indexes of the `j`-th vertex of the facet of a cell
 opposite to vertex `i`.
 */
 int vertex_triple_index(const int i, const int j);

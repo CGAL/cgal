@@ -6,14 +6,14 @@ A halfedge record in a \em Dcel data structure used
 by the `General_polygon_set_2` and `Polygon_set_2` template classes
 to represent the underlying internal `Arrangement_2` data structure.
 
-\cgalRefines{ArrangementDcelHalfedge}
+\cgalRefines{AosDcelHalfedge}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Gps_face_halfedge}
 \cgalHasModelsEnd
 
-\sa `ArrangementDcel`
-\sa `ArrangementDcelVertex`
+\sa `AosDcel`
+\sa `AosDcelVertex`
 \sa `GeneralPolygonSetDcelFace`
 
 */

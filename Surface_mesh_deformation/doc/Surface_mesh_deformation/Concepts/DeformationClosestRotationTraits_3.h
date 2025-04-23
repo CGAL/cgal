@@ -49,7 +49,7 @@ public:
   /// Returns the vector (x,y,z)
   Vector vector(double x, double y, double z);
 
-  /// Returns `i`th coefficient of a vector
+  /// Returns `i`-th coefficient of a vector
   double vector_coordinate(const Vector& v, int i);
 
   /// Computes a rotation matrix close to `m` and places it into `R`

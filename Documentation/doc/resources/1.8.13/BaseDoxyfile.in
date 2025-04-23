@@ -213,7 +213,7 @@ ALIASES                = "cgal=%CGAL" \
 # language is one of the parsers supported by doxygen: IDL, Java, Javascript,
 # C#, C, C++, D, PHP, Objective-C, Python, Fortran (fixed format Fortran:
 # FortranFixed, free formatted Fortran: FortranFree, unknown formatted Fortran:
-# Fortran. In the later case the parser tries to guess whether the code is fixed
+# Fortran. In the latter case the parser tries to guess whether the code is fixed
 # or free formatted code, this is the default for Fortran type files), VHDL. For
 # instance to make doxygen treat .inc files as Fortran files (default is PHP),
 # and .f files as C (default is Fortran), use: inc=Fortran f=C.
@@ -476,24 +476,6 @@ HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
-
-# The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
-# cascading style sheets that are included after the standard style sheets
-# created by doxygen. Using this option one can overrule certain style aspects.
-# This is preferred over using HTML_STYLESHEET since it does not replace the
-# standard style sheet and is therefore more robust against future updates.
-# Doxygen will copy the style sheet files to the output directory.
-# Note: The order of the extra style sheet files is of importance (e.g. the last
-# style sheet in the list overrules the setting of the previous ones in the
-# list).
-# Note: Since the styling of scrollbars can currently not be overruled in
-# Webkit/Chromium, the styling will be left out of the default doxygen.css if
-# one or more extra stylesheets have been specified. So if scrollbar
-# customization is desired it has to be added explicitly. For an example see the
-# documentation.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-HTML_EXTRA_STYLESHEET  = ${CGAL_DOC_RESOURCE_DIR}/cgal_stylesheet.css
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this

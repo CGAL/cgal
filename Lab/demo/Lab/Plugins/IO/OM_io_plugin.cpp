@@ -124,6 +124,8 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       res << item;
       if(!selection_item->isEmpty())
         res << selection_item;
+      else
+        delete selection_item;
       return res;
     }
   }

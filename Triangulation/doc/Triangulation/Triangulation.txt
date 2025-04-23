@@ -163,7 +163,7 @@ neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. Th
 of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
-the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
+the \f$ i\f$-th vertex of \f$ \sigma\f$ (\cgalFigureRef{triangulationfigfullcell}).
 
 The vertices and full cells of the triangulations are accessed through
 `handles` and `iterators`. A handle is a model of the
@@ -183,7 +183,7 @@ to \f$ f \f$.
 \if READY_TO_PUBLISH
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
 neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
-\f$ c\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
+\f$ c\f$ (\cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
 often needed for maintaining the triangulation data structure. Thus,
 it might be desirable, for performance reasons, to store the mirror
 indices alongside the references to the vertices and neighbors in a

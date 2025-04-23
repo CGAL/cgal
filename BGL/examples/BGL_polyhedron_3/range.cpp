@@ -40,10 +40,10 @@ void fct(const Polyhedron& p)
     std::cout << vd->point() << std::endl;
   }
 
-  std::cout << "boost::tie + std::for_each" << std::endl;
+  std::cout << "std::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
 
-  boost::tie(vb,ve) = vertices_range(p);
+  std::tie(vb,ve) = vertices_range(p);
   std::for_each(vb,ve, Fct());
 }
 

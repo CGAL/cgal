@@ -22,6 +22,7 @@
 \example BGL_surface_mesh/prim.cpp
 \example BGL_surface_mesh/gwdwg.cpp
 \example BGL_surface_mesh/seam_mesh.cpp
+\example BGL_surface_mesh/shortest_path.cpp
 \example BGL_surface_mesh/write_inp.cpp
 \example BGL_surface_mesh/surface_mesh_dual.cpp
 \example BGL_surface_mesh/connected_components.cpp

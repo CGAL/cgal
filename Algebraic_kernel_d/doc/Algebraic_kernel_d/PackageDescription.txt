@@ -16,7 +16,6 @@
 
 /*!
 \addtogroup PkgAlgebraicKernelDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKernelD}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin

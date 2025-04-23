@@ -281,7 +281,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               // -----------
               // cv1 coincide with the identification curve. In this case we
               // consider the identification to be on the right. All (interior)
-              // points are smaller then the right boundary.
+              // points are smaller than the right boundary.
               rc1 = SMALLER;
               rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
             }
@@ -294,7 +294,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
               //       -----------
               // cv2 coincide with the identification curve. In this case we
               // consider the identification to be on the left. All (interior)
-              // points are larger then the left boundary.
+              // points are larger than the left boundary.
               rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
               rc2 = LARGER;
             }

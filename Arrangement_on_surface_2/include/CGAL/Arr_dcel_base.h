@@ -40,24 +40,24 @@ namespace CGAL {
 
 inline void* _clean_pointer(const void* p)
 {
-  static_assert(sizeof(void*) == sizeof(size_t));
-  const size_t  mask = ~1;
-  const size_t  val = (reinterpret_cast<size_t>(p) & mask);
+  static_assert(sizeof(void*) == sizeof(std::size_t));
+  const std::size_t mask = ~1;
+  const std::size_t val = (reinterpret_cast<std::size_t>(p) & mask);
 
   return (reinterpret_cast<void*>(val));
 }
 
 inline void* _set_lsb(const void* p)
 {
-  const size_t  mask = 1;
-  const size_t  val = (reinterpret_cast<size_t>(p) | mask);
+  const std::size_t  mask = 1;
+  const std::size_t  val = (reinterpret_cast<std::size_t>(p) | mask);
   return (reinterpret_cast<void*>( val));
 }
 
 inline bool _is_lsb_set(const void* p)
 {
-  const size_t  mask = 1;
-  const size_t  val = reinterpret_cast<size_t>(p);
+  const std::size_t  mask = 1;
+  const std::size_t  val = reinterpret_cast<std::size_t>(p);
   return ((val & mask) != 0);
 }
 
@@ -565,7 +565,7 @@ public:
                                                     Outer_ccb_const_iterator;
 
   /*! obtains the number of outer CCBs the face has. */
-  size_t number_of_outer_ccbs() const { return (this->outer_ccbs.size()); }
+  std::size_t number_of_outer_ccbs() const { return (this->outer_ccbs.size()); }
 
   /*! obtains an iterator for the first outer CCB of the face. */
   Outer_ccb_iterator outer_ccbs_begin() { return (this->outer_ccbs.begin()); }
@@ -601,7 +601,7 @@ public:
   typedef Inner_ccb_const_iterator                  Hole_const_iterator;
 
   /*! obtains the number of inner CCBs the face has. */
-  size_t number_of_inner_ccbs() const { return (this->inner_ccbs.size()); }
+  std::size_t number_of_inner_ccbs() const { return (this->inner_ccbs.size()); }
 
   /*! obtains an iterator for the first inner CCB of the face. */
   Inner_ccb_iterator inner_ccbs_begin() { return (this->inner_ccbs.begin()); }
@@ -646,7 +646,7 @@ public:
   }
 
   // Backward compatibility:
-  size_t number_of_holes() const { return number_of_inner_ccbs(); }
+  std::size_t number_of_holes() const { return number_of_inner_ccbs(); }
   Hole_iterator holes_begin() { return inner_ccbs_begin(); }
   Hole_iterator holes_end() { return inner_ccbs_end(); }
   Hole_const_iterator holes_begin() const { return inner_ccbs_begin(); }
@@ -669,7 +669,7 @@ public:
                                               Isolated_vertex_const_iterator;
 
   /*! obtains the number of isloated vertices inside the face. */
-  size_t number_of_isolated_vertices() const
+  std::size_t number_of_isolated_vertices() const
   { return (this->iso_verts.size()); }
 
   /*! obtains an iterator for the first isloated vertex inside the face. */
@@ -986,13 +986,13 @@ protected:
   typedef In_place_list<Inner_ccb, false>        Inner_ccb_list;
   typedef In_place_list<Isolated_vertex, false>  Iso_vert_list;
 
-    typedef std::allocator_traits<Allocator> Allocator_traits;
-    typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Face>            Face_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
-    typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Halfedge>        Halfedge_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Face>            Face_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
+  typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1002,7 +1002,6 @@ public:
   typedef std::bidirectional_iterator_tag                iterator_category;
 
 protected:
-
   Vertex_list         vertices;             // The vertices container.
   Halfedge_list       halfedges;            // The halfedges container.
   Face_list           faces;                // The faces container.

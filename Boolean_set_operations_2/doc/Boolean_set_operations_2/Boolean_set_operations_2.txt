@@ -669,10 +669,10 @@ The traits class used to instantiate the `General_polygon_set_2`
 class template must model the concept `GeneralPolygonSetTraits_2`,
 and is tailored to handle a specific family of curves. The concept
 `GeneralPolygonSetTraits_2` refines the concept
-`ArrangementDirectionalXMonotoneTraits_2` specified next.
+`AosDirectionalXMonotoneTraits_2` specified next.
 
-The concept `ArrangementDirectionalXMonotoneTraits_2` refines the
-concept `ArrangementXMonotoneTraits_2` (see
+The concept `AosDirectionalXMonotoneTraits_2` refines the
+concept `AosXMonotoneTraits_2` (see
 Section \ref arr_sssecinsert_x_mon in the 2D Arrangements package).
 Thus, a model of this concept must define the type `X_monotone_curve_2`,
 which represents an \f$ x\f$-monotone curve, and the type `Point_2`,
@@ -687,7 +687,7 @@ curve is not required to have a designated <I>source</I> and <I>target</I>, it i
 smaller) and the right (lexicographically larger) endpoints of a given
 curve.
 
-The `ArrangementDirectionalXMonotoneTraits_2` concept treats its
+The `AosDirectionalXMonotoneTraits_2` concept treats its
 \f$ x\f$-monotone curves as directed objects. It thus requires two additional
 operations on \f$ x\f$-monotone curves:
 <UL>
@@ -702,10 +702,10 @@ The traits classes `Arr_segment_traits_2`,
 `Arr_conic_traits_2` and `Arr_rational_function_traits_2`, which are
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept
-`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The \cgalFootnoteCode{Arr_polyline_traits_2} class is <I>not</I> a model of the, \cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2} concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
+`AosDirectionalXMonotoneTraits_2`.\cgalFootnote{The \cgalFootnoteCode{Arr_polyline_traits_2} class is <I>not</I> a model of the, \cgalFootnoteCode{AosDirectionalXMonotoneTraits_2} concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
 
 Just as with the case of computations using models of the
-`ArrangementXMonotoneTraits_2` concept, operations are robust only
+`AosXMonotoneTraits_2` concept, operations are robust only
 when exact arithmetic is used. When inexact arithmetic is used,
 (nearly) degenerate configurations may result in abnormal termination
 of the program or even incorrect results.
@@ -761,7 +761,7 @@ curves.
 The class-template `General_polygon_2<ArrDirectionalXMonotoneTraits>`
 models the concept `GeneralPolygon_2`. Its sole template parameter
 must be instantiated with a model of the concept
-`ArrangementDirectionalXMonotoneTraits_2` from which it obtains the
+`AosDirectionalXMonotoneTraits_2` from which it obtains the
 `X_monotone_curve_2` type. It uses the geometric operations
 on this type provided by such a model to maintain a container of
 directed curves of type `X_monotone_curve_2`, which represents a
@@ -772,7 +772,7 @@ The class-template
 models the concept `GeneralPolygonSetTraits_2`, and can be used to
 instantiate the class template `General_polygon_set_2`.
 It serves as an adapter for a geometric traits class, which models the
-concept `ArrangementDirectionalXMonotoneTraits_2`.
+concept `AosDirectionalXMonotoneTraits_2`.
 It can be used for performing set-operations on general polygons.
 The implementation of the adapter is rather simple, as it is derived
 from the instantiated template-parameter `ArrXMonotoneTraits_2`
@@ -781,13 +781,13 @@ the methods provided by the instantiated parameter
 `GeneralPolygon`, which is a model of the concept
 `GeneralPolygon_2`. By default, the `GeneralPolygon` parameter
 is defined as
-`General_polygon_2<ArrangementDirectionalXMonotoneTraits_2>`.
+`General_polygon_2<AosDirectionalXMonotoneTraits_2>`.
 
 The code excerpt listed below defines a general-polygon set type that
 can be used to perform Boolean set-operations on point sets bounded by
 the \f$ x\f$-monotone curve type defined by the arrangement-traits class
 `Arr_traits_2`, which is some representative model of the concept
-`ArrangementDirectionalXMonotoneTraits_2`.
+`AosDirectionalXMonotoneTraits_2`.
 
 \code{.cpp}
 #include <CGAL/General_polygon_2.h>

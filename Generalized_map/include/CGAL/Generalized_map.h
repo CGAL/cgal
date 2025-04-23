@@ -876,7 +876,7 @@ namespace CGAL {
     { return mnb_used_marks; }
 
     /** Test if a given mark is reserved.
-     *  @return true iff the mark is reserved (ie in used).
+     *  @return true iff the mark is reserved (i.e. in used).
      */
     bool is_reserved(size_type amark) const
     {

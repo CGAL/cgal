@@ -78,7 +78,7 @@ for t_id in range(0, len(tests)):
 
 warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])warning)', flags=re.IGNORECASE)
 w_det=re.compile("warning");
-filter_pattern=re.compile(r'cmake|cgal', flags=re.IGNORECASE);
+filter_pattern=re.compile(r'cmake|cgal|.*\.cpp', flags=re.IGNORECASE);
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
                                                   platform=platform_name), 'a+') as results:

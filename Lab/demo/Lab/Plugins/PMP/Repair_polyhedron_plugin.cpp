@@ -87,6 +87,7 @@ public:
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionNewAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionRemoveNeedlesAndCaps->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAddBbox->setProperty("subMenuName", "Polygon Mesh Processing");
 

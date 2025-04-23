@@ -19,6 +19,7 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Triangle_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <utility>
 #include <vector>

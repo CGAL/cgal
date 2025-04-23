@@ -22,10 +22,10 @@ namespace CGAL {
 
 /*! \class
  * A model of the following concepts:
- * 1. ArrangementBasicTraits_2,
- * 2. ArrangementDirectionalXMonotoneTraits_2,
- * 4. ArrangementConstructXMonotoneCurveTraits_2, and
- * 3. ArrangementOpenBoundaryTraits_2
+ * 1. AosBasicTraits_2,
+ * 2. AosDirectionalXMonotoneTraits_2,
+ * 4. AosConstructXMonotoneCurveTraits_2, and
+ * 3. AosOpenBoundaryTraits_2
  * It handles linear curves.
  */
 template <class Kernel_T>
@@ -43,7 +43,7 @@ public:
   Arr_directional_non_caching_segment_basic_traits_2() : Base() {}
 
   /// \name Types and functors inherited from the base, required by the
-  // ArrangementBasicTraits_2 concept.
+  // AosBasicTraits_2 concept.
   //@{
 
   // Traits types:

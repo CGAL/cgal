@@ -250,7 +250,7 @@ public:
       if(!c3t3_item || extension != "vtu")
         return false;
 
-      std::ofstream os(output_filename.data());
+      std::ofstream os(output_filename.data(), std::ios::binary);
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
@@ -447,8 +447,8 @@ public:
            cit != c3t3_item->c3t3().triangulation().finite_cells_end();
            ++cit)
       {
-        CGAL_assertion(cit->info() >= 0);
-        c3t3_item->c3t3().add_to_complex(cit, cit->info());
+        if(cit->info() != 0)
+          c3t3_item->c3t3().add_to_complex(cit, cit->info());
         for(int i=0; i < 4; ++i)
         {
           if(cit->surface_patch_index(i)>0)

@@ -1992,10 +1992,10 @@ public:
     determines according to pre defined conditions whether the
     current Trapezoidal_decomposition_2<Traits> needs update
     Postconditions:
-    The output is true iff the depth of the Trapezoidal Tree is more then
+    The output is true iff the depth of the Trapezoidal Tree is more than
     DepthThreshold times log of the X_curve count or the Trapezoidal Tree's
     size
-    is more then SizeThreshold times the log of the last count.
+    is more than SizeThreshold times the log of the last count.
   */
   bool set_with_guarantees(bool u)
   {

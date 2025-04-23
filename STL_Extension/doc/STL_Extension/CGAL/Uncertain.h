@@ -500,7 +500,7 @@ Uncertain<T> operator-(Uncertain<T> u);
 returns the extension of the `enum_cast<T>` function over `u`.
 */
 template <class T, class U>
-Uncertain<T> enum_cast(Uncertain<U> u);
+T enum_cast(Uncertain<U> u);
 
 /// @}
 

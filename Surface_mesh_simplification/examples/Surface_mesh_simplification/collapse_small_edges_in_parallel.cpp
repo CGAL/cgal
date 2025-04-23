@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 
   // reassemble the mesh
   Triangle_mesh final_mesh;
-  std::size_t nv=0, nf=0, ne=0;
+  Triangle_mesh::size_type nv = 0, nf = 0, ne = 0;
   for (int i=0; i< number_of_parts; ++i)
   {
     meshes[i].collect_garbage();

@@ -127,7 +127,8 @@ public:
 
   bool
   operator==(const Self& x) const {
-    return (var == x.var) && (index == x.index);
+    CGAL_kernel_assertion(var == x.var);
+    return index == x.index;
   }
 
   bool

@@ -81,7 +81,7 @@ int main()
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
+  for(std::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
     put(vertex_index_map, *vb, counter);
   }
 
@@ -89,14 +89,14 @@ int main()
   Hedge_index_map hedge_index_map(internal_hedge_index_map);
   counter = 0;
   halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
+  for(std::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
     put(hedge_index_map, *eb, counter);
   }
 
   Surface_mesh_deformation deform_mesh(mesh, vertex_index_map, hedge_index_map);
 
   // Insert the whole mesh as region of interest
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Insert two control vertices

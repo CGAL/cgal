@@ -572,7 +572,7 @@ public:
     int k;
 
     for (k = 1; k <= 2; ++k) {
-      // Get the integer coefficients of the k'th auxiliary conic curve.
+      // Get the integer coefficients of the k-th auxiliary conic curve.
       aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
       aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
       aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
@@ -593,7 +593,7 @@ public:
       }
 
       // Compute the x- and y-coordinates of intersection points of the base
-      // conic and the k'th auxiliary conic.
+      // conic and the k-th auxiliary conic.
       n_xs = compute_resultant_roots(nt_traits,
                                      base_coeffs[0], base_coeffs[1],
                                      base_coeffs[2],

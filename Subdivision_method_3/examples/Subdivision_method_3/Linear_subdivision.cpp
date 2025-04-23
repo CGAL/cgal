@@ -12,10 +12,12 @@ typedef CGAL::Simple_cartesian<double>          Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3>     Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[]) {
 
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quad.off");
+  const unsigned int iter = (argc > 2) ? std::stoi(argv[2]) : 3;
 
   Surface_mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
@@ -24,8 +26,9 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  CGAL::Linear_mask_3<Surface_mesh> mask(&mesh);
-  CGAL::Subdivision_method_3::PQQ(mesh, mask, CGAL::parameters::number_of_iterations(1));
+  // Loop_subdivision can also be used for pure triangle meshes
+  CGAL::Subdivision_method_3::CatmullClark_subdivision(mesh, params::number_of_iterations(iter)
+                                                                    .do_not_modify_geometry(true));
 
   std::ofstream out("out.off");
   out << mesh;

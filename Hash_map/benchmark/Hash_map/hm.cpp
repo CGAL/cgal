@@ -157,11 +157,11 @@ run(const G& g)
 
 
 #if 0
-  std::cerr << "boost::tie(vb,ve) = vertices(g);\n";
+  std::cerr << "std::tie(vb,ve) = vertices(g);\n";
   t.reset(); t.start();
     for(int i=0; i<100; i++){
   typename boost::graph_traits<G>::vertex_iterator vb, ve;
-  boost::tie(vb,ve) = vertices(g);
+  std::tie(vb,ve) = vertices(g);
   for(; vb != ve; ++vb) {
     vertex_descriptor vd = *vb;
 #ifdef NOHASH

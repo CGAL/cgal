@@ -96,7 +96,7 @@ public:
     return R().construct_center_3_object()(*this);
   }
 
-  FT
+  decltype(auto)
   squared_radius() const
   {
     return R().compute_squared_radius_3_object()(*this);

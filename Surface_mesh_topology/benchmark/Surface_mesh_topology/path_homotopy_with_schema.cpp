@@ -118,13 +118,13 @@ int main(int argc, char** argv)
 
     if (!withE)
     { E=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
     if (!withD)
     { D=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                cm.number_of_darts()/10))); }
+                                  (10, (std::max)(std::size_t(11),
+                                                  cm.number_of_darts()/10))); }
 
 
 

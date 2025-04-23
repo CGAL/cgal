@@ -98,14 +98,14 @@ $(document).ready(function() {
     if(window.location.href.includes("doc.cgal.org")){ 
       var url='https://doc.cgal.org/latest/Manual/menu_version.js';
       var script = document.createElement("script"); // Make a script DOM node
-      script.src = url; // Set it's src to the provided URL
+      script.src = url; // Set its src to the provided URL
       document.head.appendChild(script);
     }
     else
     {
       var url='../Manual/menu_version.js';
       var script = document.createElement("script"); // Make a script DOM node
-      script.src = url; // Set it's src to the provided URL
+      script.src = url; // Set its src to the provided URL
       document.head.appendChild(script);
     }
 })();

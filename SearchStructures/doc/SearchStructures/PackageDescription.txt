@@ -10,7 +10,6 @@
 
 /*!
 \addtogroup PkgSearchStructuresRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgSearchStructures}
 \cgalPkgPicture{segment_tree.png}
 \cgalPkgSummaryBegin

@@ -46,7 +46,7 @@ public:
   void before_edge_split(halfedge_descriptor h, const Triangle_mesh& tm);
   /// called when a new split is done. The target of `hnew` is a new split vertex. There is only one call per edge.
   void edge_split(halfedge_descriptor hnew, const Triangle_mesh& tm);
-  /// called when the split of the halfedge `h` passed at the later call to `before_edge_split()` is finished.
+  /// called when the split of the halfedge `h` passed at the latter call to `before_edge_split()` is finished.
   void after_edge_split();
   ///  called when a new edge has been added to triangulate a face. The face triangulated is `f_split`
   ///  in the last call to `before_subface_creations(f_split, tm)`. There is only one call per edge.
@@ -119,6 +119,9 @@ public:
   /// The point has already been put in the vertex point map.
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, const Triangle_mesh& tm_tgt);
+  /// called for each face `f` present in the output mesh `tm` that corresponds to a face present in both input meshes corefined.
+  void subface_of_coplanar_faces_intersection(face_descriptor f, TriangleMesh& tm);
+
 /// @}
 
 /// @name Functions used by corefine() for progress tracking

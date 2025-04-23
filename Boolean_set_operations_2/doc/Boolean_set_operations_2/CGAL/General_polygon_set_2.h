@@ -50,7 +50,7 @@ boundary and the holes are also pairwise disjoint, except perhaps at the
 vertices.
 
 \sa `Arrangement_2`
-\sa `ArrangementXMonotoneTraits_2`
+\sa `AosXMonotoneTraits_2`
 \sa `Nef_polyhedron_2`
 
 */

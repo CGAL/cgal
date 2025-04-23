@@ -1,10 +1,9 @@
-
 namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The class `Arr_consolidated_curve_data_traits_2` is a model of the concept
- * `ArrangementTraits_2`, and serves as a decorator class that enables the
+ * `AosTraits_2`, and serves as a decorator class that enables the
  * extension of the curve type defined by the `Traits` parameter. The traits
  * class inherits its point type from `Traits::Point_2`, and defines the types
  * `Curve_2` and `X_monotone_curve_2` extended with extraneous data fields of
@@ -12,24 +11,21 @@ namespace CGAL {
  *
  * Each `Curve_2` object is associated with a single data field of type `Data`,
  * and each `X_monotone_curve_2` object is associated with a set of unique data
- * objects. When a curve is subdivided into \f$ x\f$-monotone subcurves, all
+ * objects. When a curve is subdivided into \f$x\f$-monotone subcurves, all
  * resulting subcurves are associated with a list containing a single data
- * object, copied from the inducing curve. When an \f$ x\f$-monotone curve is
+ * object, copied from the inducing curve. When an \f$x\f$-monotone curve is
  * split, its data set is duplicated, and inserted into the sets of both
- * resulting subcurves. In case two (or more) \f$ x\f$-monotone curves overlap,
- * their data sets are consolidated, and are inserted into the set of the \f$
- * x\f$-monotone curve that represents the overlap.
+ * resulting subcurves. In case two (or more) \f$x\f$-monotone curves overlap,
+ * their data sets are consolidated, and are inserted into the set of the
+ * \f$x\f$-monotone curve that represents the overlap.
  *
- * \cgalModels{ArrangementTraits_2}
+ * \cgalModels{AosTraits_2}
  */
 template <typename Traits, typename Data>
-class Arr_consolidated_curve_data_traits_2
-  : public Arr_curve_data_traits_2<Traits, _Unique_list<Data>,
-                                   _Consolidate_unique_lists<Data>,
-                                   Data>
-{
+class Arr_consolidated_curve_data_traits_2 :
+    public Arr_curve_data_traits_2<Traits, _Unique_list<Data>,
+                                   _Consolidate_unique_lists<Data>, Data> {
 public:
-
   /// \name Types
   /// @{
 
@@ -39,10 +35,10 @@ public:
   //! the base curve.
   typedef typename Base_traits_2::Curve_2 Base_curve_2;
 
-  //! the base \f$ x\f$-monotone curve curve.
+  //! the base \f$x\f$-monotone curve curve.
   typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2;
 
-  //! a set of data objects that is associated with an \f$ x\f$-monotone curve.
+  //! a set of data objects that is associated with an \f$x\f$-monotone curve.
   typedef unspecified_type typedef Data_container;
 
   //! a non-mutable iterator for the data objects in the data container.
@@ -59,14 +55,15 @@ public:
    */
   class Data_container {
   public:
-
     /// \name Creation
     /// @{
 
-    /*! constructs default */
+    /*! constructs default.
+     */
     Data_container();
 
-    /*! constructs set containing a single `data` object. */
+    /*! constructs set containing a single `data` object.
+     */
     Data_container(const Data& data);
 
     /// @}
@@ -74,22 +71,27 @@ public:
     /// \name Access Functions
     /// @{
 
-    /*! returns the number of data objects in the set. */
+    /*! returns the number of data objects in the set.
+     */
     std::size_t size() const;
 
-    /*! returns an iterator pointing to the first data object. */
+    /*! returns an iterator pointing to the first data object.
+     */
     Data_iterator begin() const;
 
-    /*! returns a past-the-end iterator for the data objects. */
+    /*! returns a past-the-end iterator for the data objects.
+     */
     Data_iterator end() const;
 
     /*! returns the first data object inserted into the set.
-     * \pre The number of data objects is not \f$ 0\f$.
+     *
+     * \pre The number of data objects is not \f$0\f$.
      */
     const Data& front() const;
 
     /*! returns the last data object inserted into the set.
-     *  \pre The number of data objects is not \f$ 0\f$.
+     *
+     *  \pre The number of data objects is not \f$0\f$.
      */
     const Data& back() const;
 
@@ -123,13 +125,12 @@ public:
      */
     bool erase(const Data& data);
 
-    /*! clears the set. */
+    /*! clears the set.
+     */
     void clear();
 
     /// @}
-
   }; /* end Arr_consolidated_curve_data_traits_2::Data_container */
-
 }; /* end Arr_consolidated_curve_data_traits_2 */
 
 } /* end namespace CGAL */

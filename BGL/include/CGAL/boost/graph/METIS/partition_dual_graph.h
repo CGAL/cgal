@@ -61,7 +61,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // fill the adjacency info
   face_iterator fit, fe;
-  boost::tie(fit, fe) = faces(tm);
+  std::tie(fit, fe) = faces(tm);
   for(int i=0, j=0; fit!=fe; ++fit, ++i)
   {
     eptr[i] = j;

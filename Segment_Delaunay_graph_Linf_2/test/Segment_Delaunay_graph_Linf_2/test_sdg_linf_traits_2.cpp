@@ -5,20 +5,20 @@
 #define CGAL_SDG_DEBUG(a) { a }
 #endif
 
+#include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_algebraic.h>
 
-#include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
 
 
 

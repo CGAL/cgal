@@ -26,7 +26,7 @@ contour offset instead of two contour offsets, one of them corresponding to the 
 
 Simply using `2*offset` as the separation is incorrect since `offset` is the distance
 between an offset line and its original, not between an offset vertex and its original.
-The later, which is calculated by this function and needed to place the frame sufficiently
+The latter, which is calculated by this function and needed to place the frame sufficiently
 away from the polygon, can be thousands of times larger than `offset`.
 
 If the result is <I>absent</I>, any attempt to construct an exterior offset polygon at distance `offset` will fail.

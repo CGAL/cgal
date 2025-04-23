@@ -147,7 +147,7 @@ void duplicate_terminal_vertices(Graph& graph,
   typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
 
   vertex_iterator b,e;
-  boost::tie(b,e) = vertices(graph);
+  std::tie(b,e) = vertices(graph);
   std::vector<vertex_descriptor> V(b,e);
   for(vertex_descriptor v : V)
   {
@@ -156,7 +156,7 @@ void duplicate_terminal_vertices(Graph& graph,
     if (deg != 2 || is_terminal(orig_v, orig))
       {
         out_edge_iterator b, e;
-        boost::tie(b, e) = out_edges(v, graph);
+        std::tie(b, e) = out_edges(v, graph);
         std::vector<edge_descriptor> out_edges_of_v(b, e);
         for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
           {

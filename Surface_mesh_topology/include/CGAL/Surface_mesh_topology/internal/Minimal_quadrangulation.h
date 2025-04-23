@@ -1280,7 +1280,7 @@ protected:
         else
         {// there is at least a hole around the vertex
          // we set the 0-th dart just after a hole
-         // then we add 1 to the next dart if we dont cross a hole
+         // then we add 1 to the next dart if we don't cross a hole
          // and we add deg(v)+1 if we cross a hole
           dh=it;
           while(!get_local_map().is_marked(dh, m_mark_perforated))

@@ -662,11 +662,8 @@ private:
   //------------------------------------------------------------------------
 
 public:
-  typedef Boolean           result_type;
-  typedef Site_2            argument_type;
-
-  Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& r,
-                       const Site_2& s, const Site_2& t, Sign sgn) const
+  Boolean operator()(const Site_2& p, const Site_2& q, const Site_2& r,
+                     const Site_2& s, const Site_2& t, Sign sgn) const
   {
     if ( sgn == POSITIVE ) {
       return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());

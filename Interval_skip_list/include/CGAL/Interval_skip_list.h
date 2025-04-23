@@ -1111,7 +1111,7 @@ template <class Interval>
   Interval_skip_list<Interval>::removeMarkers(IntervalSLnode<Interval>* left,
                                             const Interval& I)
   {
-    // Remove markers for interval I, which has left as it's left
+    // Remove markers for interval I, which has left as its left
     // endpoint,  following a staircase pattern.
 
     //    Interval_handle res=0, tmp=0; // af: assignment not possible with std::list

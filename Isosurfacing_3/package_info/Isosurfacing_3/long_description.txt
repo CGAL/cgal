@@ -1,0 +1,5 @@
+This component takes a 3D domain as input and a user-specified isovalue, and generates a surface mesh
+approximating the specified isovalue. The meshing algorithm can be selected among two isosurfacing algorithms:
+marching cubes and dual contouring. Two variants of the marching cubes algorithm are offererd:
+with or without topological guarantees. The domain can be created from an explicit grid,
+an implicit grid or a volumetric image.

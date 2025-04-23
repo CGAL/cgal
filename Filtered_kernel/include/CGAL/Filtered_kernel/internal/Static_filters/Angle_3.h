@@ -34,13 +34,12 @@ template < typename K_base >
 class Angle_3
   : public K_base::Angle_3
 {
-  typedef typename K_base::Point_3   Point_3;
+  typedef typename K_base::Angle   Angle;
+  typedef typename K_base::Point_3 Point_3;
+
   typedef typename K_base::Angle_3 Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
   Sign sign_with_error(const double x, const double error) const {
@@ -49,7 +48,7 @@ public:
     else return ZERO;
   }
 
-  result_type operator()(const Point_3 &p, const Point_3& q, const Point_3& r) const
+  Angle operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Angle_3", tmp);
 

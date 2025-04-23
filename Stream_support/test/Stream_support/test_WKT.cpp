@@ -3,8 +3,8 @@
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <cassert>
 
@@ -17,7 +17,69 @@ typedef std::vector<Point>                                            MultiPoint
 typedef std::vector<Linestring>                                       MultiLinestring;
 typedef std::vector<Poly>                                             MultiPolygon;
 
+
+typedef CGAL::Point_3<Kernel>                                         Point3;
+typedef std::vector<Point3>                                           Linestring3;
+typedef std::vector<Point3>                                           MultiPoint3;
+typedef std::vector<Linestring3>                                      MultiLinestring3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool test_WKT_3D()
+{
+  {
+    Point3 p(1,2,3), q(0,0,0);
+    std::stringstream ss;
+    CGAL::IO::write_point_WKT(ss, p);
+    bool b = CGAL::IO::read_point_WKT(ss, q);
+    assert(b);
+    CGAL_USE(b);
+    assert(p == q);
+  }
+  {
+    Point3 p(1,2,3), q(3,2,1);
+    MultiPoint3  mp, mq;
+    mp.push_back(p);
+    mp.push_back(q);
+    std::stringstream ss;
+    CGAL::IO::write_multi_point_WKT(ss, mp);
+    bool b = CGAL::IO::read_multi_point_WKT(ss, mq);
+    assert(b);
+    CGAL_USE(b);
+    assert(mp == mq);
+  }
+  {
+    Point3 p(1,2,3), q(3,2,1);
+    Linestring3  mp, mq;
+    mp.push_back(p);
+    mp.push_back(q);
+    std::stringstream ss;
+    CGAL::IO::write_linestring_WKT(ss, mp);
+    bool b = CGAL::IO::read_linestring_WKT(ss, mq);
+    assert(b);
+    CGAL_USE(b);
+    assert(mp == mq);
+  }
+  {
+    Point3 p(1,2,3), q(3,2,1), r(4,5,6);
+    Linestring3  mp, mq;
+    mp.push_back(p);
+    mp.push_back(q);
+    mq.push_back(p);
+    mq.push_back(r);
+    MultiLinestring3  mmp, mmq;
+    mmp.push_back(mp);
+    mmp.push_back(mq);
+    std::stringstream ss;
+    CGAL::IO::write_multi_linestring_WKT(ss, mmp);
+    bool b = CGAL::IO::read_multi_linestring_WKT(ss, mmq);
+    assert(b);
+    CGAL_USE(b);
+    assert(mmp == mmq);
+  }
+  return true;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
 
@@ -272,6 +334,8 @@ int main()
   bool ok = test_read_WKT();
   assert(ok);
   ok = test_write_WKT();
+  assert(ok);
+  ok = test_WKT_3D();
   assert(ok);
 
   return EXIT_SUCCESS;

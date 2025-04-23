@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
 
   face_iterator facesBegin, facesEnd;
-  boost::tie(facesBegin, facesEnd) = faces(polyhedron);
+  std::tie(facesBegin, facesEnd) = faces(polyhedron);
 
   std::vector<face_descriptor> facesList;
 
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
   }
 
   vertex_iterator startVertexIt, endVertexIt;
-  boost::tie(startVertexIt, endVertexIt) = vertices(polyhedron);
+  std::tie(startVertexIt, endVertexIt) = vertices(polyhedron);
 
   bool first = true;
 

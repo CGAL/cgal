@@ -712,7 +712,7 @@ namespace nanoflann
          *   // Must return the Euclidean (L2) distance between the vector "p1[0:size-1]" and the data point with index "idx_p2" stored in the class:
          *   inline DistanceType kdtree_distance(const T *p1, const size_t idx_p2,size_t size) const { ... }
          *
-         *   // Must return the dim'th component of the idx'th point in the class:
+         *   // Must return the dim-th component of the idx-th point in the class:
          *   inline T kdtree_get_pt(const size_t idx, int dim) const { ... }
          *
          *   // Optional bounding-box computation: return false to default to a standard bbox computation loop.
@@ -1002,7 +1002,7 @@ namespace nanoflann
                         if(node->child1 == NULL && node->child2 == NULL)
                                 return 1;
                         else{
-                                return std::max(depth(node->child1)+1,depth(node->child2)+1);
+                                return (std::max)(depth(node->child1)+1,depth(node->child2)+1);
                         }
                 }
 
@@ -1130,8 +1130,8 @@ namespace nanoflann
                                 node->sub.divhigh = right_bbox[cutfeat].low;
 
                                 for (int i=0; i<(DIM>0 ? DIM : dim); ++i) {
-                                        bbox[i].low = std::min(left_bbox[i].low, right_bbox[i].low);
-                                        bbox[i].high = std::max(left_bbox[i].high, right_bbox[i].high);
+                                        bbox[i].low = (std::min)(left_bbox[i].low, right_bbox[i].low);
+                                        bbox[i].high = (std::max)(left_bbox[i].high, right_bbox[i].high);
                                 }
                         }
 
@@ -1470,7 +1470,7 @@ namespace nanoflann
                         return s;
                 }
 
-                // Returns the dim'th component of the idx'th point in the class:
+                // Returns the dim-th component of the idx-th point in the class:
                 inline num_t kdtree_get_pt(const size_t idx, int dim) const {
                         return m_data_matrix.coeff(idx,dim);
                 }

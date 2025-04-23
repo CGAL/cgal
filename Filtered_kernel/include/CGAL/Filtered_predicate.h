@@ -28,7 +28,7 @@ namespace CGAL {
 
 // TODO :
 // - each predicate in the default kernel should define a tag that says if it
-//   wants to be filtered or not (=> all homogeneous predicate define this
+//   wants to be filtered or not (=> all homogeneous predicates define this
 //   tag).  We could even test-suite that automatically.  It makes a strong
 //   new requirement on the kernel though...
 //   Could be done with a traits mechanism ?
@@ -52,17 +52,12 @@ class Filtered_predicate
   EP  ep;
   AP  ap;
 
-  typedef typename AP::result_type  Ares;
-
 public:
-
+  // AP's result type must be convertible to EP's result type.
   typedef AP    Approximate_predicate;
   typedef EP    Exact_predicate;
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
-
-  typedef typename EP::result_type  result_type;
-  // AP::result_type must be convertible to EP::result_type.
 
   Filtered_predicate()
   {}
@@ -85,11 +80,14 @@ public:
   {}
 
   template <typename... Args>
-  result_type
+  auto
   operator()(const Args&... args) const
   {
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(ep(c2e(args)...))> >::Type result_type;
 
 #ifndef CGAL_EPICK_NO_INTERVALS
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(ap(c2a(args)...))> >::Type Ares;
+
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -98,7 +96,7 @@ public:
         {
           Ares res = ap(c2a(args)...);
           if (is_certain(res))
-            return get_certain(res);
+            return result_type(get_certain(res));
         }
       catch (Uncertain_conversion_exception&) {}
     }
@@ -106,7 +104,7 @@ public:
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
 #endif // CGAL_EPICK_NO_INTERVALS
-    return ep(c2e(args)...);
+    return result_type(ep(c2e(args)...));
   }
 };
 
@@ -120,27 +118,28 @@ class Filtered_predicate_RT_FT
   EP_FT ep_ft;
   AP ap;
 
-  using Ares = typename Remove_needs_FT<typename AP::result_type>::Type;
-
-public:
-  using result_type = typename Remove_needs_FT<typename EP_FT::result_type>::Type;
-
 private:
+  // Detect if the predicate's result type has been wrapped with the `Needs_FT` class
   template <typename... Args>
   struct Call_operator_needs_FT
   {
-    using Actual_approx_res = decltype(ap(c2a(std::declval<const Args&>())...));
-    using Approx_res = std::remove_cv_t<std::remove_reference_t<Actual_approx_res> >;
-    enum { value = std::is_same<Approx_res, Needs_FT<Ares> >::value };
+    template <typename T>
+    struct is_Needs_FT : std::false_type { };
+    template <typename ...T>
+    struct is_Needs_FT<Needs_FT<T...> > : std::true_type { };
+
+    typedef CGAL::cpp20::remove_cvref_t<decltype(ap(c2a(std::declval<const Args&>())...))> Actual_approx_res;
+    enum { value = is_Needs_FT<Actual_approx_res>::value };
   };
 
+  // If there is no `Needs_FT` in the result, then we can use an RT-based exact predicate
   template <typename... Args,
             std::enable_if_t<Call_operator_needs_FT<Args...>::value>* = nullptr>
-  result_type call(const Args&... args) const { return ep_ft(c2e_ft(args)...); }
+  decltype(auto) exact_call(const Args&... args) const { return ep_ft(c2e_ft(args)...); }
 
   template <typename... Args,
             std::enable_if_t<! Call_operator_needs_FT<Args...>::value>* = nullptr>
-  result_type call(const Args&... args) const { return ep_rt(c2e_rt(args)...); }
+  decltype(auto) exact_call(const Args&... args) const { return ep_rt(c2e_rt(args)...); }
 
 public:
   // ## Important note
@@ -154,10 +153,14 @@ public:
   bool needs_FT(const Args&...) const { return Call_operator_needs_FT<Args...>::value; }
 
   template <typename... Args>
-  result_type
+  auto
   operator()(const Args&... args) const
   {
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(exact_call(args...))> >::Type result_type;
+
 #ifndef CGAL_EPICK_NO_INTERVALS
+    typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(ap(c2a(args)...))> >::Type Ares;
+
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
@@ -166,7 +169,7 @@ public:
         {
           Ares res = ap(c2a(args)...);
           if (is_certain(res))
-            return get_certain(res);
+            return result_type(get_certain(res));
         }
       catch (Uncertain_conversion_exception&) {}
     }
@@ -174,7 +177,7 @@ public:
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
 #endif // CGAL_EPICK_NO_INTERVALS
-    return call(args...);
+    return result_type(exact_call(args...));
   }
 };
 

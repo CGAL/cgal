@@ -86,7 +86,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
 
       int ret_val;
-      boost::tie(ret_val,number_of_cones)=request_value_from_user<int>("Enter the number of cones");
+      std::tie(ret_val,number_of_cones)=request_value_from_user<int>("Enter the number of cones");
       if (ret_val < 0) {
         print_error_message("Incorrect value");
         return;
@@ -129,7 +129,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
     }
     boost::graph_traits<Graph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       boost::graph_traits<Graph>::edge_descriptor e = *ei;
       boost::graph_traits<Graph>::vertex_descriptor  u = source(e, g);
       boost::graph_traits<Graph>::vertex_descriptor  v = target(e, g);

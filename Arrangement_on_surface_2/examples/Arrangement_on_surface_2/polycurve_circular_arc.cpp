@@ -15,7 +15,6 @@ int main() {
 
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 

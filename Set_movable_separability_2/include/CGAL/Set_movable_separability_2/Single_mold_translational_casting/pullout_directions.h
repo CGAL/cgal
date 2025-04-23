@@ -73,7 +73,7 @@ pullout_directions
  CastingTraits_2& traits)
 {
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(pgn, traits));
   CGAL_precondition(pgn.edges_end()!=i);
 
   typedef CastingTraits_2 Casting_traits_2;

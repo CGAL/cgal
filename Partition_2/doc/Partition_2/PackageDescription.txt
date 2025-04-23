@@ -7,7 +7,6 @@
 /// \ingroup PkgPartition2Ref
 /*!
 \addtogroup PkgPartition2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPartition2}
 \cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
 \cgalPkgSummaryBegin

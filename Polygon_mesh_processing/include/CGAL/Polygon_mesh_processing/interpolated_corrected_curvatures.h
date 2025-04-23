@@ -622,7 +622,7 @@ void interpolated_corrected_curvatures_one_vertex(
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+  Vertex_position_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_const_property_map(CGAL::vertex_point, pmesh));
 
   Vertex_normal_map vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
@@ -773,7 +773,7 @@ private:
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-    vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+    vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
       get_const_property_map(CGAL::vertex_point, pmesh));
 
     vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),

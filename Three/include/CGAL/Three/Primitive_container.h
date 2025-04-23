@@ -178,7 +178,7 @@ public:
   //!
   void setVbos(std::vector<Vbo*>);
   //!
-  //! \brief setVbo sets the `vbo_id`th `Vbo` of this container to `vbo`.
+  //! \brief setVbo sets the `vbo_id`-th `Vbo` of this container to `vbo`.
   //! \param vbo_id
   //! \param vbo
   //!
@@ -199,7 +199,7 @@ public:
   //!
   Vao* getVao(Viewer_interface* viewer)const;
   //!
-  //! \brief getVbo returns the `id`th Vbo of this container.
+  //! \brief getVbo returns the `id`-th Vbo of this container.
   //!
   Vbo *getVbo(std::size_t id)const;
   //!

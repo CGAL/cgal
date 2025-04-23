@@ -544,7 +544,7 @@ template <class NT>
 int BiPoly<NT>::getXdegree(){
     int deg=-1;
     for(int i=0; i <=ydeg; i++)
-      deg = max(deg, coeffX[i].getTrueDegree());
+      deg = (max)(deg, coeffX[i].getTrueDegree());
     return deg;
   }
 

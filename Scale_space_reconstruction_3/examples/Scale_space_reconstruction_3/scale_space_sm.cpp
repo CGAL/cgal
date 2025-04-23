@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
   // Also store the input points as vertex property
   Surface_mesh::Property_map<vertex_descriptor, Point> original;
   bool created;
-  boost::tie(original, created) = mesh.add_property_map<vertex_descriptor,Point>("v:original");
+  std::tie(original, created) = mesh.add_property_map<vertex_descriptor,Point>("v:original");
   assert(created);
 
   int i = 0;

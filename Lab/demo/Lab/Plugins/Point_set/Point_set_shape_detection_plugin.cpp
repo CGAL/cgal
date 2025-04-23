@@ -277,7 +277,7 @@ private:
     Point_set::Property_map<int> shape_id;
     if (dialog.add_property()) {
       bool added = false;
-      boost::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      std::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added) {
         for (auto it = points->begin(); it != points->end(); ++ it)
           shape_id[*it] = -1;
@@ -563,7 +563,7 @@ private:
     if (dialog.add_property())
     {
       bool added = false;
-      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      std::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added)
       {
         for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)

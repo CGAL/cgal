@@ -251,7 +251,7 @@ public:
       // vertex to the extended point.
       if (! vh->is_at_open_boundary() && m_base_equal(base_p, vh->point()))
         return (Point_2(base_p, vh));
-      else return (Point_2(base_p));
+      return (Point_2(base_p));
     }
   };
 
@@ -308,7 +308,7 @@ public:
       // vertex to the extended point.
       if (! vh->is_at_open_boundary() && m_base_equal(base_p, vh->point()))
         return (Point_2(base_p, vh));
-      else return (Point_2(base_p));
+      return (Point_2(base_p));
     }
   };
 

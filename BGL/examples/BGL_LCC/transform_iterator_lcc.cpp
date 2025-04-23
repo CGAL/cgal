@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator;
 
   halfedge_around_target_iterator hb,he;
-  boost::tie(hb,he) = halfedges_around_target(halfedge(vd,lcc),lcc);
+  std::tie(hb,he) = halfedges_around_target(halfedge(vd,lcc),lcc);
   adjacent_vertex_iterator avib, avie;
   avib = boost::make_transform_iterator(hb, Source<LCC>(lcc));
   avie = boost::make_transform_iterator(he, Source<LCC>(lcc));

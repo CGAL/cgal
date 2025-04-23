@@ -23,9 +23,9 @@ compute_color_map(QColor base_color,
                   std::size_t nb_of_colors,
                   Output_color_iterator out)
 {
-  qreal hue = base_color.hueF();
-  const qreal step = (static_cast<qreal>(1)) / nb_of_colors;
+  const qreal step = (static_cast<qreal>(0.85)) / nb_of_colors;
 
+  qreal hue = base_color.hueF();
   qreal h = (hue == -1) ? 0 : hue;
   for(std::size_t i=0; i<nb_of_colors; ++i)
   {

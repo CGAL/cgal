@@ -611,9 +611,11 @@ bool build_triangulation_from_file(std::istream& is,
       continue;
     }
 
-    if(line == "Vertices")
+    if(line.find("Vertices") != std::string::npos)
     {
       is >> nv;
+      if(verbose)
+        std::cerr << "Reading "<< nv << " vertices" << std::endl;
       for(int i=0; i<nv; ++i)
       {
         typename Tr::Geom_traits::FT x,y,z;
@@ -627,11 +629,15 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
 
-    if(line == "Triangles")
+    if(line.find("Triangles") != std::string::npos)
     {
       bool has_negative_surface_patch_ids = false;
       typename Tr::Cell::Surface_patch_index max_surface_patch_id = 0;
       is >> nf;
+
+      if(verbose)
+        std::cerr << "Reading "<< nf << " triangles" << std::endl;
+
       for(int i=0; i<nf; ++i)
       {
         int n[3];
@@ -680,9 +686,13 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
 
-    if(line == "Tetrahedra")
+    if(line.find("Tetrahedra") != std::string::npos)
     {
       is >> ntet;
+
+      if(verbose)
+        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
+
       for(int i=0; i<ntet; ++i)
       {
         int n[4];

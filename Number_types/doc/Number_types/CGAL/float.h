@@ -6,10 +6,10 @@
 
 This header provides all necessary functions so the fundamental type
 `float` is a model of the concepts `RealEmbeddable` and
-`FieldWithSqrt`. Due to rounding errors and overflow `float` is
+`FieldWithKthRoot`. Due to rounding errors and overflow `float` is
 considered as not exact.
 
-\cgalModels{FieldWithSqrt,RealEmbeddable}
+\cgalModels{FieldWithKthRoot,RealEmbeddable}
 
 */
 
