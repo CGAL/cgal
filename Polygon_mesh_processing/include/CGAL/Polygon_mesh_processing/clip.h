@@ -629,7 +629,7 @@ struct Visitor_wrapper_for_triangulate_face
   *   \cgalParamNBegin{use_compact_clipper}
   *     \cgalParamDescription{if `false`, the parts of `tm` coplanar with `clipper` will not be part of the output.}
   *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
+  *     \cgalParamDefault{`true`}
   *     \cgalParamExtra{This option has an effect only if a surface and not a volume is clipped,
   *                     (i.e., if `clip_volume` is `false` or if `tm` is open).}
   *   \cgalParamNEnd
