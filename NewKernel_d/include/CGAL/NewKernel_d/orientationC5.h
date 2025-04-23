@@ -51,7 +51,8 @@ orientationC5(RT p0, RT p1, RT p2, RT p3, RT p4,
               RT q0, RT q1, RT q2, RT q3, RT q4,
               RT r0, RT r1, RT r2, RT r3, RT r4,
               RT s0, RT s1, RT s2, RT s3, RT s4,
-              RT t0, RT t1, RT t2, RT t3, RT t4)
+              RT t0, RT t1, RT t2, RT t3, RT t4,
+              RT u0, RT u1, RT u2, RT u3, RT u4)
 {
   RT pq0 = q0 - p0;
   RT pq1 = q1 - p1;
@@ -73,10 +74,16 @@ orientationC5(RT p0, RT p1, RT p2, RT p3, RT p4,
   RT pt2 = t2 - p2;
   RT pt3 = t3 - p3;
   RT pt4 = t4 - p4;
+  RT pu0 = t0 - p0;
+  RT pu1 = u1 - p1;
+  RT pu2 = u2 - p2;
+  RT pu3 = u3 - p3;
+  RT pu4 = u4 - p4;
   RT det = determinant(pq0, pq1, pq2, pq3, pq4,
                        pr0, pr1, pr2, pr3, pr4,
                        ps0, ps1, ps2, ps3, ps4,
-                       pt0, pt1, pt2, pt3, pt4);
+                       pt0, pt1, pt2, pt3, pt4,
+                       pu0, pu1, pu2, pu3, pu4);
 
   if (det > 0) return 1;
   if (det < 0) return -1;
