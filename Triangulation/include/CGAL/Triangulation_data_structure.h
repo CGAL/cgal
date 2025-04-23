@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <set>
 
 namespace CGAL {
@@ -939,13 +940,13 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     const int cur_dim = current_dimension();
     Full_cell_handle new_s;
 
-    std::queue<IITH_task> task_queue;
+    std::stack<IITH_task, std::vector<IITH_task>> task_queue;
     task_queue.push(
     IITH_task(f, mirror_index(full_cell(f), index_of_covertex(f))) );
 
   while (!task_queue.empty())
   {
-    IITH_task task = task_queue.front();
+    IITH_task task = task_queue.top();
     task_queue.pop();
 
     Full_cell_handle old_s = full_cell(task.boundary_facet);
