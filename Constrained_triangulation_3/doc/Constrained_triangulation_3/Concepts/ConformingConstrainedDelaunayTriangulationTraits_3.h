@@ -11,7 +11,7 @@ parameter `Triangulation_3` in the function template
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel (recommended)}
-\cgalHasModelsBare{All %CGAL kernels}
+\cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
 \todo Add the requirements in the concept `ConformingConstrainedDelaunayTriangulationTraits_3`.
