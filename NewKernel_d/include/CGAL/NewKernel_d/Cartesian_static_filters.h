@@ -244,7 +244,7 @@ struct Cartesian_static_filters<Dimension_tag<3>, R_, Derived_> : public R_ {
         };
 };
 
-
+#ifndef CGAL_NO_STATIC_FILTER_5
 template <class R_, class Derived_>
 struct Cartesian_static_filters<Dimension_tag<5>, R_, Derived_> : public R_ {
   constexpr Cartesian_static_filters(){}
@@ -256,5 +256,6 @@ struct Cartesian_static_filters<Dimension_tag<5>, R_, Derived_> : public R_ {
                 typedef SFA::Orientation_of_points_5<R_,Derived> type;
         };
 };
+#endif
 } // namespace CGAL
 #endif
