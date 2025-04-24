@@ -193,7 +193,7 @@ namespace Segment_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t.
+      This function creates an empty property map that maps iterators on the input range `Item` to `std::size_t`.
     */
     Region_index_map region_index_map() {
       return Region_index_map(m_region_map);
@@ -220,8 +220,7 @@ namespace Segment_set {
       direction of this segment and the line's direction is within the `maximum_angle`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
-      \param query
-      `Item` of the query segment
+      \param query item of the query segment
 
       The last parameter is not used in this implementation.
 

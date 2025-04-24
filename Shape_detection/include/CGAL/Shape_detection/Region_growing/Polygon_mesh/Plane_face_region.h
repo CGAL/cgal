@@ -1,4 +1,4 @@
-// Copyright (c) 2018 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
+// Author(s)     : Sébastien Loriot
 //
 
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_PLANE_FACE_REGION_H
@@ -30,13 +30,12 @@ namespace Polygon_mesh {
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Region type based on the quality of the least squares plane
-    fit applied to faces of a polygon mesh.
+    \brief Region type based on the plane of the first face selected.
 
-    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
-    to chunks of faces in a polygon mesh and controls the quality of this fit.
-    If all quality conditions are satisfied, the chunk is accepted as a valid region,
-    otherwise rejected.
+    This class uses the supporting plane of the first face picked for the region
+    and expands it for all faces with a normal close to that of the first face
+    (close being defined by the input angle threshold) and such that vertices are
+    not far from that supporting plane (far being defined by the input distance threshold).
 
     \tparam GeomTraits
     a model of `Kernel`
@@ -173,9 +172,8 @@ namespace Polygon_mesh {
     m_face_normals(get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh)),
     m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) )
     {
-
       static constexpr bool use_input_face_normal =
-        parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
+        !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_SD_RG_USE_PMP
     auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
@@ -205,7 +203,7 @@ namespace Polygon_mesh {
     };
 #endif
 
-      if constexpr (use_input_face_normal)
+      if constexpr (!use_input_face_normal)
       {
         for (const Item &i : faces(pmesh))
           put(m_face_normals, i, get_face_normal(i, pmesh));
@@ -262,7 +260,7 @@ namespace Polygon_mesh {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps each face to a std::size_t
+      This function creates an empty property map that maps each face to a `std::size_t`.
     */
     Region_index_map region_index_map() {
       return get(CGAL::dynamic_face_property_t<std::size_t>(), m_face_graph);
@@ -280,7 +278,7 @@ namespace Polygon_mesh {
 
     // TODO: we probably want to return the m_seed_face instead
     Primitive primitive() const {
-      return m_plane_of_best_fit;
+      return m_plane;
     }
 
     /*!
@@ -291,8 +289,7 @@ namespace Polygon_mesh {
       its normal and the plane's normal is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query
-      `Item` of the query face
+      \param query item of the query face
 
       The last parameter is not used in this implementation.
 
@@ -304,20 +301,21 @@ namespace Polygon_mesh {
       const Item query,
       const Region&) const
     {
-      //TODO: that's a bit dummy that we retest points that are already in the region...
-
       halfedge_descriptor h = halfedge(m_seed_face, m_face_graph);
 
-
+      //TODO: store me!
       const typename GeomTraits::Point_3& p=get(m_vpm,source(h, m_face_graph));
       const typename GeomTraits::Point_3& q=get(m_vpm,target(h, m_face_graph));
       typename GeomTraits::Point_3 r;
       //TODO: add safety checks for degenerate faces
+      halfedge_descriptor guard = prev(h, m_face_graph);
+
       do{
         h=next(h, m_face_graph);
+        if (h == guard) return false;
         r=get(m_vpm,target(h, m_face_graph));
       }
-      while(!collinear(p,q,r));
+      while(collinear(p,q,r));
 
 
       if (m_cos_value_threshold==1 || m_distance_threshold == 0)
@@ -328,35 +326,38 @@ namespace Polygon_mesh {
           if (!coplanar(p,q,r, get(m_vpm, v)))
             return false;
         }
+        return true;
       }
       else
       {
         // test on distance of points to the plane of the seed face
         const FT squared_distance_threshold = m_distance_threshold * m_distance_threshold;
         h = halfedge(query, m_face_graph);
-        typename GeomTraits::Plane_3 plane(p,q,r);
         for (vertex_descriptor v : vertices_around_face(h, m_face_graph))
         {
-          FT sd = m_squared_distance_3(plane, get(m_vpm, v));
-          if (sd>squared_distance_threshold) return false;
+          //TODO: that's a bit dummy that we retest points that are already in the region...
+          //      not sure caching in a vpm does worth it (need reset for each region)
+          if (typename GeomTraits::Compare_squared_distance_3()(p,q,r,get(m_vpm, v), squared_distance_threshold) != SMALLER)
+            return false;
         }
 
+        const typename GeomTraits::Point_3& p2=get(m_vpm,source(h, m_face_graph));
+        const typename GeomTraits::Point_3& q2=get(m_vpm,target(h, m_face_graph));
+        typename GeomTraits::Point_3 r2;
+
+        halfedge_descriptor guard = prev(h, m_face_graph);
+        do{
+          h=next(h, m_face_graph);
+          if (h == guard) return true;
+          r2=get(m_vpm,target(h, m_face_graph));
+        }
+        while(collinear(p2,q2,r2));
 
         // test on the normal of the query face to the normal of the seed face
-        const Vector_3 face_normal = get(m_face_normals, query);
-        const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
-        const FT squared_cos_value = cos_value * cos_value;
-
-        FT squared_cos_value_threshold =
-          m_cos_value_threshold * m_cos_value_threshold;
-        squared_cos_value_threshold *= m_squared_length_3(face_normal);
-        squared_cos_value_threshold *= m_squared_length_3(m_normal_of_best_fit);
-
-        if (squared_cos_value < squared_cos_value_threshold)
-          return false;
+        return typename GeomTraits::Compare_angle_3()(p,q,r,
+                                                      p2,q2,r2,
+                                                      m_cos_value_threshold) == SMALLER;
       }
-
-      return true;
     }
 
     /*!
@@ -389,7 +390,7 @@ namespace Polygon_mesh {
     bool update(const Region& region) {
 
       CGAL_precondition(region.size() > 0);
-      if (region.size() == 1) { // create new reference plane and normal
+      if (region.size() == 1) { // init reference plane and normal
         m_seed_face = region[0];
 
         // The best fit plane will be a plane through this face centroid with
@@ -399,8 +400,8 @@ namespace Polygon_mesh {
         if (face_normal == CGAL::NULL_VECTOR) return false;
 
         CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
-        m_plane_of_best_fit = Plane_3(face_centroid, face_normal);
-        m_normal_of_best_fit = face_normal;
+        m_plane = Plane_3(face_centroid, face_normal);
+        m_normal = face_normal;
       }
       //TODO: shall we try to find a better seed face in the region?
       return true;
@@ -425,8 +426,8 @@ namespace Polygon_mesh {
     typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
     typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
 
-    Plane_3 m_plane_of_best_fit;
-    Vector_3 m_normal_of_best_fit;
+    Plane_3 m_plane;
+    Vector_3 m_normal;
     face_descriptor m_seed_face;
 
     // Compute centroid of the face.

@@ -209,7 +209,7 @@ namespace Point_set {
     /*!
       \brief implements `RegionType::region_index_map()`.
 
-      This function creates an empty property map that maps iterators on the input range `Item` to std::size_t
+      This function creates an empty property map that maps iterators on the input range `Item` to `std::size_t`.
     */
 
     Region_index_map region_index_map() {
@@ -238,8 +238,7 @@ namespace Point_set {
       its normal and the sphere radius is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
-      \param query
-      item of the query point
+      \param query item of the query point
 
       \param region
       inlier items of the region

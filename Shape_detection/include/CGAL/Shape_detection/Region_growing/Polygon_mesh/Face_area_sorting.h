@@ -1,4 +1,4 @@
-// Copyright (c) 2018 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
+// Author(s)     : Sébastien Loriot
 //
+
 
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_FACE_AREA_SORTING_H
 #define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_FACE_AREA_SORTING_H
@@ -24,10 +25,9 @@ namespace Polygon_mesh {
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
+    \brief Sorting of polygon mesh faces with respect to their area.
 
-    `Items` of faces in a polygon mesh are sorted with respect to the quality of the
-    least squares plane fit applied to the vertices of incident faces of each face.
+    `Items` of faces in a polygon mesh are sorted in decreasing area.
 
     \tparam GeomTraits
     a model of `Kernel`
@@ -111,6 +111,57 @@ namespace Polygon_mesh {
       m_scores.resize(m_ordered.size(), 0.);
     }
 
+    /*!
+      \brief initializes all internal data structures.
+      3 Parameter constructor with dummy parameter provided for compatibility with other sorting types.
+
+      \tparam Dummy
+      Dummy parameter, not used.
+
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
+      \param pmesh
+      an instance of `PolygonMesh` that represents a polygon mesh
+
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+      \pre `faces(pmesh).size() > 0`
+    */
+    template<typename Dummy, typename CGAL_NP_TEMPLATE_PARAMETERS>
+      Face_area_sorting(
+        const PolygonMesh& pmesh,
+        const Dummy&,
+        const CGAL_NP_CLASS& np = parameters::default_values())
+      : m_face_graph(pmesh)
+      , m_vpm(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+        get_const_property_map(CGAL::vertex_point, pmesh)))
+      , m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
+    {
+      CGAL_precondition(faces(pmesh).size() > 0);
+
+      m_ordered.resize(faces(pmesh).size());
+
+      std::size_t index = 0;
+      for (Item item : faces(pmesh))
+        m_ordered[index++] = item;
+      m_scores.resize(m_ordered.size(), 0.);
+    }
+
     /// @}
 
     /// \name Sorting
@@ -179,7 +230,8 @@ namespace Polygon_mesh {
           std::vector<typename GeomTraits::Triangle_3> triangles;
           internal::triangulate_face<GeomTraits>(pts, triangles);
           for (const typename GeomTraits::Triangle_3& tr : triangles)
-            m_scores[idx++] += approximate_sqrt(squared_area(tr[0], tr[1], tr[2]));
+            m_scores[idx] += approximate_sqrt(squared_area(tr[0], tr[1], tr[2]));
+          ++idx;
         }
       }
     }
