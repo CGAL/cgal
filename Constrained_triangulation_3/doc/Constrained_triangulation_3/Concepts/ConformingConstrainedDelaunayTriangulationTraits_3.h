@@ -7,14 +7,12 @@ for the geometric traits class of the triangulation used as the first template
 parameter `Triangulation_3` in the function template
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`.
 
-\cgalRefines{DelaunayTriangulationTraits_3}
+\cgalRefines{DelaunayTriangulationTraits_3, ProjectionTraitsGeometricTraits_3}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel (recommended)}
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
-
-\todo mention the requirements of `Projection_traits_3<Gt>`
 
 */
 class ConformingConstrainedDelaunayTriangulationTraits_3 {
@@ -100,9 +98,12 @@ public:
 
   /*!
    * returns a predicate object that must provide the function operators:
-    `bool operator()(Triangle_3 t)`
-    `bool operator()(Tetrahedron_3 t)`
-    which return true iff the object is degenerate.
+   *
+   * - `bool operator()(Triangle_3 t)`
+   *
+   * - `bool operator()(Tetrahedron_3 t)`
+   *
+   * which return true iff the object is degenerate.
    */
   unspecified_type is_degenerate_3_object();
 
