@@ -562,6 +562,11 @@ public:
   \include{doc} CDT_3_description_of_input.dox-frag
 
   */
+
+  // -----------------------
+  // Constructors
+  // -----------------------
+
   /*!
     * \brief %default constructor.
     *
@@ -617,6 +622,10 @@ public:
   Conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
       : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
   {
+    // ----------------------------------
+    // cstr... (polygon mesh)
+    // ----------------------------------
+
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get(CGAL::vertex_point, mesh));
 
@@ -630,14 +639,10 @@ public:
 
     if constexpr (has_face_patch_map) {
       auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
-      int max_patch_id = 0;
+      using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_face_patch_map, *faces(mesh).first))>;
+      Patch_id_type max_patch_id{0};
       for(auto f : faces(mesh)) {
         max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
-      }
-      for(auto f : faces(mesh)) {
-        if(get(mesh_face_patch_map, f) < 0) {
-          put(mesh_face_patch_map, f, max_patch_id++);
-        }
       }
       number_of_patches = max_patch_id + 1;
       patch_edges.resize(number_of_patches);
@@ -775,45 +780,93 @@ public:
     */
   template <typename PointRange, typename PolygonRange, typename NamedParams = parameters::Default_named_parameters>
   Conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
-                                       const PolygonRange& polygons,
-                                       const NamedParams& np = parameters::default_values())
+                                                  const PolygonRange& polygons,
+                                                  const NamedParams& np = parameters::default_values())
       : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
   {
+    // ----------------------------------
+    // cstr... (polygon soup)
+    // ----------------------------------
+
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
 
-    auto point_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map),
-                                                   CGAL::Identity_property_map<PointRange_value_type>{});
-    // TODO: face_patch_map is not used
-    auto face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
-                                                       boost::identity_property_map{});
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-    using Cell_handle = typename Triangulation::Cell_handle;
-    using Vec_vertex_handle = std::vector<Vertex_handle>;
-    Vec_vertex_handle vertices(points.size());
-    Cell_handle hint_ch{};
-    auto i = 0u;
-    for(auto p_descr : points) {
-      auto p = get(point_map, p_descr);
-      auto vh = cdt_impl.insert(p, hint_ch, false);
-      hint_ch = vh->cell();
-      vertices[i++] = vh;
-    }
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    auto point_map = choose_parameter(get_parameter(np, internal_np::point_map),
+                                                    CGAL::Identity_property_map<PointRange_value_type>{});
 
-    struct {
-      Vec_vertex_handle* vertices;
-      const Vertex_handle& operator()(std::size_t i) const { return (*vertices)[i]; }
-    } transform_function{&vertices};
-    for(auto polygon : polygons) {
-      auto begin = boost::make_transform_iterator(polygon.begin(), transform_function);
-      auto end = boost::make_transform_iterator(polygon.end(), transform_function);
-      cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+    constexpr bool has_face_patch_map = !parameters::is_default_parameter<NamedParams, internal_np::face_patch_t>::value;
+
+    if(false == has_face_patch_map) {
+      using Vertex_handle = typename Triangulation::Vertex_handle;
+      using Cell_handle = typename Triangulation::Cell_handle;
+      using Vec_vertex_handle = std::vector<Vertex_handle>;
+      Vec_vertex_handle vertices(points.size());
+      Cell_handle hint_ch{};
+      auto i = 0u;
+      for(auto p_descr : points) {
+        auto p = get(point_map, p_descr);
+        auto vh = cdt_impl.insert(p, hint_ch, false);
+        hint_ch = vh->cell();
+        vertices[i++] = vh;
+      }
+
+      struct
+      {
+        Vec_vertex_handle* vertices;
+        const Vertex_handle& operator()(std::size_t i) const { return (*vertices)[i]; }
+      } transform_function{&vertices};
+      for(auto polygon : polygons) {
+        auto begin = boost::make_transform_iterator(polygon.begin(), transform_function);
+        auto end = boost::make_transform_iterator(polygon.end(), transform_function);
+        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+      }
+      cdt_impl.restore_Delaunay();
+      cdt_impl.restore_constrained_Delaunay();
+    } else {
+      auto polygon_patch_map =
+          choose_parameter(get_parameter(np, internal_np::face_patch), boost::identity_property_map{});
+      using std::begin;
+      using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *begin(points)))>;
+
+      using Surface_mesh = CGAL::Surface_mesh<Point_type>;
+      using SM_Graph_traits = typename boost::graph_traits<Surface_mesh>;
+      using face_descriptor = typename SM_Graph_traits::face_descriptor;
+
+      CGAL::unordered_flat_map<std::size_t, face_descriptor> sm_face_to_polygon_id_map;
+
+      auto face_patch_map_fct = [&](face_descriptor f) {
+        return get(polygon_patch_map, sm_face_to_polygon_id_map.at(f));
+      };
+
+      auto face_patch_pmap = boost::make_function_property_map<face_descriptor>(face_patch_map_fct);
+
+      auto polygon_to_face_map_fct =[&](std::size_t polygon_id) -> face_descriptor& { return sm_face_to_polygon_id_map[polygon_id]; };
+
+      auto polygon_to_face_pmap = boost::make_function_property_map<std::size_t>(polygon_to_face_map_fct);
+
+      Surface_mesh surface_mesh;
+      namespace PMP = CGAL::Polygon_mesh_processing;
+      PMP::polygon_soup_to_polygon_mesh(points, polygons, surface_mesh, np.polygon_to_face_map(polygon_to_face_pmap));
+
+      using std::cbegin;
+      using std::cend;
+      CGAL_assertion(
+          std::none_of(cbegin(sm_face_to_polygon_id_map), cend(sm_face_to_polygon_id_map),
+                       [](const auto& pair) { return pair.second == boost::graph_traits<Surface_mesh>::null_face(); }));
+
+      Conforming_constrained_Delaunay_triangulation_3 ccdt{surface_mesh,
+                                                           CGAL::parameters::face_patch_map(face_patch_pmap)};
+      *this = std::move(ccdt);
     }
-    cdt_impl.restore_Delaunay();
-    cdt_impl.restore_constrained_Delaunay();
   }
 
   /// @} // end constructors section
+
+  // -----------------------
+  // Accessors
+  // -----------------------
 
   /// \name Accessors for the Underlying Triangulation
   /// @{
@@ -955,7 +1008,9 @@ public:
 };
 
 #ifndef DOXYGEN_RUNNING
-
+// ----------------------------------------------------------
+// Conforming_constrained_Delaunay_triangulation_3_impl
+// ----------------------------------------------------------
 template <typename T_3>
 class Conforming_constrained_Delaunay_triangulation_3_impl : public Conforming_Delaunay_triangulation_3<T_3> {
 public:
@@ -1005,67 +1060,49 @@ public:
     return {constrained_facets_begin(), constrained_facets_end()};
   }
 private:
-  struct CDT_2_types {
-    struct Projection_traits : public Projection_traits_3<Geom_traits> {
-      // struct Side_of_oriented_circle_2 : public Geom_traits::Coplanar_side_of_bounded_circle_3 {
-      //   using result_type = Oriented_side;
-      //   template <typename... Arg> auto operator()(Arg&&... arg) const
-      //   {
-      //     return CGAL::enum_cast<Oriented_side>(
-      //         Geom_traits::Coplanar_side_of_bounded_circle_3::operator()(std::forward<Arg>(arg)...));
-      //   }
-      // };
-      // Side_of_oriented_circle_2 side_of_oriented_circle_2_object() const { return {}; }
-
-      // using Compare_xy_2 = typename Geom_traits::Compare_xyz_3;
-      // Compare_xy_2 compare_xy_2_object() const { return {}; }
-
+  struct CDT_2_types
+  {
+    struct Projection_traits : public Projection_traits_3<Geom_traits>
+    {
       using Projection_traits_3<Geom_traits>::Projection_traits_3; // inherit cstr
     };
     // static_assert(CGAL::is_nothrow_movable<Projection_traits>::value);
 
-    struct Vertex_info {
+    struct Vertex_info
+    {
       Vertex_handle vertex_handle_3d = {};
     };
 
     using Color_value_type = std::int8_t;
-    struct Face_info {
+    struct Face_info
+    {
       Color_value_type is_outside_the_face = -1;
       Color_value_type is_in_region = 0;
       std::bitset<3> is_edge_also_in_3d_triangulation = 0;
       bool missing_subface = true;
       Facet facet_3d = {};
     };
-    using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info,
-                                                      Projection_traits>;
+    using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info, Projection_traits>;
     using Vb = Base_with_time_stamp<Vb1>;
-    using Fb1 = Triangulation_face_base_with_info_2<Face_info,
-                                                    Projection_traits>;
+    using Fb1 = Triangulation_face_base_with_info_2<Face_info, Projection_traits>;
     using Fb = Constrained_triangulation_face_base_2<Projection_traits, Fb1>;
-    using TDS = Triangulation_data_structure_2<Vb,Fb>;
+    using TDS = Triangulation_data_structure_2<Vb, Fb>;
     using Itag = No_constraint_intersection_requiring_constructions_tag;
-    using CDT_base =
-        Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
+    using CDT_base = Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
     using CDT = CDT_base;
 
-    template <Color_value_type Face_info::* member_ptr>
-    struct CDT_2_dual_color_map {
+    template <Color_value_type Face_info::* member_ptr> struct CDT_2_dual_color_map
+    {
       using category = boost::read_write_property_map_tag;
       using reference = Color_value_type&;
       using value_type = Color_value_type;
       using key_type = typename CDT::Face_handle;
 
-      friend reference get(CDT_2_dual_color_map, key_type fh) {
-        return fh->info().*member_ptr;
-      }
-      friend void put(CDT_2_dual_color_map, key_type fh, value_type value) {
-        fh->info().*member_ptr = value;
-      }
+      friend reference get(CDT_2_dual_color_map, key_type fh) { return fh->info().*member_ptr; }
+      friend void put(CDT_2_dual_color_map, key_type fh, value_type value) { fh->info().*member_ptr = value; }
     };
-    using Color_map_is_outside_the_face =
-        CDT_2_dual_color_map<&Face_info::is_outside_the_face>;
-    using Color_map_is_in_region =
-        CDT_2_dual_color_map<&Face_info::is_in_region>;
+    using Color_map_is_outside_the_face = CDT_2_dual_color_map<&Face_info::is_outside_the_face>;
+    using Color_map_is_in_region = CDT_2_dual_color_map<&Face_info::is_in_region>;
   }; // CDT_2_types
   using CDT_2 = typename CDT_2_types::CDT;
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
@@ -1908,6 +1945,10 @@ private:
     Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
   };
 
+  // -------------------------
+  // construct_cavities
+  // -------------------------
+
   template <typename Fh_region, typename Vertices_container, typename Edges_container>
   auto construct_cavities(CDT_3_signed_index face_index,
                           int region_index,
@@ -2489,6 +2530,10 @@ private:
     return outputs;
   }
 
+  // -------------------------
+  // end of construct_cavities
+  // -------------------------
+
   template <typename Tr, typename Function>
   static void visit_convex_hull_of_triangulation(const Tr& tr, Function f)
   {
@@ -2503,6 +2548,10 @@ private:
   using Conforming_Dt::with_offset;
   using Conforming_Dt::with_point;
   using Conforming_Dt::with_point_and_info;
+
+  // -------------------------
+  // restore_subface_region
+  // -------------------------
 
   template <typename Fh_region>
   void restore_subface_region(CDT_3_signed_index face_index, int region_index,
@@ -3022,6 +3071,10 @@ private:
     }
     CGAL_assume(!this->debug_validity() || this->is_valid(true));
   };
+
+  // -------------------------
+  // end of restore_subface_region
+  // -------------------------
 
   struct Oriented_face_of_cdt_2 {
     CDT_2_face_handle fh;
