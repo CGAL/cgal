@@ -39,7 +39,11 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_6", tmp);
 
-      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4, t0, t1, t2, t3, t4, u0, u1, u2, u3, u4;
+      double a01, a02, a03, a04, a05, a06, a11, a12, a13, a14, a15, a16,
+             a21, a22, a23, a24, a25, a26, a31, a32, a33, a34, a35,
+             a36, a41, a42, a43, a44, a45, a46,
+             a51, a52, a53, a54, a55, a56,
+             a61, a62, a63, a64, a65, a66;
 
       if (fit_in_double(p.c0(), a01) && fit_in_double(p.c1(), a02) &&
           fit_in_double(p.c2(), a03) && fit_in_double(p.c3(), a04) &&
@@ -47,7 +51,7 @@ public:
 
           fit_in_double(q.c0(), a11) && fit_in_double(q.c1(), a12) &&
           fit_in_double(q.c2(), a13) && fit_in_double(q.c3(), a14) &&
-          fit_in_double(q.c4(), a15) && fit_in_double(q.c4(), a16) &&
+          fit_in_double(q.c4(), a15) && fit_in_double(q.c5(), a16) &&
 
           fit_in_double(r.c0(), a21) && fit_in_double(r.c1(), a22) &&
           fit_in_double(r.c2(), a23) && fit_in_double(r.c3(), a24) &&
@@ -64,6 +68,7 @@ public:
           fit_in_double(u.c0(), a51) && fit_in_double(u.c1(), a52) &&
           fit_in_double(u.c2(), a53) && fit_in_double(u.c3(), a54) &&
           fit_in_double(u.c4(), a55) && fit_in_double(u.c5(), a56) &&
+
           fit_in_double(v.c0(), a61) && fit_in_double(v.c1(), a62) &&
           fit_in_double(v.c2(), a63) && fit_in_double(v.c3(), a64) &&
           fit_in_double(v.c4(), a65) && fit_in_double(v.c5(), a66))

@@ -218,8 +218,8 @@ template <class Base_,class R_> struct Adapter_6 {
         };
         struct Orientation_6 {
                 typedef typename Get_type<R_, Orientation_tag>::type result_type;
-                auto operator()(Point_5 const&A, Point6 const&B, Point6 const&C,
-                                Point6 const&D, Point6 const&E, Point6 const&F, Point6 const&G)const{
+                auto operator()(Point_6 const&A, Point_6 const&B, Point_6 const&C,
+                                Point_6 const&D, Point_6 const&E, Point_6 const&F, Point_6 const&G)const{
                         Point const* t[7]={&A.p,&B.p,&C.p,&D.p,&E.p,&F.p,&G.p};
                         return Orientation_base(A.r)(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+7));
                 }
@@ -230,7 +230,7 @@ template <class Base_,class R_> struct Orientation_of_points_6 : private Store_k
         typedef typename Get_type<R_, Point_tag>::type        Point;
         typedef typename Get_type<R_, Orientation_tag>::type result_type;
         typedef typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type CC;
-        typedef Adapter_5<Base_, R_> Adapter;
+        typedef Adapter_6<Base_, R_> Adapter;
         template<class Iter> result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{
                 CC c(this->kernel());
                 Point const& A=*f;
