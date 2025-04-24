@@ -182,10 +182,6 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
                                                           const PolygonRange &polygons,
                                                           const NamedParameters &np = parameters::default_values())
 {
-  using PointRange_value_type = CGAL::cpp20::remove_cvref_t<decltype(*points.begin())>;
-  auto point_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map),
-                                               CGAL::Identity_property_map<PointRange_value_type>{});
-
   using Geom_traits = typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
 
   using Default_CDT = Conforming_constrained_Delaunay_triangulation_3<Geom_traits>;
