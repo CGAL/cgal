@@ -12,7 +12,7 @@
 #ifndef CGAL_CT_3_TYPES_H
 #define CGAL_CT_3_TYPES_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/config.h>
 
