@@ -12,7 +12,7 @@
 #ifndef CGAL_CDT_3_CONFIG_H
 #define CGAL_CDT_3_CONFIG_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/config.h>
 
