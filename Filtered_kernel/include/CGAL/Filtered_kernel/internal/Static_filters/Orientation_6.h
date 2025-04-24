@@ -317,211 +317,263 @@ public:
     int int_tmp_result;
     double eps;
     double max1 = CGAL::abs(a02);
-    if( (max1 < CGAL::abs(a12)) )
+    double tmp = CGAL::abs(a12);
+    if( max1 < tmp )
     {
-        max1 = CGAL::abs(a12);
+        max1 = tmp;
     }
-    if( (max1 < CGAL::abs(a22)) )
+    tmp = CGAL::abs(a22);
+    if( max1 < tmp )
     {
-        max1 = CGAL::abs(a22);
+        max1 = tmp;
     }
-    if( (max1 < CGAL::abs(a32)) )
+    tmp = CGAL::abs(a32);
+    if( max1 < tmp)
     {
-        max1 = CGAL::abs(a32);
+        max1 = tmp;
     }
-    if( (max1 < CGAL::abs(a42)) )
+    tmp = CGAL::abs(a42);
+    if( max1 < tmp)
     {
-        max1 = CGAL::abs(a42);
+        max1 = tmp;
     }
-    if( (max1 < CGAL::abs(a52)) )
+    tmp = CGAL::abs(a52);
+    if(max1 < tmp )
     {
-        max1 = CGAL::abs(a52);
+        max1 = tmp;
     }
-    if( (max1 < CGAL::abs(a62)) )
+    tmp = CGAL::abs(a62);
+    if( (max1 < tmp) )
     {
-        max1 = CGAL::abs(a62);
+        max1 = tmp;
     }
     double max2 = CGAL::abs(a03);
-    if( (max2 < CGAL::abs(a13)) )
+    tmp = CGAL::abs(a13);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a13);
+        max2 = tmp;
     }
-    if( (max2 < CGAL::abs(a23)) )
+    tmp = CGAL::abs(a23);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a23);
+        max2 = tmp;
     }
-    if( (max2 < CGAL::abs(a33)) )
+    tmp = CGAL::abs(a33);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a33);
+        max2 = tmp;
     }
-    if( (max2 < CGAL::abs(a43)) )
+    tmp = CGAL::abs(a43);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a43);
+        max2 = tmp;
     }
-    if( (max2 < CGAL::abs(a53)) )
+    tmp = CGAL::abs(a53);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a53);
+        max2 = tmp;
     }
-    if( (max2 < CGAL::abs(a63)) )
+    tmp = CGAL::abs(a63);
+    if( (max2 < tmp) )
     {
-        max2 = CGAL::abs(a63);
+        max2 = tmp;
     }
     double max3 = CGAL::abs(a04);
-    if( (max3 < CGAL::abs(a14)) )
+    tmp = CGAL::abs(a14);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a14);
+        max3 = tmp;
     }
-    if( (max3 < CGAL::abs(a24)) )
+    tmp = CGAL::abs(a24);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a24);
+        max3 = tmp;
     }
-    if( (max3 < CGAL::abs(a34)) )
+    tmp = CGAL::abs(a34);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a34);
+        max3 = tmp;
     }
-    if( (max3 < CGAL::abs(a44)) )
+    tmp = CGAL::abs(a44);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a44);
+        max3 = tmp;
     }
-    if( (max3 < CGAL::abs(a54)) )
+    tmp = CGAL::abs(a54);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a54);
+        max3 = tmp;
     }
-    if( (max3 < CGAL::abs(a64)) )
+    tmp = CGAL::abs(a64);
+    if( (max3 < tmp) )
     {
-        max3 = CGAL::abs(a64);
+        max3 = tmp;
     }
     double max4 = CGAL::abs(a05);
-    if( (max4 < CGAL::abs(a15)) )
+    tmp = CGAL::abs(a15);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a15);
+        max4 = tmp;
     }
-    if( (max4 < CGAL::abs(a25)) )
+    tmp = CGAL::abs(a25);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a25);
+        max4 = tmp;
     }
-    if( (max4 < CGAL::abs(a35)) )
+    tmp = CGAL::abs(a35);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a35);
+        max4 = tmp;
     }
-    if( (max4 < CGAL::abs(a45)) )
+    tmp = CGAL::abs(a45);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a45);
+        max4 = tmp;
     }
-    if( (max4 < CGAL::abs(a55)) )
+    tmp = CGAL::abs(a55);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a55);
+        max4 = tmp;
     }
-    if( (max4 < CGAL::abs(a65)) )
+    tmp = CGAL::abs(a65);
+    if( (max4 < tmp) )
     {
-        max4 = CGAL::abs(a65);
+        max4 = tmp;
     }
     double max5 = CGAL::abs(a06);
-    if( (max5 < CGAL::abs(a16)) )
+    tmp = CGAL::abs(a16);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a16);
+        max5 = tmp;
     }
-    if( (max5 < CGAL::abs(a26)) )
+    tmp = CGAL::abs(a26);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a26);
+        max5 = tmp;
     }
-    if( (max5 < CGAL::abs(a36)) )
+    tmp = CGAL::abs(a36);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a36);
+        max5 = tmp;
     }
-    if( (max5 < CGAL::abs(a46)) )
+    tmp = CGAL::abs(a46);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a46);
+        max5 = tmp;
     }
-    if( (max5 < CGAL::abs(a56)) )
+    tmp = CGAL::abs(a56);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a56);
+        max5 = tmp;
     }
-    if( (max5 < CGAL::abs(a66)) )
+    tmp = CGAL::abs(a66);
+    if( (max5 < tmp) )
     {
-        max5 = CGAL::abs(a66);
+        max5 = tmp;
     }
+
     double max6 = CGAL::abs(m01);
-    if( (max6 < CGAL::abs(m02)) )
+    tmp = CGAL::abs(m02);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m02);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m03)) )
+    tmp = CGAL::abs(m03);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m03);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m04)) )
+    tmp = CGAL::abs(m04);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m04);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m05)) )
+    tmp = CGAL::abs(m05);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m05);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m06)) )
+    tmp = CGAL::abs(m06);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m06);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m12)) )
+    tmp = CGAL::abs(m12);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m12);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m13)) )
+    tmp = CGAL::abs(m13);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m13);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m14)) )
+    tmp = CGAL::abs(m14);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m14);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m15)) )
+    tmp = CGAL::abs(m15);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m15);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m16)) )
+    tmp = CGAL::abs(m16);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m16);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m23)) )
+    tmp = CGAL::abs(m23);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m23);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m24)) )
+    tmp = CGAL::abs(m24);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m24);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m25)) )
+    tmp = CGAL::abs(m25);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m25);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m26)) )
+    tmp = CGAL::abs(m26);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m26);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m34)) )
+    tmp = CGAL::abs(m34);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m34);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m35)) )
+    tmp = CGAL::abs(m35);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m35);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m36)) )
+    tmp = CGAL::abs(m36);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m36);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m45)) )
+    tmp = CGAL::abs(m45);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m45);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m46)) )
+    tmp = CGAL::abs(m46);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m46);
+        max6 = tmp;
     }
-    if( (max6 < CGAL::abs(m56)) )
+    tmp = CGAL::abs(m56);
+    if( (max6 < tmp) )
     {
-        max6 = CGAL::abs(m56);
+        max6 = tmp;
     }
+
     double lower_bound_1;
     double upper_bound_1;
     lower_bound_1 = max6;
