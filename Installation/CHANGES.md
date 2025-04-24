@@ -28,6 +28,9 @@
     to remesh triangle meshes. This remeshing algorithm uses clustering on polygonal meshes as to
     approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
     sharp features and corners.
+- New implementation of `CGAL::Polygon_mesh_processing::clip()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
+- New implementation of `CGAL::Polygon_mesh_processing::split()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
+- Added the function `CGAL::Polygon_mesh_processing::refine_with_plane()`, which enables users to refine a mesh with their intersection with a plane.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
 - Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.
