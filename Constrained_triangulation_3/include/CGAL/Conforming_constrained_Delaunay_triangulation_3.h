@@ -3942,7 +3942,7 @@ protected:
     face_constraint_misses_subfaces[pos] = false;
   }
   static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
-  std::vector<CDT_3_signed_index> faces_region_numbers;
+  std::vector<int> faces_region_numbers;
 };
 
 #endif // DOXYGEN_RUNNING
