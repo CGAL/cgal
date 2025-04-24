@@ -45,8 +45,8 @@ the operations 'sqrt', 'k-th root' and 'real root of a polynomial',
 respectively. The concept `IntegralDomainWithoutDivision` also
 corresponds to integral domains in the algebraic sense, the
 distinction results from the fact that some implementations of
-integral domains lack the  integral division,
-which is always well-defined algebraically.
+integral domains lack the (algebraically always well-defined) integral
+division.
 Note that `Field` refines `IntegralDomain`. This is because
 most ring-theoretic notions like greatest common divisors become trivial for
 `Field`s. Hence, we see `Field` as a refinement of
@@ -269,7 +269,7 @@ The package is part of \cgal since release 3.3. Of course the package is based
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced
 by the experience with the number type support in \exacus \cgalCite{beh-eeeafcs-05},
 which in the main goes back to
-Lutz Kettner, Susan Hert, Arno Eigenwillig and Michael Hemmer.
+Lutz Kettner, Susan Hert, Arno Eigenwillig, and Michael Hemmer.
 However, the package abstracts from the pure support for
 number types that are embedded on the real axis which allows the support of
 polynomials, finite fields, and algebraic extensions as well. See also related

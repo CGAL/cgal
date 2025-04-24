@@ -197,9 +197,9 @@ The AABB tree example folder contains three examples of trees
 constructed with custom primitives. In \ref AABB_tree/AABB_custom_example.cpp "AABB_custom_example.cpp"
 the primitive contains triangles which are defined by three pointers
 to custom points. In \ref AABB_tree/AABB_custom_triangle_soup_example.cpp "AABB_custom_triangle_soup_example.cpp" all input
-triangles are stored into a single array to form a triangle
+triangles are stored into a single array as to form a triangle
 soup. The primitive internally uses a `boost::iterator_adaptor`
-to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
+as to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
 and `AABBPrimitive::reference_point()`) required by the primitive concept. In
 \ref AABB_tree/AABB_custom_indexed_triangle_set_example.cpp "AABB_custom_indexed_triangle_set_example.cpp" the input is an indexed
 triangle set stored through two arrays: one array of points and one
