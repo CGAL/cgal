@@ -14,7 +14,7 @@ parameter `Triangulation_3` in the function template
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
-\todo Add the requirements in the concept `ConformingConstrainedDelaunayTriangulationTraits_3`.
+\todo mention the requirements of `Projection_traits_3<Gt>`
 
 */
 class ConformingConstrainedDelaunayTriangulationTraits_3 {
@@ -28,68 +28,14 @@ public:
   using FT = unspecified_type;
 
   /*!
-  * The line type
-  */
-  using Line_3 = unspecified_type;
-
-  /*!
-  * The point type
-  */
-  using Point_3 = unspecified_type;
-
-  /*!
   * The vector type
   */
   using Vector_3 = unspecified_type;
 
   /*!
-  * The segment type
-  */
-  using Segment_3 = unspecified_type;
-
-  /*!
-  * The triangle type
-  */
-  using Triangle_3 = unspecified_type;
-
-  /*!
-  * The tetrahedron type
-  */
-  using Tetrahedron_3 = unspecified_type;
-
-  /*!
-   */
-  using Construct_cross_product_vector_3 = unspecified_type;
-
-  /*!
-   */
-  using Construct_vector_3 = unspecified_type;
-
-  /*!
-   */
-  using Construct_sum_of_vectors_3 = unspecified_type;
-
-  /*!
-   */
-  using Construct_triangle_3 = unspecified_type;
-
-  /*!
+   * A constructor object model of `ConstructVertex_3`
    */
   using Construct_vertex_3 = unspecified_type;
-
-  /*!
-   */
-  using Orientation_3 = unspecified_type;
-
-  /*!
-  * A predicate object that must provide the function operators:
-
-    `bool operator()(Triangle_3 t)`
-    `bool operator()(Tetrahedron_3 t)`
-
-    which return true iff the object is degenerate.
-   */
-  using Is_degenerate_3 = unspecified_type;
 
   /// @}
 
@@ -98,32 +44,67 @@ public:
   /// @{
 
   /*!
+   * returns a function object model of `Angle_3`
    */
-  Construct_cross_product_vector_3 construct_cross_product_vector_3_object();
+  unspecified_type angle_3_object();
 
   /*!
+   * returns a function object model of `CompareAngle_3
    */
-  Construct_vector_3 construct_vector_3_object();
+  unspecified_type compare_angle_3_object();
 
   /*!
+   * returns a function object model of `ComputeScalarProduct_3`
    */
-  Construct_sum_of_vectors_3 construct_sum_of_vectors_3_object();
+  unspecified_type compute_scalar_product_3_object();
 
   /*!
+   * returns a function object model of `ComputeSquaredLength_3`
    */
-  Construct_triangle_3 construct_triangle_3_object();
+  unspecified_type compute_squared_length_3_object();
 
   /*!
+   * returns a function object model of `ConstructCrossProductVector_3`
+   */
+  unspecified_type construct_cross_product_vector_3_object();
+
+  /*!
+   * returns a function object model of `ConstructMidpoint_3`
+   */
+  unspecified_type construct_midpoint_3_object();
+
+  /*!
+   * returns a function object model of `ConstructVector_3`
+   */
+  unspecified_type construct_vector_3_object();
+
+  /*!
+   * returns a function object model of `ConstructScaledVector_3`
+   */
+  unspecified_type construct_scaled_vector_3_object();
+
+  /*!
+   * returns a function object model of `ConstructSumOfVectors_3`
+   */
+  unspecified_type construct_sum_of_vectors_3_object();
+
+  /*!
+   * returns a function object model of `ConstructTranslatedPoint_3`
+   */
+  unspecified_type construct_translated_point_3_object();
+
+  /*!
+   * returns a function object model of `ConstructVertex_3`
    */
   Construct_vertex_3 construct_vertex_3_object();
 
   /*!
+   * returns a predicate object that must provide the function operators:
+    `bool operator()(Triangle_3 t)`
+    `bool operator()(Tetrahedron_3 t)`
+    which return true iff the object is degenerate.
    */
-  Orientation_3 orientation_3_object();
-
-  /*!
-   */
-  Is_degenerate_3 is_degenerate_3_object();
+  unspecified_type is_degenerate_3_object();
 
   /// @}
 
