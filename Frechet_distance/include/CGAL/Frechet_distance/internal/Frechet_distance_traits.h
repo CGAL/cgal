@@ -13,7 +13,8 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_DISTANCE_TRAITS_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_DISTANCE_TRAITS_H
 
 #include <CGAL/license/Frechet_distance.h>
 
@@ -72,3 +73,5 @@ public:
 }
 }
 }  // end of namespace CGAL
+
+#endif  // CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_DISTANCE_TRAITS_H

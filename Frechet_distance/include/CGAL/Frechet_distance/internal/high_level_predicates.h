@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_HIGH_LEVEL_PEDICATES_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_HIGH_LEVEL_PEDICATES_H
+
 #include <CGAL/license/Frechet_distance.h>
 
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
@@ -185,3 +187,5 @@ intersection_interval(Curve<T, false> const& curve1,
 } // namespace internal
 } // namespace Frechet_distance_
 } // namespace CGAL
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_HIGH_LEVEL_PEDICATES_H

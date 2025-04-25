@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_TYPES_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_TYPES_H
+
 #include <CGAL/license/Frechet_distance.h>
 #include <vector>
 
@@ -205,3 +207,5 @@ struct BoxData {
 } // namespace internal
 } // namespace Frechet_distance_
 } // namespace CGAL
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_TYPES_H

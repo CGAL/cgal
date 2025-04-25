@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_FILTER_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_FILTER_H
+
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/certificate.h>
 #include <CGAL/Frechet_distance/internal/curve.h>
@@ -487,3 +489,5 @@ bool Filter<K>::negative(PointID position1, PointID position2)
 } // namespace internal
 } // namespace Frechet_distance_
 } // namespace CGAL
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_FILTER_H

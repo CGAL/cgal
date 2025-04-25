@@ -13,8 +13,8 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#ifndef CGAL_INTERNAL_Frechet_distance_FRECHET_DISTANCE_H
-#define CGAL_INTERNAL_Frechet_distance_FRECHET_DISTANCE_H
+#ifndef CGAL_INTERNAL_FRECHET_DISTANCE_FRECHET_DISTANCE_H
+#define CGAL_INTERNAL_FRECHET_DISTANCE_FRECHET_DISTANCE_H
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/curve.h>
 #include <CGAL/Frechet_distance/internal/frechet_light.h>
@@ -196,4 +196,4 @@ std::pair<double,double> calcDistance(Curve<Traits, is_filtered> const& curve1,
 
 } } }  // end of namespace CGAL::Frechet_distance::internal
 
-#endif  // CGAL_INTERNAL_Frechet_distance_FRECHET_DISTANCE_H
+#endif  // CGAL_INTERNAL_FRECHET_DISTANCE_FRECHET_DISTANCE_H

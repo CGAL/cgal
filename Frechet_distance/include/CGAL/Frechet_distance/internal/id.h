@@ -13,7 +13,8 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_ID_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_ID_H
 #include <CGAL/license/Frechet_distance.h>
 #include <cstdint>
 #include <functional>
@@ -76,3 +77,5 @@ struct hash<CGAL::Frechet_distance::internal::ID<T>> {
 };
 
 }  // namespace std
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_ID_H

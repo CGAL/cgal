@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_GEOMETRY_BASICS_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_GEOMETRY_BASICS_H
+
 #include <CGAL/license/Frechet_distance.h>
 
 #include <cmath>
@@ -681,3 +683,5 @@ std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval)
 } // namespace internal
 } // namespace Frechet_distance
 } // namespace CGAL
+
+#endif CGAL_FRECHET_DISTANCE_INTERNAL_GEOMETRY_BASICS_H

@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_H
+
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/certificate.h>
 #include <CGAL/Frechet_distance/internal/curve.h>
@@ -1532,3 +1534,5 @@ std::size_t FrechetLight<C>::getNumberOfBoxes() const { return num_boxes; }
 } // namespace internal
 } // namespace Frechet_distance
 } // namespace CGAL
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_H
