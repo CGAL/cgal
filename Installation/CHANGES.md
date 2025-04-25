@@ -86,8 +86,13 @@
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
+Release date: October 2024
+
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
--   Made the implicit function thread-safe so that the parallel version of `make_mesh_3()` can be used.
+
+-   Made the implicit function thread-safe so that the parallel version of [`CGAL::make_mesh_3()`](https://doc.cgal.org/6.0.1/Mesh_3/group__PkgMesh3Functions.html#gac8599a0c967075f740bf8e2e92c4770e)
+    can be used.
+
 
 ## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 
