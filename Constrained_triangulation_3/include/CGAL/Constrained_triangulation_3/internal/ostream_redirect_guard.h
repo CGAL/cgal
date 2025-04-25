@@ -12,6 +12,8 @@
 #ifndef CGAL_CDT_3_INTERNAL_OSTREAM_REDIRECT_GUARD_H
 #define CGAL_CDT_3_INTERNAL_OSTREAM_REDIRECT_GUARD_H
 
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include <ostream>
 
 namespace CGAL {
