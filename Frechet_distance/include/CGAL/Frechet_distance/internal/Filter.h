@@ -17,8 +17,8 @@
 #define CGAL_FRECHET_DISTANCE_INTERNAL_FILTER_H
 
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/certificate.h>
-#include <CGAL/Frechet_distance/internal/curve.h>
+#include <CGAL/Frechet_distance/internal/Certificate.h>
+#include <CGAL/Frechet_distance/internal/Curve.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 
 namespace CGAL {
