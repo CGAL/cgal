@@ -97,13 +97,7 @@ public:
   Construct_vertex_3 construct_vertex_3_object();
 
   /*!
-   * returns a predicate object that must provide the function operators:
-   *
-   * - `bool operator()(Triangle_3 t)`
-   *
-   * - `bool operator()(Tetrahedron_3 t)`
-   *
-   * which return true iff the object is degenerate.
+   * returns a predicate object model of `IsDegenerate_3`
    */
   unspecified_type is_degenerate_3_object();
 
