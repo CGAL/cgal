@@ -201,6 +201,7 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
     set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER_QT"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+  add_library(CGAL::CGAL_Basic_viewer ALIAS CGAL::CGAL_Basic_viewer_Qt)
 endif()
 
 #warning: the order in this list has to match the enum in Exact_type_selector
