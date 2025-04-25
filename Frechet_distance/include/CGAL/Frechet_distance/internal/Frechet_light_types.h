@@ -19,9 +19,9 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <vector>
 
-#include <CGAL/Frechet_distance/internal/curve.h>
+#include <CGAL/Frechet_distance/internal/Curve.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
-#include <CGAL/Frechet_distance/internal/id.h>
+#include <CGAL/Frechet_distance/internal/Id.h>
 
 namespace CGAL {
 namespace Frechet_distance {

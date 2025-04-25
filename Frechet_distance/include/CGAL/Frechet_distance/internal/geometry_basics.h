@@ -29,8 +29,8 @@
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Interval_nt.h>
 
-#include <CGAL/Frechet_distance/internal/id.h>
-#include <CGAL/Frechet_distance/internal/curve.h>
+#include <CGAL/Frechet_distance/internal/Id.h>
+#include <CGAL/Frechet_distance/internal/Curve.h>
 
 namespace CGAL {
 namespace Frechet_distance {

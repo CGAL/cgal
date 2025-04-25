@@ -17,12 +17,12 @@
 #define CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_LIGHT_H
 
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/certificate.h>
-#include <CGAL/Frechet_distance/internal/curve.h>
-#include <CGAL/Frechet_distance/internal/filter.h>
-#include <CGAL/Frechet_distance/internal/frechet_light_types.h>
+#include <CGAL/Frechet_distance/internal/Certificate.h>
+#include <CGAL/Frechet_distance/internal/Curve.h>
+#include <CGAL/Frechet_distance/internal/Filter.h>
+#include <CGAL/Frechet_distance/internal/Frechet_light_types.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
-#include <CGAL/Frechet_distance/internal/id.h>
+#include <CGAL/Frechet_distance/internal/Id.h>
 #include <CGAL/Frechet_distance/internal/high_level_predicates.h>
 
 

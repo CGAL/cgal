@@ -17,7 +17,7 @@
 #define CGAL_FRECHET_DISTANCE_INTERNAL_CURVE_H
 
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/id.h>
+#include <CGAL/Frechet_distance/internal/Id.h>
 
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Bbox_d.h>

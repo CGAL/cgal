@@ -16,8 +16,8 @@
 #ifndef CGAL_INTERNAL_FRECHET_DISTANCE_FRECHET_DISTANCE_H
 #define CGAL_INTERNAL_FRECHET_DISTANCE_FRECHET_DISTANCE_H
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/curve.h>
-#include <CGAL/Frechet_distance/internal/frechet_light.h>
+#include <CGAL/Frechet_distance/internal/Curve.h>
+#include <CGAL/Frechet_distance/internal/Frechet_light.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 #include <CGAL/Frechet_distance/internal/Frechet_distance_traits.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
