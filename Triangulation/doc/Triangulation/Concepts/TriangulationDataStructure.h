@@ -26,8 +26,8 @@ which is also the unique vertex and the unique full cell in the
 `TriangulationDataStructure`.
 In a
 geometric realization of the `TriangulationDataStructure` (<I>e.g.</I>, in a
-`Triangulation<TriangulationTraits_, TriangulationDataStructure_>` or a
-`Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`), this vertex
+`CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>` or a
+`CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`), this vertex
 corresponds to <I>the vertex at infinity</I>.
 
 <DT><B>0</B><DD> This corresponds to two vertices, each incident to one \f$ 0\f$-face;
