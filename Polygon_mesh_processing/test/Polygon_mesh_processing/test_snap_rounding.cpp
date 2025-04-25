@@ -3,32 +3,17 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/IO/polygon_soup_io.h>
-
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <sstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-
-template <class TriangleMesh>
-struct My_exp_visitor :
-  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
-{
-  void after_subface_creations(TriangleMesh&){++(*i);}
-
-  My_exp_visitor()
-    : i (new int(0) )
-  {}
-
-  std::shared_ptr<int> i;
-};
 
 struct My_visitor : public PMP::Autorefinement::Default_visitor
 {
@@ -47,6 +32,7 @@ struct My_visitor : public PMP::Autorefinement::Default_visitor
   void number_of_output_triangles(std::size_t nbt)
   {
     tgt_check.assign(expected_nb_output, 0);
+    std::cout << nbt << " " << expected_nb_output << std::endl;
     assert(nbt==expected_nb_output);
   }
 
@@ -76,70 +62,6 @@ struct My_visitor : public PMP::Autorefinement::Default_visitor
   std::vector<int> tgt_check;
 };
 
-void test_coref_based(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,
-                      std::size_t nb_vertices_after_autorefine, bool all_fixed, std::size_t nb_vertices_after_fix,
-                      bool triple_intersection)
-{
-  std::cout << "Running tests (coref based) on " << fname << "\n";
-  std::ifstream input(fname);
-
-  Mesh mesh;
-  if (!input || !(input >> mesh))
-  {
-    std::cerr << "  Input mesh is not a valid off file." << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  input.close();
-  std::size_t nb_vertices_before_autorefine = num_vertices(mesh);
-
-// Testing PMP::experimental::surface_self_intersection()
-  try{
-    std::vector< std::vector<K::Point_3> >polylines;
-    PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
-    assert(polylines.size() == nb_polylines);
-    std::size_t total_nb_pt=0;
-    for(const std::vector<K::Point_3>& polyline : polylines)
-      total_nb_pt+=polyline.size();
-    assert(total_nb_points == total_nb_pt);
-    assert( !triple_intersection );
-  }
-  catch(const PMP::Corefinement::Triple_intersection_exception&)
-  {
-    assert( triple_intersection );
-  }
-
-// Testing PMP::experimental::autorefine()
-  try{
-    My_exp_visitor<Mesh> visitor;
-    PMP::experimental::autorefine(mesh,
-      CGAL::parameters::visitor(visitor));
-    mesh.collect_garbage();
-    assert( nb_vertices_after_autorefine==num_vertices(mesh));
-    assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
-    assert( !triple_intersection );
-  }
-  catch(const PMP::Corefinement::Triple_intersection_exception&)
-  {
-    assert( triple_intersection );
-  }
-
-// Testing PMP::experimental::autorefine_and_remove_self_intersections()
-  try{
-    input.open(fname);
-    mesh.clear();
-    input >> mesh;
-    bool res=PMP::experimental::autorefine_and_remove_self_intersections(mesh);
-    assert(res==all_fixed);
-    mesh.collect_garbage();
-    assert( nb_vertices_after_fix==num_vertices(mesh));
-    assert( !triple_intersection );
-  }
-  catch(const PMP::Corefinement::Triple_intersection_exception&)
-  {
-    assert( triple_intersection );
-  }
-}
-
 template <class Tag>
 void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size_t expected_nb_output, Tag tag)
 {
@@ -160,6 +82,8 @@ void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size
 // Testing autorefine()
   My_visitor visitor(triangles.size(), expected_nb_output);
   PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(visitor).concurrency_tag(tag).apply_iterative_snap_rounding(true));
+  std::cout << points.size() << " " << nb_vertices_after_autorefine << std::endl;
+  std::cout << triangles.size() << " " << expected_nb_output << std::endl;
   assert( nb_vertices_after_autorefine==points.size());
   assert( expected_nb_output==triangles.size());
   assert( !PMP::does_triangle_soup_self_intersect(points, triangles) );
@@ -168,14 +92,12 @@ void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size
 
 int main(int argc, const char** argv)
 {
-  // file nb_polylines total_nb_points nb_vertices_after_autorefine all_fixed nb_vertices_after_fix triple_intersection
-  for (int i=0;i<(argc-1)/9; ++i)
+  // file expected_nb_of_vertices expected_nb_of_faces (after repair)
+  for (int i=0;i<(argc-1)/3; ++i)
   {
-    test_coref_based(argv[1+9*i], atoi(argv[1+9*i+1]), atoi(argv[1+9*i+2]),
-                     atoi(argv[1+9*i+3]), atoi(argv[1+9*i+4])==0?false:true, atoi(argv[1+9*i+5]), atoi(argv[1+9*i+6])==0?false:true);
-    test(argv[1+9*i], atoi(argv[1+9*i+7]), atoi(argv[1+9*i+8]), CGAL::Sequential_tag());
+    test(argv[1+3*i], atoi(argv[1+3*i+1]), atoi(argv[1+3*i+2]), CGAL::Sequential_tag());
 #ifdef CGAL_LINKED_WITH_TBB
-    test(argv[1+9*i], atoi(argv[1+9*i+7]), atoi(argv[1+9*i+8]), CGAL::Parallel_tag());
+    test(argv[1+3*i], atoi(argv[1+3*i+1]), atoi(argv[1+3*i+2]), CGAL::Parallel_tag());
 #endif
   }
 }
