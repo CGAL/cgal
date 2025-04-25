@@ -33,6 +33,8 @@
 #include <stack>
 #include <set>
 
+#include <boost/iterator/counting_iterator.hpp>
+
 namespace CGAL {
 
 template<   class Dimen,
