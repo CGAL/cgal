@@ -1,9 +1,3 @@
-#define PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
-// #define CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
-// #define PMP_ROUNDING_VERTICES_NAIVE_SNAP
-// #define PMP_ROUNDING_VERTICES_FLOAT_SNAP
-// TODO delete those verbose line macro before release
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -24,21 +18,6 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel EPECK;
 typedef CGAL::Simple_cartesian<double> Cartesian;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-
-struct Track_visitor : PMP::Autorefinement::Default_visitor
-{
-  // inline void number_of_output_triangles(std::size_t nbt) { std::cout << "total number of triangles: " << nbt << std::endl;}
-  inline void number_of_output_triangles(std::size_t /*nbt*/) {}
-
-  // inline void verbatim_triangle_copy(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " goes to " << tgt_id << std::endl;}
-  inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
-
-  // inline void new_subtriangle(std::size_t tgt_id, std::size_t src_id) { std::cout << src_id << " subdivides to " << tgt_id << std::endl;}
-  inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
-
-  // inline void delete_triangle(std::size_t src_id) { std::cout << src_id << " deleted" << std::endl;}
-  inline void delete_triangle(std::size_t /*src_id*/) {}
-};
 
 template<typename Kernel>
 struct Example{
@@ -64,12 +43,7 @@ struct Example{
 
     CGAL::Real_timer t;
     t.start();
-#if 1
-    Track_visitor visitor;
-    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).visitor(visitor));
-#else
-    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
-#endif
+    bool success=PMP::autorefine_triangle_soup(input_points, input_triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(false).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
     t.stop();
     std::cout << "\nOutput:" << std::endl;
     std::cout << "#points = " << input_points.size() << " and #triangles = " << input_triangles.size() << " in " << t.time() << " sec." << std::endl;
@@ -90,9 +64,6 @@ int main(int argc, char** argv)
 {
   const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
                                          : std::string(argv[1]);
-
-  // const std::string out_file = argc <= 2 ? "rounded_soup.off"
-  //                                        : std::string(argv[2]);
 
   const int grid_size = argc <= 2 ? 23
                                   : std::stoi(std::string(argv[2]));
