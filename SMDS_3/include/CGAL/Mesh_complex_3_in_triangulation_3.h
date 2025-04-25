@@ -351,6 +351,14 @@ public:
     far_vertices_.clear();
   }
 
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(const Triangulation& tr)
+  {
+    tr_ = tr;
+    rescan_after_load_of_triangulation();
+  }
+
   /** adds cell \p cell to the 3D complex, with subdomain index \p index
   */
   void add_to_complex(const Cell_handle& cell, const Subdomain_index& index)
