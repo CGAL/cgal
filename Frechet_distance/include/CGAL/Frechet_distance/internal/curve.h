@@ -13,7 +13,9 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_CURVE_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_CURVE_H
+
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 
@@ -468,3 +470,5 @@ std::ostream& operator<<(std::ostream& out, const Curve<K>& curve)
 }
 
 } } } // namespace CGAL::Frechet_distance::internal
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_CURVE_H

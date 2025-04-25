@@ -13,7 +13,8 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#pragma once
+#ifndef CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_CLASSICAL_H
+#define CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_CLASSICAL_H
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/curve.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
@@ -122,3 +123,6 @@ std::pair<double,double> FrechetClassical<C>::calcDistance(Curve const& curve1, 
 } // namespace internal
 } // namespace Frechet_distance_
 } // namespace CGAL
+
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_FRECHET_CLASSICAL_H
+
