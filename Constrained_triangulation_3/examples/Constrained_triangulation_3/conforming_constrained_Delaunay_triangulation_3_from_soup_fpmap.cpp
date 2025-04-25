@@ -1,3 +1,4 @@
+// Copy the content from the old file to the new file, but update all occurrences of 'fmap' in the filename and code to 'fpmap'.
 #include <CGAL/draw_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
@@ -48,7 +49,6 @@ int main(int argc, char* argv[])
   };
 
   auto soup_fpmap = boost::make_function_property_map<std::size_t>(polygon_to_patch_id);
-
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
       points, polygons, CGAL::parameters::face_patch_map(soup_fpmap));
 
