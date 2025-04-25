@@ -86,6 +86,7 @@ Skin_surface_3 3D Skin Surface Meshing
 SMDS_3 3D Simplicial Mesh Data Structure
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
+Sphere_packing Sphere Packing
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
 Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
