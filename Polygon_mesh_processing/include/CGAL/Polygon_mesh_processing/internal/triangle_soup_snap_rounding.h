@@ -33,6 +33,7 @@ namespace Polygon_mesh_processing
 namespace internal
 {
 
+// Certified ceil function for exact number types
 template <class NT> double double_ceil(Lazy_exact_nt< NT > x);
 template <class NT> double double_ceil(NT x);
 
@@ -42,7 +43,7 @@ double double_ceil(Lazy_exact_nt< NT > x){
   double ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
     return ceil_left;
-  // If not refine interval by contracting the DAG and try again
+  // If not refine the interval by contracting the DAG and try again
   x.exact();
   ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
@@ -69,6 +70,7 @@ double double_ceil(NT x){
   }
 };
 
+// Color a range by an index, it is used by the visitor to track the correspondance between the input and the output
 template <typename Range>
 class Indexes_range : public Range{
   typedef std::remove_cv_t<typename std::iterator_traits<typename Range::iterator>::value_type> Value_type;
@@ -98,18 +100,71 @@ private:
   bool modified;
 };
 
-//repair_polygon_soup for triangles
+// Repair_polygon_soup without remove_pinched_polygons since our polygon are triangles
 template <typename PointRange, typename PolygonRange,
-          typename Polygon = typename Polygon_types<PointRange, PolygonRange>::Polygon_3,
-          typename NamedParameters>
+          typename Polygon = typename Polygon_types<PointRange, PolygonRange>::Polygon_3>
+struct Triangle_soup_fixer
+{
+  template <typename NamedParameters>
+  void operator()(PointRange& points,
+                  PolygonRange& polygons,
+                  const NamedParameters& np) const
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
+    merge_duplicate_points_in_polygon_soup(points, polygons, np);
+    simplify_polygons_in_polygon_soup(points, polygons, traits);
+    remove_invalid_polygons_in_polygon_soup(points, polygons);
+    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    remove_isolated_points_in_polygon_soup(points, polygons);
+  }
+};
+
+// Specialization for array and Indexes_range of array
+template <typename PointRange, typename PolygonRange, typename PID, std::size_t N>
+struct Triangle_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
+{
+  template <typename NamedParameters>
+  void operator()(PointRange& points,
+                  PolygonRange& polygons,
+                  const NamedParameters& np) const
+  {
+    repair_polygon_soup(points, polygons, np);
+  }
+};
+
+template <typename PointRange, typename PolygonRange, typename PID, std::size_t N>
+struct Triangle_soup_fixer<PointRange, PolygonRange, Indexes_range< std::array<PID, N> > >
+{
+  template <typename NamedParameters>
+  void operator()(PointRange& points,
+                  PolygonRange& polygons,
+                  const NamedParameters& np) const
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
+    merge_duplicate_points_in_polygon_soup(points, polygons, np);
+    remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
+    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    remove_isolated_points_in_polygon_soup(points, polygons);
+  }
+};
+
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
 void repair_triangle_soup(PointRange& points,
                           PolygonRange& polygons,
                           const NamedParameters& np)
 {
-  merge_duplicate_points_in_polygon_soup(points, polygons, np);
-  remove_invalid_polygons_in_polygon_soup(points, polygons);
-  merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
-  remove_isolated_points_in_polygon_soup(points, polygons);
+  Triangle_soup_fixer<PointRange, PolygonRange> fixer;
+  fixer(points, polygons, np);
 }
 
 struct Wrapp_id_visitor : public Autorefinement::Default_visitor
@@ -280,7 +335,6 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 #endif
     for (Point_3 &p : points)
       p = Point_3(to_double(p.x()), to_double(p.y()), to_double(p.z()));
-
     repair_triangle_soup(points, triangles, np);
 
     // Get all intersecting triangles
