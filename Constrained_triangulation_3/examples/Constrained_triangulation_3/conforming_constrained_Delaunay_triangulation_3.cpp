@@ -1,7 +1,7 @@
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/draw_triangulation_3.h>
+#include <CGAL/draw_constrained_triangulation_3.h>
 
 #include <algorithm>
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
 
-  CGAL::draw(ccdt.triangulation());
+  CGAL::draw(ccdt);
 
   return EXIT_SUCCESS;
 }
