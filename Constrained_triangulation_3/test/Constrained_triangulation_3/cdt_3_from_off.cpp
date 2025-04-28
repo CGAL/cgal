@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#pragma warning(disable: 4455)
+#endif
+
 #if defined(CGAL_DEBUG_CDT_3) && !__has_include(<format>)
 #undef CGAL_DEBUG_CDT_3
 #endif
