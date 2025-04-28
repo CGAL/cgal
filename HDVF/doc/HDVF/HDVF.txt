@@ -7,9 +7,19 @@ namespace CGAL {
 \cgalAutoToc
 \author Alexandra Bac
 
-This chapter describes the ...
+This chapter describes the Homological Discrete Vector Field (HDVF) package: a framework for "geometric" homology computation. HDVFs provide tools to compute basic homological information (such as Betti numbers, ie. number of holes per dimension), but also higher level information (homology and cohomology generators, homology/cohomology annotation...). Moreover HDVFs provide persistent homology computation tools as well as Alexander duality and relative homology tools.
 
-\section secHDVFdefinitions Definitions
+A chain complex is an algebraic structure, associated to a given geometric complex (such as a simplicial, a cubical or a cellular complex) encoding cells in each dimension (through groups) and adjacency between such cells (through morphisms called boundary maps). 
+
+\section secHDVFdefinitions Overview
+
+Section on definitions here ...
+
+\section secHDVFdefinitions Computational homology reminders
+
+Section on definitions here ...
+
+\section secHDVFdefinitions HDVF definitions
 
 Section on definitions here ...
 
