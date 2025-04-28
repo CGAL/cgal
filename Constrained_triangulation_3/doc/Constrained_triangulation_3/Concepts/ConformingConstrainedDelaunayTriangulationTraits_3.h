@@ -30,11 +30,6 @@ public:
   */
   using Vector_3 = unspecified_type;
 
-  /*!
-   * A constructor object model of `ConstructVertex_3`
-   */
-  using Construct_vertex_3 = unspecified_type;
-
   /// @}
 
   /// \name Operations
@@ -94,7 +89,7 @@ public:
   /*!
    * returns a function object model of `ConstructVertex_3`
    */
-  Construct_vertex_3 construct_vertex_3_object();
+  unspecified_type construct_vertex_3_object();
 
   /*!
    * returns a predicate object model of `IsDegenerate_3`
