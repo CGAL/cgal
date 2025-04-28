@@ -58,7 +58,7 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_or_de
     auto [c, index] = *f;
     return c->ccdt_3_data().is_facet_constrained(index);
   };
-  options.colored_face = [](const Tr&, Facet_descriptor f) {
+  options.colored_face = [](const Tr&, Facet_descriptor) {
     return true;
   };
   options.face_color = [&](const Tr&, Facet_descriptor f) {
