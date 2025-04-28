@@ -790,7 +790,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
     std::vector<Full_cell_handle> simps;
     // save the Face's vertices:
-    Full_cell s;
+    Full_cell s(current_dimension);
     for( int i = 0; i <= fd; ++i )
         s.set_vertex(i, f.vertex(i));
     // compute the star of f
