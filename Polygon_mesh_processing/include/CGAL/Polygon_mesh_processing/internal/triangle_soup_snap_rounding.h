@@ -167,6 +167,7 @@ void repair_triangle_soup(PointRange& points,
   fixer(points, polygons, np);
 }
 
+// A visitor of Autorefinement to track the correspondance between input and output triangles
 struct Wrapp_id_visitor : public Autorefinement::Default_visitor
 {
   template< typename Triangle>
@@ -248,7 +249,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
-    Autorefinement::Default_visitor//default
+    Autorefinement::Default_visitor
   >::type Visitor;
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
@@ -301,7 +302,6 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
   auto snap = [](typename Kernel::FT x, double scale)
   {
     // Scale the coordinate, round to nearest integer and scale back
-    // TODO replace this ceil by the one of Algebraic_fondation when it will be add to master
     return internal::double_ceil((x * scale) - 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
@@ -376,6 +376,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     std::cout << "Snap the coordinates of the vertices of the intersecting triangles" << std::endl;
 #endif
 
+// Variants of the rounding process depending of the macros defined
 #if defined(PMP_ROUNDING_VERTICES_NAIVE_SNAP)
     // Nothing
 
@@ -478,6 +479,8 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
       }
     }
 #elif defined(PMP_ROUNDING_VERTICES_FLOAT_SNAP)
+    // Version where points are rounded to the closest simple precision float.
+
     for (auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
@@ -490,8 +493,6 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 
     // Get all the snap version of the points of the vertices of the intersecting triangles
     // Note: points will not be modified here, they will be modified in the next for loop
-
-    //TODO: TBB version of this for loop
 
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
