@@ -42,6 +42,18 @@ typedef OSM::SparseMatrix<CoefficientType, OSM::COLUMN> CMatrix;
 
 /// @}
 
+/// \name Operators
+/// @{
+
+/*!
+Affectation operator.
+ 
+The operator creates a "fresh" copy of `complex`.
+ */
+    Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex);
+    
+/// @}
+    
 /// \name Access functions
 /// @{
 

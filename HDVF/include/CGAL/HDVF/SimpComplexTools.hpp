@@ -29,9 +29,9 @@
 /** \brief vtk export for SimpComplex */
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix, typename VertexIdType = int>
-void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType, VertexIdType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType, VertexIdType> &complex, string filename = "test")
+void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
 {
-    typedef Simplicial_chain_complex<CoefType, VertexIdType> ComplexType;
+    typedef Simplicial_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
     vector<vector<int> > labels = hdvf.export_label(PSC) ;
@@ -68,10 +68,10 @@ void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType, VertexId
 
 // Duality
 
-template<typename CoefficientType, typename VertexIdType = int>
+template<typename CoefficientType>
 class Duality_SimpComplexTools {
 public:
-    typedef Simplicial_chain_complex<CoefficientType, VertexIdType> _ComplexType ;
+    typedef Simplicial_chain_complex<CoefficientType> _ComplexType ;
     typedef SubChainComplex<CoefficientType, _ComplexType> _SubCCType ;
     // Constructor
     Duality_SimpComplexTools() {}
@@ -141,7 +141,7 @@ public:
         for (int q = 0; q <= _CC.dim(); ++q)
             for (int i = 0; i<_CC.nb_cells(q); ++i)
             {
-                const Simplex<VertexIdType>& s(_CC._ind2simp.at(q).at(i)) ;
+                const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
                 vcells.push_back(s.getVertices()) ;
             }
                 
@@ -154,14 +154,14 @@ public:
 
 
 /** \brief Export persistent information to vtk files */
-template <typename CoefType, typename DegType, typename VertexIdType = int>
-void Per_Simp_output_vtk (PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType, VertexIdType>, DegType> &per_hdvf, Simplicial_chain_complex<CoefType, VertexIdType> &complex, string filename = "per")
+template <typename CoefType, typename DegType>
+void Per_Simp_output_vtk (PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType>, DegType> &per_hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "per")
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using perHDVFType = PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType, VertexIdType>, DegType> ;
-    using ComplexType = Simplicial_chain_complex<CoefType, VertexIdType> ;
+    using perHDVFType = PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType>, DegType> ;
+    using ComplexType = Simplicial_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
