@@ -32,7 +32,6 @@ struct My_visitor : public PMP::Autorefinement::Default_visitor
   void number_of_output_triangles(std::size_t nbt)
   {
     tgt_check.assign(expected_nb_output, 0);
-    std::cout << nbt << " " << expected_nb_output << std::endl;
     assert(nbt==expected_nb_output);
   }
 
@@ -82,8 +81,6 @@ void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size
 // Testing autorefine()
   My_visitor visitor(triangles.size(), expected_nb_output);
   PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(visitor).concurrency_tag(tag).apply_iterative_snap_rounding(true));
-  std::cout << points.size() << " " << nb_vertices_after_autorefine << std::endl;
-  std::cout << triangles.size() << " " << expected_nb_output << std::endl;
   assert( nb_vertices_after_autorefine==points.size());
   assert( expected_nb_output==triangles.size());
   assert( !PMP::does_triangle_soup_self_intersect(points, triangles) );
