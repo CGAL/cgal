@@ -533,15 +533,21 @@ private:
     Constraints_set constraints_set;
   } priv;
 public:
-  Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
-  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) {}
+  Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp) {}
+  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) { copy(ch); }
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
 
-  ~Polyline_constraint_hierarchy_2(){ clear();}
+  ~Polyline_constraint_hierarchy_2() { clear(); }
   void clear();
 
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch) { return copy(ch); }
-  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
+
+  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) {
+    if(this == &ch) return *this;
+    clear();
+    priv = std::move(ch.priv);
+    return *this;
+  }
 
   // Query
   bool is_subconstraint(T va, T vb) const;
