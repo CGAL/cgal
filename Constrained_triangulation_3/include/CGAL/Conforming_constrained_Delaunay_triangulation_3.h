@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
+
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 #include <CGAL/Base_with_time_stamp.h>
@@ -876,7 +878,7 @@ public:
     * This allows the use of all non-modifying functions of the base triangulation.
     * See the other overload for a way to move the triangulation out of this object and then modify it.
     */
-  const Triangulation& triangulation() & {
+  const Triangulation& triangulation() const& {
     return cdt_impl;
   }
 

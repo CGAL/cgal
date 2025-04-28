@@ -10,6 +10,9 @@
 \defgroup PkgConstrainedTriangulation3Classes Classes and Class Templates
 \ingroup PkgConstrainedTriangulation3Ref
 
+\defgroup PkgDrawCDT_3 Draw a 3D Constrained Triangulation
+\ingroup PkgConstrainedTriangulation3Ref
+
 \addtogroup PkgConstrainedTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
 \cgalPkgPicture{cdt3-small.png}
@@ -56,4 +59,9 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits, Triangulation>`
 - `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits, Vertex_base>`
 - `CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits, Cell_base>`
+
+\cgalCRPSection{Draw a 3D Constrained Triangulation}
+
+- \link PkgDrawCDT_3 CGAL::draw() \endlink
+
 */
