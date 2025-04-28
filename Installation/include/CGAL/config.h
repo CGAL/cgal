@@ -506,7 +506,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L
+#if CGAL_CXX20 && __cpp_lib_format >= 201907L
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 
