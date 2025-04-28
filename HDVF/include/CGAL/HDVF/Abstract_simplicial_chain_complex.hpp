@@ -233,7 +233,7 @@ public:
      * \author Alexandra Bac
      * */
     /** \brief   */
-    void print_complex() const;
+    std::ostream& print_complex(std::ostream& out = std::cout) const;
 
    
 protected:
@@ -360,20 +360,20 @@ void Abstract_simplicial_chain_complex<CoefficientType,VertexIdType>::calculate_
 
 // Method to display the complex's information
 template<typename CoefficientType, typename VertexIdType>
-void Abstract_simplicial_chain_complex<CoefficientType, VertexIdType>::print_complex() const {
-    std::cout << "Complex dimension: " << _dim << std::endl;
+std::ostream& Abstract_simplicial_chain_complex<CoefficientType, VertexIdType>::print_complex(std::ostream& out) const {
+    out << "Complex dimension: " << _dim << std::endl;
 
     // Total number of cells
     int nb_total_cells = 0;
     for (int i = 0; i <= _dim; ++i) {
         nb_total_cells += _nb_cells[i];
     }
-    std::cout << "Total number of cells: " << nb_total_cells << std::endl;
+    out << "Total number of cells: " << nb_total_cells << std::endl;
     
     // Cells per dimension
     for (int q = 0; q <= _dim; ++q) {
-        std::cout << "--- dimension " << q << std::endl;
-        cout << nb_cells(q) << " cells" << endl ;
+        out << "--- dimension " << q << std::endl;
+        out << nb_cells(q) << " cells" << endl ;
 //        for (int j = 0; j < _nb_cells.at(q); ++j) {
 //            Simplex s(_ind2Simp.at(q).at(j));
 //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::endl;
@@ -381,9 +381,10 @@ void Abstract_simplicial_chain_complex<CoefficientType, VertexIdType>::print_com
     }
     
     // Boundary matrices
-    std::cout << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
+    out << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
     for (int q = 1; q <= _dim; ++q)
-        std::cout << "_d[" << q << "] : " << _d[q].dimensions().first << "x" << _d[q].dimensions().second << std::endl <<  _d[q] << std::endl;
+        out << "_d[" << q << "] : " << _d[q].dimensions().first << "x" << _d[q].dimensions().second << std::endl <<  _d[q] << std::endl;
+    return out ;
 }
 
 /**
