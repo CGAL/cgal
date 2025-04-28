@@ -131,8 +131,8 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
   CGAL_kernel_precondition(!k.is_degenerate_3_object() (t1) );
   CGAL_kernel_precondition(!k.is_degenerate_3_object() (t2) );
 
-  typename K::Construct_vertex_3 vertex_on = k.construct_vertex_3_object();
-  typename K::Orientation_3 orientation = k.orientation_3_object();
+  auto vertex_on = k.construct_vertex_3_object();
+  auto orientation = k.orientation_3_object();
 
   const Point_3& p = vertex_on(t1,0);
   const Point_3& q = vertex_on(t1,1);
