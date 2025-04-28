@@ -456,14 +456,14 @@ Insertion in a hole, \f$ d=2\f$
 \cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
-insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);
+insert_in_hole(ForwardIterator s, ForwardIterator e, Facet f);
 
 /*!
 Same as above, but handles to the new full cells are
 appended to the `out` output iterator.
 */
 template< class ForwardIterator, class OutputIterator >
-Vertex_handle insert_in_hole(ForwardIterator start, ForwardIterator end, Facet
+Vertex_handle insert_in_hole(ForwardIterator s, ForwardIterator e, Facet
 f, OutputIterator out);
 
 /*!
@@ -594,7 +594,7 @@ Calls `delete_full_cell` over an iterator range of value type `Full_cell_handle`
 \cgalAdvancedEnd
 */
 template< typename ForwardIterator > void
-delete_full_cells(ForwardIterator start, ForwardIterator end);
+delete_full_cells(ForwardIterator s, ForwardIterator e);
 
 /// @}
 

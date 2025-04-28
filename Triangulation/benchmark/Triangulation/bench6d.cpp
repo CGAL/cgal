@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
     std::vector<Triangulation::Full_cell_handle> infinite_cells;
     t.tds().incident_full_cells(t.infinite_vertex(), std::back_inserter(infinite_cells));
 
+    return 0;
     std::set<std::pair<std::ptrdiff_t, std::ptrdiff_t>> edges;
 
     for(auto ch : infinite_cells) {

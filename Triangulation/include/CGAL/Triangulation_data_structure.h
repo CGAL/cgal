@@ -309,10 +309,10 @@ public:
         return s->mirror_index(i);
     }
 
-    int mirror_vertex(Full_cell_handle s, int i) const /* Concept */
+    Vertex_handle mirror_vertex(Full_cell_handle s, int i) const /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s && check_range(i));
-        return s->mirror_vertex(i);
+        return s->mirror_vertex(i, current_dimension);
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FACETS OPERATIONS
