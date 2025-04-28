@@ -1,6 +1,6 @@
 data-autoref/test_01.off 4 2
 data-autoref/test_02.off 10 17
-data-autoref/test_03.off 11 14
+data-autoref/test_03.off 13 20
 data-autoref/test_04.off 12 20
 data-autoref/test_05.off 12 20
 data-autoref/test_06.off 89 248
