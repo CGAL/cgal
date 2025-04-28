@@ -219,7 +219,7 @@ void refine_with_plane(PolygonMesh& pm,
  /*
   *    \cgalParamNBegin{visitor}
   *      \cgalParamDescription{TODO add concept}
-  *      \cgalParamType{reference wrapper recommeded if it has state TODO}
+  *      \cgalParamType{reference wrapper recommended if it has state TODO}
   *      \cgalParamDefault{None}
   *    \cgalParamNEnd
  */
