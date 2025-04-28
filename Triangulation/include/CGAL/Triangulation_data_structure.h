@@ -368,7 +368,7 @@ protected:
 public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-    Vertex_handle collapse_face(const Face &); /* Concept */
+    Vertex_handle contract_face(const Face &); /* Concept */
     void remove_decrease_dimension(Vertex_handle, Vertex_handle); /* Concept */
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
@@ -784,7 +784,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 template <class Dim, class Vb, class Fcb>
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::collapse_face(const Face & f) /* Concept */
+::contract_face(const Face & f) /* Concept */
 {
     const int fd = f.face_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
