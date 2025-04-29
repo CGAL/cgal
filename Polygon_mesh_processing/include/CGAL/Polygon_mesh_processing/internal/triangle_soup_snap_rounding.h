@@ -483,18 +483,23 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     // Get all the snap version of the points of the vertices of the intersecting triangles
     // Note: points will not be modified here, they will be modified in the next for loop
 
-    std::set<Point_3> snap_points;
+    std::vector<Point_3> snap_points;
+    snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
+
     for (auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
-        snap_points.emplace(snap_p(points[pi]));
+        snap_points.emplace_back(snap_p(points[pi]));
       for (size_t pi : triangles[pair.second])
-        snap_points.emplace(snap_p(points[pi]));
+        snap_points.emplace_back(snap_p(points[pi]));
     }
 
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Snap the coordinates of the vertices close-by the previous ones" << std::endl;
 #endif
+
+    std::sort(snap_points.begin(), snap_points.end());
+    snap_points.erase(std::unique(snap_points.begin(), snap_points.end()), snap_points.end());
 
     // If the snapped version of a point correspond to one of the previous point, we snap it
 #ifdef CGAL_LINKED_WITH_TBB
