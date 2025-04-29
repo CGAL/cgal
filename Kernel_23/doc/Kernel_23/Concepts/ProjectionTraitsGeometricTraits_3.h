@@ -19,7 +19,7 @@ public:
 /// \name Types
 /// @{
 
-  /*! Number type */
+  /*! Number type model of `FieldNumberType`*/
   typedef unspecified_type FT;
 
   /*! 2D point type */
