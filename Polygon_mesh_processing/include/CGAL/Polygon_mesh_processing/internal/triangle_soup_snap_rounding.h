@@ -158,7 +158,7 @@ void repair_triangle_soup(PointRange& points,
 }
 
 // A visitor of Autorefinement to track the correspondance between input and output triangles
-struct Wrapp_id_visitor : public Autorefinement::Default_visitor
+struct Wrap_id_visitor : public Autorefinement::Default_visitor
 {
   template< typename Triangle>
   inline void internal_new_subtriangle(Triangle& new_t, const Triangle& old_t) {
@@ -531,7 +531,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 #endif
     if constexpr(has_visitor)
     {
-      Wrapp_id_visitor visitor;
+      Wrap_id_visitor visitor;
       autorefine_triangle_soup(points, triangles, parameters::point_map(pm).concurrency_tag(Concurrency_tag()).visitor(visitor));
     }
     else
