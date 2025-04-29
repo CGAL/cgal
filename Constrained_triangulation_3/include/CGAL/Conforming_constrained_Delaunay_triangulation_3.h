@@ -552,6 +552,7 @@ private:
   CDT_3_impl cdt_impl = {};
 
   using Is_constrained = typename CDT_3_impl::Is_constrained;
+
 public:
   /** \name Constructors
   @{
@@ -956,9 +957,10 @@ public:
   /// \name Accessors for Constrained Facets
   /// @{
   /*!
-   * \brief returns if a facet is constrained.
+   * \brief returns whether a facet is constrained or not.
    * \param f is a facet of the triangulation, of type
-   *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`, as defined by its triangulation data structure \endlink.
+   *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`\endlink,
+   *        as defined by its triangulation data structure.
    */
   bool is_facet_constrained(typename Triangulation::Facet f) const {
     return cdt_impl.is_facet_constrained(f);

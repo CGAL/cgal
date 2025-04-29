@@ -30,7 +30,7 @@ namespace CGAL {
  *
  * @tparam Traits The geometric traits class, which must be a model of `ConformingConstrainedDelaunayTriangulationTraits_3`.
  *         It should be the same as the geometric traits class of the triangulation.
- * @tparam Cell_base The base class for the cell, which must be a model of `TriangulationCellBase_3`.
+ * @tparam CellBase The base class for the cell, which must be a model of `TriangulationCellBase_3`.
  *
  * @cgalModels{ConformingConstrainedDelaunayTriangulationCellBase_3, SimplicialMeshCellBase_3, RemeshingCellBase_3}
  *
@@ -38,11 +38,11 @@ namespace CGAL {
  *
  * \sa `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3`
  */
-template <typename Traits, typename Cell_base = Triangulation_cell_base_3<Traits> >
+template <typename Traits, typename CellBase = Triangulation_cell_base_3<Traits> >
 class Conforming_constrained_Delaunay_triangulation_cell_base_3
-  : public Base_with_time_stamp<Cell_base>
+  : public Base_with_time_stamp<CellBase>
 {
-  using Base = Base_with_time_stamp<Cell_base>;
+  using Base = Base_with_time_stamp<CellBase>;
   Conforming_constrained_Delaunay_triangulation_cell_data_3 ccdt_3_data_;
 
   CDT_3_signed_index subdomain_index_ = -1;
@@ -51,7 +51,7 @@ public:
   // To get correct cell type in TDS
   template < class TDS3 >
   struct Rebind_TDS {
-    typedef typename Cell_base::template Rebind_TDS<TDS3>::Other Cb3;
+    typedef typename CellBase::template Rebind_TDS<TDS3>::Other Cb3;
     typedef Conforming_constrained_Delaunay_triangulation_cell_base_3 <Traits, Cb3> Other;
   };
 

@@ -17,82 +17,68 @@ parameter `Triangulation_3` in the function template
 */
 class ConformingConstrainedDelaunayTriangulationTraits_3 {
 public:
-  /// \name Types
-  /// @{
-
-  /*!
-  * The number type
-  */
-  using FT = unspecified_type;
-
-  /*!
-  * The vector type
-  */
-  using Vector_3 = unspecified_type;
-
-  /// @}
 
   /// \name Operations
   /// The following functions give access to the predicate and construction objects:
   /// @{
 
   /*!
-   * returns a function object model of `Angle_3`
+   * returns a function object model of `Kernel::Angle_3`
    */
   unspecified_type angle_3_object();
 
   /*!
-   * returns a function object model of `CompareAngle_3
+   * returns a function object model of `Kernel::CompareAngle_3`
    */
   unspecified_type compare_angle_3_object();
 
   /*!
-   * returns a function object model of `ComputeScalarProduct_3`
+   * returns a function object model of `Kernel::ComputeScalarProduct_3`
    */
   unspecified_type compute_scalar_product_3_object();
 
   /*!
-   * returns a function object model of `ComputeSquaredLength_3`
+   * returns a function object model of `Kernel::ComputeSquaredLength_3`
    */
   unspecified_type compute_squared_length_3_object();
 
   /*!
-   * returns a function object model of `ConstructCrossProductVector_3`
+   * returns a function object model of `Kernel::ConstructCrossProductVector_3`
    */
   unspecified_type construct_cross_product_vector_3_object();
 
   /*!
-   * returns a function object model of `ConstructMidpoint_3`
+   * returns a function object model of `Kernel::ConstructMidpoint_3`
    */
   unspecified_type construct_midpoint_3_object();
 
   /*!
-   * returns a function object model of `ConstructVector_3`
+   * returns a function object model of `Kernel::ConstructVector_3`
    */
   unspecified_type construct_vector_3_object();
 
   /*!
-   * returns a function object model of `ConstructScaledVector_3`
+   * returns a function object model of `Kernel::ConstructScaledVector_3`
    */
   unspecified_type construct_scaled_vector_3_object();
 
   /*!
-   * returns a function object model of `ConstructSumOfVectors_3`
+   * returns a function object model of `Kernel::ConstructSumOfVectors_3`
    */
   unspecified_type construct_sum_of_vectors_3_object();
 
   /*!
-   * returns a function object model of `ConstructTranslatedPoint_3`
+   * returns a function object model of `Kernel::ConstructTranslatedPoint_3`
    */
   unspecified_type construct_translated_point_3_object();
 
   /*!
-   * returns a function object model of `ConstructVertex_3`
+   * returns a function object model of `Kernel::ConstructVertex_3`
    */
   unspecified_type construct_vertex_3_object();
 
   /*!
-   * returns a predicate object model of `IsDegenerate_3`
+   * returns a predicate object model of `Kernel::IsDegenerate_3`
    */
   unspecified_type is_degenerate_3_object();
 

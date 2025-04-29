@@ -4,7 +4,8 @@
 
 The concept `ConformingConstrainedDelaunayTriangulationVertexBase_3` refines the concept
 `TriangulationVertexBase_3` and is the base vertex class for
-the `CGAL::make_conforming_constrained_Delaunay_triangulation_3()` function template.
+the triangulation returned by
+`CGAL::make_conforming_constrained_Delaunay_triangulation_3()` function template.
 
 \cgalRefines{TriangulationVertexBase_3, BaseWithTimeStamp}
 
