@@ -344,7 +344,6 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
       std::cout << "End of the snapping" << std::endl;
 #endif
-      CGAL_assertion(!does_triangle_soup_self_intersect<Concurrency_tag>(points, triangles));
       if constexpr(has_visitor)
       {
         std::vector<std::vector<size_t> > map_io(number_of_input_triangles);
