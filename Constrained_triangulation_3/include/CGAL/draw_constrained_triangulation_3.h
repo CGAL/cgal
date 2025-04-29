@@ -71,7 +71,7 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_or_de
 /*!
 \ingroup PkgDrawCDT_3
 
-A shortcut to \link PkgDrawTriangulation3 `CGAL::add_to_graphics_scene(ccdt.triangulation(), gs_options, title)` \endlink.
+A shortcut to \link PkgDrawTriangulation3 `CGAL::draw(ccdt.triangulation(), gs_options, title)` \endlink.
 */
 template <typename Traits, typename Tr, typename GSOptions>
 void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt,
