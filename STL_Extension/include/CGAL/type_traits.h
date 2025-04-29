@@ -81,7 +81,7 @@ namespace is_complete_internals
     template<class T>
     std::enable_if_t<sizeof(T) != 0, std::true_type>
     check(T(*)());
-    
+
     std::false_type check(...);
 };
 
