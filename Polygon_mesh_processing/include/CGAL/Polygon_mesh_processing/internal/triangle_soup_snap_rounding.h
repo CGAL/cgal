@@ -53,7 +53,7 @@ double double_ceil(const Lazy_exact_nt< NT > &x){
 template <class NT>
 double double_ceil(const NT &x){
   using FT = Fraction_traits<NT>;
-  if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
+  if constexpr(FT::Is_fraction::value){
     // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
     typename FT::Numerator_type num, r, e;
     typename FT::Denominator_type denom;
