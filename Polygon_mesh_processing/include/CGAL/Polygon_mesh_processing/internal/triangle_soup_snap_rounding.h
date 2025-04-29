@@ -76,9 +76,8 @@ public:
   typedef typename Range::const_iterator const_iterator;
   typedef typename Range::iterator iterator;
 
-  Indexes_range(){}
+  Indexes_range() = default;
   Indexes_range(const std::initializer_list<std::size_t>  &l): Range(l), m_id(0), modified(true){}
-  Indexes_range(const Indexes_range<Range> &ir): Range(ir), m_id(ir.id()), modified(ir.was_modified()){}
   Indexes_range(Range &p): Range(p), modified(true){}
   Indexes_range(Range &p, size_t id): Range(p), m_id(id),modified(false){}
 
