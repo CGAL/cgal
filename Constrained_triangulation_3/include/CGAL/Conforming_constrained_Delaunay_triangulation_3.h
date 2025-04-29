@@ -2849,11 +2849,13 @@ private:
             << " )";
           return s.str();
         };
-        if(fail_upper) {
-          std::cerr << "NOTE: Face " << display_face() << " is not a facet of the upper cavity\n";
-        }
-        if(fail_lower) {
-          std::cerr << "NOTE: Face " << display_face() << " is not a facet of the lower cavity\n";
+        if(this->debug_missing_region()) {
+          if(fail_upper) {
+            std::cerr << "NOTE: Face " << display_face() << " is not a facet of the upper cavity\n";
+          }
+          if(fail_lower) {
+            std::cerr << "NOTE: Face " << display_face() << " is not a facet of the lower cavity\n";
+          }
         }
         return true;
       }
