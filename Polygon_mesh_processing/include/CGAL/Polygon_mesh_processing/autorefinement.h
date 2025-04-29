@@ -986,9 +986,6 @@ bool polygon_soup_snap_rounding(PointRange &points,
                                 PolygonRange &triangles,
                                 const NamedParameters& np = parameters::default_values());
 
-template <typename Range>
-class Indexes_range;
-
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 bool autorefine_triangle_soup(PointRange& soup_points,
                                TriangleRange& soup_triangles,
