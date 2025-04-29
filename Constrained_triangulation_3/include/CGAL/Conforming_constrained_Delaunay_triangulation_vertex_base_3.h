@@ -38,7 +38,8 @@ namespace CGAL {
  * \sa `CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3`
  */
 template < typename Traits, typename VertexBase = Triangulation_vertex_base_3<Traits> >
-class Conforming_constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vertex_base>
+class Conforming_constrained_Delaunay_triangulation_vertex_base_3
+  : public Base_with_time_stamp<VertexBase>
 {
   Conforming_constrained_Delaunay_triangulation_vertex_data_3 ccdt_3_data_;
   bool cache_validity_ = false;
