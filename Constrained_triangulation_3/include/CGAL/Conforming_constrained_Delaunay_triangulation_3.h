@@ -3501,9 +3501,10 @@ private:
       processed_faces.insert(fh_region.begin(), fh_region.end());
 
       auto handle_error_with_region = [&](const char* what, CDT_2_face_handle fh_2d) {
-
-              std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
-                  << " of face #F" << face_index << '\n';
+        if(this->debug_regions()) {
+          std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
+                    << " of face #F" << face_index << '\n';
+        }
 #if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
         std::cerr << "  constrained edges are:\n";
         for(auto [c, index]: cdt_2.constrained_edges()) {
@@ -3698,7 +3699,9 @@ public:
         if(restore_face(static_cast <CDT_3_signed_index>(i))) {
           face_constraint_misses_subfaces_reset(i);
         } else {
-          std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
+          if(this->debug_missing_region()) {
+            std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
+          }
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
         }
         the_process_made_progress = true;
