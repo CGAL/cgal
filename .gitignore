@@ -1169,3 +1169,4 @@ dump-*.xyz
 dump.off.mesh
 log.txt
 patches_after_merge.ply
+CMakeUserPresets.json
