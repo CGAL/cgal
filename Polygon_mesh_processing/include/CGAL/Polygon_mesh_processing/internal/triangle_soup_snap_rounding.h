@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Léo Valque, Sylvain Lazard
+// Author(s)     : Léo Valque
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
