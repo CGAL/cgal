@@ -1674,7 +1674,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
 *     \cgalParamDescription{A value `gs` used to scale the points to `[-2^gs, 2^gs]` before rounding them on integers. Used only if `apply_iterative_snap_rounding()` is set to `true`}
-*     \cgalParamType{unsigned int}
+*     \cgalParamType{`unsigned int`}
 *     \cgalParamDefault{23}
 *     \cgalParamExtra{Must be lower than 52.}
 *   \cgalParamNEnd
