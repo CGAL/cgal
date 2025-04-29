@@ -79,21 +79,14 @@ public:
   Indexes_range() = default;
   Indexes_range(const std::initializer_list<std::size_t>  &l): Range(l), m_id(0), modified(true){}
   Indexes_range(Range &p): Range(p), modified(true){}
-  Indexes_range(Range &p, size_t id): Range(p), m_id(id),modified(false){}
+  Indexes_range(Range &p, std::size_t id): Range(p), m_id(id),modified(false){}
 
-  void operator=(const Indexes_range<Range> &ir)
-  {
-    Range::operator=(ir);
-    modified=ir.was_modified();
-    m_id=ir.id();
-  }
-
-  inline size_t id() const { return m_id; }
-  inline void set_id(size_t id){ m_id=id; }
+  inline std::size_t id() const { return m_id; }
+  inline void set_id(std::size_t id){ m_id=id; }
   inline bool was_modified() const { return modified; }
 
 private:
-  size_t m_id;
+  std::size_t m_id;
   bool modified;
 };
 
