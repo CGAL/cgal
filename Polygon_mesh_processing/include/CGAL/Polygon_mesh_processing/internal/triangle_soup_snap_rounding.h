@@ -32,11 +32,11 @@ namespace internal
 {
 
 // Certified ceil function for exact number types
-template <class NT> double double_ceil(Lazy_exact_nt< NT > x);
-template <class NT> double double_ceil(NT x);
+template <class NT> double double_ceil(const Lazy_exact_nt< NT > &x);
+template <class NT> double double_ceil(const NT &x);
 
 template <class NT>
-double double_ceil(Lazy_exact_nt< NT > x){
+double double_ceil(const Lazy_exact_nt< NT > &x){
   // If both sides are in the same ceil, return this ceil
   double ceil_left=std::ceil(to_interval(x).first);
   if(ceil_left==std::ceil(to_interval(x).second))
@@ -51,7 +51,7 @@ double double_ceil(Lazy_exact_nt< NT > x){
 };
 
 template <class NT>
-double double_ceil(NT x){
+double double_ceil(const NT &x){
   using FT = Fraction_traits<NT>;
   if constexpr(std::is_same<typename FT::Is_fraction, Tag_true>::value){
     // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
