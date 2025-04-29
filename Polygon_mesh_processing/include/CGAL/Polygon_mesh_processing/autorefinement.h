@@ -1681,7 +1681,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{Maximum number of iterations performed by the snap rounding algorithm. Used only if `apply_iterative_snap_rounding` is true.}
 *     \cgalParamType{unsigned int}
-*     \cgalParamDefault{15}
+*     \cgalParamDefault{5}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
