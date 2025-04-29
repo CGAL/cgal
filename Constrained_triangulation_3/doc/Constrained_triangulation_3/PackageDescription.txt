@@ -40,13 +40,6 @@ to add Steiner points to the PLC to make it tetrahedralizable.
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
-`CGAL::make_conforming_constrained_Delaunay_triangulation_3()` is the main function to create
-a conforming constrained Delaunay triangulation in 3D, an instance of the class template
-`CGAL::Conforming_constrained_Delaunay_triangulation_3`.
-
-\cgalCRPSection{Functions Templates}
-
-- `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
 
 \cgalCRPSection{Concepts}
 
@@ -54,7 +47,13 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 - `ConformingConstrainedDelaunayTriangulationVertexBase_3`
 - `ConformingConstrainedDelaunayTriangulationCellBase_3`
 
-\cgalCRPSubsection{Class Templates}
+\cgalCRPSection{Functions}
+
+- `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`: the main function to create
+a conforming constrained Delaunay triangulation in 3D, an instance of the class template
+`CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+
+\cgalCRPSubsection{Classes}
 
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits, Triangulation>`
 - `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits, Vertex_base>`

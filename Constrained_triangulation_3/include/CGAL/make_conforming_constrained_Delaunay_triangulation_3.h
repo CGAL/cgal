@@ -29,7 +29,7 @@ namespace CGAL {
   Free Functions for Creating Conforming Constrained Delaunay Triangulations  {#PkgConstrainedTriangulation3Functions}
   ==========================================================================
 
-  Each of the following functions create a 3D conforming constrained Delaunay triangulation
+  The following functions create a 3D conforming constrained Delaunay triangulation
   from either a polygon soup or a polygon mesh.
 
   Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
@@ -40,7 +40,7 @@ namespace CGAL {
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------
 
-  For both function templates, the template arguments can be deduced from the function arguments or defaulted.
+  For both function templates, the template arguments can be deduced from the function arguments, or defaulted.
 
   - The first template argument `Triangulation` defaults to `CGAL::Default`, and in that case the
     triangulation type is deduced from the input type and the named parameters (see below).
@@ -94,8 +94,8 @@ namespace CGAL {
  *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered a separate patch.}
- *   \cgalParamExtra{Otherwise, faces with the same patch identifier are considered part of the same surface patch.}
+ *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered a separate patch.
+ *                   Otherwise, faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -108,7 +108,8 @@ namespace CGAL {
  * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon mesh, of a type
  *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
- * \pre `mesh` must not have self-intersections:
+ * \pre `mesh` must not have self-intersections.
+ *      For triangulated surfaces, it can be checked using the function
  *      \link CGAL::Polygon_mesh_processing::does_self_intersect
  *      `CGAL::Polygon_mesh_processing::does_self_intersect(mesh, np) == false`
  *      \endlink
