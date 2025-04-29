@@ -321,7 +321,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(parallel_execution)
+    if constexpr (parallel_execution)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, points.size()),
                         [&](const tbb::blocked_range<size_t>& r){
