@@ -12,17 +12,15 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
+
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Lazy_exact_nt.h>
-
-#include <CGAL/mutex.h>
 
 namespace CGAL
 {
@@ -102,7 +100,7 @@ private:
 
 // Repair_polygon_soup without remove_pinched_polygons since our polygon are triangles
 template <typename PointRange, typename PolygonRange,
-          typename Polygon = typename Polygon_types<PointRange, PolygonRange>::Polygon_3>
+          typename Polygon = typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3>
 struct Triangle_soup_fixer
 {
   template <typename NamedParameters>
