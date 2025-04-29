@@ -73,7 +73,7 @@ public:
   using Self = Constrained_triangulation_plus_2<Tr_>;
   using Base = Tr_;
   using Constraint_hierarchy = Ctp_2_hierarchy_type<Tr_>;
-//  static_assert(CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
+  static_assert(CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
 protected:
   const auto& hierarchy() const { return static_cast<const Constraint_hierarchy&>(*this); }
   auto& hierarchy() { return static_cast<Constraint_hierarchy&>(*this); }
@@ -988,7 +988,7 @@ public:
 #if defined(_MSC_VER)
   std::ptrdiff_t insert(InputIterator first, InputIterator last, int i = 0)
 #else
-    std::ptrdiff_t insert(InputIterator first, InputIterator last)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last)
 #endif
   {
 #if defined(_MSC_VER)
@@ -1001,9 +1001,8 @@ public:
     spatial_sort (points.begin(), points.end(), geom_traits());
 
     Face_handle hint;
-    for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-            p != end; ++p)
-        hint = insert (*p, hint)->face();
+    for (const auto& p : points)
+        hint = insert (p, hint)->face();
 
     return this->number_of_vertices() - n;
   }
@@ -1018,7 +1017,7 @@ copy_triangulation(const Constrained_triangulation_plus_2 &ctp)
   Base::copy_triangulation(ctp);
   //the following assumes that the triangulation and its copy
   // iterate on their vertices in the same order
-  std::map<Vertex_handle,Vertex_handle> vmap;
+  CGAL::unordered_flat_map<Vertex_handle,Vertex_handle> vmap;
   Vertex_iterator vit = ctp.vertices_begin();
   Vertex_iterator vvit = this->vertices_begin();
   for( ; vit != ctp.vertices_end(); ++vit, ++vvit) {
