@@ -1685,7 +1685,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \return `true` if `apply_iterative_snap_rounding` is set to `false`; otherwise, return `true` if the modified triangle soup is free from
+* \return `true` if `apply_iterative_snap_rounding` is set to `false`; otherwise, returns `true` if the modified triangle soup is free from
 * self-intersection, and `false` if the algorithm was unable to provide such a triangle soup within the number of iterations.
 *
 */
