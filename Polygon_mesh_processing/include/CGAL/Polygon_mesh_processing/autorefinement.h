@@ -1669,7 +1669,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{apply_iterative_snap_rounding}
 *     \cgalParamDescription{Enable the rounding of the coordinates so that they fit in doubles.}
-*     \cgalParamType{boolean}
+*     \cgalParamType{Boolean}
 *     \cgalParamDefault{false}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
