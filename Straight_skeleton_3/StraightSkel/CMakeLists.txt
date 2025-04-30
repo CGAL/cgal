@@ -247,7 +247,7 @@ set(algo_3d_SOURCES
 add_library(skelalgo2d SHARED ${algo_SOURCES} ${algo_2d_SOURCES})
 add_library(skelalgo3d SHARED ${algo_3d_SOURCES})
 target_link_libraries(skelalgo2d PUBLIC skeldata2d CGAL::CGAL)
-target_link_libraries(skelalgo3d PUBLIC skelalgo2d skeldata3d skeldb CGAL::CGAL)
+target_link_libraries(skelalgo3d PUBLIC skelalgo2d skeldata3d skeldb CGAL::CGAL CGAL::Eigen3_support)
 
 
 # build user interface

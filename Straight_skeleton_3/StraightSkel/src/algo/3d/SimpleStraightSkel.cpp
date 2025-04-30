@@ -531,7 +531,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                true /*convert_to_double*/);
 #endif
 
-        polyhedron_cpy = PolyhedronTransformation::shiftFacets(polyhedron_cpy, 0.0);
+        PolyhedronTransformation::resetPoints(polyhedron_cpy);
         if(!polyhedron_cpy || !polyhedron_cpy->isConsistent()) {
             std::cerr << "Warning: failed to un-tilt polyhedron" << std::endl;
             result = false;
@@ -572,23 +572,6 @@ bool SimpleStraightSkel::run() {
     }
 
     DEBUG_PRINT("== Straight Skeleton 3D started ==");
-    CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
-
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    if (config->isLoaded()) {
-        bool usePerturbations = false;
-        if ((config->contains("main", "rand_move_points") &&
-            config->getBool("main", "rand_move_points")) ||
-            (config->contains("main", "rand_move_points_when_degenerated") &&
-            config->getBool("main", "rand_move_points_when_degenerated"))) {
-            usePerturbations = true;
-        }
-
-        if (!usePerturbations) {
-            std::cerr << "Running in unperturbed mode is not currently supported" << std::endl;
-            return false;
-        }
-    }
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;

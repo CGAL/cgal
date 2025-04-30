@@ -17,17 +17,80 @@
 #include "algo/3d/PolyhedronTransformation.h"
 #include "algo/3d/SelfIntersection.h"
 #include "algo/3d/SimpleStraightSkel.h"
+#include "db/3d/AbstractFile.h"
+#include "db/3d/OBJFile.h"
 #include "db/3d/PLYFile.h"
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/random_perturbation.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
 #include <list>
+#include <random>
+#include <vector>
 
 namespace algo { namespace _3d {
+
+// @tmp
+namespace utils {
+
+template<typename PolygonMesh, typename Values>
+void save_colored_mesh(PolygonMesh& pmesh,
+                       const Values& values,
+                       const std::string fullpath)
+{
+  using Color = CGAL::IO::Color;
+
+  std::cout << "Save " << fullpath << std::endl;
+
+  srand(static_cast<unsigned int>(time(NULL)));
+
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+
+  using value_type = typename CGAL::cpp20::remove_cvref<decltype(values[face_descriptor()])>::type;
+
+  using Face_property_color = CGAL::dynamic_face_property_t<Color>;
+  using Face_color_map = typename boost::property_map<PolygonMesh, Face_property_color>::type;
+  Face_color_map face_color = get(Face_property_color(), pmesh);
+
+  // get a unique vector of values
+  std::vector<value_type> unique_values;
+  for (auto f : faces(pmesh)) {
+    unique_values.push_back(values[f]);
+  }
+
+  std::sort(unique_values.begin(), unique_values.end());
+  unique_values.erase(std::unique(unique_values.begin(), unique_values.end()), unique_values.end());
+
+  std::map<std::size_t, CGAL::Color> colors;
+  for (const auto& value : unique_values) {
+    colors[value] = Color(static_cast<unsigned char>(rand() % 256),
+                          static_cast<unsigned char>(rand() % 256),
+                          static_cast<unsigned char>(rand() % 256));
+    std::cout << " value " << value << " has color " << colors[value] << std::endl;
+  }
+
+  for (auto f : faces(pmesh)) {
+    std::cout << "face " << f << " with value " << values[f] << " gets color " << colors[values[f]] << std::endl;
+    put(face_color, f, colors[values[f]]);
+  }
+
+  std::ofstream out(fullpath);
+  CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::face_color_map(face_color));
+}
+
+} // namespace utils
 
 bool
 OutwardMeshOffset::
@@ -179,6 +242,8 @@ assign_weights(Mesh& sm,
 
   DEBUG_PRINT("E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
 
+  utils::save_colored_mesh(sm, fwm, "results/weighted.ply");
+
   return true;
 }
 
@@ -235,18 +300,17 @@ invert_and_add_bbox(Mesh& sm)
 
   // if the face:weight pmap exists, get the smallest value
   // as to assign an even smaller value to the bounding box's faces
-  auto fwm = sm.property_map<face_descriptor, double>("f:weight");
-
   double min_weight = std::numeric_limits<double>::max(); // 'double' on purpose
-  if(fwm) {
-    for(face_descriptor f : faces(sm))
-      min_weight = (std::min)(min_weight, get(*fwm, f));
+  for(face_descriptor f : faces(sm)) {
+    min_weight = (std::min)(min_weight, get(*fwm, f));
   }
+  DEBUG_PRINT("min weight: " << min_weight)
 
   std::unordered_map<face_descriptor, face_descriptor> f2f;
   CGAL::copy_face_graph(bbox_mesh, sm,
                         CGAL::parameters::face_to_face_output_iterator(
                           std::inserter(f2f, f2f.end())));
+
 
   if(fwm) {
     for(const auto& e : f2f)
@@ -259,16 +323,6 @@ invert_and_add_bbox(Mesh& sm)
   }
 
   return true;
-}
-
-PolyhedronSPtr
-OutwardMeshOffset::
-perturb(PolyhedronSPtr polyhedron)
-{
-    polyhedron = PolyhedronTransformation::perturb(polyhedron);
-    PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
-    polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
-    return polyhedron;
 }
 
 bool
@@ -315,6 +369,133 @@ remove_bbox_and_invert(Mesh& sm)
   return true;
 }
 
+PolyhedronSPtr
+OutwardMeshOffset::
+convert(Mesh& sm)
+{
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    DEBUG_PRINT("Converting mesh...");
+
+    bool merge_faces = false;
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    std::string section("main");
+    if (config->isLoaded() &&
+        config->contains(section, "merge_coplanar_faces") &&
+        config->getBool(section, "merge_coplanar_faces")) {
+        merge_faces = true;
+    }
+
+    if (!merge_faces) {
+        return db::_3d::PLYFile::load(sm);
+    }
+
+    // Use shape detection to analyze the mesh
+    std::vector<std::size_t> region_ids(num_faces(sm));
+    boost::vector_property_map<Plane3> plane_map; // supporting planes of the regions detected
+
+    // detect planar regions in the mesh
+    // @todo growing should:
+    // - use the .ini value of 'epsilon_coplanarity'
+    // - stop if it merges faces with different weights
+    // - give an error for adjacent coplanar faces have different weights
+    std::size_t nb_regions =
+        PMP::region_growing_of_planes_on_faces(sm,
+                                              CGAL::make_random_access_property_map(region_ids),
+                                              CGAL::parameters::cosine_of_maximum_angle(0.98)
+                                                                .region_primitive_map(plane_map)
+                                                                .maximum_distance(0.001));
+
+    utils::save_colored_mesh(sm, region_ids, "results/regions_2.ply");
+
+    // detect corner vertices on the boundary of planar regions
+    std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
+    std::vector<bool> ecm(num_edges(sm), false); // mark edges at the boundary of regions
+
+    PMP::detect_corners_of_regions(sm,
+                                   CGAL::make_random_access_property_map(region_ids),
+                                   nb_regions,
+                                   CGAL::make_random_access_property_map(corner_id_map),
+                                   CGAL::parameters::cosine_of_maximum_angle(0.98).
+                                                     maximum_distance(0.001).
+                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+
+    std::map<edge_descriptor, EdgeWPtr> e2e;
+    PolyhedronSPtr polyhedron = db::_3d::PLYFile::load(sm, {}, e2e);
+
+    std::cout << "On load, " << polyhedron->facets().size() << " facets" << std::endl;
+
+    // If everything is degree 3 in the region growing, merge the facets
+    bool all_degree_3 = true;
+    vertex_iterator vit = vertices(sm).begin(), vend = vertices(sm).end();
+    std::size_t cid = 0;
+    for (; vit!=vend; ++vit, ++cid) {
+        std::set<std::size_t> incident_regions;
+        for (face_descriptor f : CGAL::faces_around_target(halfedge(*vit, sm), sm)) {
+            // could break early but it's useful to know how many regions were detected
+            incident_regions.insert(region_ids[f]);
+        }
+
+        if (incident_regions.size() > 3) {
+            DEBUG_PRINT("Region corner with degree " << incident_regions.size() << " at " << sm.point(*vit));
+            all_degree_3 = false;
+            break;
+        }
+    }
+
+    if (all_degree_3) {
+        // merge the facets incident to an unconstrained edge (i.e., the edge is interior to a region)
+        for (edge_descriptor e: edges(sm)) {
+          if (ecm[e]) {
+              continue;
+          }
+
+          EdgeSPtr edge = e2e[e].lock();
+          if (!edge) {
+              continue;
+          }
+          DEBUG_PRINT("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
+          DEBUG_PRINT("SM check: " << sm.point(source(e, sm)) << " " << sm.point(target(e, sm)));
+          DEBUG_PRINT("SS check: " << *(edge->getVertexSrc()->getPoint()) << " " << *(edge->getVertexDst()->getPoint()));
+
+          db::_3d::AbstractFile::mergeFacets(edge, polyhedron);
+        }
+    }
+
+    db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron);
+
+    std::cout << "Converted, " << polyhedron->facets().size() << " facets" << std::endl;
+    db::_3d::OBJFile::save("results/converted.obj", polyhedron, false /*do not triangulate*/);
+
+    return polyhedron;
+}
+
+PolyhedronSPtr
+OutwardMeshOffset::
+preprocess(Mesh& sm)
+{
+    DEBUG_PRINT("Preprocessing mesh...");
+
+    CGAL_precondition(CGAL::is_triangle_mesh(sm));
+
+    PolyhedronSPtr polyhedron = convert(sm);
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
+
+    polyhedron = PolyhedronTransformation::perturb(polyhedron);
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
+
+    if (!polyhedron || !polyhedron->isConsistent()) {
+        // Failure here is likely from a bad perturbation (after all, there is a probabily
+        // epsilon that we create something that is degenerate).
+        // @todo try again with another perturbation, or smarter (iterative) perturbation
+        std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
+        return {};
+    }
+
+    return polyhedron;
+}
+
 bool
 OutwardMeshOffset::
 run(const char* mesh_filename,
@@ -322,6 +503,8 @@ run(const char* mesh_filename,
     const std::list<CGAL::FT>& save_offsets,
     const std::filesystem::path save_path)
 {
+    namespace PMP = ::CGAL::Polygon_mesh_processing;
+
     util::ConfigurationSPtr config = util::Configuration::getInstance();
     std::string str_conf_file = config->findDefaultFilename();
     if (!config->load(str_conf_file)) {
@@ -340,6 +523,12 @@ run(const char* mesh_filename,
         return false;
     }
 
+    auto fwm = sm.property_map<face_descriptor, double>("f:weight");
+    CGAL_USE(fwm);
+    CGAL_assertion(bool(fwm));
+    CGAL_assertion_code(for (face_descriptor f : faces(sm)))
+    CGAL_assertion(get(*fwm, f) != 0);
+
     // the algorithm shrinks and we want an outward offset: invert the mesh
     // and add a far bounding box as to transform the input into a hole in a volume
     // whose shrinking will be equivalent to an outward offsetting
@@ -348,26 +537,9 @@ run(const char* mesh_filename,
         return false;
     }
 
-    // convert from CGAL::Surface_mesh to the Skeleton's Mesh Data Structure
-    PolyhedronSPtr polyhedron = db::_3d::PLYFile::load(sm);
+    CGAL_assertion(!PMP::does_self_intersect(sm));
 
-    // apply the perturbation
-    polyhedron = perturb(polyhedron);
-
-    // Failure here is likely from a bad perturbation (after all, there is a epsilon
-    // probability that we create something that is degenerate).
-    // @todo try again with another perturbation, or smarter (iterative) perturbation
-    if (!polyhedron || !polyhedron->isConsistent()) {
-        std::cerr << "Error: failed to build polyhedron (bad perturbation?)" << std::endl;
-        return false;
-    }
-
-#if 0 // this could be kept, but I don't want to pay the heavy runtime cost for now
-    if (SelfIntersection::hasSelfIntersectingSurface(polyhedron)) {
-        std::cerr << "Error: input has self intersections (post perturbation)" << std::endl;
-        return false;
-    }
-#endif
+    PolyhedronSPtr polyhedron = preprocess(sm);
 
     // run the skeleton code
     algo::ControllerSPtr controller = { };

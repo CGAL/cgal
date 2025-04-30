@@ -33,10 +33,16 @@ public:
     static void scale(PolyhedronSPtr polyhedron, Vector3SPtr s);
 
     /**
-     * returns the position of the vertex of a polyhedron, computed from the planes of
+     * updates the position of the vertex of a polyhedron, computed from the planes of
      * its incident faces.
      */
     static void resetPoint(VertexSPtr vertex);
+
+    /**
+     * updates the positions of the vertices of a polyhedron, computed from the planes of
+     * their incident faces.
+     */
+    static void resetPoints(PolyhedronSPtr polyhedron);
 
     /**
      * returns the shifted position of the vertex of a polyhedron
@@ -85,6 +91,7 @@ public:
     static bool hasParallelPlanes(PolyhedronSPtr polyhedron);
     static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron);
     static void randMovePoints(PolyhedronSPtr polyhedron);
+    static PolyhedronSPtr merge_and_perturb(PolyhedronSPtr polyhedron);
     static PolyhedronSPtr perturb(PolyhedronSPtr polyhedron);
 
     static Point3SPtr boundingBoxMin(PolyhedronSPtr polyhedron);

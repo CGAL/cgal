@@ -100,6 +100,18 @@ void PolyhedronTransformation::resetPoint(VertexSPtr vertex)
   vertex->setPoint(point);
 }
 
+void PolyhedronTransformation::resetPoints(PolyhedronSPtr polyhedron)
+{
+    // Reset degree 3 vertices
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (vertex->degree() == 3) {
+            resetPoint(vertex);
+        }
+    }
+}
+
 // @todo this function cannot deal with degree 1 vertices
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)
@@ -116,8 +128,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
             FacetSPtr facet = FacetSPtr(facet_wptr);
             Plane3SPtr plane = facet->plane();
 
-            // @fixme only meaningful if we are doing perturbations
-            if (vertex->degree() != 3) {
+            if (vertex->degree() > 3) {
                 // planes are _offset_ planes, but it doesn't matter for the tests
                 bool independent = true;
                 if (i == 1) {
@@ -125,8 +136,8 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                 } else if (i == 2) {
                     // @todo avoid recomputing the intersection from scratch later
                     independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
-                                                            planes[1]->a(), planes[1]->b(), planes[1]->c(),
-                                                            plane->a(), plane->b(), plane->c()));
+                                                             planes[1]->a(), planes[1]->b(), planes[1]->c(),
+                                                             plane->a(), plane->b(), plane->c()));
                 }
 
                 if (!independent) {
@@ -134,12 +145,8 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                 }
             }
 
-            CGAL::FT speed = 1.0;
-            if (facet->hasData()) {
-                speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-            }
+            planes[i] = shiftPlane(facet, offset);
 
-            planes[i] = KernelWrapper::offsetPlane(plane, offset*speed);
             // std::cout << "facet[" << i << "] = " << facet->toString() << std::endl;
             // std::cout << "  Offset Plane[" << i << "] = " << *(planes[i]) << std::endl;
 
@@ -673,8 +680,10 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
         FacetSPtr facet = *it_f++;
 
         // If we are doing random point perturbation, the mesh must be a triangle mesh
-        // otherwise points will no longer be on the supporting planes of its incident faces
-        CGAL_assertion(facet->vertices().size() == 3);
+        // otherwise points will no longer be on the supporting planes of their incident faces
+        if (facet->vertices().size() != 3) {
+            std::cerr << "Warning: facet " << facet->getID() << "  is not a triangle but we are displacing its vertices" << std::endl;
+        }
 
         facet->storePlaneCoefficients();
     }
@@ -690,7 +699,12 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
         Point3SPtr p_t = KernelFactory::createPoint3(*p + *v_r);
         vertex->setPoint(p_t);
     }
-    polyhedron->initPlanes(); // recompute planes
+
+    // recompute normalized planes, and ensure points are on the planes
+    polyhedron->initPlanes();
+    normalizeFacetPlanes(polyhedron);
+
+    resetPoints(polyhedron);
 
     polyhedron->appendDescription("rand_move_points_range=" +
             util::StringFactory::fromDouble(range) + "; ");
@@ -698,171 +712,115 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
     CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 }
 
+PolyhedronSPtr PolyhedronTransformation::merge_and_perturb(PolyhedronSPtr polyhedron) {
+  // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
+  // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
+  // of the plane will still yield a single intersection point.
+  // That's not the case (in general) for degree > 3 vertices as there would no longer be
+  // a single intersection point for the tilted planes.
+  //
+  // The advantage is that we can manipulate much smaller meshes since the faces are polygonal.
+  bool canUsePlaneTilts = true;
+
+  // copy the polyhedron because we will merge (almost) coplanar faces and check if the result
+  // is a mesh with only degree 3 vertices.
+  PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+
+  // @todo?
+  // could we merge non-connected input faces as to assign them the same (tilted) plane?
+  // Often in inputs we have many faces that correspond to the same plane, but vertical faces
+  // split it into separate connected components.
+  // The important thing is that we don't want to create degenerate conditions so the CCs
+  // should NOT interact with each other; how to prevent that?...
+  db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
+
+  db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
+                          false /*do_triangulate*/,
+                          true /*convert_to_double*/);
+
+  db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
+  CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
+
+  std::list<VertexSPtr>::iterator it_v = polyhedron_cpy->vertices().begin();
+  while (it_v != polyhedron_cpy->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+      if (vertex->degree() != 3) {
+          DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
+          canUsePlaneTilts = false;
+          break;
+      }
+  }
+
+  if (canUsePlaneTilts) {
+      DEBUG_PRINT("All vertices are degree 3 ==> tilt the polyhedron's faces");
+
+      std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
+      while (it_f != polyhedron_cpy->facets().end()) {
+          FacetSPtr facet = *it_f++;
+
+          // @todo these two are only useful if we plan on untilting at the end.
+          // We need the normalization because we will shift the base plane.
+          facet->perturbPlaneCoefficients();
+      }
+
+      polyhedron = polyhedron_cpy;
+      resetPoints(polyhedron);
+  } else {
+      // this is not 'polyhedron_cpy' because the polyhedron must be triangulated
+      // for vertices to remain on the planes of their incident facets
+      randMovePoints(polyhedron);
+  }
+
+  DEBUG_PRINT("Done with perturbation");
+
+  return polyhedron;
+}
+
+// same as above, but we do not merge facets
 PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
+    CGAL_precondition(polyhedron && polyhedron->isConsistent());
+
+    DEBUG_PRINT("Perturbing...");
+
     // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
     // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
     // of the plane will still yield a single intersection point.
     // That's not the case (in general) for degree > 3 vertices as there would no longer be
     // a single intersection point for the tilted planes.
     //
-    // The advantage is that we can manipulate much smaller meshes since the faces are polygonal.
-    bool canUsePlaneTilts = true;
+    // The advantage is that we then manipulate smaller meshes since the faces are polygonal.
+    bool all_degree_3 = true;
 
-    // copy the polyhedron because we will merge (almost) coplanar faces and check if the result
-    // is a mesh with only degree 3 vertices.
-    PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
-
-    // @todo?
-    // could we merge non-connected input faces as to assign them the same (tilted) plane?
-    // Often in inputs we have many faces that correspond to the same plane, but vertical faces
-    // split it into separate connected components.
-    // The important thing is that we don't want to create degenerate conditions so the CCs
-    // should NOT interact with each other; how to prevent that?...
-    db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
-
-    db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
-                            false /*do_triangulate*/,
-                            true /*convert_to_double*/);
-
-    db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
-    CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
-
-    std::list<VertexSPtr>::iterator it_v = polyhedron_cpy->vertices().begin();
-    while (it_v != polyhedron_cpy->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        if (vertex->degree() != 3) {
-            DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
-            canUsePlaneTilts = false;
-            break;
-        }
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+      if (vertex->degree() != 3) {
+        DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
+        all_degree_3 = false;
+        break;
+      }
     }
 
-    if (canUsePlaneTilts) {
-        DEBUG_PRINT("All vertices are degree 3 ==> tilt the polyhedron's faces");
+    if (all_degree_3) {
+        DEBUG_PRINT("Tilting the polyhedron's facets");
 
-        std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
-        while (it_f != polyhedron_cpy->facets().end()) {
+        std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+        while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
-
-            // @todo these two are only useful if we plan on untilting at the end.
-            // We need the normalization because we will shift the base plane.
-            facet->normalizePlaneCoefficients();
-            facet->storePlaneCoefficients();
+            std::cout << "perturb " << facet->toString() << std::endl;
             facet->perturbPlaneCoefficients();
         }
 
-        polyhedron = polyhedron_cpy;
+        resetPoints(polyhedron);
     } else {
-        // this is not 'polyhedron_cpy' because the polyhedron must be triangulated
-        // for vertices to remain on the planes of their incident facets
         randMovePoints(polyhedron);
     }
 
     DEBUG_PRINT("Done with perturbation");
 
+    CGAL_postcondition(polyhedron && polyhedron->isConsistent());
+
     return polyhedron;
-}
-
-
-Point3SPtr PolyhedronTransformation::boundingBoxMin(PolyhedronSPtr polyhedron) {
-    CGAL::FT p_min[3];
-    for (unsigned int i = 0; i < 3; i++) {
-        p_min[i] = std::numeric_limits<double>::max();
-    }
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        Point3SPtr p = vertex->getPoint();
-        for (unsigned int i = 0; i < 3; i++) {
-            if ((*p)[i] < p_min[i]) {
-                p_min[i] = (*p)[i];
-            }
-        }
-    }
-    Point3SPtr result = KernelFactory::createPoint3(p_min[0],p_min[1],p_min[2]);
-    return result;
-}
-
-Point3SPtr PolyhedronTransformation::boundingBoxMax(PolyhedronSPtr polyhedron) {
-    CGAL::FT p_max[3];
-    for (unsigned int i = 0; i < 3; i++) {
-        p_max[i] = -std::numeric_limits<double>::max();
-    }
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        Point3SPtr p = vertex->getPoint();
-        for (unsigned int i = 0; i < 3; i++) {
-            if ((*p)[i] > p_max[i]) {
-                p_max[i] = (*p)[i];
-            }
-        }
-    }
-    Point3SPtr result = KernelFactory::createPoint3(p_max[0],p_max[1],p_max[2]);
-    return result;
-}
-
-void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
-        Point3SPtr p_box_min, Point3SPtr p_box_max) {
-    Vector3SPtr v_box_min = KernelFactory::createVector3(p_box_min);
-    Vector3SPtr v_box_max = KernelFactory::createVector3(p_box_max);
-    Vector3SPtr v_size = KernelFactory::createVector3(*v_box_max - *v_box_min);
-    Vector3SPtr v_center = KernelFactory::createVector3(
-            (*v_box_min + *v_box_max) / 2.0);
-
-    Point3SPtr p_box_min_curr = boundingBoxMin(polyhedron);
-    Point3SPtr p_box_max_curr = boundingBoxMax(polyhedron);
-    Vector3SPtr v_box_min_curr = KernelFactory::createVector3(p_box_min_curr);
-    Vector3SPtr v_box_max_curr = KernelFactory::createVector3(p_box_max_curr);
-    Vector3SPtr v_size_curr = KernelFactory::createVector3(
-            *v_box_max_curr - *v_box_min_curr);
-    Vector3SPtr v_center_curr = KernelFactory::createVector3(
-            (*v_box_min_curr + *v_box_max_curr) / 2.0);
-
-    CGAL::FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
-    for (unsigned int i = 0; i < 3; i++) {
-        CGAL::FT s = (*v_size)[i]/(*v_size_curr)[i];
-        if (scale_factor > s) {
-            scale_factor = s;
-        }
-    }
-    scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0; // @fixme interval
-    DEBUG_VAR(scale_factor);
-    Vector3SPtr v_s = KernelFactory::createVector3(
-            scale_factor, scale_factor, scale_factor);
-
-    Vector3SPtr v_t = KernelFactory::createVector3((*v_center_curr) * -1.0);
-    if (v_t->squared_length() > 0.0) {
-        translate(polyhedron, v_t);
-    }
-    if (scale_factor != 1.0) {
-        scale(polyhedron, v_s);
-    }
-    if (v_center->squared_length() > 0.0) {
-        translate(polyhedron, v_center);
-    }
-}
-
-bool PolyhedronTransformation::isInsideBox(PolyhedronSPtr polyhedron,
-        Point3SPtr p_box_min, Point3SPtr p_box_max) {
-    bool result = true;
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        Point3SPtr p = vertex->getPoint();
-        for (unsigned int i = 0; i < 3; i++) {
-            if (!((*p_box_min)[i] <= (*p)[i] &&
-                    (*p)[i] <= (*p_box_max)[i])) {
-                result = false;
-                // std::cout << *p << " is not in the box " << *p_box_min << " " << *p_box_max << std::endl;
-                break;
-            }
-        }
-        if (!result) {
-            break;
-        }
-    }
-    return result;
 }
 
 } }

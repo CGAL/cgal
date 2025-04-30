@@ -29,7 +29,10 @@ class OutwardMeshOffset
     using Mesh = CGAL::Surface_mesh<Point3>;
 
     using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+    using halfedge_descriptor = boost::graph_traits<Mesh>::halfedge_descriptor;
+    using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
     using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+    using vertex_iterator = typename boost::graph_traits<Mesh>::vertex_iterator;
 
     virtual ~OutwardMeshOffset();
 
@@ -40,15 +43,12 @@ public:
                                const char* weights_filename);
 
     static bool invert_and_add_bbox(Mesh& sm);
-
-    // @todo don't duplicate with `main.cpp`
-    static PolyhedronSPtr perturb(PolyhedronSPtr polyhedron);
-
     static bool remove_bbox_and_invert(Mesh& sm);
+    static PolyhedronSPtr convert(Mesh& sm);
+    static PolyhedronSPtr preprocess(Mesh& sm);
 
 public:
     // @todo add missing parameters:
-    // - save path
     // - config file path
     static bool run(const char* mesh_filename,
                     const char* weights_filename,
