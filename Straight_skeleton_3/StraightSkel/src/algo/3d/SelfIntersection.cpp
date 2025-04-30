@@ -85,20 +85,16 @@ bool SelfIntersection::intersectEdges(FacetSPtr facet,
             // 0 * max = 0
             const CGAL::FT max = std::numeric_limits<double>::max(); // do not put FT
             if (edge1->getVertexSrc()->degree() == 1) {
-                p_11 = KernelFactory::createPoint3(*p_11 +
-                        (*p_11-*p_12) * max);
+                p_11 = KernelFactory::createPoint3(*p_11 + (*p_11-*p_12) * max);
             }
             if (edge1->getVertexDst()->degree() == 1) {
-                p_12 = KernelFactory::createPoint3(*p_12 +
-                        (*p_12-*p_11) * max);
+                p_12 = KernelFactory::createPoint3(*p_12 + (*p_12-*p_11) * max);
             }
             if (edge2->getVertexSrc()->degree() == 1) {
-                p_21 = KernelFactory::createPoint3(*p_21 +
-                        (*p_21-*p_22) * max);
+                p_21 = KernelFactory::createPoint3(*p_21 + (*p_21-*p_22) * max);
             }
             if (edge2->getVertexDst()->degree() == 1) {
-                p_22 = KernelFactory::createPoint3(*p_22 +
-                        (*p_22-*p_21) * max);
+                p_22 = KernelFactory::createPoint3(*p_22 + (*p_22-*p_21) * max);
             }
         }
 
@@ -469,7 +465,6 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         }
 
         if (point_inside_bounds) {
-             // @fixme construction
             CGAL::FT sq_dist = KernelWrapper::squared_distance(edge->line(), point);
             if (sq_dist < sq_dist_min) {
                 result = edge;
@@ -743,15 +738,15 @@ bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
             while (it_e != polyhedron->edges().end()) {
                 EdgeSPtr edge = *it_e++;
                 if (isEdgeInsideFacet(facet, edge, true /*handle_degree_1_as_ray*/)) {
-                    std::cout << "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!" << std::endl;
-                    std::cout << facet->toString() << std::endl;
-                    std::cout << edge->toString() << std::endl;
+                    // std::cout << "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!" << std::endl;
+                    // std::cout << facet->toString() << std::endl;
+                    // std::cout << edge->toString() << std::endl;
                     result = true;
                     break;
                 }
             }
 
-            if (result) { // @fixme just return early...
+            if (result) {
                 break;
             }
         }

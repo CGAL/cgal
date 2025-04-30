@@ -45,6 +45,107 @@ PolyhedronTransformation::~PolyhedronTransformation() {
     // intentionally does nothing.
 }
 
+Point3SPtr PolyhedronTransformation::boundingBoxMin(PolyhedronSPtr polyhedron) {
+    CGAL::FT p_min[3];
+    for (unsigned int i = 0; i < 3; i++) {
+        p_min[i] = std::numeric_limits<double>::max();
+    }
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr p = vertex->getPoint();
+        for (unsigned int i = 0; i < 3; i++) {
+            if ((*p)[i] < p_min[i]) {
+                p_min[i] = (*p)[i];
+            }
+        }
+    }
+    Point3SPtr result = KernelFactory::createPoint3(p_min[0],p_min[1],p_min[2]);
+    return result;
+}
+
+Point3SPtr PolyhedronTransformation::boundingBoxMax(PolyhedronSPtr polyhedron) {
+    CGAL::FT p_max[3];
+    for (unsigned int i = 0; i < 3; i++) {
+        p_max[i] = -std::numeric_limits<double>::max();
+    }
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr p = vertex->getPoint();
+        for (unsigned int i = 0; i < 3; i++) {
+            if ((*p)[i] > p_max[i]) {
+                p_max[i] = (*p)[i];
+            }
+        }
+    }
+    Point3SPtr result = KernelFactory::createPoint3(p_max[0],p_max[1],p_max[2]);
+    return result;
+}
+
+void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
+    Point3SPtr p_box_min, Point3SPtr p_box_max) {
+    Vector3SPtr v_box_min = KernelFactory::createVector3(p_box_min);
+    Vector3SPtr v_box_max = KernelFactory::createVector3(p_box_max);
+    Vector3SPtr v_size = KernelFactory::createVector3(*v_box_max - *v_box_min);
+    Vector3SPtr v_center = KernelFactory::createVector3(
+            (*v_box_min + *v_box_max) / 2.0);
+
+    Point3SPtr p_box_min_curr = boundingBoxMin(polyhedron);
+    Point3SPtr p_box_max_curr = boundingBoxMax(polyhedron);
+    Vector3SPtr v_box_min_curr = KernelFactory::createVector3(p_box_min_curr);
+    Vector3SPtr v_box_max_curr = KernelFactory::createVector3(p_box_max_curr);
+    Vector3SPtr v_size_curr = KernelFactory::createVector3(
+            *v_box_max_curr - *v_box_min_curr);
+    Vector3SPtr v_center_curr = KernelFactory::createVector3(
+            (*v_box_min_curr + *v_box_max_curr) / 2.0);
+
+    CGAL::FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
+    for (unsigned int i = 0; i < 3; i++) {
+        CGAL::FT s = (*v_size)[i]/(*v_size_curr)[i];
+        if (scale_factor > s) {
+            scale_factor = s;
+        }
+    }
+    scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0; // @fixme interval
+    DEBUG_VAR(scale_factor);
+    Vector3SPtr v_s = KernelFactory::createVector3(
+            scale_factor, scale_factor, scale_factor);
+
+    Vector3SPtr v_t = KernelFactory::createVector3((*v_center_curr) * -1.0);
+    if (v_t->squared_length() > 0.0) {
+        translate(polyhedron, v_t);
+    }
+    if (scale_factor != 1.0) {
+        scale(polyhedron, v_s);
+    }
+    if (v_center->squared_length() > 0.0) {
+        translate(polyhedron, v_center);
+    }
+}
+
+bool PolyhedronTransformation::isInsideBox(PolyhedronSPtr polyhedron,
+    Point3SPtr p_box_min, Point3SPtr p_box_max) {
+    bool result = true;
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr p = vertex->getPoint();
+        for (unsigned int i = 0; i < 3; i++) {
+            if (!((*p_box_min)[i] <= (*p)[i] &&
+                    (*p)[i] <= (*p_box_max)[i])) {
+                result = false;
+                // std::cout << *p << " is not in the box " << *p_box_min << " " << *p_box_max << std::endl;
+                break;
+            }
+        }
+        if (!result) {
+            break;
+        }
+    }
+    return result;
+}
+
 void PolyhedronTransformation::translate(PolyhedronSPtr polyhedron, Vector3SPtr v_t) {
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
@@ -53,6 +154,7 @@ void PolyhedronTransformation::translate(PolyhedronSPtr polyhedron, Vector3SPtr 
         Point3SPtr p_t = KernelFactory::createPoint3(*p + *v_t);
         vertex->setPoint(p_t);
     }
+
     polyhedron->initPlanes();
 
     polyhedron->appendDescription("translate=<" +
@@ -209,7 +311,7 @@ Segment3SPtr PolyhedronTransformation::shiftEdge(EdgeSPtr edge,
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
-    // two common planes is much slower than computing the 3-plane intersection
+    // two common planes is much slower than computing two 3-plane intersections
     Line3SPtr common_line = KernelWrapper::intersection(offset_plane_l, offset_plane_r);
     Point3SPtr src_point = KernelWrapper::intersection(offset_plane_src, common_line);
     Point3SPtr dst_point = KernelWrapper::intersection(offset_plane_dst, common_line);
@@ -240,8 +342,7 @@ Plane3SPtr PolyhedronTransformation::shiftPlane(FacetSPtr facet,
 // of degree 1 vertices.
 void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
                                                   CGAL::FT offset,
-                                                  const bool recompute_positions)
-{
+                                                  const bool recompute_positions) {
     DEBUG_PRINT("~~~~ Shift [in place] by " << offset);
 
     // std::ofstream shift_out("results/last_shift.polylines.txt");
@@ -312,6 +413,8 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         facet->setPlane(offset_plane);
     }
+
+    CGAL_postcondition(bool(polyhedron) && polyhedron->isConsistent());
 }
 
 // @speed plenty of needless recomputations:
@@ -326,11 +429,17 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     // std::ofstream shift_out("results/last_shift.polylines.txt");
     // shift_out.precision(17);
 
+    CGAL_precondition(offset != 0);
+
     PolyhedronSPtr result = Polyhedron::create();
 
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
+
+        // this could be handled, but they are useless and should have been removed with
+        // calls to the function removeVerticesDegLt3()
+        CGAL_precondition(vertex->degree() != 2);
 
         // those are treated in the next loop
         if (vertex->degree() == 1) {
@@ -341,7 +450,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         if (offset != 0 || recompute_positions) {
             new_point = shiftPoint(vertex, offset);
             if (!new_point) {
-                std::cerr << "Warning: Failed to create shifted polyhedron" << std::endl;
+                std::cerr << "Warning: Failed to create shifted point" << std::endl;
                 return { };
             }
         }
