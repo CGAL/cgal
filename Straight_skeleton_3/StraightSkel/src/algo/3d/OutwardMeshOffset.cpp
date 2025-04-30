@@ -83,16 +83,25 @@ assign_weights(Mesh& sm,
     return false;
   }
 
+  DEBUG_PRINT("x1_val = " << x1_val);
+  DEBUG_PRINT("x2_val = " << x2_val);
+  DEBUG_PRINT("y1_val = " << y1_val);
+  DEBUG_PRINT("y2_val = " << y2_val);
+  DEBUG_PRINT("bot_val = " << bot_val);
+  DEBUG_PRINT("top_val = " << top_val);
+
   CGAL::FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
-  if(vx1 > 0.) eps_weight = (std::min)(eps_weight, vx1);
-  if(vx2 > 0.) eps_weight = (std::min)(eps_weight, vx2);
-  if(vy1 > 0.) eps_weight = (std::min)(eps_weight, vy1);
-  if(vy2 > 0.) eps_weight = (std::min)(eps_weight, vy2);
-  if(vz1 > 0.) eps_weight = (std::min)(eps_weight, vz1);
-  if(vz2 > 0.) eps_weight = (std::min)(eps_weight, vz2);
+  eps_weight = (std::min)(eps_weight, x1_val);
+  eps_weight = (std::min)(eps_weight, x2_val);
+  eps_weight = (std::min)(eps_weight, y1_val);
+  eps_weight = (std::min)(eps_weight, y2_val);
+  eps_weight = (std::min)(eps_weight, bot_val);
+  eps_weight = (std::min)(eps_weight, top_val);
+
+  DEBUG_PRINT("min_weight = " << eps_weight);
 
   if(eps_weight == 0.) {
-    std::cerr << "Error: all weights are zero?" << std::endl;
+    std::cerr << "Error: all weights are zero" << std::endl;
     return false;
   }
 
