@@ -5160,9 +5160,610 @@ void SimpleStraightSkel::tagFacetsWithStepID(const std::set<FacetSPtr>& facets)
 
 
 
+    // don't modify this 'define' without modifying the one in SimpleStraightSkel.cpp
+// #define CGAL_SS3_ALWAYS_PERTURB_WITH_PLANE_TILTS
+#ifndef CGAL_SS3_ALWAYS_PERTURB_WITH_PLANE_TILTS
+    canUsePlaneTilts = all_degree_3;
+#endif
+
+// @todo something cleaner (return type from the preprocess function?)
+bool forced_tilts = false;
+// don't modify this 'define' without modifying the one in PolyhedronTransformation.cpp
+// #define CGAL_SS3_ALWAYS_PERTURB_WITH_PLANE_TILTS
+#ifdef CGAL_SS3_ALWAYS_PERTURB_WITH_PLANE_TILTS
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+      if (vertex->degree() != 3) { // splitter is in init()
+        DEBUG_PRINT("Tilts were used, but there are degree > 3 vertices like: " << vertex->getID())
+        forced_tilts = true;
+        break;
+      }
+    }
+#endif
+
+
+#ifdef CGAL_SS3_ALWAYS_PERTURB_WITH_PLANE_TILTS
+        // If we have forced tilts despite having vertices with degree > 3 (pre split),
+        // then we have a bit of an awkward situation: the points are not on the planes
+        // but if we recompute them, we might have (small) self-intersections because of the
+        // tilts. So, we recompute points AND shift forward a bit: we know the future
+        // is without self-intersections because the splitter picked valid combinations
+        if (forced_tilts) {
+            current_offset = -1e-5; // @fixme hardcoded value that is obviously not sound
+            DEBUG_PRINT("Dummy tilt to " << current_offset);
+            PolyhedronTransformation::shiftFacetsInPlace(polyhedron, current_offset);
+            db::_3d::OBJFile::save("results/shift_post_forced_tilt.obj", polyhedron, false /*do not triangulate*/);
+            CGAL_assertion(polyhedron->isConsistent());
+            CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
+        }
+#endif
 
 
 
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+/**
+ * Modify the geometry of the polyhedron as to avoid degenerate configurations.
+ */
+static PolyhedronSPtr preprocess(PolyhedronSPtr polyhedron);
+
+PolyhedronSPtr SimpleStraightSkel::preprocess(PolyhedronSPtr polyhedron) {
+  bool rand_move_points = false;
+  bool rand_move_points_when_degenerated = false;
+  CGAL::FT rand_move_points_range = 0.01;
+
+  util::ConfigurationSPtr config = util::Configuration::getInstance();
+  if (config->isLoaded()) {
+      rand_move_points = config->getBool("main", "rand_move_points");
+      rand_move_points_when_degenerated = config->getBool("main", "rand_move_points_when_degenerated");
+      rand_move_points_range = config->getFT("main", "rand_move_points_range");
+  }
+
+  // unperturbed is not currently supported
+  CGAL_warning_msg(rand_move_points_when_degenerated || rand_move_points,
+    "Not perturbing...?");
+
+  if (rand_move_points_when_degenerated && !rand_move_points) {
+      DEBUG_PRINT("Checking if all combinations of 3 facet supporting planes intersect in a point.");
+      DEBUG_PRINT("If this takes too long, disable 'rand_move_points_when_degenerated'.");
+      if (!PolyhedronTransformation::doAll3PlanesIntersect(polyhedron)) {
+          DEBUG_PRINT("Not all combinations of 3 planes intersect.");
+          rand_move_points = true;
+      } else {
+          DEBUG_PRINT("No need to perturb");
+      }
+  }
+
+  if (rand_move_points) {
+      polyhedron = PolyhedronTransformation::perturb(polyhedron);
+  }
+
+  // Failure here is likely from a bad perturbation (after all, there is an epsilon probability
+  // that we create something that is degenerate).
+  // @todo try again with another perturbation, or smarter (iterative) perturbation
+  CGAL_assertion_msg(polyhedron && polyhedron->isConsistent(),
+                     "Error: invalid polyhedron (bad perturbation?)");
+
+  return polyhedron;
+}
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
+  // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
+  // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
+  // of the plane will still yield a single intersection point.
+  // That's not the case (in general) for degree > 3 vertices as there would no longer be
+  // a single intersection point for the tilted planes.
+  //
+  // The advantage is that we then manipulate smaller meshes since the faces are polygonal.
+  bool canUsePlaneTilts = true;
+
+  // copy the polyhedron because we will merge (almost) coplanar faces and check if the result
+  // is a mesh with only degree 3 vertices.
+  PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+
+  // @todo?
+  // could we merge non-connected input faces as to assign them the same (tilted) plane?
+  // Often in inputs we have many faces that correspond to the same plane, but vertical faces
+  // split it into separate connected components.
+  // The important thing is that we don't want to create degenerate conditions so the CCs
+  // should NOT interact with each other; how to prevent that?...
+  db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
+  db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
+
+  db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
+                          false /*do_triangulate*/,
+                          true /*convert_to_double*/);
+
+  CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
+
+  bool all_degree_3 = true;
+
+  std::list<VertexSPtr>::iterator it_v = polyhedron_cpy->vertices().begin();
+  while (it_v != polyhedron_cpy->vertices().end()) {
+    VertexSPtr vertex = *it_v++;
+    if (vertex->degree() != 3) {
+      DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
+      all_degree_3 = false;
+      break;
+    }
+  }
+
+  if (canUsePlaneTilts) {
+      DEBUG_PRINT("Tilting the polyhedron's facets");
+
+      std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
+      while (it_f != polyhedron_cpy->facets().end()) {
+          FacetSPtr facet = *it_f++;
+          facet->perturbPlaneCoefficients();
+      }
+
+      // If we have forced tilts with degree > 3 vertices, we cannot yet recompute point
+      // positions: the incident facets will no longer intersect in a single point,
+      if (all_degree_3) {
+          resetPoints(polyhedron_cpy);
+      }
+
+      polyhedron = polyhedron_cpy;
+  } else {
+      randMovePoints(polyhedron);
+  }
+
+  DEBUG_PRINT("Done with perturbation");
+
+  CGAL_postcondition(polyhedron && polyhedron->isConsistent());
+
+  return polyhedron;
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+void
+OutwardMeshOffset::
+nudge_points(Mesh& sm)
+{
+    DEBUG_PRINT("Apply random point perturbations...");
+    CGAL_precondition(CGAL::is_triangle_mesh(sm));
+    CGAL::Polygon_mesh_processing::random_perturbation(sm, 1e-10, CGAL::parameters::do_project(false).random_seed(0));
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+bool
+OutwardMeshOffset::
+merge_coplanar_faces(Mesh& sm)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  remesh almost planar is no good because Surface_mesh cannot represent faces with multiple boundaries
+
+  // run the remeshing algorithm using filled properties
+  std::vector<Vector3> normal_map(num_faces(sm));
+  for(face_descriptor f : faces(sm)) {
+      normal_map[f] = plane_map[f].orthogonal_vector();
+  }
+
+  Mesh out;
+  PMP::remesh_almost_planar_patches(sm,
+                                    out,
+                                    nb_regions, nb_corners,
+                                    CGAL::make_random_access_property_map(region_ids),
+                                    CGAL::make_random_access_property_map(corner_id_map),
+                                    CGAL::make_random_access_property_map(ecm),
+                                    CGAL::parameters::patch_normal_map(CGAL::make_random_access_property_map(normal_map)),
+                                    CGAL::parameters::do_not_triangulate_faces(true));
+
+  // carry over the weight information from 'sm' to 'out'
+  auto fwm = sm.property_map<face_descriptor, double>("f:weight");
+  CGAL_assertion(bool(fwm));
+  auto fwm_out = out.add_property_map<face_descriptor, double>("f:weight").first;
+
+  std::map<std::size_t, double> patch_weights;
+  for (face_descriptor f : faces(sm)) {
+      std::size_t region_id = region_ids[f];
+      std::cout << "face " << f << " in patch " << region_id << " wants to assign its weight " << get(*fwm, f);
+      if (patch_weights.count(region_id) != 0) {
+          std::cout << ", and patch already has weight " << patch_weights[region_id] << std::endl;
+
+          // "warning" only because we can have numerical errors (note that these are only because
+          // of possible approximations in the input: there is nothing approximate with EPECK
+          // in the normal computation or weight interpolation).
+          CGAL_warning(patch_weights[region_id] == get(*fwm, f));
+      } else {
+          std::cout << std::endl;
+      }
+      patch_weights[region_id] = get(*fwm, f);
+  }
+
+  for (face_descriptor f : faces(out)) {
+      std::size_t region_id = region_ids[f];
+      CGAL_assertion(region_id < patch_weights.size());
+      put(fwm_out, f, patch_weights[region_id]);
+  }
+
+  sm = out;
+
+  return is_valid(sm) && CGAL::is_valid_face_graph(sm);
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+static bool chamfer_vertices(const std::vector<vertex_descriptor>& vs, Mesh& sm);
+static bool chamfer_high_degree_vertices(Mesh& sm);
+
+bool
+OutwardMeshOffset::
+chamfer_vertices(const std::vector<vertex_descriptor>& vertices_to_chamfer,
+                 Mesh& sm)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
+
+  DEBUG_PRINT("Chamfer " << vertices_to_chamfer.size() << " vertices with high degree...");
+
+  auto fwm = sm.property_map<face_descriptor, double>("f:weight");
+  CGAL_assertion(bool(fwm));
+  double min_weight = std::numeric_limits<double>::max(); // 'double' on purpose
+  for(face_descriptor f : faces(sm)) {
+      min_weight = (std::min)(min_weight, get(*fwm, f));
+  }
+
+  // the weight of chamfering faces is very small, such that they do not live long
+  // @fixme chamfering at a vertex that has a face with weight 0...?
+  // @fixme weight being typed double
+  // @fixme currently the min_weight at that point is that of the bbox faces, which is already
+  // 1e-10 times the min of zero weight faces, which is already 1e-10 the "real" min weight
+  double chamfer_weight = 1e-10 * min_weight;
+
+  // For all vertices with degree > 3, compute the minimal distance to the nearest neighboring point
+  // and construct a regular tetrahedron centered at the vertex and inscribed in a sphere 1000
+  // times smaller than the distance to the nearest neighboring point
+  std::vector<Tetrahedron3> tetrahedra;
+
+  for (vertex_descriptor vertex : vertices_to_chamfer) {
+      DEBUG_PRINT("Chamfer " << vertex << "...");
+
+      // Compute the distance to the nearest neighboring point
+      CGAL::FT min_sq_distance = std::numeric_limits<double>::max();
+      for (vertex_descriptor nv : CGAL::vertices_around_target(halfedge(vertex, sm), sm)) {
+          CGAL::FT sq_distance = CGAL::squared_distance(sm.point(vertex), sm.point(nv));
+          if (sq_distance < min_sq_distance) {
+              min_sq_distance = sq_distance;
+          }
+      }
+
+      // Create the tetrahedron centered at the vertex
+      CGAL::FT radius = CGAL::approximate_sqrt(min_sq_distance) / 10; // @tmp put something much smaller
+
+      auto random_unit_axis = []() {
+          static std::random_device rd;
+          unsigned int s = 0; // rd()
+          static std::mt19937 gen(s);
+          static std::uniform_real_distribution<> angle_dist(0, 2 * CGAL_PI);
+          static std::uniform_real_distribution<> axis_dist(-1, 1);
+          double angle = angle_dist(gen);
+          double z = axis_dist(gen);
+          double x = std::sqrt(1 - z * z) * std::cos(angle);
+          double y = std::sqrt(1 - z * z) * std::sin(angle);
+          return Vector3(x, y, z);
+      };
+
+      // Rotate the tetrahedron around a random axis
+      Vector3 first_axis = random_unit_axis();
+      Vector3 second_axis = random_unit_axis();
+      second_axis = second_axis - CGAL::scalar_product(first_axis, second_axis) * first_axis;
+      second_axis = second_axis / CGAL::approximate_sqrt(second_axis.squared_length()); // handle null length (generate another 2nd)
+      Vector3 third_axis = CGAL::cross_product(first_axis, second_axis);
+
+      // std::cout << "rotation matrix" << std::endl;
+      // std::cout << first_axis << " N = " << first_axis.squared_length() << std::endl;
+      // std::cout << second_axis << " N = " << second_axis.squared_length() << std::endl;
+      // std::cout << third_axis << " N = " << third_axis.squared_length() << std::endl;
+
+      // the rotation matrix
+      CGAL::Aff_transformation_3<CGAL::K> rotation_matrix(
+          first_axis.x(), first_axis.y(), first_axis.z(),
+          second_axis.x(), second_axis.y(), second_axis.z(),
+          third_axis.x(), third_axis.y(), third_axis.z());
+
+      // the rotated tetrahedron vertices
+      Vector3 v0 = rotation_matrix.transform(Vector3(1, 1, 1));
+      Vector3 v1 = rotation_matrix.transform(Vector3(-1, -1, 1));
+      Vector3 v2 = rotation_matrix.transform(Vector3(-1, 1, -1));
+      Vector3 v3 = rotation_matrix.transform(Vector3(1, -1, -1));
+
+      // std::cout << "v0 = " << v0 << std::endl;
+      // std::cout << "v1 = " << v1 << std::endl;
+      // std::cout << "v2 = " << v1 << std::endl;
+      // std::cout << "v3 = " << v2 << std::endl;
+
+      tetrahedra.emplace_back(sm.point(vertex) + radius * v0,
+                              sm.point(vertex) + radius * v1,
+                              sm.point(vertex) + radius * v2,
+                              sm.point(vertex) + radius * v3);
+  }
+
+  // Boolean operation to remove all tetrahedra from the mesh
+  Mesh chamfered_mesh;
+  Mesh tetrahedra_mesh;
+
+  for (const auto& tetrahedron : tetrahedra) {
+      Mesh tetrahedron_mesh;
+      CGAL::make_tetrahedron(tetrahedron[0], tetrahedron[1], tetrahedron[2], tetrahedron[3],
+                             tetrahedron_mesh);
+      CGAL_assertion(!PMP::does_self_intersect(tetrahedron_mesh));
+
+      static int tet_id = -1;
+      CGAL::IO::write_polygon_mesh("results/tet_" + std::to_string(++tet_id) + ".obj", tetrahedron_mesh,
+                                   CGAL::parameters::stream_precision(17));
+
+      CGAL::copy_face_graph(tetrahedron_mesh, tetrahedra_mesh);
+  }
+
+  CGAL_assertion(!PMP::does_self_intersect(tetrahedra_mesh));
+
+  auto tet_fwm = tetrahedra_mesh.add_property_map<face_descriptor, double>("f:weight").first;
+  for (face_descriptor f : faces(tetrahedra_mesh)) {
+      put(tet_fwm, f, chamfer_weight);
+  }
+
+  Mesh result;
+  auto res_fwm = result.add_property_map<face_descriptor, double>("f:weight").first;
+
+  // the visitor keeps the weight from faces coming from 'sm', and sets a very small weight
+  // for faces coming from the tetrahedron. The point is that the faces of the tetrahedron
+  // should disappear very quickly, "eaten" by other faces that shift at much higher speed
+  // such that in the result, we do not see that we had chamfered the vertices
+  struct Weight_setter_visitor
+    : public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<Mesh>
+  {
+      // @fixme surface mesh
+      boost::container::flat_map<const Mesh*, Mesh::Property_map<Mesh::Face_index, double> > properties;
+      double weight = -1;
+
+      Weight_setter_visitor() { properties.reserve(3); }
+
+      void before_subface_creations(face_descriptor f_split, Mesh& tm)
+      {
+        weight = properties[&tm][f_split];
+      }
+
+      void after_subface_created(face_descriptor f_new, Mesh& tm)
+      {
+        properties[&tm][f_new] = weight;
+      }
+
+      void after_face_copy(face_descriptor f_src, Mesh& tm_src,
+                            face_descriptor f_tgt, Mesh& tm_tgt)
+      {
+        properties[&tm_tgt][f_tgt] = properties[&tm_src][f_src];
+      }
+  };
+
+  Weight_setter_visitor visitor;
+  visitor.properties[&sm] = *fwm;
+  visitor.properties[&tetrahedra_mesh] = tet_fwm;
+  visitor.properties[&result] = res_fwm;
+
+  CGAL_assertion(PMP::does_bound_a_volume(sm));
+  CGAL_assertion(PMP::does_bound_a_volume(tetrahedra_mesh));
+
+  PMP::corefine_and_compute_difference(sm, tetrahedra_mesh, result,
+                                        CGAL::parameters::visitor(visitor));
+
+  utils::save_colored_mesh(result, res_fwm, "results/coref_regions.ply");
+
+  sm = result;
+  fwm = sm.property_map<face_descriptor, double>("f:weight");
+
+  CGAL::IO::write_polygon_mesh("results/chamfered.obj", sm, CGAL::parameters::stream_precision(17));
+
+  // test if the chamfered mesh has only degree 3 vertices
+  // preprocess should return the PolyhedronSPtr
+  // most complicated part: simplify the mesh according to the shape detection regions
+  //   need some kind of SM_edge SS3Polyhedron_edge correspodence (build it in the load())
+  // weights should be CGAL::FT
+  // performance acute merging -> write the PLY
+  // write the code to get rid of main.cpp (inward offsetting)
+
+  return true;
+}
+
+bool
+OutwardMeshOffset::
+chamfer_high_degree_vertices(Mesh& sm)
+{
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    DEBUG_PRINT("Chamfer mesh...");
+
+    CGAL::IO::write_polygon_mesh("results/pre-perturbation.obj", sm, CGAL::parameters::stream_precision(17));
+    CGAL_assertion(CGAL::is_triangle_mesh(sm));
+
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    DEBUG_PRINT("Attempting to tilt the polyhedron's facets...");
+
+    // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
+    // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
+    // of the plane will still yield a single intersection point.
+    // That's not the case (in general) for degree > 3 vertices as there would no longer be
+    // a single intersection point for the tilted planes.
+    //
+    // The advantage is that we then manipulate smaller meshes since the faces are polygonal.
+    bool can_use_plane_tilts = true;
+
+    // @todo?
+    // could we merge non-connected input faces as to assign them the same (tilted) plane?
+    // Often in inputs we have many faces that correspond to the same plane, but vertical faces
+    // split it into separate connected components.
+    // The important thing is that we don't want to create degenerate conditions so the CCs
+    // should NOT interact with each other; how to prevent that?...
+
+    // declare vectors to store mesh properties
+    std::vector<std::size_t> region_ids(num_faces(sm));
+    boost::vector_property_map<Plane3> plane_map; // supporting planes of the regions detected
+
+    // detect planar regions in the mesh
+    // @fixme growing should stop if it merges faces with different weights
+    // and give an error for true coplanar faces with different weights
+    std::size_t nb_regions =
+        PMP::region_growing_of_planes_on_faces(sm,
+                                               CGAL::make_random_access_property_map(region_ids),
+                                               CGAL::parameters::cosine_of_maximum_angle(0.98)
+                                                                .region_primitive_map(plane_map)
+                                                                .maximum_distance(0.001));
+
+    utils::save_colored_mesh(sm, region_ids, "results/regions.ply");
+
+    // detect corner vertices on the boundary of planar regions
+    std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
+    std::vector<bool> ecm(num_edges(sm), false); // mark edges at the boundary of regions
+
+    PMP::detect_corners_of_regions(sm,
+                                   CGAL::make_random_access_property_map(region_ids),
+                                   nb_regions,
+                                   CGAL::make_random_access_property_map(corner_id_map),
+                                   CGAL::parameters::cosine_of_maximum_angle(0.98).
+                                                     maximum_distance(0.001).
+                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+
+    std::vector<vertex_descriptor> vertices_to_chamfer;
+
+    vertex_iterator vit = vertices(sm).begin(), vend = vertices(sm).end();
+    std::size_t cid = 0;
+    for (; vit!=vend; ++vit, ++cid) {
+        std::set<std::size_t> incident_regions;
+        for (face_descriptor f : CGAL::faces_around_target(halfedge(*vit, sm), sm)) {
+            auto res = incident_regions.insert(region_ids[f]);
+            if (res.second && incident_regions.size() > 3) {
+                DEBUG_PRINT("Region corner with degree > 3: " << sm.point(*vit));
+                can_use_plane_tilts = false;
+                vertices_to_chamfer.push_back(*vit);
+                break;
+            }
+        }
+    }
+
+    // @todo with incident face _IDS_ instead of incident faces,
+    // maybe we can avoid having to triangulate EVERYTHING as soon as one vertex
+    // does not have degree 3 by marking the vertex that needs to be moved manually
+    // and tilts are possible for the incident faces as long as they have less than 3 vertices
+    // that need to be manually moved (if 3 out of n vertices must be moved manually, we can still
+    // tilt the face such that it matches the 3 moved vertices and other vertices will move
+    // with the tilted plane)
+    if (!can_use_plane_tilts) {
+        can_use_plane_tilts = chamfer_vertices(vertices_to_chamfer, sm);
+        CGAL_assertion(can_use_plane_tilts);
+    }
+
+    return is_valid(sm) && is_valid_face_graph(sm) && can_use_plane_tilts;
+}
+
+
+
+PolyhedronSPtr
+OutwardMeshOffset::
+preprocess(Mesh& sm)
+{
+    DEBUG_PRINT("Preprocessing mesh...");
+
+    CGAL_precondition(CGAL::is_triangle_mesh(sm));
+
+#ifdef CGAL_SS3_APPLY_CHAMFERING
+    bool apply_perturbation = false;
+    bool apply_perturbation_when_degenerated = false;
+    CGAL::FT rand_move_points_range = 0.01;
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    if (config->isLoaded()) {
+        apply_perturbation = config->getBool("main", "rand_move_points");
+        apply_perturbation_when_degenerated = config->getBool("main", "rand_move_points_when_degenerated");
+        rand_move_points_range = config->getFT("main", "rand_move_points_range");
+    }
+
+    // unperturbed is not currently supported
+    CGAL_warning_msg(apply_perturbation_when_degenerated || apply_perturbation,
+      "Not perturbing...?");
+
+    if (apply_perturbation_when_degenerated && !apply_perturbation) {
+        DEBUG_PRINT("Checking if all combinations of 3 facet supporting planes intersect in a point.");
+        DEBUG_PRINT("If this takes too long, disable 'rand_move_points_when_degenerated'.");
+        // @todo implement a smarter doAll3PlanesIntersect() for Surface_mesh, careful about normalization of planes
+        if (true) {
+            DEBUG_PRINT("Not all combinations of 3 planes intersect.");
+            apply_perturbation = true;
+          } else {
+            DEBUG_PRINT("No need to perturb");
+          }
+        }
+
+        if(apply_perturbation) {
+        // as to force every plane to have degree 3
+        // @todo make this a config option
+        chamfer_high_degree_vertices(sm);
+    }
+#endif
+
+    PolyhedronSPtr polyhedron = convert(sm);
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
+
+    polyhedron = PolyhedronTransformation::perturb(polyhedron);
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
+
+    if (!polyhedron || !polyhedron->isConsistent()) {
+        // Failure here is likely from a bad perturbation (after all, there is a probabily
+        // epsilon that we create something that is degenerate).
+        // @todo try again with another perturbation, or smarter (iterative) perturbation
+        std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
+        return {};
+    }
+
+    return polyhedron;
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
 
