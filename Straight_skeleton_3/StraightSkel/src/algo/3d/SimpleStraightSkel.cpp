@@ -93,7 +93,7 @@
 #define CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
 
 /*
-  Limit the visilibity of other vertices to connected component of the face
+  Limit the visilibity of other vertices to connected component of the face for VV events
 */
 // #define CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
 
@@ -101,7 +101,7 @@
 
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
 # ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-#  error "Don't mix these two: when using vanish events, we "polute" the queue with non-events"
+#  error "Don't mix these two: when using vanish events, we 'polute' the queue with non-events"
 # endif
 #else
 # ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
@@ -118,7 +118,7 @@
 // ----
 
 // Sometimes should be disabled not to run out of memory.
-// @todo Does not seem very effective currently, need to bench again to check
+// @todo Does not seem very effective anymore, need to bench again to check
 // where the real cost is in events
 // @todo could store only a Boolean value to improve memory footprint at the expanse
 // of computation.
@@ -402,7 +402,7 @@ bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
     while (it_e != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (!edge_wptr.expired()) { // @fixme fix all these expired checks that should be lock() tries
+        if (!edge_wptr.expired()) {
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
             if (!isReflex(edge)) {
                 result = false;
@@ -488,7 +488,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                         const bool dump_exact,
                                         const bool attempt_untilting)
 {
-    bool result;
+    bool result = true;
 
     // attempt naive un-tilting
     if (attempt_untilting) {
@@ -521,7 +521,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                true /*convert_to_double*/);
 #endif
 
-        CGAL_assertion(polyhedron_cpy->isConsistent());
+        CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
 
         db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
 
@@ -581,8 +581,13 @@ bool SimpleStraightSkel::run() {
     PolyhedronSPtr polyhedron = polyhedron_->clone();
 
 #ifdef CGAL_SS3_DUMP_FILES
-    db::_3d::OBJFile::save("results/init_pre.obj", polyhedron, false /*do not triangulate*/);
+    db::_3d::OBJFile::save("results/input.obj", polyhedron, false /*do not triangulate*/);
 #endif
+
+    // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
+
+    // store base plane coefficients
+    cacheBasePlanes(polyhedron);
 
 // #define CGAL_SS3_ACUTE_WEIGHTS
 // #define CGAL_SS3_MERGING_WEIGHTS
@@ -665,12 +670,12 @@ bool SimpleStraightSkel::run() {
 
         step_id_ = -1;
         CGAL::FT current_offset = 0;
-        CGAL::FT upcoming_offset = 0;
+        CGAL::FT upcoming_offset;
 
         CGAL_assertion_code(const bool is_emptiness_expected = save_offsets_.empty();)
 
 #ifdef CGAL_SS3_DUMP_FILES
-        db::_3d::OBJFile::save("results/init_post.obj", polyhedron, false /*do not triangulate*/);
+        db::_3d::OBJFile::save("results/split.obj", polyhedron, false /*do not triangulate*/);
 #endif
 
         PQ queue;
@@ -707,54 +712,33 @@ bool SimpleStraightSkel::run() {
             }
             // @debug -
 
-            if (queue.empty() && save_offsets_.empty()) {
+            AbstractEventSPtr event = nextEvent(queue, current_offset);
+            if (!event) {
+                DEBUG_PRINT("No more events to treat");
                 break;
             }
 
-            AbstractEventSPtr event = nextEvent(queue, current_offset);
-            CGAL_assertion(bool(event));
-
             DEBUG_PRINT("popped E" << event->getID() << " Type [" << event->getType() << "]");
 
-            DEBUG_PRINT("Check event validity...");
-            if (!event->isValid()) {
-                DEBUG_PRINT("Skipping invalid event E" << event->getID());
-                continue;
-            }
-
-            DEBUG_PRINT("Check if still relevant...");
-            // @fixme the current "isObsolete" is a sufficient condition: if the neighborhoods have
-            // changed, then the event should be discarded.
-            // But we likely need the necessary condition, i.e. "if it is not obsolete, then
-            // we know it is valid. Is it just re-doing the combinatorial checks?
-            if (isEventObsolete(event)) {
-              DEBUG_PRINT("Skipping obsolete event E" << event->getID());
-#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-              CGAL_assertion(false); // should never happen since we refresh
-#endif
-              continue;
-            }
-
-            // A valid event at the same time as the previous event?!
-            CGAL_warning(event->getOffset() != current_offset);
-
-            // Another upcoming event at the same time?!
-            bool simultaneousEvents = (!queue.empty() && upcoming_offset == queue.top()->getOffset());
-            if (simultaneousEvents) {
-                // @tmp below is wrong since there is no canonical representation for all events
-                std::cerr << "Warning: there should not be any simultaneous events" << std::endl;
-                std::cerr << "Did you forget to enable perturbations in the config file?" << std::endl;
-                // return false;
-            }
-
             static int event_id = -1;
-            std::cout << "--> Event #" << ++event_id << " " << event->toString() << " --" << std::endl;
+            std::cout << "--> Accepted event #" << ++event_id << " " << event->toString() << " --" << std::endl;
 
             upcoming_offset = event->getOffset();
 
-            DEBUG_PRINT(" current offset: " << current_offset << "\n"
-                     << " upcoming offset: " << upcoming_offset << " (type " << event->getType() << ")\n"
-                     << " simultaneous? " << simultaneousEvents);
+            // the next event should be at a time that is further away than the current one
+            bool simultaneousEvents = (current_offset == upcoming_offset);
+            if (simultaneousEvents) {
+                std::cerr << "Warning: there should not be any simultaneous events" << std::endl;
+                std::cerr << "Did you forget to enable perturbations in the config file?" << std::endl;
+                // @fixme there are still some configurations where we have non canonicality
+                // return false;
+            }
+
+            // the event after is also at the same time?
+            if (!queue.empty() && upcoming_offset == queue.top()->getOffset()) {
+                std::cerr << "Warning: the event after the next one has the same event offset" << std::endl;
+            }
+
 #ifdef CGAL_SS3_RUN_TIMERS
             std::cout << "current elapsed time: " << timer.time() << std::endl;
 #endif
@@ -794,11 +778,12 @@ bool SimpleStraightSkel::run() {
 
             // If we are interested in a specific offset, there is no point going further
             if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT && save_offsets_.empty()) {
-              if (config->isLoaded() &&
-                  config->contains("main", "stop_after_last_save_event") &&
-                  config->getBool("main", "stop_after_last_save_event")) {
-                  break;
-              }
+                util::ConfigurationSPtr config = util::Configuration::getInstance();
+                if (config->isLoaded() &&
+                    config->contains("main", "stop_after_last_save_event") &&
+                    config->getBool("main", "stop_after_last_save_event")) {
+                    break;
+                }
             }
 
             current_offset = upcoming_offset;
@@ -1055,6 +1040,21 @@ SheetSPtr SimpleStraightSkel::createSheet(EdgeSPtr edge) {
     return result;
 }
 
+void SimpleStraightSkel::cacheBasePlanes(PolyhedronSPtr polyhedron) {
+    basePlanes_.reserve(polyhedron->facets().size());
+
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        if (!facet->hasData()) {
+            SkelFacetData::create(facet);
+        }
+        CGAL_assertion(bool(facet->getPlane()));
+        facet->setBasePlaneID(basePlanes_.size());
+        basePlanes_.push_back(facet->getPlane());
+    }
+}
+
 bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     WriteLock l(polyhedron->mutex());
     bool result = true;
@@ -1112,8 +1112,6 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     it_v = vertices_tosplit.begin();
     while (it_v != vertices_tosplit.end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_PRINT("Split #" << v2s_i++ << ": " << vertex->toString());
-
         bool equal_speeds = true;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
@@ -1185,9 +1183,6 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
             result = false;
         }
     }
-#endif
-
-    basePlanes_.reserve(polyhedron->facets().size());
 
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
@@ -1195,10 +1190,8 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         if (!facet->hasData()) {
             SkelFacetData::create(facet);
         }
-        CGAL_assertion(bool(facet->getPlane()));
-        facet->setBasePlaneID(basePlanes_.size());
-        basePlanes_.push_back(facet->getPlane());
     }
+#endif
 
     CGAL_postcondition(skel_result_->isConsistent());
 
@@ -1724,7 +1717,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     CGAL::FT r2c = plane_r2->c();
     CGAL::FT r2d = plane_r2->d();
 
-    // @todo zero speed
     CGAL::FT lt1 = (l1a * point->x() + l1b * point->y() + l1c * point->z() + l1d) / speed_l1;
     CGAL::FT rt1 = (r1a * point->x() + r1b * point->y() + r1c * point->z() + r1d) / speed_r1;
     CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
@@ -1802,6 +1794,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     }
 
     const bool reject_new = (reject_2b || reject_3b || reject_5b || reject_6b);
+# ifndef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
+    if(reject_new) {
+        return { };
+    }
+# endif
 #endif
 
 #ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
@@ -4902,13 +4899,17 @@ void SimpleStraightSkel::printQueue(const PQ& queue) {
     PQ duplicate_queue = queue;
     while (!duplicate_queue.empty()) {
         AbstractEventSPtr event = duplicate_queue.top();
+        std::cout << "Event E" << event->getID()
+                  << " T" << event->getType()
+                  << " @ " << event->getOffset();
         if(event->isValid()) {
-            std::cout << event->toString() << std::endl;
             if (isEventObsolete(event)) {
-                std::cout << "ObsoleteEvent E" <<  event->getID() << std::endl;
+                std::cout << " [Obsolete]" << std::endl;
+            } else {
+                std::cout << "\n" << event->toString() << std::endl;
             }
         } else {
-            std::cout << "InvalidEvent E" << event->getID() << std::endl;
+            std::cout << " [Invalid]" << std::endl;
         }
         duplicate_queue.pop();
     }
@@ -5432,28 +5433,31 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
 AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
                                                 const CGAL::FT current_offset)
 {
-    CGAL_precondition(!queue.empty() || !save_offsets_.empty());
-
-    // If a save event is closest, delay building it in case a const event is even closer
+    if (queue.empty() && save_offsets_.empty())
+        return { };
 
     AbstractEventSPtr event;
     CGAL::FT offset_next = 0;
-    bool doSave = false;
 
+    // If a save event is closest, delay building it in case a const event is even closer
+    bool do_save = false;
+
+    // purge the queue lazily as to avoid wasting time if we stop on the last save offset
     if (save_offsets_.empty()) {
         event = queue.top();
         offset_next = event->getOffset();
     } else {
+        // If we have upcoming save events, compare
         CGAL::FT next_save_offset = save_offsets_.front();
 
         if (queue.empty()) {
             // queue is empty but save_offsets cannot be empty as well
-            doSave = true;
+            do_save = true;
             offset_next = save_offsets_.front();
         } else {
             // neither queue nor save_offsets are empty, take the earliest
             if (next_save_offset > queue.top()->getOffset()) { // save is strictly earlier
-                doSave = true;
+                do_save = true;
                 offset_next = next_save_offset;
             } else {
                 // save offsets exist, but are farther in the future than the next event
@@ -5463,6 +5467,30 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
         }
     }
 
+    // Tentative next event is not a save event, test its sanity.
+    // Do this here because we don't want a const event to get created because it's before a zombie event.
+    if (!do_save) {
+        if (!event->isValid()) {
+            DEBUG_PRINT("Skipping invalid event E" << event->getID());
+            queue.pop();
+            return nextEvent(queue, current_offset);
+        }
+
+        // @fixme the current "isObsolete" is only a sufficient condition: if the neighborhoods
+        // have changed, then the event should be discarded.
+        // But we likely also need the necessary condition, i.e. "if it is not obsolete, then
+        // we know it is valid". Is it just re-doing the combinatorial checks?
+        if (isEventObsolete(event)) {
+            DEBUG_PRINT("Skipping obsolete event E" << event->getID());
+#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+            CGAL_assertion(false); // should never happen since we refresh
+#endif
+            queue.pop();
+            return nextEvent(queue, current_offset);
+        }
+    }
+
+    CGAL_assertion(do_save || bool(event));
     CGAL_assertion(offset_next != 0);
 
     // Check if the next const event would be (strictly) closer
@@ -5471,19 +5499,21 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
     if (const_offset != 0) {
         CGAL::FT next_const_offset = floor(CGAL::to_double(current_offset / const_offset) + 1.0) * const_offset;
         if (current_offset > next_const_offset && next_const_offset > offset_next) {
-            doSave = false;
+            do_save = false;
             return ConstOffsetEvent::create(next_const_offset);
         }
     }
 
-    if (doSave) { // save event is the topmost
+    if (do_save) { // save event is the topmost
         save_offsets_.pop_front();
         return SaveOffsetEvent::create(offset_next);
     }
 
+    CGAL_assertion(bool(event));
+
+    // neither a ConstOffsetEvent nor a SaveOffsetEvent
     queue.pop();
 
-    CGAL_assertion(bool(event));
     return event;
 }
 
@@ -5519,12 +5549,14 @@ PolyhedronSPtr SimpleStraightSkel::shiftToEventOffset(PolyhedronSPtr polyhedron,
   // polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift);
   PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
 
+#if 0 //def CGAL_SS3_DUMP_FILES
   // below will have degeneracies since we have not yet treated the event
-  // db::_3d::OBJFile::save("results/shift_" + std::to_string(step_id_) + ".obj",
-  //                        polyhedron,
-  //                        false /*do not triangulate*/);
+  static int shift_id = -1;
+  db::_3d::OBJFile::save("results/shift_" + std::to_string(++shift_id) + ".obj",
+                         polyhedron,
+                         false /*do not triangulate*/);
+#endif
 
-  CGAL_postcondition(bool(polyhedron) && polyhedron->isConsistent());
   return polyhedron;
 }
 
@@ -5665,7 +5697,6 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT current_offset,
                 break;
             }
 
-            // @fixme another geometric check
             if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
                 continue;
             }

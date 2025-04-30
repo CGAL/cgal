@@ -114,6 +114,11 @@ public:
     static SheetSPtr createSheet(EdgeSPtr edge);
 
     /**
+     * Assign to each facet the ID of a stored base (i.e., unshifted) plane equation.
+     */
+    void cacheBasePlanes(PolyhedronSPtr polyhedron);
+
+    /**
      * Split all vertices with degree > 3 and
      * initializes the data variables of all edges and vertices.
      */
