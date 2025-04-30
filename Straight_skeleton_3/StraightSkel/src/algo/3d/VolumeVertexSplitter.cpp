@@ -195,24 +195,25 @@ PolyhedronSPtr VolumeVertexSplitter::splitVertex(VertexSPtr vertex) {
         if (!poly_c_offset) {
             continue;
         }
-        if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
-            DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
-            if (!poly_opt_vol) {
+
+        auto updateOptimalCombination = [&](const combi& combination,
+                                            PolyhedronSPtr& poly_c_offset)
+        {
+            if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
+                DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
                 combi_opt_vol = combination;
                 poly_opt_vol = poly_c_offset;
-                continue;
             }
-            if (optimization_ > 0) {
-                if (compareSurfaceAreas(poly_opt_vol, poly_c_offset) < 0) {
-                    combi_opt_vol = combination;
-                    poly_opt_vol = poly_c_offset;
-                }
-            } else if (optimization_ < 0) {
-                if (compareSurfaceAreas(poly_opt_vol, poly_c_offset) > 0) {
-                    combi_opt_vol = combination;
-                    poly_opt_vol = poly_c_offset;
-                }
-            }
+        };
+
+        if (!poly_opt_vol) {
+            updateOptimalCombination(combination, poly_c_offset);
+            continue;
+        }
+
+        if ((optimization_ > 0 && compareSurfaceAreas(poly_opt_vol, poly_c_offset) < 0) ||
+            (optimization_ < 0 && compareSurfaceAreas(poly_opt_vol, poly_c_offset) > 0)) {
+            updateOptimalCombination(combination, poly_c_offset);
         }
     }
     DEBUG_VAL("Selected split-combination: " << combiToString(combi_opt_vol));
