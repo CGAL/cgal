@@ -29,6 +29,8 @@
 #include <unordered_map>
 #include <utility>
 
+#include <optional>
+
 namespace CGAL {
 
 /*
@@ -134,7 +136,7 @@ Vertex_range vertices_range() {
 Edge_range edges_range() {
   return combinatorial_map_.template one_dart_per_cell<1>();
 }
-Face_range faces_range() {
+Face_range faces_range() {  
   return combinatorial_map_.template one_dart_per_cell<2>();
 }
 Vertex_const_range vertices_const_range() const {
@@ -149,8 +151,8 @@ Face_const_range faces_const_range() const {
 
 protected:
   Combinatorial_map_with_cross_ratios combinatorial_map_;
-  bool has_anchor_ = false;
-  Anchor anchor_;
+  // bool has_anchor_ = false;
+  std::optional<Anchor> anchor_ = std::nullopt;
 
   Dart_descriptor pick_edge_to_flip();
   Dart_const_descriptor pick_edge_to_flip() const;
@@ -235,11 +237,7 @@ Triangulation_on_hyperbolic_surface_2(const Domain& domain)
   }
 
   // Set the anchor
-  anchor_.dart = dart_of_triangle[0];
-  anchor_.vertices[0] = domain.vertex(size-1);
-  anchor_.vertices[1] = domain.vertex(0);
-  anchor_.vertices[2] = domain.vertex(1);
-  has_anchor_ = true;
+  anchor_ = Anchor(dart_of_triangle[0], domain.vertex(size-1), domain.vertex(0), domain.vertex(1));
 }
 
 /* template<class Traits, class Attributes> */
@@ -271,7 +269,8 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
 has_anchor() const
 {
   CGAL_precondition(is_valid());
-  return has_anchor_;
+  // return has_anchor_;
+  return anchor_.has_value();
 }
 
 template<class Traits, class Attributes>
@@ -280,7 +279,7 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
 anchor()
 {
   CGAL_precondition(is_valid() && has_anchor());
-  return anchor_;
+  return anchor_.value();
 }
 
 template<class Traits, class Attributes>
@@ -289,7 +288,7 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
 anchor() const
 {
   CGAL_precondition(is_valid() && has_anchor());
-  return anchor_;
+  return anchor_.value();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -327,22 +326,23 @@ flip(Dart_descriptor dart)
    Complex_number cross_ratio_AC = get_cross_ratio(a);
 
    // Modify the anchor
-
-   if (anchor_.dart == a) {
-     anchor_.dart = e;
-     anchor_.vertices[1] = Point(fourth_point_from_cross_ratio(anchor_.vertices[1], anchor_.vertices[2], anchor_.vertices[0], cross_ratio_AC));
-   } else if (anchor_.dart == b) {
-     anchor_.vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.vertices[0], anchor_.vertices[1], anchor_.vertices[2], cross_ratio_AC));
-   } else if (anchor_.dart == c) {
-     anchor_.vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.vertices[2], anchor_.vertices[0], anchor_.vertices[1], cross_ratio_AC));
-   } else if (anchor_.dart == d) {
-     anchor_.dart = b;
-     anchor_.vertices[1] = Point(fourth_point_from_cross_ratio(anchor_.vertices[1], anchor_.vertices[2], anchor_.vertices[0], cross_ratio_AC));
-   } else if (anchor_.dart == e) {
-     anchor_.vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.vertices[0], anchor_.vertices[1], anchor_.vertices[2], cross_ratio_AC));
-   } else if (anchor_.dart == f) {
-     anchor_.vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.vertices[2], anchor_.vertices[0], anchor_.vertices[1], cross_ratio_AC));
-   }
+   if(has_anchor()){
+     if (anchor_.value().dart == a) {
+       anchor_.value().dart = e;
+       anchor_.value().vertices[1] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[1], anchor_.value().vertices[2], anchor_.value().vertices[0], cross_ratio_AC));
+     } else if (anchor_.value().dart == b) {
+       anchor_.value().vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[0], anchor_.value().vertices[1], anchor_.value().vertices[2], cross_ratio_AC));
+     } else if (anchor_.value().dart == c) {
+       anchor_.value().vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[2], anchor_.value().vertices[0], anchor_.value().vertices[1], cross_ratio_AC));
+     } else if (anchor_.value().dart == d) {
+       anchor_.value().dart = b;
+       anchor_.value().vertices[1] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[1], anchor_.value().vertices[2], anchor_.value().vertices[0], cross_ratio_AC));
+     } else if (anchor_.value().dart == e) {
+       anchor_.value().vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[0], anchor_.value().vertices[1], anchor_.value().vertices[2], cross_ratio_AC));
+     } else if (anchor_.value().dart == f) {
+       anchor_.value().vertices[2] = Point(fourth_point_from_cross_ratio(anchor_.value().vertices[2], anchor_.value().vertices[0], anchor_.value().vertices[1], cross_ratio_AC));
+     }
+  }
 
    // Compute the new cross ratios
 
@@ -452,39 +452,39 @@ lift(bool center) const
 
   Dart_const_range darts = combinatorial_map_.darts();
 
-  combinatorial_map_.mark(anchor_.dart, visited_darts_mark);
-  combinatorial_map_.mark(const_ccw(anchor_.dart), visited_darts_mark);
-  combinatorial_map_.mark(const_cw(anchor_.dart), visited_darts_mark);
+  combinatorial_map_.mark(anchor_.value().dart, visited_darts_mark);
+  combinatorial_map_.mark(const_ccw(anchor_.value().dart), visited_darts_mark);
+  combinatorial_map_.mark(const_cw(anchor_.value().dart), visited_darts_mark);
 
   if (center) {
-    Isometry center_the_drawing = hyperbolic_translation<Traits>(anchor_.vertices[0]);
-    positions[anchor_.dart] = center_the_drawing.evaluate(anchor_.vertices[0]);
-    positions[const_ccw(anchor_.dart)] = center_the_drawing.evaluate(anchor_.vertices[1]);
-    positions[const_cw(anchor_.dart)] = center_the_drawing.evaluate(anchor_.vertices[2]);
+    Isometry center_the_drawing = hyperbolic_translation<Traits>(anchor_.value().vertices[0]);
+    positions[anchor_.value().dart] = center_the_drawing.evaluate(anchor_.value().vertices[0]);
+    positions[const_ccw(anchor_.value().dart)] = center_the_drawing.evaluate(anchor_.value().vertices[1]);
+    positions[const_cw(anchor_.value().dart)] = center_the_drawing.evaluate(anchor_.value().vertices[2]);
   } else {
-    positions[anchor_.dart] = anchor_.vertices[0];
-    positions[const_ccw(anchor_.dart)] = anchor_.vertices[1];
-    positions[const_cw(anchor_.dart)] = anchor_.vertices[2];
+    positions[anchor_.value().dart] = anchor_.value().vertices[0];
+    positions[const_ccw(anchor_.value().dart)] = anchor_.value().vertices[1];
+    positions[const_cw(anchor_.value().dart)] = anchor_.value().vertices[2];
   }
 
   std::tuple<Dart_const_descriptor, Point, Point, Point> value =
-    std::make_tuple(anchor_.dart,
-                    positions[anchor_.dart],
-                    positions[const_ccw(anchor_.dart)],
-                    positions[const_cw(anchor_.dart)]);
+    std::make_tuple(anchor_.value().dart,
+                    positions[anchor_.value().dart],
+                    positions[const_ccw(anchor_.value().dart)],
+                    positions[const_cw(anchor_.value().dart)]);
   realizations.push_back(value);
 
-  Complex_number anchor_z0(anchor_.vertices[0].x(), anchor_.vertices[0].y());
-  Complex_number anchor_z1(anchor_.vertices[1].x(), anchor_.vertices[1].y());
-  Complex_number anchor_z2(anchor_.vertices[2].x(), anchor_.vertices[2].y());
+  Complex_number anchor_z0(anchor_.value().vertices[0].x(), anchor_.value().vertices[0].y());
+  Complex_number anchor_z1(anchor_.value().vertices[1].x(), anchor_.value().vertices[1].y());
+  Complex_number anchor_z2(anchor_.value().vertices[2].x(), anchor_.value().vertices[2].y());
 
   double weight_of_anchor_dart = CGAL::to_double(norm(anchor_z0) + norm(anchor_z1));
   double weight_of_ccw_anchor_dart = CGAL::to_double(norm(anchor_z1) + norm(anchor_z2));
   double weight_of_cw_anchor_dart = CGAL::to_double(norm(anchor_z2) + norm(anchor_z0));
 
-  queue.push(std::make_pair(anchor_.dart, weight_of_anchor_dart));
-  queue.push(std::make_pair(const_ccw(anchor_.dart), weight_of_ccw_anchor_dart));
-  queue.push(std::make_pair(const_cw(anchor_.dart), weight_of_cw_anchor_dart));
+  queue.push(std::make_pair(anchor_.value().dart, weight_of_anchor_dart));
+  queue.push(std::make_pair(const_ccw(anchor_.value().dart), weight_of_ccw_anchor_dart));
+  queue.push(std::make_pair(const_cw(anchor_.value().dart), weight_of_cw_anchor_dart));
 
   while (! queue.empty()) {
     Dart_const_descriptor invader = queue.top().first;
@@ -553,16 +553,16 @@ is_valid() const
 
   // 2. Check the anchor, if any
 
-  if (has_anchor_) {
+  if (has_anchor()) {
     // Check that the dart descriptor of the anchor points to a dart of the combinatorial map
-    if (!combinatorial_map_.is_dart_used(anchor_.dart)) {
+    if (!combinatorial_map_.is_dart_used(anchor_.value().dart)) {
       return false;
     }
 
     // Check that the three vertices of the anchor lie within the open unit disk
     for (int k=0; k<3; ++k) {
       // if (anchor_.vertices[k].get_z() >= Number(1)) {
-      if (norm(Complex_number(anchor_.vertices[k].x(),anchor_.vertices[k].y())) >= Number(1)) {
+      if (norm(Complex_number(anchor_.value().vertices[k].x(),anchor_.value().vertices[k].y())) >= Number(1)) {
         return false;
       }
     }
@@ -592,12 +592,12 @@ to_stream(std::ostream& s) const
   s << current_dart_index << std::endl;
 
   // Store the anchor, if any
-  if (has_anchor_) {
+  if (has_anchor()) {
     s << "yes" << std::endl;
-    s << darts_indices[anchor_.dart] << std::endl;
-    s << anchor_.vertices[0] << std::endl;
-    s << anchor_.vertices[1] << std::endl;
-    s << anchor_.vertices[2] << std::endl;
+    s << darts_indices[anchor_.value().dart] << std::endl;
+    s << anchor_.value().vertices[0] << std::endl;
+    s << anchor_.value().vertices[1] << std::endl;
+    s << anchor_.value().vertices[2] << std::endl;
   } else {
     s << "no" << std::endl;
   }
@@ -633,16 +633,16 @@ from_stream(std::istream& s)
   int anchor_dart_id = 0;
   s >> line;
   if (!line.compare("yes")) {
-    has_anchor_ = true;
+    anchor_ = Anchor();
 
     s >> line;
     anchor_dart_id = std::stoi(line); // (*) anchor_.dart_id is set at the end of the function
 
-    s >> anchor_.vertices[0];
-    s >> anchor_.vertices[1];
-    s >> anchor_.vertices[2];
+    s >> anchor_.value().vertices[0];
+    s >> anchor_.value().vertices[1];
+    s >> anchor_.value().vertices[2];
   } else {
-    has_anchor_ = false;
+    // has_anchor_ = false;
   }
 
   // Load the triangles
@@ -679,8 +679,8 @@ from_stream(std::istream& s)
   }
 
   // (*) here
-  if (has_anchor_) {
-    anchor_.dart = darts_by_id[anchor_dart_id];
+  if (has_anchor()) {
+    anchor_.value().dart = darts_by_id[anchor_dart_id];
   }
 }
 
@@ -762,7 +762,7 @@ copy_from(Combinatorial_map_with_cross_ratios& cmap)
 {
   //combinatorial_map_.copy_from_const(cmap);
   combinatorial_map_.copy(cmap);
-  has_anchor_ = false;
+  // has_anchor_ = false;
 }
 
 template<class Traits, class Attributes>
@@ -796,11 +796,12 @@ copy_from(Combinatorial_map_with_cross_ratios& cmap,
   cmap.opposite(anchor.dart);
 
   // Set the anchor
-  anchor_.dart = darts_table[anchor.dart];
+  anchor_ = Anchor();
+  anchor_.value().dart = darts_table[anchor.dart];
   for (int k=0; k<3; ++k) {
-    anchor_.vertices[k] = anchor.vertices[k];
+    anchor_.value().vertices[k] = anchor.vertices[k];
   }
-  has_anchor_ = true;
+  // has_anchor_ = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -833,3 +834,4 @@ fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c,
 } // namespace CGAL
 
 #endif // CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_2_H
+
