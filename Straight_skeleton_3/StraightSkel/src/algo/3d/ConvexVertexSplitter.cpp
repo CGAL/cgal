@@ -85,10 +85,11 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     PolyhedronSPtr poly_opt_offset;
     int num_convex_edges = 0;
     int num_convex_edges_opt = 0;
+
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;
-        // std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
+        std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
 
         // don't take it out of the loop
         PolyhedronSPtr poly_c = copyVertex(vertex);
@@ -98,6 +99,7 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
 
         VertexSPtr vertex_c = poly_c->vertices().front();
         CombiVertexSplitter::splitVertex(vertex_c, combination);
+
         PolyhedronSPtr poly_c_offset = PolyhedronTransformation::shiftFacets(poly_c, -1.0);
         if (!poly_c_offset) {
             std::cerr << "Warning: failed to create offset of corner" << std::endl;
@@ -106,38 +108,42 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
 
         // std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
         // std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
-        static int test_id = -1;
-        ++test_id;
+
+        // static int test_id = -1;
+        // ++test_id;
         // db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + ".obj", poly_c, false);
         // db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + "_offset.obj", poly_c_offset, false);
+
         // poly_c->dumpEdges("results/last_convex_split_base");
         // poly_c_offset->dumpEdges("results/last_convex_split_offset");
 
-        if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
-            DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
-            num_convex_edges = countConvexEdges(poly_c_offset);
-            DEBUG_VAR(num_convex_edges);
-            if (!poly_opt) {
+        num_convex_edges = countConvexEdges(poly_c_offset);
+        auto updateOptimalCombination = [&](const combi& combination,
+                                            PolyhedronSPtr& poly_c,
+                                            PolyhedronSPtr& poly_c_offset,
+                                            int num_convex_edges)
+        {
+            if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
+                DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
                 combi_opt = combination;
                 poly_opt = poly_c;
                 poly_opt_offset = poly_c_offset;
                 num_convex_edges_opt = num_convex_edges;
-                continue;
             }
-            if (optimization_ < 0) {
-                if (num_convex_edges > num_convex_edges_opt) {
-                    combi_opt = combination;
-                    poly_opt = poly_c;
-                    poly_opt_offset = poly_c_offset;
-                    num_convex_edges_opt = num_convex_edges;
-                }
-            } else if (optimization_ > 0) {
-                if (num_convex_edges < num_convex_edges_opt) {
-                    combi_opt = combination;
-                    poly_opt = poly_c;
-                    poly_opt_offset = poly_c_offset;
-                    num_convex_edges_opt = num_convex_edges;
-                }
+        };
+
+        if (!poly_opt) {
+            updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
+            continue;
+        }
+
+        if (optimization_ < 0) {
+            if (num_convex_edges > num_convex_edges_opt) {
+                updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
+            }
+        } else if (optimization_ > 0) {
+            if (num_convex_edges < num_convex_edges_opt) {
+                updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
             }
         }
     }
