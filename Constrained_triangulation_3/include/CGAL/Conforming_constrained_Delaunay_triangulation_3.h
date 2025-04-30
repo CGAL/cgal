@@ -927,7 +927,7 @@ public:
       }
     }
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
-    static_assert(CGAL::is_nothrow_movable_v<Triangulation> == false || 
+    static_assert(CGAL::is_nothrow_movable_v<Triangulation> == false ||
                   CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
     static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
     *this = Conforming_constrained_Delaunay_triangulation_3{};
