@@ -16,6 +16,11 @@
 #include <CGAL/license/GraphicsView.h>
 #include <CGAL/Graphics_scene.h>
 
+// compatibility
+#if defined(CGAL_USE_BASIC_VIEWER) && !defined(CGAL_USE_BASIC_VIEWER_QT)
+#define CGAL_USE_BASIC_VIEWER 1
+#endif
+
 #if defined(CGAL_USE_BASIC_VIEWER_QT)
 #include <CGAL/Qt/Basic_viewer.h>
 // #elif defined(CGAL_USE_BASIC_VIEWER_GLFW)
@@ -27,7 +32,7 @@ namespace CGAL
   void draw_graphics_scene(const Graphics_scene&,
                            const char* ="CGAL Basic Viewer")
   {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER_QT is not defined."<<std::endl;
+    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 } // End namespace CGAL
 #endif

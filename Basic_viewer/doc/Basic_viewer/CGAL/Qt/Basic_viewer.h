@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements are added through the scene. This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER_QT` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER_QT`.
+The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements are added through the scene. This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 CGAL::QGLViewer is our internal fork of <a href="https://github.com/GillesDebunne/libQGLViewer">QGLViewer class</a> which is <em>A versatile 3D OpenGL viewer based on QOpenGLWidget</em>.
 */
@@ -207,7 +207,7 @@ public:
 
 The class `QApplication_and_basic_viewer` regroups a `Basic_viewer` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer` to define their own behavior.
 
-This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER_QT` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER_QT`.
+This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 */
 class QApplication_and_basic_viewer
@@ -230,7 +230,7 @@ public:
 /*!
  \ingroup PkgBasicViewerClasses
 
- opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER_QT` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition CGAL_USE_BASIC_VIEWER_QT.
+ opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition CGAL_USE_BASIC_VIEWER.
 */
 void draw_graphics_scene(const Graphics_scene& graphic_scene,
                          const char *title="CGAL Basic Viewer")
