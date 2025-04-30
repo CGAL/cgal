@@ -190,7 +190,22 @@ invert_and_add_bbox(Mesh& sm)
 
   DEBUG_PRINT("Inverting and adding a Bbox...");
 
-  PMP::triangulate_faces(sm);
+  auto fwm = sm.property_map<face_descriptor, double>("f:weight");
+  CGAL_assertion(bool(fwm));
+
+  struct Weight_setter_visitor
+    : public CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor<Mesh>
+  {
+    Mesh::Property_map<Mesh::Face_index, double> property;
+    double weight = 1.0;
+    void before_subface_creations(face_descriptor f_old) { weight = get(property, f_old); }
+    void after_subface_created(face_descriptor f_new) { put(property, f_new, weight); }
+  };
+
+  Weight_setter_visitor visitor;
+  visitor.property = *fwm;
+
+  PMP::triangulate_faces(sm, CGAL::parameters::visitor(visitor));
 
   // check the sanity of the input
   bool has_SI = PMP::does_self_intersect(sm);
