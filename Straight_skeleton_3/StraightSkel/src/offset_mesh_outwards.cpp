@@ -6,6 +6,16 @@
 
 int main(int argc, char** argv)
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
+  if (argc == 1) {
+    std::cout << "Usage: " << argv[0]
+              << " <input filename> [<weights filename>] [<output directory>]"
+              << std::endl;
+    std::exit(0);
+  }
+
   // Can be any format read by CGAL::IO::read_polygon_mesh()
   const char* input_filename = argv[1];
 
