@@ -57,6 +57,7 @@ typedef K::Triangle_3     Triangle3;
 typedef K::Plane_3        Plane3;
 typedef K::Sphere_3       Sphere3;
 typedef K::Iso_cuboid_3   Iso_cuboid3;
+typedef K::Tetrahedron_3 Tetrahedron3;
 
 template <typename FT>
 decltype(auto) sqrt_with_warning(const FT& v)

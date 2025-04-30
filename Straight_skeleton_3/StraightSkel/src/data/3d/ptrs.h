@@ -49,6 +49,7 @@ using CGAL::Triangle3;
 using CGAL::Plane3;
 using CGAL::Sphere3;
 using CGAL::Iso_cuboid3;
+using CGAL::Tetrahedron3;
 #else
 using kernel::Point3;
 using kernel::Vector3;
