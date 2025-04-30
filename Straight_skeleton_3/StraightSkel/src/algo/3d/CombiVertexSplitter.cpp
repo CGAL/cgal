@@ -297,6 +297,7 @@ PolyhedronSPtr CombiVertexSplitter::copyVertex(VertexSPtr vertex) {
                 facet->getData())->getSpeed());
     }
     result->addFacet(facet_c);
+    result->initializeAllIDs();
     return result;
 }
 
