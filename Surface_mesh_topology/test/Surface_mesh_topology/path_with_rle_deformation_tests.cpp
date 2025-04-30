@@ -11,7 +11,7 @@
 #include "Creation_of_test_cases_for_paths.h"
 
 // If you want to use a viewer, you can use qglviewer.
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
@@ -53,21 +53,21 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool use_only_positive,
                     bool use_only_negative,
                     bool
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
                     draw
 #endif
                     =false,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modification;
                                            // otherwise repeat the given number of times
 {
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
   std::vector<Path_on_surface<LCC_3_cmap> > v;
   if (draw)
   {
     v.push_back(path);
     // CGAL::draw(path.get_map(), v);
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
   internal::Light_MQ<LCC_3_cmap> lmq(path.get_map());
   Path_on_surface<LCC_3_cmap> prepp(path.get_map());
@@ -100,9 +100,9 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
     if (modified)
     {
       prevp=Path_on_surface<LCC_3_cmap>(curp);
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
       if (draw) { v.push_back(prevp); }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
     }
 
     // if (draw /* && nbtest==1*/)
@@ -112,13 +112,13 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   }
   while((repeat==0 && modified) || (nb<repeat));
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
   if (draw)
   {
     std::string title="Test "+std::to_string(nbtests);
     CGAL::draw(path.get_map(), v, title.c_str());
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
   path.swap(prevp);
   assert(path.is_valid(true));

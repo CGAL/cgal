@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   {
     std::cout<<"  Number of faces: "<<cycle.size()<<std::endl;
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
     if(argc>=3 && std::string(argv[2])=="-draw")
     { draw_facewidth(lcc, cycle); }
 #endif

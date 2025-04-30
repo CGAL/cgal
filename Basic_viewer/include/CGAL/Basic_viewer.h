@@ -18,6 +18,10 @@
 
 // compatibility
 #if defined(CGAL_USE_BASIC_VIEWER) && !defined(CGAL_USE_BASIC_VIEWER_QT)
+#define CGAL_USE_BASIC_VIEWER_QT 1
+#endif
+
+#if defined(CGAL_USE_BASIC_VIEWER_QT) && !defined(CGAL_USE_BASIC_VIEWER)
 #define CGAL_USE_BASIC_VIEWER 1
 #endif
 

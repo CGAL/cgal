@@ -119,10 +119,10 @@ int main()
   bool cij, ckl, hij_ij, hij_kl, hkl_ij, hkl_kl;
   bool test_valid=true;
 /*
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
   std::vector<Path_on_surface<SM> > paths={pij, pkl};
   CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt6
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 */
   for (int i=-4; i<=4; ++i)
   {

@@ -39,7 +39,7 @@ main(int argc, char* argv[])
   {
     std::ofstream out("union.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
     CGAL::draw(mpwh);
 #endif
   }

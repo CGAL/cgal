@@ -32,7 +32,7 @@ private:
   const LCC_3& m_lcc;
 };
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 
 struct Draw_functor: public CGAL::Graphics_scene_options<LCC_3,
                                       typename LCC_3::Dart_const_handle,
@@ -63,16 +63,16 @@ struct Draw_functor: public CGAL::Graphics_scene_options<LCC_3,
   LCC_3::size_type belong_to_cycle;
 };
 
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
 int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
   std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
   std::ifstream inp(filename);
   if (inp.fail())
@@ -143,13 +143,13 @@ int main(int argc, char* argv[])
   }
   while(cycle_exist);
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
     CGAL::draw(lccoriginal, df, "Unsew edge width repeatdly");
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
   lccoriginal.free_mark(belong_to_cycle);
   lccoriginal.free_mark(is_root);
