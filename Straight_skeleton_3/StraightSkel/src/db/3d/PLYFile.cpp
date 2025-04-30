@@ -43,16 +43,19 @@ PLYFile::~PLYFile() {
 }
 
 PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
-                             const std::string& description)
+                             const std::string& description,
+                             std::map<edge_descriptor, EdgeWPtr>& e2e)
 {
     typedef CGAL::Surface_mesh<Point3>::Face_index Face_index;
+
+    CGAL_warning(CGAL::is_triangle_mesh(sm));
 
     PolyhedronSPtr result = Polyhedron::create();
 
     unsigned int vertex_id_new = 0;
     std::vector<VertexSPtr> vertices;
 
-    for(auto vi : CGAL::vertices(sm)) {
+    for(vertex_descriptor vi : CGAL::vertices(sm)) {
         vertex_id_new++;
         Point3SPtr point = KernelFactory::createPoint3(sm.point(vi));
         VertexSPtr vertex = Vertex::create(point);
@@ -65,7 +68,7 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
     auto weight_pmap_res = sm.property_map<Face_index, double>("f:weight");
 
     unsigned int facet_id_new = 0;
-    for(auto fi : faces(sm)) {
+    for(face_descriptor fi : faces(sm)) {
         facet_id_new++;
         unsigned int num_vertices = sm.degree(fi);
         // std::cout << "new face of size " << num_vertices << std::endl;
@@ -78,8 +81,8 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
         }
 
         unsigned int pos = 0;
-        for (auto h : CGAL::halfedges_around_face(halfedge(fi, sm), sm)) {
-            unsigned int vertex_id = target(h, sm);
+        for (halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(fi, sm), sm)) {
+            unsigned int vertex_id = source(h, sm);
             if (vertex_id < vertices.size()) {
                 poly_vertices[pos++] = vertices[vertex_id];
             } else {
@@ -94,12 +97,28 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
         FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
         facet->setID(facet_id_new);
 
+        // Correspondence between the edges of the original mesh and the new edges
+        // in the polyhedron
+        // poly_vertices is filled starting at source() of the first edge
+        // Facet::create() creates the i-th edge between vertices[i] and vertices[i+1]
+        halfedge_descriptor h = halfedge(fi, sm);
+        std::list<EdgeSPtr>::iterator eit = facet->edges().begin();
+        for (unsigned int i = 0; i < num_vertices; ++i) {
+            EdgeSPtr e = *eit++;
+            e2e[edge(h, sm)] = e;
+            h = next(h, sm);
+        }
+
         // std::cout << "Final edges:" << std::endl;
-        // for(auto e : facet->edges())
+        // for(edge_descriptor e : facet->edges())
         //     std::cout << e->toString() << std::endl;
 
         if (num_vertices == 3) {
-            Triangle::create(facet, poly_vertices);
+            Plane3SPtr plane = KernelFactory::createPlane3(
+                    poly_vertices[0]->getPoint(),
+                    poly_vertices[1]->getPoint(),
+                    poly_vertices[2]->getPoint());
+            facet->setPlane(plane);
         } else if (normal_sum && num_vertices > 3) {
             // vertex normals are used as a hint for facet normal
             // @fixme no reason for these 3 points not to be collinear?
@@ -147,9 +166,11 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
         if (weight_pmap_res) {
             weight = get(*weight_pmap_res, fi);
         } else {
-            std::cerr << "Warning: no weight map, expected?" << std::endl;
+            std::cerr << "Error: face was not associated a weight?" << std::endl;
+            return {};
         }
 
+        CGAL_assertion(weight != 0);
         data::_3d::skel::SkelFacetDataSPtr data = data::_3d::skel::SkelFacetData::create(facet);
         data->setSpeed(weight);
     }
@@ -165,11 +186,11 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
     }
 
     util::ConfigurationSPtr config = util::Configuration::getInstance();
+    std::string section("db_3d_PLYFile");
     if (config->isLoaded() &&
-        config->contains("main", "merge_coplanar_faces") &&
-        config->getBool("main", "merge_coplanar_faces")) {
+        config->contains(section, "merge_coplanar_faces") &&
+        config->getBool(section, "merge_coplanar_faces")) {
         double epsilon = 0.;
-        std::string section("db_3d_PLYFile");
         std::string key("epsilon_coplanarity");
         if (config->contains(section, key)) {
             epsilon = config->getDouble(section, key);
@@ -178,10 +199,17 @@ PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
     }
 
     removeVerticesDegLt3(result);
-    assert(result->isConsistent());
 
+    CGAL_postcondition(result->isConsistent());
 
     return result;
+}
+
+PolyhedronSPtr PLYFile::load(const CGAL::Surface_mesh<Point3>& sm,
+                             const std::string& description)
+{
+  std::map<edge_descriptor, EdgeWPtr> unused_e2e;
+  return load(sm, description, unused_e2e);
 }
 
 // This particular reader can read weights if they are stored as a property in the PLY file

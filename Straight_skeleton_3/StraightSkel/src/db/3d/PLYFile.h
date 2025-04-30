@@ -26,10 +26,20 @@ using namespace data::_3d;
  * PLY file format
  */
 class PLYFile : public AbstractFile {
+
+    using Mesh = CGAL::Surface_mesh<Point3>;
+    using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
+    using edge_descriptor = typename boost::graph_traits<Mesh>::edge_descriptor;
+    using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+
 public:
     virtual ~PLYFile();
 
-    static PolyhedronSPtr load(const CGAL::Surface_mesh<Point3>& sm,
+    static PolyhedronSPtr load(const Mesh& sm,
+                               const std::string& description,
+                               std::map<edge_descriptor, EdgeWPtr>& e2e);
+    static PolyhedronSPtr load(const Mesh& sm,
                                const std::string& description = {});
 
     static PolyhedronSPtr load(const std::string& filename);

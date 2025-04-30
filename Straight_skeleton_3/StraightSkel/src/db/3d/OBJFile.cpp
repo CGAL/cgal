@@ -192,11 +192,11 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         // std::cout << "Loaded OBJ: " << result->toString() << std::endl;
 
         util::ConfigurationSPtr config = util::Configuration::getInstance();
+        std::string section("db_3d_OBJFile");
         if (config->isLoaded() &&
-            config->contains("main", "merge_coplanar_faces") &&
-            config->getBool("main", "merge_coplanar_faces")) {
+            config->contains(section, "merge_coplanar_faces") &&
+            config->getBool(section, "merge_coplanar_faces")) {
             double epsilon = 0.;
-            std::string section("db_3d_OBJFile");
             std::string key("epsilon_coplanarity");
             if (config->contains(section, key)) {
                 epsilon = config->getDouble(section, key);
@@ -219,6 +219,7 @@ bool OBJFile::save(const std::string& filename,
                    const bool convert_to_double)
 {
    // @fixme make the use of Ids optional so that it doesn't mess with downstream stuff
+   bool result = true;
 
     DEBUG_PRINT(" -- Save OBJ " << filename << " --");
     DEBUG_PRINT("    do_triangulate: " << std::boolalpha << do_triangulate << "\n"
@@ -239,7 +240,6 @@ bool OBJFile::save(const std::string& filename,
     // Improve precision if EPECK
     CGAL::internal::Evaluate<CGAL::FT> evaluate;
 
-    bool result = true;
     std::ofstream ofs(filename.c_str());
     ofs.precision(17);
     if (ofs.is_open()) {
@@ -275,16 +275,12 @@ bool OBJFile::save(const std::string& filename,
             }
         }
 
-        // Map vertex pointers to their IDs for facet writing
-        std::map<VertexSPtr, std::size_t> v_ids;
-        for (const auto& vertex : polyhedron->vertices()) {
-            v_ids[vertex] = vertex->getID() + 1;
-        }
-
+        // Write facets
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
             CGAL_assertion(facet->getID() != -1);
+            // std::cout << "handle facet " << facet->getID() << std::endl;
 
             bool do_triangulate_face = do_triangulate;
             if (facet->edges().size() < 3)
@@ -330,9 +326,9 @@ bool OBJFile::save(const std::string& filename,
                         VertexSPtr vm1 = edge->prev(facet)->src(facet);
 
                         // manually create a degenerate face so that the resulting mesh is conforming
-                        ofs << "f " << v_ids.at(vm1) << " "
-                                    << v_ids.at(v0) << " "
-                                    << v_ids.at(v1) << "\n";
+                        ofs << "f " << vm1->getID() + 1 << " "
+                                    << v0->getID() + 1 << " "
+                                    << v1->getID() + 1 << "\n";
                     }
                     else
                     {
@@ -365,7 +361,7 @@ bool OBJFile::save(const std::string& filename,
                 if(do_triangulate_face)
                 {
                     std::unordered_map<PCDT_FH, bool> in_domain_map;
-                    boost::associative_property_map< std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
+                    boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
 
                     CGAL::mark_domain_in_triangulation(pcdt, in_domain);
 
@@ -374,56 +370,70 @@ bool OBJFile::save(const std::string& filename,
                         if(!get(in_domain, fh))
                           continue;
 
-                        ofs << "f " << v_ids.at(fh->vertex(0)->info()) << " "
-                                    << v_ids.at(fh->vertex(1)->info()) << " "
-                                    << v_ids.at(fh->vertex(2)->info()) << "\n";
-
+                        ofs << "f " << (fh->vertex(0)->info()->getID() + 1) << " "
+                                    << (fh->vertex(1)->info()->getID() + 1) << " "
+                                    << (fh->vertex(2)->info()->getID() + 1) << "\n";
                     }
                 }
             }
 
             if(!do_triangulate_face)
             {
-              ofs << "f ";
-              unsigned int num_edges = 0;
-              EdgeSPtr first = facet->edges().front();
-              EdgeSPtr edge = first;
-              EdgeSPtr prev_edge = edge;
-              do {
-                  prev_edge = edge;
-                  edge = edge->prev(facet); // this is to get the first edge in case the face is open
-                  // std::cout << edge->toString() << std::endl;
-              } while (edge != prev_edge && edge != first);
+                std::set<EdgeSPtr> visited_edges;
 
-              first = edge;
-              do {
-                  VertexSPtr vertex = edge->src(facet);
-                  ofs << vertex->getID() + 1 << " ";
-                  prev_edge = edge;
-                  edge = edge->next(facet);
-                  ++num_edges;
-              } while(edge != prev_edge && edge != first);
+                std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+                while (it_e != facet->edges().end()) {
+                    EdgeSPtr edge = *it_e++;
+                    if (visited_edges.find(edge) != visited_edges.end()) {
+                        continue; // already visited
+                    }
 
-              if (edge != first) { // open face
-                  VertexSPtr vertex = edge->dst(facet);
-                  ofs << vertex->getID() + 1;
-              }
+                    std::vector<VertexSPtr> boundary_vertices;
+                    EdgeSPtr start_edge = edge;
+                    // std::cout << "start a walk @ " << start_edge->src(facet)->getID() << " " << start_edge->dst(facet)->getID() << std::endl;
+                    bool is_open = false;
 
-              if (num_edges != facet->edges().size()) {
-                  DEBUG_VAL("W: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
-                  DEBUG_VAL("W: It is impossible for an obj file to store holes inside a facet.");
-                  // DEBUG_VAR(facet->toString());
-              }
-              ofs << "\n";
+                    // Walk forward to collect boundary vertices
+                    do {
+                        visited_edges.insert(edge);
+                        boundary_vertices.push_back(edge->src(facet));
+                        if (edge->dst(facet)->degree() == 1) {
+                            is_open = true;
+                            break;
+                        }
+                        edge = edge->next(facet);
+                    } while (edge != start_edge);
+
+                    // If open, also walk backward to collect remaining boundary vertices
+                    if (is_open) {
+                        boundary_vertices.push_back(edge->dst(facet));
+                        edge = start_edge;
+                        while (edge->src(facet)->degree() != 1) {
+                            edge = edge->prev(facet);
+                            visited_edges.insert(edge);
+                            boundary_vertices.insert(boundary_vertices.begin(), edge->src(facet));
+                        }
+                    }
+
+                    // Write the boundary as a face
+                    ofs << "f ";
+                    for (const auto& vertex : boundary_vertices) {
+                        ofs << (vertex->getID() + 1) << " ";
+                    }
+
+                    ofs << "\n";
+                }
             }
         }
+
         // result = (polyhedron->vertices().size() == vertex_id &&
         //           polyhedron->facets().size() == facet_id);
         ofs.close();
     } else {
-        DEBUG_PRINT("Warning: failed to open file");
+        DEBUG_PRINT("Error: failed to open file");
         CGAL_assertion(false);
     }
+
     DEBUG_PRINT("-- Write OBJ end --");
     return result;
 }
