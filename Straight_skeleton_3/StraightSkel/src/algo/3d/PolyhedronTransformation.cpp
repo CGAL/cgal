@@ -477,6 +477,71 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     // Do NOT merge the two vertices loops together: this function assumes that degree 1 vertices
     // are adjacent to degree 3+ vertices that have been offset in the first loop, and offsets
     // degree 1 vertices using the offset of the adjacent degree 3+ vertex.
+#if 1
+    it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+
+        CGAL_precondition(vertex->degree() != 2);
+
+        // those are treated in the first loop
+        if (vertex->degree() >= 3) {
+            continue;
+        }
+
+        EdgeSPtr edge;
+        unsigned int i = 0;
+        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
+        while (it_e != vertex->edges().end()) {
+            EdgeWPtr edge_wptr = *it_e++;
+            if (!edge_wptr.expired()) {
+                edge = EdgeSPtr(edge_wptr);
+                i++;
+            }
+        }
+
+        CGAL_assertion(i == 1);
+
+        VertexSPtr vertex_other = edge->other(vertex);
+        CGAL_assertion(vertex_other->degree() >= 3);
+
+        FacetSPtr facet1 = edge->getFacetL();
+        FacetSPtr facet2 = edge->getFacetR();
+        Plane3SPtr plane1 = facet1->plane();
+        Plane3SPtr plane2 = facet2->plane();
+        Line3SPtr intersection_line = KernelWrapper::intersection(plane1, plane2);
+        CGAL_assertion(bool(intersection_line));
+
+        // Determine the direction using the unshifted positions
+        Point3SPtr point_other = vertex_other->getPoint();
+        Point3SPtr point = vertex->getPoint();
+        CGAL_assertion(*point != *point_other);
+        Vector3 direction = intersection_line->to_vector();
+        if (CGAL::scalar_product(direction, *point - *point_other) < 0) {
+            direction = -direction;
+        }
+
+        // Apply the shift to the offset vertex
+        SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+        VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+
+        // The length of the direction does not matter: when degree 1 are evaluated, the code
+        // treats them as infinite rays
+        Point3SPtr offset_point = KernelFactory::createPoint3(*(offset_vertex_other->getPoint()) + direction);
+        VertexSPtr offset_vertex = Vertex::create(offset_point);
+        SkelVertexDataSPtr data;
+        if (vertex->hasData()) {
+            data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+        } else {
+            data = SkelVertexData::create(vertex);
+        }
+        data->setOffsetVertex(offset_vertex);
+        result->addVertex(offset_vertex);
+
+        // std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
+        // shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
+    }
+#else
     it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -522,6 +587,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
         }
     }
+#endif
 
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
