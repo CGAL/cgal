@@ -16,6 +16,8 @@
 #include <map>
 #include <set>
 
+namespace CGAL {
+
 using namespace std ;
 
 typedef std::vector<double> IONodeType ;
@@ -103,7 +105,7 @@ inline double dist(const IONodeType &v1, const IONodeType &v2)
         tmp = v2.at(i) - v1.at(i) ;
         x += tmp*tmp ;
     }
-        
+    
     return sqrt(x) ;
 }
 
@@ -112,7 +114,7 @@ inline IONodeType max(const IONodeType &v1, const IONodeType &v2)
     assert(v1.size() == v2.size()) ;
     IONodeType tmp(v1) ;
     for (int i=0; i<3; ++i)
-        tmp[i] = max(tmp.at(i), v2.at(i)) ;
+        tmp[i] = std::max(tmp.at(i), v2.at(i)) ;
     return tmp ;
 }
 
@@ -121,7 +123,7 @@ inline IONodeType min(const IONodeType &v1, const IONodeType &v2)
     assert(v1.size() == v2.size()) ;
     IONodeType tmp(v1) ;
     for (int i=0; i<3; ++i)
-        tmp[i] = min(tmp.at(i), v2.at(i)) ;
+        tmp[i] = std::min(tmp.at(i), v2.at(i)) ;
     return tmp ;
 }
 
@@ -320,7 +322,7 @@ public:
             return false;
         }
         // todo : check for header == "off"
-
+        
         // 2 - number of vertices, number of faces, number of edges (can be ignored)
         std::string info;
         if (!get_next_uncommented_line(infile, info)) {
@@ -328,9 +330,9 @@ public:
         }
         std::istringstream info_stream;
         info_stream.str(info);
-
+        
         info_stream >> nvertices >> ncells >> nedges;
-
+        
         nodes.resize(nvertices) ;
         for(auto i=0; i < nvertices; ++i) {
             if (!get_next_uncommented_line(infile,info)) {
@@ -341,7 +343,7 @@ public:
             info_stream >> p[0] >> p[1] >> p[2] ;
             nodes[i] = p ;
         }
-
+        
         // 4 - the actual faces
         cells.resize(ncells);
         for(auto i=0; i < ncells; ++i) {
@@ -360,7 +362,7 @@ public:
             cells[i] = c ;
             dim = (c.size()-1>dim)?c.size()-1:dim ;
         }
-
+        
         infile.close();
         return true;
     }
@@ -499,7 +501,7 @@ public:
         double r = 0 ;
         for (IONodeType v : nodes)
         {
-            r = max (r, dist(v,bary)) ;
+            r = std::max (r, dist(v,bary)) ;
         }
         return r ;
     }
@@ -818,7 +820,7 @@ public:
         }
         rigid_transformation(c, r) ;
     }
-
+    
     
     // Icosahedron
     inline static const float X=.525731112119133606f;
@@ -898,8 +900,8 @@ public:
 
 // ///////////////////
 
-// Generic CubObject class - for 2D/3D cubical meshes
-class CubObject
+// Generic Cub_object class - for 2D/3D cubical meshes
+class Cub_object
 {
 public:
     int dim = 0 ; // Dimension of the complex
@@ -908,10 +910,10 @@ public:
     std::vector<IOCubCellType> cubs ;
     bool khalimsky ;
     
-    CubObject() : dim(0), ncubs(vector<int>(4)), N(vector<int>(3)), khalimsky(false) {}
-    CubObject(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<int>(4)), N(vector<int>(3)), cubs(vcubs), khalimsky(khal)
+    Cub_object() : dim(0), ncubs(vector<int>(4)), N(vector<int>(3)), khalimsky(false) {}
+    Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<int>(4)), N(vector<int>(3)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
-    CubObject(const CubObject &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
+    Cub_object(const Cub_object &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
     
     // Mesh operations
     void clear_cubs() { cubs.clear() ; for (int i=0; i<4; ++i) ncubs[i] = 0 ; }
@@ -958,7 +960,7 @@ public:
         getline(infile,inputLine);
         if(inputLine.compare("P2") != 0) cerr << "Version error" << endl;
         else cout << "Version : " << inputLine << endl;
-            
+        
         
         // Second line: dimensions
         getline(infile,inputLine);
@@ -1080,7 +1082,7 @@ public:
     
     void print_infos (int level = 0) const
     {
-        cout << "CubObject infos - dim : " << dim << ", cubs : " << cubs.size() << endl ;
+        cout << "Cub_object infos - dim : " << dim << ", cubs : " << cubs.size() << endl ;
         for (int q=0; q < dim; ++q)
             cout << "\tSize along dim " << q << " : " << N[q] << endl ;
         for (int q = 0; q <= dim; ++q)
@@ -1149,6 +1151,8 @@ private:
         }
     }
 } ;
+
+}
 
 
 #endif /* tools_io_hpp */

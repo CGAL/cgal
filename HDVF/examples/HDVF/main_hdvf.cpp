@@ -15,12 +15,14 @@
 #include "CGAL/HDVF/tools_io.hpp"
 #include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
 #include "CGAL/HDVF/SimpComplexTools.hpp"
-#include "CGAL/HDVF/Cubical_complex.hpp"
+#include "CGAL/HDVF/Cubical_chain_complex.hpp"
 #include "CGAL/HDVF/CubComplexTools.hpp"
 #include "CGAL/HDVF/hdvf.hpp"
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/HDVF/hdvf_tools.hpp"
 #include "arguments.h"
+
+using namespace CGAL ;
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
@@ -142,10 +144,10 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using ComplexType = Cubical_complex<CoefficientType> ;
+        using ComplexType = Cubical_chain_complex<CoefficientType> ;
         using HDVFType = HDVF<CoefficientType, ComplexType> ;
         
-        CubObject mesh ;
+        Cub_object mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
         if (options.primal)
         {
@@ -166,7 +168,7 @@ void main_code (const Options &options)
         // Complex
         ComplexType complex(mesh, primal_dual);
         
-        mesh_complex_output<CubObject, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<Cub_object, ComplexType>(mesh, complex, options) ;
         
         // HDVF computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;

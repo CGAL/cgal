@@ -1,11 +1,22 @@
-#ifndef CUBCOMPLEXTOOLS_HPP
-#define CUBCOMPLEXTOOLS_HPP
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef Duality_cubical_complex_tools_HPP
+#define Duality_cubical_complex_tools_HPP
 
 #include <vector>
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
-#include "Cubical_complex.hpp"
+#include "Cubical_chain_complex.hpp"
 #include "hdvf.hpp"
 #include "per_hdvf.hpp"
 #include "sub_chain_complex.hpp"
@@ -13,7 +24,7 @@
 #include "CGAL/OSM/OSM.hpp"
 
 /**
- * \class CubComplexTools
+ * \class Duality_cubical_complex_tools
  * \brief Provides tools for CubComplexes ((co)homology, duality, persistent homology).
  * \brief Friend class of CubComplex
  *
@@ -24,14 +35,16 @@
 
 // CubComplex
 
+namespace CGAL {
+
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix>
-void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_complex<CoefType> &complex, string filename = "test")
+void Cub_output_vtk (HDVF<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
 {
-    typedef Cubical_complex<CoefType> ComplexType;
+    typedef Cubical_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
     vector<vector<int> > labels = hdvf.export_label(PSC) ;
     string outfilePSC(filename+"_PSC.vtk") ;
-    ComplexType::cubical_complex_to_vtk(complex, outfilePSC, &labels) ;
+    ComplexType::Cubical_chain_complex_to_vtk(complex, outfilePSC, &labels) ;
     
     // Export generators of all critical cells if available
     if (hdvf.get_hdvf_opts() != OPT_BND)
@@ -45,9 +58,9 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _Spar
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-//                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
+                    //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_GChain(c,q)) ;
-                    ComplexType::cubical_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 if (q < complex.dim())
                 {
@@ -55,7 +68,7 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _Spar
                     {
                         string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                         OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_FSTARChain(c,q)) ;
-                        ComplexType::cubical_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
+                        ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
                     }
                 }
             }
@@ -71,7 +84,7 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _Spar
 //                {
 //                    string outfile(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
 //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
-//                    cubical_complex_write_to_vtk<CoefType>(complex, outfile, &labels, BOOLEAN_LABELS, "bool") ;
+//                    Cubical_chain_complex_write_to_vtk<CoefType>(complex, outfile, &labels, BOOLEAN_LABELS, "bool") ;
 //                }
 //                if (q < complex.dim())
 //                {
@@ -79,7 +92,7 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _Spar
 //                    {
 //                        string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
 //                        vector<vector<int> > labels_fstar = hdvf.export_label(FSTAR,c,q) ;
-//                        cubical_complex_write_to_vtk<CoefType>(complex, outfile_f, &labels_fstar, BOOLEAN_LABELS, "bool") ;
+//                        Cubical_chain_complex_write_to_vtk<CoefType>(complex, outfile_f, &labels_fstar, BOOLEAN_LABELS, "bool") ;
 //                    }
 //                }
 //            }
@@ -90,12 +103,12 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_complex<CoefType>, _ChainType, _Spar
 // Duality
 
 template<typename T>
-class CubComplexTools {
+class Duality_cubical_complex_tools {
 public:
-    typedef Cubical_complex<T> _ComplexType ;
+    typedef Cubical_chain_complex<T> _ComplexType ;
     typedef SubChainComplex<T, _ComplexType> _SubCCType ;
     // Constructor
-    CubComplexTools() {}
+    Duality_cubical_complex_tools() {}
     
     
     /** \brief Build a CubComplex L and SubChainComplex K from a CubComplex.
@@ -108,11 +121,11 @@ public:
     /** \brief Build the bounding box CubComplex of _CC  */
     static std::pair<_ComplexType&, _SubCCType&> CubComplexBB (const _ComplexType& _CC)
     {
-        CubObject tmp ;
+        Cub_object tmp ;
         tmp.dim = _CC.dim() ;
         tmp.N = _CC._size_bb ;
         tmp.ncubs.resize(tmp.dim+1) ;
-//        tmp.ncubs = tmp.N ;
+        //        tmp.ncubs = tmp.N ;
         // Visit all boolean indices in the BB of _CC and insert corresponding Cells
         for (int i=0; i<_CC._P.at(_CC.dim()); ++i)
         {
@@ -140,16 +153,16 @@ public:
 } ;
 
 // Persistent homology
-    
+
 /** \brief Export persistent information to vtk files */
 template <typename CoefType, typename DegType>
-void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_complex<CoefType>, DegType> &per_hdvf, Cubical_complex<CoefType> &complex, string filename = "per")
+void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_chain_complex<CoefType>, DegType> &per_hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "per")
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using perHDVFType = PersistentHDVF<CoefType, Cubical_complex<CoefType>, DegType> ;
-    using ComplexType = Cubical_complex<CoefType> ;
+    using perHDVFType = PersistentHDVF<CoefType, Cubical_chain_complex<CoefType>, DegType> ;
+    using ComplexType = Cubical_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
@@ -167,7 +180,7 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_complex<CoefType>, Deg
             // Build name associated to the ith hole : filename_i
             string out_file = filename+"_"+to_string(i) ;
             // Export PSC labels to vtk
-            ComplexType::cubical_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
+            ComplexType::Cubical_chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
             const PerIntervalCells per_int_cells(std::get<1>(hole_data.hole)) ;
             // Export homology generators (g)
             if (per_hdvf.get_hdvf_opts()  & (OPT_FULL | OPT_G))
@@ -176,13 +189,13 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_complex<CoefType>, Deg
                 {
                     const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
                     string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::cubical_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
                 }
                 // Second generator : filename_i_g_tau_q+1.vtk
                 {
                     const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
                     string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::cubical_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
                 }
             }
             // Export cohomology generators (fstar)
@@ -192,13 +205,13 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_complex<CoefType>, Deg
                 {
                     const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
                     string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::cubical_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
                 }
                 // Second generator : filename_i_fstar_tau_q+1.vtk
                 {
                     const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
                     string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::cubical_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
                 }
             }
         }
@@ -208,6 +221,6 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_complex<CoefType>, Deg
     Cub_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf") ;
 }
 
+}
 
-
-#endif // CUBCOMPLEXTOOLS_HPP
+#endif // Duality_cubical_complex_tools_HPP

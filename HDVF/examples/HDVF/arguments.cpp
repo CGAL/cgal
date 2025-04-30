@@ -3,6 +3,7 @@
 #include "arguments.h"
 
 using namespace std ;
+using namespace CGAL ;
 
 void usage()
 {

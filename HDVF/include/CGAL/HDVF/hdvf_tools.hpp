@@ -11,6 +11,7 @@
 #include "hdvf.hpp"
 #include "CGAL/OSM/OSM.hpp"
 
+namespace CGAL {
 
 // IO tools
 
@@ -53,7 +54,7 @@ void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
                     PairCell p(possM.at(ipair)) ;
                     cout << "M(" << p << ")" << endl ;
                     hdvf.M(p.sigma, p.tau, p.dim) ;
-//                    hdvf.print_matrices() ;
+                    //                    hdvf.print_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
@@ -77,7 +78,7 @@ void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
                     PairCell p(possW.at(ipair)) ;
                     cout << "W(" << p << ")" << endl ;
                     hdvf.W(p.sigma, p.tau, p.dim) ;
-//                    hdvf.print_matrices() ;
+                    //                    hdvf.print_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
@@ -101,7 +102,7 @@ void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
                     PairCell p(possMW.at(ipair)) ;
                     cout << "MW(" << p << ")" << endl ;
                     hdvf.MW(p.sigma, p.tau, p.dim) ;
-//                    hdvf.print_matrices() ;
+                    //                    hdvf.print_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
@@ -109,6 +110,8 @@ void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
         else if (instr == string("Q"))
             over = true ;
     }
+}
+
 }
 
 #endif // HDVF_TOOLS_HPP

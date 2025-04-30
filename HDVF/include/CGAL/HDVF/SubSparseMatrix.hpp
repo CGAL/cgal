@@ -118,7 +118,7 @@ public:
     /** \brief Operator<<. */
     friend std::ostream& operator<<(std::ostream &_stream, const SubSparseMatrix &_matrix) {
         _stream << static_cast<const SparseMatrix<_CoefficientType, _ChainTypeFlag>&>(_matrix) ;
-        _stream << _matrix._subChains << endl ;
+        _stream << _matrix._subChains << std::endl ;
         return _stream ;
     }
 };

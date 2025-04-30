@@ -14,6 +14,8 @@
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
 
+namespace CGAL {
+
 /**
  * \class SubChainComplex
  * \brief Implementation of the sub chain complex relation (for duality) - subcomplex and cocomplex
@@ -76,8 +78,8 @@ private:
         {
             for (int i : cells.at(q))
             {
-                    _sub.at(q).setOn(i) ;
-                    ++_nb_cells.at(q) ;
+                _sub.at(q).setOn(i) ;
+                ++_nb_cells.at(q) ;
             }
         }
     }
@@ -182,13 +184,13 @@ public:
         return _sub.at(q) ;
     }
     
-//    template <typename _CoefficientType, typename _ComplexType>
-//    friend ostream & operator << (ostream & out, const SubChainComplex<_CoefficientType,_ComplexType> & sub)
-//    {
-//        for (int q = 0; q <= sub._dim; ++q)
-//            out << "dim " << q << " : " << sub._sub.at(q) << endl ;
-//        return out ;
-//    }
+    //    template <typename _CoefficientType, typename _ComplexType>
+    //    friend ostream & operator << (ostream & out, const SubChainComplex<_CoefficientType,_ComplexType> & sub)
+    //    {
+    //        for (int q = 0; q <= sub._dim; ++q)
+    //            out << "dim " << q << " : " << sub._sub.at(q) << endl ;
+    //        return out ;
+    //    }
     
     friend std::ostream & operator << (std::ostream & out, const SubChainComplex & sub)
     {
@@ -197,5 +199,7 @@ public:
         return out ;
     }
 };
+
+}
 
 #endif /* SUB_CHAIN_COMPLEX_H */

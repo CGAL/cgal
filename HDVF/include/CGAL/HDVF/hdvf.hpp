@@ -17,10 +17,9 @@
 #include <random>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
-//#include "Abstract_simplicial_complex.hpp"
-//#include "Simplex.hpp"
-//#include "CubComplex.hpp"
 #include "CGAL/HDVF/sub_chain_complex.hpp"
+
+namespace CGAL {
 
 /** \brief Enum for the HDVF label of cells. */
 enum FlagType {
@@ -91,7 +90,7 @@ public:
     typedef _ChainType<_CoefficientType, OSM::ROW> RChain;
     typedef _SparseMatrixType<_CoefficientType, OSM::COLUMN> CMatrix;
     typedef _SparseMatrixType<_CoefficientType, OSM::ROW> RMatrix;
-
+    
 protected:
     // Properties
     /** \brief Flags for the cells. */
@@ -116,7 +115,7 @@ protected:
     
     /** \brief HDVF options for computation (computation of partial reduction). */
     int _hdvf_opt;
-
+    
 public:
     // Constructor - default : full reduction computed, no sub-complex
     HDVF(const _ComplexType& K, int hdvf_opt = OPT_FULL) ;
@@ -124,7 +123,7 @@ public:
     HDVF(const HDVF& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt) { }
     // Destructor
     ~HDVF() { }
-
+    
     // findPair functions
     
     /** \brief find a valid PairCell for A in dimension q */
@@ -172,23 +171,23 @@ public:
     void MW(int pi, int sigma, int dim);
     
     /** \brief Compute a perfect HDVF
-            From dimension q-1 to dimension 0
-            As long as findPairA(q) returns a pair
-            -> Perform operation A
-            -> Add the pair to the output vector
-    */
+     From dimension q-1 to dimension 0
+     As long as findPairA(q) returns a pair
+     -> Perform operation A
+     -> Add the pair to the output vector
+     */
     std::vector<PairCell> computePerfectHDVF(bool verbose = false);
     
     /** \brief Compute a perfect HDVF
-            From dimension q-1 to dimension 0
-            As long as findPairsA(q) returns pairs
-            -> Choose one randomly
-            -> Perform operation A
-            -> Add the pair to the output vector
-        Slower than computePerfectHDVF
-    */
-     std::vector<PairCell> computeRandPerfectHDVF(bool verbose = false);
-
+     From dimension q-1 to dimension 0
+     As long as findPairsA(q) returns pairs
+     -> Choose one randomly
+     -> Perform operation A
+     -> Add the pair to the output vector
+     Slower than computePerfectHDVF
+     */
+    std::vector<PairCell> computeRandPerfectHDVF(bool verbose = false);
+    
     // HDVF getters
     // Method to get cells if with a given flag (P,S,C) for each dimension
     virtual std::vector<std::vector<int> > get_flag (FlagType flag) const ;
@@ -208,21 +207,21 @@ public:
     
     // Method to print A-pairs
     virtual std::ostream& print_pairs(const std::vector<PairCell>& pairs, std::ostream &out = std::cout);
-
+    
     // Method to project a chain onto P, S, or C cells
     template<int ChainTypeFlag>
     _ChainType<_CoefficientType, ChainTypeFlag> projection(const _ChainType<_CoefficientType, ChainTypeFlag>& chain, FlagType flag, int dim) const {
         // Create a new chain to store the result
         // Better to initialize 'result' directly with the correct size and iterate over it
         _ChainType<_CoefficientType, ChainTypeFlag> result(chain);
-
+        
         // Iterate over each element of the chain
         std::vector<int> tmp ;
         for (typename _ChainType<_CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
         {
             int cell_index = it->first;
             _CoefficientType value = it->second;
-
+            
             // Check the flag of the corresponding cell
             if (_flag[dim][cell_index] != flag) {
                 // Set to 0
@@ -299,20 +298,20 @@ public:
     virtual std::vector<std::vector<int> > export_labelsPSC () const
     {
         std::vector<std::vector<int> > labels(_K.dim()+1) ;
-            for (int q=0; q<=_K.dim(); ++q)
+        for (int q=0; q<=_K.dim(); ++q)
+        {
+            for (int i = 0; i<_K.nb_cells(q); ++i)
             {
-                for (int i = 0; i<_K.nb_cells(q); ++i)
-                {
-                    if (_flag.at(q).at(i) == PRIMARY)
-                        labels.at(q).push_back(-1) ;
-                    else if (_flag.at(q).at(i) == SECONDARY)
-                        labels.at(q).push_back(1) ;
-                    else if (_flag.at(q).at(i) == CRITICAL)
-                        labels.at(q).push_back(0) ;
-                    else // NONE
-                        labels.at(q).push_back(2) ;
-                }
+                if (_flag.at(q).at(i) == PRIMARY)
+                    labels.at(q).push_back(-1) ;
+                else if (_flag.at(q).at(i) == SECONDARY)
+                    labels.at(q).push_back(1) ;
+                else if (_flag.at(q).at(i) == CRITICAL)
+                    labels.at(q).push_back(0) ;
+                else // NONE
+                    labels.at(q).push_back(2) ;
             }
+        }
         return labels ;
     }
     
@@ -393,27 +392,27 @@ HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::HDVF(const Co
     
     // Resize the _DD_col vector to hold dim+1 elements
     _DD_col.resize(dim + 1);
-
+    
     // Resize the _F_row vector to hold dim+1 elements
     if (_hdvf_opt & (OPT_FULL | OPT_F))
         _F_row.resize(dim + 1);
-
+    
     // Resize the _G_col vector to hold dim+1 elements
     if (_hdvf_opt & (OPT_FULL | OPT_G))
         _G_col.resize(dim + 1);
-
+    
     // Resize the _H_col vector to hold dim+1 elements
     if (_hdvf_opt & OPT_FULL)
         _H_col.resize(dim + 1);
-
+    
     // Resize flag and count vectors to hold dim+1 elements
     _flag.resize(dim + 1);
     _nb_P.resize(dim + 1);
     _nb_S.resize(dim + 1);
     _nb_C.resize(dim + 1);
-
+    
     // Initialize matrices and counters
-
+    
     for (int q = 0; q <= dim; q++) {
         // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_F))
@@ -422,22 +421,22 @@ HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::HDVF(const Co
         // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_G))
             _G_col[q] = CMatrix(_K.nb_cells(q), _K.nb_cells(q));
-
+        
         // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
         if (_hdvf_opt & OPT_FULL)
             _H_col[q] = CMatrix(_K.nb_cells(q + 1), _K.nb_cells(q));
-
+        
         // Initialize the counters for PRIMARY, SECONDARY, and CRITICAL cells
         _nb_P[q] = 0;
         _nb_S[q] = 0;
         _nb_C[q] = _K.nb_cells(q);
     }
-
+    
     // Initialize the flags for each dimension to CRITICAL
     for (int q = 0; q <= dim; q++) {
         _flag[q] = std::vector<FlagType>(_K.nb_cells(q), CRITICAL);
     }
-
+    
     // Populate the DD matrices
     _DD_col.resize(_K.dim()+1) ;
     for (int q=0; q<=_K.dim(); ++q)
@@ -509,7 +508,7 @@ PairCell HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::find
     return p;
 }
 
- /** \brief find a valid PairCell containing tau for A in dimension q */
+/** \brief find a valid PairCell containing tau for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 PairCell HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairA(int q, bool &found, int tau) // const
@@ -579,38 +578,38 @@ std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatr
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsA(int q, bool &found, int tau) // const
 {
-   found = false;
-   std::vector<PairCell> pairs;
-   
-   // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-   RChain tmp(OSM::getRow(_DD_col.at(q+1), tau)) ;
+    found = false;
+    std::vector<PairCell> pairs;
+    
+    // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
+    RChain tmp(OSM::getRow(_DD_col.at(q+1), tau)) ;
     for (typename RChain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
-   {
-       if (abs(it->second) == 1)
-       {
-           found = true ;
-           PairCell p ;
-           p.sigma = tau ;
-           p.tau = it->first ;
-           p.dim = q ;
-           pairs.push_back(p) ;
-       }
-   }
-   // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-   const CChain& tmp2(OSM::cgetColumn(_DD_col.at(q), tau)) ;
+    {
+        if (abs(it->second) == 1)
+        {
+            found = true ;
+            PairCell p ;
+            p.sigma = tau ;
+            p.tau = it->first ;
+            p.dim = q ;
+            pairs.push_back(p) ;
+        }
+    }
+    // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
+    const CChain& tmp2(OSM::cgetColumn(_DD_col.at(q), tau)) ;
     for (typename CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
-   {
-       if (abs(it->second) == 1)
-       {
-           found = true ;
-           PairCell p ;
-           p.sigma = it->first ;
-           p.tau = tau ;
-           p.dim = q-1 ;
-           pairs.push_back(p) ;
-       }
-   }
-   return pairs;
+    {
+        if (abs(it->second) == 1)
+        {
+            found = true ;
+            PairCell p ;
+            p.sigma = it->first ;
+            p.tau = tau ;
+            p.dim = q-1 ;
+            pairs.push_back(p) ;
+        }
+    }
+    return pairs;
 }
 
 // Methods to find a pair of cells for M in dimension q
@@ -988,7 +987,7 @@ PairCell HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::find
 {
     found = false;
     PairCell p;
-        
+    
     if (_flag.at(q).at(tau) == CRITICAL)
         return p ; // Empty / found false
     
@@ -1217,10 +1216,10 @@ std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatr
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int tau1, int tau2, int q) {
     //----------------------------------------------- Submatrices of D ----------------------------------------------------
-
+    
     // Output operation details to the console
-//    cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << endl;
-
+    //    cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << endl;
+    
     // Extract submatrices from _DD_col
     RChain D12(OSM::getRow(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
     CChain D21(OSM::getColumn(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
@@ -1239,9 +1238,9 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
     // Delete rows and columns from _DD_col
     _DD_col[q + 1].delRow(tau1); // Remove row tau1 from _DD_col[q+1]
     _DD_col[q + 1].delColumn(tau2); // Remove column tau2 from _DD_col[q+1]
-
+    
     //---------------------------------------------- Submatrices of F -----------------------------------------------------
-
+    
     RChain F11 ;
     CChain G11 ;
     if (_hdvf_opt & (OPT_FULL | OPT_F))
@@ -1252,9 +1251,9 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
         // Delete the row tau1 from _F_row
         _F_row[q].delRow(tau1);
     }
-
+    
     //--------------------------------------------- Submatrices of G ------------------------------------------------------
-
+    
     if (_hdvf_opt & (OPT_FULL | OPT_G))
     {
         // Extract the relevant submatrix from _G_col
@@ -1263,9 +1262,9 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
         // Delete the column tau2 from _G_col
         _G_col[q + 1].delColumn(tau2);
     }
-
+    
     //--------------------------------------------- Update matrices -------------------------------------------------------
-
+    
     // ---- Update _F_row
     
     if (_hdvf_opt & (OPT_FULL | OPT_F))
@@ -1281,7 +1280,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
         // Remove the row tau2 from _F_row[q+1]
         _F_row[q + 1].delRow(tau2);
     }
-
+    
     // ---- Update _G_col
     
     if (_hdvf_opt & (OPT_FULL | OPT_G))
@@ -1296,7 +1295,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
         // Remove the column tau1 from _G_col[q]
         _G_col[q].delColumn(tau1);
     }
-
+    
     // ---- Update _H_col
     
     if (_hdvf_opt & OPT_FULL)
@@ -1317,7 +1316,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
         // Set the coefficient at (tau2, tau1) in _H_col[q] to D11_inv
         _H_col[q].set_coef(tau2, tau1, D11_inv);
     }
-
+    
     // ---- Update _DD_col
     
     // Update _DD_col
@@ -1338,7 +1337,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
     _flag[q + 1][tau2] = SECONDARY; // Set the flag of tau2 in dimension q+1 to SECONDARY
     --_nb_C.at(q+1) ;
     ++_nb_S.at(q+1) ;
-
+    
     // -----------------------------------------------------------------------------------------------------------------------
 }
 
@@ -1348,7 +1347,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int ta
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::R(int pi, int sigma, int q) {
     //----------------------------------------------- Submatrices of H ----------------------------------------------------
-
+    
     if (_hdvf_opt & OPT_FULL)
     {
         // Output operation details to the console
@@ -1511,22 +1510,22 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::M(int pi
         _H_col[q].delColumn(pi);
         
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
-
+        
         // For DD_q+1 and DD_q:
         // Extract the relevant row chains from _DD_col
-
+        
         // DD_q+1 (corresponds to the row matrix of _DD_col)
         RChain D11(OSM::getRow(_DD_col[q+1], gamma)); // D11 is the row chain from _DD_col[q+1] at index gamma
         _DD_col[q + 1].delRow(gamma); // Remove row gamma from _DD_col[q + 1]
         
         //--------------------------------------------- Submatrices of DD ------------------------------------------------------
-                
+        
         // DD_q (corresponds to the column matrix of _DD_col)
         // CChain D11_q(OSM::getColumn(_DD_col[q], gamma));
         // D11_q is the column chain from _DD_col[q] at index gamma
         if (q > 0)
             _DD_col[q].delColumn(gamma); // Remove column gamma from _DD_col[q]
-
+        
         //--------------------------------------------- Update matrices -------------------------------------------------------
         
         // Update _H_col
@@ -1590,9 +1589,9 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::M(int pi
 
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::W(int sigma, int gamma, int q) {
-
+    
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
-
+    
     if (_hdvf_opt & OPT_FULL)
     {
         // Output the operation details to the console
@@ -1623,7 +1622,7 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::W(int si
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
         
         // Extract the row chain from _F_row
-//        RChain F11(OSM::getRow(_F_row[q], gamma)); // F11 is the row chain from _F_row[q] at index gamma
+        //        RChain F11(OSM::getRow(_F_row[q], gamma)); // F11 is the row chain from _F_row[q] at index gamma
         
         // Remove the row gamma from _F_row
         _F_row[q].delRow(gamma);
@@ -1715,9 +1714,9 @@ void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::W(int si
 
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 void HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::MW(int pi, int sigma, int q) {
-
+    
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
-
+    
     if (_hdvf_opt & OPT_FULL)
     {
         // Output the operation details to the console
@@ -1839,11 +1838,11 @@ std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatr
     std::vector<PairCell> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dim(); // Get the dimension of the complex K
-
+    
     // Loop through dimensions from q-1 to 0
     for (int q = dim - 1; q >= 0; --q) {
         std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
-//        cout << _K.nb_cells(q) << " cells of dimension " << q << endl ;
+        //        cout << _K.nb_cells(q) << " cells of dimension " << q << endl ;
         // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
         
         // Find a pair of cells in dimension q
@@ -1867,7 +1866,7 @@ std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatr
             pair = findPairA(q, trouve);
         }
     }
-
+    
     // Return the list of pairs found
     return pair_list;
 }
@@ -1877,50 +1876,50 @@ std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatr
 
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
 std::vector<PairCell> HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::computeRandPerfectHDVF(bool verbose) {
-     std::vector<PairCell> pair_list; // Vector to store the list of pairs
-     bool trouve = false; // Flag to indicate whether a pair was found
-     int dim = _K.dim(); // Get the dimension of the complex K
-     
-     // Init random generator
-     std::random_device dev;
-     std::mt19937 rng(dev()); // Random
-     
-     // Loop through dimensions from q-1 to 0
-     for (int q = dim - 1; q >= 0; --q) {
-         std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
-         // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
-         
-         std::vector<PairCell> pairs = findPairsA(q, trouve);
-         
-         PairCell pair ;
-         
-         // While a pair is found
-         while (trouve)
-         {
-             // Add one of the pairs (randomly) to the list
-             {
-                 // Pickup a random cell sigma
-                 std::uniform_int_distribution<std::mt19937::result_type> rand_dist(0,pairs.size()-1);
-                 int i(rand_dist(rng)) ;
-                 pair = pairs.at(i) ;
-             }
-             pair_list.push_back(pair);
-             
-             // Perform operation A with the chosen pair
-             A(pair.sigma, pair.tau, pair.dim);
-             if (verbose)
-             {
-                 std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
-                 print_matrices(std::cout) ;
-             }
-             
-             // Compute possible pairings
-             pairs = findPairsA(q, trouve);
-         }
-     }
-     // Return the list of pairs found
-     return pair_list;
- }
+    std::vector<PairCell> pair_list; // Vector to store the list of pairs
+    bool trouve = false; // Flag to indicate whether a pair was found
+    int dim = _K.dim(); // Get the dimension of the complex K
+    
+    // Init random generator
+    std::random_device dev;
+    std::mt19937 rng(dev()); // Random
+    
+    // Loop through dimensions from q-1 to 0
+    for (int q = dim - 1; q >= 0; --q) {
+        std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
+        // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
+        
+        std::vector<PairCell> pairs = findPairsA(q, trouve);
+        
+        PairCell pair ;
+        
+        // While a pair is found
+        while (trouve)
+        {
+            // Add one of the pairs (randomly) to the list
+            {
+                // Pickup a random cell sigma
+                std::uniform_int_distribution<std::mt19937::result_type> rand_dist(0,pairs.size()-1);
+                int i(rand_dist(rng)) ;
+                pair = pairs.at(i) ;
+            }
+            pair_list.push_back(pair);
+            
+            // Perform operation A with the chosen pair
+            A(pair.sigma, pair.tau, pair.dim);
+            if (verbose)
+            {
+                std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
+                print_matrices(std::cout) ;
+            }
+            
+            // Compute possible pairings
+            pairs = findPairsA(q, trouve);
+        }
+    }
+    // Return the list of pairs found
+    return pair_list;
+}
 
 // Method to get cells if with a given flag (P,S,C) for each dimension
 //template<typename CoefficientType, typename ComplexType>
@@ -1982,11 +1981,11 @@ std::ostream& HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>:
         out << "--- dim " << q << std::endl;
         for (int i = 0; i < critical.at(q).size(); ++i)
         {
-                out << critical.at(q).at(i) << " ";
+            out << critical.at(q).at(i) << " ";
         }
         out << std::endl;
     }
-
+    
     if (_hdvf_opt & (OPT_FULL | OPT_G))
     {
         // Print matrices g
@@ -2006,7 +2005,7 @@ std::ostream& HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>:
             }
         }
     }
-
+    
     if (_hdvf_opt & (OPT_FULL | OPT_F))
     {
         // Print matrices f*
@@ -2038,6 +2037,8 @@ std::ostream& HDVF<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>:
         out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
     }
     return out ;
+}
+
 }
 
 #endif // HDVF_H

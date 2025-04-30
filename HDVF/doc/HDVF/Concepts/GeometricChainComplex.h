@@ -33,7 +33,7 @@ typedef std::vector<double> Point ;
 /*!
 Returns the vector of vertices coordinates.
  */
-const std::vector<Point >& get_nodes_coords() const;
+const std::vector<Point >& get_vertices_coords() const;
 
 /*!
  Returns the coordinates of the cell of index `i` and dimension 0.

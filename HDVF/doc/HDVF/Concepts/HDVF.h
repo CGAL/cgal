@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `AbstractChainComplex` describes the requirements for (topological) chain complexes associated to abstract complexes used in the concept `CGAL::HDVF`.
+The concept `HDVF` describes the requirements for (topological) chain complexes associated to abstract complexes used in the concept `CGAL::HDVF`.
  It provides methods to:
  
  - get the dimension of the complex, the number of cells in each dimension

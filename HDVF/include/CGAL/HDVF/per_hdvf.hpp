@@ -32,6 +32,8 @@
  * \date 22/08/2024
  */
 
+namespace CGAL {
+
 template <typename _CoefType, typename _ComplexType, typename _DegType>
 class Filtration
 {
@@ -206,13 +208,13 @@ void Filtration<_CoefType, _ComplexType, _DegType>::star_filtration(const std::v
     std::vector<_DegType> tmp_deg ;
     std::vector<int> tmp_perm ;
     // Init tmp_perm (for vertices)
-//    cout << "vertices degrees : " << endl ;
+    //    cout << "vertices degrees : " << endl ;
     for (int i=0; i<deg.size(); ++i)
     {
         tmp_perm.push_back(i) ;
         tmp_filtration.push_back(CellDim(i,0)) ;
         tmp_deg.push_back(deg.at(i)) ;
-//        cout << i << " -> " << deg.at(i) << endl ;
+        //        cout << i << " -> " << deg.at(i) << endl ;
     }
     // For all other cells
     for (int q=1; q<=_K.dim(); ++q)
@@ -225,7 +227,7 @@ void Filtration<_CoefType, _ComplexType, _DegType>::star_filtration(const std::v
             // Vertices of the cell
             // TODO : bottom_faces should produce a set
             std::vector<int> verts(_K.bottom_faces(i,q)) ;
-//            cout << "cell " << i << " dim " << q << " : " << verts ;
+            //            cout << "cell " << i << " dim " << q << " : " << verts ;
             // Compute the degree of the cell
             _DegType d = deg.at(verts.at(0)) ;
             for (int j=1; j<verts.size(); ++j)
@@ -244,7 +246,7 @@ void Filtration<_CoefType, _ComplexType, _DegType>::star_filtration(const std::v
             }
             tmp_deg.push_back(d) ;
             tmp_perm.push_back(tmp_perm.size()) ;
-//            cout << " -> " << d << endl ;
+            //            cout << " -> " << d << endl ;
         }
     }
     // Sort filtration
@@ -267,7 +269,7 @@ void Filtration<_CoefType, _ComplexType, _DegType>::star_filtration(const std::v
     }
     
     // Check filtration
-//    cout << "check_filtration : " << check_filtration() << endl ;
+    //    cout << "check_filtration : " << check_filtration() << endl ;
 }
 
 template <typename _CoefType, typename _ComplexType, typename _DegType>
@@ -317,11 +319,11 @@ std::function<double(int)>  deg_fun (const ComplexType& complex, std::function<d
     std::function<double(int)> deg_fun_f = [&complex, &f](int i)
     {
         const std::vector<double> Xi(complex.get_vertex_coords(i)) ;
-//        cout << "deg_fun_f, i: " << i ;
-//        cout << " Xi : " ;
-//        for (double c : Xi)
-//            cout << c << " " ;
-//        cout << " - degree: " << f(Xi) << endl ;
+        //        cout << "deg_fun_f, i: " << i ;
+        //        cout << " Xi : " ;
+        //        for (double c : Xi)
+        //            cout << c << " " ;
+        //        cout << " - degree: " << f(Xi) << endl ;
         return f(Xi) ;
     } ;
     return deg_fun_f ;
@@ -363,12 +365,12 @@ ostream& operator<< (ostream& out, const PerHoleT<_DegType>& hole)
     const PerIntervalCells per_int_cells(std::get<1>(hole)) ;
     const PerDegIntervalT<_DegType> per_int_deg(std::get<2>(hole)) ;
     
-//    const _DegType duration((per_int_deg.second>=0)?per_int_deg.second-per_int_deg.first:per_int_deg.second) ;
+    //    const _DegType duration((per_int_deg.second>=0)?per_int_deg.second-per_int_deg.first:per_int_deg.second) ;
     const _DegType duration(per_int_deg.second-per_int_deg.first) ;
     if (duration >= 0) // finite interval
     {
-            out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
-            out << per_int.second << " (" << per_int_cells.second.first << ", " << per_int_cells.second.second << ") / duration: " << duration << "]" << endl ;
+        out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
+        out << per_int.second << " (" << per_int_cells.second.first << ", " << per_int_cells.second.second << ") / duration: " << duration << "]" << endl ;
     }
     else
     {
@@ -443,7 +445,7 @@ public:
             this->progress_bar(i, _f._filtration.size()) ;
             stepPersist() ;
         }
-            
+        
         // Compute "infinite" holes
         vector<vector<int> > criticals(this->get_flag(CRITICAL)) ;
         for (int q=0; q < criticals.size(); ++q)
@@ -691,7 +693,7 @@ public:
                     {
                         const int id(it2->first) ;
                         if (_K_to_per.at(dim+1).at(id) <=_t_dim.at(dim+1))
-                        fstar_cofaces[id] = 1 ;
+                            fstar_cofaces[id] = 1 ;
                     }
                 }
                 return fstar_cofaces ;
@@ -861,7 +863,7 @@ PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::PersistentHDVF(const _
     {
         _masks.at(q) = OSM::Bitboard(this->_K.nb_cells(q)) ;
     }
-               
+    
     // Init boundary matrices
     vector<CMatrix> _DD_per(this->_K.dim()+1) ;
     
@@ -978,26 +980,26 @@ void PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::stepPersist()
             else
                 export_perHDVF() ;
         }
-            
-//        if (interval_deg.second-interval_deg.first>0)
-//        {
-//            cout << "========> time : " << _t << endl ;
-//            cout << "pair found : " << p.sigma << ", " << p.tau << " - dim " << p.dim << endl ;
-//            this->print_reduction() ;
-//            
-//        }
+        
+        //        if (interval_deg.second-interval_deg.first>0)
+        //        {
+        //            cout << "========> time : " << _t << endl ;
+        //            cout << "pair found : " << p.sigma << ", " << p.tau << " - dim " << p.dim << endl ;
+        //            this->print_reduction() ;
+        //            
+        //        }
         
         // Prepare for next step
         this->A(p.sigma, p.tau, p.dim) ; // Update the reduction
-//        if (interval_deg.second-interval_deg.first>0)
-//        {
-//            cout << "====> after A : " << endl ;
-//            this->print_reduction() ;
-//            
-//        }
+        //        if (interval_deg.second-interval_deg.first>0)
+        //        {
+        //            cout << "====> after A : " << endl ;
+        //            this->print_reduction() ;
+        //            
+        //        }
     }
 }
 
-
+}
 
 #endif // PER_HOM_HPP

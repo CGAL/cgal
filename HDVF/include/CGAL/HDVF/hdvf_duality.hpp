@@ -13,13 +13,11 @@
 #include <iostream>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
-#include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
-#include "CGAL/HDVF/Simplex.hpp"
-#include "CGAL/HDVF/Cubical_complex.hpp"
 #include "CGAL/HDVF/hdvf.hpp"
 #include "CGAL/HDVF/sub_chain_complex.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 
+namespace CGAL {
 
 /**
  * \class Dual_HDVF
@@ -420,26 +418,26 @@ public:
                 return CChain(0) ;
         }
     }
-            
-//            // Get fstar(cell, dim) with per indices
-//            RChain fstar_cell(OSM::cgetRow(this->_F_row.at(dim), cell)) ;
-//            // Add 1 to the cell
-//            fstar_cell[cell] = 1 ;
-//            // Keep cells of the chain belonging to _subCC
-//            // Compute the chain (transpose of F_STAR column)
-//            CChain fstar_cell_sub(fstar_cell.dimension()) ;
-//            for (typename RChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
-//            {
-//                // Keep cells of the chain belonging to _subCC
-//                if (_subCC.get_Bit(dim, it->first))
-//                {
-//                    fstar_cell_sub[it->first] = it->second ;
-//                }
-//            }
-//            return fstar_cell_sub ;
-//        }
-//        else
-//            throw "Error : trying to export g_chain without proper HDVF option" ;
+    
+    //            // Get fstar(cell, dim) with per indices
+    //            RChain fstar_cell(OSM::cgetRow(this->_F_row.at(dim), cell)) ;
+    //            // Add 1 to the cell
+    //            fstar_cell[cell] = 1 ;
+    //            // Keep cells of the chain belonging to _subCC
+    //            // Compute the chain (transpose of F_STAR column)
+    //            CChain fstar_cell_sub(fstar_cell.dimension()) ;
+    //            for (typename RChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
+    //            {
+    //                // Keep cells of the chain belonging to _subCC
+    //                if (_subCC.get_Bit(dim, it->first))
+    //                {
+    //                    fstar_cell_sub[it->first] = it->second ;
+    //                }
+    //            }
+    //            return fstar_cell_sub ;
+    //        }
+    //        else
+    //            throw "Error : trying to export g_chain without proper HDVF option" ;
     
 } ;
 
@@ -597,9 +595,9 @@ void Dual_HDVF<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // Compute perfect HDVF over K
     this->computePerfectHDVF() ;
     critical_K = this->get_flag(CRITICAL) ;
-//    this->print_matrices() ;
-//    this->print_reduction() ;
-
+    //    this->print_matrices() ;
+    //    this->print_reduction() ;
+    
     std::cout << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
@@ -608,12 +606,12 @@ void Dual_HDVF<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // Compute perfect HDVF over L-K
     this->computePerfectHDVF() ;
     critical_L_K = this->get_flag(CRITICAL) ;
-//    this->print_matrices() ;
-//    this->print_reduction() ;
+    //    this->print_matrices() ;
+    //    this->print_reduction() ;
     
-//    std::cout << "==== Pairing matrix" << endl ;
-//
-//    print_bnd_pairing() ;
+    //    std::cout << "==== Pairing matrix" << endl ;
+    //
+    //    print_bnd_pairing() ;
 }
 
 template<typename _CoefficientType, typename _ComplexType>
@@ -622,7 +620,7 @@ std::vector<PairCell> Dual_HDVF<_CoefficientType,_ComplexType>::computePairingHD
     // TODO : check both HDVFs are perfect
     
     std::cout << "==== Compute pairing" << endl ;
-
+    
     // Create a full SubChainComplex
     _subCC = SubChainComplex<_CoefficientType, _ComplexType>(_L) ;
     screen_DD_col() ;
@@ -659,6 +657,8 @@ vector<int> Dual_HDVF<CoefficientType,ComplexType>::get_flag_dim (FlagType flag,
             res.push_back(i) ;
     }
     return res ;
+}
+
 }
 
 #endif /* HDVF_DUALITY_H */

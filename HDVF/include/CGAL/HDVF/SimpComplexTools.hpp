@@ -24,6 +24,8 @@
  * \date 06/11/2024
  */
 
+namespace CGAL {
+
 // SimpComplex
 
 /** \brief vtk export for SimpComplex */
@@ -48,7 +50,7 @@ void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType>, _ChainT
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-//                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
+                    //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_GChain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
@@ -69,18 +71,18 @@ void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType>, _ChainT
 // Duality
 
 template<typename CoefficientType>
-class Duality_SimpComplexTools {
+class Duality_simplicial_complex_tools {
 public:
     typedef Simplicial_chain_complex<CoefficientType> _ComplexType ;
     typedef SubChainComplex<CoefficientType, _ComplexType> _SubCCType ;
     // Constructor
-    Duality_SimpComplexTools() {}
+    Duality_simplicial_complex_tools() {}
     
     /** \brief Build a SimpComplex L and SubChainComplex K from a SimpComplex _K.
      * L : complex built out of _K and a closing icosphere meshed by tetgen
      * K (SubChainComplex) : SubChainComplex identifying _K inside L
      */
-
+    
     /** \brief Build the bounding box CubComplex of _CC  */
     typedef struct ztriple {
         _ComplexType& L ;
@@ -91,7 +93,7 @@ public:
     static TripleRes SimpComplexBB (const _ComplexType& _K, double BB_ratio=1.5, const string& out_file_prefix = "file_K_closed.off")
     {
         // Export _CC to a MeshObject to add the icosphere and mesh with tetGen
-        Mesh_object mesh_L = Duality_SimpComplexTools::export_meshObject(_K) ;
+        Mesh_object mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
         
         // Closing K by adding the icosphere
         //  Compute a bounding icosphere
@@ -106,7 +108,7 @@ public:
         
         // Write this mesh to an off file for Tetgen
         mesh_L.write_off(out_file_prefix) ;
-//        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
+        //        const std::string tetgen_path(CMAKE_TETGEN_PATH) ;
         // WARNING: use CGAL 3D triangulation to get rid of tetgen...
         const std::string tetgen_path("/Users/umenohana/Dropbox/G-Mod/TopAlg/code/tetgen1.6.0/build/") ;
         std::string tetgen_command = tetgen_path+"tetgen -pqkcYfe "+out_file_prefix+".off" ;
@@ -144,8 +146,8 @@ public:
                 const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
                 vcells.push_back(s.getVertices()) ;
             }
-                
-        Mesh_object &m = *(new Mesh_object(-3, _CC.get_nodes_coords(), vcells)) ;
+        
+        Mesh_object &m = *(new Mesh_object(-3, _CC.get_vertices_coords(), vcells)) ;
         return m ;
     }
 } ;
@@ -218,6 +220,8 @@ void Per_Simp_output_vtk (PersistentHDVF<CoefType, Simplicial_chain_complex<Coef
     }
     info_file.close() ;
     Simp_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf") ;
+}
+
 }
 
 #endif // SimpComplexTools_HPP

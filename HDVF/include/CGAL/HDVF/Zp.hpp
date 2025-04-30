@@ -14,55 +14,57 @@
 #include <iostream>
 #include <vector>
 
+namespace CGAL {
+
 // Chose _TSlot according to the size of p
 template <int p, typename _TSlot = int>
 class Zp {
     _TSlot _i ;
 public:
-
+    
     /// Constructor (default)
     Zp(_TSlot i=0) : _i( (i>=0)?(i % p):((i % p) + p) ) { }
-
-
+    
+    
     /// Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
-
+    
     /// unary operator+
     friend Zp operator+ (const Zp& a)
     {
         return Zp<p, _TSlot>(a) ;
     }
-
+    
     /// unary operator-
     friend Zp     operator- (const Zp& a)
     {
         return Zp<p, _TSlot>(- a._i) ;
     }
-
+    
     /// operator+
     friend Zp     operator+ (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i + b._i)) ;
     }
-
+    
     /// operator-
     friend Zp     operator- (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i - b._i)) ;
     }
-
+    
     /// operator*
     friend Zp     operator* (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i * b._i)) ;
     }
-
+    
     /// operator/
     friend Zp     operator/ (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>(a._i / b._i) ;
     }
-
+    
     /// operator+=
     Zp &     operator+= (const Zp& a)
     {
@@ -76,7 +78,7 @@ public:
         }
         return *this ;
     }
-
+    
     /// operator-=
     Zp &     operator-= (const Zp& a)
     {
@@ -90,7 +92,7 @@ public:
         }
         return *this ;
     }
-
+    
     /// operator*=
     Zp &     operator*= (const Zp& a)
     {
@@ -104,7 +106,7 @@ public:
         }
         return *this ;
     }
-
+    
     /// operator/=
     Zp &     operator/= (const Zp& a)
     {
@@ -118,30 +120,32 @@ public:
         }
         return *this ;
     }
-
+    
     /// operator==
     friend bool     operator== (const Zp& a, const Zp& b)
     {
         return (a._i == b._i) ;
     }
-
+    
     /// operator!=
     friend bool     operator!= (const Zp& a, const Zp& b)
     {
         return (a._i != b._i);
     }
-
+    
     /// abs
     friend Zp  abs(const Zp& a)
     {
         return Zp<p,_TSlot>(abs(a._i)) ;
     }
-
+    
     /// operator<<
     friend std::ostream& operator<<(std::ostream& out, const Zp& a)
     {
         return (out << int(a._i)) ;
     }
 };
+
+}
 
 #endif
