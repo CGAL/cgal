@@ -185,6 +185,7 @@ PolyhedronSPtr VolumeVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<combi> combinations = generateAllCombinations(vertex->degree());
     combi combi_opt_vol;
     PolyhedronSPtr poly_opt_vol;
+
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;

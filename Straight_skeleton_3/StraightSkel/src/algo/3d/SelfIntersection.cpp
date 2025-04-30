@@ -633,6 +633,8 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
                                          bool handle_degree_1_as_ray)
 {
     // std::cout << "\n> isEdgeInsideFacet()" << std::endl;
+    // std::cout << "  " << edge->toString() << std::endl;
+    // std::cout << "  " << facet->toString() << std::endl;
 
     bool result = false;
 

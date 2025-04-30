@@ -256,6 +256,9 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
         }
     }
 
+    // @fixme currently assumes that if degree 3, then the planes are independent, which is not true
+    // in theory. But in practice we don't have this configuration and I don't want to pay the check.
+    // Still, at least an assertion...
     if (i < 3) {
         std::cerr << "Warning: Couldn't find three independent planes for " << vertex->toString() << std::endl;
         return { };

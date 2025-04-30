@@ -134,7 +134,6 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_PRINT("Considering " << vertex->toString());
         if (vertex->degree() < 3) {
             vertices_toremove.push_back(vertex);
         }
