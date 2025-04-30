@@ -16,5 +16,5 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_nef_3 PRIVATE CGAL::CGAL_Basic_viewer_Qt)
+  target_link_libraries(draw_nef_3 PRIVATE CGAL::CGAL_Basic_viewer)
 endif()

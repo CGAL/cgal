@@ -20,6 +20,6 @@ create_single_source_cgal_program( "exact_test.cpp")
 create_single_source_cgal_program( "repair_polygon_2_test.cpp" )
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_test_polygons PRIVATE CGAL::CGAL_Basic_viewer_Qt)
-  target_link_libraries(exact_test PRIVATE CGAL::CGAL_Basic_viewer_Qt)
+  target_link_libraries(draw_test_polygons PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(exact_test PRIVATE CGAL::CGAL_Basic_viewer)
 endif()

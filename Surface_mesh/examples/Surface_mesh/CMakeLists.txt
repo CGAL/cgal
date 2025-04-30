@@ -30,7 +30,7 @@ create_single_source_cgal_program("draw_surface_mesh.cpp")
 if(CGAL_Qt6_FOUND)
 
   #link it with the required CGAL libraries
-  target_link_libraries(draw_surface_mesh PRIVATE CGAL::CGAL_Basic_viewer_Qt)
+  target_link_libraries(draw_surface_mesh PRIVATE CGAL::CGAL_Basic_viewer)
 
 endif()
 
