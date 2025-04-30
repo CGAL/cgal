@@ -41,15 +41,15 @@ assign_weights(Mesh& sm,
     return false;
   }
 
+  auto fwm = res.first;
+
   if(!weights_filename) {
     DEBUG_PRINT("No input weights provided; all weights are set to '1'.");
     for(face_descriptor f : faces(sm))
-      put(res.first, f, 1.);
+      put(fwm, f, 1.);
 
     return true;
   }
-
-  auto fwm = res.first;
 
   std::ifstream weights_in(weights_filename) ;
   std::string x1, x2, y1, y2, z1, z2;
