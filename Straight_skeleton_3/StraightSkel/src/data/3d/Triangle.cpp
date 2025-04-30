@@ -32,7 +32,6 @@ TriangleSPtr Triangle::create(FacetSPtr facet, VertexSPtr vertices[3]) {
     TriangleSPtr result = TriangleSPtr(new Triangle());
     result->setFacet(facet);
     result->setVertices(vertices);
-    facet->addTriangle(result);
     return result;
 }
 

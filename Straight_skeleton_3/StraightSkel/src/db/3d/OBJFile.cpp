@@ -128,7 +128,11 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                     //   std::cout << e->toString() << std::endl;
 
                     if (num_vertices == 3) {
-                        Triangle::create(facet, poly_vertices);
+                        Plane3SPtr plane = KernelFactory::createPlane3(
+                                poly_vertices[0]->getPoint(),
+                                poly_vertices[1]->getPoint(),
+                                poly_vertices[2]->getPoint());
+                        facet->setPlane(plane);
                     } else if (normal_sum && num_vertices > 3) {
                         // vertex normals are used as a hint for facet normal
                         // @fixme no reason for these 3 points not to be collinear?

@@ -68,9 +68,6 @@ public:
     void sortVertices();
     void sortEdges();
 
-    void addTriangle(TriangleSPtr triangle);
-    bool removeTriangle(TriangleSPtr triangle);
-
     PolyhedronSPtr getPolyhedron() const;
     void setPolyhedron(PolyhedronSPtr polyhedron);
     std::list<FacetSPtr>::iterator getPolyhedronListIt() const;
@@ -82,11 +79,6 @@ public:
 
     std::list<VertexSPtr>& vertices();
     std::list<EdgeSPtr>& edges();
-    std::list<TriangleSPtr>& triangles();
-
-    VertexSPtr ith_vertex(const std::size_t i);
-    EdgeSPtr ith_edge(const std::size_t i);
-    TriangleSPtr ith_triangle(const std::size_t i);
 
     /**
      * counter clockwise from outside
@@ -144,7 +136,6 @@ public:
 public:
     std::list<VertexSPtr> vertices_;
     std::list<EdgeSPtr> edges_;
-    std::list<TriangleSPtr> triangles_;
     PolyhedronWPtr polyhedron_;
     std::list<FacetSPtr>::iterator polyhedron_list_it_;
     FacetDataSPtr data_;

@@ -111,15 +111,6 @@ PolyhedronSPtr Polyhedron::clone() const {
             }
             facet_c->addEdge(edge_c);
         }
-        std::list<TriangleSPtr>::const_iterator it_t = facet->triangles().begin();
-        while (it_t != facet->triangles().end()) {
-            TriangleSPtr triangle = *it_t++;
-            VertexSPtr vertices_t_c[3];
-            for (unsigned int i = 0; i < 3; i++) {
-                vertices_t_c[i] = vertices_c[triangle->getVertex(i)];
-            }
-            Triangle::create(facet_c, vertices_t_c);
-        }
         result->addFacet(facet_c);
     }
     return result;
@@ -549,11 +540,6 @@ void Polyhedron::initializeAllIDs() {
     std::list<FacetSPtr>::iterator it_f = facets_.begin();
     while (it_f != facets_.end()) {
         FacetSPtr facet = *it_f++;
-        std::list<TriangleSPtr>::iterator it_t = facet->triangles().begin();
-        while (it_t != facet->triangles().end()) {
-            TriangleSPtr triangle = *it_t++;
-            triangle->setID(-1);
-        }
         facet->setID(facet_id++);
     }
     std::list<EdgeSPtr>::iterator it_e = edges_.begin();
@@ -573,11 +559,6 @@ void Polyhedron::resetAllIDs() {
     std::list<FacetSPtr>::iterator it_f = facets_.begin();
     while (it_f != facets_.end()) {
         FacetSPtr facet = *it_f++;
-        std::list<TriangleSPtr>::iterator it_t = facet->triangles().begin();
-        while (it_t != facet->triangles().end()) {
-            TriangleSPtr triangle = *it_t++;
-            triangle->setID(-1);
-        }
         facet->setID(-1);
     }
     std::list<EdgeSPtr>::iterator it_e = edges_.begin();

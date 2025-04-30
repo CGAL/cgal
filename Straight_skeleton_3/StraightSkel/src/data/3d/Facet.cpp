@@ -41,7 +41,6 @@ Facet::Facet() {
 }
 
 Facet::~Facet() {
-    triangles_.clear();
     edges_.clear();
     vertices_.clear();
 }
@@ -121,16 +120,6 @@ bool Facet::removeVertex(VertexSPtr vertex) {
     if (it_v != vertices_.end()) {
         vertices_.erase(it_v);
         vertex->removeFacet(shared_from_this());
-        std::list<TriangleSPtr>::iterator it_t = triangles_.begin();
-        while (it_t != triangles_.end()) {
-            TriangleSPtr triangle = *it_t++;
-            for (unsigned int i = 0; i < 3; i++) {
-                if (triangle->getVertex(i) == vertex) {
-                    removeTriangle(triangle);
-                    break;
-                }
-            }
-        }
         result = true;
     }
     return result;
@@ -296,29 +285,6 @@ void Facet::sortEdges() {
     }
 }
 
-void Facet::addTriangle(TriangleSPtr triangle) {
-    std::list<TriangleSPtr>::iterator it = triangles_.insert(triangles_.end(), triangle);
-    triangle->setFacet(shared_from_this());
-    triangle->setFacetListIt(it);
-    for (unsigned int i = 0; i < 3; i++) {
-        VertexSPtr vertex = triangle->getVertex(i);
-        if (!containsVertex(vertex)) {
-            addVertex(vertex);
-        }
-    }
-}
-
-bool Facet::removeTriangle(TriangleSPtr triangle) {
-    bool result = false;
-    if (triangle->getFacet() == shared_from_this()) {
-        triangles_.erase(triangle->getFacetListIt());
-        triangle->setFacet(FacetSPtr());
-        triangle->setFacetListIt(std::list<TriangleSPtr>::iterator());
-        result = true;
-    }
-    return result;
-}
-
 PolyhedronSPtr Facet::getPolyhedron() const {
     DEBUG_WPTR(this->polyhedron_);
     if (this->polyhedron_.expired())
@@ -362,26 +328,6 @@ std::list<VertexSPtr>& Facet::vertices() {
 
 std::list<EdgeSPtr>& Facet::edges() {
     return this->edges_;
-}
-
-std::list<TriangleSPtr>& Facet::triangles() {
-    return this->triangles_;
-}
-
-VertexSPtr Facet::ith_vertex(const std::size_t i)
-{
-    CGAL_assertion(i < this->vertices_.size());
-    return *(std::next(std::cbegin(this->vertices_), i));
-}
-EdgeSPtr Facet::ith_edge(const std::size_t i)
-{
-    CGAL_assertion(i < this->edges_.size());
-    return *(std::next(std::cbegin(this->edges_), i));
-}
-TriangleSPtr Facet::ith_triangle(const std::size_t i)
-{
-    CGAL_assertion(i < this->triangles_.size());
-    return *(std::next(std::cbegin(this->triangles_), i));
 }
 
 FacetSPtr Facet::next(VertexSPtr vertex) const {
@@ -522,12 +468,6 @@ void Facet::merge(FacetSPtr facet) {
             }
         }
     }
-    std::list<TriangleSPtr>::iterator it_t = facet->triangles_.begin();
-    while (it_t != facet->triangles().end()) {
-        TriangleSPtr triangle = *it_t++;
-        facet->removeTriangle(triangle);
-        addTriangle(triangle);
-    }
 }
 
 int Facet::getID() const {
@@ -556,49 +496,45 @@ void Facet::setPlane(Plane3SPtr plane) {
 
 bool Facet::initPlane() {
     bool result = false;
-    std::list<TriangleSPtr>::iterator it_t = triangles_.begin();
-    while (it_t != triangles_.end()) {
-        TriangleSPtr triangle = *it_t++;
-        Plane3SPtr plane = triangle->plane();
-        if (plane) {
-            plane_ = plane;
-            result = true;
-            break;
-        }
-    }
-    if (!result) {
-        Point3SPtr point_prev;
-        std::vector<Point3SPtr> points;
-        std::list<VertexSPtr>::iterator it_v = vertices_.begin();
-        while (it_v != vertices_.end()) {
-            VertexSPtr vertex = *it_v++;
-            Point3SPtr point = vertex->getPoint();
-            if (point_prev != point) {
-                points.push_back(point);
-            }
-            point_prev = point;
-        }
 
-        if (points.size() >= 3)
-        {
-          Point3SPtr p0 = points[0];
-          Vector3SPtr normal = KernelFactory::createVector3(0,0,0);
-          std::size_t last_i = points.size() - 1;
-          for(std::size_t i=1; i<last_i; ++i) {
-            Point3SPtr p1 = points[i];
-            Point3SPtr p2 = points[i+1];
-            CGAL_assertion(p1 && p2);
-            *normal += 0.5 * CGAL::cross_product(*p2 - *p1, *p0 - *p1);
-          }
+    std::cout << "initPlane() of " << getID() << std::endl;
 
-          if(*normal != CGAL::NULL_VECTOR) {
-            plane_ = KernelFactory::createPlane3(p0, normal);
-            result = true;
-          }
+    Point3SPtr point_prev;
+    std::vector<Point3SPtr> points;
+    std::list<VertexSPtr>::iterator it_v = vertices_.begin();
+    while (it_v != vertices_.end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr point = vertex->getPoint();
+        if (point_prev != point) {
+            points.push_back(point);
         }
+        point_prev = point;
     }
 
-    CGAL_assertion(result);
+    std::cout << "computing normals from " << points.size() << " points" << std::endl;
+    for (std::size_t i=0; i<points.size(); ++i) {
+        std::cout << "point " << i << ": " << *points[i] << std::endl;
+    }
+
+    if (points.size() >= 3)
+    {
+      Point3SPtr p0 = points[0];
+      Vector3SPtr normal = KernelFactory::createVector3(0,0,0);
+      std::size_t last_i = points.size() - 1;
+      for(std::size_t i=1; i<last_i; ++i) {
+        Point3SPtr p1 = points[i];
+        Point3SPtr p2 = points[i+1];
+        CGAL_assertion(p1 && p2);
+        *normal += 0.5 * CGAL::cross_product(*p2 - *p1, *p0 - *p1);
+      }
+
+      if(*normal != CGAL::NULL_VECTOR) {
+        plane_ = KernelFactory::createPlane3(p0, normal);
+        result = true;
+      }
+    }
+
+    CGAL_postcondition(result);
     return result;
 }
 
@@ -612,24 +548,14 @@ Plane3SPtr Facet::plane() {
 
 void Facet::normalizePlaneCoefficients()
 {
-    if (!this->plane_) {
-        this->initPlane();
-    }
+    CGAL_precondition(bool(this->plane_));
 
-#ifdef USE_CGAL
     const CGAL::FT a = plane_->a();
     const CGAL::FT b = plane_->b();
     const CGAL::FT c = plane_->c();
     const CGAL::FT d = plane_->d();
     // this should be the only place with unavoidable SQRTs
     const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
-#else
-    const double a = plane_->getA();
-    const double b = plane_->getB();
-    const double c = plane_->getC();
-    const double d = plane_->getD();
-    const double n = sqrt(a*a + b*b + c*c);
-#endif
 
     if(!is_zero(n)) {
         plane_ = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
@@ -638,9 +564,7 @@ void Facet::normalizePlaneCoefficients()
 
 void Facet::storePlaneCoefficients()
 {
-    if (!this->plane_) {
-        this->initPlane();
-    }
+    CGAL_precondition(bool(this->plane_));
 
     // need a different shared ptr here because plane_ will change with the perturbation
     cachedPlane_ = KernelFactory::createPlane3(*(plane_));
@@ -653,9 +577,12 @@ void Facet::storePlaneCoefficients()
 
 void Facet::perturbPlaneCoefficients()
 {
-    if (!this->plane_) {
-        this->initPlane();
-    }
+    CGAL_precondition(bool(this->plane_));
+
+    normalizePlaneCoefficients();
+
+    // @todo storing coefficients is only useful if we plan on untilting at the end.
+    storePlaneCoefficients();
 
 #ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
     std::cout << "Nudging Face " << this->getID() << std::endl;
@@ -695,9 +622,10 @@ void Facet::perturbPlaneCoefficients()
 
     double n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
 
-    // @todo if it's zero, re-nudge differently
+    // should not happen since we have normalized and the shift is tiny
     CGAL_assertion(n != 0);
 
+    // below doesn't seem to matter. Probably need specific static filters...
 #if 0
     plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
 #else
@@ -985,14 +913,6 @@ std::string Facet::toString() const {
             while (it_e != edges_.end()) {
             EdgeSPtr edge = *it_e++;
             sstr << edge->toString() << "\n";
-        }
-    }
-    if (triangles_.size() > 0) {
-        sstr << "\n";
-        std::list<TriangleSPtr>::const_iterator it_t = triangles_.begin();
-        while (it_t != triangles_.end()) {
-            TriangleSPtr triangle = *it_t++;
-            sstr << triangle->toString() << "\n";
         }
     }
     sstr << ") END FACET TOSTRING()\n";

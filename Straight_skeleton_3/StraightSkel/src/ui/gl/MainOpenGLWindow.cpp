@@ -743,6 +743,11 @@ void MainOpenGLWindow::drawPolyhedron(PolyhedronSPtr polyhedron, bool bold, bool
     std::list<data::_3d::FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         data::_3d::FacetSPtr facet = *it_f++;
+        // @fixme
+        // triangles_ were removed because they were not maintained properly through
+        // vertex removal (e.g. degree < 3 vertex removal)
+        // this could just use CDT to triangulate
+#if 0
         std::list<data::_3d::TriangleSPtr>::iterator it_t = facet->triangles().begin();
         while (it_t != facet->triangles().end()) {
             data::_3d::TriangleSPtr triangle = *it_t++;
@@ -769,6 +774,7 @@ void MainOpenGLWindow::drawPolyhedron(PolyhedronSPtr polyhedron, bool bold, bool
             }
             drawArrow(pos_norm, dir_norm);
         }
+#endif
     }
     setColor(color_begin);
 }

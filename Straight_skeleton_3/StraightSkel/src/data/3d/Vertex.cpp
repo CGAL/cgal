@@ -630,7 +630,6 @@ std::string Vertex::toString() const {
             if (!facet_wptr.expired()) {
                 result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
                 result += " (" + std::to_string(FacetSPtr(facet_wptr)->getBasePlaneID()) + ")";
-                CGAL_warning(FacetSPtr(facet_wptr)->getBasePlaneID() == FacetSPtr(facet_wptr)->getID());
             }
         }
         result += " }";

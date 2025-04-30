@@ -110,6 +110,8 @@ int FacetDAO::insert(FacetSPtr facet) {
                 dao_edge->insert(edge);
             }
         }
+        // @fixme
+#if 0
         TriangleDAOSPtr dao_triangle = DAOFactory::getTriangleDAO();
         std::list<TriangleSPtr>::iterator it_t = facet->triangles().begin();
         while (it_t != facet->triangles().end()) {
@@ -120,6 +122,7 @@ int FacetDAO::insert(FacetSPtr facet) {
                 dao_triangle->insert(triangle);
             }
         }
+#endif
         Plane3SPtr plane = facet->getPlane();
         if (plane) {
             PlaneDAOSPtr dao_plane = DAOFactory::getPlaneDAO();
