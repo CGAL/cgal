@@ -20,17 +20,18 @@
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/unordered_flat_set.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
+#include <boost/container/map.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <fstream>
 #include <bitset>
-#include <unordered_set>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -39,6 +40,7 @@ namespace CGAL {
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:
+  static constexpr bool t_3_is_not_movable = false == CGAL::is_nothrow_movable_v<T_3>;
   using Geom_traits = typename T_3::Geom_traits;
   using Vertex_handle = typename T_3::Vertex_handle;
   using Edge = typename T_3::Edge;
@@ -935,14 +937,14 @@ protected:
   double segment_vertex_epsilon = 1e-8;
   std::optional<double> max_bbox_edge_length;
   using Pair_of_vertex_handles = std::pair<Vertex_handle, Vertex_handle>;
-  std::map<Pair_of_vertex_handles, Constrained_polyline_id> pair_of_vertices_to_cid;
+  boost::container::map<Pair_of_vertex_handles, Constrained_polyline_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {this};
 
   using Stack_info = std::pair<Subconstraint, Constrained_polyline_id>;
   using Subconstraints_to_conform = std::stack<Stack_info, std::vector<Stack_info>>;
   Subconstraints_to_conform subconstraints_to_conform;
 
-  std::vector<std::unordered_set<Vertex_handle>> all_finite_edges;
+  std::vector<CGAL::unordered_flat_set<Vertex_handle>> all_finite_edges;
   bool update_all_finite_edges_ = false;
 
   void update_all_finite_edges() {

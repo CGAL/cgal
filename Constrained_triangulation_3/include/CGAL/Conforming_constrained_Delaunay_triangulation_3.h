@@ -49,6 +49,7 @@
 
 
 #include <boost/container/flat_set.hpp>
+#include <boost/container/map.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/graph/breadth_first_search.hpp>
@@ -59,7 +60,6 @@
 
 #include <algorithm>
 #include <optional>
-#include <unordered_map>
 #include <vector>
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
@@ -544,10 +544,9 @@ public:
 private:
   using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation::Triangulation_data_structure>;
   static_assert(std::is_base_of_v<Triangulation, DT_3>);
-  static_assert(CGAL::is_nothrow_movable_v<DT_3>);
 
   using CDT_3_impl = Conforming_constrained_Delaunay_triangulation_3_impl<DT_3>;
-  static_assert(CGAL::is_nothrow_movable_v<CDT_3_impl>);
+  static_assert(CDT_3_impl::t_3_is_not_movable || CGAL::is_nothrow_movable_v<CDT_3_impl>);
 
   CDT_3_impl cdt_impl = {};
 
@@ -928,7 +927,8 @@ public:
       }
     }
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
-    static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
+    static_assert(CGAL::is_nothrow_movable_v<Triangulation> == false || 
+                  CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
     static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
     *this = Conforming_constrained_Delaunay_triangulation_3{};
     return result;
@@ -1020,6 +1020,7 @@ class Conforming_constrained_Delaunay_triangulation_3_impl : public Conforming_D
 public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
   using Conforming_Dt::tr;
+  static_assert(Conforming_Dt::t_3_is_not_movable || CGAL::is_nothrow_movable_v<Conforming_Dt>);
 
   using Vertex_handle = typename T_3::Vertex_handle;
   using Edge = typename T_3::Edge;
@@ -1070,7 +1071,7 @@ private:
     {
       using Projection_traits_3<Geom_traits>::Projection_traits_3; // inherit cstr
     };
-    static_assert(CGAL::is_nothrow_movable<Projection_traits>::value);
+    static_assert(CGAL::is_nothrow_movable_v<Projection_traits>);
 
     struct Vertex_info
     {
@@ -3918,7 +3919,7 @@ protected:
     bool is_reverse = false;
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
-  std::multimap<Constrained_polyline_id, CDT_3_signed_index> constraint_to_faces;
+  boost::container::multimap<Constrained_polyline_id, CDT_3_signed_index> constraint_to_faces;
 
   // boost::dynamic_bitset<> face_constraint_misses_subfaces;
   // std::size_t face_constraint_misses_subfaces_find_first() const {
@@ -3934,7 +3935,7 @@ protected:
   //   face_constraint_misses_subfaces.reset(pos);
   // }
   // static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
-  static_assert(false == CGAL::is_nothrow_movable_v<boost::dynamic_bitset<>>);
+  // static_assert(false == CGAL::is_nothrow_movable_v<boost::dynamic_bitset<>>);
   std::vector<bool> face_constraint_misses_subfaces;
   std::size_t face_constraint_misses_subfaces_find_first(std::size_t pos = 0) const {
     auto it = std::find(face_constraint_misses_subfaces.begin() + pos, face_constraint_misses_subfaces.end(), true);
