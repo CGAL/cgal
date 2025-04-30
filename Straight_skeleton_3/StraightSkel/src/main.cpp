@@ -366,23 +366,6 @@ int main(int argc, const char* argv[]) {
             }
         }
 
-        // polyhedron->initializeAllIDs();
-
-        // @todo implement lazy perturbations where we only perturb if we encounter an issue?
-        // - Would cost more (detection of simultaneous events, etc.)
-        // - How to detect "hidden" simultaneous events?
-        if (rand_move_points_when_degenerated && !rand_move_points) {
-            std::cout << "Checking if all combinations of 3 facet supporting planes intersect in a point." << std::endl;
-            std::cout << "In case this takes too long, "
-                << "you may disable 'rand_move_points_when_degenerated'." << std::endl;
-            if (!algo::_3d::PolyhedronTransformation::doAll3PlanesIntersect(polyhedron)) {
-                std::cout << "Warning: Not all combinations of 3 planes intersect." << std::endl;
-                rand_move_points = true;
-            } else {
-                std::cout << "No need to perturb" << std::endl;
-            }
-        }
-
         if (translate_and_scale_polyhedron) {
             data::_3d::Point3SPtr p_box_min =
                     data::_3d::KernelFactory::createPoint3(-10.0, -10.0, -10.0);
@@ -392,17 +375,9 @@ int main(int argc, const char* argv[]) {
                     polyhedron, p_box_min, p_box_max);
         }
 
-
-        // @todo don't duplicate with OutwardMeshOffset.h|.cpp
         if (rand_move_points) {
-            polyhedron = algo::_3d::PolyhedronTransformation::perturb(polyhedron);
+            polyhedron = algo::_3d::PolyhedronTransformation::merge_and_perturb(polyhedron);
         }
-
-        algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
-
-        // since we have modified plane coefficients, ensure that points are on the facets
-        // @todo use resetpoint to avoid zero offset plane shifts
-        polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
 
         if (!polyhedron || !polyhedron->isConsistent()) {
             // Failure here is likely from a bad perturbation (after all, there is a probabily
@@ -411,8 +386,6 @@ int main(int argc, const char* argv[]) {
             std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
             return EXIT_FAILURE;
         }
-
-        db::_3d::OBJFile::save("results/perturbation_after.obj", polyhedron, false /*triangulate*/);
 
         if (translate_and_scale_view) {
             data::_3d::Point3SPtr p_box_min =
