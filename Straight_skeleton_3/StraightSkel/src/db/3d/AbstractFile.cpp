@@ -70,6 +70,26 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     return result;
 }
 
+void AbstractFile::mergeFacets(EdgeSPtr edge,
+                               PolyhedronSPtr polyhedron)
+{
+  DEBUG_PRINT(edge->toString());
+  FacetSPtr facet_l = edge->getFacetL();
+  FacetSPtr facet_r = edge->getFacetR();
+  if (facet_l) {
+      facet_l->removeEdge(edge);
+  }
+  if (facet_r) {
+      facet_r->removeEdge(edge);
+  }
+  polyhedron->removeEdge(edge);
+  if (facet_l && facet_r &&
+          facet_l != facet_r) {
+      facet_l->merge(facet_r);
+      polyhedron->removeFacet(facet_r);
+  }
+}
+
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
                                       double epsilon)
 {
@@ -96,21 +116,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     it_e = edges_toremove.begin();
     while (it_e != edges_toremove.end()) {
         EdgeSPtr edge = *it_e++;
-        DEBUG_VAR(edge->toString());
-        FacetSPtr facet_l = edge->getFacetL();
-        FacetSPtr facet_r = edge->getFacetR();
-        if (facet_l) {
-            facet_l->removeEdge(edge);
-        }
-        if (facet_r) {
-            facet_r->removeEdge(edge);
-        }
-        polyhedron->removeEdge(edge);
-        if (facet_l && facet_r &&
-                facet_l != facet_r) {
-            facet_l->merge(facet_r);
-            polyhedron->removeFacet(facet_r);
-        }
+        mergeFacets(edge, polyhedron);
         result++;
     }
 
