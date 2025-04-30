@@ -52,34 +52,37 @@ assign_weights(Mesh& sm,
   }
 
   std::ifstream weights_in(weights_filename) ;
-  std::string x1, x2, y1, y2, z1, z2;
-  CGAL::FT vx1, vx2, vy1, vy2, vz1, vz2;
-  vx1 = vx2 = vy1 = vy2 = vz1 = vz2 = 0;
+  std::string x1_str, x2_str, y1_str, y2_str, bot_str, top_str;
+  CGAL::FT x1_val, x2_val, y1_val, y2_val, bot_val, top_val;
+  x1_val = x2_val = y1_val = y2_val = bot_val = top_val = 0;
 
-  if(!(weights_in >> x1 >> vx1
-                  >> x2 >> vx2
-                  >> y1 >> vy1
-                  >> y2 >> vy2)) {
+  if(!(weights_in >> x1_str >> x1_val
+                  >> x2_str >> x2_val
+                  >> y1_str >> y1_val
+                  >> y2_str >> y2_val)) {
     std::cerr << "Error: failed to read weights" << std::endl;
     return false;
   }
 
-  if(weights_in >> z1 >> vz1
-                >> z2 >> vz2) {
+  CGAL_assertion(x1_str == "x1:" && x2_str == "x2:" && y1_str == "y1:" && y2_str == "y2:");
+
+  if(weights_in >> bot_str >> bot_val
+                >> top_str >> top_val) {
     DEBUG_PRINT("bottom & top weight info detected");
+    CGAL_assertion(bot_str == "bottom:" && top_str == "top:");
   } else {
-    if(vx2 != vy2) {
+    if(x2_val != y2_val) {
       std::cerr << "Warning: unknown z-speeds, and x-speed and y-speed differ..." << std::endl;
       // arbitrary choice
-      vz2 = vy2;
+      top_val = y2_val;
     } else {
-      // assign the uniform speed to the "up" direction
-      vz2 = vx2;
+      // assign the uniform speed to the top
+      top_val = x2_val;
     }
   }
 
-  if(vx1 < 0 || vx2 < 0 || vy1 < 0 || vy2 < 0 || vz1 < 0 || vz2 < 0) {
-    std::cerr << "Error: negative weights?" << std::endl;
+  if(x1_val < 0 || x2_val < 0 || y1_val < 0 || y2_val < 0 || bot_val < 0 || top_val < 0) {
+    std::cerr << "Error: negative weights are not allowed" << std::endl;
     return false;
   }
 
@@ -105,31 +108,37 @@ assign_weights(Mesh& sm,
     return false;
   }
 
+  // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
 
-  if(vx1 == 0.) { DEBUG_PRINT("vx1 to eps weight"); vx1 = eps_weight; }
-  if(vx2 == 0.) { DEBUG_PRINT("vx2 to eps weight"); vx2 = eps_weight; }
-  if(vy1 == 0.) { DEBUG_PRINT("vy1 to eps weight"); vy1 = eps_weight; }
-  if(vy2 == 0.) { DEBUG_PRINT("vy2 to eps weight"); vy2 = eps_weight; }
-  if(vz1 == 0.) { DEBUG_PRINT("vz1 to eps weight"); vz1 = eps_weight; }
-  if(vz2 == 0.) { DEBUG_PRINT("vz2 to eps weight"); vz2 = eps_weight; }
-
-  const Vector3 east  {  1,  0,  0 }; // x2
-  const Vector3 south {  0, -1,  0 }; // y1
-  const Vector3 west  { -1,  0,  0 }; // x1
-  const Vector3 north {  0,  1,  0 }; // y2
-  const Vector3 up    {  0,  0,  1 }; // z2
-  const Vector3 down  {  0,  0, -1 }; // z1
+  if(x1_val == 0) { DEBUG_PRINT("x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
+  if(x2_val == 0) { DEBUG_PRINT("x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
+  if(y1_val == 0) { DEBUG_PRINT("y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
+  if(y2_val == 0) { DEBUG_PRINT("y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
+  if(bot_val == 0) { DEBUG_PRINT("bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
+  if(top_val == 0) { DEBUG_PRINT("top_val to eps weight " << eps_weight); top_val = eps_weight; }
 
   for(face_descriptor f : faces(sm))
   {
-    CGAL::FT weight = 1.;
-
     // internal stuff, we don't need to normalize and introduce inexactness
     Vector3 v = CGAL::NULL_VECTOR;
     CGAL::Polygon_mesh_processing::internal::sum_normals<Point3>(sm, f, get(CGAL::vertex_point, sm), v, CGAL::K());
     CGAL::FT sq_n = v.squared_length();
 
+    DEBUG_PRINT("face: " << f << " normal: " << v);
+
+#if 1
+    CGAL::FT sq_cos_x = CGAL::square(v.x()) / sq_n;
+    CGAL::FT sq_cos_y = CGAL::square(v.y()) / sq_n;
+    CGAL::FT sq_cos_z = CGAL::square(v.z()) / sq_n;
+
+    // The weight is a weighted sum of all speed contributions, where the weights are
+    // the squared cosines of the angles between the normal and the axes
+    CGAL::FT weight_x = (v.x() >= 0) ? x1_val : x2_val;
+    CGAL::FT weight_y = (v.y() >= 0) ? y1_val : y2_val;
+    CGAL::FT weight_z = (v.z() >= 0) ? top_val : bot_val;
+    CGAL::FT weight = weight_x*sq_cos_x + weight_y*sq_cos_y + weight_z*sq_cos_z;
+#else
     if(v.x() == 0 && v.y() == 0) {
       if(v.z() > 0)
         weight = vz2;
@@ -156,6 +165,7 @@ assign_weights(Mesh& sm,
         }
       }
     }
+#endif
 
     DEBUG_PRINT("face: " << f << " weight: " << weight);
 
@@ -164,9 +174,10 @@ assign_weights(Mesh& sm,
     // be detected if its value type is, e.g., EPECK::FT
     // Could be CGAL::FT if there were no intermediary saving
     put(fwm, f, CGAL::to_double(weight));
+    CGAL_postcondition(get(fwm, f) != 0);
   }
 
-  DEBUG_PRINT("E-W-S-N weights: " << vx1 << " " << vx2 << " " << vy1 << " " << vy2);
+  DEBUG_PRINT("E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
 
   return true;
 }
