@@ -11,11 +11,15 @@ The concept `HDVF` describes the requirements for Homological Discrete Vector Fi
  An HDVF is perfect when the reduced boundary is null; in this case, the maps \f$f\f$ and \f$g\f$ (and their duals) provide homology and cohomology information (generators, annotation...).
  
  In order to build a perfect HDVF, a pairing operation called `A` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathcal O(n^2)\f$.
- 
- The `HDVF` concept
+ Starting from this operation, `HDVF` provides two methods to generate perfect HDVFs (and hence compute homology):
+ - `compute_perfect_hdvf` which computes a perfect HDVF by chosing at each step the first A-pairings available (depending on cells ordering in the chain complex)
+ - `compute_rand_perfect_hdvf` which computes a perfect random HDVF by chosing at each step a rand A-pairing among all possible ones  (this option is thus slower)
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Abstract_simplicial_chain_complex<CoefficientType>`}
+\cgalHasModelsBare{`HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
+\cgalHasModelsBare{`HDVF<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
+\cgalHasModelsBare{`HDVF_persistence<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
+\cgalHasModelsBare{`HDVF_duality<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
 \cgalHasModelsEnd
 
 */

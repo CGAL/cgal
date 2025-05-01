@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <unordered_set>
 #include "Cubical_chain_complex.hpp"
-#include "hdvf.hpp"
+#include "hdvf_core.hpp"
 #include "per_hdvf.hpp"
 #include "sub_chain_complex.hpp"
 #include "tools_io.hpp"
@@ -38,7 +38,7 @@
 namespace CGAL {
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix>
-void Cub_output_vtk (HDVF<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
+void Cub_output_vtk (HDVF_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Cubical_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
@@ -175,7 +175,7 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_chain_complex<CoefType
         // Export informations of this hole
         info_file << i << " -> " << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
         
-        if (per_hdvf.hole_duration(hole))
+        if (per_hdvf.hole_duration(hole)>=0)
         {
             // Build name associated to the ith hole : filename_i
             string out_file = filename+"_"+to_string(i) ;

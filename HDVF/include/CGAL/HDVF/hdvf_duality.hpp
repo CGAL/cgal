@@ -13,7 +13,7 @@
 #include <iostream>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
-#include "CGAL/HDVF/hdvf.hpp"
+#include "CGAL/HDVF/hdvf_core.hpp"
 #include "CGAL/HDVF/sub_chain_complex.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 
@@ -34,14 +34,14 @@ namespace CGAL {
  */
 
 template<typename _CoefficientType, typename _ComplexType>
-class Dual_HDVF : public HDVF<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> {
+class Dual_HDVF : public HDVF_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> {
 private:
     // Matrices types
     typedef OSM::Chain<_CoefficientType, OSM::COLUMN> CChain;
     typedef OSM::Chain<_CoefficientType, OSM::ROW> RChain;
     
     // HDVF Type
-    typedef HDVF<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
+    typedef HDVF_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
     
     // Complex L
     const _ComplexType& _L ;
@@ -443,7 +443,7 @@ public:
 
 template<typename _CoefficientType, typename _ComplexType>
 Dual_HDVF<_CoefficientType,_ComplexType>::Dual_HDVF(const _ComplexType& L, SubChainComplex<_CoefficientType, _ComplexType>& K, int hdvf_opt) :
-HDVF<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
+HDVF_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
 /** \brief find a valid PairCell for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>
@@ -587,7 +587,7 @@ std::vector<PairCell> Dual_HDVF<_CoefficientType,_ComplexType>::findPairsA(int q
 template<typename _CoefficientType, typename _ComplexType>
 void Dual_HDVF<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
 {
-    std::cout << "==== Compute perfect HDVF over K" << endl ;
+    std::cout << endl << "==== Compute perfect HDVF over K" << endl ;
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
@@ -598,7 +598,7 @@ void Dual_HDVF<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     //    this->print_matrices() ;
     //    this->print_reduction() ;
     
-    std::cout << "==== Compute perfect HDVF over L-K" << endl ;
+    std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
@@ -619,7 +619,7 @@ std::vector<PairCell> Dual_HDVF<_CoefficientType,_ComplexType>::computePairingHD
 {
     // TODO : check both HDVFs are perfect
     
-    std::cout << "==== Compute pairing" << endl ;
+    std::cout << endl << "==== Compute pairing" << endl ;
     
     // Create a full SubChainComplex
     _subCC = SubChainComplex<_CoefficientType, _ComplexType>(_L) ;

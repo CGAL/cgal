@@ -18,7 +18,7 @@
 #include <functional>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
-#include "CGAL/HDVF/hdvf.hpp"
+#include "CGAL/HDVF/hdvf_core.hpp"
 
 /**
  * \class Filtration class
@@ -382,7 +382,7 @@ ostream& operator<< (ostream& out, const PerHoleT<_DegType>& hole)
 
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-class PersistentHDVF : public HDVF<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>
+class PersistentHDVF : public HDVF_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>
 {
     // Matrices types
     typedef OSM::Chain<_CoefficientType, OSM::COLUMN> CChain;
@@ -391,7 +391,7 @@ class PersistentHDVF : public HDVF<_CoefficientType,_ComplexType, OSM::Chain, OS
     typedef OSM::SubSparseMatrix<_CoefficientType, OSM::ROW> RMatrix;
     
     // HDVF type
-    typedef HDVF<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
+    typedef HDVF_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
     
     // Persistence diagram types
     typedef PerDegIntervalT<_DegType> PerDegInterval;
@@ -835,7 +835,7 @@ public:
 
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::PersistentHDVF(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt, bool with_export) : HDVF<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1), _computation_over(false)
+PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::PersistentHDVF(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt, bool with_export) : HDVF_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1), _computation_over(false)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;

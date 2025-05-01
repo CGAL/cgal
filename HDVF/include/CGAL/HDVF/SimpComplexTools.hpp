@@ -8,7 +8,7 @@
 //#include "config.h"
 #include "Simplex.hpp"
 #include "Abstract_simplicial_chain_complex.hpp"
-#include "hdvf.hpp"
+#include "hdvf_core.hpp"
 #include "per_hdvf.hpp"
 #include "sub_chain_complex.hpp"
 #include "tools_io.hpp"
@@ -31,7 +31,7 @@ namespace CGAL {
 /** \brief vtk export for SimpComplex */
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix, typename VertexIdType = int>
-void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
+void Simp_output_vtk (HDVF_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
     // Export PSC labelling

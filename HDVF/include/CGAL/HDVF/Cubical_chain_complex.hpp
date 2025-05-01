@@ -608,6 +608,9 @@ Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& 
     
     _cells.resize(_P[_dim], false) ;
     
+    // Initialize _visited_cells
+    _visited_cells.resize(_P[_dim], false) ;
+    
     // Initialize _cells, _base2bool, and _bool2base
     initialize_cells(cub,type);
     
@@ -615,11 +618,7 @@ Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& 
     _d.resize(_dim+1);
     for (int q = 0; q <= _dim; ++q) {
         calculate_d(q);
-    }
-    
-    // Initialize _visited_cells
-    _visited_cells.resize(_P.at(_dim), false) ;
-    
+    } 
 }
 
 // initialize_cells implementation

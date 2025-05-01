@@ -73,8 +73,8 @@ struct PairCell {
  *
  * The HDVF_core class contains all functions to build HDVF_core, create perfect HDVF_core (A and associate finders) and delineated generators through HDVF_core operations (R, M, W, MW and associate finders).
  *
- * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
- * \tparam _ComplexType The type of complex  (default is SimpComplex)
+ * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
+ * \tparam ComplexType The type of complex  (default is SimpComplex)
  *
  * \author Bac A.
  * \version 0.1.0
@@ -82,14 +82,14 @@ struct PairCell {
  */
 
 
-template<typename _CoefficientType, typename _ComplexType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix>
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType = OSM::Chain, template <typename, int> typename SparseMatrixType = OSM::SparseMatrix>
 class HDVF_core {
 public:
     /** \brief Typedefs for coefficient type and different chain and matrix types. */
-    typedef _ChainType<_CoefficientType, OSM::COLUMN> CChain;
-    typedef _ChainType<_CoefficientType, OSM::ROW> RChain;
-    typedef _SparseMatrixType<_CoefficientType, OSM::COLUMN> CMatrix;
-    typedef _SparseMatrixType<_CoefficientType, OSM::ROW> RMatrix;
+    typedef ChainType<CoefficientType, OSM::COLUMN> CChain;
+    typedef ChainType<CoefficientType, OSM::ROW> RChain;
+    typedef SparseMatrixType<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef SparseMatrixType<CoefficientType, OSM::ROW> RMatrix;
     
 protected:
     // Properties
@@ -111,14 +111,14 @@ protected:
     std::vector<CMatrix> _DD_col;
     
     /** \brief Reference to the underlying complex. */
-    const _ComplexType& _K;
+    const ComplexType& _K;
     
     /** \brief HDVF_core options for computation (computation of partial reduction). */
     int _hdvf_opt;
     
 public:
     // Constructor - default : full reduction computed, no sub-complex
-    HDVF_core(const _ComplexType& K, int hdvf_opt = OPT_FULL) ;
+    HDVF_core(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
     // Copy constructor
     HDVF_core(const HDVF_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt) { }
     // Destructor
@@ -179,17 +179,17 @@ public:
     
     // Method to project a chain onto P, S, or C cells
     template<int ChainTypeFlag>
-    _ChainType<_CoefficientType, ChainTypeFlag> projection(const _ChainType<_CoefficientType, ChainTypeFlag>& chain, FlagType flag, int dim) const {
+    ChainType<CoefficientType, ChainTypeFlag> projection(const ChainType<CoefficientType, ChainTypeFlag>& chain, FlagType flag, int dim) const {
         // Create a new chain to store the result
         // Better to initialize 'result' directly with the correct size and iterate over it
-        _ChainType<_CoefficientType, ChainTypeFlag> result(chain);
+        ChainType<CoefficientType, ChainTypeFlag> result(chain);
         
         // Iterate over each element of the chain
         std::vector<int> tmp ;
-        for (typename _ChainType<_CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
+        for (typename ChainType<CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
         {
             int cell_index = it->first;
-            _CoefficientType value = it->second;
+            CoefficientType value = it->second;
             
             // Check the flag of the corresponding cell
             if (_flag[dim][cell_index] != flag) {
@@ -351,8 +351,8 @@ protected:
 };
 
 // Constructor for the HDVF_core class
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::HDVF_core(const ComplexType& K, int hdvf_opt) : _K(K) {
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::HDVF_core(const ComplexType& K, int hdvf_opt) : _K(K) {
     // Get the dimension of the simplicial complex
     int dim = _K.dim();
     std::cout << "----> Starting HDVF_core creation / dim " << dim << std::endl ;
@@ -414,8 +414,8 @@ HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::HDVF_cor
 }
 
 // Method to print the matrices
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::ostream& HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::print_matrices(std::ostream& out) const {
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_matrices(std::ostream& out) const {
     // Iterate through each dimension and print the corresponding matrices
     for (int q = 0; q <= _K.dim(); ++q) {
         out << "------- Dimension " << q << std::endl;
@@ -452,8 +452,8 @@ std::ostream& HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixT
 
 /** \brief find a valid PairCell for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairA(int q, bool &found) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairA(int q, bool &found) // const
 {
     found = false;
     PairCell p;
@@ -479,8 +479,8 @@ PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>:
 
 /** \brief find a valid PairCell containing tau for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairA(int q, bool &found, int tau) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairA(int q, bool &found, int tau) // const
 {
     found = false;
     PairCell p ;
@@ -515,8 +515,8 @@ PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>:
 
 /** \brief find all the valid PairCell for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsA(int q, bool &found) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsA(int q, bool &found) // const
 {
     std::vector<PairCell> pairs;
     found = false ;
@@ -544,8 +544,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 
 /** \brief find all the valid PairCell containing tau for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsA(int q, bool &found, int tau) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsA(int q, bool &found, int tau) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -588,8 +588,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell for M in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairM(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairM(int q, bool &found) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -618,8 +618,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell containing tau for M in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairM(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairM(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -663,8 +663,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell for M in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsM(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsM(int q, bool &found) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -694,8 +694,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell containing tau for M in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsM(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsM(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -747,8 +747,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell for W in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairW(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairW(int q, bool &found) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -777,8 +777,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell containing tau for W in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairW(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairW(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -822,8 +822,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell for W in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsW(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsW(int q, bool &found) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -854,8 +854,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell containing tau for W in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsW(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsW(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -907,8 +907,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell for MW in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairMW(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairMW(int q, bool &found) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -951,8 +951,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find a valid PairCell containing tau for MW in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//PairCell HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairMW(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//PairCell HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairMW(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    PairCell p;
@@ -1040,8 +1040,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell for MW in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsMW(int q, bool &found) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsMW(int q, bool &found) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -1087,8 +1087,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 //
 ///** \brief find all the valid PairCell containing tau for MW in dimension q */
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::findPairsMW(int q, bool &found, int tau) // const
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsMW(int q, bool &found, int tau) // const
 //{
 //    found = false;
 //    std::vector<PairCell> pairs;
@@ -1182,8 +1182,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 // Method to perform operation A
 // tau1 is in dimension q, tau2 is in dimension q+1
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(int tau1, int tau2, int q) {
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+void HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int tau1, int tau2, int q) {
     //----------------------------------------------- Submatrices of D ----------------------------------------------------
     
     // Output operation details to the console
@@ -1313,8 +1313,8 @@ void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(i
 //// Method to perform operation R
 //// pi is in dimension q, sigma is in dimension q+1
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::R(int pi, int sigma, int q) {
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//void HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::R(int pi, int sigma, int q) {
 //    //----------------------------------------------- Submatrices of H ----------------------------------------------------
 //    
 //    if (_hdvf_opt & OPT_FULL)
@@ -1432,8 +1432,8 @@ void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(i
 //// Method to perform operation M
 //// pi is in dimension q, gamma is in dimension q
 ////template<typename CoefficientType, typename ComplexType>
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::M(int pi, int gamma, int q) {
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//void HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::M(int pi, int gamma, int q) {
 //    //----------------------------------------------- Submatrices of F ----------------------------------------------------
 //    
 //    if (_hdvf_opt & OPT_FULL)
@@ -1556,8 +1556,8 @@ void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(i
 //// Method to perform operation W
 //// gamma is in dimension q, sigma is in dimension q
 //
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::W(int sigma, int gamma, int q) {
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//void HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::W(int sigma, int gamma, int q) {
 //    
 //    //----------------------------------------------- Submatrices of G ----------------------------------------------------
 //    
@@ -1681,8 +1681,8 @@ void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(i
 //// Method to perform operation MW
 //// gamma is in dimension q, sigma is in dimension q
 //
-//template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-//void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::MW(int pi, int sigma, int q) {
+//template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+//void HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::MW(int pi, int sigma, int q) {
 //    
 //    //----------------------------------------------- Submatrices of G ----------------------------------------------------
 //    
@@ -1802,8 +1802,8 @@ void HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::A(i
 // Method to compute a perfect HDVF_core (Higher Dimensional Vector Field)
 // Returns a vector of PairCell objects representing the pairs found
 
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::computePerfectHDVF(bool verbose) {
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::computePerfectHDVF(bool verbose) {
     std::vector<PairCell> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dim(); // Get the dimension of the complex K
@@ -1843,8 +1843,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 // Method to compute a random perfect HDVF_core (Higher Dimensional Vector Field)
 // Returns a vector of PairCell objects representing the pairs found
 
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::computeRandPerfectHDVF(bool verbose) {
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::computeRandPerfectHDVF(bool verbose) {
     std::vector<PairCell> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dim(); // Get the dimension of the complex K
@@ -1892,8 +1892,8 @@ std::vector<PairCell> HDVF_core<CoefficientType, ComplexType, _ChainType, _Spars
 
 // Method to get cells if with a given flag (P,S,C) for each dimension
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<std::vector<int> > HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::get_flag (FlagType flag) const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<std::vector<int> > HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag (FlagType flag) const
 {
     std::vector<std::vector<int> > res(_K.dim()+1) ;
     for (int q=0; q<=_K.dim(); ++q)
@@ -1909,8 +1909,8 @@ std::vector<std::vector<int> > HDVF_core<CoefficientType, ComplexType, _ChainTyp
 
 // Method to get cells with a given flag (P,S,C) for a given dimension
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::vector<int> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::get_flag_dim (FlagType flag, int q) const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::vector<int> HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag_dim (FlagType flag, int q) const
 {
     std::vector<int> res ;
     for (int i=0; i<_K.nb_cells(q); ++i)
@@ -1923,8 +1923,8 @@ std::vector<int> HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatr
 
 // Method to print the current state of the reduction
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::ostream& HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::print_reduction(std::ostream& out) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_reduction(std::ostream& out) // const
 {
     // Print PSC
     out << "----- flags of cells:" << std::endl;
@@ -1999,8 +1999,8 @@ std::ostream& HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixT
 
 // Method to print A-pairs
 //template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename _ChainType, template <typename, int> typename _SparseMatrixType>
-std::ostream& HDVF_core<CoefficientType, ComplexType, _ChainType, _SparseMatrixType>::print_pairs(const std::vector<PairCell>& pairs, std::ostream& out) // const
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_pairs(const std::vector<PairCell>& pairs, std::ostream& out) // const
 {
     for (const auto& pair : pairs) {
         out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;

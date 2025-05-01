@@ -13,7 +13,6 @@
 #include "CGAL/HDVF/SimpComplexTools.hpp"
 #include "CGAL/HDVF/Cubical_chain_complex.hpp"
 #include "CGAL/HDVF/CubComplexTools.hpp"
-#include "CGAL/HDVF/hdvf.hpp"
 #include "CGAL/HDVF/hdvf_tools.hpp"
 #include "CGAL/HDVF/hdvf_duality.hpp"
 #include "CGAL/OSM/OSM.hpp"
