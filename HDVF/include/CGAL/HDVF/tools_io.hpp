@@ -17,6 +17,7 @@
 #include <set>
 
 namespace CGAL {
+namespace HDVF {
 
 using namespace std ;
 
@@ -1152,7 +1153,8 @@ private:
     }
 } ;
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 
 #endif /* tools_io_hpp */

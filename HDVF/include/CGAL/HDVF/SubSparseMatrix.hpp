@@ -15,7 +15,7 @@
 #include "CGAL/OSM/SparseMatrix.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
 
-
+namespace CGAL {
 namespace OSM {
 
 /**
@@ -123,6 +123,7 @@ public:
     }
 };
 
-}
+} /* end namespace OSM */
+} /* end namespace CGAL */
 
 #endif

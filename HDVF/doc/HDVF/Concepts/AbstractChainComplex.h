@@ -14,7 +14,7 @@ The concept `AbstractChainComplex` describes the requirements for (topological) 
  
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Abstract_simplicial_chain_complex<CoefficientType>`}
+\cgalHasModelsBare{`CGAL::Abstract_simplicial_chain_complex<Ring>`}
 \cgalHasModelsEnd
 
 */

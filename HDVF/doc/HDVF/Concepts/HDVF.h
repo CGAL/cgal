@@ -16,15 +16,59 @@ The concept `HDVF` describes the requirements for Homological Discrete Vector Fi
  - `compute_rand_perfect_hdvf` which computes a perfect random HDVF by chosing at each step a rand A-pairing among all possible ones  (this option is thus slower)
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`HDVF_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
-\cgalHasModelsBare{`HDVF<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
-\cgalHasModelsBare{`HDVF_persistence<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
-\cgalHasModelsBare{`HDVF_duality<CoefficientType, ComplexType, ChainType, SparseMatrixType>`}
+\cgalHasModelsBare{`HDVF_core<Ring, AbstractChainComplex, SparseChain, SparseMatrix>`}
+\cgalHasModelsBare{`HDVF<Ring, AbstractChainComplex>`}
+\cgalHasModelsBare{`HDVF_persistence<Ring, AbstractChainComplex>`}
+\cgalHasModelsBare{`HDVF_duality<Ring, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
+ \sa `AbstractChainComplex`
+ \sa `Ring`
+ \sa `SparseChain`
+ \sa `SparseMatrix`
+ 
+ \warning How to describe constants declared in the namespace HDVF and used everywhere?
+ 
+ /** \brief Enum for the HDVF_core label of cells. */
+ static enum FlagType {
+     PRIMARY,
+     SECONDARY,
+     CRITICAL,
+     NONE // For duality and persistence
+ };
+
+ /** \brief HDVF_core options (compute only reduced boundary). */
+ const int OPT_BND = 0b0001;
+ /** \brief HDVF_core options (compute only reduced boundary and f). */
+ const int OPT_F = 0b0010;
+ /** \brief HDVF_core options (compute only reduced boundary and g). */
+ const int OPT_G = 0b0100;
+ /** \brief HDVF_core options (compute full reduction). */
+ const int OPT_FULL = 0b1000;
+
+ /** \brief Enum for export: lets chose the type of export.
+  *
+  * - PSC export a flag encoding the label of the cell: P (-1), S (1), C (0)
+  * - FSTAR exports a boolean flag for a given cohomology generator (true: the cell belongs to the cycle, false: the cell does not belong)
+  * - G exports a boolean flag for a given homology generator (true: the cell belongs to the cycle, false: the cell does not belong)
+  */
+ enum ExportType {
+     PSC,
+     FSTAR,
+     G
+ };
+
+ /** \brief PairCell: Structure to represent a pair of cells (for HDVF operations).
+  */
+ struct PairCell {
+     int sigma;  // Index of the first cell
+     int tau;    // Index of the second cell
+     int dim;    // Dimension of cells: q/q+1 for A and R, q for other operations
+ };
+ 
 */
 
-class AbstractChainComplex
+class HDVF
 {
 public:
 /// \name Types

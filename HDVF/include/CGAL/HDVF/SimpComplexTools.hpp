@@ -25,15 +25,17 @@
  */
 
 namespace CGAL {
+namespace HDVF {
 
 // SimpComplex
 
 /** \brief vtk export for SimpComplex */
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix, typename VertexIdType = int>
-void Simp_output_vtk (HDVF_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
+void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
+    typedef Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
     vector<vector<int> > labels = hdvf.export_labelsPSC() ;
@@ -157,12 +159,12 @@ public:
 
 /** \brief Export persistent information to vtk files */
 template <typename CoefType, typename DegType>
-void Per_Simp_output_vtk (PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType>, DegType> &per_hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "per")
+void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<CoefType>, DegType> &per_hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "per")
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using perHDVFType = PersistentHDVF<CoefType, Simplicial_chain_complex<CoefType>, DegType> ;
+    using perHDVFType = Hdvf_persistence<CoefType, Simplicial_chain_complex<CoefType>, DegType> ;
     using ComplexType = Simplicial_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
     // Iterate over persistence diagram (iterator over non zero intervals)
@@ -222,6 +224,7 @@ void Per_Simp_output_vtk (PersistentHDVF<CoefType, Simplicial_chain_complex<Coef
     Simp_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf") ;
 }
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // SimpComplexTools_HPP

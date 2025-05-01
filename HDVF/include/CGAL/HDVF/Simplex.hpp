@@ -8,6 +8,7 @@
 #include <iostream>
 
 namespace CGAL {
+namespace HDVF {
 
 class Simplex {
     template<typename _CoefficientType>
@@ -75,6 +76,7 @@ class Simplex {
     }
 };
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // SIMPLEX_HPP

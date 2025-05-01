@@ -20,6 +20,7 @@
 #include "CGAL/OSM/OSM.hpp"
 
 namespace CGAL {
+namespace HDVF {
 
 // Forward declaration of Duality_cubical_complex_tools
 template<typename T> class Duality_cubical_complex_tools ;
@@ -35,16 +36,16 @@ ostream & operator<<(ostream & out, std::vector<int> c)
 }
 
 /*!
-\ingroup PkgHDVFAlgorithmClasses
-
-The class `Cubical_chain_complex` represents (topological) chain complexes associated to cubical complexes.
-
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Cubical_chain_complex` represents (topological) chain complexes associated to cubical complexes.
+ 
  \paragraph Description
  
-An cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
-
-<img src="cubical_complex.png" align="center" width=20%/>
-
+ An cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
+ 
+ <img src="cubical_complex.png" align="center" width=20%/>
+ 
  A cell in a cubical complex of dimension q is the cartesian product of \f$q\f$ intervals \f$[n_1,n_1+\delta_1]\times [n_q,n_q+\delta_q] \f$ with \f$n_i\in \mathbb N \f$ and \f$\delta_i = 0,1\f$.
  The dimension of such a cell is \f$\sum_{i=1}^q \delta_i\f$.
  A 0-cell is thus a vertex, a 1-cell contains one non zero delta (edge along one of the axes), a 2-cell contains two non zero deltas (square along two of the axes), while a 3-cell is a cube...
@@ -62,13 +63,13 @@ An cubical complex is a set of "square" cells such that: all the faces of a give
  The dimension of a cell is the given by the number of odd coordinates.
  In our previous example, \f$B_1=3, B_2=2, B_3=1\f$, hence \f$N_1=7, N_2=5, N_3=3\f$ and we get the following Khalimsky coordinates: \f$\mathrm{khal}(v) = (4,2,0)\f$, \f$\mathrm{khal}(e) = (1,2,0)\f$ and \f$\mathrm{khal}(f) = (5,1,2)\f$.
  
-The boundary map of the complex is computed by the constructor of the class using the standard formula with Khalimsky coordinates. Given a cell \f$\sigma\f$ with \f$\mathrm{khal}(\sigma) = (x_1,\ldots,x_q)\f$
+ The boundary map of the complex is computed by the constructor of the class using the standard formula with Khalimsky coordinates. Given a cell \f$\sigma\f$ with \f$\mathrm{khal}(\sigma) = (x_1,\ldots,x_q)\f$
  \f[ \partial(x_1,\ldots,x_q) = \sum_{\substack{i=0\\x_i\text{ odd}}}^q (-1)^{j(i)} \left( (x_1,\ldots,x_i+1,\ldots, x_q) - (x_1,\ldots,x_i-1,\ldots, x_q)\right)\f]
  where \f$j(i)\f$ is the number of odd coordinates between \f$x_1\f$ and \f$x_i\f$.
-
  
  
-Let us also point out that besides Khalimsky coordinates, cells are indexed along each dimension, thus each cell is uniquely determined by its dimension and its index in this dimension (called "base index").
+ 
+ Let us also point out that besides Khalimsky coordinates, cells are indexed along each dimension, thus each cell is uniquely determined by its dimension and its index in this dimension (called "base index").
  
  \paragraph Implementation Implementation details
  
@@ -79,11 +80,11 @@ Let us also point out that besides Khalimsky coordinates, cells are indexed alon
  As stated above, besides this boolean representation, topological computations require to identify the bases of cells in any dimension (bases of the free chain groups). Hence, a cell of dimension \f$d\f$ is also identified by its index in the basis of \f$d\f$-dimensional cells. This index is called its *basis index*. The vector `_bool2base` stores, for each dimension, the map between boolean and base indices, while the `_base2bool` stores, for each dimension, the permutation between base and boolean indices.
  
  <img src="cubical_implementation.png" align="center" width=50%/>
-
-\cgalModels{GeometricChainComplex}
-
-\tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
-*/
+ 
+ \cgalModels{GeometricChainComplex}
+ 
+ \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
+ */
 
 
 template<typename CoefficientType>
@@ -775,7 +776,7 @@ template<typename CoefficientType>
 std::vector<int> Cubical_chain_complex<CoefficientType>::calculate_boundaries(int idcell) const {
     std::vector<int> boundaries;
     std::vector<int> c = ind2khal(idcell);
-
+    
     for (int i = 0; i < _dim; ++i) {
         if (c[i] % 2 == 1)
         {
@@ -1012,6 +1013,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
     out.close() ;
 }
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // CGAL_CUBICAL_CHAIN_COMPLEX_HPP

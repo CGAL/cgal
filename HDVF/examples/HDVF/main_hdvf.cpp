@@ -1,6 +1,6 @@
-// HDVF off files
+// Hdvf off files
 // --------
-// Computes a "perfect" HDVF and provides a batch mode to specify arguments
+// Computes a "perfect" Hdvf and provides a batch mode to specify arguments
 // For help: hdvf -h
 // --------
 // A. Bac
@@ -10,26 +10,27 @@
 #include <chrono>
 #include <type_traits>
 #include <typeinfo>
-#include "CGAL/HDVF/Zp.hpp"
-#include "CGAL/HDVF/Simplex.hpp"
-#include "CGAL/HDVF/tools_io.hpp"
-#include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
-#include "CGAL/HDVF/SimpComplexTools.hpp"
-#include "CGAL/HDVF/Cubical_chain_complex.hpp"
-#include "CGAL/HDVF/CubComplexTools.hpp"
-#include "CGAL/HDVF/hdvf.hpp"
+#include "CGAL/Hdvf/Zp.hpp"
+#include "CGAL/Hdvf/Simplex.hpp"
+#include "CGAL/Hdvf/tools_io.hpp"
+#include "CGAL/Hdvf/Abstract_simplicial_chain_complex.hpp"
+#include "CGAL/Hdvf/SimpComplexTools.hpp"
+#include "CGAL/Hdvf/Cubical_chain_complex.hpp"
+#include "CGAL/Hdvf/CubComplexTools.hpp"
+#include "CGAL/Hdvf/hdvf.hpp"
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/HDVF/hdvf_tools.hpp"
+#include "CGAL/Hdvf/hdvf_tools.hpp"
 #include "arguments.h"
 
 using namespace CGAL ;
+using namespace HDVF ;
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
 
 //#define SCALAR 5
 
-// HDVF computation, output and export
+// Hdvf computation, output and export
 
 template <typename MeshType, typename ComplexType>
 void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const Options& options)
@@ -47,9 +48,9 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
 }
 
 template <typename CoefficientType, typename ComplexType>
-HDVF<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
+Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
-    HDVF<CoefficientType, ComplexType>& hdvf(*(new HDVF<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
+    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
     std::vector<PairCell> pairs ;
     if (!options.random)
         pairs = hdvf.computePerfectHDVF(options.verbose);
@@ -89,7 +90,7 @@ void main_code (const Options &options)
     if (options.in_format == InputFormat::SIMP)
     {
         using ComplexType = Abstract_simplicial_chain_complex<CoefficientType>  ;
-        using HDVFType = HDVF<CoefficientType, ComplexType> ;
+        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
         
         // MeshObject
         Mesh_object mesh ;
@@ -100,7 +101,7 @@ void main_code (const Options &options)
         
         mesh_complex_output<Mesh_object, ComplexType>(mesh, complex, options) ;
         
-        // HDVF computation, export, output
+        // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
         
         // Export to vtk
@@ -110,7 +111,7 @@ void main_code (const Options &options)
     else if (options.in_format == InputFormat::OFF)
     {
         using ComplexType = Simplicial_chain_complex<CoefficientType> ;
-        using HDVFType = HDVF<CoefficientType, ComplexType> ;
+        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
         
         // MeshObject
         Mesh_object mesh ;
@@ -121,7 +122,7 @@ void main_code (const Options &options)
         
         mesh_complex_output<Mesh_object, ComplexType>(mesh, complex, options) ;
         
-        // HDVF computation, export, output
+        // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
         
         // Loop on operations with vtk export
@@ -145,7 +146,7 @@ void main_code (const Options &options)
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
         using ComplexType = Cubical_chain_complex<CoefficientType> ;
-        using HDVFType = HDVF<CoefficientType, ComplexType> ;
+        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
         
         Cub_object mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
@@ -170,7 +171,7 @@ void main_code (const Options &options)
         
         mesh_complex_output<Cub_object, ComplexType>(mesh, complex, options) ;
         
-        // HDVF computation, export, output
+        // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
         
         // Loop on operations with vtk export

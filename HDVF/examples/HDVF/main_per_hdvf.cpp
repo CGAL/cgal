@@ -24,6 +24,7 @@
 #include "arguments.h"
 
 using namespace CGAL ;
+using namespace HDVF ;
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
@@ -77,9 +78,9 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
 }
 
 template <typename CoefficientType, typename ComplexType, typename DegType>
-PersistentHDVF<CoefficientType, ComplexType, DegType>& per_HDVF_comput (const ComplexType& complex, const Filtration<CoefficientType, ComplexType, DegType>& f, const Options &options)
+Hdvf_persistence<CoefficientType, ComplexType, DegType>& per_HDVF_comput (const ComplexType& complex, const Filtration<CoefficientType, ComplexType, DegType>& f, const Options &options)
 {
-    typedef PersistentHDVF<CoefficientType, ComplexType, DegType> HDVFType ;
+    typedef Hdvf_persistence<CoefficientType, ComplexType, DegType> HDVFType ;
     HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export)));
     
     cout << "----> START computing persistent homology" << endl ;
@@ -188,7 +189,7 @@ void main_code (const Options &options)
     else if (options.in_format == InputFormat::OFF)
     {
         using ComplexType = Simplicial_chain_complex<CoefficientType> ;
-        using HDVFType = PersistentHDVF<CoefficientType, ComplexType,DegType> ;
+        using HDVFType = Hdvf_persistence<CoefficientType, ComplexType,DegType> ;
         
         // MeshObject
         Mesh_object mesh ;
@@ -216,7 +217,7 @@ void main_code (const Options &options)
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
         using ComplexType = Cubical_chain_complex<CoefficientType> ;
-        using HDVFType = PersistentHDVF<CoefficientType, ComplexType, DegType> ;
+        using HDVFType = Hdvf_persistence<CoefficientType, ComplexType, DegType> ;
         
         Cub_object mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;

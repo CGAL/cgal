@@ -27,6 +27,7 @@
 //#define SCALAR 5
 
 using namespace CGAL ;
+using namespace HDVF ;
 
 template <typename CoefficientType, typename MeshType, typename ComplexType>
 void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const SubChainComplex<CoefficientType, ComplexType>& K, const Options& options)
@@ -56,7 +57,7 @@ inline ostream& dual_pairs_output(const std::vector<PairCell>& pairs, ostream& o
 }
 
 template <typename CoefficientType, typename ComplexType>
-void dual_HDVF_pair (Dual_HDVF<CoefficientType, ComplexType>& dual_hdvf, const Options &options)
+void dual_HDVF_pair (Hdvf_duality<CoefficientType, ComplexType>& dual_hdvf, const Options &options)
 {
     // Compute pairing
     std::vector<PairCell> pairs = dual_hdvf.computePairingHDVF() ;
@@ -81,9 +82,9 @@ void dual_HDVF_pair (Dual_HDVF<CoefficientType, ComplexType>& dual_hdvf, const O
 }
 
 template <typename CoefficientType, typename ComplexType>
-Dual_HDVF<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType& L,  SubChainComplex<CoefficientType, ComplexType>& K, const Options &options)
+Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType& L,  SubChainComplex<CoefficientType, ComplexType>& K, const Options &options)
 {
-    using HDVFType = Dual_HDVF<CoefficientType, ComplexType> ;
+    using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
     using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
     
     HDVFType& hdvf(*(new HDVFType(L, K, options.HDVF_opt)));
@@ -153,7 +154,7 @@ void main_code (const Options &options)
     else if (options.in_format == InputFormat::OFF)
     {
         using ComplexType = Simplicial_chain_complex<CoefficientType> ;
-        using HDVFType = Dual_HDVF<CoefficientType, ComplexType> ;
+        using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
         using ToolsType = Duality_simplicial_complex_tools<CoefficientType> ;
         using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
 
@@ -201,7 +202,7 @@ void main_code (const Options &options)
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
         using ComplexType = Cubical_chain_complex<CoefficientType> ;
-        using HDVFType = Dual_HDVF<CoefficientType, ComplexType> ;
+        using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
         using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
         using ToolsType = Duality_cubical_complex_tools<CoefficientType> ;
         

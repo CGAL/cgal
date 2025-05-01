@@ -12,6 +12,7 @@
 #include "CGAL/OSM/OSM.hpp"
 
 namespace CGAL {
+namespace HDVF {
 
 // IO tools
 
@@ -23,9 +24,9 @@ inline ostream & operator<< (ostream &out, const PairCell &p)
 
 
 template <typename CoefType, typename ComplexType>
-void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
+void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                       ComplexType &complex,
-                      const std::function<void(HDVF<CoefType, ComplexType> &hdvf, ComplexType &complex)> &output_vtk)
+                      const std::function<void(Hdvf<CoefType, ComplexType> &hdvf, ComplexType &complex)> &output_vtk)
 {
     bool over = false ;
     output_vtk(hdvf, complex) ;
@@ -112,6 +113,7 @@ void interaction_loop(HDVF<CoefType, ComplexType> &hdvf,
     }
 }
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // HDVF_TOOLS_HPP

@@ -15,6 +15,7 @@
 #include "CGAL/OSM/Bitboard.hpp"
 
 namespace CGAL {
+namespace HDVF {
 
 /**
  * \class SubChainComplex
@@ -200,6 +201,7 @@ public:
     }
 };
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif /* SUB_CHAIN_COMPLEX_H */

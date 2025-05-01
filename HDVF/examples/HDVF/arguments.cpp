@@ -4,6 +4,7 @@
 
 using namespace std ;
 using namespace CGAL ;
+using namespace HDVF ;
 
 void usage()
 {

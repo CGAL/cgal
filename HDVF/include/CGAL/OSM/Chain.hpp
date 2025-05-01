@@ -19,7 +19,7 @@
 #include <iterator>
 #include <iostream>
 
-
+namespace CGAL {
 namespace OSM {
 
 /**
@@ -37,12 +37,12 @@ namespace OSM {
  */
 template <typename _CoefficientType, int _ChainTypeFlag>
 class Chain {
-
+    
 public:
     typedef std::pair<int, _CoefficientType> pair;
     typedef typename std::unordered_map<int, _CoefficientType>::iterator iterator;
     typedef typename std::unordered_map<int, _CoefficientType>::const_iterator const_iterator;
-
+    
     // Add these lines to allow the SparseMatrix class to access other templated
     // SparsedMatrix private members.
     template <typename _CT, int _CTF>
@@ -52,16 +52,16 @@ public:
 protected:
     /** \brief The chain inner representation and storage of data. */
     std::unordered_map<int, _CoefficientType> chainData;
-
+    
     /** \brief The chain coefficient type. */
     typedef _CoefficientType coefficientType;
-
+    
     /** \brief The chain type flag. */
     int chainTypeFlag = _ChainTypeFlag;
-
+    
     /** \brief The chain boundary. */
     int upperBound;
-
+    
 public:
     /**
      * \brief Create new Chain for SparseMatrix object.
@@ -84,7 +84,7 @@ public:
         upperBound = 0;
         chainData = std::unordered_map<int, _CoefficientType>();
     }
-
+    
     /**
      * \brief Create new Chain for SparseMatrix object.
      * 
@@ -121,7 +121,7 @@ public:
      * \date 08/04/2024
      */
     size_t dimension() const { return upperBound ; }
-
+    
     /**
      * \brief Create new Chain for SparseMatrix object.
      * 
@@ -147,9 +147,9 @@ public:
     Chain(const Chain &_otherToCopy) {
         upperBound = _otherToCopy.upperBound;
         chainData = _otherToCopy.chainData;
-//        *this = _otherToCopy;
+        //        *this = _otherToCopy;
     }
-
+    
     /**
      * \brief Assign to other chain.
      * 
@@ -172,10 +172,10 @@ public:
     Chain& operator=(const Chain &_otherToCopy) {
         upperBound = _otherToCopy.upperBound;
         chainData = _otherToCopy.chainData;
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Displays a Chain in the output stream.
      * 
@@ -195,15 +195,15 @@ public:
         for (const_iterator i = _chain.chainData.begin() ; i != _chain.chainData.end() ; ++i) {
             _stream << i->first << ": " << i->second << ", ";
         }
-
+        
         if (_chain.chainData.size() > 0) {
             _stream << "\b\b";
         }
         _stream << "]";
-
+        
         return _stream;
     }
-
+    
     /**
      * \brief Adds two chains together.
      * 
@@ -229,10 +229,10 @@ public:
     friend Chain operator+(const Chain &_first, const Chain<_CoefficientType, _CTF> &_second) {
         Chain newChain = _first;
         newChain += _second;
-
+        
         return newChain;
     }
-
+    
     /**
      * \brief Substract two chains together.
      * 
@@ -261,7 +261,7 @@ public:
         
         return newChain;
     }
-
+    
     /**
      * \brief Apply factor on each coefficients.
      * 
@@ -283,7 +283,7 @@ public:
         
         return newChain;
     }
-
+    
     /**
      * \brief Apply factor on each coefficients.
      * 
@@ -305,7 +305,7 @@ public:
         
         return newChain;
     }
-
+    
     /**
      * \brief Perform matrix multiplication between two chains.
      * 
@@ -328,7 +328,7 @@ public:
      */
     template <typename _CT>
     friend SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
-
+    
     /**
      * \brief Perform matrix multiplication between two chains.
      * 
@@ -351,7 +351,7 @@ public:
      */
     template <typename _CT>
     friend SparseMatrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
-
+    
     /**
      * \brief Perform dot product between two chains.
      * 
@@ -372,7 +372,7 @@ public:
      */
     template <typename _CT>
     friend _CT operator*(const Chain<_CT, ROW> &_row, const Chain<_CT, COLUMN> &_column);
-
+    
     /**
      * \brief Add a chain and assign.
      * 
@@ -397,7 +397,7 @@ public:
         if (this->upperBound != _other.upperBound) {
             throw std::runtime_error("Chains must be the same size.");
         }
-
+        
         for (pair pair: _other.chainData) {
             this->chainData[pair.first] += pair.second;
             
@@ -405,10 +405,10 @@ public:
                 this->chainData.erase(pair.first);
             }
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Substract a chain and assign.
      * 
@@ -433,18 +433,18 @@ public:
         if (this->upperBound != _other.upperBound) {
             throw std::runtime_error("Chains must be the same size.");
         }
-
+        
         for (pair pair: _other.chainData) {
             this->chainData[pair.first] -= pair.second;
-
+            
             if (this->chainData[pair.first] == 0) {
                 this->chainData.erase(pair.first);
             }
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Apply factor on each coefficients and assign.
      * 
@@ -463,14 +463,14 @@ public:
             this->chainData.clear();
             return *this;
         }
-
+        
         for (pair pair: this->chainData) {
             this->chainData[pair.first] = pair.second * _lambda;
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Get a coefficient from the chain.
      * 
@@ -490,10 +490,10 @@ public:
         if (_index >= upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(upperBound) + ".");
         }
-
+        
         return chainData.at(_index);
     }
-
+    
     /**
      * \brief Set a coefficient in the chain.
      * 
@@ -513,10 +513,10 @@ public:
         if (_index >= upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(upperBound) + ".");
         }
-
+        
         return chainData[_index];
     }
-
+    
     /**
      * \brief Checks if a coefficient is null. Should be used instead of operator[] for that case.
      * 
@@ -530,7 +530,7 @@ public:
     const bool isNull(const int _index) const {
         return chainData.find(_index) == chainData.end();
     }
-
+    
     /**
      * \brief Checks if the chain is null.
      * 
@@ -543,7 +543,7 @@ public:
     const bool isNull() const {
         return chainData.size() == 0;
     }
-
+    
     /**
      * \brief Get a subchain from the chain.
      * 
@@ -565,7 +565,7 @@ public:
      */
     template <typename _CT, int _CTF>
     friend Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const std::vector<int> &_indexes);
-
+    
     /**
      * \brief Get a subchain from the chain.
      * 
@@ -587,7 +587,7 @@ public:
      */
     template <typename _CT, int _CTF>
     friend Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const int _indexes);
-
+    
     /**
      * \brief Get a subchain from the chain and assign.
      * 
@@ -610,10 +610,10 @@ public:
         for (int index : _indexes) {
             this->chainData.erase(index);
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Get a subchain from the chain and assign.
      * 
@@ -634,10 +634,10 @@ public:
      */
     Chain& operator/=(const int _index) {
         this->chainData.erase(_index);
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Set all coefficients to zero.
      * 
@@ -648,7 +648,7 @@ public:
     void nullify() {
         this->chainData.clear();
     }
-
+    
     /**
      * \brief Iterator to the beginning of the chain.
      * 
@@ -668,7 +668,7 @@ public:
     iterator begin() noexcept {
         return chainData.begin();
     }
-
+    
     /**
      * \brief Constant iterator to the beginning of the chain.
      * 
@@ -688,7 +688,7 @@ public:
     const_iterator begin() const noexcept {
         return chainData.begin();
     }
-
+    
     /**
      * \brief Constant iterator to the beginning of the chain.
      * 
@@ -708,7 +708,7 @@ public:
     const_iterator cbegin() const noexcept {
         return chainData.cbegin();
     }
-
+    
     /**
      * \brief Iterator to the end of the chain.
      * 
@@ -728,7 +728,7 @@ public:
     iterator end() noexcept {
         return chainData.end();
     }
-
+    
     /**
      * \brief Constant iterator to the end of the chain.
      * 
@@ -748,7 +748,7 @@ public:
     const_iterator end() const noexcept {
         return chainData.end();
     }
-
+    
     /**
      * \brief Constant iterator to the end of the chain.
      * 
@@ -768,7 +768,7 @@ public:
     const_iterator cend() const noexcept {
         return chainData.cend();
     }
-
+    
     /**
      * \brief Transpose a Chain.
      * 
@@ -782,15 +782,15 @@ public:
      */
     Chain<_CoefficientType, COLUMN + ROW - _ChainTypeFlag> transpose() {
         Chain<_CoefficientType, COLUMN + ROW - _ChainTypeFlag> chain;
-
+        
         chain.upperBound = this->upperBound;
         for (pair pair: this->chainData) {
             chain.chainData[pair.first] = pair.second;
         }
-
+        
         return chain;
     }
-
+    
     /**
      * \brief Checks if chain is a column.
      * 
@@ -805,7 +805,7 @@ public:
     bool isColumn() const {
         return _ChainTypeFlag == COLUMN;
     }
-
+    
     /**
      * \brief Checks if chain is a row.
      * 
@@ -846,11 +846,11 @@ public:
 template <typename _CT>
 SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
     SparseMatrix<_CT, COLUMN> matrix(_column.upperBound, _row.upperBound);
-
+    
     for (std::pair<int, _CT> pair : _row.chainData) {
         OSM::setColumn(matrix,pair.first,_column * pair.second) ;
     }
-
+    
     return matrix;
 }
 
@@ -877,11 +877,11 @@ SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Cha
 template <typename _CT>
 SparseMatrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
     SparseMatrix<_CT, ROW> matrix(_column.upperBound, _row.upperBound);
-
+    
     for (std::pair<int, _CT> pair : _column.chainData) {
         OSM::setRow(matrix,pair.first,_row * pair.second);
     }
-
+    
     return matrix;
 }
 
@@ -913,7 +913,7 @@ _CoefficientType operator*(const Chain<_CoefficientType, ROW> &_row, const Chain
     for (std::pair<int, _CoefficientType> pair: _column.chainData) {
         indexes[pair.first] += 1;
     }
-
+    
     // Perform dot product
     _CoefficientType result = _CoefficientType();
     for (std::pair<int, int> index: indexes) {
@@ -921,7 +921,7 @@ _CoefficientType operator*(const Chain<_CoefficientType, ROW> &_row, const Chain
             result += _row.chainData.at(index.first) * _column.chainData.at(index.first);
         }
     }
-
+    
     return result;
 }
 
@@ -975,6 +975,7 @@ Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const int _index) {
     return newChain;
 }
 
-}
+} /* end namespace OSM */
+} /* end namespace CGAL */
 
 #endif

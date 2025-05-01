@@ -54,15 +54,15 @@ const int index64[64] = {
    13, 18,  8, 12,  7,  6,  5, 63
 };
 
-
+namespace CGAL {
 namespace OSM {
 
 /**
  * \class Bitboard
  * \brief Bitboards are long bitset with specific operations.
- * 
+ *
  * Bitboards are used with SparseMatrix to quickly find and set non empty columns.
- * 
+ *
  * \author Fedyna K.
  * \version 0.2.0
  * \date 23/05/2024
@@ -251,7 +251,7 @@ public:
                     ++(*this);
                 } while (index >_index);
             }
-                
+            
         }
         
         /**
@@ -365,64 +365,64 @@ public:
         std::size_t size;
         std::vector<std::uint64_t> iteratedBoards;
     };
-
+    
     /**
      * \brief Bitboard default constructor. Initialize bitboard with all zeros and size 64.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
      */
     Bitboard(): boards({0UL}), _size(64) {}
-
+    
     /**
      * \brief Bitboard value intializer. Initialize bitboard with given vector of bitboards.
-     * 
+     *
      * \param[in] _bitboards The vector of 64bit ints.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
      */
     Bitboard(const std::vector<std::uint64_t> &_bitboard):
-        boards(_bitboard),
-        _size(_bitboard.size() * 64)
+    boards(_bitboard),
+    _size(_bitboard.size() * 64)
     {}
     
     /**
      * \brief Bitboard size initializer. Initialize bitboard with given size.
-     * 
+     *
      * \param[in] _size The size of the bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
      */
     Bitboard(const std::size_t _size, bool empty = true):
-        boards(std::vector<std::uint64_t>(_size / BITBOARD_INT_SIZE + (_size % BITBOARD_INT_SIZE != 0))),
-        _size(_size) 
+    boards(std::vector<std::uint64_t>(_size / BITBOARD_INT_SIZE + (_size % BITBOARD_INT_SIZE != 0))),
+    _size(_size)
     { if (!empty) bit_not() ; }
-
+    
     /**
      * \brief Bitboard copy constructor. Initialize bitboard with given bitboard.
-     * 
+     *
      * \param[in] _bitboards The bitboard to copy.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
      */
     Bitboard(const Bitboard &_bitboard):
-        boards(_bitboard.boards),
-        _size(_bitboard._size)
+    boards(_bitboard.boards),
+    _size(_bitboard._size)
     {}
     
-
+    
     /**
      * \brief Bitboard assign operator. Initialize bitboard with given bitboard.
-     * 
+     *
      * \param[in] _bitboard The bitboard to copy.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -430,10 +430,10 @@ public:
     Bitboard& operator=(const Bitboard &_bitboard) {
         this->boards = _bitboard.boards;
         this->_size = _bitboard._size;
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Bitwise NOT on a bitboard.
      *
@@ -448,7 +448,7 @@ public:
         {
             boards[i] = ~boards[i];
         }
-
+        
         return *this;
     }
     
@@ -470,21 +470,21 @@ public:
     /**
      * \brief Bitboard begin iterator that allows to loop through all non-null indices.
      * \returns The begin iterator.
-     * 
+     *
      * \note The iterator is constant.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
      */
     iterator begin() const { return iterator(0, _size, boards); }
-
+    
     /**
      * \brief Bitboard past-the-end iterator.
      * \returns The past-the-end iterator.
-     * 
+     *
      * \note The iterator is constant.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -503,7 +503,7 @@ public:
      */
     reverse_iterator reverse_begin() const { return reverse_iterator(_size-1, _size, boards); }
     reverse_iterator reverse_begin(size_t index) const { std::cout << "reverse with index " << index << std::endl ; return reverse_iterator(index, _size, boards); }
-
+    
     /**
      * \brief Bitboard past-the-end reverse_iterator.
      * \returns The past-the-end reverse_iterator.
@@ -515,14 +515,14 @@ public:
      * \date 23/05/2024
      */
     reverse_iterator reverse_end() const { return reverse_iterator(size_t_maxvalue, _size, boards); }
-
+    
     /**
      * \brief Stream operator that displays all bits.
-     * 
+     *
      * \param[in,out] _stream The stream to edit.
      * \param[in] _bitboard The bitboard to display.
      * \returns The edited stream.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -531,22 +531,22 @@ public:
         // Cheat for speed, iterate through all non-null indices and fill the in-between with zeros.
         std::size_t last = -1;
         for (auto index: _bitboard) {
-            _stream << std::string(index - last - 1, '0') << "1"; 
+            _stream << std::string(index - last - 1, '0') << "1";
             last = index;
         }
         // Add the leading zeros.
         _stream << std::string(_bitboard._size - last - 1, '0');
-
+        
         return _stream;
     }
-
+    
     /**
      * \brief Bitwise OR between two bitboards.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -556,14 +556,14 @@ public:
         res |= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -573,14 +573,14 @@ public:
         res |= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -590,14 +590,14 @@ public:
         res |= _left;
         return res;
     }
-
+    
     /**
      * \brief Bitwise AND between two bitboards.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -607,14 +607,14 @@ public:
         res &= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -624,14 +624,14 @@ public:
         res &= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -641,14 +641,14 @@ public:
         res &= _left;
         return res;
     }
-
+    
     /**
      * \brief Bitwise XOR between two bitboards.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -658,14 +658,14 @@ public:
         res ^= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -675,14 +675,14 @@ public:
         res ^= _right;
         return res;
     }
-
+    
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -692,13 +692,13 @@ public:
         res ^= _left;
         return res;
     }
-
+    
     /**
      * \brief Bitwise OR between two bitboards.
-     * 
+     *
      * \param[in] _other The other bitboard.
      * \returns The reference to the ORed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -707,16 +707,16 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] |= _other.boards[i];
         }
-
+        
         return *this;
     }
     
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _other The bit position.
      * \returns The reference to the ORed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -724,17 +724,17 @@ public:
     Bitboard& operator|=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-
+        
         boards[boardIndex] |= bit;
         return *this;
     }
-
+    
     /**
      * \brief Bitwise AND between two bitboards.
-     * 
+     *
      * \param[in] _other The other bitboard.
      * \returns The reference to the ANDed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -743,16 +743,16 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] &= _other.boards[i];
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _other The bit position.
      * \returns The reference to the ANDed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -760,17 +760,17 @@ public:
     Bitboard& operator&=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-
+        
         boards[boardIndex] &= bit;
         return *this;
     }
-
+    
     /**
      * \brief Bitwise XOR between two bitboards.
-     * 
+     *
      * \param[in] _other The other bitboard.
      * \returns The reference to the XORed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -779,16 +779,16 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] ^= _other.boards[i];
         }
-
+        
         return *this;
     }
-
+    
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
-     * 
+     *
      * \param[in] _other The bit position.
      * \returns The reference to the XORed bitboard.
-     * 
+     *
      * \author Fedyna K.
      * \version 0.2.0
      * \date 23/05/2024
@@ -796,14 +796,14 @@ public:
     Bitboard& operator^=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-
+        
         boards[boardIndex] ^= bit;
         return *this;
     }
-
+    
     /**
      * \brief Toggle on and off a given bit.
-     * 
+     *
      * \param[in] _index The bit position.
      *
      * \author Fedyna K.
@@ -813,10 +813,10 @@ public:
     void toggle(const std::size_t &_index) {
         *this ^= _index;
     }
-
+    
     /**
      * \brief Toggle on a given bit.
-     * 
+     *
      * \param[in] _index The bit position.
      *
      * \author Fedyna K.
@@ -826,10 +826,10 @@ public:
     void setOn(const std::size_t &_index) {
         *this |= _index;
     }
-
+    
     /**
      * \brief Toggle off a given bit.
-     * 
+     *
      * \param[in] _index The bit position.
      *
      * \author Fedyna K.
@@ -839,20 +839,21 @@ public:
     void setOff(const std::size_t &_index) {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
-
+        
         boards[boardIndex] &= ~bit;
     }
-
+    
     bool isOn(const std::size_t &_index) const {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
-
+        
         return (boards[boardIndex] & bit) != 0;
     }
     
     size_t size() const { return _size ; }
 };
 
-}
+} /* end namespace OSM */
+} /* end namespace CGAL */
 
 #endif

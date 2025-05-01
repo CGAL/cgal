@@ -36,10 +36,12 @@
 // CubComplex
 
 namespace CGAL {
+namespace HDVF {
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix>
-void Cub_output_vtk (HDVF_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
+void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
 {
+    typedef Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;
     typedef Cubical_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
     vector<vector<int> > labels = hdvf.export_labelsPSC() ;
@@ -75,7 +77,7 @@ void Cub_output_vtk (HDVF_core<CoefType, Cubical_chain_complex<CoefType>, _Chain
         }
     }
 }
-//        vector<vector<int> > criticals(hdvf.get_flag(CRITICAL)) ;
+//        vector<vector<int> > criticals(hdvf.get_flag(HDVF_coreT::CRITICAL)) ;
 //        for (int q = 0; q <= complex.dim(); ++q)
 //        {
 //            for (int c : criticals.at(q))
@@ -156,12 +158,12 @@ public:
 
 /** \brief Export persistent information to vtk files */
 template <typename CoefType, typename DegType>
-void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_chain_complex<CoefType>, DegType> &per_hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "per")
+void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType> &per_hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "per")
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using perHDVFType = PersistentHDVF<CoefType, Cubical_chain_complex<CoefType>, DegType> ;
+    using perHDVFType = Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType> ;
     using ComplexType = Cubical_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
     // Iterate over persistence diagram (iterator over non zero intervals)
@@ -221,6 +223,7 @@ void Per_Cub_output_vtk (PersistentHDVF<CoefType, Cubical_chain_complex<CoefType
     Cub_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf") ;
 }
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // Duality_cubical_complex_tools_HPP

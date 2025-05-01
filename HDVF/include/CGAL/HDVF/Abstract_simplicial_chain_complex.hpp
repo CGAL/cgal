@@ -21,31 +21,32 @@
 #include "CGAL/OSM/OSM.hpp"
 
 namespace CGAL {
+namespace HDVF {
 
 // Forward declaration of SimpComplexTools
 template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
 /*!
-\ingroup PkgHDVFAlgorithmClasses
-
-The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
-
-An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
-
-<img src="simplicial_complex.png" align="center" width=20%/>
-
-A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+ \ingroup PkgHDVFAlgorithmClasses
  
-The boundary map of the complex is computed by the constructor of the class using the standard formula:
+ The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
+ 
+ An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
+ 
+ <img src="simplicial_complex.png" align="center" width=20%/>
+ 
+ A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+ 
+ The boundary map of the complex is computed by the constructor of the class using the standard formula:
  \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
  where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
-
-Let us also point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
-
-\cgalModels{AbstractChainComplex}
-
-\tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
-*/
+ 
+ Let us also point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
+ 
+ \cgalModels{AbstractChainComplex}
+ 
+ \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
+ */
 
 
 template<typename CoefficientType>
@@ -361,14 +362,14 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
 }
 
 /*!
-\ingroup PkgHDVFAlgorithmClasses
-
-The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (ie. 0-simplices). Hence, vtk output is available.
-
-\cgalModels{GeometricChainComplex}
-
-\tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
-*/
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (ie. 0-simplices). Hence, vtk output is available.
+ 
+ \cgalModels{GeometricChainComplex}
+ 
+ \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
+ */
 
 template<typename CoefficientType>
 class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientType> {
@@ -681,6 +682,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
     out.close() ;
 }
 
+} /* end namespace HDVF */
 } /* end namespace CGAL */
 
 #endif // CGAL_ABSTRAT_SIMPLICIAL_CHAIN_COMPLEX_HPP

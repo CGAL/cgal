@@ -33,6 +33,7 @@
  */
 
 namespace CGAL {
+namespace HDVF {
 
 template <typename _CoefType, typename _ComplexType, typename _DegType>
 class Filtration
@@ -145,7 +146,7 @@ protected:
     bool check_filtration() ;
     
     template <typename CoefT, typename ComplexT, typename DegT>
-    friend class PersistentHDVF ;
+    friend class Hdvf_persistence ;
 };
 
 template <typename _CoefType, typename _ComplexType, typename _DegType>
@@ -336,7 +337,7 @@ std::function<double(int)>  deg_fun (const ComplexType& complex, std::function<d
  * \class Persistent HDVF
  * \brief Implementation of persistent HDVF (inherits HDVF).
  *
- * The PersistentHDVF class contains all functions to build persistent HDVF and create perfect persistent HDVF.
+ * The Hdvf_persistence class contains all functions to build persistent HDVF and create perfect persistent HDVF.
  *
  * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
  * \tparam _ComplexType The type of complex  (default is SimpComplex)
@@ -382,7 +383,7 @@ ostream& operator<< (ostream& out, const PerHoleT<_DegType>& hole)
 
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-class PersistentHDVF : public HDVF_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>
+class Hdvf_persistence : public Hdvf_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>
 {
     // Matrices types
     typedef OSM::Chain<_CoefficientType, OSM::COLUMN> CChain;
@@ -391,7 +392,7 @@ class PersistentHDVF : public HDVF_core<_CoefficientType,_ComplexType, OSM::Chai
     typedef OSM::SubSparseMatrix<_CoefficientType, OSM::ROW> RMatrix;
     
     // HDVF type
-    typedef HDVF_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
+    typedef Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
     
     // Persistence diagram types
     typedef PerDegIntervalT<_DegType> PerDegInterval;
@@ -430,8 +431,8 @@ protected:
     bool _computation_over ;
     
 public:
-    /** \brief PersistentHDVF Constructor */
-    PersistentHDVF(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
+    /** \brief Hdvf_persistence Constructor */
+    Hdvf_persistence(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
     
     // Persistence step
     PairCell findNextPair(bool &found) ;
@@ -483,7 +484,7 @@ public:
         return per_int_deg.second - per_int_deg.first ;
     }
     
-    friend ostream& operator<< (ostream& out, const PersistentHDVF& per_hdvf)
+    friend ostream& operator<< (ostream& out, const Hdvf_persistence& per_hdvf)
     {
         int i = 0 ;
         for (PerHole hole : per_hdvf._persist)
@@ -759,7 +760,7 @@ public:
         using pointer           = Exp_infos*;  // or also value_type*
         
         // Iterator constructors
-        iterator(const PersistentHDVF& per_hdvf, int i=0) : _i(i), _per_hdvf(per_hdvf)
+        iterator(const Hdvf_persistence& per_hdvf, int i=0) : _i(i), _per_hdvf(per_hdvf)
         {
             if (_i == 0)
             {
@@ -827,7 +828,7 @@ public:
         
     private:
         int _i ; // Index along _persist
-        const PersistentHDVF& _per_hdvf ; // per_hdvf iterated
+        const Hdvf_persistence& _per_hdvf ; // per_hdvf iterated
     };
     iterator begin() { return iterator(*this, 0) ; }
     iterator end() { return iterator(*this, _persist.size()) ; }    
@@ -835,7 +836,7 @@ public:
 
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::PersistentHDVF(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt, bool with_export) : HDVF_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1), _computation_over(false)
+Hdvf_persistence<_CoefficientType, _ComplexType, _DegType>::Hdvf_persistence(const _ComplexType& K, const Filtration<_CoefficientType, _ComplexType, _DegType>& f, int hdvf_opt, bool with_export) : Hdvf_core<_CoefficientType,_ComplexType, OSM::Chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1), _computation_over(false)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;
@@ -902,7 +903,7 @@ PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::PersistentHDVF(const _
 }
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-PairCell PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::findNextPair(bool &found)
+PairCell Hdvf_persistence<_CoefficientType, _ComplexType, _DegType>::findNextPair(bool &found)
 {
     PairCell p ;
     // Get current cell (in the basis K)
@@ -944,7 +945,7 @@ PairCell PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::findNextPair(
 }
 
 template<typename _CoefficientType, typename _ComplexType, typename _DegType>
-void PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::stepPersist()
+void Hdvf_persistence<_CoefficientType, _ComplexType, _DegType>::stepPersist()
 {
     // Compute next persistent pair
     
@@ -1000,6 +1001,7 @@ void PersistentHDVF<_CoefficientType, _ComplexType, _DegType>::stepPersist()
     }
 }
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif // PER_HOM_HPP

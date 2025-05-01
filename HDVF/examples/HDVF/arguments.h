@@ -12,7 +12,7 @@ struct Options
     std::string outfile_root = "res", in_file ;
     Algorithm algorithm = Algorithm::HDVF ;
     InputFormat in_format = InputFormat::OFF ;
-    int HDVF_opt = CGAL::OPT_FULL ;
+    int HDVF_opt = CGAL::HDVF::OPT_FULL ;
     int scalar = 0 ; // 0 : Z, n : Z/nZ
     bool with_export = true ; // Export reduction information to a file
     bool with_vtk_export = false ; // Export generators/cogenerators and PSC labels as vtk

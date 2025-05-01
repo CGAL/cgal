@@ -15,6 +15,7 @@
 #include <vector>
 
 namespace CGAL {
+namespace HDVF {
 
 // Chose _TSlot according to the size of p
 template <int p, typename _TSlot = int>
@@ -146,6 +147,7 @@ public:
     }
 };
 
-}
+} /* end namespace HDVF */
+} /* end namespace CGAL */
 
 #endif
