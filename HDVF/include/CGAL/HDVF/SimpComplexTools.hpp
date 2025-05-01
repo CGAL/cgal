@@ -36,7 +36,7 @@ void Simp_output_vtk (HDVF<CoefType, Simplicial_chain_complex<CoefType>, _ChainT
     typedef Simplicial_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.export_label(PSC) ;
+    vector<vector<int> > labels = hdvf.export_labelsPSC() ;
     ComplexType::Simplicial_chain_complex_to_vtk(complex, outfile, &labels) ;
     
     if (hdvf.get_hdvf_opts() != OPT_BND)

@@ -42,7 +42,7 @@ void Cub_output_vtk (HDVF<CoefType, Cubical_chain_complex<CoefType>, _ChainType,
 {
     typedef Cubical_chain_complex<CoefType> ComplexType;
     // Export PSC labelling
-    vector<vector<int> > labels = hdvf.export_label(PSC) ;
+    vector<vector<int> > labels = hdvf.export_labelsPSC() ;
     string outfilePSC(filename+"_PSC.vtk") ;
     ComplexType::Cubical_chain_complex_to_vtk(complex, outfilePSC, &labels) ;
     
