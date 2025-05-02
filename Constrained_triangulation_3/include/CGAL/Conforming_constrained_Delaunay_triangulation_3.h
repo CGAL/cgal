@@ -990,7 +990,7 @@ public:
    *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`\endlink,
    *        as defined by its triangulation data structure.
    */
-  bool is_facet_constrained(typename Triangulation::Facet f) const {
+  bool is_facet_constrained(const typename Triangulation::Facet& f) const {
     return cdt_impl.is_facet_constrained(f);
   }
 
@@ -1001,7 +1001,26 @@ public:
     return cdt_impl.is_facet_constrained(typename Triangulation::Facet(ch, index));
   }
 
-/*!
+  /*!
+   * @brief same as `face_constraint_index(f)` with `f` being `Triangulation::Facet(ch, index)`.
+   * @pre `is_facet_constrained(f)`
+   */
+  CDT_3_signed_index face_constraint_index(typename Triangulation::Cell_handle ch, int i) const
+  {
+    return ch->face_id[unsigned(i)];
+  }
+
+  /*!
+   * @brief returns the index of the constraint that constrains the
+   * facet \p f
+   * @pre `is_facet_constrained(f)`
+   */
+  CDT_3_signed_index face_constraint_index(const typename Triangulation::Facet& f) const
+  {
+    return face_constraint_index(f.first, f.second);
+  }
+
+  /*!
    * \brief returns the number of constrained facets in the triangulation.
    *
    */

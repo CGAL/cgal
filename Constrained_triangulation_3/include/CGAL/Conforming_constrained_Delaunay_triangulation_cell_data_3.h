@@ -67,16 +67,12 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
     return cdt.tds().faces().iterator_to(*ptr);
   }
 public:
-  /// @brief returns whether the i-th facet of the cell is constrained or not.
   bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
 
-  /// @brief returns the index of the constraint that constrains the
-  /// i-th facet of the cell.
-  /// @pre `is_facet_constrained(i)`
   CDT_3_signed_index face_constraint_index(int i) const {
     return face_id[unsigned(i)];
   }
-  /// @brief sets the index of the constraint that constrains the i-th facet of the cell.
+
   void set_face_constraint_index(int i, CDT_3_signed_index index) {
     face_id[unsigned(i)] = index;
   }
