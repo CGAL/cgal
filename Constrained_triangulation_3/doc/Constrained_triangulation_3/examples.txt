@@ -31,7 +31,7 @@ constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
 */
 
 /*!
-\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup_fpmap.cpp
+\example Constrained_triangulation_3/ccdt_3_from_soup_fpmap.cpp
 @brief
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 */
