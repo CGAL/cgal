@@ -16,7 +16,6 @@
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
-#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>

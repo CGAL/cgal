@@ -18,14 +18,13 @@
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Projection_traits_3.h>
@@ -1088,7 +1087,7 @@ private:
       Facet facet_3d = {};
     };
     using Vb1 = Triangulation_vertex_base_with_info_2<Vertex_info, Projection_traits>;
-    using Vb = Base_with_time_stamp<Vb1>;
+    using Vb = Triangulation_simplex_base_with_time_stamp<Vb1>;
     using Fb1 = Triangulation_face_base_with_info_2<Face_info, Projection_traits>;
     using Fb = Constrained_triangulation_face_base_2<Projection_traits, Fb1>;
     using TDS = Triangulation_data_structure_2<Vb, Fb>;

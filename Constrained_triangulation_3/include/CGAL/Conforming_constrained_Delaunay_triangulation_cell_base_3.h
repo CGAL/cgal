@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
@@ -40,9 +40,9 @@ namespace CGAL {
  */
 template <typename Traits, typename CellBase = Triangulation_cell_base_3<Traits> >
 class Conforming_constrained_Delaunay_triangulation_cell_base_3
-  : public Base_with_time_stamp<CellBase>
+    : public Triangulation_simplex_base_with_time_stamp<CellBase>
 {
-  using Base = Base_with_time_stamp<CellBase>;
+  using Base = Triangulation_simplex_base_with_time_stamp<CellBase>;
   Conforming_constrained_Delaunay_triangulation_cell_data_3 ccdt_3_data_;
 
   CDT_3_signed_index subdomain_index_ = -1;
