@@ -27,7 +27,7 @@ namespace CGAL {
  * @brief Vertex base class for the 3D conforming constrained Delaunay triangulation.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
- * required by `make_conforming_constrained_Delaunay_triangulation_3()`.
+ * required by `Conforming_constrained_Delaunay_triangulation_3`.
  *
  * @tparam Traits The geometric traits class, model of `ConformingConstrainedDelaunayTriangulationTraits_3`.
  *         It must be the same as the geometric traits class of the triangulation.
