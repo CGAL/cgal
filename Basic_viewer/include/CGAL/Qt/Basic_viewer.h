@@ -2033,6 +2033,6 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
 
 } // End namespace CGAL
 
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_QT_BASIC_VIEWER_H

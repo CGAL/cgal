@@ -199,7 +199,7 @@ endforeach()
 if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
   add_library(CGAL::CGAL_Basic_viewer_Qt INTERFACE IMPORTED GLOBAL)
     set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER_QT"
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
   add_library(CGAL::CGAL_Basic_viewer ALIAS CGAL::CGAL_Basic_viewer_Qt)
 endif()

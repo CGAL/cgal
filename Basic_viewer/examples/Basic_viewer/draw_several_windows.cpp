@@ -7,7 +7,7 @@
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Basic_viewer.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #include <QMainWindow>
 #endif
 
@@ -55,7 +55,7 @@ int main(void)
   CGAL::add_to_graphics_scene(output_mesh, scene2);
 
   /// (2) Qt code that create windows, add them in a layout, and create app.
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;

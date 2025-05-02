@@ -47,7 +47,7 @@ void draw(const MPH& aph);
 
 namespace CGAL {
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
+#if defined(CGAL_USE_BASIC_VIEWER)
 
 #include <CGAL/Qt/init_ogl_context.h>
 
@@ -180,7 +180,7 @@ private:
   const Mpwh& m_mpwh;
 };
 
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function.
 template<class T, class C>
@@ -190,7 +190,7 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
   CGAL_USE(mpwh);
   CGAL_USE(title);
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
+#if defined(CGAL_USE_BASIC_VIEWER)
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -209,7 +209,7 @@ void draw(const CGAL::Multipolygon_with_holes_2<T, C>& mpwh,
     mainwindow.show();
     app.exec();
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 } // End namespace CGAL

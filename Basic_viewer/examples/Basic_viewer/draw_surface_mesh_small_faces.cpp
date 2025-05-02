@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 
   add_to_graphics_scene(sm, gs, gsosm);
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 
   CGAL::Qt::QApplication_and_basic_viewer app(gs, "Small faces");
   if(app)

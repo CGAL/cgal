@@ -27,7 +27,7 @@ struct Graphics_scene_options_periodic_2_triangulation_2: public CGAL::Graphics_
 
 opens a new window and draws a periodic 2D triangulation. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` (Qt viewer) is defined.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \tparam P2T2 which must be an instantiation of a `CGAL::Periodic_2_triangulation_2<...>`.

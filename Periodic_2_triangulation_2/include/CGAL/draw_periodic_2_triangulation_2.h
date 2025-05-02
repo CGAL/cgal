@@ -230,7 +230,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
   CGAL_USE(gs_options);
   CGAL_USE(title);
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
+#if defined(CGAL_USE_BASIC_VIEWER)
   CGAL::Graphics_scene gs;
   add_to_graphics_scene(ap2t2, gs, gs_options);
   CGAL::Qt::QApplication_and_basic_viewer app(gs, title);
@@ -267,7 +267,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
     // Then we run the app
     app.run();
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<class Gt, class Tds>

@@ -382,7 +382,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 
   CGAL_USE(title);
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
+#if defined(CGAL_USE_BASIC_VIEWER)
 
   CGAL::Qt::QApplication_and_basic_viewer app(buffer, title);
   if(app)
@@ -437,7 +437,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
     // Then we run the app
     app.run();
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<class DG, class AT, class AP>

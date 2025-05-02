@@ -166,7 +166,7 @@ void compute_elements(const PWH& pwh,
 
 } // End namespace draw_function_for_boolean_set_2
 
-#if defined(CGAL_USE_BASIC_VIEWER_QT)
+#if defined(CGAL_USE_BASIC_VIEWER)
 
 template <typename PolygonSet_2, typename GSOptions>
 class Polygon_set_2_basic_viewer_qt : public Basic_viewer
@@ -261,7 +261,7 @@ private:
   GSOptions& gso;
 };
 
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 
 #define CGAL_PS2_TYPE CGAL::Polygon_set_2<T, C, D>
 
@@ -292,7 +292,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
   CGAL_USE(gso);
   CGAL_USE(title);
 
-#ifdef CGAL_USE_BASIC_VIEWER_QT
+#ifdef CGAL_USE_BASIC_VIEWER
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -311,7 +311,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
     basic_viewer.show();
     app.exec();
   }
-#endif // CGAL_USE_BASIC_VIEWER_QT
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<class T, class C, class D>
