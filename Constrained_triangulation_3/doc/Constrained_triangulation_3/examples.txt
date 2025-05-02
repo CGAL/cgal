@@ -1,29 +1,37 @@
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp
-Simple example demonstrating the usage of the Constrained_triangulation_3 package.
+@brief
+
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.<br>
 
 It constructs a 3D constrained Delaunay triangulation from a polygon mesh.
 */
 
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp
-Simple example demonstrating the usage of the Constrained_triangulation_3 package.
+@brief
+
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.<br>
 
 It constructs a constrained Delaunay triangulation from a polygon soup.
 */
 
 /*!
 \example Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp
+@brief
+
 How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
 */
 
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp
+@brief
 How to detect surface patches separated by sharp edges, before the construction of the
 constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
 */
 
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup_fpmap.cpp
+@brief
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 */
