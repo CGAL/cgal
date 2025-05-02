@@ -31,9 +31,9 @@ constexpr bool cdt_3_can_use_cxx20_format() {
   return true;
 }
 
-template <typename... Args>
-decltype(auto) cdt_3_format(std::format_string<Args...> fmt, Args&&... args) {
-  return std::format(fmt, std::forward<Args>(args)...);
+template <typename Format, typename... Args>
+decltype(auto) cdt_3_format(Format&& fmt, Args&&... args) {
+  return std::format(std::forward<Format>(fmt), std::forward<Args>(args)...);
 }
 
 #else // not CGAL_CDT_3_CAN_USE_CXX20_FORMAT
