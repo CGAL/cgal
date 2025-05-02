@@ -19,8 +19,6 @@
 #include <algorithm>
 
 namespace CGAL {
-#if defined(CGAL_USE_BASIC_VIEWER) || defined(DOXYGEN_RUNNING)
-
 /*!
 \ingroup PkgDrawCDT_3
 
@@ -80,8 +78,6 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccd
 {
   draw(ccdt.triangulation(), gs_options, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER || DOXYGEN_RUNNING
 
 } // End namespace CGAL
 
