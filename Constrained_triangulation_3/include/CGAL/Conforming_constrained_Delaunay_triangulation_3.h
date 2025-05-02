@@ -900,10 +900,39 @@ public:
   /// @} // end triangulation section
 
   /// \cond SKIP_IN_MANUAL
-  Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() && {
+  Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() &&
+  {
+    using Vertex_handle = typename Triangulation::Vertex_handle;
+
     auto& tr = cdt_impl;
+
+    auto sync_vertex_type_with_dimension_and_index = [&](Vertex_handle v)
+    {
+      switch(v->ccdt_3_data().vertex_type()) {
+      case CDT_3_vertex_type::CORNER:
+        v->set_dimension(0);
+        v->set_index(0);
+        break;
+      case CDT_3_vertex_type::STEINER_ON_EDGE:
+        v->set_dimension(1);
+        v->set_index(static_cast<int>(v->ccdt_3_data().constrained_polyline_id(tr).index()));
+        break;
+      case CDT_3_vertex_type::STEINER_IN_FACE:
+        v->set_dimension(2);
+        v->set_index(v->ccdt_3_data().face_index());
+        break;
+      case CDT_3_vertex_type::FREE:
+        v->set_dimension(3);
+        v->set_index(1);
+        break;
+      default:
+        CGAL_error();
+        break;
+      }
+    };
+
     for(auto vh : tr.all_vertex_handles()) {
-      vh->sync_vertex_type_with_dimension_and_index(tr);
+      sync_vertex_type_with_dimension_and_index(vh);
     }
 
     for(auto ch : tr.all_cell_handles()) {

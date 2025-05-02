@@ -77,33 +77,6 @@ public:
   std::size_t cached_number_of_incident_facets() const { return number_of_incident_facets_; }
   std::size_t cached_number_of_components() const { return number_of_components_; }
 
-  template<typename Tr>
-  void sync_vertex_type_with_dimension_and_index(const Tr& tr)
-  {
-    switch(ccdt_3_data().vertex_type())
-    {
-    case CDT_3_vertex_type::CORNER:
-      set_dimension(0);
-      set_index(0);
-      break;
-    case CDT_3_vertex_type::STEINER_ON_EDGE:
-      set_dimension(1);
-      set_index(static_cast<int>(ccdt_3_data().constrained_polyline_id(tr).index()));
-      break;
-    case CDT_3_vertex_type::STEINER_IN_FACE:
-      set_dimension(2);
-      set_index(ccdt_3_data().face_index());
-      break;
-    case CDT_3_vertex_type::FREE:
-      set_dimension(3);
-      set_index(1);
-      break;
-    default:
-      CGAL_error();
-      break;
-    }
-  }
-
   // model of ConformingConstrainedDelaunayTriangulationVertexBase_3
   Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() { return ccdt_3_data_; }
   const Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() const { return ccdt_3_data_; }
