@@ -29,6 +29,10 @@
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/type_traits.h>
 
+#ifdef CGAL_BASE_WITH_TIME_STAMP_H
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
+#endif
+
 #ifdef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
@@ -362,8 +366,7 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
 
 #ifdef CGAL_BASE_WITH_TIME_STAMP_H
 template <class Base>
-struct
-Get_io_signature<Base_with_time_stamp<Base> >
+struct Get_io_signature<Triangulation_simplex_base_with_time_stamp<Base>>
 {
   std::string operator()() {
     return Get_io_signature<Base>()();

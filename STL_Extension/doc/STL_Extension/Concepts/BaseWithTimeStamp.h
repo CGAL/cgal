@@ -8,7 +8,7 @@ an object must provide so that its timestamp is updated by
 a `CGAL::Compact_container` or a `CGAL::Concurrent_compact_container`.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Base_with_time_stamp}
+\cgalHasModels{CGAL::Triangulation_simplex_base_with_time_stamp}
 \cgalHasModelsEnd
 
 \sa `CGAL::Compact_container`
