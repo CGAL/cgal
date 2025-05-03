@@ -194,27 +194,22 @@ namespace CGAL
                     Point_3 origin;
             };
 
-        // Has on positive side
+        // Orientation_3
         template < typename K >
-            struct Has_on_positive_side_3_dual_point
+            struct Orientation_3_dual_point
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
                 typedef typename K::Point_3    Point_3;
-                typedef typename K::Boolean    result_type;
+                typedef typename K::Orientation_3::result_type result_type;
 
-                Has_on_positive_side_3_dual_point (Point_3 const& o =
-                                                   Point_3(0, 0, 0)) :
+                Orientation_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
                     origin(o)
                 {}
 
                 result_type
-                    operator()(const Plane_dual<K> p, const Plane_3 &q) const
+                    operator()(const Plane_3& p1, const Plane_3& p2, const Plane_3& p3, const Plane_3 &q) const
                     {
-                        Plane_3 p1 = p.p1;
-                        Plane_3 p2 = p.p2;
-                        Plane_3 p3 = p.p3;
-
                         RT dp1 = p1.d() + origin.x() * p1.a()
                             + origin.y() * p1.b() + origin.z() * p1.c();
                         RT dp2 = p2.d() + origin.x() * p2.a()
@@ -245,15 +240,33 @@ namespace CGAL
                             beta * (p1.b() * dq - q.b() * dp1) +
                             gamma * (p1.c() * dq - q.c() * dp1);
 
-                        if (CGAL::is_positive(dp1 * dq)) {
-                            return CGAL::is_positive(prod);
-                        } else {
-                            return CGAL::is_negative(prod);
-                        }
+                        return CGAL::sign(dp1 * dq);
                     }
 
                 private:
                     Point_3 origin;
+            };
+
+        // Has on positive side
+        template < typename K >
+            struct Has_on_positive_side_3_dual_point
+              : public Orientation_3_dual_point<K>
+            {
+                typedef typename K::RT         RT;
+                typedef typename K::Plane_3    Plane_3;
+                typedef typename K::Point_3    Point_3;
+                typedef typename K::Boolean    result_type;
+
+                Has_on_positive_side_3_dual_point (Point_3 const& o =
+                                                   Point_3(0, 0, 0)) :
+                    Orientation_3_dual_point<K>(o)
+                {}
+
+                result_type
+                    operator()(const Plane_dual<K> p, const Plane_3 &q) const
+                    {
+                      return static_cast<const Orientation_3_dual_point<K>*>(this)->operator()(p.p1, p.p2, p.p3, q)==ON_POSITIVE_SIDE;
+                    }
             };
 
         // Less distance to point
