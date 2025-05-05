@@ -558,7 +558,7 @@ public:
   \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either
   a polygon soup or a polygon mesh.
 
-  Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
+  Input Data
   ----------
 
   The input data requirements are described in the documentation of the
@@ -646,6 +646,11 @@ public:
       hint_ch = vh->cell();
       put(tr_vertex_map, v, vh);
     }
+
+    if(cdt_impl.dimension() != 3) {
+      CGAL_error_msg("3D constrained Delaunay triangulation: the input data should be non-coplanar.");
+    }
+
 
     struct {
       decltype(tr_vertex_map)* vertex_map;

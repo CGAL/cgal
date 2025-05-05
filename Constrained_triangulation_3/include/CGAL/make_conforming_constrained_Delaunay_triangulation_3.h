@@ -49,6 +49,8 @@ namespace CGAL {
   described by the `face_patch_map` property map if provided.
 
 
+  \pre The input data must not be coplanar.
+
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------
 
