@@ -53,31 +53,31 @@ public:
     // findPair functions for M, W, MW
     
     /** \brief find a valid PairCell for M in dimension q */
-    PairCell findPairM(int q, bool &found); // const;
+    PairCell find_pair_M(int q, bool &found); // const;
     /** \brief find a valid PairCell containing tau for M in dimension q */
-    PairCell findPairM(int q, bool &found, int tau); // const;
+    PairCell find_pair_M(int q, bool &found, int tau); // const;
     /** \brief find all the valid PairCell for M in dimension q */
-    std::vector<PairCell> findPairsM(int q, bool &found); // const;
+    std::vector<PairCell> find_pairs_M(int q, bool &found); // const;
     /** \brief find all the valid PairCell containing tau for M in dimension q */
-    std::vector<PairCell> findPairsM(int q, bool &found, int tau); // const;
+    std::vector<PairCell> find_pairs_M(int q, bool &found, int tau); // const;
     
     /** \brief find a valid PairCell for W in dimension q */
-    PairCell findPairW(int q, bool &found); // const;
+    PairCell find_pair_W(int q, bool &found); // const;
     /** \brief find a valid PairCell containing tau for W in dimension q */
-    PairCell findPairW(int q, bool &found, int tau); // const;
+    PairCell find_pair_W(int q, bool &found, int tau); // const;
     /** \brief find all the valid PairCell for W in dimension q */
-    std::vector<PairCell> findPairsW(int q, bool &found); // const;
+    std::vector<PairCell> find_pairs_W(int q, bool &found); // const;
     /** \brief find all the valid PairCell containing tau for W in dimension q */
-    std::vector<PairCell> findPairsW(int q, bool &found, int tau); // const;
+    std::vector<PairCell> find_pairs_W(int q, bool &found, int tau); // const;
     
     /** \brief find a valid PairCell for MW in dimension q */
-    PairCell findPairMW(int q, bool &found); // const;
+    PairCell find_pair_MW(int q, bool &found); // const;
     /** \brief find a valid PairCell containing tau for MW in dimension q */
-    PairCell findPairMW(int q, bool &found, int tau); // const;
+    PairCell find_pair_MW(int q, bool &found, int tau); // const;
     /** \brief find all the valid PairCell for MW in dimension q */
-    std::vector<PairCell> findPairsMW(int q, bool &found); // const;
+    std::vector<PairCell> find_pairs_MW(int q, bool &found); // const;
     /** \brief find all the valid PairCell containing tau for MW in dimension q */
-    std::vector<PairCell> findPairsMW(int q, bool &found, int tau); // const;
+    std::vector<PairCell> find_pairs_MW(int q, bool &found, int tau); // const;
     
     // Hdvf methods
     /** \brief Hdvf operation A(gamma1, gamma2) */
@@ -102,7 +102,7 @@ Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : H
 /** \brief find a valid PairCell for M in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairM(int q, bool &found) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) // const
 {
     found = false;
     PairCell p;
@@ -132,7 +132,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairM(int q, bool &found) // co
 /** \brief find a valid PairCell containing tau for M in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairM(int q, bool &found, int tau) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, int tau) // const
 {
     found = false;
     PairCell p;
@@ -177,7 +177,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairM(int q, bool &found, int t
 /** \brief find all the valid PairCell for M in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsM(int q, bool &found) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -208,7 +208,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsM(int q, bool
 /** \brief find all the valid PairCell containing tau for M in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsM(int q, bool &found, int tau) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found, int tau) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -261,7 +261,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsM(int q, bool
 /** \brief find a valid PairCell for W in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairW(int q, bool &found) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) // const
 {
     found = false;
     PairCell p;
@@ -291,7 +291,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairW(int q, bool &found) // co
 /** \brief find a valid PairCell containing tau for W in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairW(int q, bool &found, int tau) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, int tau) // const
 {
     found = false;
     PairCell p;
@@ -336,7 +336,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairW(int q, bool &found, int t
 /** \brief find all the valid PairCell for W in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsW(int q, bool &found) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -368,7 +368,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsW(int q, bool
 /** \brief find all the valid PairCell containing tau for W in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsW(int q, bool &found, int tau) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found, int tau) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -421,7 +421,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsW(int q, bool
 /** \brief find a valid PairCell for MW in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairMW(int q, bool &found) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) // const
 {
     found = false;
     PairCell p;
@@ -465,7 +465,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairMW(int q, bool &found) // c
 /** \brief find a valid PairCell containing tau for MW in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::findPairMW(int q, bool &found, int tau) // const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, int tau) // const
 {
     found = false;
     PairCell p;
@@ -554,7 +554,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::findPairMW(int q, bool &found, int 
 /** \brief find all the valid PairCell for MW in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsMW(int q, bool &found) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found) // const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -599,9 +599,9 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsMW(int q, boo
 }
 
 /** \brief find all the valid PairCell containing tau for MW in dimension q */
-//template<typename CoefficientType, typename ComplexType>
+
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::findPairsMW(int q, bool &found, int tau) // const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found, int tau) // const
 {
     found = false;
     std::vector<PairCell> pairs;

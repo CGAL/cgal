@@ -1,15 +1,16 @@
-/**
- * \file hdvf.hpp
- * \brief Hdvf_core code library.
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
- *
- * Hdvf_core code library (constructors, operations, finders).
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef HDVF_CORE_H
-#define HDVF_CORE_H
+#ifndef HDVF_CORE_HPP
+#define HDVF_CORE_HPP
 
 #include <vector>
 #include <cassert>
@@ -17,13 +18,12 @@
 #include <random>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
-#include "CGAL/HDVF/sub_chain_complex.hpp"
 
 namespace CGAL {
 namespace HDVF {
 
 
-/** \brief Enum for the Hdvf_core label of cells. */
+/** \brief HDVF Enum for the label of cells. */
 static enum FlagType {
     PRIMARY,
     SECONDARY,
@@ -31,28 +31,17 @@ static enum FlagType {
     NONE // For duality and persistence
 };
 
-/** \brief Hdvf_core options (compute only reduced boundary). */
+/** \brief HDVF option (compute only reduced boundary). */
 const int OPT_BND = 0b0001;
-/** \brief Hdvf_core options (compute only reduced boundary and f). */
+/** \brief HDVF option (compute only reduced boundary and f). */
 const int OPT_F = 0b0010;
-/** \brief Hdvf_core options (compute only reduced boundary and g). */
+/** \brief HDVF option (compute only reduced boundary and g). */
 const int OPT_G = 0b0100;
-/** \brief Hdvf_core options (compute full reduction). */
+/** \brief HDVF option (compute full reduction). */
 const int OPT_FULL = 0b1000;
 
-/** \brief Enum for export: lets chose the type of export.
- *
- * - PSC export a flag encoding the label of the cell: P (-1), S (1), C (0)
- * - FSTAR exports a boolean flag for a given cohomology generator (true: the cell belongs to the cycle, false: the cell does not belong)
- * - G exports a boolean flag for a given homology generator (true: the cell belongs to the cycle, false: the cell does not belong)
- */
-enum ExportType {
-    PSC,
-    FSTAR,
-    G
-};
 
-/** \brief PairCell: Structure to represent a pair of cells (for HDVF operations).
+/** \brief Structure to represent data for HDVF operations (pairs of cells).
  */
 struct PairCell {
     int sigma;  // Index of the first cell
@@ -60,19 +49,35 @@ struct PairCell {
     int dim;    // Dimension of cells: q/q+1 for A and R, q for other operations
 };
 
+/** \brief Method printing PairCells (that is pairs of cells for HDVF operations) */
 
-/**
- * \class Hdvf_core
- * \brief Implementation of Hdvf_core and associate operations.
- *
- * The Hdvf_core class contains all functions to build Hdvf_core, create perfect Hdvf_core (A and associate finders) and delineated generators through Hdvf_core operations (R, M, W, MW and associate finders).
- *
- * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
- * \tparam ComplexType The type of complex  (default is SimpComplex)
- *
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
+std::ostream& print_pairs(const std::vector<PairCell>& pairs, std::ostream& out = std::cout)
+{
+    for (const auto& pair : pairs) {
+        out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
+    }
+    return out ;
+}
+
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short).
+ 
+ An enumeration `FlagType` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely PRIMARY, SECONDARY, CRITICAL). The NONE is used in `HDVF_duality` to compute relative homology on a sub-complex).
+ The flag of each cell is stored in an appropriate structure and getters are provided to access to this information.
+ 
+ The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information.
+ 
+ The class provides constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
+ In order to find proper pairs, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
+ 
+ \cgalModels{HDVF}
+ 
+ \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+ \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
+ \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::SparseMatrix`), providing the type of sparse matrices used.
  */
 
 
@@ -121,13 +126,13 @@ public:
     // findPair functions
     
     /** \brief find a valid PairCell for A in dimension q */
-    virtual PairCell findPairA(int q, bool &found); // const;
+    virtual PairCell find_pair_A(int q, bool &found) const;
     /** \brief find a valid PairCell containing tau for A in dimension q */
-    virtual PairCell findPairA(int q, bool &found, int tau); // const;
+    virtual PairCell find_pair_A(int q, bool &found, int tau) const;
     /** \brief find all the valid PairCell for A in dimension q */
-    virtual std::vector<PairCell> findPairsA(int q, bool &found); // const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
     /** \brief find all the valid PairCell containing tau for A in dimension q */
-    virtual std::vector<PairCell> findPairsA(int q, bool &found, int tau); // const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
     
     // Hdvf_core methods
     /** \brief Hdvf_core operation A(gamma1, gamma2) */
@@ -135,128 +140,52 @@ public:
     
     /** \brief Compute a perfect Hdvf_core
      From dimension q-1 to dimension 0
-     As long as findPairA(q) returns a pair
+     As long as find_pair_A(q) returns a pair
      -> Perform operation A
      -> Add the pair to the output vector
      */
-    std::vector<PairCell> computePerfectHDVF(bool verbose = false);
+    std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
     
     /** \brief Compute a perfect Hdvf_core
      From dimension q-1 to dimension 0
-     As long as findPairsA(q) returns pairs
+     As long as find_pairs_A(q) returns pairs
      -> Choose one randomly
      -> Perform operation A
      -> Add the pair to the output vector
-     Slower than computePerfectHDVF
+     Slower than compute_perfect_hdvf
      */
-    std::vector<PairCell> computeRandPerfectHDVF(bool verbose = false);
+    std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
     
     // Hdvf_core getters
+    
+    // Flag getters
     // Method to get cells if with a given flag (P,S,C) for each dimension
-    virtual std::vector<std::vector<int> > get_flag (FlagType flag) const ;
+    std::vector<std::vector<int> > get_flag (FlagType flag) const ;
     // Method to get cells with a given flag (P,S,C) for a given dimension
-    virtual std::vector<int> get_flag_dim (FlagType flag, int q) const ;
+    std::vector<int> get_flag_dim (FlagType flag, int q) const ;
     // Method to get the flag (P,S,C) of a cell tau of dimension q
     FlagType get_cell_flag (int q, int tau) const { return _flag.at(q).at(tau); }
     
+    // Options getters
     // Method to get options
     int get_hdvf_opts () const { return _hdvf_opt ; }
     
+    // Reduction getters
+    const RMatrix& get_f (int q) const { return _F_row.at(q); }
+    const CMatrix& get_g (int q) const { return _G_col.at(q); }
+    const CMatrix& get_h (int q) const { return _H_col.at(q); }
+    const CMatrix& get_dd (int q) const { return _DD_col.at(q); }
+    
     // Method to print the matrices _F_row, _G_col, _H_col
-    virtual std::ostream& print_matrices(std::ostream &out = std::cout) const;
+    std::ostream& print_matrices(std::ostream &out = std::cout) const;
     
     // Method to print the reduction
-    virtual std::ostream& print_reduction(std::ostream &out = std::cout); // const;
+    std::ostream& print_reduction(std::ostream &out = std::cout) const;
     
     // Method to print A-pairs
-    virtual std::ostream& print_pairs(const std::vector<PairCell>& pairs, std::ostream &out = std::cout);
+//    virtual std::ostream& print_pairs(const std::vector<PairCell>& pairs, std::ostream &out = std::cout);
     
-    // Method to project a chain onto P, S, or C cells
-    template<int ChainTypeFlag>
-    ChainType<CoefficientType, ChainTypeFlag> projection(const ChainType<CoefficientType, ChainTypeFlag>& chain, FlagType flag, int dim) const {
-        // Create a new chain to store the result
-        // Better to initialize 'result' directly with the correct size and iterate over it
-        ChainType<CoefficientType, ChainTypeFlag> result(chain);
-        
-        // Iterate over each element of the chain
-        std::vector<int> tmp ;
-        for (typename ChainType<CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
-        {
-            int cell_index = it->first;
-            CoefficientType value = it->second;
-            
-            // Check the flag of the corresponding cell
-            if (_flag[dim][cell_index] != flag) {
-                // Set to 0
-                tmp.push_back(cell_index) ;
-                
-            }
-        }
-        result /= tmp ;
-        return result;
-    }
-    
-    //    // [OLD] Method to generate labels for visualisation
-    //    // Kept for compatibility
-    //    // For PSC, no additional arguments, for FSTAR and G, specify the critical cell concerned
-    //    virtual std::vector<std::vector<int> > export_label (ExportType type, int cell=0, int dim=0) const
-    //    {
-    //        std::vector<std::vector<int> > labels(_K.dim()+1) ;
-    //        if (type == PSC)
-    //        {
-    //            for (int q=0; q<=_K.dim(); ++q)
-    //            {
-    //                for (int i = 0; i<_K.nb_cells(q); ++i)
-    //                {
-    //                    if (_flag.at(q).at(i) == PRIMARY)
-    //                        labels.at(q).push_back(-1) ;
-    //                    else if (_flag.at(q).at(i) == SECONDARY)
-    //                        labels.at(q).push_back(1) ;
-    //                    else
-    //                        labels.at(q).push_back(0) ;
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if ((type == FSTAR) && (_hdvf_opt & (OPT_FULL | OPT_F)))
-    //            {
-    //                for (int q=0; q<=_K.dim(); ++q)
-    //                {
-    //                    labels.at(q).resize(_K.nb_cells(q)) ;
-    //                }
-    //
-    //                if (dim < _K.dim())
-    //                {
-    //                    labels.at(dim).at(cell) = 1 ;
-    //                    const RChain& fstar_cell = OSM::cgetRow(_F_row.at(dim), cell) ;
-    //                    for (typename RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
-    //                    {
-    //                        // Set the cofaces of it->first in dimension dim+1
-    //                        RChain cofaces(_K.cod(it->first,dim)) ;
-    //                        for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-    //                            labels.at(dim+1).at(it2->first) = 1 ; // set the flag to 1 only for FSTAR(cell) cells
-    //                    }
-    //                }
-    //                else
-    //                    throw "Error: cannot export f* for a cell of maximal dimension" ;
-    //            }
-    //            else if (_hdvf_opt & (OPT_FULL | OPT_G)) // G
-    //            {
-    //                for (int q=0; q<=_K.dim(); ++q)
-    //                {
-    //                    labels.at(q).resize(_K.nb_cells(q)) ;
-    //                }
-    //
-    //                labels.at(dim).at(cell) = 1 ;
-    //                const CChain& g_cell = OSM::cgetColumn(_G_col.at(dim), cell) ;
-    //                for (typename CChain::const_iterator it = g_cell.cbegin(); it != g_cell.cend(); ++it)
-    //                    labels.at(dim).at(it->first) = 1 ; // set the flag to 1 only for FSTAR(cell) cells
-    //            }
-    //        }
-    //        return labels ;
-    //    }
-    
+public:
     // Method to generate PSC labels for visualisation
     virtual std::vector<std::vector<int> > export_labelsPSC () const
     {
@@ -324,6 +253,31 @@ public:
             throw "Error : trying to export g_chain without proper Hdvf_core option" ;
     }
 protected:
+    // Method to project a chain onto P, S, or C cells
+    template<int ChainTypeFlag>
+    ChainType<CoefficientType, ChainTypeFlag> projection(const ChainType<CoefficientType, ChainTypeFlag>& chain, FlagType flag, int dim) const {
+        // Create a new chain to store the result
+        // Better to initialize 'result' directly with the correct size and iterate over it
+        ChainType<CoefficientType, ChainTypeFlag> result(chain);
+        
+        // Iterate over each element of the chain
+        std::vector<int> tmp ;
+        for (typename ChainType<CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
+        {
+            int cell_index = it->first;
+            CoefficientType value = it->second;
+            
+            // Check the flag of the corresponding cell
+            if (_flag[dim][cell_index] != flag) {
+                // Set to 0
+                tmp.push_back(cell_index) ;
+                
+            }
+        }
+        result /= tmp ;
+        return result;
+    }
+    
     void progress_bar(int i, int n)
     {
         const int step(n/20) ;
@@ -447,7 +401,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 /** \brief find a valid PairCell for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairA(int q, bool &found) // const
+PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found) const
 {
     found = false;
     PairCell p;
@@ -474,7 +428,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
 /** \brief find a valid PairCell containing tau for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairA(int q, bool &found, int tau) // const
+PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, int tau) const
 {
     found = false;
     PairCell p ;
@@ -510,7 +464,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
 /** \brief find all the valid PairCell for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsA(int q, bool &found) // const
+std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found) const
 {
     std::vector<PairCell> pairs;
     found = false ;
@@ -539,7 +493,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
 /** \brief find all the valid PairCell containing tau for A in dimension q */
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::findPairsA(int q, bool &found, int tau) // const
+std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, int tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -1797,19 +1751,19 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
 // Returns a vector of PairCell objects representing the pairs found
 
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::computePerfectHDVF(bool verbose) {
+std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
     std::vector<PairCell> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dim(); // Get the dimension of the complex K
     
     // Loop through dimensions from q-1 to 0
     for (int q = dim - 1; q >= 0; --q) {
-        std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
+        std::cout << std::endl << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
         //        cout << _K.nb_cells(q) << " cells of dimension " << q << endl ;
         // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
         
         // Find a pair of cells in dimension q
-        PairCell pair = findPairA(q, trouve);
+        PairCell pair = find_pair_A(q, trouve);
         
         // While a pair is found
         while (trouve) {
@@ -1826,7 +1780,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
             }
             
             // Find another pair of cells in dimension q
-            pair = findPairA(q, trouve);
+            pair = find_pair_A(q, trouve);
         }
     }
     
@@ -1838,7 +1792,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
 // Returns a vector of PairCell objects representing the pairs found
 
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::computeRandPerfectHDVF(bool verbose) {
+std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
     std::vector<PairCell> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dim(); // Get the dimension of the complex K
@@ -1852,7 +1806,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
         std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
         // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
         
-        std::vector<PairCell> pairs = findPairsA(q, trouve);
+        std::vector<PairCell> pairs = find_pairs_A(q, trouve);
         
         PairCell pair ;
         
@@ -1877,7 +1831,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
             }
             
             // Compute possible pairings
-            pairs = findPairsA(q, trouve);
+            pairs = find_pairs_A(q, trouve);
         }
     }
     // Return the list of pairs found
@@ -1918,7 +1872,7 @@ std::vector<int> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrix
 // Method to print the current state of the reduction
 //template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_reduction(std::ostream& out) // const
+std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_reduction(std::ostream& out) const
 {
     // Print PSC
     out << "----- flags of cells:" << std::endl;
@@ -1991,18 +1945,9 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     return out ;
 }
 
-// Method to print A-pairs
-//template<typename CoefficientType, typename ComplexType>
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::print_pairs(const std::vector<PairCell>& pairs, std::ostream& out) // const
-{
-    for (const auto& pair : pairs) {
-        out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
-    }
-    return out ;
-}
+
 
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // HDVF_H
+#endif // HDVF_CORE_HPP

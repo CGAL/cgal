@@ -1494,7 +1494,7 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::iterator begin() noexcept { return chainsStates.begin(); }
+    inline Bitboard::iterator begin() const noexcept { return chainsStates.begin(); }
     
     /**
      * \brief Iterator to the ending of the chains indices.
@@ -1511,7 +1511,7 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::iterator end() noexcept { return chainsStates.end(); }
+    inline Bitboard::iterator end() const noexcept { return chainsStates.end(); }
     
     /**
      * \brief Reverse iterator to the chains indices.

@@ -70,13 +70,13 @@ public:
     Hdvf_duality(const _ComplexType& L, SubChainComplex<_CoefficientType, _ComplexType>& K, int hdvf_opt = OPT_FULL) ;
     
     /** \brief find a valid PairCell for A in dimension q */
-    virtual PairCell findPairA(int q, bool &found); // const;
+    virtual PairCell find_pair_A(int q, bool &found) const;
     /** \brief find a valid PairCell containing tau for A in dimension q */
-    virtual PairCell findPairA(int q, bool &found, int tau); // const;
+    virtual PairCell find_pair_A(int q, bool &found, int tau) const;
     /** \brief find all the valid PairCell for A in dimension q */
-    virtual std::vector<PairCell> findPairsA(int q, bool &found); // const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
     /** \brief find all the valid PairCell containing tau for A in dimension q */
-    virtual std::vector<PairCell> findPairsA(int q, bool &found, int tau); // const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
     
     /** \brief Set _DD_col to _subCC */
     inline void screen_DD_col ()
@@ -247,87 +247,6 @@ public:
         return out ;
     }
     
-    // Method to generate labels for visualisation
-    // For PSC, no additional arguments, for FSTAR and G, specify the critical cell concerned
-    vector<vector<int> > export_label (ExportType type, int cell=0, int dim=0) const
-    {
-        vector<vector<int> > labels(this->_K.dim()+1) ;
-        if (type == PSC)
-        {
-            for (int q=0; q<=this->_K.dim(); ++q)
-            {
-                for (int i = 0; i<this->_K.nb_cells(q); ++i)
-                {
-                    if (_subCC.get_Bit(q, i)) // i belongs to _subCC
-                    {
-                        if (this->_flag.at(q).at(i) == HDVF_type::PRIMARY)
-                            labels.at(q).push_back(-1) ;
-                        else if (this->_flag.at(q).at(i) == HDVF_type::SECONDARY)
-                            labels.at(q).push_back(1) ;
-                        else
-                            labels.at(q).push_back(0) ;
-                    }
-                    else // i does not belongs to _subCC
-                        labels.at(q).push_back(2) ;
-                }
-            }
-        }
-        else
-        {
-            if ((type == FSTAR) && (_hdvf_opt & (OPT_FULL | OPT_F)))
-            {
-                for (int q=0; q<=this->_K.dim(); ++q)
-                {
-                    labels.at(q).resize(this->_K.nb_cells(q)) ;
-                }
-                
-                if (dim < this->_K.dim())
-                {
-                    labels.at(dim).at(cell) = 1 ;
-                    const typename HDVF_type::RChain& fstar_cell = OSM::cgetRow(this->_F_row.at(dim), cell) ;
-                    for (typename HDVF_type::RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
-                    {
-                        // Keep cells of the chain belonging to _subCC
-                        if (_subCC.get_Bit(dim, it->first))
-                        {
-                            // Set the cofaces belonging to _subCC of it->first in dimension dim+1
-                            typename HDVF_type::RChain cofaces(this->_K.cod(it->first,dim)) ;
-                            for (typename HDVF_type::RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                            {
-                                if (_subCC.get_Bit(dim+1, it2->first))
-                                    labels.at(dim+1).at(it2->first) = 1 ; // set the flag to 1 only for FSTAR(cell) cells
-                            }
-                        }
-                    }
-                }
-                else
-                    throw "Error: cannot export f* for a cell of maximal dimension" ;
-            }
-            else if (_hdvf_opt & (OPT_FULL | OPT_G)) // G
-            {
-                //                cout << "Export : _subCC : " << _subCC << endl ;
-                for (int q=0; q<=this->_K.dim(); ++q)
-                {
-                    labels.at(q).resize(this->_K.nb_cells(q)) ;
-                }
-                
-                labels.at(dim).at(cell) = 1 ;
-                const typename HDVF_type::CChain& g_cell = OSM::cgetColumn(this->_G_col.at(dim), cell) ;
-                for (typename HDVF_type::CChain::const_iterator it = g_cell.cbegin(); it != g_cell.cend(); ++it)
-                {
-                    // Keep cells of the chain belonging to _subCC
-                    if (_subCC.get_Bit(dim, it->first))
-                    {
-                        //                        cout << "g(" << cell << ", " << dim << ") : " << it->first << endl ;
-                        labels.at(dim).at(it->first) = 1 ; // set the flag to 1 only for G(cell) cells
-                    }
-                    
-                }
-                
-            }
-        }
-        return labels ;
-    }
     
     
     // Method to generate PSC labels for visualisation
@@ -448,7 +367,7 @@ Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix>(L,hd
 
 /** \brief find a valid PairCell for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>
-PairCell Hdvf_duality<_CoefficientType,_ComplexType>::findPairA(int q, bool &found) // const
+PairCell Hdvf_duality<_CoefficientType,_ComplexType>::find_pair_A(int q, bool &found) const
 {
     found = false;
     PairCell p;
@@ -475,7 +394,7 @@ PairCell Hdvf_duality<_CoefficientType,_ComplexType>::findPairA(int q, bool &fou
 
 /** \brief find a valid PairCell containing tau for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>
-PairCell Hdvf_duality<_CoefficientType,_ComplexType>::findPairA(int q, bool &found, int tau) // const
+PairCell Hdvf_duality<_CoefficientType,_ComplexType>::find_pair_A(int q, bool &found, int tau) const
 {
     found = false;
     PairCell p ;
@@ -516,7 +435,7 @@ PairCell Hdvf_duality<_CoefficientType,_ComplexType>::findPairA(int q, bool &fou
 
 /** \brief find all the valid PairCell for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>
-std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::findPairsA(int q, bool &found) // const
+std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::find_pairs_A(int q, bool &found) const
 {
     vector<PairCell> pairs;
     found = false ;
@@ -544,7 +463,7 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::findPairsA(in
 
 /** \brief find all the valid PairCell containing tau for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>
-std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::findPairsA(int q, bool &found, int tau) // const
+std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::find_pairs_A(int q, bool &found, int tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -594,7 +513,8 @@ void Hdvf_duality<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // Restrict _DD_col accordingly
     screen_DD_col() ;
     // Compute perfect HDVF over K
-    this->computePerfectHDVF() ;
+    std::vector<PairCell> tmp = this->compute_perfect_hdvf() ;
+    std::cout << tmp.size() << " cells paired" << endl ;
     critical_K = this->get_flag(CRITICAL) ;
     //    this->print_matrices() ;
     //    this->print_reduction() ;
@@ -605,7 +525,10 @@ void Hdvf_duality<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // Restrict _DD_col accordingly
     screen_DD_col() ;
     // Compute perfect HDVF over L-K
-    this->computePerfectHDVF() ;
+    tmp.clear() ;
+    tmp = this->compute_perfect_hdvf() ;
+    std::cout << tmp.size() << " cells paired" << endl ;
+    print_pairs(tmp) ;
     critical_L_K = this->get_flag(CRITICAL) ;
     //    this->print_matrices() ;
     //    this->print_reduction() ;
@@ -626,7 +549,7 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::computePairin
     _subCC = SubChainComplex<_CoefficientType, _ComplexType>(_L) ;
     screen_DD_col() ;
     // Copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<PairCell> pairing = this->computePerfectHDVF() ;
+    std::vector<PairCell> pairing = this->compute_perfect_hdvf() ;
     return pairing ;
 }
 

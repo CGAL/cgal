@@ -42,7 +42,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             cout << "Provide sigma / q (separate with space):" << endl ;
             cin >> sigma >> q ;
             bool found = false ;
-            vector<PairCell> possM(hdvf.findPairsM(q, found, sigma)) ;
+            vector<PairCell> possM(hdvf.find_pairs_M(q, found, sigma)) ;
             cout << "-> possible pairings for M:" << endl ;
             for (int i = 0; i<possM.size(); ++i)
                 cout << i << " : " << possM.at(i) << endl ;
@@ -66,7 +66,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             cout << "Provide sigma / q (separate with space):" << endl ;
             cin >> sigma >> q ;
             bool found = false ;
-            vector<PairCell> possW(hdvf.findPairsW(q, found, sigma)) ;
+            vector<PairCell> possW(hdvf.find_pairs_W(q, found, sigma)) ;
             cout << "-> possible pairings for W:" << endl ;
             for (int i = 0; i<possW.size(); ++i)
                 cout << i << " : " << possW.at(i) << endl ;
@@ -90,7 +90,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             cout << "Provide sigma / q (separate with space):" << endl ;
             cin >> sigma >> q ;
             bool found = false ;
-            vector<PairCell> possMW(hdvf.findPairsMW(q, found, sigma)) ;
+            vector<PairCell> possMW(hdvf.find_pairs_MW(q, found, sigma)) ;
             cout << "-> possible pairings for MW:" << endl ;
             for (int i = 0; i<possMW.size(); ++i)
                 cout << i << " : " << possMW.at(i) << endl ;

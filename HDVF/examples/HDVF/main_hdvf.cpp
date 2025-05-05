@@ -53,14 +53,14 @@ Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, con
     Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
     std::vector<PairCell> pairs ;
     if (!options.random)
-        pairs = hdvf.computePerfectHDVF(options.verbose);
+        pairs = hdvf.compute_perfect_hdvf(options.verbose);
     else
-        pairs = hdvf.computeRandPerfectHDVF(options.verbose);
+        pairs = hdvf.compute_rand_perfect_hdvf(options.verbose);
     
     if (options.with_output)
     {
         cout << "----> pairs found by computePerfectHDVF" << endl ;
-        hdvf.print_pairs(pairs) ;
+        print_pairs(pairs) ;
         cout << "----> reduction" << endl ;
         hdvf.print_reduction() ;
     }
@@ -74,7 +74,7 @@ Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, con
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> pairs found by computePerfectHDVF" << endl ;
-        hdvf.print_pairs(pairs, out) ;
+        print_pairs(pairs, out) ;
         out << "----> reduction" << endl ;
         hdvf.print_reduction(out) ;
         

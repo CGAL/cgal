@@ -35,7 +35,7 @@ template <typename _CoefficientType, int _ChainTypeFlag>
 class SubSparseMatrix : public SparseMatrix<_CoefficientType, _ChainTypeFlag> {
     
 protected:
-    /** \brief A bitboard describing subchains along. */
+    /** \brief A bitboard describing subchains restriction. */
     Bitboard _subChains;
     
     /** \brief A bitboard containing state of each chain (restricted to subchains). */
@@ -72,14 +72,16 @@ public:
     
     
     /** \brief Iterator to the beginning of the subchains indices. */
-    inline Bitboard::iterator begin() noexcept
+    inline Bitboard::iterator begin() const noexcept
     {
-        _subChainsStates = this->chainsStates & _subChains ;
-        return _subChainsStates.begin();
+        return _subChainsStates.begin() ;
     }
     
     /** \brief Iterator to the end of the subchains indices. */
-    inline Bitboard::iterator end() noexcept { return _subChainsStates.end(); }
+    inline Bitboard::iterator end() const noexcept
+    {
+        return _subChainsStates.end() ; 
+    }
     
     /** \brief Change subchains. */
     inline void set_sub (const Bitboard& new_subChains)
