@@ -1,3 +1,0 @@
-\tparam Triangulation an instance of the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class template,
-  or `CGAL::Default`
-\tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

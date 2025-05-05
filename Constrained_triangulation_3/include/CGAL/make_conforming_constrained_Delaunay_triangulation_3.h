@@ -35,7 +35,19 @@ namespace CGAL {
   Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
   ----------
 
-  \include{doc} CDT_3_description_of_input.dox-frag
+  The input data (polygon mesh or polygon soup) represents the polygonal constraints enforced
+  during the triangulation process.
+
+  By default, each face of the input is considered a polygonal constraint for the triangulation. The
+  named parameter `face_patch_map` can be used to describe larger polygonal constraints, possibly with holes. If
+  used, this parameter must be a property map that associates each face of the input with a patch
+  identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
+  surface patches (defined as the union of the input faces with a given patch identifier) is expected to be a polygon or
+  a polygon with holes, with coplanar vertices (or nearly coplanar up to the precision of the number type used).
+
+  The generated triangulation will conform to the faces of the input, or to the surface patches
+  described by the `face_patch_map` property map if provided.
+
 
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------
@@ -70,11 +82,13 @@ namespace CGAL {
 */
 
 /*!
+ * \anchor make_conforming_constrained_Delaunay_triangulation_3_mesh
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
- *
  * \tparam PolygonMesh a model of `FaceListGraph`
- * \include{doc} CDT_3_common_template_parameters.dox-frag
+ * \tparam Triangulation an instance of the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class template,
+ *                       or `CGAL::Default`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param mesh the polygon mesh representing the constraints
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -95,7 +109,7 @@ namespace CGAL {
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered a separate patch.
- *                   Otherwise, faces with the same patch identifier are considered part of the same surface patch.}
+ *                   Faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -130,14 +144,16 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
 }
 
 /*!
+ * \anchor make_conforming_constrained_Delaunay_triangulation_3_soup
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
- *
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  *         of the polygon soup
  * \tparam PolygonRange a model of the concept `RandomAccessContainer` whose value type is a model of the concept
  *    `RandomAccessContainer` whose value type is `std::size_t`
- * \include{doc} CDT_3_common_template_parameters.dox-frag
+ * \tparam Triangulation an instance of the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class template,
+ *         or `CGAL::Default`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param points a range of points representing the vertices of the polygon soup
  * \param polygons a range of ranges of indices representing the faces of the polygon soup
@@ -170,10 +186,11 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon soup, of a type
  *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
- * \pre The polygon soup must not have self-intersections. If the polygon soup is a triangle soup, this is equivalent to:
+ * \pre The polygon soup must be free of self-intersections. If the polygon soup is a triangle soup, this is equivalent to:
  *      \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect
  *     `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points, polygons, np) == false`
- *     \endlink.
+ *     \endlink
+ *     (click on the link for details).
  */
 template <typename Triangulation = CGAL::Default,
           typename PointRange,
