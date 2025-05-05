@@ -33,7 +33,7 @@ namespace CGAL
            typename CurveIndex = int,
            typename CornerIndex = int>
   using Simplicial_mesh_triangulation_3 =
-      public CGAL::Triangulation_3<K,
+      CGAL::Triangulation_3<K,
         CGAL::Triangulation_data_structure_3<
           CGAL::Simplicial_mesh_vertex_base_3<K,
                                               SubdomainIndex,
@@ -41,9 +41,9 @@ namespace CGAL
                                               CurveIndex,
                                               CornerIndex>,
           CGAL::Simplicial_mesh_cell_base_3<K, SubdomainIndex, SurfacePatchIndex>,
-          CGAL::Sequential_tag>
-          >
-  {};
+          CGAL::Sequential_tag
+        >
+      >;
 };
 
 #endif // CGAL_SIMPLICIAL_MESH_TRIANGULATION_3_H
