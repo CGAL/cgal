@@ -143,7 +143,7 @@ typedef unspecified_type Orientation_2;
 
 /*!
 a model for
-`Kernel::Construct_vector_2`.
+`Kernel::ConstructVector_2`.
 */
 typedef unspecified_type Construct_vector_2;
 
@@ -158,25 +158,25 @@ typedef unspecified_type Construct_vector_from_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_perpendicular_vector_2`.
+`Kernel::ConstructPerpendicularVector_2`.
 */
 typedef unspecified_type Construct_perpendicular_vector_2;
 
 /*!
 a model for
-`Kernel::Construct_direction_2`.
+`Kernel::ConstructDirection_2`.
 */
 typedef unspecified_type Construct_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_opposite_direction_2`.
+`Kernel::ConstructOppositeDirection_2`.
 */
 typedef unspecified_type Construct_opposite_direction_2;
 
 /*!
 a model for
-`Kernel::Construct_line_2`.
+`Kernel::ConstructLine_2`.
 */
 typedef unspecified_type Construct_line_2;
 

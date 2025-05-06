@@ -42,7 +42,7 @@ typedef unspecified_type Point_2;
 
 /*!
 model for
-`Kernel::Compute_squared_distance_2`.
+`Kernel::ComputeSquaredDistance_2`.
 */
 typedef unspecified_type Compute_squared_distance_2;
 
