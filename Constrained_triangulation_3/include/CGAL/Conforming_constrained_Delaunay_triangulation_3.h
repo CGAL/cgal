@@ -32,6 +32,7 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/Bbox_3.h>
 
 
 #include <CGAL/boost/graph/Dual.h>
@@ -45,7 +46,6 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
-
 
 #include <boost/container/flat_set.hpp>
 #include <boost/container/map.hpp>
@@ -647,10 +647,28 @@ public:
       put(tr_vertex_map, v, vh);
     }
 
+    [[maybe_unused]] std::array<Vertex_handle, 8> extra_vertices_on_bbox;
     if(cdt_impl.dimension() != 3) {
-      CGAL_error_msg("3D constrained Delaunay triangulation: the input data should be non-coplanar.");
-    }
+      const auto bbox = CGAL::bbox_3(cdt_impl.points_begin(), cdt_impl.points_end(), cdt_impl.geom_traits());
+      double d_x = bbox.xmax() - bbox.xmin();
+      double d_y = bbox.ymax() - bbox.ymin();
+      double d_z = bbox.zmax() - bbox.zmin();
 
+      const double d = (std::max)({d_x, d_y, d_z});
+
+      using Point = typename CDT_3_impl::Point;
+
+      extra_vertices_on_bbox[0] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
+      extra_vertices_on_bbox[1] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
+      extra_vertices_on_bbox[2] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
+      extra_vertices_on_bbox[3] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
+      extra_vertices_on_bbox[4] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
+      extra_vertices_on_bbox[5] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
+      extra_vertices_on_bbox[6] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
+      extra_vertices_on_bbox[7] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+
+      CGAL_assertion(cdt_impl.dimension() == 3);
+    }
 
     struct {
       decltype(tr_vertex_map)* vertex_map;
@@ -836,12 +854,9 @@ public:
   /// \cond SKIP_IN_MANUAL
   Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() &&
   {
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-
     auto& tr = cdt_impl;
 
-    auto sync_vertex_type_with_dimension_and_index = [&](Vertex_handle v)
-    {
+    for(auto v : tr.all_vertex_handles()) {
       switch(v->ccdt_3_data().vertex_type()) {
       case CDT_3_vertex_type::CORNER:
         v->set_dimension(0);
@@ -863,28 +878,30 @@ public:
         CGAL_error();
         break;
       }
-    };
-
-    for(auto vh : tr.all_vertex_handles()) {
-      sync_vertex_type_with_dimension_and_index(vh);
     }
 
-    for(auto ch : tr.all_cell_handles()) {
-      ch->set_subdomain_index(1);
-    }
+    if(tr.dimension() < 3) {
+      for(auto ch : tr.all_cell_handles()) {
+        ch->set_subdomain_index(0);
+      }
+    } else {
+      for(auto ch : tr.all_cell_handles()) {
+        ch->set_subdomain_index(1);
+      }
 
-    std::stack<decltype(tr.infinite_cell())> stack;
-    stack.push(tr.infinite_cell());
-    while(!stack.empty()) {
-      auto ch = stack.top();
-      stack.pop();
-      ch->set_subdomain_index(0);
-      for(int i = 0; i < 4; ++i) {
-        if(ch->is_facet_on_surface(i))
-          continue;
-        auto n = ch->neighbor(i);
-        if(n->subdomain_index() == 1) {
-          stack.push(n);
+      std::stack<decltype(tr.infinite_cell())> stack;
+      stack.push(tr.infinite_cell());
+      while(!stack.empty()) {
+        auto ch = stack.top();
+        stack.pop();
+        ch->set_subdomain_index(0);
+        for(int i = 0; i < 4; ++i) {
+          if(ch->is_facet_on_surface(i))
+            continue;
+          auto n = ch->neighbor(i);
+          if(n->subdomain_index() == 1) {
+            stack.push(n);
+          }
         }
       }
     }
