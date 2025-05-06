@@ -48,7 +48,7 @@ typedef unspecified_type Compute_squared_distance_2;
 
 /*!
 model for
-`Kernel::Less_xy_2`.
+`Kernel::LessXY_2`.
 */
 typedef unspecified_type Less_xy_2;
 
