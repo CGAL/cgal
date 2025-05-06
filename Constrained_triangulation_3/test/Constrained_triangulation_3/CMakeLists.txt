@@ -24,6 +24,7 @@ create_single_source_cgal_program( "cdt_3_from_off.cpp")
 target_link_libraries(cdt_3_from_off PRIVATE CDT_3_dependencies)
 create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp")
 target_link_libraries(cdt_3_from_off_with_Epeck PRIVATE CDT_3_dependencies)
+create_single_source_cgal_program( "snap_and_cdt3.cpp")
 
 if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
   add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
