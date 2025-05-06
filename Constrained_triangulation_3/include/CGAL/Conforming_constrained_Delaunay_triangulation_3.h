@@ -647,28 +647,7 @@ public:
       put(tr_vertex_map, v, vh);
     }
 
-    [[maybe_unused]] std::array<Vertex_handle, 8> extra_vertices_on_bbox;
-    if(cdt_impl.dimension() != 3) {
-      const auto bbox = CGAL::bbox_3(cdt_impl.points_begin(), cdt_impl.points_end(), cdt_impl.geom_traits());
-      double d_x = bbox.xmax() - bbox.xmin();
-      double d_y = bbox.ymax() - bbox.ymin();
-      double d_z = bbox.zmax() - bbox.zmin();
-
-      const double d = (std::max)({d_x, d_y, d_z});
-
-      using Point = typename CDT_3_impl::Point;
-
-      extra_vertices_on_bbox[0] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
-      extra_vertices_on_bbox[1] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
-      extra_vertices_on_bbox[2] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
-      extra_vertices_on_bbox[3] = cdt_impl.insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
-      extra_vertices_on_bbox[4] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
-      extra_vertices_on_bbox[5] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
-      extra_vertices_on_bbox[6] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
-      extra_vertices_on_bbox[7] = cdt_impl.insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
-
-      CGAL_assertion(cdt_impl.dimension() == 3);
-    }
+    cdt_impl.add_bbox_points_if_not_dimension_3();
 
     struct {
       decltype(tr_vertex_map)* vertex_map;
@@ -764,6 +743,8 @@ public:
         hint_ch = vh->cell();
         vertices[i++] = vh;
       }
+
+      cdt_impl.add_bbox_points_if_not_dimension_3();
 
       struct
       {
@@ -1007,6 +988,19 @@ public:
     return {constrained_facets_begin(), constrained_facets_end()};
   }
   /// @} // end constrained facets section
+
+  /// \name Checking
+  /// These methods are mainly a debugging help for the users of advanced features.
+  /// @{
+
+  /*!
+  \brief returns whether the triangulation is valid.
+  When `verbose` is set to `true`, messages describing the first invalidity encountered are
+  printed.
+  */
+  bool is_valid(bool verbose = false) const { return cdt_impl.is_valid(verbose); }
+
+  /// @}
 };
 
 #ifndef DOXYGEN_RUNNING
@@ -3727,6 +3721,30 @@ public:
         i = face_constraint_misses_subfaces_find_first();
         the_process_made_progress = false;
       }
+    }
+  }
+
+  void add_bbox_points_if_not_dimension_3() {
+    if(this->dimension() != 3) {
+      const auto bbox = CGAL::bbox_3(this->points_begin(), this->points_end(), this->geom_traits());
+      double d_x = bbox.xmax() - bbox.xmin();
+      double d_y = bbox.ymax() - bbox.ymin();
+      double d_z = bbox.zmax() - bbox.zmin();
+
+      const double d = (std::max)({d_x, d_y, d_z});
+
+      using Point = typename T_3::Point_3;
+
+      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+
+      CGAL_assertion(this->dimension() == 3);
     }
   }
 
