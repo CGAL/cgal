@@ -17,8 +17,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/cdt_debug_io.h>
 #include <CGAL/Constrained_triangulation_3/internal/ostream_redirect_guard.h>
 
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
 #include <tl/expected.hpp>
 #include <sstream>
 
@@ -70,28 +69,7 @@ namespace CGAL {
       result.nb_of_removed_isolated_points = PMP::remove_isolated_points_in_polygon_soup(points, faces);
     }
 
-    // check if the polygon soup is pure triangles, and create a triangulated copy otherwise
-    bool is_pure_triangles = std::all_of(faces.begin(), faces.end(), [](const auto&f) { return f.size() == 3; });
-
-    { // Now, call does_triangle_soup_self_intersect.
-      // ... but that function requires a triangulated soup (triangle soup)
-      // So, if needed, create a copy of the range of faces, and triangulate it on the fly.
-
-      // create a non-deleting pointer to `faces` (with a null deleter)
-      using Deleter = std::function<void(Faces*)>; // function pointer type
-      using Ptr = std::unique_ptr<Faces, Deleter>;
-      auto null_deleter = +[](Faces *) {};
-      Ptr triangle_faces_ptr{&faces, null_deleter};
-      if (!is_pure_triangles)
-      {
-        auto faces_copy_ptr = new Faces(faces); // copy `faces`
-        auto delete_function_ptr = +[](Faces* vector){ delete vector; };
-        triangle_faces_ptr = Ptr(faces_copy_ptr, delete_function_ptr);
-        PMP::triangulate_polygons(points, *triangle_faces_ptr, np);
-      }
-
-      result.polygon_soup_self_intersects = PMP::does_triangle_soup_self_intersect(points, *triangle_faces_ptr, np);
-    }
+    result.polygon_soup_self_intersects = PMP::does_polygon_soup_self_intersect(points, faces, np);
 
     if (!PMP::orient_polygon_soup(points, faces))
     {
