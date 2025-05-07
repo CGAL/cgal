@@ -32,7 +32,7 @@ struct My_visitor : public PMP::Autorefinement::Default_visitor
   void number_of_output_triangles(std::size_t nbt)
   {
     tgt_check.assign(expected_nb_output, 0);
-    // assert(nbt==expected_nb_output);
+    assert(nbt==expected_nb_output);
   }
 
   void verbatim_triangle_copy(std::size_t tgt_id, std::size_t src_id)
@@ -62,7 +62,7 @@ struct My_visitor : public PMP::Autorefinement::Default_visitor
 };
 
 template <class Tag>
-void test(const std::string fname, std::size_t nb_vertices_after_autorefine, std::size_t expected_nb_output, Tag tag)
+void test(const char* fname, std::size_t nb_vertices_after_autorefine, std::size_t expected_nb_output, Tag tag)
 {
   std::cout << "Running tests on " << fname;
   if (std::is_same_v<Tag, CGAL::Sequential_tag>)
@@ -80,16 +80,11 @@ void test(const std::string fname, std::size_t nb_vertices_after_autorefine, std
 
 // Testing autorefine()
   My_visitor visitor(triangles.size(), expected_nb_output);
-  PMP::repair_polygon_soup(points, triangles);
-  PMP::triangulate_polygons(points, triangles);
-  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(visitor).concurrency_tag(tag).erase_all_duplicates(false).apply_iterative_snap_rounding(true));
-  // PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::concurrency_tag(tag).erase_all_duplicates(false).apply_iterative_snap_rounding(true).snap_grid_size(23).number_of_iterations(15));
-  CGAL::IO::write_polygon_soup("/tmp/debug.off", points, triangles);
+  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(visitor).concurrency_tag(tag).apply_iterative_snap_rounding(true));
   assert( nb_vertices_after_autorefine==points.size());
   assert( expected_nb_output==triangles.size());
   assert( !PMP::does_triangle_soup_self_intersect(points, triangles) );
- CGAL::IO::write_polygon_soup("/tmp/debug.off", points, triangles);
-
+//  CGAL::IO::write_polygon_soup("/tmp/debug.off", points, triangles);
 }
 
 int main(int argc, const char** argv)
@@ -97,7 +92,7 @@ int main(int argc, const char** argv)
   // file expected_nb_of_vertices expected_nb_of_faces (after repair)
   for (int i=0;i<(argc-1)/3; ++i)
   {
-    test(std::string("/home/lvalque/CGAL/git/PMP_triangle_soup_rounding-GF/Polygon_mesh_processing/test/Polygon_mesh_processing/")+argv[1+3*i], atoi(argv[1+3*i+1]), atoi(argv[1+3*i+2]), CGAL::Sequential_tag());
+    test(argv[1+3*i], atoi(argv[1+3*i+1]), atoi(argv[1+3*i+2]), CGAL::Sequential_tag());
 #ifdef CGAL_LINKED_WITH_TBB
     test(argv[1+3*i], atoi(argv[1+3*i+1]), atoi(argv[1+3*i+2]), CGAL::Parallel_tag());
 #endif

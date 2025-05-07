@@ -95,7 +95,7 @@ private:
 
 // Repair_polygon_soup without remove_pinched_polygons since our polygon are triangles
 template <typename PointRange, typename PolygonRange,
-          typename Polygon = typename ::CGAL::Polygon_mesh_processing::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3>
+          typename Polygon = typename ::CGAL::internal::Polygon_types<PointRange, PolygonRange>::Polygon_3>
 struct Triangle_soup_fixer
 {
   template <typename NamedParameters>
