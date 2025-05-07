@@ -1,39 +1,47 @@
-/**
- * \file hdvf.hpp
- * \brief Hdvf code library.
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
- *
- * Hdvf code library (constructors, operations, finders).
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef HDVF_H
-#define HDVF_H
+#ifndef CGAL_HDVF_H
+#define CGAL_HDVF_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
 #include <random>
-#include "CGAL/Hdvf/Hdvf_core.hpp"
+#include "CGAL/Hdvf/Hdvf_core.h"
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
 
 namespace CGAL {
 namespace HDVF {
 
-/**
- * \class Hdvf
- * \brief Implementation of Hdvf and associate operations.
- *
- * The Hdvf class contains all functions to build Hdvf, create perfect Hdvf (A and associate finders) and delineated generators through Hdvf operations (R, M, W, MW and associate finders).
- *
- * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
- * \tparam ComplexType The type of complex  (default is SimpComplex)
- *
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Hdvf` implements homology and cohomology computation via  homological discrete vector fields (HDVF for short).
+ 
+ An enumeration `FlagType` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely PRIMARY, SECONDARY, CRITICAL). The NONE is used in `HDVF_duality` to compute relative homology on a sub-complex).
+ The flag of each cell is stored in an appropriate structure and getters are provided to access to this information.
+ 
+ The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information.
+ 
+ The class provides constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
+ In order to find proper pairs, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
+ 
+ \cgalModels{HDVF}
+ 
+ \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+ \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
+ \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::SparseMatrix`), providing the type of sparse matrices used.
  */
 
 
@@ -1181,4 +1189,4 @@ void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // HDVF_H
+#endif // CGAL_HDVF_H

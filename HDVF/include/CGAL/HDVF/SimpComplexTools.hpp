@@ -8,7 +8,7 @@
 //#include "config.h"
 #include "Simplex.hpp"
 #include "Abstract_simplicial_chain_complex.hpp"
-#include "hdvf_core.hpp"
+#include "Hdvf_core.h"
 #include "per_hdvf.hpp"
 #include "sub_chain_complex.hpp"
 #include "tools_io.hpp"
@@ -38,7 +38,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
     typedef Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.export_labelsPSC() ;
+    vector<vector<int> > labels = hdvf.export_psc_labels() ;
     ComplexType::Simplicial_chain_complex_to_vtk(complex, outfile, &labels) ;
     
     if (hdvf.get_hdvf_opts() != OPT_BND)
@@ -53,7 +53,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_GChain(c,q)) ;
+                    OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 if (q < complex.dim())
@@ -61,7 +61,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                     if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                     {
                         string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                        OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_FSTARChain(c,q)) ;
+                        OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
                         ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
                     }
                 }

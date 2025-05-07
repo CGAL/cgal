@@ -13,7 +13,7 @@
 #include <iostream>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
-#include "CGAL/HDVF/hdvf_core.hpp"
+#include "CGAL/HDVF/Hdvf_core.h"
 #include "CGAL/HDVF/sub_chain_complex.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 
@@ -250,7 +250,7 @@ public:
     
     
     // Method to generate PSC labels for visualisation
-    virtual vector<vector<int> > export_labelsPSC () const
+    virtual vector<vector<int> > export_psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
@@ -275,12 +275,12 @@ public:
     
     // Method to export a G chain for visualisation
     // with cell indices in initial _K
-    virtual CChain export_GChain (int cell, int dim) const
+    virtual CChain export_homology_chain (int cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_GChain with dim out of range" ;
+            throw "Error : export_homology_chain with dim out of range" ;
         //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_GChain with 'future' cell wrt persistence" ;
+        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -306,12 +306,12 @@ public:
     
     // Method to export a FSTAR chain for visualisation
     // with cell indices in initial _K
-    virtual CChain export_FSTARChain (int cell, int dim) const
+    virtual CChain export_cohomology_chain (int cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_FSTARChain with dim out of range" ;
+            throw "Error : export_cohomology_chain with dim out of range" ;
         //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_GChain with 'future' cell wrt persistence" ;
+        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -528,7 +528,7 @@ void Hdvf_duality<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     tmp.clear() ;
     tmp = this->compute_perfect_hdvf() ;
     std::cout << tmp.size() << " cells paired" << endl ;
-    print_pairs(tmp) ;
+    std::cout << tmp ;
     critical_L_K = this->get_flag(CRITICAL) ;
     //    this->print_matrices() ;
     //    this->print_reduction() ;

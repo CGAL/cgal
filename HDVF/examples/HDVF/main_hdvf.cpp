@@ -60,7 +60,7 @@ Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, con
     if (options.with_output)
     {
         cout << "----> pairs found by computePerfectHDVF" << endl ;
-        print_pairs(pairs) ;
+        std::cout << pairs ;
         cout << "----> reduction" << endl ;
         hdvf.print_reduction() ;
     }
@@ -74,7 +74,7 @@ Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, con
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> pairs found by computePerfectHDVF" << endl ;
-        print_pairs(pairs, out) ;
+        out << pairs ;
         out << "----> reduction" << endl ;
         hdvf.print_reduction(out) ;
         

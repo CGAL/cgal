@@ -18,7 +18,7 @@
 #include <functional>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
-#include "CGAL/HDVF/hdvf_core.hpp"
+#include "CGAL/HDVF/Hdvf_core.h"
 
 /**
  * \class Filtration class
@@ -531,7 +531,7 @@ public:
     
     
     // Method to generate PSC labels for visualisation
-    virtual vector<vector<int> > export_labelsPSC () const
+    virtual vector<vector<int> > export_psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
@@ -559,12 +559,12 @@ public:
     
     // Method to export a G chain for visualisation
     // with cell indices in initial _K
-    virtual CChain export_GChain (int cell, int dim) const
+    virtual CChain export_homology_chain (int cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_GChain with dim out of range" ;
+            throw "Error : export_homology_chain with dim out of range" ;
         //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_GChain with 'future' cell wrt persistence" ;
+        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -587,12 +587,12 @@ public:
     
     // Method to export a FSTAR chain for visualisation
     // with cell indices in initial _K
-    virtual CChain export_FSTARChain (int cell, int dim) const
+    virtual CChain export_cohomology_chain (int cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_GChain with dim out of range" ;
+            throw "Error : export_homology_chain with dim out of range" ;
         //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_GChain with 'future' cell wrt persistence" ;
+        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -631,24 +631,24 @@ public:
     void export_perHDVF(PairCell p)
     {
         // Export labels
-        ExpLabels labels(this->export_labelsPSC()) ;
+        ExpLabels labels(this->export_psc_labels()) ;
         _export_labels.push_back(labels) ;
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            CChain chain_sigma(export_GChain(p.sigma, p.dim)) ;
+            CChain chain_sigma(export_homology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
             if (p.tau >= 0)
-                chain_tau = export_GChain(p.tau, p.dim+1) ;
+                chain_tau = export_homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
         // Export fstar (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            CChain chain_sigma(export_FSTARChain(p.sigma, p.dim)) ;
+            CChain chain_sigma(export_cohomology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
             if (p.tau >= 0)
-                chain_tau = export_FSTARChain(p.tau, p.dim+1) ;
+                chain_tau = export_cohomology_chain(p.tau, p.dim+1) ;
             _export_fstar.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
     }

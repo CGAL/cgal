@@ -227,17 +227,16 @@ const CMatrix& get_dd (int q) const;
 
 /*!
  * Prints the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
- 
-By default, outputs the complex to `std::cout`.
+ *
+ * By default, outputs the complex to `std::cout`.
 */
 std::ostream& print_matrices(std::ostream &out = std::cout) const;
 
 /*!
  * Prints the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
- 
-By default, outputs the complex to `std::cout`.
+ *
+ * By default, outputs the complex to `std::cout`.
 */
-
 std::ostream& print_reduction(std::ostream &out = std::cout) const;
 
     
