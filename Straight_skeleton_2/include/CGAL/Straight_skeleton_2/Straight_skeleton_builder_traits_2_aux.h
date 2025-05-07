@@ -101,9 +101,6 @@ private:
   E2C From_Exact;
   F2C From_Filtered;
 
-  typedef typename AC::result_type  AC_result_type;
-  typedef typename FC::result_type  FC_result_type;
-  typedef typename EC::result_type  EC_result_type;
   typedef typename C2F::Target_kernel FK;
 
   bool has_enough_precision(const typename FK::Point_2& point, double precision) const
@@ -140,22 +137,21 @@ public:
     , Filter_construction(Filter_construction)
   {}
 
-  typedef AC_result_type           result_type;
-
   template <class ... A>
-  result_type
-  operator()(A&& ... a) const
+  auto operator()(A&& ... a) const
+    -> typename std::invoke_result<AC, A...>::type
   {
     {
       Protect_FPU_rounding<Protection> P;
       try
       {
+        using FC_result_type = typename std::invoke_result<FC, decltype(To_Filtered(std::forward<A>(a)))...>::type;
         FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
 
         const double precision =
           Lazy_exact_nt<double>::get_relative_precision_of_to_double();
 
-        if ( fr && has_enough_precision(*fr, precision) )
+        if (fr && has_enough_precision(*fr, precision))
           return From_Filtered(fr);
       }
       catch (Uncertain_conversion_exception&) {}
@@ -163,7 +159,9 @@ public:
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
+
+    using EC_result_type = typename std::invoke_result<EC, decltype(To_Exact(std::forward<A>(a)))...>::type;
+    EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...);
     return From_Exact(er);
   }
 };

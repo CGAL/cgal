@@ -788,7 +788,7 @@ template<class R_> struct Side_of_bounded_circumsphere : private Store_kernel<R_
           typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
           typename Get_functor<R_, Compare_distance_tag>::type cd(this->kernel());
 
-          return enum_cast<Bounded_side>(cd(cc(f, e), *f, p0));
+          return enum_cast<result_type>(cd(cc(f, e), *f, p0));
         }
 };
 }

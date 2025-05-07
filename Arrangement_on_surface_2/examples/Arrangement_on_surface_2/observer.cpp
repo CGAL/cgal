@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/observer.cpp
 // Using a simple arrangement observer.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_observer.h>
 
 #include "arr_exact_construction_segments.h"

@@ -8,14 +8,14 @@
     fill=white,blur shadow,rounded corners,align=center}}
 \begin{document}
 \begin{forest}
-  [\name{ArrangementBasicTraits\_2},name=abt,
+  [\name{AosBasicTraits\_2},name=abt,
     % forked edges,
     for tree={concept,edge={-latex}}
-    [\name{ArrangementApproximateTraits\_2}
+    [\name{AosApproximatePointTraits\_2}
       [,phantom]
-      [\name{ArrangementLandmarkTraits\_2},name=alt,before drawing tree={x=0}]
+      [\name{AosLandmarkTraits\_2},name=alt,before drawing tree={x=0}]
     ]
-    [\name{ArrangementConstructXMonotoneCurveTraits\_2},name=acxmt]
+    [\name{AosConstructXMonotoneCurveTraits\_2},name=acxmt]
   ]
   \draw[-latex] (acxmt) to (alt);
 \end{forest}

@@ -5,8 +5,6 @@
 #include <list>
 #include <chrono>
 
-#include <CGAL/basic.h>
-
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 #include "read_objects.h"

@@ -28,7 +28,11 @@ target_link_libraries(extrude_plugin PRIVATE scene_surface_mesh_item
                                              scene_selection_item)
 
 if(TARGET CGAL::Eigen3_support)
-  if("${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
+  if("${Eigen3_VERSION}" VERSION_GREATER "3.1.90")
+    qt6_wrap_ui( acvd_remeshingUI_FILES ACVD_remeshing_dialog.ui)
+    cgal_lab_plugin(acvd_remeshing_plugin ACVD_remeshing_plugin ${acvd_remeshingUI_FILES} KEYWORDS PMP)
+    target_link_libraries(acvd_remeshing_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item CGAL::Eigen3_support)
+
     qt6_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     cgal_lab_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
     target_link_libraries(hole_filling_plugin PRIVATE scene_surface_mesh_item scene_polylines_item scene_selection_item CGAL::Eigen3_support)
@@ -72,11 +76,10 @@ if(TARGET CGAL::Eigen3_support)
       set_tests_properties(
         "compilation of  extrude_plugin"
         "compilation of  fairing_plugin"
+        "compilation of  hole_filling_plugin"
+        "compilation of  remesh_planar_patches_plugin"
+        "compilation of  smoothing_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
-      set_tests_properties(
-      "compilation of  hole_filling_plugin"
-      "compilation of  smoothing_plugin"
-      PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
@@ -184,13 +187,12 @@ target_link_libraries(
 
 if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
+    "compilation of  degenerated_faces_plugin"
+    "compilation of  engrave_text_plugin"
+    "compilation of  isotropic_remeshing_plugin"
     "compilation of  join_and_split_plugin"
+    "compilation of  random_perturbation_plugin"
     "compilation of  selection_plugin"
     "compilation of  triangulate_facets_plugin"
-    "compilation of  isotropic_remeshing_plugin"
-    "compilation of  remesh_planar_patches_plugin"
-    "compilation of  random_perturbation_plugin"
-    "compilation of  engrave_text_plugin"
-    "compilation of  degenerated_faces_plugin"
     PROPERTIES RESOURCE_LOCK Selection_test_resources)
 endif()

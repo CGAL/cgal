@@ -773,7 +773,7 @@ public:
 
   Nef_polyhedron_2<T,Items,Mark> symmetric_difference(
     const Nef_polyhedron_2<T,Items,Mark>& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
+  /*{\Mop returns the symmetric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/
   { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());

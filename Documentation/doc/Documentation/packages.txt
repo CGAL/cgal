@@ -72,6 +72,7 @@
 \package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
+\package_listing{Triangulation_on_hyperbolic_surface_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{TDS_3}
@@ -94,6 +95,7 @@
 \package_listing{Skin_surface_3}
 \package_listing{SMDS_3}
 \package_listing{Mesh_3}
+\package_listing{Isosurfacing_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
 \package_listing{Alpha_wrap_3}

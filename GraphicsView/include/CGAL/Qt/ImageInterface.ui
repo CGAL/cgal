@@ -141,7 +141,7 @@
      <item>
       <widget class="QDoubleSpinBox" name="oversampling">
        <property name="toolTip">
-        <string>Antialiases image (when larger then 1.0)</string>
+        <string>Antialiases image (when larger than 1.0)</string>
        </property>
        <property name="prefix">
         <string>x </string>

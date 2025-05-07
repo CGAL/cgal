@@ -1838,7 +1838,7 @@ void Viewer::setLighting()
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of 3 floats.");
+      msgBox->setText("ERROR : Input should consist of 3 floats.");
       msgBox->exec();
       return;
     }

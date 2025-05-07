@@ -210,6 +210,7 @@ public:
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
     connect(ui_widget.selectionOrEuler, SIGNAL(currentChanged(int)), this, SLOT(on_SelectionOrEuler_changed(int)));
     connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
+    connect(ui_widget.movePoint_pushButton,  SIGNAL(clicked()), this, SLOT(on_movePoint_pushButton_clicked()));
 
     ui_widget.Sharp_edges_label->hide();
     ui_widget.Sharp_angle_spinbox->hide();
@@ -987,6 +988,10 @@ public Q_SLOTS:
     {
       Q_EMIT set_operation_mode(mode);
     }
+
+    ui_widget.movePointCoordinates_textEdit->setVisible(false);
+    ui_widget.movePoint_pushButton->setVisible(false);
+
     switch(mode)
     {
     //Join vertex
@@ -1043,12 +1048,79 @@ public Q_SLOTS:
       ui_widget.docImage_Label->setPixmap(pm);
       break;
     }
+    // Move point
+    case 12:
+    {
+      ui_widget.docImage_Label->clear();
+      ui_widget.movePointCoordinates_textEdit->setVisible(true);
+      ui_widget.movePoint_pushButton->setVisible(true);
+      ui_widget.movePoint_pushButton->setEnabled(true);
+      break;
+    }
     default:
       ui_widget.docImage_Label->clear();
       break;
     }
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
   }
+
+  void on_movePoint_pushButton_clicked()
+  {
+    QString text = ui_widget.movePointCoordinates_textEdit->toPlainText();
+    Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+    QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+    int counter = 0;
+    double coord[3];
+    bool ok = true;
+    if (list.isEmpty()) return;
+    if (list.size() != 3){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consist of a triplet.");
+      msgBox->exec();
+      return;
+    }
+
+    for(QString s : list)
+    {
+      if(!s.isEmpty())
+      {
+        double res = s.toDouble(&ok);
+        if(!ok)
+        {
+          QMessageBox *msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Coordinates are invalid.");
+          msgBox->exec();
+          break;
+        }
+        else
+        {
+          coord[counter++] = res;
+        }
+      }
+    }
+
+    if(counter == 3)
+    {
+      const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
+      item->point_set()->insert(p);
+      counter = 0;
+
+      ui_widget.movePointCoordinates_textEdit->clear();
+
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item)
+        selection_item = onTheFlyItem();
+      if (!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+
+      selection_item->moveVertex(p);
+    }
+  }
+
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item)

@@ -142,6 +142,7 @@ struct Mesh_3_options {
     , dump_after_exude_prefix()
     , number_of_initial_points(-1)
     , nonlinear_growth_of_balls(nonlinear)
+    , surface_only(false)
     , maximal_number_of_vertices(0)
     , pointer_to_error_code(0)
 #ifndef CGAL_NO_ATOMIC
@@ -157,6 +158,7 @@ struct Mesh_3_options {
   std::string dump_after_exude_prefix;
   int number_of_initial_points;
   bool nonlinear_growth_of_balls;
+  bool surface_only;
   std::size_t maximal_number_of_vertices;
   Mesh_error_code* pointer_to_error_code;
 #ifndef CGAL_NO_ATOMIC
