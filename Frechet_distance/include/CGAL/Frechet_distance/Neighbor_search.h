@@ -48,28 +48,18 @@ class Neighbor_search
     using Polylines = std::vector<Polyline>;
 
 public:
-/*!
- * constructs a neighbor search data structure for `polylines`
- * \tparam PolylineRange must be a model of `RandomAccessRange` with value type `PointRange`
-*/
-    template <typename PolylineRange>
-    Neighbor_search(const PolylineRange& polylines)
-    : curves(polylines.begin(), polylines.end())
-    {
-      kd_tree.insert(curves);
-      kd_tree.template build<Sequential_tag>();
-    }
 
 /*!
  * constructs a neighbor search data structure for `polylines`
- * \tparam PolylineRange must be a model of `RandomAccessRange` with value type `PointRange`
  * \tparam ConcurrencyTag enables sequential versus parallel construction.
  * Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * \tparam PolylineRange must be a model of `RandomAccessRange` with value type `PointRange`
 */
-    template <typename PolylineRange, typename ConcurrencyTag>
-    Neighbor_search(const PolylineRange& polylines, ConcurrencyTag)
+    template <typename ConcurrencyTag = Sequential_tag, typename PolylineRange>
+    Neighbor_search(const PolylineRange& polylines, ConcurrencyTag tag = ConcurrencyTag())
     : curves(polylines.begin(), polylines.end())
     {
+      CGAL_USE(tag);
       kd_tree.insert(curves);
       kd_tree.template build<ConcurrencyTag>();
     }
