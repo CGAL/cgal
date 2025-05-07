@@ -18,6 +18,7 @@
 #include <CGAL/number_utils.h>
 
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Lazy_exact_nt.h>
@@ -105,7 +106,7 @@ struct Triangle_soup_fixer
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
@@ -140,7 +141,7 @@ struct Triangle_soup_fixer<PointRange, PolygonRange, Indexes_range< std::array<P
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
