@@ -163,7 +163,7 @@ void repair_triangle_soup(PointRange& points,
 struct Wrap_snap_visitor : public Autorefinement::Default_visitor
 {
   template< typename Triangle>
-  void new_subtriangle(Triangle& new_t, const Triangle& old_t) {
+  void new_subdivision(Triangle& new_t, const Triangle& old_t) {
     new_t.set_id(old_t.id());
   }
 };

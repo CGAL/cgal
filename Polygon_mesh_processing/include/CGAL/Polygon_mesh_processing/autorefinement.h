@@ -1561,7 +1561,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
             if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
-              visitor.new_subtriangle(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+              visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
           }
         }
     );
@@ -1577,7 +1577,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     for (const std::pair<std::array<EK::Point_3,3>, std::size_t>& t_and_id : new_triangles)
     {
       if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
-        visitor.new_subtriangle(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
+        visitor.new_subdivision(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
       else
         visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
       soup_triangles_out.push_back({ get_point_id(t_and_id.first[0]),
