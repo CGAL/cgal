@@ -35,8 +35,8 @@ of this process in 2D (where our ice-cream spoon is simply a circle).
 
 Alpha shapes depend on a parameter \f$ \alpha\f$ after which they are named.
 In the ice-cream analogy above, \f$ \alpha\f$ is the squared radius of the
-carving spoon. A very small value will allow us to eat up all of the
-ice-cream except the chocolate points themselves. Thus we already see
+carving spoon. A very small value will allow us to eat up all the
+ice-cream except the chocolate points themselves. Thus, we already see
 that the \f$ \alpha\f$-shape degenerates to the point-set \f$ S\f$ for
 \f$ \alpha \rightarrow 0\f$. On the other hand, a huge value of \f$ \alpha\f$
 will prevent us even from moving the spoon between two points since
@@ -53,7 +53,7 @@ We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
 are based on the Delaunay triangulation. <I>Weighted alpha shapes</I>
 are based on its generalization, the regular triangulation
 (cf. Section \ref Section_2D_Triangulations_Regular "Regular Triangulations"),
-replacing the euclidean distance by the power to weighted points.
+replacing the Euclidean distance by the power to weighted points.
 
 There is a close connection between alpha shapes and the underlying
 triangulations. More precisely, the \f$ \alpha\f$-complex of \f$ S\f$ is a
@@ -100,7 +100,7 @@ It provides iterators to enumerate the vertices and edges that are in
 the \f$ \alpha\f$-shape, and functions that allow to classify vertices,
 edges and faces with respect to the \f$ \alpha\f$-shape. They can be in
 the interior of a face that belongs or does not belong to the \f$ \alpha\f$-shape.
-They can be singular/regular, that is be on the boundary of the \f$ \alpha\f$-shape,
+They can be singular/regular, that is, they can be on the boundary of the \f$ \alpha\f$-shape,
 but not incident/incident to a triangle of the \f$ \alpha\f$-complex.
 
 Finally, it provides a function to determine the \f$ \alpha\f$-value
@@ -213,7 +213,7 @@ cube will be chosen and no optimizations will be used.
 It is also recommended to switch the triangulation to 1-sheeted
 covering if possible. Note that a periodic triangulation in 9-sheeted
 covering space is degenerate. In this case, an exact constructions
-kernel needs to be used to compute the alpha shapes. Otherwise the
+kernel needs to be used to compute the alpha shapes. Otherwise, the
 results will suffer from round-off problems.
 
 \cgalExample{Alpha_shapes_2/ex_periodic_alpha_shapes_2.cpp}
