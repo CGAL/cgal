@@ -67,10 +67,22 @@ public:
     using Point = Traits::Point_d;
 #endif
 
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Sequential_tag);
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Parallel_tag);
+
 
      /*!  returns the indices of the inserted polylines that are closer than `distance` to the polyline `query`.
+        * \param query the query polyline
+        * \param distance the distance bound
+        * \tparam ConcurrencyTag enables sequential versus parallel computation.
+        * Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+        * \return a vector of indices of the inserted polylines that are closer than `distance` to the polyline `query`.
      */
-    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance);
+    template <typename ConcurrencyTag = Sequential_tag>
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance)
+    {
+        return get_close_curves(query, distance, ConcurrencyTag());
+    }
 
 private:
     Polylines curves;
@@ -85,7 +97,7 @@ std::vector<std::size_t>
 auto
 #endif
 Neighbor_search<PointRange, Traits>::get_close_curves(
-    const PointRange& curve, double distance) -> std::vector<std::size_t>
+    const PointRange& curve, double distance, Sequential_tag) -> std::vector<std::size_t>
 {
     auto result = kd_tree.search(curve, distance);
 
@@ -100,6 +112,38 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);
     result.erase(new_end, result.end());
 
+    return result;
+}
+
+template <class PointRange, class Traits>
+#ifdef DOXYGEN_RUNNING
+std::vector<std::size_t>
+#else
+auto
+#endif
+Neighbor_search<PointRange, Traits>::get_close_curves(
+    const PointRange& curve, double distance, Parallel_tag) -> std::vector<std::size_t>
+{
+    std::vector<std::size_t> result;
+#ifdef CGAL_LINKED_WITH_TBB
+    result = kd_tree.search(curve, distance);
+    std::vector<int> to_remove(result.size(), 0);
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, result.size()), [&](const tbb::blocked_range<std::size_t>& r) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+            to_remove[i] = is_Frechet_distance_larger(curve, curves[result[i]], distance, parameters::geom_traits(Traits()));
+        }
+    });
+
+    int compact = 0;
+    for(int i = 0; i < to_remove.size(); ++i) {
+        if(! to_remove[i]) {
+            result[compact] = result[i];
+            ++compact;
+        }
+    }
+    result.resize(compact);
+#endif
     return result;
 }
 
