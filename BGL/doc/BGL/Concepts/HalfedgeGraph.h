@@ -60,7 +60,7 @@ returns one of the halfedges corresponding to `e`.
  */
 template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-halfedge(boost::graph_traits<HalfedgeGraph>::edge_descriptor f, const HalfedgeGraph& g);
+halfedge(boost::graph_traits<HalfedgeGraph>::edge_descriptor e, const HalfedgeGraph& g);
 
 /*! \relates HalfedgeGraph
 returns a halfedge with target `v`.
