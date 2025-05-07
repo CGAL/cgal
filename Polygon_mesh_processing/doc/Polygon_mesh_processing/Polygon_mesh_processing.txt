@@ -889,7 +889,7 @@ would then also includes overlaps of duplicated points.
 The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
 using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
 merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
-might be introduced due to rounding issues of points coordinates. The `apply_iterative_snap_rounding` option can be used to resolve this issue.
+might be introduced due to the rounding of the coordinates of intersection points. The `apply_iterative_snap_rounding` option can be used to resolve this issue.
 When set to `true`, it ensures the coordinates are rounded to fit in `double` with potential additional subdivisions,
 preventing any self-intersections from occurring.
 
