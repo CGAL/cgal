@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
 
   #if 1
-  bool OK = PMP::orient_polygon_soup(input_points, input_triangles);
+  PMP::orient_polygon_soup(input_points, input_triangles);
 
   CGAL::Surface_mesh<Kernel::Point_3> mesh;
   PMP::polygon_soup_to_polygon_mesh(input_points, input_triangles, mesh);
