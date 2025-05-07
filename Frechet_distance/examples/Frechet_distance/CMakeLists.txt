@@ -25,12 +25,13 @@ create_single_source_cgal_program( "Frechet_distance_d.cpp" )
 target_link_libraries(Frechet_distance_d PUBLIC CGAL::Eigen3_support)
 endif()
 
+
+create_single_source_cgal_program("parallel_Frechet_DS_2.cpp")
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
 
-  create_single_source_cgal_program("parallel_Frechet_DS_2.cpp")
   target_link_libraries(parallel_Frechet_DS_2 PRIVATE CGAL::TBB_support)
 else()
   message(STATUS "NOTICE: The example 'parallel_Frechet_DS_2' requires TBB, and will not be compiled")
