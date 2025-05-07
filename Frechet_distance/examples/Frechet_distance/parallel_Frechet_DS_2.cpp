@@ -37,14 +37,14 @@ int main()
     curves.pop_back();
 
     using Neighbor_search = CGAL::Frechet_distance::Neighbor_search<Curve, Traits>;
-    Neighbor_search ds(curves, CGAL::Parallel_tag());
+    Neighbor_search ds(curves, CGAL::Parallel_if_available_tag());
 
     for(const Curve& c : curves){
         std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(c, query, 0.000001);
         std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
     }
     double distance = 16;
-    std::vector<std::size_t> result = ds.get_close_curves(query, distance);
+    std::vector<std::size_t> result = ds.get_close_curves<CGAL::Parallel_if_available_tag>(query, distance);
 
     std::cout << result.size() << " curves at Frechet distance closer than " << distance << std::endl;
 }
