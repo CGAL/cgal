@@ -33,6 +33,7 @@ namespace CGAL {
 namespace Frechet_distance {
 
 /*!
+* \ingroup PkgFrechetDistanceRef
  * A data structure to store polylines with a function that enables to find those polylines which are closer than a distance bound to a query polyline.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
