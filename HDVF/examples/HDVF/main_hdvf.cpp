@@ -17,7 +17,7 @@
 #include "CGAL/Hdvf/SimpComplexTools.hpp"
 #include "CGAL/Hdvf/Cubical_chain_complex.hpp"
 #include "CGAL/Hdvf/CubComplexTools.hpp"
-#include "CGAL/Hdvf/hdvf.hpp"
+#include "CGAL/Hdvf/Hdvf.h"
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/Hdvf/hdvf_tools.hpp"
 #include "arguments.h"

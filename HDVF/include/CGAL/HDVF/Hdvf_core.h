@@ -9,8 +9,8 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef HDVF_CORE_H
-#define HDVF_CORE_H
+#ifndef CGAL_HDVF_CORE_H
+#define CGAL_HDVF_CORE_H
 
 #include <vector>
 #include <cassert>
@@ -146,59 +146,72 @@ public:
      *
      * Builds a HDVF by copy from another, including options.
      *
-     * \param[in] K A chain complex (a model of `AbstractChainComplex`)
-     * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
+     * \param[in] hdvf An initial HDVF.
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt) { }
     
     /**
-     * \brief HDVF destructor. */
+     * \brief HDVF_core destructor. */
     ~Hdvf_core() { }
     
     /**
      * \brief Find a valid PairCell of dimension q / q+1 for A.
      *
-     * \param[in] q The function finds a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
-     
+     * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     *
+     * \param[in] q Lower dimension of the pair.
+     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual PairCell find_pair_A(int q, bool &found) const;
     
     /**
      * \brief Find a valid PairCell for A containing `gamma` (a cell of dimension `q`)
      *
-     * \param[in] q Dimension of the cell gamma.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma The function finds a cell \f$\gamma'\f$ such that one of the following conditions holds:
+     * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     *
+     * \param[in] q Dimension of the cell `gamma`.
+     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] gamma Index of a cell to pair.
      */
     virtual PairCell find_pair_A(int q, bool &found, int gamma) const;
     
     /**
-     * \brief Find *all* valid PairCells of dimension q / q+1 for A. This method is thus slower than `find_pair_A`.
+     * \brief Find *all* valid PairCell of dimension q / q+1 for A.
      *
-     * \param[in] q The function finds all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the vector of all valid pairs found.
+     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+     * It returns a vector of such pairs.
+     *
+     * \param[in] q Lower dimension of the pair.
+     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
     
     /**
      * \brief Find *all* valid PairCell for A containing `gamma` (a cell of dimension `q`)
      *
-     * \param[in] q Dimension of the cell gamma.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
-     * \param[in] gamma The function finds all the cell \f$\gamma'\f$ such that one of the following conditions holds:
+     * The function searches all CRITICAL cells \f$\gamma'\f$ such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
-     * \return The vector of all possible valid pairs.
+     * It returns a vector of such pairs.
+     *
+     * \param[in] q Dimension of the cell `gamma`.
+     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] gamma Index of a cell to pair.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int gamma) const;
     
     /**
      * \brief A operation: pairs critical cells.
      *
-     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the A operation, \f$\gamma_1\f$ becomes PRIMARY, \f$\gamma_2\f$ becomes SECONDARY. The A functions updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the A operation, \f$\gamma_1\f$ becomes PRIMARY, \f$\gamma_2\f$ becomes SECONDARY. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     *
+     * \param[in] gamma1 First cell of the pair (dimension `q`)
+     * \param[in] gamma2 Second cell of the pair (dimension `q+1`)
+     * \param[in] q Dimension of the pair
      */
-    void A(int gamma1, int gamma2, int dim);
+    void A(int gamma1, int gamma2, int q);
     
     /**
      * \brief Compute a perfect HDVF.
@@ -997,4 +1010,4 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // HDVF_CORE_H
+#endif // CGAL_HDVF_CORE_H

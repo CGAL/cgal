@@ -1,12 +1,13 @@
-/**
- * \file per_hom.hpp
- * \brief Persistent homology with HDVF.
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
- *
- * Persistent homology with HDVF.
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
 #ifndef PER_HOM_HPP
 #define PER_HOM_HPP

@@ -8,7 +8,7 @@
 #include "tools_io.hpp"
 //#include "AbstractSimpComplex.hpp"
 //#include "CubComplex.hpp"
-#include "hdvf.hpp"
+#include "Hdvf.h"
 #include "CGAL/OSM/OSM.hpp"
 
 namespace CGAL {

@@ -1,7 +1,7 @@
 #ifndef ARGUMENTS_H
 #define ARGUMENTS_H
 
-#include "CGAL/HDVF/hdvf.hpp"
+#include "CGAL/HDVF/Hdvf.h"
 
 enum class Algorithm { HDVF, DualHDVF, PerHDVF };
 enum class InputFormat { SIMP, OFF, CUB, PGM };
