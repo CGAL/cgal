@@ -473,7 +473,7 @@ public:
       ss << "  -> constrained segment " << display_vert(va) << "  -  " << display_vert(vb) << '\n';
       ss << "  -> distance = " << min_dist << '\n';
       ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
-      throw std::runtime_error(ss.str());
+      CGAL_error_msg(ss.str().c_str());
     }
   }
 

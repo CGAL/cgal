@@ -32,6 +32,7 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/Bbox_3.h>
 
 
 #include <CGAL/boost/graph/Dual.h>
@@ -45,7 +46,6 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
-
 
 #include <boost/container/flat_set.hpp>
 #include <boost/container/map.hpp>
@@ -558,7 +558,7 @@ public:
   \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either
   a polygon soup or a polygon mesh.
 
-  Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
+  Input Data
   ----------
 
   The input data requirements are described in the documentation of the
@@ -646,6 +646,8 @@ public:
       hint_ch = vh->cell();
       put(tr_vertex_map, v, vh);
     }
+
+    cdt_impl.add_bbox_points_if_not_dimension_3();
 
     struct {
       decltype(tr_vertex_map)* vertex_map;
@@ -742,6 +744,8 @@ public:
         vertices[i++] = vh;
       }
 
+      cdt_impl.add_bbox_points_if_not_dimension_3();
+
       struct
       {
         Vec_vertex_handle* vertices;
@@ -831,12 +835,9 @@ public:
   /// \cond SKIP_IN_MANUAL
   Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() &&
   {
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-
     auto& tr = cdt_impl;
 
-    auto sync_vertex_type_with_dimension_and_index = [&](Vertex_handle v)
-    {
+    for(auto v : tr.all_vertex_handles()) {
       switch(v->ccdt_3_data().vertex_type()) {
       case CDT_3_vertex_type::CORNER:
         v->set_dimension(0);
@@ -858,28 +859,30 @@ public:
         CGAL_error();
         break;
       }
-    };
-
-    for(auto vh : tr.all_vertex_handles()) {
-      sync_vertex_type_with_dimension_and_index(vh);
     }
 
-    for(auto ch : tr.all_cell_handles()) {
-      ch->set_subdomain_index(1);
-    }
+    if(tr.dimension() < 3) {
+      for(auto ch : tr.all_cell_handles()) {
+        ch->set_subdomain_index(0);
+      }
+    } else {
+      for(auto ch : tr.all_cell_handles()) {
+        ch->set_subdomain_index(1);
+      }
 
-    std::stack<decltype(tr.infinite_cell())> stack;
-    stack.push(tr.infinite_cell());
-    while(!stack.empty()) {
-      auto ch = stack.top();
-      stack.pop();
-      ch->set_subdomain_index(0);
-      for(int i = 0; i < 4; ++i) {
-        if(ch->is_facet_on_surface(i))
-          continue;
-        auto n = ch->neighbor(i);
-        if(n->subdomain_index() == 1) {
-          stack.push(n);
+      std::stack<decltype(tr.infinite_cell())> stack;
+      stack.push(tr.infinite_cell());
+      while(!stack.empty()) {
+        auto ch = stack.top();
+        stack.pop();
+        ch->set_subdomain_index(0);
+        for(int i = 0; i < 4; ++i) {
+          if(ch->is_facet_on_surface(i))
+            continue;
+          auto n = ch->neighbor(i);
+          if(n->subdomain_index() == 1) {
+            stack.push(n);
+          }
         }
       }
     }
@@ -985,6 +988,19 @@ public:
     return {constrained_facets_begin(), constrained_facets_end()};
   }
   /// @} // end constrained facets section
+
+  /// \name Checking
+  /// These methods are mainly a debugging help for the users of advanced features.
+  /// @{
+
+  /*!
+  \brief returns whether the triangulation is valid.
+  When `verbose` is set to `true`, messages describing the first invalidity encountered are
+  printed.
+  */
+  bool is_valid(bool verbose = false) const { return cdt_impl.is_valid(verbose); }
+
+  /// @}
 };
 
 #ifndef DOXYGEN_RUNNING
@@ -3705,6 +3721,30 @@ public:
         i = face_constraint_misses_subfaces_find_first();
         the_process_made_progress = false;
       }
+    }
+  }
+
+  void add_bbox_points_if_not_dimension_3() {
+    if(this->dimension() != 3) {
+      const auto bbox = CGAL::bbox_3(this->points_begin(), this->points_end(), this->geom_traits());
+      double d_x = bbox.xmax() - bbox.xmin();
+      double d_y = bbox.ymax() - bbox.ymin();
+      double d_z = bbox.zmax() - bbox.zmin();
+
+      const double d = (std::max)({d_x, d_y, d_z});
+
+      using Point = typename T_3::Point_3;
+
+      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
+      this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+
+      CGAL_assertion(this->dimension() == 3);
     }
   }
 

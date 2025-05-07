@@ -4,6 +4,7 @@ project(Constrained_triangulation_3_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program(test_constrained_Delaunay_triangulation_3.cpp)
+create_single_source_cgal_program(test_2D_constrained_Delaunay_triangulation_3.cpp)
 create_single_source_cgal_program(test_ccdt_remeshing.cpp)
 
 find_package(Eigen3 QUIET)
@@ -23,6 +24,7 @@ create_single_source_cgal_program( "cdt_3_from_off.cpp")
 target_link_libraries(cdt_3_from_off PRIVATE CDT_3_dependencies)
 create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp")
 target_link_libraries(cdt_3_from_off_with_Epeck PRIVATE CDT_3_dependencies)
+create_single_source_cgal_program( "snap_and_cdt3.cpp")
 
 if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
   add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
