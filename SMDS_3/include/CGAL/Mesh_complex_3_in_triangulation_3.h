@@ -358,6 +358,13 @@ public:
     tr_ = tr;
     rescan_after_load_of_triangulation();
   }
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(Triangulation&& tr)
+  {
+    tr_ = std::move(tr);
+    rescan_after_load_of_triangulation();
+  }
 
   /** adds cell \p cell to the 3D complex, with subdomain index \p index
   */
