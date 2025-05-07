@@ -67,10 +67,6 @@ public:
     using Point = Traits::Point_d;
 #endif
 
-    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Sequential_tag);
-    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Parallel_tag);
-
-
      /*!  returns the indices of the inserted polylines that are closer than `distance` to the polyline `query`.
         * \param query the query polyline
         * \param distance the distance bound
@@ -85,6 +81,11 @@ public:
     }
 
 private:
+
+
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Sequential_tag);
+    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Parallel_tag);
+
     Polylines curves;
     Frechet_distance::internal::FrechetKdTree<Traits> kd_tree;
 };
