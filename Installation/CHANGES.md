@@ -9,7 +9,7 @@
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
 - Added the function `CGAL::Polygon_mesh_processing::discrete_mean_curvature` and `CGAL::Polygon_mesh_processing::discrete_Guassian_curvature` to evaluate the discrete curvature at a vertex of a mesh.
 - Added the function `CGAL::Polygon_mesh_processing::angle_sum` to compute the sum of the angles around a vertex.
-
+- Added the parameter `apply_iterative_snap_rounding` to the function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup`. When set to `true`, the coordinates are rounded to fit in double and may perform additional subdivisions to ensure the output remains free of self-intersections.
 
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
