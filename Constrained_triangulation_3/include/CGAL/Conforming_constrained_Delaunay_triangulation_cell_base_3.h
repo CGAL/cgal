@@ -32,9 +32,7 @@ namespace CGAL {
  *         It should be the same as the geometric traits class of the triangulation.
  * @tparam CellBase The base class for the cell, which must be a model of `TriangulationCellBase_3`.
  *
- * @cgalModels{ConformingConstrainedDelaunayTriangulationCellBase_3, SimplicialMeshCellBase_3, RemeshingCellBase_3}
- *
- * \note This cell base class also models the `SimplicialMeshCellBase_3` and `RemeshingCellBase_3` concepts, allowing the use of functionality from \ref Chapter_Tetrahedral_Remeshing "Tetrahedral Remeshing" and \ref Chapter_3D_Simplicial_Mesh_Data_Structure "3D Simplicial Mesh Data Structures", if the corresponding vertex base also models the right concepts.
+ * @cgalModels{ConformingConstrainedDelaunayTriangulationCellBase_3}
  *
  * \sa `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3`
  */
@@ -45,8 +43,6 @@ class Conforming_constrained_Delaunay_triangulation_cell_base_3
   using Base = Triangulation_simplex_base_with_time_stamp<CellBase>;
   Conforming_constrained_Delaunay_triangulation_cell_data_3 ccdt_3_data_;
 
-  CDT_3_signed_index subdomain_index_ = -1;
-  mutable double sliver_value_ = 0.;
 public:
   // To get correct cell type in TDS
   template < class TDS3 >
@@ -65,29 +61,6 @@ public:
   const Conforming_constrained_Delaunay_triangulation_cell_data_3& ccdt_3_data() const {
     return ccdt_3_data_;
   }
-
-  // model of SimplicialMeshCellBase_3
-  using Surface_patch_index = CDT_3_signed_index;
-  using Subdomain_index = CDT_3_signed_index;
-  bool is_facet_on_surface(int i) const { return ccdt_3_data().is_facet_constrained(i); }
-  Surface_patch_index surface_patch_index(int i) const { return ccdt_3_data().face_constraint_index(i) + 1; }
-  void set_surface_patch_index(int i, Surface_patch_index index)
-  {
-    ccdt_3_data().set_face_constraint_index(i, index - 1);
-  }
-  Subdomain_index subdomain_index() const { return subdomain_index_; }
-  void set_subdomain_index(Subdomain_index i) { subdomain_index_ = i; }
-
-  // model of RemeshingCellBase_3
-  void set_sliver_value(double value) {
-    sliver_value_ = value;
-  }
-  double sliver_value() const {
-    CGAL_assertion(is_cache_valid());
-    return sliver_value_;
-  }
-  bool is_cache_valid() const { return sliver_value_ != sliver_value_ /* ie is a NaN */; }
-  void reset_cache_validity() const { sliver_value_ = std::numeric_limits<double>::quiet_NaN(); }
 
   static std::string io_signature() {
     static_assert(

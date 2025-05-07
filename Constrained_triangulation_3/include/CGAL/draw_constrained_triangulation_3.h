@@ -38,7 +38,7 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_or_de
   using Facet_descriptor = typename Tr::Finite_facets_iterator;
 
   using Face_index = CGAL::cpp20::remove_cvref_t<
-      decltype(std::declval<Cell_handle>()->surface_patch_index(0))>;
+      decltype(std::declval<Cell_handle>()->ccdt_3_data().face_constraint_index(0))>;
 
   Face_index nb_colors = 0;
   std::for_each(

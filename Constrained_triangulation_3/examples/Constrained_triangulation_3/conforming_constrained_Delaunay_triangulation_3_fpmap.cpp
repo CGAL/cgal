@@ -5,7 +5,7 @@
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/IO/File_medit.h>
+#include <CGAL/IO/write_MEDIT.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
             << ccdt.number_of_constrained_facets() << '\n';
 
   std::ofstream out("ccdt.mesh");
-  CGAL::IO::write_MEDIT(out, ccdt.triangulation());
+  CGAL::IO::write_MEDIT(out, ccdt);
   out.close();
 
   return EXIT_SUCCESS;

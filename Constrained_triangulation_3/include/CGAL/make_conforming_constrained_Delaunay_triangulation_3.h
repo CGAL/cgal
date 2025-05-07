@@ -140,7 +140,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
   using CDT = typename CGAL::Default::Get<Triangulation,
                                           Conforming_constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
   CDT cdt(mesh, np);
-  auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
+  auto remeshing_cdt{std::move(cdt)};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
   return remeshing_cdt;
 }
@@ -207,7 +207,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
   using Default_CDT = Conforming_constrained_Delaunay_triangulation_3<Geom_traits>;
   using CDT = typename CGAL::Default::Get<Triangulation, Default_CDT>::type;
   CDT cdt(points, polygons, np);
-  auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
+  auto remeshing_cdt{std::move(cdt)};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
   return remeshing_cdt;
 }
