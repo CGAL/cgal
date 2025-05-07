@@ -471,11 +471,11 @@ int go(Mesh mesh, CDT_options options) {
 
       auto& tr = cdt;
 
-      for (auto ch : tr.all_cell_handles())
+      std::unordered_map<CDT::Cell_handle, int /*Subdomain_index*/> cells_map;
+      for(auto ch : tr.all_cell_handles())
       {
-        ch->set_subdomain_index(1);
+        cells_map[ch] = 1;
       }
-
 
       std::stack<decltype(tr.infinite_cell())> stack;
       stack.push(tr.infinite_cell());
@@ -483,13 +483,13 @@ int go(Mesh mesh, CDT_options options) {
       {
         auto ch = stack.top();
         stack.pop();
-        ch->set_subdomain_index(0);
+        cells_map[ch] = 0;
         for (int i = 0; i < 4; ++i)
         {
-          if (ch->is_facet_on_surface(i))
+          if(ch->ccdt_3_data().is_facet_constrained(i))
             continue;
           auto n = ch->neighbor(i);
-          if (n->subdomain_index() == 1)
+          if (cells_map[n] == 1)
           {
             stack.push(n);
           }
@@ -503,7 +503,7 @@ int go(Mesh mesh, CDT_options options) {
       std::vector<std::array<std::size_t, 4>> indexed_tetra;
       indexed_tetra.reserve(cdt.number_of_cells());
       for(auto ch: cdt.finite_cell_handles()) {
-        if(ch->subdomain_index() > 0) {
+        if(cells_map[ch] > 0) {
           indexed_tetra.push_back({ch->vertex(0)->time_stamp() -1,
                                    ch->vertex(1)->time_stamp() -1,
                                    ch->vertex(2)->time_stamp() -1,

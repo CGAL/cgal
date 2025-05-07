@@ -1,6 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_base_3.h>
+
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
@@ -8,8 +13,16 @@
 #include <algorithm>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
-using Tr = CDT::Triangulation;
+
+using Vbb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
+using Vb = CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K, Vbb>;
+
+using Cbb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
+using Cb = CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K, Cbb>;
+
+using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+using Tr = CGAL::Triangulation_3<K, Tds>;
+using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K, Tr>;
 
 
 int main(int argc, char* argv[])

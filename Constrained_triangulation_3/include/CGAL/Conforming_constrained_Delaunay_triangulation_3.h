@@ -552,6 +552,9 @@ private:
   using Is_constrained = typename CDT_3_impl::Is_constrained;
 
 public:
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+
+public:
   /** \name Constructors
   @{
 

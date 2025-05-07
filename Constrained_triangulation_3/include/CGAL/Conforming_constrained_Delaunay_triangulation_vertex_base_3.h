@@ -42,11 +42,6 @@ class Conforming_constrained_Delaunay_triangulation_vertex_base_3
   : public Triangulation_simplex_base_with_time_stamp<VertexBase>
 {
   Conforming_constrained_Delaunay_triangulation_vertex_data_3 ccdt_3_data_;
-  bool cache_validity_ = false;
-  CDT_3_signed_index index_ = 0;
-  int dim_ = -1;
-  std::size_t number_of_incident_facets_ = 0;
-  std::size_t number_of_components_ = 0;
 
 public:
   // To get correct vertex type in TDS
@@ -59,23 +54,6 @@ public:
   // constructors, inherited from the base class
   using Base = Triangulation_simplex_base_with_time_stamp<VertexBase>;
   using Base::Base;
-
-  // model of SimplicialMeshVertexBase_3
-  using Index = int;
-  int in_dimension() const { return dim_; }
-  void set_dimension(int d) { dim_ = d; }
-  Index index() const { return index_; }
-  void set_index(Index i) { index_ = i; }
-  bool is_c2t3_cache_valid() const { return cache_validity_; }
-  void invalidate_c2t3_cache() { cache_validity_ = false; }
-  void set_c2t3_cache(std::size_t i, std::size_t j)
-  {
-    number_of_incident_facets_ = i;
-    number_of_components_ = j;
-    cache_validity_ = true;
-  }
-  std::size_t cached_number_of_incident_facets() const { return number_of_incident_facets_; }
-  std::size_t cached_number_of_components() const { return number_of_components_; }
 
   // model of ConformingConstrainedDelaunayTriangulationVertexBase_3
   Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() { return ccdt_3_data_; }
