@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
- * The class `Arr_conic_traits_2` is a model of the `ArrangementTraits_2`
+ * The class `Arr_conic_traits_2` is a model of the `AosTraits_2`
  * concept and can be used to construct and maintain arrangements of bounded
  * segments of algebraic curves of degree \f$2\f$ at most, also known as
  * <I>conic curves</I>.
@@ -13,13 +13,13 @@ namespace CGAL {
  *
  * <UL>
 
- * <LI>If \f$4 r s - t^2 > 0\f$, \f$ C\f$ is an ellipse.  A special case occurs
- * when \f$r = s\f$ and \f$ t = 0\f$, when \f$ C\f$ becomes a circle.
+ * <LI>If \f$4 r s - t^2 > 0\f$, \f$C\f$ is an ellipse.  A special case occurs
+ * when \f$r = s\f$ and \f$t = 0\f$, when \f$C\f$ becomes a circle.
  *
- * <LI>If \f$4 r s - t^2 < 0\f$, \f$ C\f$ is a hyperbola.
+ * <LI>If \f$4 r s - t^2 < 0\f$, \f$C\f$ is a hyperbola.
  *
- * <LI>If \f$4 r s - t^2 = 0\f$, \f$ C\f$ is a parabola.  A degenerate case
- * occurs when \f$r = s = t = 0\f$, when \f$ C\f$ is a line.
+ * <LI>If \f$4 r s - t^2 = 0\f$, \f$C\f$ is a parabola.  A degenerate case
+ * occurs when \f$r = s = t = 0\f$, when \f$C\f$ is a line.
  *
  * </UL>
  *
@@ -27,15 +27,15 @@ namespace CGAL {
  *
  * <UL>
  *
- * <LI>A full ellipse (or a circle) \f$ C\f$.
+ * <LI>A full ellipse (or a circle) \f$C\f$.
  *
- * <LI>The tuple \f$ \langle C, p_s, p_t, o \rangle\f$, where \f$ C\f$ is the
- * supporting conic curve, with the arc endpoints being \f$ p_s\f$ and \f$
- * p_t\f$ (the source and target points, respectively). The orientation \f$ o\f$
- * indicates whether we proceed from \f$ p_s\f$ to \f$ p_t\f$ in a clockwise or
- * in a counterclockwise direction. Note that \f$ C\f$ may also correspond to a
- * line or to pair of lines---in this case \f$ o\f$ may specify a `COLLINEAR`
- * orientation.
+ * <LI>The tuple \f$\langle C, p_s, p_t, o \rangle\f$, where \f$C\f$ is the
+ * supporting conic curve, with the arc endpoints being \f$p_s\f$ and
+ * \f$p_t\f$ (the source and target points, respectively). The orientation
+ * \f$o\f$ indicates whether we proceed from \f$p_s\f$ to \f$p_t\f$ in a
+ * clockwise or in a counterclockwise direction. Note that \f$C\f$ may also
+ * correspond to a line or to pair of lines---in this case \f$o\f$ may specify a
+ * `COLLINEAR` orientation.
  *
  * </UL>
  *
@@ -54,7 +54,7 @@ namespace CGAL {
  * must be rational numbers. This guarantees that the coordinates of all
  * arrangement vertices (in particular, those representing intersection points)
  * are algebraic numbers of degree \f$4\f$ (a real number \f$\alpha\f$ is an
- * algebraic number of degree \f$d\f$ if there exist a polynomial \f$ p\f$ with
+ * algebraic number of degree \f$d\f$ if there exist a polynomial \f$p\f$ with
  * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
  * We therefore require separate representations of the curve
  * coefficients and the point coordinates. The `NtTraits` should be substituted
@@ -75,34 +75,31 @@ namespace CGAL {
  * and defines a curve and \f$x\f$-monotone curve types, as detailed below.
  *
  * While the `Arr_conic_traits_2` models the concept
- * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of
+ * `AosDirectionalXMonotoneTraits_2`, the implementation of
  * the `Are_mergeable_2` operation does not enforce the input curves
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Arr_conic_traits_2 {
 public:
-
   /// \name Types
   /// @{
 
-  /*! the `NtTraits::Rational` type (and also the `RatKernel::FT` type).
-   */
+  /// the `NtTraits::Rational` type (and also the `RatKernel::FT` type).
   typedef unspecified_type      Rational;
 
-  /*! the `NtTraits::Algebraic` type (and also the `AlgKernel::FT` type).
-   */
+  /// the `NtTraits::Algebraic` type (and also the `AlgKernel::FT` type).
   typedef unspecified_type      Algebraic;
 
   /// @}
 
   /*! The `Curve_2` class nested within the conic-arc traits can represent
-   * arbitrary conic arcs and support their construction in various ways.  The
+   * arbitrary conic arcs and support their construction in various ways. The
    * copy and default constructor as well as the assignment operator are
    * provided for conic arcs. In addition, an `operator<<` for the curves is
    * defined for standard output streams.
@@ -211,7 +208,6 @@ public:
     void set_target(const Point_2 & pt);
 
     /// @}
-
   }; /* end Arr_conic_traits_2::Curve_2 */
 
   /*! \class X_monotone_curve_2
@@ -227,7 +223,6 @@ public:
    */
   class X_monotone_curve_2 {
   public:
-
     /// \name Creation
     /// @{
 
@@ -249,7 +244,6 @@ public:
     const Point_2& right() const;
 
     /// @}
-
   }; /* end Arr_conic_traits_2::X_monotone_curve_2 */
 
   /*! The `Point_2` class nested within the conic-arc traits is
@@ -366,7 +360,8 @@ public:
      * respectively) is available, and their exact locations are given
      * implicitly, specified by the intersections of the supporting conic curve
      * with \f$r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0\f$ and
-     * \f$r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$, respectively.
+     * \f$r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0\f$,
+     * respectively.
      *
      * \pre The two auxiliary curves specifying the endpoints really intersect
      * with the supporting conic curve, such that the arc endpoints define a
@@ -407,11 +402,13 @@ public:
      * \pre `source` and `target` must not be the same.
      * \return A segment connecting `source` and `target`.
      */
-    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target) const;
+    X_monotone_curve_2 operator()(const Point_2& source,
+                                  const Point_2& target) const;
 
     /*! constructs a special segment of a given line connecting to given
      * endpoints.
-     * \param a, b, c The coefficients of the supporting line (\f$ax + by + c = 0\f$).
+     * \param a, b, c The coefficients of the supporting line
+     *        (\f$ax + by + c = 0\f$).
      * \param source The source point.
      * \param target The target point.
      * \pre `source` and `target` must not be the same.
@@ -419,7 +416,8 @@ public:
      */
     X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
                                   const Algebraic& c,
-                                  const Point_2& source, const Point_2& target) const;
+                                  const Point_2& source,
+                                  const Point_2& target) const;
   };
 
   /*! \class Construct_bbox_2
@@ -440,57 +438,14 @@ public:
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks \
+  /*! \name Auxiliary Functor definitions, used for, e.g., the landmarks \
    * point-location strategy and the drawing function.
    */
-  //@{
+  /// @{
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
   typedef Approximate_kernel::Point_2                   Approximate_point_2;
-  //@}
-
-  /*! \class Approximate_2
-   * A functor that approximates a point and an \f$x\f$-monotone curve.
-   */
-  class Approximate_2 {
-  public:
-    /*! obtains an approximation of a point coordinate.
-     * \param p The exact point.
-     * \param i The coordinate index (either 0 or 1).
-     * \pre `i` is either 0 or 1.
-     * \return An approximation of p's \f$x\f$-coordinate (if `i` == 0), or an
-     *         approximation of p's \f$y\f$-coordinate (if `i` == 1).
-     */
-    Approximate_number_type operator()(const Point_2& p, int i) const;
-
-    /*! obtains an approximation of a point.
-     * \param p The exact point.
-     */
-    Approximate_point_2 operator()(const Point_2& p) const;
-
-    /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
-     * approximate points that represent an approximate polyline, and inserts
-     * them into an output container given through an output iterator.  The
-     * first and last points in the sequence are always approximations of the
-     * endpoints of the given arc.
-     *
-     * \param oi An output iterator for the output container.
-     * \param error The error bound of the polyline approximation. This is the
-     *        Hausdorff distance between the arc and the polyline that
-     *        approximates the arc.
-     * \param xcv The exact \f$x\f$-monotone arc.
-     * \param l2r A Boolean flag that indicates whether the arc direction is
-     *        left to right.
-     * \return The past-the-end iterator of the output container.
-     *
-     * \pre Dereferencing `oi` must yield an object of type
-     *      `Arr_conic_traits_2::Approximate_point_2`.
-     */
-    template <typename OutputIterator>
-    OutputIterator operator()(OutputIterator oi, double error,
-                              const X_monotone_curve_2& xcv,
-                              bool l2r = true) const;
-  };
+  /// @}
 
   /*! \class Trim_2
    * A functor that trims a conic arc.
@@ -523,11 +478,7 @@ public:
   /*! obtains a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
 
-  /*! obtains an `Approximate_2` functor. */
-  Approximate_2 approximate_2_object() const;
-
   /// @}
-
 }; /* end Arr_conic_traits_2 */
 
 } /* end namespace CGAL */

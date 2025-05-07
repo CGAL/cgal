@@ -917,6 +917,7 @@ public Q_SLOTS:
 
   void updateTick();
   void moveVertex();
+  void moveVertex(const Point_3&);
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {

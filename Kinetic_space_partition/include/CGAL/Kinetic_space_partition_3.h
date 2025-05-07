@@ -398,6 +398,8 @@ public:
     using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
     using PointMap = typename NP_helper::Point_map;
 
+    static_assert(std::is_same_v<typename NP_helper::Geom_traits, Kernel>);
+
     PointMap point_map = NP_helper::get_point_map(np);
 
     To_exact to_exact;

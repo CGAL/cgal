@@ -2131,6 +2131,34 @@ public:
     Patches1 patches_of_tm1(tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1);
     Patches2 patches_of_tm2(tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
 
+    // report input coplanar faces
+    if (coplanar_patches_of_tm1.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm1.find_first();
+                 i < coplanar_patches_of_tm1.npos;
+                 i = coplanar_patches_of_tm1.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm1[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm1);
+        }
+      }
+    }
+    if (coplanar_patches_of_tm2.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm2.find_first();
+                 i < coplanar_patches_of_tm2.npos;
+                 i = coplanar_patches_of_tm2.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm2[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm2);
+        }
+      }
+    }
+
     // for each boolean operation, define two bitsets of patches contributing
     // to the result
     std::vector< boost::dynamic_bitset<> > patches_of_tm1_used(4);

@@ -80,6 +80,8 @@ namespace CCC_internal {
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
+    static void restore_erase_counter(Element*, unsigned int) {}
+    template <typename Element>
     static void increment_erase_counter(Element &) {}
   };
 
@@ -96,9 +98,21 @@ namespace CCC_internal {
     }
 
     template <typename Element>
+    static unsigned int erase_counter(Element* e)
+    {
+      return e->erase_counter();
+    }
+
+    template <typename Element>
     static void set_erase_counter(Element &e, unsigned int c)
     {
       e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void restore_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
     }
 
     template <typename Element>
@@ -353,9 +367,11 @@ public:
     pointer ret = init_insert(fl);
     auto erase_counter = EraseCounterStrategy<T>::erase_counter(*ret);
     const auto ts = Time_stamper::time_stamp(ret);
+    const auto ec = EraseCounterStrategy<T>::erase_counter(ret);
     new (ret) value_type(std::forward<Args>(args)...);
     Time_stamper::restore_timestamp(ret, ts);
     EraseCounterStrategy<T>::set_erase_counter(*ret, erase_counter);
+    EraseCounterStrategy<T>::restore_erase_counter(ret, ec);
     return finalize_insert(ret, fl);
   }
 
@@ -386,8 +402,10 @@ private:
 
     auto ptr = &*x;
     const auto ts = Time_stamper::time_stamp(ptr);
+    const auto ec = EraseCounterStrategy<T>::erase_counter(*x);
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
     Time_stamper::restore_timestamp(ptr, ts);
+    EraseCounterStrategy<T>::restore_erase_counter(ptr, ec);
 
     put_on_free_list(&*x, fl);
   }

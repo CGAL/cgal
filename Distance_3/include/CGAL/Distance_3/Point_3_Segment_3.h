@@ -79,6 +79,7 @@ squared_distance(const typename K::Point_3& pt,
   typedef typename K::Vector_3 Vector_3;
 
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
 
   // assert that the segment is valid (non zero length).
   const Vector_3 diff = vector(seg.source(), pt);
@@ -90,7 +91,7 @@ squared_distance(const typename K::Point_3& pt,
 
   const RT e = wdot(segvec, segvec, k);
   if(wmult((K*)0, d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
-    return squared_distance(pt, seg.target(), k);
+    return sq_dist(pt, seg.target());
 
   // This is an expanded call to squared_distance_to_line() to avoid recomputing 'e'
   const Vector_3 wcr = wcross(segvec, diff, k);
@@ -108,25 +109,29 @@ squared_distance(const typename K::Segment_3& seg,
   return squared_distance(pt, seg, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Point_3& pt,
+                         const typename K::Segment_3& seg,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  //Doing an early exit was slower.
+  return compare(squared_distance(pt, seg, k), d2);
+}
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_squared_distance(const typename K::Segment_3& seg,
+                         const typename K::Point_3& pt,
+                         const K& k,
+                         const typename K::FT &d2)
+{
+  return compare_squared_distance(pt, seg, k, d2);
+}
+
 } // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K>& pt,
-                 const Segment_3<K>& seg)
-{
-  return K().compute_squared_distance_3_object()(pt, seg);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Segment_3<K>& seg,
-                 const Point_3<K>& pt)
-{
-  return K().compute_squared_distance_3_object()(seg, pt);
-}
 
 } // namespace CGAL
 

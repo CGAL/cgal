@@ -23,8 +23,34 @@
 #include <CGAL/Rational_traits.h>
 #include <CGAL/wmult.h>
 
+#include <type_traits>
+
 namespace CGAL {
 namespace internal {
+
+inline
+Comparison_result smaller_of(const Comparison_result& a, const Comparison_result& b)
+{
+  return (std::min)(a,b);
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Uncertain<Comparison_result>& a, const Uncertain<Comparison_result>& b)
+{
+  return Uncertain((std::min)(a.inf(),b.inf()), (std::min)(a.sup(),b.sup()));
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Uncertain<Comparison_result>& a, const Comparison_result& b)
+{
+  return smaller_of(a,make_uncertain(b));
+}
+
+inline
+Uncertain<Comparison_result> smaller_of(const Comparison_result& a, const Uncertain<Comparison_result>& b)
+{
+  return smaller_of(make_uncertain(a),b);
+}
 
 template <class K>
 bool is_null(const typename K::Vector_3 &v, const K&)
@@ -39,7 +65,10 @@ wdot(const typename K::Vector_3 &u,
      const typename K::Vector_3 &v,
      const K&)
 {
-  return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
+  if constexpr(std::is_same_v<typename K::RT, double>)
+    return std::fma(u.hx(), v.hx(), std::fma(u.hy(), v.hy(), u.hz()*v.hz()));
+  else
+    return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
 template <class K>
@@ -84,6 +113,26 @@ wdot(const typename K::Point_3 &p,
   return wdot_tag(p, q, r, k, tag);
 }
 
+inline
+double diff_of_products(const double a, const double b, const double c, const double d)
+{
+// Kahan method, less numerical error
+#if 1
+  double w = d * c;
+  double e = std::fma(c, -d, w);
+  double f = std::fma(a, b, -w);
+  return f + e;
+#else
+  return std::fma(a, b, -c*d);
+#endif
+}
+
+template <typename OFT>
+OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d, std::enable_if_t<!std::is_same_v<double,OFT>>* = 0)
+{
+  return a*b - c*d;
+}
+
 template <class K>
 typename K::Vector_3
 wcross(const typename K::Vector_3 &u,
@@ -92,9 +141,9 @@ wcross(const typename K::Vector_3 &u,
 {
   typedef typename K::Vector_3 Vector_3;
   return Vector_3(
-        u.hy()*v.hz() - u.hz()*v.hy(),
-        u.hz()*v.hx() - u.hx()*v.hz(),
-        u.hx()*v.hy() - u.hy()*v.hx());
+        diff_of_products(u.hy(),v.hz(),u.hz(),v.hy()),
+        diff_of_products(u.hz(),v.hx(),u.hx(),v.hz()),
+        diff_of_products(u.hx(),v.hy(),u.hy(),v.hx()));
 }
 
 template <class K>
@@ -219,6 +268,16 @@ squared_distance_to_line(const typename K::Vector_3& dir,
   RT num, den;
   squared_distance_to_line_RT(dir, diff, num, den, k);
   return Rational_traits<FT>().make_rational(num, den);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_squared_distance_to_line(const typename K::Vector_3& dir,
+                                 const typename K::Vector_3& diff,
+                                 const K& k,
+                                 const typename K::FT &d2)
+{
+  return compare(squared_distance_to_line(dir,diff,k),d2);
 }
 
 template <class K>

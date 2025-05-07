@@ -1043,7 +1043,7 @@ public:
   //@}
 
   /// \name Types and functors defined here, required by the
-  // ArrangementDirectionalXMonotoneTraits_2 concept.
+  // AosDirectionalXMonotoneTraits_2 concept.
   //@{
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
@@ -2625,7 +2625,7 @@ protected:
 
     if ((! is_vert(cv[0]) && (cmp_x(get_min_v(cv[i]), q) == EQUAL)) ||
         (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))) {
-      // q is the left endpoint of the i'th subcurve:
+      // q is the left endpoint of the i-th subcurve:
       if (to_right) return i;
       else {
         // to_left
@@ -2642,7 +2642,7 @@ protected:
 
     if ((! is_vert(cv[0]) && (cmp_x(get_max_v(cv[i]), q) == EQUAL)) ||
         (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
-      // q is the right endpoint of the i'th subcurve:
+      // q is the right endpoint of the i-th subcurve:
       if (! to_right) return i;
       else {
         if (direction == SMALLER) {

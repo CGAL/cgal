@@ -59,14 +59,6 @@ squared_distance(const typename K::Segment_3& s1,
   const Vector_3 v1 = cv(p1, q1), v2 = cv(p2, q2);
   const Vector_3 p1p2 = cv(p1, p2);
 
-  // @todo compute these only when needed?
-  const FT a =   sp(v1, v1);
-  const FT b = - sp(v1, v2);
-  const FT c = - b;
-  const FT d = - sp(v2, v2);
-  const FT e =   sp(v1, p1p2);
-  const FT f =   sp(v2, p1p2);
-
   if(p1 == q1)
   {
     if(p2 == q2)
@@ -76,6 +68,9 @@ squared_distance(const typename K::Segment_3& s1,
       res.squared_distance = sq_dist(p1, p2);
       return res;
     }
+
+    const FT d = - sp(v2, v2);
+    const FT f =   sp(v2, p1p2);
 
     CGAL_assertion(d < 0);
 
@@ -87,6 +82,9 @@ squared_distance(const typename K::Segment_3& s1,
   }
   else if(p2 == q2)
   {
+    const FT a =   sp(v1, v1);
+    const FT e =   sp(v1, p1p2);
+
     CGAL_assertion(a > 0);
 
     res.y = 0;
@@ -96,10 +94,17 @@ squared_distance(const typename K::Segment_3& s1,
     return res;
   }
 
+  const FT a =   sp(v1, v1);
+  const FT b = - sp(v1, v2);
+  const FT c = - b;
+  const FT d = - sp(v2, v2);
+  const FT e =   sp(v1, p1p2);
+  const FT f =   sp(v2, p1p2);
+
   CGAL_assertion(a > 0 && d < 0);
 
   const FT det = a*d - b*c;
-  if(det == 0)
+  if(is_zero(det))
     res.x = 0;
   else
     res.x = boost::algorithm::clamp<FT>((e*d - b*f) / det, 0, 1);
@@ -183,25 +188,101 @@ squared_distance(const typename K::Segment_3& seg1,
   return res.squared_distance;
 }
 
+template <typename K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Segment_3& s1,
+                         const typename K::Segment_3& s2,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  typedef typename K::FT                                                  FT;
+  typedef typename K::Point_3                                             Point_3;
+  typedef typename K::Vector_3                                            Vector_3;
+
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Construct_vector_3 cv = k.construct_vector_3_object();
+  typename K::Compute_scalar_product_3 sp = k.compute_scalar_product_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
+  typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
+
+  /* The content of this function is very similar with the one above, the difference is we can exit earlier if
+     the supporting line are farther than d since we do not need the exact distance. */
+
+#if 1
+  const Point_3& p1 = vertex(s1, 0);
+  const Point_3& q1 = vertex(s1, 1);
+  const Point_3& p2 = vertex(s2, 0);
+  const Point_3& q2 = vertex(s2, 1);
+  const Vector_3 v1 = cv(p1, q1), v2 = cv(p2, q2);
+  const Vector_3 p1p2 = cv(p1, p2);
+
+  // If degenerate segment, compare the distance between the point and the other segment
+  if(p1 == q1)
+    if(p2 == q2)
+      return csq_dist(p1,p2,d2);
+    else
+      return csq_dist(p1,s2,d2);
+  else if(p2 == q2)
+    return csq_dist(s1,p2,d2);
+
+  // Compare first the distance between the lines, if larger we can exit early
+  typename K::Comparison_result res_ll=csq_dist(s1.supporting_line(), s2.supporting_line(), d2);
+  if(certainly(res_ll==LARGER))
+    return LARGER;
+
+  // Compute the distance between the segments
+  // TODO some factorization with above function? only the last case is different
+
+  const FT a =   sp(v1, v1);
+  const FT b = - sp(v1, v2);
+  const FT c = - b;
+  const FT d = - sp(v2, v2);
+  const FT e =   sp(v1, p1p2);
+  const FT f =   sp(v2, p1p2);
+
+  CGAL_assertion(a > 0 && d < 0);
+  const FT det = a*d - b*c;
+  FT res_x;
+  if(is_zero(det))
+    res_x = 0;
+  else
+    res_x = boost::algorithm::clamp<FT>((e*d - b*f) / det, 0, 1);
+
+  FT xc = res_x*c;
+  // res.y = (f - xc) / d, by definition, but building it up more efficiently
+  if(f > xc) // y < 0 <=> f - xc / d < 0 <=> f - xc > 0 (since d is -||v2||)
+  {
+    // res_y = 0;
+    res_x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
+    return compare(sq_dist(p1+res_x*v1,p2), d2);
+  }
+  else // y >= 0
+  {
+    FT n = f - xc; // delay the division by d
+    if(n < d) // y > 1 <=> n / d > 1 <=> n < d (once again, important to note that d is negative!)
+    {
+      // res_y = 1;
+      res_x = boost::algorithm::clamp<FT>((e + c) / a, 0, 1); // (e + y*c) / a
+      return compare(sq_dist(p1+res_x*v1,p2+v2), d2);
+    }
+    else if(res_x==0 || res_x==1) // 0 <= y <= 1
+    {
+      FT res_y = n / d;
+      return compare(sq_dist(p1 + res_x*v1, p2 + res_y*v2), d2);
+    }
+    else
+    {
+      //Already computed by distance line line
+      return res_ll;
+    }
+  }
+#else
+  // Faster with Simple_cartesian<double>, a bit slower with EPICK or EPECK specifically if d2 is small
+  return compare(squared_distance(s1, s2 ,k), d2);
+#endif
+}
+
 } // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance_parallel(const Segment_3<K>& seg1,
-                          const Segment_3<K>& seg2)
-{
-  return internal::squared_distance_parallel(seg1, seg2, K());
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Segment_3<K>& seg1,
-                 const Segment_3<K>& seg2)
-{
-  return K().compute_squared_distance_3_object()(seg1, seg2);
-}
 
 } // namespace CGAL
 

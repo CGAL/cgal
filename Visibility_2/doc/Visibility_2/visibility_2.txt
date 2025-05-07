@@ -87,7 +87,7 @@ Where \f$ n \f$ denotes the number of vertices of \f$ f \f$ and \f$ h \f$ the nu
 Example representing a cathedral.
 \cgalFigureEnd
 
-The left hand side of Figure \cgalFigureRef{cathedral-fig} depicts the outer boundary of a cathedral,
+The left hand side of \cgalFigureRef{cathedral-fig} depicts the outer boundary of a cathedral,
 which is a simple polygon with 565 vertices.
 The right hand side shows the cathedral also with its inner pillars, which is a polygon (with holes)
 with 1153 vertices.
