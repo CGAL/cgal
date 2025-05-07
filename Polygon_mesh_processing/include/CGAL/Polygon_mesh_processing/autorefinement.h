@@ -90,10 +90,6 @@ struct Default_visitor
   inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void delete_triangle(std::size_t /*src_id*/) {}
-
-  // Not documented
-  template< typename Triangle>
-  inline void internal_new_subtriangle(Triangle& /*new_t*/ , const Triangle& /*old_t*/) {}
 };
 
 } // end of Autorefinement visitor
@@ -979,7 +975,7 @@ void generate_subtriangles(std::size_t ti,
 } // end of autorefine_impl
 #endif
 
-namespace internal{
+namespace autorefine_impl{
 // Forward declaration
 struct Wrap_snap_visitor;
 template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
@@ -1419,8 +1415,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   {
     if (is_degen[f])
     {
-      if constexpr (!std::is_same_v<Autorefinement::Default_visitor, Visitor>)
-        visitor.delete_triangle(f);
+      visitor.delete_triangle(f);
       continue; //skip degenerate faces
     }
 
@@ -1616,7 +1611,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   return true;
 }
 
-} // end of internal
+} // end of autorefine_impl
 
 /**
 * \ingroup PMP_corefinement_grp
@@ -1703,11 +1698,11 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   if(do_snap)
   {
     CGAL_PMP_AUTOREFINE_VERBOSE("Snap polygon soup");
-    return internal::polygon_soup_snap_rounding(soup_points, soup_triangles, np);
+    return autorefine_impl::polygon_soup_snap_rounding(soup_points, soup_triangles, np);
   }
   else
   {
-    return internal::autorefine_triangle_soup(soup_points, soup_triangles, np);
+    return autorefine_impl::autorefine_triangle_soup(soup_points, soup_triangles, np);
   }
 }
 

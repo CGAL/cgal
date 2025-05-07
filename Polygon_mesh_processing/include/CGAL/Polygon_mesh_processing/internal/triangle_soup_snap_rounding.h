@@ -28,7 +28,7 @@ namespace CGAL
 namespace Polygon_mesh_processing
 {
 
-namespace internal
+namespace autorefine_impl
 {
 
 // Certified ceil function for exact number types
@@ -79,7 +79,9 @@ public:
   Indexes_range() = default;
   Indexes_range(const std::initializer_list<std::size_t>  &l): Range(l), m_id(0), modified(true){}
   Indexes_range(Range &p): Range(p), modified(true){}
+  Indexes_range(Range &&p): Range(std::move(p)), modified(true){}
   Indexes_range(Range &p, std::size_t id): Range(p), m_id(id),modified(false){}
+  Indexes_range(Range &&p, std::size_t id): Range(std::move(p)), m_id(id),modified(false){}
 
   inline std::size_t id() const { return m_id; }
   inline void set_id(std::size_t id){ m_id=id; }
@@ -103,14 +105,14 @@ struct Triangle_soup_fixer
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    typedef typename CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-    merge_duplicate_points_in_polygon_soup(points, polygons, np);
-    simplify_polygons_in_polygon_soup(points, polygons, traits);
-    remove_invalid_polygons_in_polygon_soup(points, polygons);
-    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
-    remove_isolated_points_in_polygon_soup(points, polygons);
+    CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
+    CGAL::Polygon_mesh_processing::internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
+    CGAL::Polygon_mesh_processing::internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
+    CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup(points, polygons);
   }
 };
 
@@ -138,13 +140,13 @@ struct Triangle_soup_fixer<PointRange, PolygonRange, Indexes_range< std::array<P
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    typedef typename CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-    merge_duplicate_points_in_polygon_soup(points, polygons, np);
-    remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
-    merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
-    remove_isolated_points_in_polygon_soup(points, polygons);
+    CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
+    CGAL::Polygon_mesh_processing::internal::remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
+    CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
+    CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup(points, polygons);
   }
 };
 
@@ -292,7 +294,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
   auto snap = [](typename Kernel::FT x, double scale)
   {
     // Scale the coordinate, round to nearest integer and scale back
-    return internal::double_ceil((x * scale) - 0.5) / scale;
+    return double_ceil((x * scale) - 0.5) / scale;
   };
   auto snap_p = [scale, snap](const Point_3 &p)
   {
@@ -301,7 +303,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
                     snap(p.z(),scale[2]) );
   };
 
-  for (std::size_t i = 0; i <= max_nb_of_iteration; ++i)
+  for (std::size_t i = 0; i < max_nb_of_iteration; ++i)
   {
 #ifdef PMP_ROUNDING_VERTICES_IN_POLYGON_SOUP_VERBOSE
     std::cout << "Start Iteration " << i << std::endl;
@@ -577,6 +579,6 @@ bool polygon_soup_snap_rounding(PointRange &soup_points,
   }
 }
 
-} } } //end of CGAL::Polygon_mesh_processing::internal namespace
+} } } //end of CGAL::Polygon_mesh_processing::autorefine_impl namespace
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_SNAP_ROUNDING_H
