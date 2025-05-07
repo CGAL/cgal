@@ -59,22 +59,23 @@ struct Lambda<Curve<FilteredTraits,true>>
 
     mutable Approx approx;
     mutable std::optional<Exact> exact;
-    const Curve * curve1;
-    PointID circle_center;
-    const Curve * curve2;
-    PointID line_start;
-    distance_t radius;
+    const Curve * curve1 = nullptr;
+    PointID circle_center = -1;
+    const Curve * curve2 = nullptr;
+    PointID line_start=-1;
+    distance_t radius=0;
     mutable bool is_zero, is_one, is_exact, is_start;
-
-    Lambda() {}
 
     Lambda(int zero_one)
         : approx(zero_one),
           is_zero(zero_one == 0),
           is_one(zero_one == 1),
-          is_exact(true)
+          is_exact(true),
+          is_start(false)
     {
     }
+
+    Lambda() : Lambda(0) {}
 
     Lambda(const Approx& approx, const Curve& curve1, const PointID& circle_center,
          const Curve& curve2, const PointID& line_start, const distance_t& radius, bool is_start)
@@ -684,4 +685,4 @@ std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval)
 } // namespace Frechet_distance
 } // namespace CGAL
 
-#endif CGAL_FRECHET_DISTANCE_INTERNAL_GEOMETRY_BASICS_H
+#endif // CGAL_FRECHET_DISTANCE_INTERNAL_GEOMETRY_BASICS_H
