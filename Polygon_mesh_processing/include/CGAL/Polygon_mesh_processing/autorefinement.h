@@ -981,6 +981,7 @@ void generate_subtriangles(std::size_t ti,
 
 namespace internal{
 // Forward declaration
+struct Wrap_snap_visitor;
 template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool polygon_soup_snap_rounding(PointRange &points,
                                 PolygonRange &triangles,
@@ -1564,7 +1565,8 @@ bool autorefine_triangle_soup(PointRange& soup_points,
               { triangle_buffer[ti][0]->second,
                 triangle_buffer[ti][1]->second,
                 triangle_buffer[ti][2]->second };
-            visitor.internal_new_subtriangle(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+            if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
+              visitor.new_subtriangle(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
           }
         }
     );
@@ -1579,11 +1581,13 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     soup_triangles_out.reserve(offset + new_triangles.size());
     for (const std::pair<std::array<EK::Point_3,3>, std::size_t>& t_and_id : new_triangles)
     {
-      visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
+      if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
+        visitor.new_subtriangle(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
+      else
+        visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
       soup_triangles_out.push_back({ get_point_id(t_and_id.first[0]),
                                      get_point_id(t_and_id.first[1]),
                                      get_point_id(t_and_id.first[2]) });
-      visitor.internal_new_subtriangle(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
     }
   }
 

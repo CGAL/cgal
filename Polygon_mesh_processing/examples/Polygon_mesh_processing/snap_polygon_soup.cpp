@@ -34,15 +34,15 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  PMP::repair_polygon_soup(points, triangles);
+  PMP::triangulate_polygons(points, triangles);
+
   std::cout << "#points = " << points.size() << " and #triangles = " << triangles.size() << std::endl;
   std::cout << "Is 2-manifold: " << PMP::is_polygon_soup_a_polygon_mesh(triangles) << std::endl;
 
   std::vector<std::pair<std::size_t, std::size_t>> pairs_of_intersecting_triangles;
   PMP::triangle_soup_self_intersections(points, triangles, std::back_inserter(pairs_of_intersecting_triangles));
   std::cout << "Nb of pairs of intersecting triangles: " << pairs_of_intersecting_triangles.size() << std::endl;
-
-  PMP::repair_polygon_soup(points, triangles);
-  PMP::triangulate_polygons(points, triangles);
 
   CGAL::Real_timer t;
   t.start();
