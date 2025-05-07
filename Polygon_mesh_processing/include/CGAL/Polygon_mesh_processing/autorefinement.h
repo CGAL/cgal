@@ -1582,7 +1582,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
         visitor.new_subdivision(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
       else
-        visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
+        visitor.new_subtriangle(soup_triangles_out.size()-1, tri_inter_ids_inverse[t_and_id.second]);
     }
   }
 
