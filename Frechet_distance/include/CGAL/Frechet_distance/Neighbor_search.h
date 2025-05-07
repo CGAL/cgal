@@ -138,7 +138,7 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
     });
 
     int compact = 0;
-    for(int i = 0; i < to_remove.size(); ++i) {
+    for(std::size_t i = 0; i < to_remove.size(); ++i) {
         if(! to_remove[i]) {
             result[compact] = result[i];
             ++compact;
