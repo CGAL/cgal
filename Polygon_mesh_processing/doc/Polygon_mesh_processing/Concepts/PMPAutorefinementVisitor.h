@@ -23,7 +23,7 @@ public:
   /// called for each subtriangle created from a triangle with intersection, `tgt_id` is the position in the triangle container after calling
   /// `autorefine_triangle_soup()` of the subtriangle, while `src_id` was the position of the original support triangle before calling the function.
   void new_subtriangle(std::size_t tgt_id, std::size_t src_id);
-  /// called for each input triangle deleted because it was degenerated, `src_id` was the position of the original support triangle before calling the function. Additionally, if `apply_iterative_snap_rounding()` is set to `true`, some extra triangle might become degenerated and will be absent from the output range of triangles. Those triangles are also reported in this function.
+  /// called for each input triangle absent in the outputbecause it was degenerate. `src_id` is the position of that triangle in the input range. Additionally, if `apply_iterative_snap_rounding()` is set to `true`, some extra triangles might become degenerate and will be absent in the output. Those triangles are also reported by this function.
   void delete_triangle(std::size_t src_id);
 /// @}
 };
