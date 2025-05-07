@@ -29,7 +29,7 @@
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/type_traits.h>
 
-#ifdef CGAL_BASE_WITH_TIME_STAMP_H
+#ifdef CGAL_SIMPLEX_BASE_WITH_TIME_STAMP_H
 #include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #endif
 
@@ -364,7 +364,7 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
 };
 #endif
 
-#ifdef CGAL_BASE_WITH_TIME_STAMP_H
+#ifdef CGAL_SIMPLEX_BASE_WITH_TIME_STAMP_H
 template <class Base>
 struct Get_io_signature<Triangulation_simplex_base_with_time_stamp<Base>>
 {

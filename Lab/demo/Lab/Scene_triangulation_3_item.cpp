@@ -1063,6 +1063,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(T3_faces)->setAlpha(alpha());
     getTriangleContainer(T3_faces)->setIsSurface(is_surface());
+    getTriangleContainer(T3_faces)->setSelected(is_selected);
     QOpenGLShaderProgram* program = viewer->getShaderProgram(getTriangleContainer(T3_faces)->getProgram());
     program->bind();
     if(d->is_filterable)
