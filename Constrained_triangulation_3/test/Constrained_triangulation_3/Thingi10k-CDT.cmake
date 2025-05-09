@@ -6,7 +6,9 @@ find_path(THINGI10K_DATA_DIR NAME 132423.stl
   PATH_SUFFIXES Downloads/Thingi10K/raw_meshes
   NO_DEFAULT_PATH
   NO_CMAKE_FIND_ROOT_PATH
+  REQUIRED
   )
+
 include(./thingi10k_max_10k_solid.cmake)
 
 set(thingi10k_BLACKLIST_WITHOUT_MERGE_FACETS
