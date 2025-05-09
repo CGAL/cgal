@@ -25,6 +25,14 @@
 
 namespace CGAL {
 
+constexpr bool cdt_3_msvc_2017() {
+#if defined(_MSC_VER) && (_MSC_VER < 1920)
+  return true;
+#else
+  return false;
+#endif
+}
+
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
 
 constexpr bool cdt_3_can_use_cxx20_format() {
