@@ -880,7 +880,7 @@ public:
         stack.pop();
         ch->set_subdomain_index(0);
         for(int i = 0; i < 4; ++i) {
-          if(ch->is_facet_on_surface(i))
+          if(ch->ccdt_3_data().is_facet_constrained(i))
             continue;
           auto n = ch->neighbor(i);
           if(n->subdomain_index() == 1) {
