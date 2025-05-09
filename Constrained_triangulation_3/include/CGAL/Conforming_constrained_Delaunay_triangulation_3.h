@@ -556,10 +556,6 @@ public:
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
   using size_type = typename CDT_3_impl::size_type;
 
-  using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
-  using size_type = typename CDT_3_impl::size_type;
-
-
 public:
   /** \name Constructors
   @{
