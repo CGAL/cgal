@@ -931,7 +931,7 @@ protected:
 
   Compare_vertex_handle comp = {this};
   Constraint_hierarchy constraint_hierarchy = {comp};
-  static_assert(CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
+  static_assert(CGAL::cdt_3_msvc_2017() || CGAL::is_nothrow_movable_v<Constraint_hierarchy>);
   Bbox_3 bbox{};
   double segment_vertex_epsilon = 1e-8;
   std::optional<double> max_bbox_edge_length;
