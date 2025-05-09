@@ -8,6 +8,9 @@
 #include <CGAL/Three/Three.h>
 
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
 #include <QAction>
 #include <QList>
 #include <QMessageBox>
@@ -18,14 +21,40 @@ using Vertex = T3::Vertex;
 using Cell = T3::Cell;
 using Wp = Geom_traits::Weighted_point_3;
 
+template <typename CDT>
 struct Vertex_converter
 {
+  const CDT* tr;
+
+  Vertex_converter(const CDT* tr) : tr(tr) {}
+
   template <typename Src> auto operator()(const Src& src) const
   {
+    using namespace CGAL;
+
     Vertex v;
     v.set_point(Wp{src.point()});
-    v.set_dimension(src.in_dimension());
-    v.set_index(src.index());
+      switch(src.ccdt_3_data().vertex_type()) {
+      case CDT_3_vertex_type::CORNER:
+        v.set_dimension(0);
+        v.set_index(0);
+        break;
+      case CDT_3_vertex_type::STEINER_ON_EDGE:
+        v.set_dimension(1);
+        v.set_index(static_cast<int>(src.ccdt_3_data().constrained_polyline_id(*tr).index()));
+        break;
+      case CDT_3_vertex_type::STEINER_IN_FACE:
+        v.set_dimension(2);
+        v.set_index(src.ccdt_3_data().face_index());
+        break;
+      case CDT_3_vertex_type::FREE:
+        v.set_dimension(3);
+        v.set_index(1);
+        break;
+      default:
+        CGAL_error();
+        break;
+      }
     return v;
   }
   template <typename T1, typename T2> void operator()(const T1&, T2&) const {}
@@ -36,9 +65,9 @@ struct Cell_converter
   template <typename Src> auto operator()(const Src& input_c) const
   {
     Cell result_c;
-    result_c.set_subdomain_index(input_c.subdomain_index());
+    result_c.set_subdomain_index(0);
     for(int i = 0; i < 4; ++i) {
-      result_c.set_surface_patch_index(i, input_c.surface_patch_index(i));
+      result_c.set_surface_patch_index(i, input_c.ccdt_3_data().face_constraint_index(i));
     }
     return result_c;
   }
@@ -77,22 +106,32 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     auto* const mesh = mesh_item ? mesh_item->face_graph() : nullptr;
     if(!mesh) return;
 
-    using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<EPICK>;
+    using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+
+    using Vbb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
+    using Vb  = CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K, Vbb>;
+
+    using Cbb  = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
+    using Cb  = CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K, Cbb>;
+
+    using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+    using Tr  = CGAL::Triangulation_3<K, Tds>;
+    using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K, Tr>;
     CDT cdt = std::invoke([&] {
       CDT cdt;
       if(mesh_item) {
         auto patch_id_pmap_opt = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
 
         if(patch_id_pmap_opt.has_value()) {
-          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
+          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
             *mesh, CGAL::parameters::face_patch_map(*patch_id_pmap_opt));
         }
         else {
-          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
+          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(*mesh);
         }
       }
       else if(soup_item) {
-        cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
+        cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
             soup_item->points(), soup_item->polygons());
 
       }
@@ -102,7 +141,8 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     auto& item_tr = triangulation_item->triangulation();
 
     const auto cdt_tr = CGAL::convert_to_triangulation_3(std::move(cdt));
-    auto inf_v = item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(), Cell_converter());
+    auto inf_v =
+        item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(&cdt), Cell_converter());
     item_tr.set_infinite_vertex(inf_v);
     triangulation_item->c3t3_changed();
 
