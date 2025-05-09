@@ -7,8 +7,11 @@
 
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
-#include <CGAL/IO/File_medit.h>
 
+#include <CGAL/IO/File_medit.h>
+#include <CGAL/property_map.h>
+
+#include <unordered_set>
 #include <fstream>
 #include <string>
 
@@ -24,6 +27,16 @@ using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Tr  = CGAL::Triangulation_3<K, Tds>;
 using CCDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K, Tr>;
 
+// Triangulation for Remeshing
+using CCDT_Tr = CCDT::Triangulation;
+using Triangulation_3 = CGAL::Triangulation_3<K, CCDT_Tr::Triangulation_data_structure>;
+
+using Vertex_handle = Triangulation_3::Vertex_handle;
+using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
+using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
+using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
+
+
 int main(int argc, char* argv[])
 {
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
@@ -36,12 +49,18 @@ int main(int argc, char* argv[])
   }
   CCDT ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CCDT>(mesh);
 
+  Constraints_set constraints;
+  Constraints_pmap constraints_pmap(constraints);
+
   //! [move ccdt to tr]
-  Tr tr = CGAL::convert_to_triangulation_3(std::move(ccdt));
+  Tr tr = CGAL::convert_to_triangulation_3(std::move(ccdt),
+                                           CGAL::parameters::edge_is_constrained_map(constraints_pmap));
   //! [move ccdt to tr]
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
-  CGAL::tetrahedral_isotropic_remeshing(tr, 1.);
+  CGAL::tetrahedral_isotropic_remeshing(tr, 1.,
+        CGAL::parameters::number_of_iterations(3)
+        .edge_is_constrained_map(constraints_pmap));
 
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
