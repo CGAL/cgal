@@ -553,6 +553,8 @@ private:
 
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
+  using size_type = typename CDT_3_impl::size_type;
 
 public:
   /** \name Constructors
