@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   {
     const Tr::Cell_handle c = f.first;
     const int i = f.second;
-    if(c->ccdt_3_data().is_facet_constrained(i))
+    if(c->is_facet_on_surface(i))
       ++nb;
   }
   assert(nb == nb_cstr_facets);

@@ -556,6 +556,10 @@ public:
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
   using size_type = typename CDT_3_impl::size_type;
 
+  using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
+  using size_type = typename CDT_3_impl::size_type;
+
+
 public:
   /** \name Constructors
   @{
@@ -888,6 +892,18 @@ public:
           if(n->subdomain_index() == 1) {
             stack.push(n);
           }
+        }
+      }
+
+      for(auto f : tr.finite_facets())
+      {
+        const auto& mf = tr.mirror_facet(f);
+        if(f.first->ccdt_3_data().is_facet_constrained(f.second) ||
+           mf.first->ccdt_3_data().is_facet_constrained(mf.second))
+        {
+          const auto& patch = f.first->ccdt_3_data().face_constraint_index(f.second);
+          f.first->set_surface_patch_index(f.second, patch);
+          mf.first->set_surface_patch_index(mf.second, patch);
         }
       }
     }
@@ -3984,15 +4000,56 @@ protected:
 * \brief creates a triangulation that can be used for tetrahedral remeshing
 * \tparam Traits is the geometric traits class of `ccdt`
 * \tparam Tr is the type of triangulation to which `ccdt` is converted
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param ccdt the triangulation to be converted
+* \param np optional sequence of \ref bgl_namedparameters "Named Parameters"
+*          among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of
+*                     `c3t3.triangulation()`.
+*                     For each edge `e` for which `c3t3.is_in_complex(e)` returns `true`,
+*                     the constrained status of `e` is set to `true`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap`
+*         with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
+*         as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
 * \return a triangulation of type `CGAL::Triangulation_3` that can be used for tetrahedral remeshing
+* \todo make it clear that the output Vb and Cb must be model of `RemeshingVertexBase_3` and
+* `RemeshingCellBase_3`
 */
-template <typename Traits, typename Tr>
+template <typename Traits,
+          typename Tr,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL::Triangulation_3<Traits,
   typename Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>::Triangulation::Triangulation_data_structure>
-convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt)
+convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  constexpr bool has_ecmap =
+      !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value;
+  if constexpr (has_ecmap)
+  {
+    const auto& tr = ccdt.triangulation();
+    auto ecmap = parameters::get_parameter(np, internal_np::edge_is_constrained);
+    for(auto e : tr.finite_edges())
+    {
+      auto [v1, v2] = tr.vertices(e);
+      if(  v1->ccdt_3_data().constrained_polyline_id(ccdt).index()
+        == v2->ccdt_3_data().constrained_polyline_id(ccdt).index())
+      {
+        if(v2 > v1)
+          std::swap(v1, v2);
+        put(ecmap, std::make_pair(v1, v2), true);
+      }
+    }
+  }
+
   auto tmp = std::move(ccdt).convert_for_remeshing();
   return std::move(tmp).triangulation();
 }
