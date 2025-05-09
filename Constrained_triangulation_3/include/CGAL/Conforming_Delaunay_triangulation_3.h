@@ -39,7 +39,7 @@ namespace CGAL {
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:
-  static constexpr bool t_3_is_not_movable = false == CGAL::is_nothrow_movable_v<T_3>;
+  static constexpr bool t_3_is_not_movable = CGAL::cdt_3_msvc_2017() || false == CGAL::is_nothrow_movable_v<T_3>;
   using Geom_traits = typename T_3::Geom_traits;
   using Vertex_handle = typename T_3::Vertex_handle;
   using Edge = typename T_3::Edge;
