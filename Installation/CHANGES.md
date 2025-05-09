@@ -109,6 +109,10 @@ Release date: _______ 2025
     enables the user to specify a `Range` of initial points.
 -   Added a new meshing parameter [`surface_only`](https://doc.cgal.org/6.1/Mesh_3/group__PkgMesh3Parameters.html#gaa2618c09b6117d7caab12dccca16ee58),
     which can be used to improve performance when only surface mesh generation is sought.
+-   Added a new mesh domain [`Poisson_mesh_domain_3`](), which should be used when generating a mesh from a Poisson surface
+    obtained with the package [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3).
+    This mesh domain re-integrates some optimizations for Poisson surface mesh generation that were lost
+    when the package [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3) had to be replaced instead of the deprecated package [3D Surface Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgSurfaceMesher3).
 
 ### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
 
