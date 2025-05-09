@@ -78,6 +78,9 @@ public:
     template <typename ConcurrencyTag = Sequential_tag>
     std::vector<std::size_t> get_close_curves(const PointRange& query, double distance)
     {
+#ifndef CGAL_LINKED_WITH_TBB
+        static_assert(!std::is_same_v<ConcurrencyTag, Parallel_tag>);
+#endif
         return get_close_curves(query, distance, ConcurrencyTag());
     }
 
@@ -85,7 +88,9 @@ private:
 
 
     std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Sequential_tag);
+#ifdef CGAL_LINKED_WITH_TBB
     std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Parallel_tag);
+#endif
 
     Polylines curves;
     Frechet_distance::internal::FrechetKdTree<Traits> kd_tree;
@@ -117,6 +122,7 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
     return result;
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
 template <class PointRange, class Traits>
 #ifdef DOXYGEN_RUNNING
 std::vector<std::size_t>
@@ -127,7 +133,6 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
     const PointRange& curve, double distance, Parallel_tag) -> std::vector<std::size_t>
 {
     std::vector<std::size_t> result;
-#ifdef CGAL_LINKED_WITH_TBB
     result = kd_tree.search(curve, distance);
     std::vector<int> to_remove(result.size(), 0);
 
@@ -145,9 +150,9 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
         }
     }
     result.resize(compact);
-#endif
     return result;
 }
+#endif
 
 }
 }  // end of namespace CGAL
