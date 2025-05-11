@@ -6,6 +6,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/convex_hull_with_hierarchy.h>
 #include <CGAL/Convex_hull_3/predicates.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -38,6 +39,7 @@ struct Test
 private:
   CGAL::Random& r;
   double m = 0, M = 1;
+  const double PI=3.14159265358979323846;
 
 public:
    Test(CGAL::Random& r) : r(r) { }
@@ -46,6 +48,13 @@ private:
   P random_point() const
   {
     return P(FT(r.get_double(m, M)), FT(r.get_double(m, M)), FT(r.get_double(m, M)));
+  }
+
+  P random_sphere_point() const
+  {
+    FT a=r.get_double(0,2*PI);
+    FT b=r.get_double(-PI/2,PI/2);
+    return P( std::cos(a)*std::cos(b), std::sin(a)*std::cos(b), std::sin(b));
   }
 
   void Tet_tet(int N)
@@ -242,6 +251,84 @@ private:
 
   }
 
+  void Test_sphere(int N, int M)
+  {
+    std::cout << "Sphere of size " << M << std::endl;
+    CGAL::Real_timer t;
+    std::vector< std::vector<P> > points_ranges;
+    std::vector< CGAL::Surface_mesh<P> > hulls;
+    std::vector< CGAL::Convex_hull_with_hierarchy<P> > hulls_wth_hierarchy;
+
+    for(int i=0; i<N; ++i)
+    {
+      std::vector<P> sp;
+      V vec( P(0,0,0), random_sphere_point());
+      vec*=1.2;
+      for(int i=0; i<M; ++i)
+        sp.push_back(random_sphere_point()+vec);
+      points_ranges.push_back(std::move(sp));
+    }
+
+    std::cout << "Compute convex hulls" << std::endl;
+    t.start();
+    for(int i=0; i<N; ++i)
+    {
+      CGAL::Surface_mesh<P> hull;
+      CGAL::convex_hull_3(points_ranges[i].begin(), points_ranges[i].end(), hull);
+      hulls.push_back(std::move(hull));
+    }
+    t.stop();
+    std::cout << "  " << t.time() << " sec" << std::endl;
+    t.reset();
+
+    std::cout << "Comstruct hierarchy of convex hulls" << std::endl;
+    t.start();
+    for(int i=0; i<N; ++i)
+      hulls_wth_hierarchy.emplace_back(hulls[i]);
+    t.stop();
+    std::cout << "  " << t.time() << " sec" << std::endl;
+    t.reset();
+
+    std::cout << "Do intersect with RangePoints" << std::endl;
+    std::cout << "  Number points read per test: " << 8*points_ranges[0].size() << std::endl;
+    t.start();
+    for(int i=0; i<N; ++i)
+      for(int j=i+1; j<N; ++j)
+        CGAL::Convex_hull_3::do_intersect(points_ranges[i], points_ranges[j]);
+    t.stop();
+    std::cout << "  " << t.time() << " sec" << std::endl;
+    t.reset();
+
+    std::cout << "Do intersect with Hulls" << std::endl;
+    nb_visited=0;
+    t.start();
+    for(int i=0; i<N; ++i)
+      for(int j=i+1; j<N; ++j)
+        CGAL::Convex_hull_3::do_intersect(hulls[i], hulls[j]);
+    t.stop();
+    std::cout << "  Number points read per test: " << double(nb_visited)/double(N*(N-1)/2) << std::endl;
+    std::cout << "  " << t.time() << " sec" << std::endl;
+    t.reset();
+
+    std::cout << "Do intersect with Hierarchical Hulls" << std::endl;
+    for(int i=0; i<8; ++i)
+      CGAL::nb_visited_in_hierarchy[i]=0;
+    t.start();
+    for(int i=0; i<N; ++i)
+      for(int j=i+1; j<N; ++j)
+        CGAL::Convex_hull_3::do_intersect(hulls_wth_hierarchy[i], hulls_wth_hierarchy[j]);
+    t.stop();
+
+    std::cout << "  Number points read per test: ";
+    for(int i=0; i<8; ++i)
+      if( CGAL::nb_visited_in_hierarchy[i])
+        std::cout << double(CGAL::nb_visited_in_hierarchy[i])/double(N*(N-1)/2) << " ";
+    std::cout << std::endl;
+    std::cout << "  " << t.time() << " sec" << std::endl;
+    t.reset();
+    std::cout << std::endl;
+  }
+
 public:
   void run()
   {
@@ -250,6 +337,17 @@ public:
     Tet_mirror(1000);
     Tet_shift(1000);
     Tet_stretched(1000);
+
+    Test_sphere(80, 40);
+    Test_sphere(80, 100);
+    Test_sphere(60, 350);
+    Test_sphere(60, 1000);
+    Test_sphere(40, 3500);
+    Test_sphere(40, 10000);
+    Test_sphere(20, 35000);
+    Test_sphere(20, 100000);
+    // Test_sphere(10, 350000);
+    // Test_sphere(10, 1000000);
     std::cout << std::endl;
   }
 };
@@ -302,8 +400,8 @@ void bench_on_data(const std::string &f1, const std::string &f2){
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-  std::cerr.precision(17);
+  // std::cout.precision(17);
+  // std::cerr.precision(17);
 
   std::cout << "3D Distance tests" << std::endl;
 
@@ -317,7 +415,7 @@ int main(int argc, char** argv)
 
   const std::string f1 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/elephant.off");
   const std::string f2 = (argc>3) ? argv[3] : CGAL::data_file_path("meshes/sphere.off");
-  bench_on_data<CGAL::Exact_predicates_inexact_constructions_kernel>(f1,f2);
+  // bench_on_data<CGAL::Exact_predicates_inexact_constructions_kernel>(f1,f2);
 
   std::cout << "Done!" << std::endl;
 
