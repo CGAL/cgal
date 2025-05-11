@@ -616,7 +616,7 @@ public:
       for(auto f : faces(mesh)) {
         max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
       }
-      number_of_patches = max_patch_id + 1;
+      number_of_patches = static_cast<int>(max_patch_id + 1);
       patch_edges.resize(number_of_patches);
       for(auto h : halfedges(mesh)) {
         if(is_border(h, mesh))
