@@ -417,7 +417,7 @@ public:
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to
     rectangle `r`.
   */
-  Bounded_side operator()(const Kernel::IsoRectangle_2& r,
+  Bounded_side operator()(const Kernel::Iso_rectangle_2& r,
                           const Kernel::Point_2&p);
 
   /// @}
@@ -466,7 +466,7 @@ public:
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is with
   respect to iso-cuboid `c`.
   */
-  Bounded_side operator()(const Kernel::IsoCuboid_3& c,
+  Bounded_side operator()(const Kernel::Iso_cuboid_3& c,
                           const Kernel::Point_3&p);
 
 
@@ -994,8 +994,8 @@ public:
     between `p` and `r`.
   */
   Comparison_result operator()(const Kernel::Point_2& p,
-                               const Kernel::WeightedPoint_2& q,
-                               const Kernel::WeightedPoint_2& r);
+                               const Kernel::Weighted_point_2& q,
+                               const Kernel::Weighted_point_2& r);
   /// @}
 };
 
@@ -1020,8 +1020,8 @@ public:
     between `p` and `r`.
   */
   Comparison_result operator()(const Kernel::Point_3& p,
-                               const Kernel::WeightedPoint_3& q,
-                               const Kernel::WeightedPoint_3& r);
+                               const Kernel::Weighted_point_3& q,
+                               const Kernel::Weighted_point_3& r);
   /// @}
 }; /* end Kernel::ComparePowerDistance_3 */
 
@@ -1288,22 +1288,22 @@ public:
     compares the weight of the smallest sphere orthogonal to the
     input weighted point(s) with the input weight.
     */
-    Comparison_result operator()(const Kernel::WeightedPoint_3& pw,
-                                 const Kernel::WeightedPoint_3& qw,
-                                 const Kernel::WeightedPoint_3& rw,
-                                 const Kernel::WeightedPoint_3& sw,
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
+                                 const Kernel::Weighted_point_3& rw,
+                                 const Kernel::Weighted_point_3& sw,
                                  const Kernel::FT& w);
 
-    Comparison_result operator()(const Kernel::WeightedPoint_3& pw,
-                                 const Kernel::WeightedPoint_3& qw,
-                                 const Kernel::WeightedPoint_3& rw,
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
+                                 const Kernel::Weighted_point_3& rw,
                                  const Kernel::FT& w);
 
-    Comparison_result operator()(const Kernel::WeightedPoint_3& pw,
-                                 const Kernel::WeightedPoint_3& qw,
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
                                  const Kernel::FT& w);
 
-    Comparison_result operator()(const Kernel::WeightedPoint_3& pw,
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
                                  const Kernel::FT& w);
 
     /// @}
@@ -2005,7 +2005,7 @@ public:
   /*!
     returns the area of `r`.
   */
-  Kernel::FT operator()(const Kernel::IsoRectangle_2& r);
+  Kernel::FT operator()(const Kernel::Iso_rectangle_2& r);
 
   /*!
     returns the signed area of `t`.
@@ -2562,11 +2562,11 @@ public:
     returns the squared radius of the sphere centered in `t`
     and orthogonal to the sphere orthogonal to `p`, `q`, `r` ,and `s`.
   */
-  Kernel::FT operator()(const Kernel::WeightedPoint_3& p,
-                        const Kernel::WeightedPoint_3& q,
-                        const Kernel::WeightedPoint_3& r,
-                        const Kernel::WeightedPoint_3& s,
-                        const Kernel::WeightedPoint_3& t
+  Kernel::FT operator()(const Kernel::Weighted_point_3& p,
+                        const Kernel::Weighted_point_3& q,
+                        const Kernel::Weighted_point_3& r,
+                        const Kernel::Weighted_point_3& s,
+                        const Kernel::Weighted_point_3& t
                         ) const;
   /// @}
 };
@@ -2606,8 +2606,8 @@ public:
     weighted point orthogonal to two weighted points on the line defined by
     these two points.
   */
-  Kernel::FT operator()(const Kernel::WeightedPoint_2& pw,
-                        const Kernel::WeightedPoint_2& qw) const;
+  Kernel::FT operator()(const Kernel::Weighted_point_2& pw,
+                        const Kernel::Weighted_point_2& qw) const;
 
   /// @}
 }; /* end Kernel::ComputePowerProduct_2 */
@@ -2650,8 +2650,8 @@ public:
     <I>power segment</I> will denote the weighted point orthogonal to
     two weighted points on the line defined by these two points.
   */
-  Kernel::FT operator()(const Kernel::WeightedPoint_3& pw,
-                        const Kernel::WeightedPoint_3& qw) const;
+  Kernel::FT operator()(const Kernel::Weighted_point_3& pw,
+                        const Kernel::Weighted_point_3& qw) const;
 
   /// @}
 }; /* end Kernel::ComputePowerProduct_3 */
@@ -2818,7 +2818,7 @@ public:
     - `Kernel::Segment_2`
     - `Kernel::Triangle_2`
 
-    as well as any combination of `Kernel::Point_2` and `Kernel::WeightedPoint_2`
+    as well as any combination of `Kernel::Point_2` and `Kernel::Weighted_point_2`
   */
   Kernel::FT operator()(Type1 obj1, Type2 obj2);
 
@@ -2854,7 +2854,7 @@ public:
     - `Kernel::Segment_3`
     - `Kernel::Plane_3`
 
-    as well as any combination of `Kernel::Point_3` and `Kernel::WeightedPoint_3`
+    as well as any combination of `Kernel::Point_3` and `Kernel::Weighted_point_3`
   */
   Kernel::FT operator()(Type1 obj1, Type2 obj2);
 
@@ -3081,14 +3081,14 @@ public:
   returns the squared radius of the
   smallest sphere circle to the argument(s).
   */
-  Kernel::FT operator() (const Kernel::WeightedPoint_2& pw,
-                         const Kernel::WeightedPoint_2& qw,
-                         const Kernel::WeightedPoint_2& rw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
+                         const Kernel::Weighted_point_2& qw,
+                         const Kernel::Weighted_point_2& rw) const;
 
-  Kernel::FT operator() (const Kernel::WeightedPoint_2& pw,
-                         const Kernel::WeightedPoint_2& qw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
+                         const Kernel::Weighted_point_2& qw) const;
 
-  Kernel::FT operator() (const Kernel::WeightedPoint_2& pw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_2& pw) const;
 
   /// @}
 }; /* end Kernel::ComputeSquaredRadiusSmallestOrthogonalCircle_2 */
@@ -3114,19 +3114,19 @@ public:
   returns the squared radius of the
   smallest sphere orthogonal to the argument(s).
   */
-  Kernel::FT operator() (const Kernel::WeightedPoint_3& pw,
-                         const Kernel::WeightedPoint_3& qw,
-                         const Kernel::WeightedPoint_3& rw,
-                         const Kernel::WeightedPoint_3& sw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw,
+                         const Kernel::Weighted_point_3& sw) const;
 
-  Kernel::FT operator() (const Kernel::WeightedPoint_3& pw,
-                         const Kernel::WeightedPoint_3& qw,
-                         const Kernel::WeightedPoint_3& rw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw) const;
 
-  Kernel::FT operator() (const Kernel::WeightedPoint_3& pw,
-                         const Kernel::WeightedPoint_3& qw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw) const;
 
-  Kernel::FT operator() (const Kernel::WeightedPoint_3& pw) const;
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw) const;
 
   /// @}
 }; /* end Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3 */
@@ -3152,7 +3152,7 @@ public:
   /*!
     returns the volume of `c`.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& c);
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& c);
 
   /*!
     returns the signed volume of `t`.
@@ -3296,7 +3296,7 @@ public:
   /*!
     returns the largest \f$ x\f$-coordinate of the iso-rectangle.
   */
-  Kernel::FT operator()(const Kernel::IsoRectangle_2& r) const;
+  Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 
   /// @}
 
@@ -3319,7 +3319,7 @@ public:
   /*!
     returns the largest \f$ x\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
 
   /// @}
 
@@ -3342,7 +3342,7 @@ public:
   /*!
     returns the smallest \f$ x\f$-coordinate of the iso-rectangle.
   */
-  Kernel::FT operator()(const Kernel::IsoRectangle_2& r) const;
+  Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 
   /// @}
 
@@ -3365,7 +3365,7 @@ public:
   /*!
     returns the smallest \f$ x\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
 
   /// @}
 
@@ -3472,7 +3472,7 @@ public:
   /*!
     returns the largest \f$ y\f$-coordinate of the iso-rectangle.
   */
-  Kernel::FT operator()(const Kernel::IsoRectangle_2& r) const;
+  Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 
   /// @}
 
@@ -3495,7 +3495,7 @@ public:
   /*!
     returns the largest \f$ y\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
 
   /// @}
 
@@ -3518,7 +3518,7 @@ public:
   /*!
     returns the smallest \f$ y\f$-coordinate of the iso-rectangle.
   */
-  Kernel::FT operator()(const Kernel::IsoRectangle_2& r) const;
+  Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 
   /// @}
 
@@ -3541,7 +3541,7 @@ public:
   /*!
     returns the smallest \f$ y\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
 
   /// @}
 
@@ -3592,7 +3592,7 @@ public:
   /*!
     returns the largest \f$ z\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
   /// @}
 }; /* end Kernel::ComputeZmax_3 */
 /*!
@@ -3612,7 +3612,7 @@ public:
   /*!
     returns the smallest \f$ z\f$-coordinate of the iso-cuboid.
   */
-  Kernel::FT operator()(const Kernel::IsoCuboid_3& r) const;
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
   /// @}
 }; /* end Kernel::ComputeZmin_3 */
 
@@ -3836,7 +3836,7 @@ public:
   /*!
     returns a bounding box of `i`.
   */
-  CGAL::Bbox_2 operator()(const Kernel::IsoRectangle_2
+  CGAL::Bbox_2 operator()(const Kernel::Iso_rectangle_2
                           &i);
 
   /*!
@@ -3896,7 +3896,7 @@ public:
   /*!
     returns a bounding box of `i`.
   */
-  CGAL::Bbox_3 operator()(const Kernel::IsoCuboid_3
+  CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3
                           &i);
 
   /*!
@@ -4740,7 +4740,7 @@ public:
     opposite vertices `p` and `q` such that `p` is the
     lexicographically smallest point in the cuboid.
   */
-  Kernel::IsoCuboid_3 operator()(const Kernel::Point_3 &p,
+  Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p,
                                   const Kernel::Point_3 &q);
 
   /*!
@@ -4749,7 +4749,7 @@ public:
     only used to distinguish the two overloaded functions.
     \pre `p.x()<=q.x()`, `p.y()<=q.y()` and `p.z()<=q.z()`.
   */
-  Kernel::IsoCuboid_3 operator()(const Kernel::Point_3 &p,
+  Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p,
                                   const Kernel::Point_3 &q,
                                   int);
 
@@ -4762,7 +4762,7 @@ public:
     minimal \f$ z\f$ coordinate is the one of `far`, the
     maximal \f$ z\f$ coordinate is the one of `close`.
   */
-  Kernel::IsoCuboid_3
+  Kernel::Iso_cuboid_3
   operator()(const Kernel::Point_3 &left,
              const Kernel::Point_3 &right,
              const Kernel::Point_3 &bottom,
@@ -4796,7 +4796,7 @@ public:
     opposite vertices `p` and `q` such that `p` is the
     lexicographically smallest point in the rectangle.
   */
-  Kernel::IsoRectangle_2 operator()(const Kernel::Point_2 &p,
+  Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p,
                                      const Kernel::Point_2 &q);
 
   /*!
@@ -4805,7 +4805,7 @@ public:
   only used to distinguish the two overloaded functions.
   \pre `p.x()<=q.x()` and `p.y()<=q.y()`.
   */
-  Kernel::IsoRectangle_2 operator()(const Kernel::Point_2 &p,
+  Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p,
                                      const Kernel::Point_2 &q,
                                      int);
 
@@ -4816,7 +4816,7 @@ public:
     minimal \f$ y\f$ coordinate is the one of `bottom`, the
     maximal \f$ y\f$ coordinate is the one of `top`.
   */
-  Kernel::IsoRectangle_2
+  Kernel::Iso_rectangle_2
   operator()(const Kernel::Point_2 &left,
              const Kernel::Point_2 &right,
              const Kernel::Point_2 &bottom,
@@ -4985,7 +4985,7 @@ public:
     `r` with lexicographically largest coordinates.
   */
   Kernel::Point_2 operator()(const
-                             Kernel::IsoRectangle_2 &r);
+                             Kernel::Iso_rectangle_2 &r);
 
   /*!
     returns the vertex of
@@ -5020,7 +5020,7 @@ public:
     `c` with lexicographically largest coordinates.
   */
   Kernel::Point_3 operator()(const
-                             Kernel::IsoCuboid_3 &c);
+                             Kernel::Iso_cuboid_3 &c);
 
   /*!
     returns the vertex of
@@ -5118,7 +5118,7 @@ public:
     `r` with lexicographically smallest coordinates.
   */
   Kernel::Point_2 operator()(const
-                             Kernel::IsoRectangle_2 &r);
+                             Kernel::Iso_rectangle_2 &r);
 
   /*!
     returns the vertex of
@@ -5153,7 +5153,7 @@ public:
     `c` with lexicographically smallest coordinates.
   */
   Kernel::Point_3 operator()(const
-                             Kernel::IsoCuboid_3 &c);
+                             Kernel::Iso_cuboid_3 &c);
 
   /*!
     returns the vertex of
@@ -6036,7 +6036,7 @@ public:
  /*!
     extracts the bare point from the weighted point.
   */
-  Kernel::Point_2 operator()(const Kernel::WeightedPoint_2& wp);
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& wp);
 
   ///@}
 
@@ -6076,7 +6076,7 @@ public:
  /*!
     extracts the bare point from the weighted point.
   */
-  Kernel::Point_3 operator()(const Kernel::WeightedPoint_3& wp);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& wp);
 
   ///@}
 
@@ -6222,8 +6222,8 @@ public:
   /*!
     returns the radical line of the weighted points.
   */
-  Kernel::Line_2 operator()(const Kernel::WeightedPoint_2& wp1,
-                            const Kernel::WeightedPoint_2& wp2);
+  Kernel::Line_2 operator()(const Kernel::Weighted_point_2& wp1,
+                            const Kernel::Weighted_point_2& wp2);
   /// @}
 };
 
@@ -7173,7 +7173,7 @@ public:
     vertex. The parameter `i` is taken modulo 4.
   */
   Kernel::Point_2 operator()(const
-                             Kernel::IsoRectangle_2 &r, int i);
+                             Kernel::Iso_rectangle_2 &r, int i);
 
   /*!
     returns the i-th vertex of `t`. The parameter
@@ -7222,7 +7222,7 @@ public:
     \image latex IsoCuboid.png
   */
   Kernel::Point_3 operator()(const
-                             Kernel::IsoCuboid_3 &c, int i);
+                             Kernel::Iso_cuboid_3 &c, int i);
 
   /*!
     returns the i-th vertex of `t`. The parameter
@@ -7262,9 +7262,9 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal circle to the input weighted points.
   */
-  Kernel::Point_2 operator()(const Kernel::WeightedPoint_2& p,
-                             const Kernel::WeightedPoint_2& q,
-                             const Kernel::WeightedPoint_2& s);
+  Kernel::Point_2 operator()(const Kernel::Weighted_point_2& p,
+                             const Kernel::Weighted_point_2& q,
+                             const Kernel::Weighted_point_2& s);
   /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_2 */
 
@@ -7287,23 +7287,23 @@ public:
   /*!
     constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
   */
-  Kernel::Point_3 operator()(const Kernel::WeightedPoint_3& p,
-                             const Kernel::WeightedPoint_3& q,
-                             const Kernel::WeightedPoint_3& r,
-                             const Kernel::WeightedPoint_3& s);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r,
+                             const Kernel::Weighted_point_3& s);
 
   /*!
   constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
   */
-  Kernel::Point_3 operator()(const Kernel::WeightedPoint_3& p,
-                             const Kernel::WeightedPoint_3& q,
-                             const Kernel::WeightedPoint_3& r);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q,
+                             const Kernel::Weighted_point_3& r);
 
   /*!
   constructs the point which is the center of the smallest orthogonal sphere to the input weighted points.
   */
-  Kernel::Point_3 operator()(const Kernel::WeightedPoint_3& p,
-                             const Kernel::WeightedPoint_3& q);
+  Kernel::Point_3 operator()(const Kernel::Weighted_point_3& p,
+                             const Kernel::Weighted_point_3& q);
 
   /// @}
 }; /* end Kernel::ConstructWeightedCircumcenter_3 */
@@ -7327,19 +7327,19 @@ public:
     introduces a weighted point with %Cartesian coordinates
     \f$ (0,0)\f$ and weight \f$ 0 \f$.
   */
-  Kernel::WeightedPoint_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
+  Kernel::Weighted_point_2 operator()(const CGAL::Origin &CGAL::ORIGIN);
 
  /*!
     introduces a weighted point with %Cartesian coordinates
     those of \f$ p \f$ and weight \f$ 0 \f$.
   */
-  Kernel::WeightedPoint_2 operator()(const Kernel::Point_2& p);
+  Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p);
 
   /*!
      introduces a weighted point with %Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
-   Kernel::WeightedPoint_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
+   Kernel::Weighted_point_2 operator()(const Kernel::Point_2& p, const Kernel::FT& w);
   ///@}
 
 }; /* end Kernel::ConstructWeightedPoint_2 */
@@ -7365,19 +7365,19 @@ public:
     introduces a weighted point with %Cartesian coordinates
     \f$ (0,0,0)\f$ and weight \f$ 0 \f$.
   */
-  Kernel::WeightedPoint_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
+  Kernel::Weighted_point_3 operator()(const CGAL::Origin &CGAL::ORIGIN);
 
  /*!
     introduces a weighted point with %Cartesian coordinates
     those of \f$ p \f$ and weight \f$ 0 \f$.
   */
-  Kernel::WeightedPoint_3 operator()(const Kernel::Point_3& p);
+  Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p);
 
   /*!
      introduces a weighted point with %Cartesian coordinates
      those of \f$ p \f$ and weight \f$ w \f$.
    */
-   Kernel::WeightedPoint_3 operator()(const Kernel::Point_3& p, const Kernel::FT& w);
+   Kernel::Weighted_point_3 operator()(const Kernel::Point_3& p, const Kernel::FT& w);
 
   ///@}
 
@@ -7557,7 +7557,7 @@ public:
     - `Kernel::Ray_2`
     - `Kernel::Segment_2`
     - `Kernel::Triangle_2`
-    - `Kernel::IsoRectangle_2`
+    - `Kernel::Iso_rectangle_2`
 
   */
   bool operator()(Type1 obj1, Type2 obj2);
@@ -7843,8 +7843,8 @@ public:
   /*!
 
    */
-  bool operator()(const Kernel::IsoRectangle_2& x,
-                  const Kernel::IsoRectangle_2& y);
+  bool operator()(const Kernel::Iso_rectangle_2& x,
+                  const Kernel::Iso_rectangle_2& y);
 
   /// @}
 
@@ -7947,8 +7947,8 @@ public:
   /*!
 
    */
-  bool operator()(const Kernel::IsoCuboid_3& x,
-                  const Kernel::IsoCuboid_3& y);
+  bool operator()(const Kernel::Iso_cuboid_3& x,
+                  const Kernel::Iso_cuboid_3& y);
 
   /// @}
 
@@ -7984,7 +7984,7 @@ public:
   /*!
     returns true iff `p` lies on the boundary of `i`.
   */
-  bool operator()(const Kernel::IsoRectangle_2&i,
+  bool operator()(const Kernel::Iso_rectangle_2&i,
                   const Kernel::Point_2&p);
 
   /*!
@@ -8034,7 +8034,7 @@ public:
   /*!
     returns true iff `p` lies on the boundary of `c`.
   */
-  bool operator()(const Kernel::IsoCuboid_3&c,
+  bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
   /// @}
@@ -8071,7 +8071,7 @@ public:
   /*!
     returns true iff `p` lies on the bounded side of `i`.
   */
-  bool operator()(const Kernel::IsoRectangle_2&i,
+  bool operator()(const Kernel::Iso_rectangle_2&i,
                   const Kernel::Point_2&p);
 
   /*!
@@ -8120,7 +8120,7 @@ public:
   /*!
     returns true iff `p` lies on the bounded side of `c`.
   */
-  bool operator()(const Kernel::IsoCuboid_3&c,
+  bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
   /*!
@@ -8338,7 +8338,7 @@ public:
   /*!
     returns true iff `p` lies on the unbounded side of `i`.
   */
-  bool operator()(const Kernel::IsoRectangle_2&i,
+  bool operator()(const Kernel::Iso_rectangle_2&i,
                   const Kernel::Point_2&p);
 
   /*!
@@ -8388,7 +8388,7 @@ public:
   /*!
     returns true iff `p` lies on the unbounded side of `c`.
   */
-  bool operator()(const Kernel::IsoCuboid_3&c,
+  bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
   /*!
@@ -8614,7 +8614,7 @@ public:
   /*!
     returns true iff `o` is degenerate.
   */
-  bool operator()(const Kernel::IsoRectangle_2&o);
+  bool operator()(const Kernel::Iso_rectangle_2&o);
 
   /*!
     returns true iff `o` is degenerate.
@@ -8673,7 +8673,7 @@ public:
   /*!
     returns true iff `o` is degenerate.
   */
-  bool operator()(const Kernel::IsoCuboid_3&o);
+  bool operator()(const Kernel::Iso_cuboid_3&o);
 
   /*!
     returns true iff `o` is degenerate.
@@ -9505,10 +9505,10 @@ public:
       `side_of_bounded_circle(p,q,r,t)`.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_2 & p,
-             const Kernel::WeightedPoint_2 & q,
-             const Kernel::WeightedPoint_2 & r,
-             const Kernel::WeightedPoint_2 & t);
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & r,
+             const Kernel::Weighted_point_2 & t);
 
   /*!
     returns the sign of the power test of `t` with respect
@@ -9517,17 +9517,17 @@ public:
     \pre `p` and `q` have different bare points.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_2 & p,
-             const Kernel::WeightedPoint_2 & q,
-             const Kernel::WeightedPoint_2 & t);
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & q,
+             const Kernel::Weighted_point_2 & t);
 
   /*!
     returns the sign of the power test of `t` with respect
     to the smallest circle orthogonal to `p`.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_2 & p,
-             const Kernel::WeightedPoint_2 & t);
+  operator()(const Kernel::Weighted_point_2 & p,
+             const Kernel::Weighted_point_2 & t);
   /// @}
 }; /* end Kernel::PowerSideOfBoundedPowerCircle_2 */
 
@@ -9572,11 +9572,11 @@ public:
       `side_of_bounded_sphere(p,q,r,s,t)`.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_3 & p,
-             const Kernel::WeightedPoint_3 & q,
-             const Kernel::WeightedPoint_3 & r,
-             const Kernel::WeightedPoint_3 & s,
-             const Kernel::WeightedPoint_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r,
+             const Kernel::Weighted_point_3 & s,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
     returns the sign of the power test of `t` with respect
@@ -9585,10 +9585,10 @@ public:
     \pre `p, q, r` are not collinear.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_3 & p,
-             const Kernel::WeightedPoint_3 & q,
-             const Kernel::WeightedPoint_3 & r,
-             const Kernel::WeightedPoint_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
     returns the sign of the power test of `t` with respect
@@ -9597,17 +9597,17 @@ public:
     \pre `p` and `q` have different bare points.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_3 & p,
-             const Kernel::WeightedPoint_3 & q,
-             const Kernel::WeightedPoint_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & t);
 
   /*!
     returns the sign of the power test of `t` with respect
     to the smallest sphere orthogonal to `p`.
   */
   CGAL::Bounded_side
-  operator()(const Kernel::WeightedPoint_3 & p,
-             const Kernel::WeightedPoint_3 & t);
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & t);
   /// @}
 
 }; /* end Kernel::PowerSideOfBoundedPowerSphere_3 */
@@ -9641,10 +9641,10 @@ class PowerSideOfOrientedPowerCircle_2
     \pre the bare points corresponding to `p`, `q`, `r` are not collinear.
   */
 
-  Oriented_side operator()(const Kernel::WeightedPoint_2& p,
-                           const Kernel::WeightedPoint_2& q,
-                           const Kernel::WeightedPoint_2& r,
-                           const Kernel::WeightedPoint_2& s);
+  Oriented_side operator()(const Kernel::Weighted_point_2& p,
+                           const Kernel::Weighted_point_2& q,
+                           const Kernel::Weighted_point_2& r,
+                           const Kernel::Weighted_point_2& s);
   /// @}
 
 };
@@ -9690,11 +9690,11 @@ public:
     `power_side_of_oriented_power_sphere_3(p,q,r,s,t)` =
        `side_of_oriented_sphere(p,q,r,s,t)`.
   */
-  Oriented_side operator()( const Kernel::WeightedPoint_3& p,
-                            const Kernel::WeightedPoint_3& q,
-                            const Kernel::WeightedPoint_3& r,
-                            const Kernel::WeightedPoint_3& s,
-                            const Kernel::WeightedPoint_3& t) const;
+  Oriented_side operator()( const Kernel::Weighted_point_3& p,
+                            const Kernel::Weighted_point_3& q,
+                            const Kernel::Weighted_point_3& r,
+                            const Kernel::Weighted_point_3& s,
+                            const Kernel::Weighted_point_3& t) const;
   /// @}
 };
 
