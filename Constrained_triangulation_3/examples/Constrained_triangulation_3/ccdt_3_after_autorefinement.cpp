@@ -1,8 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Polygon_mesh_processing/autorefinement.h>
-#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -31,6 +30,7 @@ int main(int argc, char* argv[])
 
   if(PMP::does_self_intersect(mesh))
   {
+    std::cout << "Mesh self-intersects, performing autorefine...\n";
     PMP::autorefine(mesh);
   }
 
