@@ -35,3 +35,11 @@ constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
 @brief
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 */
+
+/*!
+\example Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp
+@brief
+From a self-intersecting polyhedral surface in an OFF file, construct the constrained Delaunay triangulation
+after autorefinement.
+*/
+
