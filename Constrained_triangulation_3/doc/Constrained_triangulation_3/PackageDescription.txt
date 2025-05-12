@@ -16,6 +16,12 @@
 \defgroup PkgCDT3IOFunctions Output Functions
 \ingroup PkgConstrainedTriangulation3Ref
 
+\defgroup PkgConstrainedTriangulation3FunctionsMesh 3D Constrained Triangulation from a Surface Mesh
+\ingroup PkgConstrainedTriangulation3Functions
+
+\defgroup PkgConstrainedTriangulation3FunctionsSoup 3D Constrained Triangulation from a Polygon Mesh
+\ingroup PkgConstrainedTriangulation3Functions
+
 \addtogroup PkgConstrainedTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
 \cgalPkgPicture{cdt3-small.png}
