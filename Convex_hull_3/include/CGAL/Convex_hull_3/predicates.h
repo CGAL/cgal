@@ -208,6 +208,21 @@ const typename IK::Point_3 extreme_point(const Surface_mesh<typename IK::Point_3
   using Convex= Surface_mesh<typename IK::Point_3>;
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
+  if(C.vertices().size()<5){
+    typename Convex::Vertex_index argmax=*C.vertices().begin();
+    FT tmax=Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
+    for(auto vh=++(C.vertices().begin()); vh!=C.vertices().end(); ++vh){
+      typename Convex::Vertex_index v=*vh;
+      ++nb_visited;
+      FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
+      if(compare(tmax, p)==SMALLER){
+        tmax=p;
+        argmax=v;
+      }
+    }
+    return C.point(argmax);
+  }
+
   typename Convex::Vertex_index argmax=*C.vertices().begin();
   nb_visited++;
   FT tmax= Vector_3(ORIGIN, converter(C.point(argmax)))*dir;

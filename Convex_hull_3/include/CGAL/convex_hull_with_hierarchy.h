@@ -110,6 +110,8 @@ struct Convex_hull_with_hierarchy{
       if(level>0){
         argmax=((sm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")).first)[argmax];
         --level;
+      } else {
+        return sm.point(argmax);
       }
     }
 
