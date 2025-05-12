@@ -1239,22 +1239,4 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <include location="../../CGALlab.qrc"/>
   <include location="../../CGALlab.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>polygon_checkBox</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>fill_checkBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>190</x>
-     <y>83</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>534</x>
-     <y>83</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>
