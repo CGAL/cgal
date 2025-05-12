@@ -117,19 +117,20 @@ struct Convex_hull_with_hierarchy{
       // Starting from the vertex of the previous level, we walk on the graph
       // along neighbor that increase the "score"
       const Mesh &csm = hierarchy_mesh(level);
-      while(true){
-        loop_walk_on_the_graph:;
+      bool is_local_max;
+      do{
+        is_local_max=true;
         for(Vertex_index v: vertices_around_target(argmax ,csm)){
           ++(nb_visited_in_hierarchy[level]);
           FT p=Vector_3(ORIGIN, converter(csm.point(v)))*dir;
           if(compare(tmax, p)==SMALLER){
             tmax=p;
             argmax=v;
-            goto loop_walk_on_the_graph; // repeat with the new vertex
+            is_local_max=false; // repeat with the new vertex
+            break;
           }
         }
-        break;
-      }
+      } while(!is_local_max);
       if(level>0)
         argmax=((csm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")).first)[argmax];
       else

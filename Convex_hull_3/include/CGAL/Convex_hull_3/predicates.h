@@ -211,39 +211,22 @@ const typename IK::Point_3 extreme_point(const Surface_mesh<typename IK::Point_3
   typename Convex::Vertex_index argmax=*C.vertices().begin();
   nb_visited++;
   FT tmax= Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
-#if 1
-  while(true){
-    loop:;
+  bool is_local_max;
+  do{
+    is_local_max=true;
     for(auto v: vertices_around_target(argmax ,C)){
       FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
       ++nb_visited;
       if(compare(tmax, p)==SMALLER){
         tmax=p;
         argmax=v;
-        goto loop; // repeat with the new vertex
+        is_local_max=false; // repeat with the new vertex
+        break;
       }
     }
-    // break;
-    // The argmax is a local maximum
-    return C.point(argmax);
-  }
-#else
-  bool is_loc_max;
-  do{
-    is_loc_max=true;
-    for(auto v: vertices_around_target(argmax ,C)){
-      FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
-      nb_visited++;
-      if(compare(tmax, p)==SMALLER){
-        tmax=p;
-        argmax=v;
-        is_loc_max=false;
-      }
-    }
-  } while(!is_loc_max);
+  }while(!is_local_max);
   // Since convex, local maximum is a global maximum
   return C.point(argmax);
-#endif
 }
 
 template <class IK, class Converter, class Value, class Vector_3>
