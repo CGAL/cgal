@@ -13,6 +13,9 @@
 \defgroup PkgDrawCDT_3 Draw a 3D Constrained Triangulation
 \ingroup PkgConstrainedTriangulation3Ref
 
+\defgroup PkgCDT3IOFunctions Output Functions
+\ingroup PkgConstrainedTriangulation3Ref
+
 \addtogroup PkgConstrainedTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
 \cgalPkgPicture{cdt3-small.png}
@@ -62,5 +65,9 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 \cgalCRPSection{Draw a 3D Constrained Triangulation}
 
 - \link PkgDrawCDT_3 CGAL::draw() \endlink
+
+\cgalCRPSection{Output Functions}
+
+- `CGAL::IO::write_MEDIT()`
 
 */
