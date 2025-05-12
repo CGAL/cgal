@@ -83,7 +83,7 @@ struct Convex_hull_with_hierarchy{
   };
 
   template <class IK, class Converter, class Vector_3>
-  const typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point(const Vector_3 dir) const {
+  const typename IK::Point_3 extreme_point(const Vector_3 dir, const Converter& converter) const {
     using Point_3 = typename Kernel_traits<Vector_3>::Kernel::Point_3;
     using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
@@ -92,14 +92,14 @@ struct Convex_hull_with_hierarchy{
     const Mesh &sm = hierarchy_sm[maxlevel()];
 
     Vertex_index argmax=*sm.vertices().begin();
-    FT tmax=Vector_3(ORIGIN, Converter()(sm.point(argmax)))*dir;
+    FT tmax=Vector_3(ORIGIN, converter(sm.point(argmax)))*dir;
 
     if(sm.vertices().size() <= MAXSIZE_FOR_NAIVE_SEARCH){
       //If maxlevel is small, we simply go through all its vertices
       for(auto vh=++(sm.vertices().begin()); vh!=sm.vertices().end(); ++vh){
         Vertex_index v=*vh;
         ++(nb_visited_in_hierarchy[level]);
-        FT p=Vector_3(ORIGIN, Converter()(sm.point(v)))*dir;
+        FT p=Vector_3(ORIGIN, converter(sm.point(v)))*dir;
         if(compare(tmax, p)==SMALLER){
           tmax=p;
           argmax=v;
@@ -121,7 +121,7 @@ struct Convex_hull_with_hierarchy{
         loop_walk_on_the_graph:;
         for(Vertex_index v: vertices_around_target(argmax ,csm)){
           ++(nb_visited_in_hierarchy[level]);
-          FT p=Vector_3(ORIGIN, Converter()(csm.point(v)))*dir;
+          FT p=Vector_3(ORIGIN, converter(csm.point(v)))*dir;
           if(compare(tmax, p)==SMALLER){
             tmax=p;
             argmax=v;
@@ -133,14 +133,14 @@ struct Convex_hull_with_hierarchy{
       if(level>0)
         argmax=((csm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")).first)[argmax];
       else
-        return Converter()(csm.point(argmax));
+        return csm.point(argmax);
     }
   }
 };
 
 template <class IK, class Converter, class Vector_3>
-const typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point(const Convex_hull_with_hierarchy<typename IK::Point_3> &C, const Vector_3 dir){
-  return C.template extreme_point<IK, Converter>(dir);
+const typename IK::Point_3 extreme_point(const Convex_hull_with_hierarchy<typename IK::Point_3> &C, const Vector_3 dir, const Converter &c){
+  return C.template extreme_point<IK, Converter>(dir, c);
 }
 
 }

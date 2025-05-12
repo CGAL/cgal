@@ -14,6 +14,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef K::Point_3                                               Point_3;
 typedef CGAL::Surface_mesh<Point_3>                              Mesh;
+typedef Mesh::Property_map<Mesh::Vertex_index, Point_3>          PointMap;
 
 int main(int argc, char* argv[])
 {
@@ -45,9 +46,8 @@ int main(int argc, char* argv[])
                             << extreme_vertices2.size()
                             << " extreme vertices in the input meshes.\n";
 
-  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
-                                               CGAL::parameters::point_map(sm1.points()),
-                                               CGAL::parameters::point_map(sm2.points()));
+  bool res = CGAL::Convex_hull_3::do_intersect<K>(extreme_vertices1, extreme_vertices2,
+                                               CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PointMap>(sm1.points(), sm2.points()));
 
   std::cout << "do convex hulls intersect? " << res << "\n";
 

@@ -26,18 +26,18 @@ void test_cube()
   std::vector<Point_3> inside(1, Point_3(0.25,0.25,0.20));
   std::vector<Point_3> outside(1, Point_3(-0.25,0.25,0.25));
 
-  assert(CGAL::Convex_hull_3::do_intersect(cube, inside));
-  assert(CGAL::Convex_hull_3::do_intersect(inside, cube));
-  assert(!CGAL::Convex_hull_3::do_intersect(cube, outside));
-  assert(!CGAL::Convex_hull_3::do_intersect(outside, cube));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(cube, inside));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(inside, cube));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(cube, outside));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(outside, cube));
 
   //Test intersection on vertex, edge, face
   for(double x=0.; x<=1.; x+=0.5)
     for(double y=0.; y<=1.; y+=0.5)
       for(double z=0.; z<=1.; z+=0.5){
         std::vector<Point_3> vertex(1, Point_3(x,y,z));
-        assert(CGAL::Convex_hull_3::do_intersect(cube, vertex));
-        assert(CGAL::Convex_hull_3::do_intersect(vertex, cube));
+        assert(CGAL::Convex_hull_3::do_intersect<K>(cube, vertex));
+        assert(CGAL::Convex_hull_3::do_intersect<K>(vertex, cube));
       }
 
   //Test between cubes
@@ -57,7 +57,7 @@ void test_cube()
       for(double z=-1.5; z<=1.5; z+=0.5){
         CGAL::Aff_transformation_3<K> t(CGAL::TRANSLATION, Vector_3(x,y,z));
         transform(cube_bis, t);
-        assert(CGAL::Convex_hull_3::do_intersect(cube, cube_bis)==((std::abs(x)<1.5 && std::abs(y)<1.5 && std::abs(z)<1.5)));
+        assert(CGAL::Convex_hull_3::do_intersect<K>(cube, cube_bis)==((std::abs(x)<1.5 && std::abs(y)<1.5 && std::abs(z)<1.5)));
         transform(cube_bis, t.inverse());
       }
 }
@@ -69,13 +69,13 @@ void test_degenerate()
   std::vector<Point_3> vertex1(1, Point_3(1,0,0));
   std::vector<Point_3> vertex2(1, Point_3(0,1,0));
 
-  assert(CGAL::Convex_hull_3::do_intersect(origin, origin));
-  assert(CGAL::Convex_hull_3::do_intersect(vertex1,vertex1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(origin, origin));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(vertex1,vertex1));
 
-  assert(!CGAL::Convex_hull_3::do_intersect(origin, vertex1));
-  assert(!CGAL::Convex_hull_3::do_intersect(vertex1, origin));
-  assert(!CGAL::Convex_hull_3::do_intersect(vertex1, vertex2));
-  assert(!CGAL::Convex_hull_3::do_intersect(vertex2, vertex1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(origin, vertex1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(vertex1, origin));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(vertex1, vertex2));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(vertex2, vertex1));
 
   //Segments
   std::vector<Point_3> seg1({Point_3(0,0,0),Point_3(2,0,0)});
@@ -83,24 +83,24 @@ void test_degenerate()
   std::vector<Point_3> seg3({Point_3(0,2,0),Point_3(2,2,0)});
   std::vector<Point_3> seg4({Point_3(1,1,0),Point_3(1,3,0)});
 
-  assert(CGAL::Convex_hull_3::do_intersect(origin, seg1));
-  assert(CGAL::Convex_hull_3::do_intersect(seg1, origin));
-  assert(CGAL::Convex_hull_3::do_intersect(vertex1, seg1));
-  assert(CGAL::Convex_hull_3::do_intersect(seg1, vertex1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(origin, seg1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg1, origin));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(vertex1, seg1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg1, vertex1));
 
-  assert(!CGAL::Convex_hull_3::do_intersect(vertex2, seg1));
-  assert(!CGAL::Convex_hull_3::do_intersect(seg1, vertex2));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(vertex2, seg1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(seg1, vertex2));
 
-  assert(CGAL::Convex_hull_3::do_intersect(seg1, seg1));
-  assert(CGAL::Convex_hull_3::do_intersect(seg1, seg2));
-  assert(CGAL::Convex_hull_3::do_intersect(seg2, seg1));
-  assert(CGAL::Convex_hull_3::do_intersect(seg3, seg4));
-  assert(CGAL::Convex_hull_3::do_intersect(seg4, seg3));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg1, seg1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg1, seg2));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg2, seg1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg3, seg4));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(seg4, seg3));
 
-  assert(!CGAL::Convex_hull_3::do_intersect(seg1, seg3));
-  assert(!CGAL::Convex_hull_3::do_intersect(seg3, seg1));
-  assert(!CGAL::Convex_hull_3::do_intersect(seg1, seg4));
-  assert(!CGAL::Convex_hull_3::do_intersect(seg4, seg1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(seg1, seg3));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(seg3, seg1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(seg1, seg4));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(seg4, seg1));
 
   //Triangle
   std::vector<Point_3> tr1({Point_3(0,0,0),Point_3(2,0,0),Point_3(0,2,0)});
@@ -109,18 +109,18 @@ void test_degenerate()
   std::vector<Point_3> tr4({Point_3(1,0,0),Point_3(2,0,2),Point_3(0,0,2)});
   std::vector<Point_3> tr5({Point_3(0,0,2),Point_3(2,0,2),Point_3(0,2,2)});
 
-  assert(CGAL::Convex_hull_3::do_intersect(tr1, tr1));
-  assert(CGAL::Convex_hull_3::do_intersect(tr1, tr2));
-  assert(CGAL::Convex_hull_3::do_intersect(tr2, tr1));
-  assert(CGAL::Convex_hull_3::do_intersect(tr1, tr3));
-  assert(CGAL::Convex_hull_3::do_intersect(tr3, tr1));
-  assert(CGAL::Convex_hull_3::do_intersect(tr1, tr4));
-  assert(CGAL::Convex_hull_3::do_intersect(tr4, tr1));
-  assert(CGAL::Convex_hull_3::do_intersect(tr3, tr4));
-  assert(CGAL::Convex_hull_3::do_intersect(tr4, tr3));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr1, tr1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr1, tr2));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr2, tr1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr1, tr3));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr3, tr1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr1, tr4));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr4, tr1));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr3, tr4));
+  assert(CGAL::Convex_hull_3::do_intersect<K>(tr4, tr3));
 
-  assert(!CGAL::Convex_hull_3::do_intersect(tr1, tr5));
-  assert(!CGAL::Convex_hull_3::do_intersect(tr5, tr1));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(tr1, tr5));
+  assert(!CGAL::Convex_hull_3::do_intersect<K>(tr5, tr1));
 }
 
 void test_half_sphere()
@@ -139,8 +139,8 @@ void test_half_sphere()
       std::vector<Point_3> outside(1, Point_3(x,y,std::nextafter(std::cos(25./16),0)));
       std::vector<Point_3> inside(1, Point_3(x,y,std::nextafter(std::cos(25./16),1)));
 
-      assert(CGAL::Convex_hull_3::do_intersect(half_sphere, inside)==(x*x+y*y<0.99));
-      assert(!CGAL::Convex_hull_3::do_intersect(half_sphere, outside));
+      assert(CGAL::Convex_hull_3::do_intersect<K>(half_sphere, inside)==(x*x+y*y<0.99));
+      assert(!CGAL::Convex_hull_3::do_intersect<K>(half_sphere, outside));
     }
 }
 
@@ -164,8 +164,8 @@ void test_random_tetrahedrons(int N, CGAL::Random &r)
     P q2 = random_point();
     P q3 = random_point();
 
-    assert(CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3))==
-            CGAL::Convex_hull_3::do_intersect(std::vector<Point_3>({p1,p2,p3,p0}), std::vector<Point_3>({q1,q2,q3,q0})));
+    assert(CGAL::do_intersect<K>(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3))==
+            CGAL::Convex_hull_3::do_intersect<K>(std::vector<Point_3>({p1,p2,p3,p0}), std::vector<Point_3>({q1,q2,q3,q0})));
   }
 }
 
