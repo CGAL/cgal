@@ -14,6 +14,7 @@
 
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Bbox.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -1005,6 +1006,29 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Construct_bbox : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Construct_bbox)
+        typedef R_ R;
+        typedef typename R::Dimension Dimension;
+        typedef typename Get_type<R, RT_tag>::type RT;
+        typedef typename Get_type<R, Point_tag>::type Point;
+        typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+
+        typedef Bbox<Dimension,double> result_type;
+        typedef Point argument_type;
+        result_type operator()(Point const&a)const{
+                CI ci(this->kernel());
+                typename Real_embeddable_traits<RT>::To_interval f;
+                typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+                return result_type(pd(a), make_transforming_iterator(ci(a, Begin_tag()), f), make_transforming_iterator(ci(a, End_tag()), f));
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Construct_bbox_tag,(CartesianDKernelFunctors::Construct_bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> {
