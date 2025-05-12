@@ -8,7 +8,7 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 
-static_assert(CGAL::cdt_3_msvc_2017() || CGAL::is_nothrow_movable_v<CDT>);
+static_assert(CGAL::cdt_3_msvc_2019_or_older() || CGAL::is_nothrow_movable_v<CDT>);
 
 int main(int argc, char* argv[])
 {
