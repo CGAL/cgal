@@ -592,7 +592,7 @@ public:
   bool preconditions_verified(const PolygonMesh& mesh, const CGAL_NP_CLASS& np)
   {
     bool verified = true;
-    if(CGAL::is_triangle_mesh(mesh))/
+    if(CGAL::is_triangle_mesh(mesh))
     {
       verified = verified && !CGAL::Polygon_mesh_processing::does_self_intersect(mesh);
       CGAL_precondition_msg(verified,
