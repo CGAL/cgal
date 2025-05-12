@@ -102,7 +102,7 @@ int main(int argc, char** argv)
     bool success=PMP::autorefine_triangle_soup(points, faces, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()));
     t.stop();
     if(!success){
-      std::cout << "Round failed" << std::endl;
+      std::cout << "Rounding failed" << std::endl;
       exit(0);
     }
 
