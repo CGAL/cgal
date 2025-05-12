@@ -30,7 +30,7 @@ there are <I>convincing</I> reasons.
 <LI>Words in the names of concepts (<I>e.g.</I>, template parameters)
       should be separated using capital letters.  The only use of underscores
       in concept names is before the dimension suffix.  For example, one
-      should use a name such as ConvexHullTraits_2 for the concept
+      should use a name such as `ConvexHullTraits_2` for the concept
       in contrast to `Convex_hull_traits_2` for the name of the class that
       is a model of this concept.  This different naming scheme for concepts
       and classes was adopted mainly for two reasons (a) it is consistent with
