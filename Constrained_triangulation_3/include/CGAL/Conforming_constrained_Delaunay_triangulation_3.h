@@ -34,11 +34,13 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Bbox_3.h>
 
-
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/Compact_container.h>
 
@@ -585,6 +587,30 @@ public:
   Conforming_constrained_Delaunay_triangulation_3() = default;
 #endif
 
+#ifndef DOXYGEN_RUNNING
+  template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  bool preconditions_verified(const PolygonMesh& mesh, const CGAL_NP_CLASS& np)
+  {
+    bool verified = true;
+    if(CGAL::is_triangle_mesh(mesh))
+    {
+      verified = verified && !CGAL::Polygon_mesh_processing::does_self_intersect(mesh);
+      CGAL_precondition_msg(verified,
+                           "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+    }
+    else
+    {
+      PolygonMesh trimesh;
+      CGAL::copy_face_graph(mesh, trimesh, np);
+      CGAL::Polygon_mesh_processing::triangulate_faces(trimesh, np);
+      verified = verified && !CGAL::Polygon_mesh_processing::does_self_intersect(trimesh);
+      CGAL_precondition_msg(verified,
+                           "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+    }
+    return verified;
+  }
+#endif
+
   /*!
     * creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh,
     * following the same API and requirements as the function template
@@ -597,117 +623,121 @@ public:
     // ----------------------------------
     // cstr... (polygon mesh)
     // ----------------------------------
+    const bool check_preconditions =
+        parameters::choose_parameter(parameters::get_parameter(np, internal_np::check_preconditions), false);
+    if(!check_preconditions || preconditions_verified(mesh, np))
+    {
+      auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                                      get(CGAL::vertex_point, mesh));
 
-    auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                    get(CGAL::vertex_point, mesh));
+      using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+      std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
 
-    using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
-    std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
+      auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
 
-    auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+      int number_of_patches = 0;
+      constexpr bool has_face_patch_map = !parameters::is_default_parameter<CGAL_NP_CLASS,  internal_np::face_patch_t>::value;
 
-    int number_of_patches = 0;
-    constexpr bool has_face_patch_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_patch_t>::value;
-
-    if constexpr (has_face_patch_map) {
-      auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
-      using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_face_patch_map, *faces(mesh).first))>;
-      Patch_id_type max_patch_id{0};
-      for(auto f : faces(mesh)) {
-        max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
-      }
-      number_of_patches = static_cast<int>(max_patch_id + 1);
-      patch_edges.resize(number_of_patches);
-      for(auto h : halfedges(mesh)) {
-        if(is_border(h, mesh))
-          continue;
-        auto f = face(h, mesh);
-        auto patch_id = get(mesh_face_patch_map, f);
-        auto opp = opposite(h, mesh);
-        if(is_border(opp, mesh) || patch_id != get(mesh_face_patch_map, face(opp, mesh))) {
-          auto va = source(h, mesh);
-          auto vb = target(h, mesh);
-          patch_edges[patch_id].emplace_back(va, vb);
-          put(v_selected_map, va, true);
-          put(v_selected_map, vb, true);
+      if constexpr (has_face_patch_map) {
+        auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
+        using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_face_patch_map, *faces(mesh).first))>;
+        Patch_id_type max_patch_id{0};
+        for(auto f : faces(mesh)) {
+          max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
         }
-      }
-
-    } else {
-      number_of_patches = num_faces(mesh);
-    }
-
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-    using Cell_handle = typename Triangulation::Cell_handle;
-    auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
-    Cell_handle hint_ch{};
-    for(auto v : vertices(mesh)) {
-      if constexpr(has_face_patch_map) {
-        if(false == get(v_selected_map, v)) continue;
-      }
-      auto p = get(mesh_vp_map, v);
-      auto vh = cdt_impl.insert(p, hint_ch, false);
-      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
-      hint_ch = vh->cell();
-      put(tr_vertex_map, v, vh);
-    }
-
-    cdt_impl.add_bbox_points_if_not_dimension_3();
-
-    struct {
-      decltype(tr_vertex_map)* vertex_map;
-      auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
-    } tr_vertex_fct{&tr_vertex_map};
-
-    if constexpr(has_face_patch_map) {
-      for(int i = 0; i < number_of_patches; ++i) {
-        auto& edges = patch_edges[i];
-        if(edges.empty())
-          continue;
-        auto polylines = segment_soup_to_polylines(edges);
-        while(true) {
-          const auto non_closed_polylines_begin =
-              std::partition(polylines.begin(), polylines.end(),
-                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
-          if(non_closed_polylines_begin == polylines.end())
-            break;
-          edges.clear();
-          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
-              edges.emplace_back(*it, *(it + 1));
-            }
+        number_of_patches = static_cast<int>(max_patch_id + 1);
+        patch_edges.resize(number_of_patches);
+        for(auto h : halfedges(mesh)) {
+          if(is_border(h, mesh))
+            continue;
+          auto f = face(h, mesh);
+          auto patch_id = get(mesh_face_patch_map, f);
+          auto opp = opposite(h, mesh);
+          if(is_border(opp, mesh) || patch_id != get(mesh_face_patch_map, face(opp, mesh))) {
+            auto va = source(h, mesh);
+            auto vb = target(h, mesh);
+            patch_edges[patch_id].emplace_back(va, vb);
+            put(v_selected_map, va, true);
+            put(v_selected_map, vb, true);
           }
-          polylines.erase(non_closed_polylines_begin, polylines.end());
-          auto other_polylines = segment_soup_to_polylines(edges);
-          polylines.insert(polylines.end(), std::make_move_iterator(other_polylines.begin()),
-                           std::make_move_iterator(other_polylines.end()));
         }
 
-        std::optional<int> face_index;
-        for(auto& polyline : polylines) {
-          CGAL_assertion(polyline.front() == polyline.back());
-          polyline.pop_back();
-          auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
-          auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
-          face_index = cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
-                                                        face_index ? *face_index : -1);
+      } else {
+        number_of_patches = num_faces(mesh);
+      }
+
+      using Vertex_handle = typename Triangulation::Vertex_handle;
+      using Cell_handle = typename Triangulation::Cell_handle;
+      auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
+      Cell_handle hint_ch{};
+      for(auto v : vertices(mesh)) {
+        if constexpr(has_face_patch_map) {
+          if(false == get(v_selected_map, v)) continue;
+        }
+        auto p = get(mesh_vp_map, v);
+        auto vh = cdt_impl.insert(p, hint_ch, false);
+        vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
+        hint_ch = vh->cell();
+        put(tr_vertex_map, v, vh);
+      }
+
+      cdt_impl.add_bbox_points_if_not_dimension_3();
+
+      struct {
+        decltype(tr_vertex_map)* vertex_map;
+        auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
+      } tr_vertex_fct{&tr_vertex_map};
+
+      if constexpr(has_face_patch_map) {
+        for(int i = 0; i < number_of_patches; ++i) {
+          auto& edges = patch_edges[i];
+          if(edges.empty())
+            continue;
+          auto polylines = segment_soup_to_polylines(edges);
+          while(true) {
+            const auto non_closed_polylines_begin =
+                std::partition(polylines.begin(), polylines.end(),
+                               [](const auto& polyline) { return polyline.front() == polyline.back(); });
+            if(non_closed_polylines_begin == polylines.end())
+              break;
+            edges.clear();
+            for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+              auto& polyline = *it;
+              for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
+                edges.emplace_back(*it, *(it + 1));
+              }
+            }
+            polylines.erase(non_closed_polylines_begin, polylines.end());
+            auto other_polylines = segment_soup_to_polylines(edges);
+            polylines.insert(polylines.end(), std::make_move_iterator(other_polylines.begin()),
+                             std::make_move_iterator(other_polylines.end()));
+          }
+
+          std::optional<int> face_index;
+          for(auto& polyline : polylines) {
+            CGAL_assertion(polyline.front() == polyline.back());
+            polyline.pop_back();
+            auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
+            auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
+            face_index = cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
+                                                          face_index ? *face_index : -1);
+          }
+        }
+      } else {
+        for(auto f : faces(mesh)) {
+          auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
+
+          auto begin = boost::make_transform_iterator(face_vertices.begin(), tr_vertex_fct);
+          auto end = boost::make_transform_iterator(face_vertices.end(), tr_vertex_fct);
+
+          cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
         }
       }
-    } else {
-      for(auto f : faces(mesh)) {
-        auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
-
-        auto begin = boost::make_transform_iterator(face_vertices.begin(), tr_vertex_fct);
-        auto end = boost::make_transform_iterator(face_vertices.end(), tr_vertex_fct);
-
-        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
-      }
+      cdt_impl.restore_Delaunay();
+      cdt_impl.restore_constrained_Delaunay();
+      // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
+      //                          cdt_impl.number_of_cells());
     }
-    cdt_impl.restore_Delaunay();
-    cdt_impl.restore_constrained_Delaunay();
-    // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
-    //                          cdt_impl.number_of_cells());
   }
 
   /*!
