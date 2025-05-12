@@ -26,6 +26,7 @@ How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay t
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp
 @brief
+
 How to detect surface patches separated by sharp edges, before the construction of the
 constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
 */
@@ -33,13 +34,22 @@ constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
 /*!
 \example Constrained_triangulation_3/ccdt_3_from_soup_fpmap.cpp
 @brief
+
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 */
 
 /*!
 \example Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp
 @brief
-From a self-intersecting polyhedral surface in an OFF file, construct the constrained Delaunay triangulation
+
+From a self-intersecting triangulated surface in an OFF file, construct the constrained Delaunay triangulation
 after autorefinement.
 */
 
+/*!
+\example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
+@brief
+
+From a self-intersecting and non-triangulated surface surface in an OFF file,
+construct the constrained Delaunay triangulation after preprocessing.
+*/

@@ -187,6 +187,21 @@ when it is self-intersecting.
 \cgalExample{Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp }
 
 
+\subsubsection CT_3_example_self_intersecting_non_triangles Non-Triangulated Self-Intersecting Input Mesh
+
+The following example shows how to build a conforming constrained Delaunay triangulation from
+an input mesh that is not triangulated, and (possibly) self-intersecting.
+
+The function `CGAL::Polygon_mesh_processing::does_self_intersect()` is used to check for self-intersections,
+but this function can be used only on triangulated meshes. It is therefore necessary to triangulate
+the input mesh before checking for self-intersections, using the function
+`CGAL::Polygon_mesh_processing::triangulate_faces()`.
+
+The triangulated version of the mesh is then kept in case of self-intersections,
+to use the `CGAL::Polygon_mesh_processing::autorefine()` function to remove the self-intersections.
+
+\cgalExample{Constrained_triangulation_3/ccdt_3_preprocessing.cpp }
+
 
 \subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
