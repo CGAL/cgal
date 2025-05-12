@@ -28,7 +28,7 @@ namespace IO
  * @param os the output stream
  * @param ccdt the conforming constrained Delaunay triangulation to be written
  *
- * \see\ref IOStreamMedit
+ * \see \ref IOStreamMedit
  */
 template <typename Traits, typename Tr>
 void write_MEDIT(std::ostream& os,
