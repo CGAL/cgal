@@ -114,6 +114,15 @@ namespace CGAL {
  *                   Faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{check_preconditions}
+ *     \cgalParamDescription{a boolean activating the check of preconditions on the input
+ *                           before starting to construct the triangulation.
+ *                           If the check is activated and the preconditions not satisfied,
+ *                           the constructed triangulation is empty.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{`Traits` as defined above in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type}
@@ -175,6 +184,15 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each face of the polygon soup is considered a separate patch.}
  *   \cgalParamExtra{Otherwise faces with the same patch identifier are considered part of the same surface patch.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{check_preconditions}
+ *     \cgalParamDescription{a boolean activating the check of preconditions on the input
+ *                           before starting to construct the triangulation.
+ *                           If the check is activated and the preconditions not satisfied,
+ *                           the constructed triangulation is empty.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}

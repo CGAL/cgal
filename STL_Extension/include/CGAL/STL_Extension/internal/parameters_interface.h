@@ -321,6 +321,9 @@ CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
 CGAL_add_named_parameter(segment_t, segment_map, segment_map)
 
+// List of named parameters using in Constrained_triangulation_3
+CGAL_add_named_parameter(check_preconditions_t, check_preconditions, check_preconditions)
+
 // List of named parameters used in Mesh_2 package
 CGAL_add_named_parameter_with_compatibility(seeds_t, seeds, seeds)
 CGAL_add_named_parameter_with_compatibility(domain_is_initialized_t, domain_is_initialized, domain_is_initialized)
