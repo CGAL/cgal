@@ -1,4 +1,3 @@
-// Copy the content from the old file to the new file, but update all occurrences of 'fmap' in the filename and code to 'fpmap'.
 #include <CGAL/draw_constrained_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
