@@ -1552,19 +1552,33 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       }
     );
 
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t ti = r.begin(); ti != r.end(); ++ti)
-          {
-            soup_triangles_out[offset + ti] =
-              { triangle_buffer[ti][0]->second,
-                triangle_buffer[ti][1]->second,
-                triangle_buffer[ti][2]->second };
-            if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
-              visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+    // The constexpr  was initially inside the lammbda, but that did not compile  with VC 2017
+    if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>){
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+                visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+            }
           }
-        }
-    );
+      );
+    }else{
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+            }
+          }
+      );
+    }
 #endif
   }
   else
