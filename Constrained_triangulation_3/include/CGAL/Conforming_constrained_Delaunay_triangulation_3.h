@@ -592,7 +592,7 @@ public:
   bool preconditions_verified(const PolygonMesh& mesh, const CGAL_NP_CLASS& np)
   {
     bool verified = true;
-    if(CGAL::is_triangle_mesh(mesh))
+    if(CGAL::is_triangle_mesh(mesh))/
     {
       verified = verified && !CGAL::Polygon_mesh_processing::does_self_intersect(mesh);
       CGAL_precondition_msg(verified,
@@ -614,7 +614,7 @@ public:
   /*!
     * creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh,
     * following the same API and requirements as the function template
-   * \ref make_conforming_constrained_Delaunay_triangulation_3_mesh "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
+   * \ref PkgConstrainedTriangulation3FunctionsMesh "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
     */
   template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
@@ -743,7 +743,7 @@ public:
   /*!
     * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup,
     * following the same API and requirements as the function template
-   * \ref make_conforming_constrained_Delaunay_triangulation_3_soup "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
+   * \ref PkgConstrainedTriangulation3FunctionsSoup "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
    */
   template <typename PointRange, typename PolygonRange, typename NamedParams = parameters::Default_named_parameters>
   Conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
@@ -4023,7 +4023,7 @@ protected:
 
 
 /*!
-* \addtogroup PkgConstrainedTriangulation3Functions
+* \ingroup PkgConstrainedTriangulation3Functions
 * \brief creates a triangulation that can be used for tetrahedral remeshing
 * \tparam Traits is the geometric traits class of `ccdt`
 * \tparam Tr is the type of triangulation to which `ccdt` is converted

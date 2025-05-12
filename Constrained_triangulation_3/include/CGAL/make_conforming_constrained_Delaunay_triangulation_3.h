@@ -81,10 +81,12 @@ namespace CGAL {
   In both cases, the traits class `Traits` must fulfill the following requirements:
         - It must be a model of the concept `ConformingConstrainedDelaunayTriangulationTraits_3`.
         - It must have a `Point_3` type that is constructible from the point type of the input data.
+  @}
 */
 
 /*!
- * \anchor make_conforming_constrained_Delaunay_triangulation_3_mesh
+ * \ingroup PkgConstrainedTriangulation3FunctionsMesh
+ *
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
  * \tparam PolygonMesh a model of `FaceListGraph`
@@ -155,7 +157,8 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
 }
 
 /*!
- * \anchor make_conforming_constrained_Delaunay_triangulation_3_soup
+ * \ingroup PkgConstrainedTriangulation3FunctionsSoup
+ *
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
@@ -230,7 +233,6 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange &poin
   return remeshing_cdt;
 }
 
-/// @} // end group PkgConstrainedTriangulation3Functions
 } // end namespace CGAL
 
 #endif // CGAL_MAKE_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
