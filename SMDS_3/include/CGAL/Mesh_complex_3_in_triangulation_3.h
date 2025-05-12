@@ -328,12 +328,18 @@ public:
   const Triangulation& triangulation() const { return tr_; }
 /// @}
 
+#ifndef DOXYGEN_RUNNING
 /// \name Non const access
 /// @{
     /// returns a reference to the triangulation
+    /// \cgalAdvancedBegin
+    /// This function should only be used by advanced users: it merely swaps the triangulation without
+    /// rebuilding critical C3T3 information such as the number of simplexes in complex.
+    /// On the other hand, this is performed by `set_triangulation()`
+    /// \cgalAdvancedEnd
   Triangulation& triangulation() { return tr_; }
 /// @}
-
+#endif
 
 /// \name Modifiers
 /// @{
