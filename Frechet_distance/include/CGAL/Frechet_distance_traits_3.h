@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Max-Planck-Institute Saarbruecken (Germany), CNRS (France), GeometryFactory (France)
+// Copyright (c) 2024 Max-Planck-Institute Saarbruecken (Germany), GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
