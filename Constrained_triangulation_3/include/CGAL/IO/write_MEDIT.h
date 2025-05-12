@@ -19,6 +19,17 @@ namespace CGAL
 {
 namespace IO
 {
+/*!
+ * @ingroup PkgCDT3IOFunctions
+ * @brief outputs a conforming constrained Delaunay triangulation to
+ * the MEDIT (`.mesh`) file format.
+ *        See \cgalCite{frey:inria-00069921} for a comprehensive description of this
+ *        file format.
+ * @param os the output stream
+ * @param ccdt the conforming constrained Delaunay triangulation to be written
+ *
+ * \see\ref IOStreamMedit
+ */
 template <typename Traits, typename Tr>
 void write_MEDIT(std::ostream& os,
                  const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt)
