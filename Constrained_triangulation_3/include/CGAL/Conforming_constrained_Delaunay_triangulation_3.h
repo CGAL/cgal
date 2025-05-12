@@ -904,7 +904,7 @@ public:
       }
     }
     Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
-    static_assert(CGAL::cdt_3_msvc_2017() ||
+    static_assert(CGAL::cdt_3_msvc_2019_or_older() ||
                   CGAL::is_nothrow_movable_v<Triangulation> == false ||
                   CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
     static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
@@ -1123,7 +1123,7 @@ private:
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
   using CDT_2_face_handle = typename CDT_2::Face_handle;
   using CDT_2_edge = typename CDT_2::Edge;
-  static_assert(CGAL::cdt_3_msvc_2017() || CGAL::is_nothrow_movable_v<CDT_2>);
+  static_assert(CGAL::cdt_3_msvc_2019_or_older() || CGAL::is_nothrow_movable_v<CDT_2>);
 
 protected:
   struct PLC_error : Error_exception {

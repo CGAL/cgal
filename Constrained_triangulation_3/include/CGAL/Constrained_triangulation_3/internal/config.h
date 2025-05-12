@@ -25,8 +25,8 @@
 
 namespace CGAL {
 
-constexpr bool cdt_3_msvc_2017() {
-#if defined(_MSC_VER) && (_MSC_VER < 1920)
+constexpr bool cdt_3_msvc_2019_or_older() {
+#if defined(_MSC_VER) && (_MSC_VER < 1930)
   return true;
 #else
   return false;
