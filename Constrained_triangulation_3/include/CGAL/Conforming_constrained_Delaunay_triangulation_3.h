@@ -818,17 +818,9 @@ public:
       using SM_Graph_traits = typename boost::graph_traits<Surface_mesh>;
       using face_descriptor = typename SM_Graph_traits::face_descriptor;
 
-      CGAL::unordered_flat_map<std::size_t, face_descriptor> sm_face_to_polygon_id_map;
-
-      auto face_patch_map_fct = [&](face_descriptor f) {
-        return get(polygon_patch_map, sm_face_to_polygon_id_map.at(f));
-      };
-
-      auto face_patch_pmap = boost::make_function_property_map<face_descriptor>(face_patch_map_fct);
-
-      auto polygon_to_face_map_fct =[&](std::size_t polygon_id) -> face_descriptor& { return sm_face_to_polygon_id_map[polygon_id]; };
-
-      auto polygon_to_face_pmap = boost::make_function_property_map<std::size_t>(polygon_to_face_map_fct);
+      std::vector<face_descriptor> polygon_id_to_sm_face_map(polygons.size());
+      auto polygon_to_face_pmap = boost::make_function_property_map<std::size_t>(
+          [&](std::size_t polygon_id) -> face_descriptor& { return polygon_id_to_sm_face_map[polygon_id]; });
 
       Surface_mesh surface_mesh;
       namespace PMP = CGAL::Polygon_mesh_processing;
@@ -837,6 +829,17 @@ public:
       PMP::orient_polygon_soup(rw_points, rw_polygons, np);
       PMP::polygon_soup_to_polygon_mesh(rw_points, rw_polygons, surface_mesh, np.polygon_to_face_map(polygon_to_face_pmap));
 
+      auto sm_face_to_polygon_id_map = std::invoke([&](){
+        CGAL::unordered_flat_map<face_descriptor, std::size_t> sm_face_to_polygon_id_map;
+        for(auto i = 0u, n = polygon_id_to_sm_face_map.size(); i < n; ++i) {
+          auto f = polygon_id_to_sm_face_map[i];
+          sm_face_to_polygon_id_map[f] = i;
+        }
+        return sm_face_to_polygon_id_map;
+      });
+      auto face_patch_pmap = boost::make_function_property_map<face_descriptor>(
+          [&](face_descriptor f) { return get(polygon_patch_map, sm_face_to_polygon_id_map.at(f)); });
+
       using std::cbegin;
       using std::cend;
       CGAL_assertion(
@@ -844,7 +847,8 @@ public:
                        [](const auto& pair) { return pair.second == boost::graph_traits<Surface_mesh>::null_face(); }));
 
       Conforming_constrained_Delaunay_triangulation_3 ccdt{surface_mesh,
-                                                           CGAL::parameters::face_patch_map(face_patch_pmap)};
+                                                           CGAL::parameters::face_patch_map(face_patch_pmap)
+                                                          .return_empty_on_invalid_input(true)};
       *this = std::move(ccdt);
     }
   }
