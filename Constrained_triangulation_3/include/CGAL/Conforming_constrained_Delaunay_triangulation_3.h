@@ -45,6 +45,9 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
 #endif
 
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include <CGAL/Compact_container.h>
 
 #include <CGAL/Constrained_triangulation_3/internal/cdt_debug_io.h>
@@ -829,7 +832,10 @@ public:
 
       Surface_mesh surface_mesh;
       namespace PMP = CGAL::Polygon_mesh_processing;
-      PMP::polygon_soup_to_polygon_mesh(points, polygons, surface_mesh, np.polygon_to_face_map(polygon_to_face_pmap));
+      PointRange rw_points(points);
+      PolygonRange rw_polygons(polygons);
+      PMP::orient_polygon_soup(rw_points, rw_polygons, np);
+      PMP::polygon_soup_to_polygon_mesh(rw_points, rw_polygons, surface_mesh, np.polygon_to_face_map(polygon_to_face_pmap));
 
       using std::cbegin;
       using std::cend;
