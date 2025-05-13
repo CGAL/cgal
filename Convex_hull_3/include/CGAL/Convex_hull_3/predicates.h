@@ -293,13 +293,13 @@ struct RangeConverter: public I2O{
 };
 
 template<typename IK, typename OK, typename Converter>
-struct Functor_spherical_disjoint{
+struct Functor_do_intersect{
   typedef typename OK::Boolean  result_type;
 
   Converter c1;
   Converter c2;
-  Functor_spherical_disjoint():c1(Converter()), c2(Converter()){}
-  Functor_spherical_disjoint(Converter &&c1_, Converter &&c2_):c1(std::move(c1_)), c2(std::move(c2_)){}
+  Functor_do_intersect():c1(Converter()), c2(Converter()){}
+  Functor_do_intersect(Converter &&c1_, Converter &&c2_):c1(std::move(c1_)), c2(std::move(c2_)){}
 
   template<typename Convex>
   bool operator()(const Convex &a, const Convex &b, unsigned long INTER_MAX_ITER) const{
@@ -312,30 +312,33 @@ struct Functor_spherical_disjoint{
     do {
       Vector_3 dir = positiveBound.averageDirection();
       Vector_3 sp = c1(extreme_point(a, dir, c1)) - c2(extreme_point(b, -dir, c2));
-      if(sp==NULL_VECTOR) return false;
-      if(is_negative(sp * dir)) return true;
-      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return false;
+      if(sp==NULL_VECTOR) return true;
+      if(is_negative(sp * dir)) return false;
+      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return true;
       positiveBound.clip(-sp, tempPoly); positiveBound.swap(tempPoly);
     } while( !positiveBound.empty() );
-    return false;
+    return true;
   }
 };
 
+} // end of predicates_impl namespace
+
+//Do_intersect_traits
 template<typename K,
          typename IK=K,
          typename Converter=Cartesian_converter<K, K>,
          bool Has_filtered_predicates_ = CGAL::internal::Has_filtered_predicates<K>::value>
-struct Spherical_disjoint_traits;
+struct Do_intersect_traits;
 
 template<typename K, typename IK, typename Converter>
-struct Spherical_disjoint_traits<K, IK, Converter, false>{ //: Spherical_disjoint_traits_base<K>{
-  typedef Functor_spherical_disjoint<IK, K, Converter> Spherical_disjoint;
-  Spherical_disjoint spherical_disjoint_object() const {
-    return Spherical_disjoint(Converter(), Converter());
+struct Do_intersect_traits<K, IK, Converter, false>{
+  typedef predicates_impl::Functor_do_intersect<IK, K, Converter> Do_intersect;
+  Do_intersect do_intersect_object() const {
+    return Do_intersect(Converter(), Converter());
   }
 };
 template<typename K, typename Converter>
-struct Spherical_disjoint_traits<K, K, Converter, true> {
+struct Do_intersect_traits<K, K, Converter, true> {
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Exact_kernel::Vector_3 EVector_3;
   typedef typename K::Approximate_kernel::Vector_3 FVector_3;
@@ -344,22 +347,22 @@ struct Spherical_disjoint_traits<K, K, Converter, true> {
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-  typedef Spherical_disjoint_traits<typename K::Exact_kernel, K, C2E> Exact_traits;
-  typedef Spherical_disjoint_traits<typename K::Approximate_kernel, K, C2F> Filtering_traits;
+  typedef Do_intersect_traits<typename K::Exact_kernel, K, C2E> Exact_traits;
+  typedef Do_intersect_traits<typename K::Approximate_kernel, K, C2F> Filtering_traits;
 
-  //The conversion are made lazely by Spherical_disjoint, we thus use IdentityConverter in Filtered_predicate
+  //The conversion are made lazely by Do_intersect, we thus use IdentityConverter in Filtered_predicate
   typedef Filtered_predicate<
-              typename Exact_traits::Spherical_disjoint,
-              typename Filtering_traits::Spherical_disjoint,
+              typename Exact_traits::Do_intersect,
+              typename Filtering_traits::Do_intersect,
               IdentityConverter,
-              IdentityConverter>  Spherical_disjoint;
+              IdentityConverter>  Do_intersect;
 
-  Spherical_disjoint spherical_disjoint_object() const
+  Do_intersect do_intersect_object() const
   {
-    typename Exact_traits::Spherical_disjoint pe = Exact_traits().spherical_disjoint_object();
-    typename Filtering_traits::Spherical_disjoint pf = Filtering_traits().spherical_disjoint_object();
+    typename Exact_traits::Do_intersect pe = Exact_traits().do_intersect_object();
+    typename Filtering_traits::Do_intersect pf = Filtering_traits().do_intersect_object();
 
-    return Spherical_disjoint(pe, pf);
+    return Do_intersect(pe, pf);
   }
 };
 
@@ -368,16 +371,16 @@ template<typename K,
          typename IK=K,
          typename Converter=Cartesian_converter<K, K>,
          bool Has_filtered_predicates_ = CGAL::internal::Has_filtered_predicates<K>::value>
-struct Spherical_disjoint_traits_with_point_maps{
-  Spherical_disjoint_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_);
+struct Do_intersect_traits_with_point_maps{
+  Do_intersect_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_);
 };
 
 template<typename K, typename PointMap, typename IK, typename Converter>
-struct Spherical_disjoint_traits_with_point_maps<K, PointMap, IK, Converter, false>{
+struct Do_intersect_traits_with_point_maps<K, PointMap, IK, Converter, false>{
   const PointMap &map1;
   const PointMap &map2;
 
-  Spherical_disjoint_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_):map1(map1_), map2(map2_){}
+  Do_intersect_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_):map1(map1_), map2(map2_){}
 
   struct PointMapConverter : Converter{
     const PointMap &map;
@@ -390,13 +393,13 @@ struct Spherical_disjoint_traits_with_point_maps<K, PointMap, IK, Converter, fal
     }
   };
 
-  typedef Functor_spherical_disjoint<IK, K, PointMapConverter> Spherical_disjoint;
-  Spherical_disjoint spherical_disjoint_object() const {
-    return Spherical_disjoint(PointMapConverter(map1), PointMapConverter(map2));
+  typedef predicates_impl::Functor_do_intersect<IK, K, PointMapConverter> Do_intersect;
+  Do_intersect do_intersect_object() const {
+    return Do_intersect(PointMapConverter(map1), PointMapConverter(map2));
   }
 };
 template<typename K, typename PointMap, typename Converter>
-struct Spherical_disjoint_traits_with_point_maps<K, PointMap, K, Converter, true> {
+struct Do_intersect_traits_with_point_maps<K, PointMap, K, Converter, true> {
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Exact_kernel::Vector_3 EVector_3;
   typedef typename K::Approximate_kernel::Vector_3 FVector_3;
@@ -405,29 +408,27 @@ struct Spherical_disjoint_traits_with_point_maps<K, PointMap, K, Converter, true
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-  typedef Spherical_disjoint_traits_with_point_maps<typename K::Exact_kernel, PointMap, K, C2E> Exact_traits;
-  typedef Spherical_disjoint_traits_with_point_maps<typename K::Approximate_kernel, PointMap, K, C2F> Filtering_traits;
+  typedef Do_intersect_traits_with_point_maps<typename K::Exact_kernel, PointMap, K, C2E> Exact_traits;
+  typedef Do_intersect_traits_with_point_maps<typename K::Approximate_kernel, PointMap, K, C2F> Filtering_traits;
 
   typedef Filtered_predicate<
-              typename Exact_traits::Spherical_disjoint,
-              typename Filtering_traits::Spherical_disjoint,
+              typename Exact_traits::Do_intersect,
+              typename Filtering_traits::Do_intersect,
               IdentityConverter,
-              IdentityConverter>  Spherical_disjoint;
+              IdentityConverter>  Do_intersect;
 
   const PointMap &map1;
   const PointMap &map2;
-  Spherical_disjoint_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_):map1(map1_), map2(map2_){}
+  Do_intersect_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_):map1(map1_), map2(map2_){}
 
-  Spherical_disjoint spherical_disjoint_object() const
+  Do_intersect do_intersect_object() const
   {
-    typename Exact_traits::Spherical_disjoint pe = Exact_traits(map1, map2).spherical_disjoint_object();
-    typename Filtering_traits::Spherical_disjoint pf = Filtering_traits(map1, map2).spherical_disjoint_object();
+    typename Exact_traits::Do_intersect pe = Exact_traits(map1, map2).do_intersect_object();
+    typename Filtering_traits::Do_intersect pf = Filtering_traits(map1, map2).do_intersect_object();
 
-    return Spherical_disjoint(pe, pf);
+    return Do_intersect(pe, pf);
   }
 };
-
-} // end of predicates_impl namespace
 
 /**
 * \ingroup PkgConvexHull3Predicates
@@ -468,33 +469,18 @@ struct Spherical_disjoint_traits_with_point_maps<K, PointMap, K, Converter, true
 * \cgalNamedParamsEnd
 *
 */
-template <class Kernel, class Object1, class Object2, class Traits=predicates_impl::Spherical_disjoint_traits<Kernel> >
-bool do_intersect(const Object1& obj1, const Object2& obj2, Traits traits=Traits())
+template <class Kernel, class Object1, class Object2, class Traits >
+bool do_intersect(const Object1& obj1, const Object2& obj2, Traits traits)
 {
-  // using parameters::choose_parameter;
-  // using parameters::get_parameter;
-
-  // typedef Point_set_processing_3_np_helper<Object1, NamedParameters1> NP_helper1;
-  // typedef typename NP_helper1::Const_point_map PointMap1;
-  // // typedef typename NP_helper1::Geom_traits Geom_traits;
-
-  // typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
-  // typedef typename NP_helper2::Const_point_map PointMap2;
-
-  // typedef typename boost::property_traits<PointMap1>::value_type Point_3;
-  // CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
-
-  // unsigned int max_nb_iterations = choose_parameter(get_parameter(np1, internal_np::number_of_iterations), 0);
-
-  return !traits.spherical_disjoint_object()(obj1, obj2, 0);
-  // return !predicates_impl::sphericalDisjoint<Kernel>(obj1, obj2, max_nb_iterations);
+  return traits.do_intersect_object()(obj1, obj2, 0);
 }
 
-// template <class Kernel, class Mesh1, class Mesh2>
-// bool do_intersect(const Mesh1& sm1, const Mesh2& sm2)
-// {
-//   return !predicates_impl::Spherical_disjoint_traits<Kernel>().spherical_disjoint_object()(sm1, sm2, 0);
-// }
+template <class Kernel, class Object1, class Object2>
+bool do_intersect(const Object1& obj1, const Object2& obj2)
+{
+  //Find kernel
+  return Do_intersect_traits<Kernel>().do_intersect_object()(obj1, obj2, 0);
+}
 
 template <class PointRange1, class PointRange2,
           class NamedParameters1 = parameters::Default_named_parameters,

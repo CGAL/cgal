@@ -67,17 +67,17 @@ struct Test{
     std::vector< size_t > pma(a.size(),0), pmb(b.size(), 0);
     std::iota(pma.begin(), pma.end(), 0);
     std::iota(pmb.begin(), pmb.end(), 0);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
     CGAL::Surface_mesh<size_t> sma_pm, smb_pm;
     CGAL::convex_hull_3(pma.begin(), pma.end(), sma_pm, CGAL::make_extreme_points_traits_adapter(va));
     CGAL::convex_hull_3(pmb.begin(), pmb.end(), smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
-    assert(CGAL::Convex_hull_3::do_intersect<K>(sma_pm, smb_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(smb_pm, sma_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(vb, va))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(sma_pm, smb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(smb_pm, sma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
     CGAL::Convex_hull_with_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
     CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(vb, va))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
   }
 
   void test_cube()
