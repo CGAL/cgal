@@ -14,7 +14,7 @@
 #define CGAL_DRAW_SS2_H
 
 #include <CGAL/license/Straight_skeleton_2.h>
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Straight_skeleton_2.h>
@@ -180,8 +180,6 @@ void add_to_graphics_scene(const CGAL_SS_TYPE& ass2,
 }
 
 // Specialization of draw function.
-#ifdef CGAL_USE_BASIC_VIEWER
-
 template <class K, class GSOptions>
 void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
           const char *title="Straight Skeleton Basic Viewer")
@@ -199,8 +197,6 @@ void draw(const CGAL_SS_TYPE &ass2,
   add_to_graphics_scene(ass2, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_SS_TYPE
 

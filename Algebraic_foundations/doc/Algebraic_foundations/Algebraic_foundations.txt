@@ -15,7 +15,7 @@ As a consequence types representing polynomials, algebraic extensions and
 finite fields play a more important role in related implementations.
 This package has been introduced to stay abreast of these changes.
 Since in particular polynomials must be supported by the introduced framework
-the package avoids the term <I>number type</I>. Instead the package distinguishes
+the package avoids the term <I>number type</I>. Instead, the package distinguishes
 between the <I>algebraic structure</I> of a type and whether a type is embeddable on
 the real axis, or <I>real embeddable</I> for short.
 Moreover, the package introduces the notion of <I>interoperable</I> types which
@@ -45,11 +45,11 @@ the operations 'sqrt', 'k-th root' and 'real root of a polynomial',
 respectively. The concept `IntegralDomainWithoutDivision` also
 corresponds to integral domains in the algebraic sense, the
 distinction results from the fact that some implementations of
-integral domains lack the (algebraically always well defined) integral
+integral domains lack the (algebraically always well-defined) integral
 division.
 Note that `Field` refines `IntegralDomain`. This is because
 most ring-theoretic notions like greatest common divisors become trivial for
-`Field`s. Hence we see `Field` as a refinement of
+`Field`s. Hence, we see `Field` as a refinement of
 `IntegralDomain` and not as a
 refinement of one of the more advanced ring concepts.
 If an algorithm wants to rely on gcd or remainder computation, it is trying
@@ -119,7 +119,7 @@ Conversely, types as `leda_real` or `CORE::Expr` are exact but sensitive
 to numerical issues due to the internal use of multi precision floating point
 arithmetic. We expect that `Is_numerical_sensitive` is used for dispatching
 of algorithms, while `Is_exact` is useful to enable assertions that can be
-check for exact types only.
+checked for exact types only.
 
 Tags are very useful to dispatch between alternative implementations.
 The following example illustrates a dispatch for `Field`s using overloaded
@@ -134,7 +134,7 @@ category tags reflect the algebraic structure hierarchy.
 
 Most number types represent some subset of the real numbers. From those types
 we expect functionality to compute the sign, absolute value or double
-approximations. In particular we can expect an order on such a type that
+approximations. In particular, we can expect an order on such a type that
 reflects the order along the real axis.
 All these properties are gathered in the concept `::RealEmbeddable`.
 The concept is orthogonal to the algebraic structure concepts,
@@ -190,12 +190,12 @@ In general mixed operations are provided by overloaded operators and
 functions or just via implicit constructor calls.
 This level of interoperability is reflected by the concept
 `ImplicitInteroperable`. However, within template code the result type,
-or so called coercion type, of a mixed arithmetic operation may be unclear.
+or so-called coercion type, of a mixed arithmetic operation may be unclear.
 Therefore, the package introduces `Coercion_traits`
 giving access to the coercion type via \link Coercion_traits::Type `Coercion_traits<A,B>::Type` \endlink
 for two interoperable types `A` and `B`.
 
-Some trivial example are `int` and `double` with coercion type double
+Some trivial examples are `int` and `double` with coercion type double
 or `Gmpz` and `Gmpq` with coercion type `Gmpq`.
 However, the coercion type is not necessarily one of the input types,
 e.g. the coercion type of a polynomial
@@ -269,7 +269,7 @@ The package is part of \cgal since release 3.3. Of course the package is based
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced
 by the experience with the number type support in \exacus \cgalCite{beh-eeeafcs-05},
 which in the main goes back to
-Lutz Kettner, Susan Hert, Arno Eigenwillig and Michael Hemmer.
+Lutz Kettner, Susan Hert, Arno Eigenwillig, and Michael Hemmer.
 However, the package abstracts from the pure support for
 number types that are embedded on the real axis which allows the support of
 polynomials, finite fields, and algebraic extensions as well. See also related
