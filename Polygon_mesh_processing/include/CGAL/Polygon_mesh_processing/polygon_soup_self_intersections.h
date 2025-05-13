@@ -20,8 +20,14 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/iterator/transform_iterator.hpp>
+
+#include <algorithm>
+#include <iterator>
+#include <vector>
 
 namespace CGAL::Polygon_mesh_processing {
 
@@ -33,20 +39,26 @@ bool does_polygon_soup_self_intersect(const PointRange& points,
                                       PolygonRange polygons,
                                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  //let's be a bit more permissive and allow duplicated vertices
-  auto pm = parameters::choose_parameter<typename GetPointMap<PointRange, CGAL_NP_CLASS>::const_type>(parameters::get_parameter(np, internal_np::point_map));
-  using Point_3 = typename boost::property_traits<decltype(pm)>::value_type;
-  using PointRange_const_iterator = typename PointRange::const_iterator;
-  using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
-  auto to_point =[pm](const PointRange_value_type& v) { return get(pm, v); };
+  using std::cbegin;
+  using std::cend;
+  using std::size;
 
-  std::vector<Point_3> unique_points(boost::make_transform_iterator(points.begin(), to_point),
-                                     boost::make_transform_iterator(points.end(), to_point));
+  using Default_pm = typename GetPointMap<PointRange, CGAL_NP_CLASS>::const_type;
+  auto pm = parameters::choose_parameter<Default_pm>(parameters::get_parameter(np, internal_np::point_map));
+  using Point_3 = CGAL::cpp20::remove_cvref_t<decltype(get(pm, *cbegin(points)))>;
+
+  //let's be a bit more permissive and allow duplicated vertices
+  auto to_point =[pm](const auto& v) { return get(pm, v); };
+  auto first = boost::make_transform_iterator(cbegin(points), to_point);
+  auto last = boost::make_transform_iterator(cend(points), to_point);
+
+  std::vector<Point_3> unique_points(first, last);
 
   merge_duplicate_points_in_polygon_soup(unique_points, polygons);
 
-  bool is_pure_triangles = std::all_of(polygons.begin(), polygons.end(),
-                                       [](const auto&f) { return f.size() == 3; });
+  bool is_pure_triangles = std::all_of(CGAL_MAYBE_EXEC_POLICY(ConcurrencyTag)
+                                       cbegin(polygons), cend(polygons),
+                                       [](const auto&f) { return size(f) == 3; });
   if(is_pure_triangles)
   {
     // if the polygon soup is pure triangles,
@@ -55,15 +67,13 @@ bool does_polygon_soup_self_intersect(const PointRange& points,
   }
 
   // otherwise, we need to triangulate the polygons beforehand
-  using Polygon = CGAL::cpp20::remove_cvref_t<decltype(*polygons.begin())>;
-  using Id = typename std::iterator_traits<typename Polygon::const_iterator>::value_type;
-  auto to_std_vector = [](const Polygon& poly)
-  {
-    return std::vector<Id>(poly.begin(), poly.end());
-  };
+  using Id = CGAL::cpp20::remove_cvref_t<decltype(*cbegin(*cbegin(polygons)))>;
+  using New_polygon_type = std::vector<Id>;
 
-  std::vector<std::vector<Id>> triangles(boost::make_transform_iterator(polygons.begin(), to_std_vector),
-                                         boost::make_transform_iterator(polygons.end(), to_std_vector));
+  auto to_std_vector = [](const auto& poly) { return New_polygon_type{cbegin(poly), cend(poly)}; };
+
+  std::vector<New_polygon_type> triangles(boost::make_transform_iterator(cbegin(polygons), to_std_vector),
+                                          boost::make_transform_iterator(cend(polygons), to_std_vector));
   bool OK = triangulate_polygons(points, triangles, np);
 
   if (!OK) return false;
