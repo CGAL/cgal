@@ -81,8 +81,6 @@ void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
   draw_function_for_t2::compute_elements(at2, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 template<class Gt, class Tds, class Itag, class InDomainPmap>
 void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
           const char *title="Constrained Triangulation_2 Basic Viewer")
@@ -100,8 +98,6 @@ void draw(const CGAL_T2_TYPE& at2,
   add_to_graphics_scene(at2, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_T2_TYPE
 
