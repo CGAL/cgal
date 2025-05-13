@@ -41,7 +41,14 @@ bool does_polygon_soup_self_intersect(const PointRange& points,
 
   // otherwise, we need to triangulate the polygons beforehand
   using Polygon = CGAL::cpp20::remove_cvref_t<decltype(*polygons.begin())>;
-  std::vector<Polygon> triangles(polygons.begin(), polygons.end());
+  using Id = typename std::iterator_traits<typename Polygon::const_iterator>::value_type;
+  auto to_std_vector = [](const Polygon& poly)
+  {
+    return std::vector<Id>(poly.begin(), poly.end());
+  };
+
+  std::vector<std::vector<Id>> triangles(boost::make_transform_iterator(polygons.begin(), to_std_vector),
+                                         boost::make_transform_iterator(polygons.end(), to_std_vector));
   bool OK = triangulate_polygons(points, triangles, np);
 
   if (!OK) return false;
