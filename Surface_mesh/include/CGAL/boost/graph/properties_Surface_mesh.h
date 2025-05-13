@@ -13,6 +13,7 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_H
 #define CGAL_PROPERTIES_SURFACE_MESH_H
 
+#include <type_traits>
 #ifndef DOXYGEN_RUNNING
 
 #include <CGAL/license/Surface_mesh.h>
@@ -23,6 +24,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/boost/graph/properties.h>
 
@@ -351,69 +353,46 @@ struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_edge_property_t<T> 
 namespace CGAL {
 
 // get functions for dynamic properties of mutable Surface_mesh
-template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_vertex_property_t<T> >::type
-get(dynamic_vertex_property_t<T>, Surface_mesh<Point>& sm, const T& default_value = T())
+template <typename Point,
+          typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
+auto get(Dynamic_property_tag, Surface_mesh<Point>& sm, Default_value_args&&... default_value_args)
 {
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Vertex_index, T>(std::string(), default_value).first));
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::type
-get(dynamic_face_property_t<T>, Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Face_index, T>(std::string(), default_value).first));
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::type
-get(dynamic_edge_property_t<T>, Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Edge_index, T>(std::string(), default_value).first));
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::type
-get(dynamic_halfedge_property_t<T>, Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::type DPM;
-  return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string(), default_value).first));
+  using BPM = typename boost::property_map<Surface_mesh<Point>, Dynamic_property_tag>;
+  using descriptor = typename Dynamic_property_tag::template property_map<Surface_mesh<Point>>::descriptor;
+  using value_type = typename Dynamic_property_tag::value_type;
+  using SMPM = typename BPM::SMPM;
+  using DPM = typename BPM::type;
+  auto&& [sm_property_map, ok] = sm.template add_property_map<descriptor, value_type>(
+      std::string(),
+      std::forward<Default_value_args>(default_value_args)...);
+  CGAL_assume(ok);
+  return DPM(sm, new SMPM(std::forward<decltype(sm_property_map)>(sm_property_map)));
 }
 
 // get functions for dynamic properties of const Surface_mesh
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
-get(dynamic_vertex_property_t<T>, const Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Vertex_index, T>(num_vertices(sm), default_value);
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
-get(dynamic_face_property_t<T>, const Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Face_index, T>(num_faces(sm), default_value);
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type
-get(dynamic_halfedge_property_t<T>, const Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Halfedge_index, T>(num_halfedges(sm), default_value);
-}
-
-template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type
-get(dynamic_edge_property_t<T>, const Surface_mesh<Point>& sm, const T& default_value = T())
-{
-  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Edge_index, T>(num_edges(sm), default_value);
+template <typename Point,
+          typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename... Default_value_args>
+auto get(Dynamic_property_tag, const Surface_mesh<Point>& sm, Default_value_args&&... default_value_args) {
+  using graph_traits = boost::graph_traits<Surface_mesh<Point>>;
+  using vertex_descriptor = typename graph_traits::vertex_descriptor;
+  using face_descriptor = typename graph_traits::face_descriptor;
+  using edge_descriptor = typename graph_traits::edge_descriptor;
+  using halfedge_descriptor = typename graph_traits::halfedge_descriptor;
+  auto num_elements = CGAL::overloaded{
+    [&](vertex_descriptor) { return num_vertices(sm); },
+    [&](halfedge_descriptor) { return num_halfedges(sm); },
+    [&](edge_descriptor) { return num_edges(sm); },
+    [&](face_descriptor) { return num_faces(sm); }
+  };
+  using descriptor = typename Dynamic_property_tag::template property_map<Surface_mesh<Point>>::descriptor;
+  using value_type = typename Dynamic_property_tag::value_type;
+  return CGAL::internal::Dynamic_with_index<descriptor, value_type>(
+      num_elements(descriptor{}),
+      std::forward<Default_value_args>(default_value_args)...);
 }
 
 // implementation detail: required by Dynamic_property_map_deleter
