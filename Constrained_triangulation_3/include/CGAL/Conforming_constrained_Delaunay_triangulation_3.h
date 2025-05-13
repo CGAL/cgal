@@ -816,7 +816,8 @@ public:
           choose_parameter(get_parameter(np, internal_np::face_patch), boost::identity_property_map{});
       using PID = typename boost::property_traits<decltype(polygon_patch_map)>::value_type;
       using std::begin;
-      using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *std::begin(points)))>;
+      using std::end;
+      using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *begin(points)))>;
 
       using Surface_mesh = CGAL::Surface_mesh<Point_type>;
       using SM_Graph_traits = typename boost::graph_traits<Surface_mesh>;
@@ -832,8 +833,8 @@ public:
       namespace PMP = CGAL::Polygon_mesh_processing;
       auto to_point =[point_map](const PointRange_value_type& v) { return get(point_map, v); };
 
-      std::vector<typename Traits::Point_3> rw_points(boost::make_transform_iterator(points.begin(), to_point),
-                                                      boost::make_transform_iterator(points.end(), to_point));
+      std::vector<typename Traits::Point_3> rw_points(boost::make_transform_iterator(begin(points), to_point),
+                                                      boost::make_transform_iterator(end(points), to_point));
       PolygonRange rw_polygons(polygons);
       PMP::orient_polygon_soup(rw_points, rw_polygons);
       PMP::polygon_soup_to_polygon_mesh(rw_points, rw_polygons, surface_mesh,
