@@ -39,10 +39,10 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
 
-#ifndef CGAL_CDT_3_DISABLE_INPUT_CHEKS
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
+#ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
+#  include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#  include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#  include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
 #endif
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -66,6 +66,8 @@
 #include <boost/unordered_map.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <iterator>
 #include <optional>
 #include <vector>
 #if CGAL_CXX20 && __has_include(<ranges>)
@@ -593,17 +595,17 @@ public:
   Conforming_constrained_Delaunay_triangulation_3() = default;
 #endif
 
-#if !defined(CGAL_CDT_3_DISABLE_INPUT_CHEKS) && !defined(DOXYGEN_RUNNING)
+#if !defined(CGAL_CDT_3_DISABLE_INPUT_CHECKS) && !defined(DOXYGEN_RUNNING)
   template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   bool preconditions_verified_mesh(const PolygonMesh& mesh, const CGAL_NP_CLASS& np)
   {
     if(CGAL::is_triangle_mesh(mesh))
       return !CGAL::Polygon_mesh_processing::does_self_intersect(mesh, np);
-    PolygonMesh trimesh;
-    CGAL::copy_face_graph(mesh, trimesh, np);
-    bool OK = CGAL::Polygon_mesh_processing::triangulate_faces(trimesh, np);
+    PolygonMesh triangle_mesh;
+    CGAL::copy_face_graph(mesh, triangle_mesh, np);
+    bool OK = CGAL::Polygon_mesh_processing::triangulate_faces(triangle_mesh, np);
     if (!OK) return false;
-    return !CGAL::Polygon_mesh_processing::does_self_intersect(trimesh);
+    return !CGAL::Polygon_mesh_processing::does_self_intersect(triangle_mesh);
   }
 
   template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -627,20 +629,22 @@ public:
     // ----------------------------------
     // cstr... (polygon mesh)
     // ----------------------------------
-#ifndef CGAL_CDT_3_DISABLE_INPUT_CHEKS
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+#ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
     const bool return_empty_on_invalid_input =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::return_empty_on_invalid_input), false);
+        choose_parameter(get_parameter(np, internal_np::return_empty_on_invalid_input), false);
 
-    if (parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_self_intersection_tests), true))
+    if (choose_parameter(get_parameter(np, internal_np::do_self_intersection_tests), true))
     {
-      CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np), "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+      CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np),
+                            "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
     }
 
     if(return_empty_on_invalid_input && !preconditions_verified_mesh(mesh, np)) return;
 #endif
 
-    auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                    get(CGAL::vertex_point, mesh));
+    auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, mesh));
 
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
@@ -764,11 +768,14 @@ public:
     // ----------------------------------
     // cstr... (polygon soup)
     // ----------------------------------
-#ifndef CGAL_CDT_3_DISABLE_INPUT_CHEKS
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+#ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
     const bool return_empty_on_invalid_input =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::return_empty_on_invalid_input), false);
+        choose_parameter(get_parameter(np, internal_np::return_empty_on_invalid_input), false);
 
-    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_soup(points, polygons, np), "Conforming_constrained_Delaunay_triangulation_3: polygon soup self-intersects");
+    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_soup(points, polygons, np),
+                          "Conforming_constrained_Delaunay_triangulation_3: polygon soup self-intersects");
 
     if(return_empty_on_invalid_input && !preconditions_verified_soup(points, polygons, np)) return;
 #endif
@@ -776,14 +783,15 @@ public:
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
 
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
     auto point_map = choose_parameter(get_parameter(np, internal_np::point_map),
                                                     CGAL::Identity_property_map<PointRange_value_type>{});
 
     constexpr bool has_face_patch_map = !parameters::is_default_parameter<NamedParams, internal_np::face_patch_t>::value;
 
-    if(false == has_face_patch_map) {
+    using std::cbegin;
+    using std::cend;
+
+    if constexpr (false == has_face_patch_map) {
       using Vertex_handle = typename Triangulation::Vertex_handle;
       using Cell_handle = typename Triangulation::Cell_handle;
       using Vec_vertex_handle = std::vector<Vertex_handle>;
@@ -805,44 +813,46 @@ public:
         const Vertex_handle& operator()(std::size_t i) const { return (*vertices)[i]; }
       } transform_function{&vertices};
       for(auto polygon : polygons) {
-        auto begin = boost::make_transform_iterator(polygon.begin(), transform_function);
-        auto end = boost::make_transform_iterator(polygon.end(), transform_function);
-        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+        auto first = boost::make_transform_iterator(cbegin(polygon), transform_function);
+        auto last = boost::make_transform_iterator(cend(polygon), transform_function);
+        cdt_impl.insert_constrained_face(CGAL::make_range(first, last), false);
       }
       cdt_impl.restore_Delaunay();
       cdt_impl.restore_constrained_Delaunay();
     } else {
-      auto polygon_patch_map =
-          choose_parameter(get_parameter(np, internal_np::face_patch), boost::identity_property_map{});
-      using PID = typename boost::property_traits<decltype(polygon_patch_map)>::value_type;
-      using std::begin;
-      using std::end;
-      using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *begin(points)))>;
+      auto polygon_patch_map = get_parameter(np, internal_np::face_patch);
+      static_assert(!std::is_same_v<decltype(polygon_patch_map), internal_np::Param_not_found>);
 
+      using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *cbegin(points)))>;
       using Surface_mesh = CGAL::Surface_mesh<Point_type>;
-      using SM_Graph_traits = typename boost::graph_traits<Surface_mesh>;
-      using face_descriptor = typename SM_Graph_traits::face_descriptor;
+      using face_descriptor = typename Surface_mesh::Face_index;
 
+      using PID = CGAL::cpp20::remove_cvref_t<decltype(get(polygon_patch_map, 0u))>;
+      constexpr auto invalid_patch_id = std::numeric_limits<PID>::max();
       Surface_mesh surface_mesh;
-      auto face_patch_pmap = surface_mesh.template add_property_map<face_descriptor, PID>("fpm", std::size_t(-1)).first;
-      auto copy_ids = [face_patch_pmap, polygon_patch_map](std::pair<std::size_t, face_descriptor> pid_f)
-      {
-        put(face_patch_pmap, pid_f.second, get(polygon_patch_map, pid_f.first));
-      };
+      auto face_patch_pmap =
+          surface_mesh.template add_property_map<face_descriptor, PID>("fpm", invalid_patch_id).first;
 
-      namespace PMP = CGAL::Polygon_mesh_processing;
-      auto to_point =[point_map](const PointRange_value_type& v) { return get(point_map, v); };
+      auto to_point = [point_map](const PointRange_value_type& v) { return get(point_map, v); };
+      auto first = boost::make_transform_iterator(cbegin(points), to_point);
+      auto last = boost::make_transform_iterator(cend(points), to_point);
+      std::vector<typename Traits::Point_3> rw_points(first, last);
 
-      std::vector<typename Traits::Point_3> rw_points(boost::make_transform_iterator(begin(points), to_point),
-                                                      boost::make_transform_iterator(end(points), to_point));
       PolygonRange rw_polygons(polygons);
+      namespace PMP = CGAL::Polygon_mesh_processing;
       PMP::orient_polygon_soup(rw_points, rw_polygons);
-      PMP::polygon_soup_to_polygon_mesh(rw_points, rw_polygons, surface_mesh,
-                                        np.polygon_to_face_output_iterator(boost::make_function_output_iterator(copy_ids)));
 
-      Conforming_constrained_Delaunay_triangulation_3 ccdt{surface_mesh,
+      auto polygon_to_face_output_iterator = boost::make_function_output_iterator(
+          [face_patch_pmap, polygon_patch_map](std::pair<std::size_t, face_descriptor> pid_f) {
+            put(face_patch_pmap, pid_f.second, get(polygon_patch_map, pid_f.first));
+          });
+      PMP::polygon_soup_to_polygon_mesh(std::move(rw_points), std::move(rw_polygons), surface_mesh,
+                                        np.polygon_to_face_output_iterator(polygon_to_face_output_iterator));
+
+      Conforming_constrained_Delaunay_triangulation_3 ccdt{std::move(surface_mesh),
                                                            CGAL::parameters::face_patch_map(face_patch_pmap)
-                                                          .do_self_intersection_tests(false)};
+                                                               .do_self_intersection_tests(false)
+                                                               .geom_traits(cdt_impl.geom_traits())};
       *this = std::move(ccdt);
     }
   }
