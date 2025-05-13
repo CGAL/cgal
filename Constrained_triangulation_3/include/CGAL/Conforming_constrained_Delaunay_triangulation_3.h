@@ -827,9 +827,13 @@ public:
 
       Surface_mesh surface_mesh;
       namespace PMP = CGAL::Polygon_mesh_processing;
-      PointRange rw_points(points);
+      auto pm = choose_parameter<typename GetPointMap<PointRange, NamedParams>::const_type>(get_parameter(np, internal_np::point_map));
+      auto to_point =[pm](const PointRange_value_type& v) { return get(pm, v); };
+
+      std::vector<typename Traits::Point_3> rw_points(boost::make_transform_iterator(points.begin(), to_point),
+                                                      boost::make_transform_iterator(points.end(), to_point));
       PolygonRange rw_polygons(polygons);
-      PMP::orient_polygon_soup(rw_points, rw_polygons, np);
+      PMP::orient_polygon_soup(rw_points, rw_polygons);
       PMP::polygon_soup_to_polygon_mesh(rw_points, rw_polygons, surface_mesh, np.polygon_to_face_map(polygon_to_face_pmap));
 
       auto sm_face_to_polygon_id_map = std::invoke([&](){
