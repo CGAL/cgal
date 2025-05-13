@@ -260,38 +260,6 @@ Value extreme_point(const std::vector<Value>& C, const Vector_3 &dir, const Conv
   return *argmax;
 }
 
-template <typename IK, typename OK, typename I2O>
-struct RangeConverter: public I2O{
-
-  template< typename P >
-  const Surface_mesh< P > operator()(const Surface_mesh< P > &&sm) const{
-    return std::forward< Surface_mesh< P > > (sm);
-  }
-
-  template< typename P >
-  constexpr const Surface_mesh< P >& operator()(const Surface_mesh< P > &sm) const{
-    return sm;
-  }
-
-  std::vector<typename OK::Point_3> operator()(const std::vector<typename IK::Point_3> &pts) const{
-    std::vector<typename OK::Point_3> out;
-    for(const typename IK::Point_3 &p: pts)
-      out.push_back(I2O()(p));
-    return out;
-  }
-
-  std::array<typename OK::Point_3, 8> operator()(const std::array<typename IK::Point_3, 8> &in) const{
-    std::array<typename OK::Point_3, 8> out;
-    for(size_t i=0; i<8; ++i)
-      out[i]=I2O()(in[i]);
-    return out;
-  }
-
-  size_t operator()(size_t v) const{
-    return v;
-  }
-};
-
 template<typename IK, typename OK, typename Converter>
 struct Functor_do_intersect{
   typedef typename OK::Boolean  result_type;
