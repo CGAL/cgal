@@ -20,6 +20,7 @@ CGAL_add_named_parameter(visitor_t, visitor, visitor)
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
+CGAL_add_named_parameter(edge_is_marked_map_t, edge_is_marked_map, edge_is_marked_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
@@ -58,6 +59,8 @@ CGAL_add_named_parameter(face_color_output_iterator_t, face_color_output_iterato
 CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_map)
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
+CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
 CGAL_add_named_parameter(output_color_t, output_color, output_color)

@@ -18,7 +18,7 @@
 #ifndef CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -212,8 +212,6 @@ void add_to_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
   add_to_graphics_scene(p2, graphics_scene, gs_options);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function.
 template<class T, class C, class GSOptions>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const GSOptions &gs_options,
@@ -232,8 +230,6 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
   add_to_graphics_scene(ap2, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_P2_WITH_HOLES_TYPE
 
