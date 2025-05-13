@@ -631,7 +631,10 @@ public:
     const bool return_empty_on_invalid_input =
         parameters::choose_parameter(parameters::get_parameter(np, internal_np::return_empty_on_invalid_input), false);
 
-    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np), "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+    if (parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_self_intersection_tests), true))
+    {
+      CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np), "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+    }
 
     if(return_empty_on_invalid_input && !preconditions_verified_mesh(mesh, np)) return;
 #endif
@@ -848,7 +851,7 @@ public:
 
       Conforming_constrained_Delaunay_triangulation_3 ccdt{surface_mesh,
                                                            CGAL::parameters::face_patch_map(face_patch_pmap)
-                                                          .return_empty_on_invalid_input(true)};
+                                                          .do_self_intersection_tests(false)};
       *this = std::move(ccdt);
     }
   }
