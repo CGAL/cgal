@@ -322,7 +322,7 @@ CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directio
 CGAL_add_named_parameter(segment_t, segment_map, segment_map)
 
 // List of named parameters using in Constrained_triangulation_3
-CGAL_add_named_parameter(check_preconditions_t, check_preconditions, check_preconditions)
+CGAL_add_named_parameter(return_empty_on_invalid_input_t, return_empty_on_invalid_input, return_empty_on_invalid_input)
 
 // List of named parameters used in Mesh_2 package
 CGAL_add_named_parameter_with_compatibility(seeds_t, seeds, seeds)

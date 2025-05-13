@@ -27,12 +27,12 @@ int main(int argc, char* argv[])
             << mesh.number_of_faces() << "\n";
 
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
-                CGAL::parameters::check_preconditions(true));
+                CGAL::parameters::return_empty_on_invalid_input(true));
 
   if(ccdt.number_of_constrained_facets() == 0)
   {
     std::cerr << "Error: no constrained facets in the CDT.\n";
-    std::cerr << "Checking preconditions has failed.\n";
+    std::cerr << "Invalid input.\n";
     return EXIT_SUCCESS;
   }
 
