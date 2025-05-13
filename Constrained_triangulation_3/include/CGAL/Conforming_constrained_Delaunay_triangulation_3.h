@@ -611,7 +611,7 @@ public:
                                    const PolygonRange& polygons,
                                    const CGAL_NP_CLASS& np)
   {
-    return CGAL::Polygon_mesh_processing::does_polygon_soup_self_intersect(points, polygons, np);
+    return !CGAL::Polygon_mesh_processing::does_polygon_soup_self_intersect(points, polygons, np);
   }
 #endif
 
