@@ -42,7 +42,9 @@ bool does_polygon_soup_self_intersect(const PointRange& points,
   // otherwise, we need to triangulate the polygons beforehand
   using Polygon = CGAL::cpp20::remove_cvref_t<decltype(*polygons.begin())>;
   std::vector<Polygon> triangles(polygons.begin(), polygons.end());
-  triangulate_polygons(points, triangles, np);
+  bool OK = triangulate_polygons(points, triangles, np);
+
+  if (!OK) return false;
 
   return does_triangle_soup_self_intersect<ConcurrencyTag>(points, triangles, np);
 }
