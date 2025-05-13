@@ -116,7 +116,7 @@ namespace CGAL {
  *                   Faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{check_preconditions}
+ *   \cgalParamNBegin{return_empty_on_invalid_input}
  *     \cgalParamDescription{a boolean activating the check of preconditions on the input
  *                           before starting to construct the triangulation.
  *                           If the check is activated and the preconditions not satisfied,
@@ -189,7 +189,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *   \cgalParamExtra{Otherwise faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{check_preconditions}
+ *   \cgalParamNBegin{return_empty_on_invalid_input}
  *     \cgalParamDescription{a boolean activating the check of preconditions on the input
  *                           before starting to construct the triangulation.
  *                           If the check is activated and the preconditions not satisfied,

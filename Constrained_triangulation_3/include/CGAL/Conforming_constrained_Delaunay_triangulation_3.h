@@ -622,12 +622,12 @@ public:
     // ----------------------------------
     // cstr... (polygon mesh)
     // ----------------------------------
-    const bool check_preconditions =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::check_preconditions), false);
+    const bool return_empty_on_invalid_input =
+        parameters::choose_parameter(parameters::get_parameter(np, internal_np::return_empty_on_invalid_input), false);
 
-    CGAL_precondition_msg(check_preconditions || preconditions_verified_mesh(mesh, np), "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
+    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np), "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
 
-    if(check_preconditions && !preconditions_verified_mesh(mesh, np)) return;
+    if(return_empty_on_invalid_input && !preconditions_verified_mesh(mesh, np)) return;
 
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get(CGAL::vertex_point, mesh));
@@ -754,12 +754,12 @@ public:
     // ----------------------------------
     // cstr... (polygon soup)
     // ----------------------------------
-    const bool check_preconditions =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::check_preconditions), false);
+    const bool return_empty_on_invalid_input =
+        parameters::choose_parameter(parameters::get_parameter(np, internal_np::return_empty_on_invalid_input), false);
 
-    CGAL_precondition_msg(check_preconditions || preconditions_verified_soup(points, polygons, np), "Conforming_constrained_Delaunay_triangulation_3: polygon soup self-intersects");
+    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_soup(points, polygons, np), "Conforming_constrained_Delaunay_triangulation_3: polygon soup self-intersects");
 
-    if(check_preconditions && !preconditions_verified_soup(points, polygons, np)) return;
+    if(return_empty_on_invalid_input && !preconditions_verified_soup(points, polygons, np)) return;
 
 
     using PointRange_const_iterator = typename PointRange::const_iterator;
