@@ -3,6 +3,8 @@ project(Constrained_triangulation_3_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Qt6)
 
+add_compile_definitions(QT_NO_KEYWORDS)
+
 create_single_source_cgal_program(conforming_constrained_Delaunay_triangulation_3.cpp)
 create_single_source_cgal_program(conforming_constrained_Delaunay_triangulation_3_fpmap.cpp)
 create_single_source_cgal_program(conforming_constrained_Delaunay_triangulation_3_from_soup.cpp)
@@ -19,7 +21,12 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(ccdt_3_after_autorefinement PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_preprocessing PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_check_preconditions PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(remesh_constrained_Delaunay_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The example 'conforming_constrained_Delaunay_triangulation_3' cannot draw the result without Qt6.")
+endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(ccdt_3_from_soup_fpmap PUBLIC CGAL::TBB_support)
 endif()
