@@ -76,7 +76,7 @@ bool does_polygon_soup_self_intersect(const PointRange& points,
                                           boost::make_transform_iterator(cend(polygons), to_std_vector));
   bool OK = triangulate_polygons(points, triangles, np);
 
-  if (!OK) return false;
+  if (!OK) return true;
 
   return does_triangle_soup_self_intersect<ConcurrencyTag>(unique_points, triangles, np);
 }
