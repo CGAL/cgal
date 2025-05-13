@@ -21,6 +21,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <boost/config.hpp>
+
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
@@ -28,13 +30,12 @@
 #include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
-#include <variant>
-#include <optional>
-#include <boost/config.hpp>
-
-#include <vector>
 #include <map>
+#include <optional>
+#include <tuple>
 #include <utility>
+#include <variant>
+#include <vector>
 
 namespace CGAL {
 
@@ -1335,12 +1336,12 @@ struct Dispatch_output_iterator_aux<std::tuple<V...>,
   using Output_to_nth_of_tuple_of_iterators<Indices, V, O>::assign...;
   using Drop_output_iterator<drop_unknown_value_types>::assign;
 
-  template <typename Tuple>
-  void tuple_dispatch(const Tuple& t) {
+  template <typename This, typename Tuple>
+  void tuple_dispatch(This& self, const Tuple& t) {
     // Assign each element of the tuple to the corresponding output iterator,
     // using a fold expression on "operator," to expand the parameter pack.
     ( static_cast<Output_to_nth_of_tuple_of_iterators<Indices, V, O>&>(*this).
-          assign(*this, std::get<Indices>(t)), ...);
+          assign(self, std::get<Indices>(t)), ...);
   }
 };
 
@@ -1416,7 +1417,7 @@ public:
 
   Self& operator=(const std::tuple<V...>& t)
   {
-      this->tuple_dispatch(t);
+      this->tuple_dispatch(*this, t);
       return *this;
   }
 
