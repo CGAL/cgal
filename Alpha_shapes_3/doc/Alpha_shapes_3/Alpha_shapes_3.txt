@@ -34,8 +34,8 @@ of this process in 2D (where our ice-cream spoon is simply a circle).
 
 Alpha shapes depend on a parameter \f$ \alpha\f$ after which they are named.
 In the ice-cream analogy above, \f$ \alpha\f$ is the squared radius of the
-carving spoon. A very small value will allow us to eat up all of the
-ice-cream except the chocolate points themselves. Thus we already see
+carving spoon. A very small value will allow us to eat up all the
+ice-cream except the chocolate points themselves. Thus, we already see
 that the alpha shape degenerates to the point-set \f$ S\f$ for
 \f$ \alpha \rightarrow 0\f$. On the other hand, a huge value of \f$ \alpha\f$
 will prevent us even from moving the spoon between two points since
@@ -53,7 +53,7 @@ We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
 are based on the Delaunay triangulation. <I>Weighted alpha shapes</I>
 are based on its generalization, the regular triangulation
 (cf. Section \ref Triangulation3secclassRegulartriangulation "Regular Triangulations"),
-replacing the euclidean distance by the power to weighted points.
+replacing the Euclidean distance by the power to weighted points.
 
 Let us consider the basic case with a Delaunay triangulation.
 We first define the alpha complex of the set of points \f$ S\f$.
@@ -79,7 +79,7 @@ of the alpha complex where singular faces are removed
 (See \cgalFigureRef{figgenregex} for an example).
 
 \cgalFigureBegin{figgenregex,gen-reg-ex.png}
-Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contains any singular facet.
+Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contain any singular facet.
 \cgalFigureEnd
 
 The alpha shapes of a set of points
@@ -112,11 +112,11 @@ and radii \f$ r_1, r_2 \f$ are said to be orthogonal iff
 iff \f$ C_1C_2 ^2 < r_1^2 + r_2^2\f$.
 For a given value of \f$ \alpha\f$,
 the weighted alpha complex is formed with the simplices of the
-regular triangulation triangulation
-such that there is a sphere orthogonal to the weighted points associated
+regular triangulation such that there is a sphere
+orthogonal to the weighted points associated
 with the vertices of the simplex and suborthogonal to all the other
 input weighted points. Once again the alpha shape is then defined as
-the domain covered by a the alpha complex and comes in general and
+the domain covered by the alpha complex and comes in general and
 regularized versions.
 
 \section Alpha_Shape_3Functionality Functionality
@@ -273,7 +273,7 @@ alpha-shape, using the `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` requires a ke
 with exact predicates and exact constructions (or setting `ExactAlphaComparisonTag` to `Tag_true`)
 while using a kernel with exact predicates is sufficient for the class `Fixed_alpha_shape_3<Dt>`.
 This makes the class `Fixed_alpha_shape_3<Dt>` even more efficient in this setting.
-In addition, note that the `Fixed` version is the only of the
+In addition, note that the `Fixed` version is the only one of the
 two that supports incremental insertion and removal of points.
 
 We give the time spent while computing the alpha shape of a protein (considered
@@ -345,7 +345,7 @@ cube will be chosen and no optimizations will be used.
 It is also recommended to switch the triangulation to 1-sheeted
 covering if possible. Note that a periodic triangulation in 27-sheeted
 covering space is degenerate. In this case, an exact constructions
-kernel needs to be used to compute the alpha shapes. Otherwise the
+kernel needs to be used to compute the alpha shapes. Otherwise, the
 results will suffer from round-off problems.
 
 \cgalExample{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}

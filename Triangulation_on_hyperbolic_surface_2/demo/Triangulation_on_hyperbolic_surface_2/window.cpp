@@ -109,7 +109,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
 
   double determinant = src_x*tar_y - src_y*tar_x; // determinant of the matrix whose columns are the vectors src and tar : indicates colinearity
   double distance_squared = (src_x-tar_x)*(src_x-tar_x) + (src_y-tar_y)*(src_y-tar_y);
-  if ((std::abs(determinant) < computation_treshold_squared) || (distance_squared < computation_treshold_squared)) {
+  if ((std::abs(determinant) < computation_threshold_squared) || (distance_squared < computation_threshold_squared)) {
     // src and tar are too colinear or too close from each other
     draw_line(painter, src_x, src_y, tar_x, tar_y);
     return;
@@ -232,7 +232,7 @@ void DemoWindowItem::draw_arc(QPainter* painter,
 double DemoWindowItem::deg_angle(double x, double y)
 {
   // To avoid problems when further division by x (ok since x^2 + y^2 not too small) :
-  if (x*x <  computation_treshold_squared) {
+  if (x*x <  computation_threshold_squared) {
     if (y>0) return 90;
     return -90;
   }

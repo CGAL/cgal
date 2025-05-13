@@ -328,12 +328,18 @@ public:
   const Triangulation& triangulation() const { return tr_; }
 /// @}
 
+#ifndef DOXYGEN_RUNNING
 /// \name Non const access
 /// @{
     /// returns a reference to the triangulation
+    /// \cgalAdvancedBegin
+    /// This function should only be used by advanced users: it merely swaps the triangulation without
+    /// rebuilding critical C3T3 information such as the number of simplexes in complex.
+    /// On the other hand, this is performed by `set_triangulation()`
+    /// \cgalAdvancedEnd
   Triangulation& triangulation() { return tr_; }
 /// @}
-
+#endif
 
 /// \name Modifiers
 /// @{
@@ -349,6 +355,21 @@ public:
     edges_.clear();
     corners_.clear();
     far_vertices_.clear();
+  }
+
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(const Triangulation& tr)
+  {
+    tr_ = tr;
+    rescan_after_load_of_triangulation();
+  }
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(Triangulation&& tr)
+  {
+    tr_ = std::move(tr);
+    rescan_after_load_of_triangulation();
   }
 
   /** adds cell \p cell to the 3D complex, with subdomain index \p index
