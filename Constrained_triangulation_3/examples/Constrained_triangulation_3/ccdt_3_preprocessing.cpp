@@ -55,18 +55,37 @@ int main(int argc, char* argv[])
   if(triangle_mesh && PMP::does_self_intersect(mesh))
   {
     std::cout << "Mesh is a self-intersecting triangle mesh, perform autorefinement...\n";
+
+    // use a polygon soup as container as the output will most likely be non-manifold
+    std::vector<K::Point_3> points;
+    std::vector<std::vector<std::size_t>> polygons;
+    PMP::polygon_mesh_to_polygon_soup(mesh, points, polygons);
+    PMP::autorefine_triangle_soup(points, polygons);
+    std::cout << "Number of facets after preprocessing: "
+              << polygons.size() << "\n";
+
+    auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(points, polygons);
+
+    std::cout << "Number of constrained facets in the CDT: "
+              << ccdt.number_of_constrained_facets() << '\n';
+
+    CGAL::draw(ccdt);
+
+
     PMP::autorefine(mesh);
   }
+  else
+  {
+    std::cout << "Number of facets after preprocessing: "
+              << mesh.number_of_faces() << "\n";
 
-  std::cout << "Number of facets after preprocessing: "
-            << mesh.number_of_faces() << "\n";
+    auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh);
 
-  auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh);
+    std::cout << "Number of constrained facets in the CDT: "
+              << ccdt.number_of_constrained_facets() << '\n';
 
-  std::cout << "Number of constrained facets in the CDT: "
-            << ccdt.number_of_constrained_facets() << '\n';
-
-  CGAL::draw(ccdt);
+    CGAL::draw(ccdt);
+  }
 
   return EXIT_SUCCESS;
 }
