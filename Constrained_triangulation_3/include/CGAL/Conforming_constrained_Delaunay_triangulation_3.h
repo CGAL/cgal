@@ -827,8 +827,7 @@ public:
 
       Surface_mesh surface_mesh;
       namespace PMP = CGAL::Polygon_mesh_processing;
-      auto pm = choose_parameter<typename GetPointMap<PointRange, NamedParams>::const_type>(get_parameter(np, internal_np::point_map));
-      auto to_point =[pm](const PointRange_value_type& v) { return get(pm, v); };
+      auto to_point =[point_map](const PointRange_value_type& v) { return get(point_map, v); };
 
       std::vector<typename Traits::Point_3> rw_points(boost::make_transform_iterator(points.begin(), to_point),
                                                       boost::make_transform_iterator(points.end(), to_point));
