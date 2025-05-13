@@ -45,7 +45,8 @@ struct Convex_hull_with_hierarchy{
     return hierarchy_sm[level];
   }
 
-  void init_hierarchy(){
+  template <typename Traits>
+  void init_hierarchy(const Traits &traits){
     size_t size=hierarchy_sm[0].vertices().size();
     size_t level=0;
 
@@ -67,7 +68,7 @@ struct Convex_hull_with_hierarchy{
         }
 
       Mesh new_sm;
-      convex_hull_3(select_points.begin(), select_points.end(), new_sm);
+      convex_hull_3(select_points.begin(), select_points.end(), new_sm, traits);
       typename Mesh::Property_map<Vertex_index, Vertex_index> pm=new_sm.template add_property_map<Vertex_index>("v:next_in_hierarchy", *(above_sm.vertices().begin())).first;
       for(Vertex_index v : new_sm.vertices())
         pm[v]=select_vertices[new_sm.point(v)];
@@ -78,12 +79,19 @@ struct Convex_hull_with_hierarchy{
   }
 
   Convex_hull_with_hierarchy(Mesh &sm_){
+    typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<P>::type Traits;
     hierarchy_sm.push_back(sm_);
-    init_hierarchy();
+    init_hierarchy(Traits());
   };
 
-  template <class IK, class Converter, class Vector_3>
-  const typename IK::Point_3 extreme_point(const Vector_3 dir, const Converter& converter) const {
+  template <typename Traits>
+  Convex_hull_with_hierarchy(Mesh &sm_, const Traits &traits){
+    hierarchy_sm.push_back(sm_);
+    init_hierarchy(traits);
+  };
+
+  template <class Converter, class Vector_3>
+  const P extreme_point(const Vector_3 &dir, const Converter& converter) const {
     using Point_3 = typename Kernel_traits<Vector_3>::Kernel::Point_3;
     using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
@@ -141,9 +149,9 @@ struct Convex_hull_with_hierarchy{
   }
 };
 
-template <class IK, class Converter, class Vector_3>
-const typename IK::Point_3 extreme_point(const Convex_hull_with_hierarchy<typename IK::Point_3> &C, const Vector_3 dir, const Converter &c){
-  return C.template extreme_point<IK, Converter>(dir, c);
+template <class Value, class Converter, class Vector_3>
+const Value extreme_point(const Convex_hull_with_hierarchy<Value> &C, const Vector_3 &dir, const Converter &c){
+  return C.template extreme_point(dir, c);
 }
 
 }

@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
@@ -9,18 +10,41 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/convex_hull_with_hierarchy.h>
 
+#include <boost/property_map/vector_property_map.hpp>
+
 #include <vector>
 #include <fstream>
 
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        EPECK_with_sqrt;
 typedef CGAL::Exact_predicates_exact_constructions_kernel        EPECK;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      EPICK;
 typedef CGAL::Simple_cartesian<double>                           DOUBLE;
+
+template<typename K>
+struct Sphere{
+  typedef typename K::FT FT;
+  typedef typename K::Point_3 P;
+  FT r;
+  P c;
+  Sphere(P c_, FT r_):r(r_), c(c_){}
+
+  template<class Vector_3, class Converter>
+  P extreme_point(const Vector_3 dir, const Converter& converter) const{
+    return converter(c)+converter(r)*dir/CGAL::sqrt(dir.squared_length());
+  }
+};
+template<typename K, class Vector_3, class Converter>
+typename K::Point_3 extreme_point(const Sphere<K> &sp, const Vector_3 &dir, const Converter& converter){
+  return sp.extreme_point(dir, converter);
+}
 
 template<typename K>
 struct Test{
   typedef typename K::Point_3                                      P;
   typedef typename K::Vector_3                                     V;
   typedef CGAL::Surface_mesh<P>                                 Mesh;
+
+  typedef boost::vector_property_map<P> PMap;
 
   void test(std::vector<P> &a, std::vector<P> &b, bool result){
     assert(CGAL::Convex_hull_3::do_intersect<K>(a, b)==result);
@@ -33,6 +57,27 @@ struct Test{
     CGAL::Convex_hull_with_hierarchy<P> hsma(sma), hsmb(smb);
     assert(CGAL::Convex_hull_3::do_intersect<K>(hsma, hsmb)==result);
     assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb, hsma)==result);
+
+    //Test with Point map
+    PMap va, vb;
+    for(size_t i=0; i<a.size(); ++i)
+      va[i]=a[i];
+    for(size_t i=0; i<b.size(); ++i)
+      vb[i]=b[i];
+    std::vector< size_t > pma(a.size(),0), pmb(b.size(), 0);
+    std::iota(pma.begin(), pma.end(), 0);
+    std::iota(pmb.begin(), pmb.end(), 0);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
+    CGAL::Surface_mesh<size_t> sma_pm, smb_pm;
+    CGAL::convex_hull_3(pma.begin(), pma.end(), sma_pm, CGAL::make_extreme_points_traits_adapter(va));
+    CGAL::convex_hull_3(pmb.begin(), pmb.end(), smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+    assert(CGAL::Convex_hull_3::do_intersect<K>(sma_pm, smb_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(smb_pm, sma_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(vb, va))==result);
+    CGAL::Convex_hull_with_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
+    CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+    assert(CGAL::Convex_hull_3::do_intersect<K>(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PMap>(vb, va))==result);
   }
 
   void test_cube()
@@ -173,6 +218,16 @@ struct Test{
     }
   }
 
+  void test_implicit_function(CGAL::Random &r, int N){
+    std::vector< Sphere<K> > spheres;
+    for(int i=0; i<N; ++i)
+      spheres.emplace_back(P(r.get_double(-2, 2),0,0),1);
+
+    for(int i=0; i<N; ++i)
+      for(int j=0; j<N; ++j)
+        assert(CGAL::Convex_hull_3::do_intersect<K>(spheres[i], spheres[j])==(CGAL::abs(spheres[i].c.x()-spheres[j].c.x())<=2));
+  }
+
   void full_test(CGAL::Random &r){
     test_degenerate();
     test_cube();
@@ -192,5 +247,6 @@ int main(int argc, char** argv)
   // Test<DOUBLE>().full_test(r);
   Test<EPICK>().full_test(r);
   Test<EPECK>().full_test(r);
+  Test<EPECK_with_sqrt>().test_implicit_function(r,10);
   return 0;
 }

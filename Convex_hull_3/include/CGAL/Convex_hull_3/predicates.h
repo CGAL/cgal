@@ -202,10 +202,10 @@ inline constexpr bool is_instance_of_v = std::false_type{};
 template<template<class> class U, class V>
 inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
 
-template <class IK, class Converter, class Vector_3>
-const typename IK::Point_3 extreme_point(const Surface_mesh<typename IK::Point_3>& C, const Vector_3 dir, const Converter& converter) {
+template <class Value, class Converter, class Vector_3>
+const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, const Converter& converter) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
-  using Convex= Surface_mesh<typename IK::Point_3>;
+  using Convex= Surface_mesh<Value>;
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
   if(C.vertices().size()<5){
@@ -244,8 +244,8 @@ const typename IK::Point_3 extreme_point(const Surface_mesh<typename IK::Point_3
   return C.point(argmax);
 }
 
-template <class IK, class Converter, class Value, class Vector_3>
-Value extreme_point(const std::vector<Value>& C, const Vector_3 dir, const Converter &converter) {
+template <class Converter, class Value, class Vector_3>
+Value extreme_point(const std::vector<Value>& C, const Vector_3 &dir, const Converter &converter) {
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
   using Convex=std::vector<Value>;
   typename Convex::const_iterator argmax=C.begin();
@@ -311,7 +311,7 @@ struct Functor_spherical_disjoint{
     unsigned long planeStatPerPair = 0;
     do {
       Vector_3 dir = positiveBound.averageDirection();
-      Vector_3 sp = c1(extreme_point<IK>(a, dir, c1)) - c2(extreme_point<IK>(b, -dir, c2));
+      Vector_3 sp = c1(extreme_point(a, dir, c1)) - c2(extreme_point(b, -dir, c2));
       if(sp==NULL_VECTOR) return false;
       if(is_negative(sp * dir)) return true;
       if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return false;
