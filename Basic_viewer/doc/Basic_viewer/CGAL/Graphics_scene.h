@@ -102,6 +102,36 @@ public:
 
   /// returns `true` if the scene is in 2D, i.e., lies on the XY or XZ or YZ plane.
   bool is_two_dimensional() const;
+
+  /// set the default color of faces
+  void set_default_color_face(const CGAL::IO::Color& c);
+
+  /// set the default color of points
+  void set_default_color_point(const CGAL::IO::Color& c);
+
+  /// set the default color of segments
+  void set_default_color_segment(const CGAL::IO::Color& c);
+
+  /// set the default color of rays
+  void set_default_color_ray(const CGAL::IO::Color& c);
+
+  /// set the default color of lines
+  void set_default_color_line(const CGAL::IO::Color& c);
+
+  /// returns the default color of faces
+  const CGAL::IO::Color &get_default_color_face() const;
+
+  /// returns the default color of points
+  const CGAL::IO::Color &get_default_color_point() const;
+
+  /// returns the default color of segments
+  const CGAL::IO::Color &get_default_color_segment() const;
+
+  /// returns the default color of rays
+  const CGAL::IO::Color &get_default_color_ray() const;
+
+  /// returns the default color of lines
+  const CGAL::IO::Color &get_default_color_line() const;
 };
 
 } // namespace CGAL
