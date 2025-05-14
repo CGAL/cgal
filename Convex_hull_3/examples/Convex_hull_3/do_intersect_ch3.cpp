@@ -47,54 +47,9 @@ int main(int argc, char* argv[])
                             << " extreme vertices in the input meshes.\n";
 
   bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
-                                               CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PointMap>(sm1.points(), sm2.points()));
+                                               CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sm1.points(), sm2.points()));
 
   std::cout << "do convex hulls intersect? " << res << "\n";
 
   return 0;
 }
-
-/*
-typedef typename K::Point_3                                               Point_3;
-  typedef CGAL::Surface_mesh<Point_3>                              Mesh;
-
-  std::vector<typename K::Point_3> pts1, pts2;
-  std::vector<boost::container::small_vector<std::size_t, 3>> trs1, trs2;
-  if (!CGAL::IO::read_polygon_soup(f1, pts1, trs1))
-  {
-    std::cerr << "Cannot read " << f1 << "\n";
-  }
-  if (!CGAL::IO::read_polygon_soup(f2, pts2, trs2))
-  {
-    std::cerr << "Cannot read " << f2 << "\n";
-  }
-
-  CGAL::Real_timer t;
-  t.start();
-  Mesh hull1, hull2;
-  CGAL::convex_hull_3(pts1.begin(), pts1.end(), hull1);
-  CGAL::convex_hull_3(pts2.begin(), pts2.end(), hull2);
-  t.stop();
-  std::cout << "Computing convex hulls: " << t.time() << " sec" << std::endl;
-  std::cout << "Convex hull size:" << vertices(hull1).size() << ", " << vertices(hull2).size() << "\n" << std::endl;
-  t.reset();
-
-  t.start();
-  CGAL::Convex_hull_3::do_intersect<K>(hull1, hull2);
-  t.stop();
-  std::cout << "Do intersect: " << t.time() << " sec\n" << std::endl;
-  t.reset();
-
-  t.start();
-  std::array<Point_3, 8> obb1, obb2;
-  CGAL::oriented_bounding_box(hull1, obb1, CGAL::parameters::use_convex_hull(false));
-  CGAL::oriented_bounding_box(hull2, obb2, CGAL::parameters::use_convex_hull(false));
-  t.stop();
-  std::cout << "Computing Obbs: " << t.time() << " sec\n" << std::endl;
-  t.reset();
-
-  t.start();
-  CGAL::Convex_hull_3::do_intersect<K>(obb1, obb2);
-  t.stop();
-  std::cout << "Do intersect with Obbs: " << t.time() << " sec\n" << std::endl;
-*/

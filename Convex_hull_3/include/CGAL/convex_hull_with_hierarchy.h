@@ -157,8 +157,8 @@ struct Convex_hull_with_hierarchy{
   }
 };
 
-template <class Value, class Converter, class Vector_3>
-const Value extreme_point(const Convex_hull_with_hierarchy<Value> &C, const Vector_3 &dir, const Converter &c){
+template <class Point_type, class Converter, class Vector_3>
+const Point_type extreme_point(const Convex_hull_with_hierarchy<Point_type> &C, const Vector_3 &dir, const Converter &c){
   return C.template extreme_point(dir, c);
 }
 

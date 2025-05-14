@@ -340,14 +340,14 @@ public:
     Tet_shift(1000);
     Tet_stretched(1000);
 
-    Test_sphere(80, 40);
-    Test_sphere(80, 100);
-    Test_sphere(60, 350);
-    Test_sphere(60, 1000);
-    Test_sphere(40, 3500);
-    Test_sphere(40, 10000);
-    Test_sphere(20, 35000);
-    Test_sphere(20, 100000);
+    Test_sphere(1000, 40);
+    Test_sphere(1000, 100);
+    Test_sphere(1000, 350);
+    Test_sphere(1000, 1000);
+    Test_sphere(300, 3500);
+    Test_sphere(50, 10000);
+    Test_sphere(25, 35000);
+    Test_sphere(25, 100000);
     // Test_sphere(10, 350000);
     // Test_sphere(10, 1000000);
     std::cout << std::endl;

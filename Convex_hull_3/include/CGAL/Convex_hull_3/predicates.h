@@ -195,10 +195,10 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 };
 
-template <class Value, class Converter, class Vector_3>
-const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, const Converter& converter) {
+template <class Point_type, class Converter, class Vector_3>
+const Point_type extreme_point(const Surface_mesh<Point_type>& C, const Vector_3 &dir, const Converter& converter) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
-  using Convex= Surface_mesh<Value>;
+  using Convex= Surface_mesh<Point_type>;
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
 
   if(C.vertices().size()<5){
@@ -243,10 +243,10 @@ const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, con
   return C.point(argmax);
 }
 
-template <class Converter, class Value, class Vector_3>
-Value extreme_point(const std::vector<Value>& C, const Vector_3 &dir, const Converter &converter) {
+template <class Converter, class Point_type, class Vector_3>
+Point_type extreme_point(const std::vector<Point_type>& C, const Vector_3 &dir, const Converter &converter) {
   using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
-  using Convex=std::vector<Value>;
+  using Convex=std::vector<Point_type>;
   typename Convex::const_iterator argmax=C.begin();
   FT tmax= Vector_3(ORIGIN, converter(*argmax))*dir;
   for(typename Convex::const_iterator it=C.begin()+1; it!=C.end(); ++it){
@@ -336,8 +336,8 @@ struct Do_intersect_traits<K, K, Converter, true> {
   }
 };
 
-template<typename K,
-         typename PointMap,
+template<typename PointMap,
+         typename K=typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::Kernel,
          typename IK=K,
          typename Converter=Cartesian_converter<K, K>,
          bool Has_filtered_predicates_ = CGAL::internal::Has_filtered_predicates<K>::value>
@@ -345,8 +345,8 @@ struct Do_intersect_traits_with_point_maps{
   Do_intersect_traits_with_point_maps(const PointMap &map1_,const PointMap &map2_);
 };
 
-template<typename K, typename PointMap, typename IK, typename Converter>
-struct Do_intersect_traits_with_point_maps<K, PointMap, IK, Converter, false>{
+template<typename PointMap, typename K, typename IK, typename Converter>
+struct Do_intersect_traits_with_point_maps<PointMap, K, IK, Converter, false>{
   const PointMap &map1;
   const PointMap &map2;
 
@@ -368,8 +368,8 @@ struct Do_intersect_traits_with_point_maps<K, PointMap, IK, Converter, false>{
     return Do_intersect(PointMapConverter(map1), PointMapConverter(map2));
   }
 };
-template<typename K, typename PointMap, typename Converter>
-struct Do_intersect_traits_with_point_maps<K, PointMap, K, Converter, true> {
+template<typename PointMap, typename K, typename Converter>
+struct Do_intersect_traits_with_point_maps<PointMap, K, K, Converter, true> {
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Exact_kernel::Vector_3 EVector_3;
   typedef typename K::Approximate_kernel::Vector_3 FVector_3;
@@ -378,8 +378,8 @@ struct Do_intersect_traits_with_point_maps<K, PointMap, K, Converter, true> {
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-  typedef Do_intersect_traits_with_point_maps<typename K::Exact_kernel, PointMap, K, C2E> Exact_traits;
-  typedef Do_intersect_traits_with_point_maps<typename K::Approximate_kernel, PointMap, K, C2F> Filtering_traits;
+  typedef Do_intersect_traits_with_point_maps<PointMap, typename K::Exact_kernel, K, C2E> Exact_traits;
+  typedef Do_intersect_traits_with_point_maps<PointMap, typename K::Approximate_kernel, K, C2F> Filtering_traits;
 
   typedef Filtered_predicate<
               typename Exact_traits::Do_intersect,
@@ -399,6 +399,13 @@ struct Do_intersect_traits_with_point_maps<K, PointMap, K, Converter, true> {
     return Do_intersect(pe, pf);
   }
 };
+
+template<class PointMap>
+Do_intersect_traits_with_point_maps<PointMap>
+make_do_intersect_traits_with_point_maps(const PointMap& pmap1, const PointMap& pmap2)
+{
+  return Do_intersect_traits_with_point_maps<PointMap>(pmap1, pmap2);
+}
 
 /**
 * \ingroup PkgConvexHull3Predicates
