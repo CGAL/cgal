@@ -1025,9 +1025,9 @@ std::size_t zip_boundary_cycle(typename boost::graph_traits<PolygonMesh>::halfed
     if(!hedges_to_stitch.empty())
     {
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
-      std::cout << hedges_to_stitch.size() " halfedge pairs to stitch on border containing:\n"
-                << edge(h, pmesh) << "\n\t" << source(h, pmesh) << "\t(" << get(vpm, source(h, pmesh)) << ")"
-                                  << "\n\t" << target(h, pmesh) << "\t(" << get(vpm, target(h, pmesh)) << ")" << std::endl;
+      std::cout << hedges_to_stitch.size() << " halfedge pairs to stitch on border containing:\n"
+                << edge(bh, pmesh) << "\n\t" << source(bh, pmesh) << "\t(" << get(vpm, source(bh, pmesh)) << ")"
+                                  << "\n\t" << target(bh, pmesh) << "\t(" << get(vpm, target(bh, pmesh)) << ")" << std::endl;
 #endif
 
       std::size_t local_stitches = internal::stitch_halfedge_range(hedges_to_stitch, cycle_halfedges,
@@ -1369,12 +1369,12 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
                                                          std::back_inserter(to_stitch), np);
   res += stitch_halfedge_range(to_stitch, to_consider, pmesh, vpm, cycle_maintainer);
 
+  const auto& new_representatives = cycle_maintainer.cycle_representatives();
+
 #ifdef CGAL_PMP_STITCHING_DEBUG
   std::cout << "------- Stitched " << res << " halfedge pairs after cycles & general" << std::endl;
   std::cout << "------- Stitch cycles (#2)... (" << new_representatives.size() << " cycle(s))" << std::endl;
 #endif
-
-  const auto& new_representatives = cycle_maintainer.cycle_representatives();
 
   // Don't care about keeping track of the sub-cycles as this is the last pass
   internal::Dummy_cycle_rep_maintainer<PolygonMesh> dummy_cycle_maintainer(pmesh);
