@@ -82,15 +82,36 @@ struct Convex_hull_with_hierarchy{
     }
   }
 
-  Convex_hull_with_hierarchy(Mesh &sm_){
-    typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<P>::type Traits;
-    hierarchy_sm.push_back(sm_);
+  Convex_hull_with_hierarchy(Mesh &sm){
+    using Traits=typename Convex_hull_3::internal::Default_traits_for_Chull_3<P>::type;
+    Mesh ch;
+    convex_hull_3(sm, ch);
+    hierarchy_sm.push_back(std::move(ch));
     init_hierarchy(Traits());
   };
 
-  template <typename Traits>
-  Convex_hull_with_hierarchy(Mesh &sm_, const Traits &traits){
-    hierarchy_sm.push_back(sm_);
+  template <typename Point, typename Traits>
+  Convex_hull_with_hierarchy(Surface_mesh<Point> &sm, const Traits &traits){
+    Mesh ch;
+    convex_hull_3(vertices(sm).begin(), vertices(sm).end(), ch, traits);
+    hierarchy_sm.push_back(std::move(ch));
+    init_hierarchy(traits);
+  };
+
+  template<typename RangeIterator>
+  Convex_hull_with_hierarchy(RangeIterator begin, RangeIterator end){
+    using Traits=typename Convex_hull_3::internal::Default_traits_for_Chull_3<P>::type;
+    Mesh ch;
+    convex_hull_3(begin, end, ch);
+    hierarchy_sm.push_back(std::move(ch));
+    init_hierarchy(Traits());
+  };
+
+  template <typename RangeIterator, typename Traits>
+  Convex_hull_with_hierarchy(RangeIterator begin, RangeIterator end, const Traits &traits){
+    Mesh ch;
+    convex_hull_3(begin, end, ch, traits);
+    hierarchy_sm.push_back(std::move(ch));
     init_hierarchy(traits);
   };
 

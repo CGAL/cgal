@@ -4,6 +4,7 @@
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_3/predicates.h>
+#include <CGAL/convex_hull_with_hierarchy.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/IO/polygon_soup_io.h>
@@ -40,16 +41,21 @@ int main(int argc, char* argv[])
                          CGAL::make_extreme_points_traits_adapter(sm1.points()));
   CGAL::extreme_points_3(vertices(sm2), std::back_inserter(extreme_vertices2),
                          CGAL::make_extreme_points_traits_adapter(sm2.points()));
+  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
+                                               CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sm1.points(), sm2.points()));
 
   //print the number of extreme vertices
   std::cout << "There are " << extreme_vertices1.size() << " and "
                             << extreme_vertices2.size()
                             << " extreme vertices in the input meshes.\n";
 
-  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
-                                               CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sm1.points(), sm2.points()));
-
+  //Convex_hull_with_hierarchy is data structure for very fast intersection test of Convex_hull
+  CGAL::Convex_hull_with_hierarchy<Mesh::Vertex_index> hsm1(sm1, CGAL::make_extreme_points_traits_adapter(sm1.points()));
+  CGAL::Convex_hull_with_hierarchy<Mesh::Vertex_index> hsm2(sm2, CGAL::make_extreme_points_traits_adapter(sm2.points()));
+  res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2,
+                                          CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sm1.points(), sm2.points()));
   std::cout << "do convex hulls intersect? " << res << "\n";
+
 
   return 0;
 }

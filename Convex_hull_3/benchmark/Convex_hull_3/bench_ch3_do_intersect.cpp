@@ -348,8 +348,8 @@ public:
     Test_sphere(50, 10000);
     Test_sphere(25, 35000);
     Test_sphere(25, 100000);
-    // Test_sphere(10, 350000);
-    // Test_sphere(10, 1000000);
+    Test_sphere(10, 350000);
+    Test_sphere(10, 1000000);
     std::cout << std::endl;
   }
 };

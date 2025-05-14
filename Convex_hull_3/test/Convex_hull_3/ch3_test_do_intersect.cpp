@@ -82,6 +82,11 @@ struct Test{
     CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
     assert(CGAL::Convex_hull_3::do_intersect(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(va, vb))==result);
     assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(vb, va))==result);
+
+    CGAL::Convex_hull_with_hierarchy<typename CGAL::Surface_mesh<P>::Vertex_index> hsma_pm2(sma, CGAL::make_extreme_points_traits_adapter(sma.points()));
+    CGAL::Convex_hull_with_hierarchy<typename CGAL::Surface_mesh<P>::Vertex_index> hsmb_pm2(smb, CGAL::make_extreme_points_traits_adapter(smb.points()));
+    assert(CGAL::Convex_hull_3::do_intersect(hsma_pm2, hsmb_pm2, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sma.points(), smb.points()))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm2, hsma_pm2, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(smb.points(), sma.points()))==result);
   }
 
   void test_cube()
