@@ -1171,3 +1171,4 @@ log.txt
 patches_after_merge.ply
 CMakeUserPresets.json
 /.cache
+compile_commands.json
