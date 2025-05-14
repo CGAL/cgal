@@ -278,9 +278,10 @@ template <typename Dynamic_property_tag,
 
 auto get(const Dynamic_property_tag&, const G&, Default_value_args&&... default_value_args)
 {
-  using Property_map =
-      internal::Dynamic_property_map<typename Dynamic_property_tag::descriptor,
-                                     typename Dynamic_property_tag::value_type>;
+  using pmap_traits = typename Dynamic_property_tag::template property_map<G>;
+  using descriptor = typename pmap_traits::descriptor;
+  using value_type = typename Dynamic_property_tag::value_type;
+  using Property_map = internal::Dynamic_property_map<descriptor, value_type>;
   return Property_map(std::forward<Default_value_args>(default_value_args)...);
 }
 
