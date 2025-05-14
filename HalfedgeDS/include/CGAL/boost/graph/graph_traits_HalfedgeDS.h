@@ -113,6 +113,7 @@ struct HDS_edge {
 
   friend std::ostream& operator<<(std::ostream& os, const HDS_edge& e)
   {
+    os << e.halfedge_;
     return os;
   }
 private:
