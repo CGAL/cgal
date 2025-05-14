@@ -97,7 +97,7 @@ struct Remove_needs_FT<Needs_FT<T> >
 
 } // namespace CGAL
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if __cpp_lib_execution >= 201603L && defined(CGAL_LINKED_WITH_TBB)
 #  include <execution>
 
 namespace CGAL {
