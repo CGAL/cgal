@@ -828,7 +828,7 @@ public:
       using face_descriptor = typename Surface_mesh::Face_index;
 
       using PID = CGAL::cpp20::remove_cvref_t<decltype(get(polygon_patch_map, 0u))>;
-      constexpr auto invalid_patch_id = std::numeric_limits<PID>::max();
+      constexpr auto invalid_patch_id = (std::numeric_limits<PID>::max)();
       Surface_mesh surface_mesh;
       auto face_patch_pmap =
           surface_mesh.template add_property_map<face_descriptor, PID>("fpm", invalid_patch_id).first;
