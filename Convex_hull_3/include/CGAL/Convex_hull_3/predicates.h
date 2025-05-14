@@ -20,7 +20,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/convex_hull_with_hierarchy.h>
 
 #include <CGAL/Real_timer.h>
 
@@ -195,12 +197,6 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
     }
   }
 };
-
-template<class T, template<class> class U>
-inline constexpr bool is_instance_of_v = std::false_type{};
-
-template<template<class> class U, class V>
-inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
 
 template <class Value, class Converter, class Vector_3>
 const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, const Converter& converter) {
@@ -437,17 +433,31 @@ struct Do_intersect_traits_with_point_maps<K, PointMap, K, Converter, true> {
 * \cgalNamedParamsEnd
 *
 */
-template <class Kernel, class Object1, class Object2, class Traits >
+template <class Object1, class Object2, class Traits >
 bool do_intersect(const Object1& obj1, const Object2& obj2, Traits traits)
 {
   return traits.do_intersect_object()(obj1, obj2, 0);
 }
 
-template <class Kernel, class Object1, class Object2>
+template<class T, template<class> class U>
+inline constexpr bool is_instance_of_v = std::false_type{};
+
+template<template<class> class U, class V>
+inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
+
+template <class Object1, class Object2>
 bool do_intersect(const Object1& obj1, const Object2& obj2)
 {
-  //Find kernel
-  return Do_intersect_traits<Kernel>().do_intersect_object()(obj1, obj2, 0);
+  //Deduce kernel
+  if constexpr(is_instance_of_v<Object1, Surface_mesh> || is_instance_of_v<Object1, Convex_hull_with_hierarchy>){
+    using Kernel = typename Kernel_traits<typename Object1::Point>::Kernel;
+    return Do_intersect_traits<Kernel>().do_intersect_object()(obj1, obj2, 0);
+  } else {
+    //We suppose that Object is a Range
+    using Value_type=std::remove_cv_t<typename std::iterator_traits<typename Object1::iterator>::value_type>;
+    using Kernel = typename Kernel_traits<Value_type>::Kernel;
+    return Do_intersect_traits<Kernel>().do_intersect_object()(obj1, obj2, 0);
+  }
 }
 
 template <class PointRange1, class PointRange2,

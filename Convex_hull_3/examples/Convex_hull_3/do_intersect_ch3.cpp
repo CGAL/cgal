@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
                             << extreme_vertices2.size()
                             << " extreme vertices in the input meshes.\n";
 
-  bool res = CGAL::Convex_hull_3::do_intersect<K>(extreme_vertices1, extreme_vertices2,
-                                               CGAL::Convex_hull_3::predicates_impl::Spherical_disjoint_traits_with_point_maps<K, PointMap>(sm1.points(), sm2.points()));
+  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
+                                               CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PointMap>(sm1.points(), sm2.points()));
 
   std::cout << "do convex hulls intersect? " << res << "\n";
 

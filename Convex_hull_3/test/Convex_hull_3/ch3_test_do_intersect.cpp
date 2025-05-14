@@ -24,6 +24,10 @@ template<typename K>
 struct Sphere{
   typedef typename K::FT FT;
   typedef typename K::Point_3 P;
+
+  //do_intersect deduce Kernel from iterator type of the object, this an astuce for kernel deduction
+  typedef typename std::vector<P>::iterator iterator;
+
   FT r;
   P c;
   Sphere(P c_, FT r_):r(r_), c(c_){}
@@ -47,16 +51,16 @@ struct Test{
   typedef boost::vector_property_map<P> PMap;
 
   void test(std::vector<P> &a, std::vector<P> &b, bool result){
-    assert(CGAL::Convex_hull_3::do_intersect<K>(a, b)==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(b, a)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(a, b)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(b, a)==result);
     CGAL::Surface_mesh<P> sma, smb;
     CGAL::convex_hull_3(a.begin(), a.end(), sma);
     CGAL::convex_hull_3(b.begin(), b.end(), smb);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(sma, smb)==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(smb, sma)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(sma, smb)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(smb, sma)==result);
     CGAL::Convex_hull_with_hierarchy<P> hsma(sma), hsmb(smb);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsma, hsmb)==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb, hsma)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(hsma, hsmb)==result);
+    assert(CGAL::Convex_hull_3::do_intersect(hsmb, hsma)==result);
 
     //Test with Point map
     PMap va, vb;
@@ -67,17 +71,17 @@ struct Test{
     std::vector< size_t > pma(a.size(),0), pmb(b.size(), 0);
     std::iota(pma.begin(), pma.end(), 0);
     std::iota(pmb.begin(), pmb.end(), 0);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(pma, pmb, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
     CGAL::Surface_mesh<size_t> sma_pm, smb_pm;
     CGAL::convex_hull_3(pma.begin(), pma.end(), sma_pm, CGAL::make_extreme_points_traits_adapter(va));
     CGAL::convex_hull_3(pmb.begin(), pmb.end(), smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
-    assert(CGAL::Convex_hull_3::do_intersect<K>(sma_pm, smb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(smb_pm, sma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(sma_pm, smb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(smb_pm, sma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
     CGAL::Convex_hull_with_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
     CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect<K>(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(va, vb))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::Do_intersect_traits_with_point_maps<K, PMap>(vb, va))==result);
   }
 
   void test_cube()
@@ -214,7 +218,7 @@ struct Test{
 
       std::vector<P> a({p1,p2,p3,p0});
       std::vector<P> b({q1,q2,q3,q0});
-      test(a, b, CGAL::do_intersect<K>(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3)));
+      test(a, b, CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3)));
     }
   }
 
@@ -225,7 +229,7 @@ struct Test{
 
     for(int i=0; i<N; ++i)
       for(int j=0; j<N; ++j)
-        assert(CGAL::Convex_hull_3::do_intersect<K>(spheres[i], spheres[j])==(CGAL::abs(spheres[i].c.x()-spheres[j].c.x())<=2));
+        assert(CGAL::Convex_hull_3::do_intersect(spheres[i], spheres[j])==(CGAL::abs(spheres[i].c.x()-spheres[j].c.x())<=2));
   }
 
   void full_test(CGAL::Random &r){

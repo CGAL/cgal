@@ -88,7 +88,7 @@ private:
       PR a({random_point(), random_point(), random_point(), random_point()});
       PR b({random_point(), random_point(), random_point(), random_point()});
 
-      CGAL::Convex_hull_3::do_intersect<K>(a, b);
+      CGAL::Convex_hull_3::do_intersect(a, b);
     }
     t.stop();
     std::cout << t.time() << " sec" << std::endl << std::endl;
@@ -129,7 +129,7 @@ private:
       if(q3.x() < q3.y())
         q3 = P(-q3.x(), -q3.y(), -q3.z());
 
-      CGAL::do_intersect<K>(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
     }
     t.stop();
     std::cout << t.time() << " sec" << std::endl;
@@ -168,7 +168,7 @@ private:
       PR a({p0,p1,p2,p3});
       PR b({q0,q1,q2,q3});
 
-      CGAL::Convex_hull_3::do_intersect<K>(a, b);
+      CGAL::Convex_hull_3::do_intersect(a, b);
     }
     t.stop();
     std::cout << t.time() << " sec" << std::endl << std::endl;
@@ -206,7 +206,7 @@ private:
       PR a({random_point()+V(-1,1,0),  random_point()+V(-1,1,0),  random_point()+V(1,-1,0), random_point()+V(1,-1,0)});
       PR b({random_point()+V(-1,-1,0), random_point()+V(-1,-1,0), random_point()+V(1,1,0),  random_point()+V(1,1,0)});
 
-      CGAL::Convex_hull_3::do_intersect<K>(a, b);
+      CGAL::Convex_hull_3::do_intersect(a, b);
     }
     t.stop();
     std::cout << t.time() << " sec" << std::endl << std::endl;
@@ -244,7 +244,7 @@ private:
       PR a({random_point(), random_point(), random_point(), random_point()});
       PR b({random_point()+V(1,1,1), random_point()+V(1,1,1), random_point()+V(1,1,1), random_point()+V(1,1,1)});
 
-      CGAL::Convex_hull_3::do_intersect<K>(a, b);
+      CGAL::Convex_hull_3::do_intersect(a, b);
     }
     t.stop();
     std::cout << t.time() << " sec\n" << std::endl;
@@ -294,7 +294,7 @@ private:
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
-        CGAL::Convex_hull_3::do_intersect<K>(points_ranges[i], points_ranges[j]);
+        CGAL::Convex_hull_3::do_intersect(points_ranges[i], points_ranges[j]);
     t.stop();
     std::cout << "  " << t.time() << " sec" << std::endl;
     t.reset();
@@ -304,7 +304,7 @@ private:
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
-        CGAL::Convex_hull_3::do_intersect<K>(hulls[i], hulls[j]);
+        CGAL::Convex_hull_3::do_intersect(hulls[i], hulls[j]);
     t.stop();
     std::cout << "  Number points read per test: " << double(nb_visited)/double(N*(N-1)/2) << std::endl;
     std::cout << "  " << t.time() << " sec" << std::endl;
@@ -316,7 +316,7 @@ private:
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
-        CGAL::Convex_hull_3::do_intersect<K>(hulls_wth_hierarchy[i], hulls_wth_hierarchy[j]);
+        CGAL::Convex_hull_3::do_intersect(hulls_wth_hierarchy[i], hulls_wth_hierarchy[j]);
     t.stop();
 
     std::cout << "  Number points read per test: ";
@@ -379,7 +379,7 @@ void bench_on_data(const std::string &f1, const std::string &f2){
   t.reset();
 
   t.start();
-  CGAL::Convex_hull_3::do_intersect<K>(hull1, hull2);
+  CGAL::Convex_hull_3::do_intersect(hull1, hull2);
   t.stop();
   std::cout << "Do intersect: " << t.time() << " sec\n" << std::endl;
   t.reset();
@@ -393,7 +393,7 @@ void bench_on_data(const std::string &f1, const std::string &f2){
   t.reset();
 
   t.start();
-  CGAL::Convex_hull_3::do_intersect<K>(obb1, obb2);
+  CGAL::Convex_hull_3::do_intersect(obb1, obb2);
   t.stop();
   std::cout << "Do intersect with Obbs: " << t.time() << " sec\n" << std::endl;
 }

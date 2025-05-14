@@ -33,6 +33,7 @@ struct Convex_hull_with_hierarchy{
 
   typedef Surface_mesh< P > Mesh;
   typedef typename Mesh::Vertex_index Vertex_index;
+  typedef P Point;
 
 //   const Base &sm;
   std::vector< Mesh > hierarchy_sm;
