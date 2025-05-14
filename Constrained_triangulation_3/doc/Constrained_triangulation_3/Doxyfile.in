@@ -1,4 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Constrained Triangulations"
-
+HTML_EXTRA_FILES = ${CGAL_PACKAGE_DOC_DIR}/fig/plc.png \
+                   ${CGAL_PACKAGE_DOC_DIR}/fig/schonhardt.png \
+                   ${CGAL_PACKAGE_DOC_DIR}/fig/plc_to_cdt.png
 QUIET = YES
