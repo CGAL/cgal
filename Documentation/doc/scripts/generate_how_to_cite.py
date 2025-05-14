@@ -321,7 +321,7 @@ def main():
             )
             assert not foundDouble, (
                 """Multiple use of citation name '{}' package '{}'
-                first occurence package '{}'
+                first occurrence package '{}'
                 """.format(bib,pkg,citeDic[bib])
             )
             result_txt += gen_txt_entry(title, authors, bib, anchor, k)
