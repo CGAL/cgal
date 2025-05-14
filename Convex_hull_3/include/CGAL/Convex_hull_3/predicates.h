@@ -28,9 +28,6 @@
 
 #include <vector>
 
-int nb_visited_in_the_inner=0;
-int nb_visited=0;
-
 namespace CGAL {
 
 namespace Convex_hull_3 {
@@ -209,7 +206,9 @@ const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, con
     FT tmax=Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
     for(auto vh=++(C.vertices().begin()); vh!=C.vertices().end(); ++vh){
       typename Convex::Vertex_index v=*vh;
+#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
       ++nb_visited;
+#endif
       FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
       if(compare(tmax, p)==SMALLER){
         tmax=p;
@@ -220,14 +219,18 @@ const Value extreme_point(const Surface_mesh<Value>& C, const Vector_3 &dir, con
   }
 
   typename Convex::Vertex_index argmax=*C.vertices().begin();
-  nb_visited++;
+#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+  ++nb_visited;
+#endif
   FT tmax= Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
   bool is_local_max;
   do{
     is_local_max=true;
     for(auto v: vertices_around_target(argmax ,C)){
       FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
+#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
       ++nb_visited;
+#endif
       if(compare(tmax, p)==SMALLER){
         tmax=p;
         argmax=v;
@@ -248,6 +251,9 @@ Value extreme_point(const std::vector<Value>& C, const Vector_3 &dir, const Conv
   FT tmax= Vector_3(ORIGIN, converter(*argmax))*dir;
   for(typename Convex::const_iterator it=C.begin()+1; it!=C.end(); ++it){
     FT v=Vector_3(ORIGIN, converter(*it))*dir;
+#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+    ++nb_visited;
+#endif
     if(compare(tmax, v)==SMALLER){
       tmax=v;
       argmax=it;

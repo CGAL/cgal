@@ -1,3 +1,5 @@
+#define CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
@@ -259,6 +261,8 @@ private:
     std::vector< CGAL::Surface_mesh<P> > hulls;
     std::vector< CGAL::Convex_hull_with_hierarchy<P> > hulls_wth_hierarchy;
 
+    double nb_tests=double(N*(N-1)/2);
+
     for(int i=0; i<N; ++i)
     {
       std::vector<P> sp;
@@ -290,13 +294,14 @@ private:
     t.reset();
 
     std::cout << "Do intersect with RangePoints" << std::endl;
-    std::cout << "  Number points read per test: " << 8*points_ranges[0].size() << std::endl;
+    nb_visited=0;
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
         CGAL::Convex_hull_3::do_intersect(points_ranges[i], points_ranges[j]);
     t.stop();
-    std::cout << "  " << t.time() << " sec" << std::endl;
+    std::cout << "  Number points read per test: " << double(nb_visited)/nb_tests << std::endl;
+    std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
     t.reset();
 
     std::cout << "Do intersect with Hulls" << std::endl;
@@ -306,13 +311,12 @@ private:
       for(int j=i+1; j<N; ++j)
         CGAL::Convex_hull_3::do_intersect(hulls[i], hulls[j]);
     t.stop();
-    std::cout << "  Number points read per test: " << double(nb_visited)/double(N*(N-1)/2) << std::endl;
-    std::cout << "  " << t.time() << " sec" << std::endl;
+    std::cout << "  Number points read per test: " << double(nb_visited)/nb_tests << std::endl;
+    std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
     t.reset();
 
     std::cout << "Do intersect with Hierarchical Hulls" << std::endl;
-    for(int i=0; i<8; ++i)
-      CGAL::nb_visited_in_hierarchy[i]=0;
+    nb_visited=0;
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
@@ -320,11 +324,9 @@ private:
     t.stop();
 
     std::cout << "  Number points read per test: ";
-    for(int i=0; i<8; ++i)
-      if( CGAL::nb_visited_in_hierarchy[i])
-        std::cout << double(CGAL::nb_visited_in_hierarchy[i])/double(N*(N-1)/2) << " ";
+    std::cout << double(nb_visited)/nb_tests << " ";
     std::cout << std::endl;
-    std::cout << "  " << t.time() << " sec" << std::endl;
+    std::cout << "  " << t.time()/nb_tests << " sec per test" << std::endl;
     t.reset();
     std::cout << std::endl;
   }

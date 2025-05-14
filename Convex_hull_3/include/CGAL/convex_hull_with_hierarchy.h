@@ -20,9 +20,12 @@
 
 #include <vector>
 
-namespace CGAL{
 
-std::array<size_t, 8> nb_visited_in_hierarchy;
+#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+int nb_visited=0;
+#endif
+
+namespace CGAL{
 
 template <class P>
 struct Convex_hull_with_hierarchy{
@@ -107,7 +110,9 @@ struct Convex_hull_with_hierarchy{
       //If maxlevel is small, we simply go through all its vertices
       for(auto vh=++(sm.vertices().begin()); vh!=sm.vertices().end(); ++vh){
         Vertex_index v=*vh;
-        ++(nb_visited_in_hierarchy[level]);
+  #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+        ++nb_visited;
+  #endif
         FT p=Vector_3(ORIGIN, converter(sm.point(v)))*dir;
         if(compare(tmax, p)==SMALLER){
           tmax=p;
@@ -132,7 +137,9 @@ struct Convex_hull_with_hierarchy{
       do{
         is_local_max=true;
         for(Vertex_index v: vertices_around_target(argmax ,csm)){
-          ++(nb_visited_in_hierarchy[level]);
+    #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+          ++nb_visited;
+    #endif
           FT p=Vector_3(ORIGIN, converter(csm.point(v)))*dir;
           if(compare(tmax, p)==SMALLER){
             tmax=p;
