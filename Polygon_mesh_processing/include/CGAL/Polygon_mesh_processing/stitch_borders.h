@@ -106,9 +106,9 @@ struct Default_halfedges_keeper
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
 
-  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor h2) const
+  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor) const
   {
-    return (h1 < h2) ? h1 : h2; // Arbitrary preference
+    return h1;
   }
 };
 
