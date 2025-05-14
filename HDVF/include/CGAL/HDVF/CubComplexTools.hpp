@@ -18,7 +18,7 @@
 #include <unordered_set>
 #include "Cubical_chain_complex.hpp"
 #include "Hdvf_core.h"
-#include "per_hdvf.hpp"
+#include "Hdvf_persistence.h"
 #include "sub_chain_complex.hpp"
 #include "tools_io.hpp"
 #include "CGAL/OSM/OSM.hpp"
@@ -157,13 +157,13 @@ public:
 // Persistent homology
 
 /** \brief Export persistent information to vtk files */
-template <typename CoefType, typename DegType>
-void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType> &per_hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "per")
+template <typename CoefType, typename DegType, typename FiltrationType>
+void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType, FiltrationType> &per_hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "per")
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using perHDVFType = Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType> ;
+    using perHDVFType = Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType, FiltrationType> ;
     using ComplexType = Cubical_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
     // Iterate over persistence diagram (iterator over non zero intervals)
@@ -172,7 +172,7 @@ void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefTy
     int i = 0 ;
     for (typename perHDVFType::iterator it = per_hdvf.begin(); it != per_hdvf.end(); ++it)
     {
-        typename perHDVFType::Exp_infos hole_data(*it) ;
+        typename perHDVFType::PerIntervalInformation hole_data(*it) ;
         const PerHole hole(hole_data.hole) ;
         // Export informations of this hole
         info_file << i << " -> " << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
@@ -183,7 +183,7 @@ void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefTy
             string out_file = filename+"_"+to_string(i) ;
             // Export PSC labels to vtk
             ComplexType::Cubical_chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
-            const PerIntervalCells per_int_cells(std::get<1>(hole_data.hole)) ;
+            const CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
             // Export homology generators (g)
             if (per_hdvf.get_hdvf_opts()  & (OPT_FULL | OPT_G))
             {

@@ -134,7 +134,7 @@ public:
     /**
      * \brief Default constructor.
      *
-     * Builds a "empty" HDVF associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
+     * Builds an "empty" HDVF_core associated to K (with all cells critical). By default, the HDVF option is set to OPT_FULL (full reduction computed).
      *
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
@@ -224,7 +224,7 @@ public:
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
-     * \return The vector of all pairs of cells used for apply A.
+     * \return The vector of all `PairCell` paired with A.
      */
     std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
     
@@ -342,7 +342,7 @@ public:
     }
     
     /**
-     * \brief Export homology generators associated to `cell` (critical cell) of dimension  `q` for vtk export.
+     * \brief Export homology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
@@ -364,7 +364,7 @@ public:
     }
     
     /**
-     * \brief Export cohomology generators associated to `cell` (critical cell) of dimension  `q` for vtk export.
+     * \brief Export cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
