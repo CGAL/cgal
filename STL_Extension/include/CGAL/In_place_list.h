@@ -114,8 +114,7 @@ namespace internal {
 
     friend std::ostream& operator<<(std::ostream& os, const Self& i)
     {
-      os << &*(i);
-      return os;
+      return os << i.operator->();
     }
   };
 }
@@ -180,8 +179,7 @@ namespace internal {
 
     friend std::ostream& operator<<(std::ostream& os, const Self& i)
     {
-      os << &*(i);
-      return os;
+      return os << i.operator->();
     }
   };
 
