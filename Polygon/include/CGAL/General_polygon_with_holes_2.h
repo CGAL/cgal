@@ -148,8 +148,8 @@ protected:
 This operator exports a `General_polygon_with_holes_2` to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `GAL::IO::set_ascii_mode()` and `GAL::IO::set_binary_mode()`,
-respectively. The modifier `GAL::IO::set_pretty_mode()` can be used to allow for (a
+the \cgal modifiers for streams, `CGAL::IO::set_ascii_mode()` and `CGAL::IO::set_binary_mode()`,
+respectively. The modifier `CGAL::IO::set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 
