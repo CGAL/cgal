@@ -74,6 +74,6 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 
 \cgalCRPSection{Output Functions}
 
-- `CGAL::IO::write_MEDIT()`
+- \link PkgCDT3IOFunctions CGAL::IO::write_MEDIT() \endlink
 
 */
