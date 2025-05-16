@@ -332,7 +332,7 @@ int main(int argc, char** argv)
 
   if (test_set.empty() || test_set.count(8))
   {
-    using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<100>>;
+    using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<3>>;
     using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
     using Point = Kernel::Point_d;
     std::cout <<"CGAL::Epeck_d\n";

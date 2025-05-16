@@ -37,6 +37,7 @@ public:
   using Kernel = K;
   using FT = typename Kernel::FT;
   using Point_d = typename Kernel::Point_3;
+  using Bbox_d = typename CGAL::Bbox_3;
   using Construct_bbox_d = typename Kernel::Construct_bbox_3;
   using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_3;
   using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_3;
