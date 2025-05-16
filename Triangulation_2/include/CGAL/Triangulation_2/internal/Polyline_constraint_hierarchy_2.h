@@ -615,12 +615,14 @@ public:
   }
 
   Subconstraint_iterator subconstraints_begin() const {
+#if !defined(BOOST_MSVC) || BOOST_MSVC >= 1930 // skip for MSVC < 2022
     BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Subconstraint_iterator, std::bidirectional_iterator);
-#if BOOST_VERSION >= 108300
+#  if BOOST_VERSION >= 108300
     BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(
       Subconstraint_iterator, std::bidirectional_iterator_tag, std::bidirectional_iterator,
       Subconstraint, Subconstraint, typename Subconstraint_iterator::pointer, std::ptrdiff_t);
-#endif
+#  endif
+#endif // not (MSVC < 2022)
     return Subconstraint_iterator(Subconstraint_iterator::Construction_access::begin_tag(),
                                   this);
   }
