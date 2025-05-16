@@ -71,15 +71,16 @@ protected:
 public:
   friend bool operator==(const Conforming_constrained_Delaunay_triangulation_vertex_data_3& lhs,
                          const Conforming_constrained_Delaunay_triangulation_vertex_data_3& rhs) {
-    return lhs.m_vertex_type == rhs.m_vertex_type && lhs.mark == rhs.mark && std::invoke([&]() {
-             if(lhs.m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
-               return lhs.u.on_edge.nb_of_incident_constraints == rhs.u.on_edge.nb_of_incident_constraints &&
-                      lhs.u.on_edge.c_id == rhs.u.on_edge.c_id;
-             } else if(lhs.m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE) {
-               return lhs.u.on_face.face_index == rhs.u.on_face.face_index;
-             }
-             return true;
-           });
+    if(lhs.m_vertex_type != rhs.m_vertex_type || lhs.mark != rhs.mark) return false;
+    switch(lhs.m_vertex_type) {
+    case CDT_3_vertex_type::STEINER_ON_EDGE:
+      return lhs.u.on_edge.nb_of_incident_constraints == rhs.u.on_edge.nb_of_incident_constraints &&
+             lhs.u.on_edge.c_id == rhs.u.on_edge.c_id;
+    case CDT_3_vertex_type::STEINER_IN_FACE:
+      return lhs.u.on_face.face_index == rhs.u.on_face.face_index;
+    default:
+      return true;
+    }
   }
 
   template <typename T>
