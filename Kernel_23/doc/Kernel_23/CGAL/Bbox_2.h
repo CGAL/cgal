@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*!
-introduces an \em empty bounding box with lower left
+constructs an \em empty bounding box with lower left
 corner point at \f$ (\infty, \infty) \f$
 and with upper right corner point at
 \f$ (-\infty, -\infty) \f$, \f$ \infty \f$ being
@@ -28,7 +28,7 @@ and with upper right corner point at
 */
   Bbox_2();
 /*!
-introduces a bounding box `b` with lower left corner at
+constructs a bounding box `b` with lower left corner at
 `(xmin, ymin)` and with upper right corner at
 `(xmax, ymax)`.
 */

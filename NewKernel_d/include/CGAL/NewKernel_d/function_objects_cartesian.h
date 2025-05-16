@@ -14,6 +14,7 @@
 
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Bbox_d.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/type_traits/is_iterator.h>
@@ -1007,6 +1008,28 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Construct_bbox : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Construct_bbox)
+        typedef R_ R;
+        typedef typename R::Dimension Dimension;
+        typedef typename Get_type<R, RT_tag>::type RT;
+        typedef typename Get_type<R, Point_tag>::type Point;
+        typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+
+        typedef Bbox_d<Dimension> result_type;
+        typedef Point argument_type;
+        result_type operator()(Point const&a)const{
+                CI ci(this->kernel());
+                typename Real_embeddable_traits<RT>::To_interval f;
+                return result_type(make_transforming_iterator(ci(a, Begin_tag()), f), make_transforming_iterator(ci(a, End_tag()), f));
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Construct_bbox_tag,(CartesianDKernelFunctors::Construct_bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Squared_distance_to_origin)
         typedef R_ R;
@@ -1169,6 +1192,41 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Compare_lexicographically_tag,(CartesianDKernelFunctors::Compare_lexicographically<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Compare_squared_distance)
+        typedef R_ R;
+        typedef typename Get_type<R, RT_tag>::type RT;
+        typedef typename Get_type<R, Comparison_result_tag>::type result_type;
+        typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+        // TODO: This is_exact thing should be reengineered.
+        // the goal is to have a way to tell: don't filter this
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
+
+        template<class V,class W>
+        result_type operator()(V const&a, V const&b, W const&c)const{   //  Point, Point. FT
+                CI ci(this->kernel());
+
+                auto a_begin=ci(a,Begin_tag());
+                auto b_begin=ci(b,Begin_tag());
+                auto a_end=ci(a,End_tag());
+                RT sqdist(0);
+                result_type res;
+                // can't we do slightly better for Uncertain<*> ?
+                // after res=...; if(is_uncertain(res))return indeterminate<result_type>();
+                do{
+                  RT d = (*a_begin++ - *b_begin++);
+                  sqdist += d*d;
+                }while(a_begin!=a_end);
+                res=CGAL_NTS compare(sqdist,c);
+                return res;
+        }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Compare_squared_distance_tag,(CartesianDKernelFunctors::Compare_squared_distance<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
