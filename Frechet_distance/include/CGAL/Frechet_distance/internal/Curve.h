@@ -226,10 +226,8 @@ public:
     using Traits = T;
 
     static constexpr int dimension =  Traits::Dimension::value;
-    using Bbox = std::conditional_t<dimension==2,
-                                    Bbox_2, std::conditional_t<dimension==3,
-                                                               Bbox_3, ::CGAL::Bbox_d<typename Traits::Dimension>>>;
 
+    using Bbox = typename Traits::Bbox_d;
     using FT = typename Traits::FT;
     using IFT = std::conditional_t<std::is_floating_point_v<FT>, FT, CGAL::Interval_nt<false>>;
     using distance_t = FT;

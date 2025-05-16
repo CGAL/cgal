@@ -38,6 +38,11 @@ return an interval containing `n`, represented by a `std::pair<double, double>`.
 using FT = unspecified_type;
 
 /*!
+Either `CGAL::Bbox_2`, `CGAL::Bbox_3` or `CGAL::Bbox_d` depending on `Dimension`
+*/
+using Bbox_d = unspecified_type;
+
+/*!
 A random access iterator type to enumerate the
 %Cartesian coordinates of a point, with `FT` as value type.
 */
@@ -50,8 +55,7 @@ a begin and past-the-end `Cartesian_const_iterator_d`, respectively.
 using Construct_cartesian_const_iterator_d = unspecified_type;
 
 /*!
-Functor with operator to construct the bounding box of an object of type `Point_d`,
-result type is either `CGAL::Bbox_2`, `CGAL::Bbox_3` or `CGAL::Bbox_d` depending on `Dimension`.
+Functor with operator to construct the bounding box of an object of type `Point_d`.
 */
 using Construct_bbox_d = unspecified_type;
 

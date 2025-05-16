@@ -33,13 +33,14 @@ public:
 
   using FT = NT;
   using Point_d = std::array<FT, dimension>;
+  using Bbox_d = CGAL::Bbox_d<Dimension>;
   using Cartesian_const_iterator_d = typename Point_d::const_iterator;
 
   struct Construct_bbox_d
   {
-    Bbox_d<Dimension> operator()(const Point_d& p) const
+    Bbox_d operator()(const Point_d& p) const
     {
-      Bbox_d<Dimension> bb;
+      Bbox_d bb;
       for (int i=0;i<dimension; ++i)
       {
         (bb.min)(i)=to_interval(p[i]).first;

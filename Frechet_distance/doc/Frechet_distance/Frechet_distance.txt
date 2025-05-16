@@ -41,6 +41,8 @@ The main entry points are the following functions and classes:
 - The function `is_Frechet_distance_larger()`, which determines if the Fréchet distance between two polylines is larger than a given bound.
 - The class `Frechet_distance::Neighbor_search`, which stores a set of polylines and offers a query function to find polylines closer to a query curve than a given bound.
 
+\section secFrechetTraits Traits Classes and Choice of Kernel
+
 Both functions and the class have as template parameter a traits class defining the dimension and the point type.
 The traits classes have as template parameter a kernel.
 
