@@ -116,7 +116,7 @@ In our context, a polygon must uphold the following conditions:
 <OL>
 <LI><I>Closed Boundary</I> - the polygon's outer boundary must be a connected sequence of curves, that start and end at the same vertex.
 <LI><I>Simplicity</I> - the polygon must be simple.
-<LI><I>Orientation</I> - the polygon's outer boundary must be <I>counter-clockwise oriented</I>.
+<LI><I>Orientation</I> - the polygon's outer boundary must be <I>counterclockwise oriented</I>.
 </OL>
 
 \subsection bso_ssecpolygon_with_holes_validation Conditions for Valid Polygons with Holes
