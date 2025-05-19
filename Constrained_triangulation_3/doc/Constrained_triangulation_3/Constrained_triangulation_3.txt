@@ -55,7 +55,7 @@ A Piecewise Linear Complex, made of planar faces connected by edges and vertices
 \cgalFigureCaptionEnd
 
 
-\subsection CT_3_CDT Conforming Delaunay Triangulation
+\subsection CT_3_CDT Conforming Constrained Delaunay Triangulation
 
 The goal of the algorithms developed in this package is to compute a constrained Delaunay
 mesh containing a given set of polygonal constraints in 3D as sub-complex.
@@ -88,10 +88,10 @@ A Sch&ouml;nhardt polyhedron.
 
 Shewchuk \cgalCite{cgal:shewchuk1998condition} showed that for any PLC,
 there exists another PLC that is a refined version of the original one,
-that admits a constrained Delaunay triangulation.
+and admits a constrained Delaunay triangulation.
 The refined PLC is obtained by adding Steiner vertices on the input edges and facets,
 and the constrained triangulation built on this PLC is called
-a _conforming Delaunay triangulation_.
+a _conforming constrained Delaunay triangulation_.
 
 The algorithm implemented in this package is based on the work of
 Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
