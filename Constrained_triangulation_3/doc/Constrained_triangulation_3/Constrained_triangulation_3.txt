@@ -17,7 +17,8 @@ namespace CGAL {
 This package implements the construction of a 3D constrained Delaunay triangulation,
 conforming to the set of faces of a _Piecewise Linear Complex_, PLC for short.
 The set of input polygonal constraints given as a PLC is meant to be represented as a
-sub-complex of the triangulation.
+sub-complex of the triangulation. The produced triangulation has the type `Triangulation_3`,
+described in the chapter \ref PkgTriangulation3.
 
 For any PLC in 3D,
 the algorithm builds a constrained Delaunay triangulation conforming to this PLC.
