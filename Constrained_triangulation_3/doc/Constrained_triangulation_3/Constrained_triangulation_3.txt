@@ -14,20 +14,19 @@ namespace CGAL {
 
 \section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
-This package implements the construction of a 3D constrained Delaunay triangulation,
-conforming to the set of faces of a _Piecewise Linear Complex_, PLC for short.
-The set of input polygonal constraints given as a PLC is meant to be represented as a
-sub-complex of the triangulation. The produced triangulation has the type `Triangulation_3`,
-described in the chapter \ref PkgTriangulation3.
+3D triangulations are a way to partition space, which is useful in many applications.
+Sometimes, we want specific faces to appear in the output, for example, to preserve sharp features.
+When a triangulation exactly respects these constraints, it is called a _constrained_ triangulation.
+In some cases, it is possible to honor the geometry of the constraints but not their combinatorics;
+additional points must be inserted—this is called a _conforming_ triangulation.
 
-For any PLC in 3D,
-the algorithm builds a constrained Delaunay triangulation conforming to this PLC.
-The constrained triangulation does not always exist, and it may be necessary
-to add Steiner vertices to the PLC to make it tetrahedralizable.
+This package implements an algorithm that constructs conforming triangulations of
+3D polygonal constraints. In particular, it requires that these piecewise linear constraints
+are part of a _Piecewise Linear Complex_&nbsp;(PLC). The type of produced triangulations is
+`Triangulation_3`, described in the chapter \ref PkgTriangulation3.
 
 The problem is described by Cohen-Steiner et al. \cgalCite{cgal:cohen2002conforming},
 and by Si \cgalCite{cgal:si2008cdt3}.
-
 
 \section CT_3_definitions Definitions
 
@@ -52,7 +51,7 @@ The polygons can be non-convex, have holes, and arbitrarily many boundary segmen
 <img src="plc.png" style="max-width:60%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_plc_fig}
-A Piecewise Linear Complex, made of planar faces, connected by edges and vertices.
+A Piecewise Linear Complex, made of planar faces connected by edges and vertices.
 \cgalFigureCaptionEnd
 
 
@@ -60,10 +59,11 @@ A Piecewise Linear Complex, made of planar faces, connected by edges and vertice
 
 The goal of the algorithms developed in this package is to compute a constrained Delaunay
 mesh containing a given set of polygonal constraints in 3D as sub-complex.
-See package \ref PkgTriangulation3 for more details on Delaunay triangulations.
 
 A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any simplex
-of the triangulation contains no vertex in its interior.
+of the triangulation contains no vertex in its interior (see package \ref PkgTriangulation3
+for more details on Delaunay triangulations).
+
 A _constrained Delaunay triangulation_ of a PLC is a constrained triangulation which is as much
 Delaunay as possible, given that some facets are marked as _constrained_. More precisely, a
 triangulation is _constrained Delaunay_ if for any simplex \f$s\f$ of the triangulation,
