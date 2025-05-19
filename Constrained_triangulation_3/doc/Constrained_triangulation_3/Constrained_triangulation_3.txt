@@ -89,13 +89,13 @@ A Sch&ouml;nhardt polyhedron.
 Shewchuk \cgalCite{cgal:shewchuk1998condition} showed that for any PLC,
 there exists another PLC that is a refined version of the original one,
 and admits a constrained Delaunay triangulation.
-The refined PLC is obtained by adding Steiner vertices on the input edges and facets,
+The refined PLC is obtained by adding Steiner vertices on the input edges and polygons,
 and the constrained triangulation built on this PLC is called
 a _conforming constrained Delaunay triangulation_.
 
 The algorithm implemented in this package is based on the work of
 Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
-Steiner vertices are added on input edges and input facets
+Steiner vertices are added on input edges and input polygons
 of the PLC to make it tetrahedralizable.
 
 \cgalFigureRef{CT_3_plc2cdt_fig} shows an example of a conforming constrained
@@ -160,7 +160,7 @@ When this parameter is used, the 3D triangulation constrained faces indices (ava
 \link Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index() `face_constraint_index()`\endlink
 in `Conforming_constrained_Delaunay_triangulation_cell_data_3`)
 are set to the corresponding patch ids from this map.
-When it is not used, the face indices are set to different indices for each input facet.
+When it is not used, the face indices are set to different indices for each input polygon.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 
@@ -168,7 +168,7 @@ When it is not used, the face indices are set to different indices for each inpu
 
 \cgalFigureBegin{ccdt_fpmap, ccdt_fpmap.png}
 Left: Input PLC;
-Middle-left: The corresponding conforming constrained Delaunay triangulation with one patch per input face;
+Middle-left: The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
 Middle-Right: Input PLC segmented according to sharp edges;
 Right: The corresponding conforming constrained Delaunay triangulation using the segmentation.
 \cgalFigureEnd
