@@ -12,7 +12,7 @@
 #define __SUB_SPARSE_MATRIX__
 
 
-#include "CGAL/OSM/SparseMatrix.hpp"
+#include "CGAL/OSM/Sparse_matrix.h"
 #include "CGAL/OSM/Bitboard.hpp"
 
 namespace CGAL {
@@ -43,7 +43,7 @@ protected:
     
 public:
     /** \brief Constructor with sizes and Bitboard describing subchains. */
-    SubSparseMatrix(const int _rowCount, const int _columnCount, Bitboard subChain) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->chainsStates & subChain)
+    SubSparseMatrix(const int _rowCount, const int _columnCount, const Bitboard& subChain) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->chainsStates & subChain)
     {
     }
     

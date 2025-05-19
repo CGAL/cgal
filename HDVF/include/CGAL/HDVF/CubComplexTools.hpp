@@ -19,7 +19,7 @@
 #include "Cubical_chain_complex.hpp"
 #include "Hdvf_core.h"
 #include "Hdvf_persistence.h"
-#include "sub_chain_complex.hpp"
+#include "Sub_chain_complex_mask.h"
 #include "tools_io.hpp"
 #include "CGAL/OSM/OSM.hpp"
 
@@ -108,14 +108,14 @@ template<typename T>
 class Duality_cubical_complex_tools {
 public:
     typedef Cubical_chain_complex<T> _ComplexType ;
-    typedef SubChainComplex<T, _ComplexType> _SubCCType ;
+    typedef Sub_chain_complex_mask<T, _ComplexType> _SubCCType ;
     // Constructor
     Duality_cubical_complex_tools() {}
     
     
-    /** \brief Build a CubComplex L and SubChainComplex K from a CubComplex.
+    /** \brief Build a CubComplex L and Sub_chain_complex_mask K from a CubComplex.
      * L : full bounding box
-     * K (SubChainComplex) : CubComplex
+     * K (Sub_chain_complex_mask) : CubComplex
      */
     
     // Tools
@@ -138,7 +138,7 @@ public:
         }
         _ComplexType& L(*new _ComplexType(tmp, _ComplexType::PRIMAL)) ;
         
-        // Build the SubChainComplex corresponding to _CC
+        // Build the Sub_chain_complex_mask corresponding to _CC
         _SubCCType& K(*new _SubCCType(L, false)) ;
         // Visit all cells of _CC and activate the corresponding bit in K
         for (int q=0; q<=_CC.dim(); ++q)
@@ -166,6 +166,12 @@ void Per_Cub_output_vtk (Hdvf_persistence<CoefType, Cubical_chain_complex<CoefTy
     using perHDVFType = Hdvf_persistence<CoefType, Cubical_chain_complex<CoefType>, DegType, FiltrationType> ;
     using ComplexType = Cubical_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
+    
+    // Export the filtration
+    string out_file_filtration = filename+"_filtration.vtk" ;
+    vector<vector<int> > filtr_labels = per_hdvf.get_filtration().export_filtration();
+    ComplexType::Cubical_chain_complex_to_vtk(complex, out_file_filtration, &filtr_labels) ;
+    
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;

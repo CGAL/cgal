@@ -30,7 +30,7 @@ using namespace CGAL ;
 using namespace HDVF ;
 
 template <typename CoefficientType, typename MeshType, typename ComplexType>
-void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const SubChainComplex<CoefficientType, ComplexType>& K, const Options& options)
+void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const Sub_chain_complex_mask<CoefficientType, ComplexType>& K, const Options& options)
 {
     if (options.with_output)
     {
@@ -82,10 +82,10 @@ void dual_HDVF_pair (Hdvf_duality<CoefficientType, ComplexType>& dual_hdvf, cons
 }
 
 template <typename CoefficientType, typename ComplexType>
-Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType& L,  SubChainComplex<CoefficientType, ComplexType>& K, const Options &options)
+Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType& L,  Sub_chain_complex_mask<CoefficientType, ComplexType>& K, const Options &options)
 {
     using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
-    using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
+    using SubCCType = Sub_chain_complex_mask<CoefficientType, ComplexType> ;
     
     HDVFType& hdvf(*(new HDVFType(L, K, options.HDVF_opt)));
     
@@ -156,7 +156,7 @@ void main_code (const Options &options)
         using ComplexType = Simplicial_chain_complex<CoefficientType> ;
         using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
         using ToolsType = Duality_simplicial_complex_tools<CoefficientType> ;
-        using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
+        using SubCCType = Sub_chain_complex_mask<CoefficientType, ComplexType> ;
 
         // MeshObject
         Mesh_object mesh ;
@@ -203,7 +203,7 @@ void main_code (const Options &options)
     {
         using ComplexType = Cubical_chain_complex<CoefficientType> ;
         using HDVFType = Hdvf_duality<CoefficientType, ComplexType> ;
-        using SubCCType = SubChainComplex<CoefficientType, ComplexType> ;
+        using SubCCType = Sub_chain_complex_mask<CoefficientType, ComplexType> ;
         using ToolsType = Duality_cubical_complex_tools<CoefficientType> ;
         
         Cub_object mesh ;

@@ -106,7 +106,7 @@ public:
      *
      * Builds an empty cubical complex.
      */
-    Cubical_chain_complex() {} ;
+    Cubical_chain_complex() : _complex_id(_id_generator++) {} ;
     
     /**
      * \brief Constructor from a Cub_object (builds PRIMAL or DUAL associated complex depending on `type`).
@@ -285,6 +285,11 @@ public:
             }
         }
     }
+    
+    /** \brief Get (unique) object Id.
+     * For comparison of constant references to the complex.
+     */
+    int get_id () const { return _complex_id; }
     
     /** \brief Get the coordinates of the ith vertex */
     
@@ -486,6 +491,12 @@ protected:
     std::vector<CMatrix>  _d;
 private:
     std::vector<bool> _visited_cells; // Internal flag
+    /** \brief Static counter for objects ids.
+     * Initialized to 0.
+     */
+    static int _id_generator ;
+    /** \brief Unique object id (for comparison of constant references to the complex). */
+    const int _complex_id ;
     
     /// Protected methods
 protected:
@@ -589,9 +600,13 @@ protected:
 template <typename CoefficientType> const
 std::vector<int> Cubical_chain_complex<CoefficientType>::VTK_cubtypes({1, 3, 8, 11}) ;
 
+// Initialization of _id_generator
+template <typename CoefficientType> 
+int Cubical_chain_complex<CoefficientType>::_id_generator(0) ;
+
 // Constructor implementation
 template<typename CoefficientType>
-Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& cub,typeComplexCube type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1)
+Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& cub,typeComplexCube type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
 
 {
     // Initialize _size_bb and _P

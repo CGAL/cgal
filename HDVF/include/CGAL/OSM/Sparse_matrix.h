@@ -12,7 +12,7 @@
 #define __OSM_SPARSE_MATRIX__
 
 
-#include "Chain.hpp"
+#include "Chain.h"
 #include "Bitboard.hpp"
 #include <stdint.h>
 #include <cmath>

@@ -13,7 +13,7 @@
 
 
 #include "__base.hpp"
-#include "SparseMatrix.hpp"
+#include "Sparse_matrix.h"
 #include <unordered_map>
 #include <vector>
 #include <iterator>

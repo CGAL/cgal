@@ -10,7 +10,7 @@
 #include "Abstract_simplicial_chain_complex.hpp"
 #include "Hdvf_core.h"
 #include "Hdvf_persistence.h"
-#include "sub_chain_complex.hpp"
+#include "Sub_chain_complex_mask.h"
 #include "tools_io.hpp"
 #include "CGAL/OSM/OSM.hpp"
 
@@ -76,13 +76,13 @@ template<typename CoefficientType>
 class Duality_simplicial_complex_tools {
 public:
     typedef Simplicial_chain_complex<CoefficientType> _ComplexType ;
-    typedef SubChainComplex<CoefficientType, _ComplexType> _SubCCType ;
+    typedef Sub_chain_complex_mask<CoefficientType, _ComplexType> _SubCCType ;
     // Constructor
     Duality_simplicial_complex_tools() {}
     
-    /** \brief Build a SimpComplex L and SubChainComplex K from a SimpComplex _K.
+    /** \brief Build a SimpComplex L and Sub_chain_complex_mask K from a SimpComplex _K.
      * L : complex built out of _K and a closing icosphere meshed by tetgen
-     * K (SubChainComplex) : SubChainComplex identifying _K inside L
+     * K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
      */
     
     /** \brief Build the bounding box CubComplex of _CC  */
@@ -122,7 +122,7 @@ public:
         // Build the associated SimpComplex
         _ComplexType& L = *new _ComplexType(tetL, tetL.nodes) ;
         
-        // Build the SubChainComplex encoding _K inside L
+        // Build the Sub_chain_complex_mask encoding _K inside L
         _SubCCType& K(*new _SubCCType(L, false)) ;
         // Visit all cells of _K and activate the corresponding bit in K
         for (int q=0; q<=_K.dim(); ++q)
@@ -167,6 +167,12 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
     using perHDVFType = Hdvf_persistence<CoefType, Simplicial_chain_complex<CoefType>, DegType, FiltrationType> ;
     using ComplexType = Simplicial_chain_complex<CoefType> ;
     using PerHole = PerHoleT<DegType> ;
+    
+    // Export the filtration
+    string out_file_filtration = filename+"_filtration.vtk" ;
+    vector<vector<int> > filtr_labels = per_hdvf.get_filtration().export_filtration();
+    ComplexType::Simplicial_chain_complex_to_vtk(complex, out_file_filtration, &filtr_labels) ;
+    
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;

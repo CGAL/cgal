@@ -15,6 +15,7 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
  
 \cgalHasModelsBegin
+\cgalHasModelsBare{`CGAL::Filtration_core<DegreeType>`}
 \cgalHasModelsBare{`CGAL::Filtration_lower_star<DegreeType>`}
 \cgalHasModelsEnd
 
@@ -142,12 +143,20 @@ public:
     DegreeType get_degree (int i) const;
     
     // Filtration verification
-    /*! \brief Check that a filtration is valid (cells are ordered in increasing degrees and all cells have indices larger than their faces.
+    /*! \brief Check that a filtration is valid
+     * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      */
-    bool check_filtration() const;
+    bool is_valid_filtration() const;
     
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
      */
     friend ostream & operator<<(ostream & out, const Filtration &f);
+    
+    /**
+     * \brief Export the filtration time indices.
+     *
+     * The method exports the time index of every cells in each dimension.
+     */
+    vector<vector<int> > export_filtration () const
 };

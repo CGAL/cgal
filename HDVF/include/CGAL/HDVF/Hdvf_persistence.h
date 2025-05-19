@@ -20,7 +20,7 @@
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 #include "CGAL/HDVF/Hdvf_core.h"
-#include "CGAL/HDVF/Filtration_lower.h"
+#include "CGAL/HDVF/Filtration_lower_star.h"
 
 namespace CGAL {
 namespace HDVF {
@@ -42,13 +42,13 @@ namespace HDVF {
 
 // Types for persistent homology / cohomology
 
-/** \brief Type to store persistent intervals filtration indices (birth/death indices)
+/*! \brief Type to store persistent intervals filtration indices (birth/death indices)
  *
  * For "infinite" intervals borne at index i, the interval is set to (i,i-1)
  */
 typedef std::pair<int, int> FiltrIndexPerInterval ;
 
-/** \brief Type for indexing uniquely a cell.
+/*! \brief Type for indexing uniquely a cell.
  * - First element of the pair: index of the cell.
  * - Second element of the pair: dimension of the cell.
  *
@@ -56,7 +56,7 @@ typedef std::pair<int, int> FiltrIndexPerInterval ;
  */
 typedef std::pair<int, int> CellDim ;
 
-/** \brief Type for describing the pair of cells associated to a persistence interval:
+/*! \brief Type for describing the pair of cells associated to a persistence interval:
  * - First element of the pair: cell entailing the birth of the hole.
  * - Second element of the pair: cell entailing the death of the hole.
  *
@@ -64,14 +64,14 @@ typedef std::pair<int, int> CellDim ;
  */
 typedef std::pair<CellDim, CellDim> CellsPerInterval ;
 
-/** \brief Template for persistent intervals degrees (birth/death degrees)
+/*! \brief Template for persistent intervals degrees (birth/death degrees)
  *
  * For "infinite" intervals borne at degree d, the interval is set to (d,d-1)
  */
 template <typename DegType>
 using DegreePerIntervalT =  std::pair<DegType,DegType> ;
 
-/** \brief Template for (full) persistent interval data:
+/*! \brief Template for (full) persistent interval data:
  * - First element: persistent interval filtration indices
  * - Second element: persistent interval cells
  * - Third element: persistent interval degrees
@@ -79,7 +79,7 @@ using DegreePerIntervalT =  std::pair<DegType,DegType> ;
 template <typename DegType>
 using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIntervalT<DegType> > ;
 
-/** \brief Overload of the `<<` operator to display persistent intervals (that is PerHoleT).
+/*! \brief Overload of the `<<` operator to display persistent intervals (that is PerHoleT).
  *
  * Format:
  */
@@ -229,7 +229,7 @@ private:
     using HDVFParent::A;
 public:
     /**
-     * \brief Hdvf_persistence Constructor
+     * \brief Hdvf_persistence default constructor
      *
      * Builds an "empty" HDVF_persistence (with all cells critical) associated to the chain complex `K` and the filtration `f`.
      * By default, the HDVF option is set to OPT_FULL (full reduction computed)
@@ -292,11 +292,14 @@ public:
         return res;
     }
     
-    /** \brief Export the "with_export" boolean flag.
+    /** \brief Get the "with_export" boolean flag.
      *  If the flag is `true`, homology/cohomology generators and corresponding PSC labels are exported for each persistent interval of positive duration.
      */
     bool with_export () { return _with_export ; }
     
+    /** \brief Get a constant reference on the filtration
+     */
+    const Filtration& get_filtration() { return _f; }
     
     /** \brief Compute the (degree) duration of a persistent interval (ie. persistent hole)
      *
@@ -469,7 +472,7 @@ public:
             throw "Error : trying to export g_chain without proper HDVF option" ;
     }
     
-    /** \brief Iterator over (finite) persistent intervals.
+    /*! \brief Iterator over (finite) persistent intervals.
      *
      * Iterate over persistent intervals of finite degree duration.
      * If `discard_small` is true (which is the default), the iterator discards persistent intervals with a null degree duration (that is, small persistent holes).
@@ -481,7 +484,7 @@ public:
         using difference_type   = std::ptrdiff_t;
         using value_type        = PerIntervalInformation;
         
-        /** \brief Iterator constructor
+        /*! \brief Iterator constructor
          *
          * \param[in] per_hdvf Constant reference over the Hdvf_persistence iterated.
          * \param[in] i The initial index.
@@ -503,7 +506,7 @@ public:
         bool has_discard_small() { return _discard_small; }
         
         // Operators
-        /** \brief Iterator dereference
+        /*! \brief Iterator dereference
          *
          * \returns A `PerIntervalInformation` structure containing the information of the current persistence interval.
          */

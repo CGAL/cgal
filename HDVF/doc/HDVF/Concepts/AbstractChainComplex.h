@@ -15,6 +15,7 @@ The concept `AbstractChainComplex` describes the requirements for (topological) 
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{`CGAL::Abstract_simplicial_chain_complex<Ring>`}
+\cgalHasModelsBare{`CGAL::Sub_chain_complex_mask<Ring, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
 */

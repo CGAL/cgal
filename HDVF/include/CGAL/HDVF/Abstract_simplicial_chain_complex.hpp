@@ -45,7 +45,7 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
  
  \cgalModels{AbstractChainComplex}
  
- \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
+ \tparam CoefficientType a model of the `Ring` concept.
  */
 
 
@@ -53,11 +53,11 @@ template<typename CoefficientType>
 class Abstract_simplicial_chain_complex {
 public:
     /**
-     * \brief Default constructor (empty simplicial complex).
+     * \brief Default constructor (empty simplicial complex of dimension q).
      *
-     * Builds an empty abstract simplicial complex.
+     * Builds an empty abstract simplicial complex of dimension q.
      */
-    Abstract_simplicial_chain_complex() ;
+    Abstract_simplicial_chain_complex(int q = 0) ;
     
     /**
      * \brief Constructor from a Mesh_object.
@@ -217,6 +217,10 @@ public:
      */
     std::ostream& print_complex(std::ostream& out = std::cout) const;
     
+    /** \brief Get (unique) object Id.
+     * For comparison of constant references to the complex.
+     */
+    int get_id () const { return _complex_id; }
     
 protected:
     /** \brief Dimension of the complex */
@@ -252,11 +256,36 @@ protected:
      * \param[in] tau The simplex inserted.
      */
     void insert_simplex(const Simplex& tau);
+    
+private:
+    /** \brief Static counter for objects ids.
+     * Initialized to 0.
+     */
+    static int _id_generator ; // Initialisation 0
+    /** \brief Unique object id (for comparison of constant references to the complex). */
+    const int _complex_id ;
 };
 
-//constructor
+// Initialization of _id_generator
+template <typename CoefficientType>
+int Abstract_simplicial_chain_complex<CoefficientType>::_id_generator(0);
+
+//constructors
 template<typename CoefficientType>
-Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object& mesh) {
+Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(int q) : _complex_id(_id_generator++) {
+    // Initialize attributes
+    _dim = q;
+    
+    // Initialize vectors of Simplices and cell counts
+    _ind2simp.resize(_dim + 1);
+    _simp2ind.resize(_dim + 1);
+    _nb_cells.resize(_dim + 1, 0);
+    // Initialize boundary matrix
+    _d.resize(_dim+1);
+}
+
+template<typename CoefficientType>
+Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
     
     _dim = abs(mesh.dim);
@@ -467,6 +496,7 @@ public:
 // Initialization of static VTK_simptypes
 template <typename CoefficientType> const
 std::vector<int> Simplicial_chain_complex<CoefficientType>::VTK_simptypes({1, 3, 5, 10});
+
 
 // Simplicial_chain_complex_to_vtk
 template <typename CoefficientType>

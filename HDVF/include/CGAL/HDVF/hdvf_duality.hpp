@@ -14,7 +14,7 @@
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.hpp"
 #include "CGAL/HDVF/Hdvf_core.h"
-#include "CGAL/HDVF/sub_chain_complex.hpp"
+#include "CGAL/HDVF/Sub_chain_complex_mask.h"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 
 namespace CGAL {
@@ -48,7 +48,7 @@ private:
     const _ComplexType& _L ;
     const int _hdvf_opt ;
     // Subcomplex K
-    SubChainComplex<_CoefficientType,_ComplexType> _KCC, _subCC ;
+    Sub_chain_complex_mask<_CoefficientType,_ComplexType> _KCC, _subCC ;
 public:
     // Critical cells of perfect HDVFs
     std::vector<std::vector<int> > critical_K, critical_L_K ;
@@ -67,38 +67,29 @@ public:
      * \version 0.1.0
      * \date 28/08/2024
      */
-    Hdvf_duality(const _ComplexType& L, SubChainComplex<_CoefficientType, _ComplexType>& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf_duality(const _ComplexType& L, Sub_chain_complex_mask<_CoefficientType, _ComplexType>& K, int hdvf_opt = OPT_FULL) ;
     
-    /** \brief find a valid PairCell for A in dimension q */
+    /** \brief find a valid PairCell in the sub complex for A in dimension q */
     virtual PairCell find_pair_A(int q, bool &found) const;
-    /** \brief find a valid PairCell containing tau for A in dimension q */
+    /** \brief find a valid PairCell in the sub complex containing tau for A in dimension q */
     virtual PairCell find_pair_A(int q, bool &found, int tau) const;
-    /** \brief find all the valid PairCell for A in dimension q */
+    /** \brief find all the valid PairCell in the sub complex for A in dimension q */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
-    /** \brief find all the valid PairCell containing tau for A in dimension q */
+    /** \brief find all the valid PairCell in the sub complex containing tau for A in dimension q */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
-    
-    /** \brief Set _DD_col to _subCC */
-    inline void screen_DD_col ()
-    {
-        for (int q=0; q<=_L.dim(); ++q)
-        {
-            this->_DD_col.at(q).set_sub(_subCC.get_BitBoard(q)) ;
-        }
-    }
     
     /** \brief Set _subCC to complex K and screen _DD_col accordingly */
     inline void set_mask_K ()
     {
         _subCC = _KCC ;
-        screen_DD_col() ;
+        _subCC.screen_matrices(this->_DD_col);
     }
     
     /** \brief Set _subCC to cocomplex L-K and screen _DD_col accordingly */
     inline void set_mask_L_K ()
     {
         _subCC = _KCC.complement() ;
-        screen_DD_col() ;
+        _subCC.screen_matrices(this->_DD_col);
     }
     
     /**
@@ -137,12 +128,12 @@ public:
         // Print K
         out << "----> K" << endl ;
         _subCC = _KCC ;
-        screen_DD_col() ;
+        _subCC.screen_matrices(this->_DD_col);
         print_reduction_sub(out) ;
         
         // Print L-K
         _subCC = _KCC.complement() ;
-        screen_DD_col() ;
+        _subCC.screen_matrices(this->_DD_col);
         print_reduction_sub(out) ;
         
         // Set back _subCC to K
@@ -212,7 +203,7 @@ public:
     
     ostream& print_bnd_pairing(ostream& out = cout)
     {
-        SubChainComplex<_CoefficientType, _ComplexType> subPair(_L, false) ;
+        Sub_chain_complex_mask<_CoefficientType, _ComplexType> subPair(_L, false) ;
         for (int q=0; q<=_L.dim(); ++q)
         {
             for (int i=0; i<critical_K.at(q).size(); ++i)
@@ -362,7 +353,7 @@ public:
 } ;
 
 template<typename _CoefficientType, typename _ComplexType>
-Hdvf_duality<_CoefficientType,_ComplexType>::Hdvf_duality(const _ComplexType& L, SubChainComplex<_CoefficientType, _ComplexType>& K, int hdvf_opt) :
+Hdvf_duality<_CoefficientType,_ComplexType>::Hdvf_duality(const _ComplexType& L, Sub_chain_complex_mask<_CoefficientType, _ComplexType>& K, int hdvf_opt) :
 Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
 /** \brief find a valid PairCell for A in dimension q */
@@ -511,7 +502,7 @@ void Hdvf_duality<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
-    screen_DD_col() ;
+    _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<PairCell> tmp = this->compute_perfect_hdvf() ;
     std::cout << tmp.size() << " cells paired" << endl ;
@@ -523,7 +514,7 @@ void Hdvf_duality<_CoefficientType,_ComplexType>::computeDualPerfectHDVF()
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
-    screen_DD_col() ;
+    _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     tmp.clear() ;
     tmp = this->compute_perfect_hdvf() ;
@@ -545,9 +536,9 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::computePairin
     
     std::cout << endl << "==== Compute pairing" << endl ;
     
-    // Create a full SubChainComplex
-    _subCC = SubChainComplex<_CoefficientType, _ComplexType>(_L) ;
-    screen_DD_col() ;
+    // Create a full Sub_chain_complex_mask
+    _subCC = Sub_chain_complex_mask<_CoefficientType, _ComplexType>(_L) ;
+    _subCC.screen_matrices(this->_DD_col);
     // Copy the HDVF before computing the pairing -> otherwise we loose it...
     std::vector<PairCell> pairing = this->compute_perfect_hdvf() ;
     return pairing ;
