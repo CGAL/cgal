@@ -1,14 +1,15 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
-#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
-#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
 
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/property_map.h>
 
 #include <unordered_set>
@@ -40,10 +41,9 @@ using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 int main(int argc, char* argv[])
 {
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
-  std::ifstream in(filename);
 
   CGAL::Surface_mesh<K::Point_3> mesh;
-  if(!in || !CGAL::IO::read_OFF(in, mesh)) {
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }

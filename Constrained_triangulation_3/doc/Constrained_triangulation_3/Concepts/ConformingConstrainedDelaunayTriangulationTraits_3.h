@@ -4,7 +4,7 @@
 
 The concept `ConformingConstrainedDelaunayTriangulationTraits_3` specifies the requirements
 for the geometric traits class of the triangulation used as the first template
-parameter `Triangulation_3` in the function template
+parameter `%Triangulation` in the function template
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`.
 
 \cgalRefines{DelaunayTriangulationTraits_3, ProjectionTraitsGeometricTraits_3}

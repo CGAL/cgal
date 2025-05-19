@@ -4,23 +4,20 @@
 \defgroup PkgConstrainedTriangulation3Concepts Concepts
 \ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgConstrainedTriangulation3Functions Function Templates
-\ingroup PkgConstrainedTriangulation3Ref
-
 \defgroup PkgConstrainedTriangulation3Classes Classes and Class Templates
 \ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgDrawCDT_3 Draw a 3D Constrained Triangulation
+\defgroup PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh  Free Functions for Creating Conforming Constrained Delaunay Triangulations
 \ingroup PkgConstrainedTriangulation3Ref
 
 \defgroup PkgCDT3IOFunctions Output Functions
 \ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgConstrainedTriangulation3FunctionsMesh 3D Constrained Triangulation from a Surface Mesh
-\ingroup PkgConstrainedTriangulation3Functions
+\defgroup PkgDrawCDT_3 Draw a 3D Constrained Triangulation
+\ingroup PkgConstrainedTriangulation3Ref
 
-\defgroup PkgConstrainedTriangulation3FunctionsSoup 3D Constrained Triangulation from a Polygon Mesh
-\ingroup PkgConstrainedTriangulation3Functions
+\defgroup PkgConstrainedTriangulation3Functions Other Functions
+\ingroup PkgConstrainedTriangulation3Ref
 
 \addtogroup PkgConstrainedTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
@@ -58,7 +55,7 @@ to add Steiner points to the PLC to make it tetrahedralizable.
 
 \cgalCRPSection{Functions}
 
-- `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`: the main function to create
+- \link PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh `CGAL::make_conforming_constrained_Delaunay_triangulation_3()` \endlink: the main function to create
 a conforming constrained Delaunay triangulation in 3D, an instance of the class template
 `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
 
