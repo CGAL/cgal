@@ -19,7 +19,7 @@
 \defgroup PkgConstrainedTriangulation3FunctionsMesh 3D Constrained Triangulation from a Surface Mesh
 \ingroup PkgConstrainedTriangulation3Functions
 
-\defgroup PkgConstrainedTriangulation3FunctionsSoup 3D Constrained Triangulation from a Polygon Mesh
+\defgroup PkgConstrainedTriangulation3FunctionsSoup 3D Constrained Triangulation from a Polygon Soup
 \ingroup PkgConstrainedTriangulation3Functions
 
 \addtogroup PkgConstrainedTriangulation3Ref
