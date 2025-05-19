@@ -79,7 +79,7 @@ public:
   /*! A function object to construct the scaled version of a `Vector_2` */
   typedef unspecified_type Construct_scaled_vector_2;
 
-  /*! A function object to construct the `i`-th vertex of a `Triangle_3`` */
+  /*! A function object to construct the `i`-th vertex of a `Triangle_3` */
   typedef unspecified_type Construct_vertex_3;
   /*! A function object to construct the source vertex of a `Segment_3` */
   typedef unspecified_type Construct_source_3;

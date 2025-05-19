@@ -25,7 +25,7 @@ namespace CGAL {
  * @ingroup PkgConstrainedTriangulation3Classes
  * @brief Cell base class for the 3D conforming constrained Delaunay triangulation.
  *
- * This class is derived from the `Triangulation_cell_base_3` class and provides additional functionality
+ * This class is derived from its template parameter `CellBase` and provides additional functionality
  * required by `Conforming_constrained_Delaunay_triangulation_3`.
  *
  * @tparam Traits The geometric traits class, which must be a model of `ConformingConstrainedDelaunayTriangulationTraits_3`.
