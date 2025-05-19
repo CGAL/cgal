@@ -201,7 +201,7 @@ struct Wrap_snap_visitor : public Autorefinement::Default_visitor
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{snap_grid_size}
