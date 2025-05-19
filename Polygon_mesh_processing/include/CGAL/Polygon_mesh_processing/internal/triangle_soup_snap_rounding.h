@@ -173,7 +173,7 @@ struct Wrap_snap_visitor : public Autorefinement::Default_visitor
 *
 * Rounds the coordinates of the points so that they fit in doubles while making and keeping the model intersection free by potentially subdividing the triangles.
 * The input can be any triangle soup and the output is an intersection-free triangle soup with Hausdorff distance
-* between the input and the output bounded by M*2^-gs*k where M is the maximum absolute coordinate in the model, gs the snap_grid_size (see below) and k the number of iteration
+* between the input and the output bounded by `M*2^-gs*k` where `M`is the maximum absolute coordinate in the model, `gs` the `snap_grid_size` (see below) and `k` the number of iterations
 * performed by the algorithm.
 *
 * @tparam PointRange a model of the concept `RandomAccessContainer`
