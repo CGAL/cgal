@@ -41,11 +41,11 @@ that satisfies the following properties:
 
 - The vertices and edges in the PLC form a simplicial complex: two edges may intersect
   only at a common vertex.
-- For each polygon (face) in the PLC, its boundary is a union of edges in the PLC.
-- If two polygons (faces) in the PLC intersect, their intersection is a union of edges and vertices
+- For each polygon in the PLC, its boundary is a union of edges in the PLC.
+- If two polygons in the PLC intersect, their intersection is a union of edges and vertices
   in the PLC. In particular, the interiors of two polygons cannot intersect.
 
-The polygons (faces) can be non-convex, have holes, and arbitrarily many boundary segments.
+The polygons can be non-convex, have holes, and arbitrarily many boundary segments.
 
 \cgalFigureAnchor{CT_3_plc_fig}
 <center>
