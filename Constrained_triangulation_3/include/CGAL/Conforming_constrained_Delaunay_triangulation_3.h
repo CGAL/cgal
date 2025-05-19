@@ -563,8 +563,13 @@ private:
 
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
+
+#ifdef DOXYGEN_RUNNING
+  using Constrained_polyline_id = unspecified_type;
+#else
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
-  using size_type = typename CDT_3_impl::size_type;
+#endif // not DOXYGEN_RUNNING
+  using size_type = typename Triangulation::size_type;
 
 public:
   /** \name Constructors
