@@ -73,7 +73,7 @@ if the open line segment joining them does not intersect any polygon of the PLC,
 of polygons that are coplanar with the segment.
 
 In 3D, constrained triangulations do not always exist. It can be shown using the
-example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
+example of the Sch&ouml;nhardt polyhedron \cgalCite{schonhardt1928zerlegung},
 \cgalCite{b-ip-48a}, that requires the addition of
 Steiner vertices to be tetrahedralizable (see \cgalFigureRef{CT_3_schonhardt_fig}).
 
@@ -112,11 +112,11 @@ Right: the same CCDT seen with cutplane.
 \cgalFigureCaptionEnd
 
 
-\section CT_3_api API
+\section CT_3_api Software Design
 
 \subsection CT_3_api_classes Classes
 
-This package provides one main class `Conforming_constrained_Delaunay_triangulation_3`
+This package provides one main class `CGAL::Conforming_constrained_Delaunay_triangulation_3`
 that represents a 3D conforming constrained Delaunay triangulation.
 The class is templated by the geometric traits class and the underlying triangulation class.
 The other classes that are provided are secondary classes that define the
@@ -124,15 +124,15 @@ vertex and cell types and metadata that constitute the triangulation.
 
 \subsection CT_3_api_functions Functions
 
-Some helper constructor functions, like `make_conforming_constrained_Delaunay_triangulation_3()`,
-are provided to create a `Conforming_constrained_Delaunay_triangulation_3` object.
+Some helper constructor functions, like `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`,
+are provided to create a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object.
 
 \section CT_3_examples Examples
 
 \subsection CT_3_example_ccdt Build a Conforming Constrained Delaunay Triangulation
 
 The following example demonstrates how to use the helper constructor function
-`make_conforming_constrained_Delaunay_triangulation_3()` to create a
+`CGAL::make_conforming_constrained_Delaunay_triangulation_3()` to create a
 conforming constrained Delaunay triangulation from a given PLC.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
@@ -157,8 +157,8 @@ The following example demonstrates how to detect surface patches separated by sh
 and use this surface segmentation in the tetrahedrization process.
 
 When this parameter is used, the 3D triangulation constrained faces indices (available with
-\link Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index() `face_constraint_index()`\endlink
-in `Conforming_constrained_Delaunay_triangulation_cell_data_3`)
+`CGAL::Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index() `
+)
 are set to the corresponding patch ids from this map.
 When it is not used, the face indices are set to different indices for each input polygon.
 
