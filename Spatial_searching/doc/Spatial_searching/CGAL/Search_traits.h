@@ -3,21 +3,21 @@ namespace CGAL {
 /*!
 \ingroup SearchTraitsClasses
 
-The class `Search_traits` can be used as a template parameter of the kd tree 
-and the search classes. It is a mere wrapper for the geometric types needed 
-by these classes. 
-\cgalModels `SearchTraits`
+The class `Search_traits` can be used as a template parameter of the kd tree
+and the search classes. It is a mere wrapper for the geometric types needed
+by these classes.
+\cgalModels{SearchTraits}
 
-\sa `Search_traits_2<Kernel>` 
-\sa `Search_traits_3<Kernel>` 
-\sa `Search_traits_d<Kernel>` 
+\sa `Search_traits_2<Kernel>`
+\sa `Search_traits_3<Kernel>`
+\sa `Search_traits_d<Kernel>`
 
 */
   template< typename NT, typename Point, typename CartesianIterator, typename ConstructCartesianIterator, typename Dim >
 class Search_traits {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
@@ -27,27 +27,27 @@ or `Dynamic_dimension_tag`.
 typedef Dim Dimension;
 
 /*!
-The number type of the coordinates. 
-*/ 
-typedef NT FT; 
+The number type of the coordinates.
+*/
+typedef NT FT;
 
 /*!
-Point type. 
-*/ 
-typedef Point Point_d; 
+Point type.
+*/
+typedef Point Point_d;
 
 /*!
-An iterator over the coordinates. 
-*/ 
-typedef CartesianIterator Cartesian_const_iterator_d; 
+An iterator over the coordinates.
+*/
+typedef CartesianIterator Cartesian_const_iterator_d;
 
 /*!
-A functor with 
-two function operators, which return the begin and past the end iterator for the %Cartesian coordinates. 
-The functor for begin has as argument a `Point_d`. The functor for the past the end iterator, 
-has as argument a `Point_d` and an `int`. 
-*/ 
-typedef ConstructCartesianIterator Construct_Cartesian_const_iterator_d; 
+A functor with
+two function operators, which return the begin and past the end iterator for the %Cartesian coordinates.
+The functor for begin has as argument a `Point_d`. The functor for the past the end iterator,
+has as argument a `Point_d` and an `int`.
+*/
+typedef ConstructCartesianIterator Construct_Cartesian_const_iterator_d;
 
 
 /// @}

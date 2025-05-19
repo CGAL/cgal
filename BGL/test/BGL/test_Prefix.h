@@ -1,8 +1,6 @@
 #ifndef CGAL_TEST_PREFIX_H
 #define CGAL_TEST_PREFIX_H
 
-#define CGAL_USE_SURFACE_MESH
-
 #include <vector>
 #include <fstream>
 
@@ -12,14 +10,35 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
+
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
 
-#ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
-#endif
+
+#include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_vertex_base_with_id_2.h>
+#include <CGAL/Triangulation_face_base_with_id_2.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_hierarchy_2.h>
+#include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Regular_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Constrained_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
+#include <CGAL/boost/graph/properties_Constrained_triangulation_plus_2.h>
+#include <CGAL/boost/graph/Seam_mesh.h>
 
 #include <CGAL/boost/graph/io.h>
 
@@ -37,10 +56,11 @@ typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
           <2, 3, MyTraits>::type LCC;
 
-
-#ifdef CGAL_USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<Point_3> SM;
-#endif
+
+typedef SM::Property_map<SM::Edge_index, bool>                  Seam_edge_pmap;
+typedef SM::Property_map<SM::Vertex_index, bool>                Seam_vertex_pmap;
+typedef CGAL::Seam_mesh<SM, Seam_edge_pmap, Seam_vertex_pmap>   Seam_mesh;
 
 #if defined(CGAL_USE_OPENMESH)
 
@@ -54,6 +74,33 @@ typedef CGAL::Surface_mesh<Point_3> SM;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 #endif
+
+typedef CGAL::Triangulation_vertex_base_with_id_2<Kernel>        Vbb;
+typedef CGAL::Triangulation_face_base_with_id_2<Kernel>          Fbb;
+
+typedef CGAL::Triangulation_2<Kernel>                            Triangulation_no_id_2;
+
+typedef CGAL::Triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<Vbb, Fbb> >       Triangulation_2;
+typedef CGAL::Delaunay_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<Vbb, Fbb> >       Delaunay_triangulation_2;
+
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel, Vbb>   RVb;
+typedef CGAL::Regular_triangulation_face_base_2<Kernel, Fbb>     RFb;
+typedef CGAL::Regular_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<RVb, RFb> >       Regular_triangulation_2;
+
+typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fbb> CDFb;
+typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb>         CDVb;
+typedef CGAL::Constrained_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<CDVb, CDFb> >     Constrained_triangulation_2;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,
+          CGAL::Triangulation_data_structure_2<CDVb, CDFb> >     Constrained_Delaunay_triangulation_2;
+
+typedef CGAL::Constrained_triangulation_plus_2<
+          Constrained_Delaunay_triangulation_2>                  CDT_P2;
+
+typedef CGAL::Triangulation_hierarchy_2<CDT_P2>                  Triangulation_hierarchy_2;
 
 #include <CGAL/boost/graph/helpers.h>
 
@@ -96,11 +143,6 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 
 
 
-static const char* data[] =
-{ "data/7_faces_triangle.off", "data/genus3.off", "data/head.off",
-  "data/hedra.off", "data/hedra_open.off",   "data/open_cube.off",
-  "data/rombus.off", "data/tetrahedron.off", "data/triangle.off",
-  "data/triangular_hole.off", "data/cube.off" };
 
 /*
 #if defined(CGAL_USE_OPENMESH)
@@ -112,9 +154,12 @@ bool read_a_mesh(OMesh& s, const std::string& str) {
 
 template<typename T>
 bool read_a_mesh(T& m, const std::string& str)
-{ return CGAL::read_off(str, m); }
+{
+  return CGAL::IO::read_OFF(str, m);
+}
 
-bool read_a_mesh(Polyhedron& p, const std::string& str) {
+bool read_a_mesh(Polyhedron& p, const std::string& str)
+{
   std::ifstream in(str.c_str());
   in >> p;
   bool success = in.good();
@@ -124,8 +169,14 @@ bool read_a_mesh(Polyhedron& p, const std::string& str) {
 }
 
 template <typename T>
-std::vector<T> t_data() 
+std::vector<T> t_data()
 {
+  static const std::string data[] =
+    { "data/7_faces_triangle.off", "data/genus3.off", CGAL::data_file_path("meshes/head.off"),
+      CGAL::data_file_path("meshes/hedra.off"), CGAL::data_file_path("meshes/hedra_open.off"), CGAL::data_file_path("meshes/open_cube.off"),
+      "data/rombus.off", "data/tetrahedron.off", "data/triangle.off",
+      CGAL::data_file_path("meshes/triangular_hole.off"), CGAL::data_file_path("meshes/cube.off") };
+
   std::vector<T> vs;
   for(unsigned int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
     vs.push_back(T());
@@ -137,32 +188,57 @@ std::vector<T> t_data()
   return vs;
 }
 
-std::vector<Polyhedron> poly_data() 
-{ return t_data<Polyhedron>(); }
-
-#if defined(CGAL_USE_SURFACE_MESH)
-std::vector<SM> sm_data() 
-{ return t_data<SM>(); }
-#endif
+std::vector<Polyhedron> poly_data() { return t_data<Polyhedron>(); }
+std::vector<SM> sm_data() { return t_data<SM>(); }
+std::vector<LCC> lcc_data() { return t_data<LCC>(); }
 
 #if defined(CGAL_USE_OPENMESH)
-std::vector<OMesh> omesh_data() 
-{ return t_data<OMesh>(); }
+std::vector<OMesh> omesh_data() { return t_data<OMesh>(); }
 #endif
 
-std::vector<LCC> lcc_data()
-{ return t_data<LCC>(); }
+template <typename Tr>
+Tr build_dummy_triangulation()
+{
+  typedef typename Tr::Point                                       Point;
+
+  Tr t;
+  t.insert(Point(0.1,0));
+  t.insert(Point(1,0));
+  t.insert(Point(0.2,0.2));
+  t.insert(Point(0,1));
+  t.insert(Point(0,2));
+
+  return t;
+}
+
+template <typename Tr>
+Tr build_dummy_triangulation_with_ids()
+{
+  Tr t = build_dummy_triangulation<Tr>();
+  CGAL::set_triangulation_ids(t);
+  return t;
+}
+
+Triangulation_no_id_2 t2_no_id_data() { return build_dummy_triangulation<Triangulation_no_id_2>(); }
+Triangulation_2 t2_data() { return build_dummy_triangulation_with_ids<Triangulation_2>(); }
+Delaunay_triangulation_2 dt2_data() { return build_dummy_triangulation_with_ids<Delaunay_triangulation_2>(); }
+Regular_triangulation_2 rt2_data() { return build_dummy_triangulation_with_ids<Regular_triangulation_2>(); }
+Constrained_triangulation_2 ct2_data() { return build_dummy_triangulation_with_ids<Constrained_triangulation_2>(); }
+Constrained_Delaunay_triangulation_2 cdt2_data() { return build_dummy_triangulation_with_ids<Constrained_Delaunay_triangulation_2>(); }
+CDT_P2 cdtp2_data() { return build_dummy_triangulation_with_ids<CDT_P2>(); }
+Triangulation_hierarchy_2 t2h_data() { return build_dummy_triangulation_with_ids<Triangulation_hierarchy_2>(); }
 
 template <typename Graph>
 struct Surface_fixture_1 {
   Surface_fixture_1() {
-    assert(read_a_mesh(m, "data/fixture1.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/fixture1.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 0, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(1, 0, 0))
@@ -183,13 +259,13 @@ struct Surface_fixture_1 {
     f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
-    for(boost::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
+    for(std::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib)
     {
       if(! CGAL::is_border(opposite(*hafib, m), m))
         f2 = face(opposite(*hafib, m), m);
     }
     typename boost::graph_traits<Graph>::face_iterator fb, fe;
-    for(boost::tie(fb, fe) = faces(m); fb != fe; ++fb) {
+    for(std::tie(fb, fe) = faces(m); fb != fe; ++fb) {
       if(*fb != f1 && *fb != f2)
         f3 = *fb;
     }
@@ -205,14 +281,15 @@ struct Surface_fixture_1 {
 template <typename Graph>
 struct Surface_fixture_2 {
   Surface_fixture_2() {
-    assert(read_a_mesh(m, "data/fixture2.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/fixture2.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 2, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(2, 2, 0))
@@ -231,25 +308,25 @@ struct Surface_fixture_2 {
     assert(y != boost::graph_traits<Graph>::null_vertex());
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     bool found;
-    boost::tie(h, found) = halfedge(x, v, m);
+    std::tie(h, found) = halfedge(x, v, m);
     assert(found);
     assert(! CGAL::is_border(h,m));
     f1 = face(h, m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(v, u, m);
+    std::tie(h, found) = halfedge(v, u, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f2 = face(h, m);
     assert(f2 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(u, w, m);
+    std::tie(h, found) = halfedge(u, w, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f3 = face(h, m);
     assert(f3 != boost::graph_traits<Graph>::null_face());
 
-    boost::tie(h, found) = halfedge(w, x, m);
+    std::tie(h, found) = halfedge(w, x, m);
     assert(found);
     assert(!CGAL::is_border(h,m));
     f4 = face(h, m);
@@ -266,14 +343,15 @@ struct Surface_fixture_2 {
 template <typename Graph>
 struct Surface_fixture_3 {
   Surface_fixture_3() {
-    assert(read_a_mesh(m, "data/fixture3.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/fixture3.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
+    for(std::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
       if     (get(pm, *vb) == Point_3(0, 1, 0))
         u = *vb;
       else if(get(pm, *vb) == Point_3(0, 0, 0))
@@ -312,7 +390,8 @@ struct Surface_fixture_3 {
 template <typename Graph>
 struct Surface_fixture_4 {
   Surface_fixture_4() {
-    assert(read_a_mesh(m, "data/fixture4.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/fixture4.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
@@ -320,7 +399,7 @@ struct Surface_fixture_4 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(0,0,0)){
           if(found == 0){
@@ -330,7 +409,7 @@ struct Surface_fixture_4 {
             h2 = *hb;
             ++found;
           }
-        } 
+        }
       }
     }
     assert(found == 2);
@@ -347,7 +426,8 @@ struct Surface_fixture_4 {
 template <typename Graph>
 struct Surface_fixture_5 {
   Surface_fixture_5() {
-    assert(read_a_mesh(m, "data/add_face_to_border.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/add_face_to_border.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
@@ -355,7 +435,7 @@ struct Surface_fixture_5 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(2,1,0)){
           h1 = *hb;
@@ -363,7 +443,7 @@ struct Surface_fixture_5 {
         } else if(get(pm, target(*hb,m)) == Point_3(2,-1,0)){
           h2 = *hb;
           found++;
-        } 
+        }
       }
     }
     assert(found == 2);
@@ -377,13 +457,14 @@ struct Surface_fixture_5 {
 template <typename Graph>
 struct Surface_fixture_6 {
   Surface_fixture_6() {
-    assert(read_a_mesh(m, "data/quad.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/quad.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
-    
+
     h1 = halfedge(*faces(m).first, m);
-    
+
     h2 = next(next(h1,m),m);
   }
 
@@ -396,10 +477,11 @@ struct Surface_fixture_6 {
 template <typename Graph>
 struct Surface_fixture_7 {
   Surface_fixture_7() {
-    assert(read_a_mesh(m, "data/cube.off"));
+    const bool is_reading_successful = read_a_mesh(m, CGAL::data_file_path("meshes/cube.off"));
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
-    h = *(halfedges(m).first);    
+    h = *(halfedges(m).first);
   }
 
   Graph m;
@@ -409,7 +491,8 @@ struct Surface_fixture_7 {
 template <typename Graph>
 struct Surface_fixture_8 {
   Surface_fixture_8() {
-    assert(read_a_mesh(m, "data/fixture5.off"));
+    const bool is_reading_successful = read_a_mesh(m, "data/fixture5.off");
+    assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
@@ -417,7 +500,7 @@ struct Surface_fixture_8 {
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
-    for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
+    for(std::tie(hb, he) = halfedges(m); hb != he; ++hb) {
       if(get(pm, source(*hb,m)) == Point_3(0,0,0) &&
          get(pm, target(*hb,m)) == Point_3(1,0,0)){
           h1 = *hb;
@@ -430,16 +513,14 @@ struct Surface_fixture_8 {
                 get(pm, target(*hb,m)) == Point_3(0,0,0)){
         h3 = *hb;
         found++;
-      } 
+      }
     }
-    
+
     assert(found == 3);
   }
 
   Graph m;
   typename boost::graph_traits<Graph>::halfedge_descriptor h1, h2, h3;
-
 };
-
 
 #endif /* CGAL_TEST_PREFIX_H */

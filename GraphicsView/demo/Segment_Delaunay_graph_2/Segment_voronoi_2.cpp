@@ -6,7 +6,8 @@
 // CGAL headers
 
 #include "svd-typedefs.h"
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 #include <CGAL/Timer.h>
 
 // Qt headers
@@ -24,6 +25,7 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
+#include <CGAL/IO/WKT.h>
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -45,9 +47,9 @@ class MainWindow :
   public Ui::Segment_voronoi_2
 {
   Q_OBJECT
-  
-private:  
-  SVD svd; 
+
+private:
+  SVD svd;
   QGraphicsScene scene;
   std::list<Point_2> seeds;
 
@@ -59,7 +61,7 @@ public:
   MainWindow();
 
 private:
-  template <typename Iterator> 
+  template <typename Iterator>
   void insert_polyline(Iterator b, Iterator e)
   {
     Point_2 p, q;
@@ -76,7 +78,7 @@ private:
         vh = wh;
         p = q;
       } else {
-        std::cout << "duplicate point: " << p << std::endl; 
+        std::cout << "duplicate point: " << p << std::endl;
       }
     }
     Q_EMIT( changed());
@@ -90,7 +92,7 @@ public Q_SLOTS:
   void processInput(CGAL::Object o);
 
   void on_actionInsertPolyline_toggled(bool checked);
-  
+
   void on_actionClear_triggered();
 
   void on_actionRecenter_triggered();
@@ -100,6 +102,7 @@ public Q_SLOTS:
   void loadPolygonConstraints(QString);
 
   void loadEdgConstraints(QString);
+  void loadWKTConstraints(QString fileName);
 
 Q_SIGNALS:
   void changed();
@@ -120,9 +123,9 @@ MainWindow::MainWindow()
   segmentColor.setAlpha(150);
   sdggi->setSegmentPen(QPen(segmentColor,0));
   sdggi->setVoronoiPen(QPen(voronoiColor,0));
-    
+
   QObject::connect(this, SIGNAL(changed()),
-		   sdggi, SLOT(modelChanged()));
+                   sdggi, SLOT(modelChanged()));
 
   sdggi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
@@ -130,25 +133,25 @@ MainWindow::MainWindow()
   scene.addItem(sdggi);
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-    
+                   this, SLOT(processInput(CGAL::Object)));
 
 
-  // 
+
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPolyline);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPolyline->setChecked(true);
   this->actionShowVoronoi->setChecked(true);
   this->actionShowConstraints->setChecked(true);
@@ -163,7 +166,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -175,7 +178,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -193,7 +196,7 @@ MainWindow::processInput(CGAL::Object o)
       std::cout.precision(12);
       std::cout << points.size() << std::endl;
       for( std::list<Point_2>::iterator it =  points.begin(); it != points.end(); ++it){
-	std::cout << *it << std::endl;
+        std::cout << *it << std::endl;
       }
       */
       insert_polyline(points.begin(), points.end());
@@ -205,10 +208,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -232,15 +235,18 @@ MainWindow::on_actionClear_triggered()
 }
 
 
-void 
+void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".polygons.cgal")){
       loadPolygonConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
+      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
+      loadWKTConstraints(fileName);
       this->addToRecentFiles(fileName);
     }
   }
@@ -250,10 +256,12 @@ void
 MainWindow::on_actionLoadSegments_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Constraint File"),
-						  ".",
-						  tr("Edge files (*.edg)\n"
-						     "Poly files (*.plg)"));
+                                                  tr("Open Constraint File"),
+                                                  ".",
+                                                  tr("Edge files (*.edg);;"
+                                                     "Polyline files (*.polygons.cgal);;"
+                                                     "WKT files (*.wkt *.WKT)"
+                                                     ));
   open(fileName);
 }
 
@@ -278,8 +286,8 @@ MainWindow::loadPolygonConstraints(QString fileName)
     }
     svd.insert(vp, vfirst);
   }
-  
-  
+
+
   Q_EMIT( changed());
   actionRecenter->trigger();
 }
@@ -296,7 +304,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   bool first=true;
   int n;
   ifs >> n;
-  
+
   K::Point_2 p,q, qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
 
   SVD::Vertex_handle vp, vq, vqold;
@@ -326,12 +334,85 @@ MainWindow::loadEdgConstraints(QString fileName)
   actionRecenter->trigger();
 }
 
+void
+MainWindow::loadWKTConstraints(QString
+                               fileName
+                               )
+{
+
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef std::vector<K::Point_2> LineString;
+
+  //Multipolygon
+  K::Point_2 p,q, first;
+  SVD::Vertex_handle vp, vq, vfirst;
+  std::ifstream ifs(qPrintable(fileName));
+  do{
+    std::vector<Polygon> polygons;
+    CGAL::IO::read_multi_polygon_WKT(ifs, polygons);
+    for(const Polygon& poly : polygons)
+    {
+      if(poly.outer_boundary().is_empty())
+        continue;
+      Polygon::General_polygon_2::const_iterator it
+          =poly.outer_boundary().begin();
+      first = *(it++);
+      p = first;
+      vfirst = vp = svd.insert(p);
+      for(; it !=
+          poly.outer_boundary().end();
+          ++it){
+        q = *it;
+        vq = svd.insert(q, vp);
+        svd.insert(vp,vq);
+        p = q;
+        vp = vq;
+      }
+      if(vp != vfirst)
+        svd.insert(vp, vfirst);
+    }
+  }while(ifs.good() && !ifs.eof());
+  //MultiLineString
+  ifs.clear();
+  ifs.seekg(ifs.beg);
+  K::Point_2 qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
+  SVD::Vertex_handle vqold;
+  do{
+    std::vector<LineString > linestrings;
+    CGAL::IO::read_multi_linestring_WKT(ifs, linestrings);
+    for(const LineString& ls : linestrings)
+    {
+      bool first_pass=true;
+      LineString::const_iterator it = ls.begin();
+      for(; it!=ls.end(); ++it){
+        p = *it++;
+        q = *it;
+        if(p == q){
+          continue;
+        }
+        if((!first_pass) && (p == qold)){
+          vp = vqold;
+        } else {
+          vp = svd.insert(p);
+        }
+        vq = svd.insert(q, vp);
+        if(vp != vq)
+          svd.insert(vp,vq);
+        qold = q;
+        vqold = vq;
+        first_pass = false;
+      }
+    }
+  }while(ifs.good() && !ifs.eof());
+  Q_EMIT( changed());
+  actionRecenter->trigger();
+}
 
 void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(sdggi->boundingRect());
-  this->graphicsView->fitInView(sdggi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(sdggi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 #include "Segment_voronoi_2.moc"
@@ -345,7 +426,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Segment Voronoi 2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

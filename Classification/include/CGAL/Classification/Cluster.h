@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -55,7 +46,7 @@ class Cluster
 {
 public:
 
-  typedef typename ItemMap::value_type Item;
+  using Item = typename boost::property_traits<ItemMap>::value_type;
 
   /// \cond SKIP_IN_MANUAL
   struct Neighbor_query
@@ -63,21 +54,42 @@ public:
     template <typename OutputIterator>
     OutputIterator operator() (const Cluster& cluster, OutputIterator output) const
     {
-      return std::copy (cluster.neighbors.begin(), cluster.neighbors.end(), output);
+      return std::copy (cluster.neighbors->begin(), cluster.neighbors->end(), output);
     }
   };
-  std::vector<std::size_t> neighbors;
+  std::shared_ptr<std::vector<std::size_t> > neighbors;
   /// \endcond
-  
+
+  /// \cond SKIP_IN_MANUAL
+  class Point_idx_to_point_unary_function
+  {
+  public:
+    using argument_type = std::size_t;
+    using result_type = typename boost::property_traits<ItemMap>::reference;
+
+    const ItemRange* m_range;
+    ItemMap m_item_map;
+
+    Point_idx_to_point_unary_function (const ItemRange* range, ItemMap item_map)
+      : m_range (range), m_item_map (item_map)
+    { }
+
+    result_type operator() (const argument_type& arg) const
+    {
+      return get (m_item_map, *(m_range->begin() + arg));
+    }
+  };
+  /// \endcond
+
 private:
   const ItemRange* m_range;
   ItemMap m_item_map;
-  
-  std::vector<std::size_t> m_inliers;
+
+  std::shared_ptr<std::vector<std::size_t> > m_inliers;
   mutable CGAL::Bbox_3 m_bounding_box;
   int m_training;
   int m_label;
-  
+
 public:
 
   /// \name Constructor
@@ -92,7 +104,9 @@ public:
     \param item_map property map to access the input items.
   */
   Cluster (const ItemRange& range, ItemMap item_map)
-    : m_range (&range), m_item_map (item_map)
+    : neighbors (std::make_shared<std::vector<std::size_t> >())
+    , m_range (&range), m_item_map (item_map)
+    , m_inliers (std::make_shared<std::vector<std::size_t> >())
     , m_training(-1), m_label(-1)
   { }
 
@@ -104,50 +118,46 @@ public:
   /*!
     \brief Clears the cluster.
   */
-  void clear () { m_inliers.clear(); }
-  
+  void clear () { m_inliers->clear(); }
+
   /*!
-    \brief Inserts element of index `idx` in the cluster.
+    \brief inserts element of index `idx` in the cluster.
   */
-  void insert (std::size_t idx) { m_inliers.push_back (idx); }
+  void insert (std::size_t idx) { m_inliers->push_back (idx); }
 
   /// @}
 
   /// \name Access
   /// @{
-  
-  /*!
-    \brief Returns the number of items in the cluster.
-  */
-  std::size_t size() const { return m_inliers.size(); }
 
   /*!
-    \brief Returns the index (in the input range) of the i^{th} element of the cluster.
+    \brief returns the number of items in the cluster.
   */
-  std::size_t index (std::size_t i) const { return m_inliers[i]; }
-  
+  std::size_t size() const { return m_inliers->size(); }
+
   /*!
-    \brief Returns the i^{th} item of the cluster.
+    \brief returns the index (in the input range) of the i^{th} element of the cluster.
+  */
+  std::size_t index (std::size_t i) const { return (*m_inliers)[i]; }
+
+  /*!
+    \brief returns the i^{th} item of the cluster.
   */
   const Item& operator[] (std::size_t i) const
-  { return get (m_item_map, *(m_range->begin() + m_inliers[i])); }
+  { return get (m_item_map, *(m_range->begin() + (*m_inliers)[i])); }
 
   /*!
-    \brief Returns the bounding box of the cluster.
+    \brief returns the bounding box of the cluster.
   */
-  CGAL::Bbox_3 bbox() const
+  const CGAL::Bbox_3& bbox() const
   {
     if (m_bounding_box == CGAL::Bbox_3())
     {
-      m_bounding_box
-        = CGAL::bbox_3 (boost::make_transform_iterator
-                        (m_range->begin(),
-                         CGAL::Property_map_to_unary_function<ItemMap>(m_item_map)),
-                        boost::make_transform_iterator
-                        (m_range->end(),
-                         CGAL::Property_map_to_unary_function<ItemMap>(m_item_map)));
-
+      Point_idx_to_point_unary_function transform (m_range, m_item_map);
+      m_bounding_box = CGAL::bbox_3 (boost::make_transform_iterator (m_inliers->begin(), transform),
+                                     boost::make_transform_iterator (m_inliers->end(), transform));
     }
+
     return m_bounding_box;
   }
 
@@ -157,22 +167,22 @@ public:
   /// @{
 
   /*!
-    \brief Returns the input classification value used for training.
+    \brief returns the input classification value used for training.
   */
   int training() const { return m_training; }
-  
+
   /*!
-    \brief Returns a reference to the input classification value used for training.
+    \brief returns a reference to the input classification value used for training.
   */
   int& training() { return m_training; }
-  
+
   /*!
-    \brief Returns the output classification value.
+    \brief returns the output classification value.
   */
   int label() const { return m_label; }
-  
+
   /*!
-    \brief Returns a reference to the output classification value.
+    \brief returns a reference to the output classification value.
   */
   int& label() { return m_label; }
 
@@ -217,12 +227,16 @@ std::size_t create_clusters_from_indices (const ItemRange& range,
   {
     int c = int(get (index_map, idx));
     if (c == -1)
-      continue;  
+      continue;
     if (std::size_t(c) >= clusters.size())
-      clusters.resize (c + 1, Cluster<ItemRange, ItemMap>(range, item_map));
+    {
+      clusters.reserve (c + 1);
+      for (std::size_t i = clusters.size(); i <= std::size_t(c); ++ i)
+        clusters.push_back (Cluster<ItemRange, ItemMap>(range, item_map));
+    }
     clusters[std::size_t(c)].insert (idx);
   }
-  
+
   return clusters.size();
 }
 

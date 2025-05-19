@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Steve OUDOT, Laurent Rineau
@@ -25,6 +16,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Standard_criteria.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <cmath>
 #include <vector>
@@ -63,8 +58,8 @@ namespace CGAL {
       int i = 0;
       q.resize(criteria.size());
       for (typename Criteria::const_iterator cit = criteria.begin(); cit !=
-	     criteria.end(); ++cit)
-	if ((*cit)->is_bad (f, q[i++]))
+             criteria.end(); ++cit)
+        if ((*cit)->is_bad (f, q[i++]))
 #ifndef CGAL_SURFACE_MESHER_DEBUG_CRITERIA
           return true;
       return false;
@@ -160,7 +155,7 @@ namespace CGAL {
       d23=gt.compute_squared_distance_3_object()(p2,p3);
 
       Quality aspect_ratio = 4 * gt.compute_squared_area_3_object()(t)
-	* min_3(d12,d13,d23) / (d12*d13*d23);
+        * min_3(d12,d13,d23) / (d12*d13*d23);
 
       CGAL_assertion (aspect_ratio >= 0 && aspect_ratio <= 1);
       q = aspect_ratio;
@@ -168,16 +163,16 @@ namespace CGAL {
     }
 
   private:
-    static 
+    static
     Quality min_3 (const Quality a, const Quality b, const Quality c) {
       if (a<=b && a<=c)
-	return(a);
+        return(a);
 
       else if (b<=c)
-	return(b);
+        return(b);
 
       else
-	return(c);
+        return(c);
     }
   };  // end Aspect_ratio_criterion
 
@@ -229,10 +224,10 @@ namespace CGAL {
       const FT denom = distance(c, fh.first->get_facet_surface_center(fh.second));
 
       if(denom == FT(0)) {
-	q = 1;
+        q = 1;
       }
       else {
-	q = B / denom;
+        q = B / denom;
       }
       return q < FT(1);
     }
@@ -277,7 +272,7 @@ namespace CGAL {
       const Point& p1 = fh.first->vertex ((fh.second+1)&3)->point();
 
       q =  B / gt.compute_squared_distance_3_object()
-	(p1, fh.first->get_facet_surface_center (fh.second));
+        (p1, fh.first->get_facet_surface_center (fh.second));
       return q < FT(1);
     }
   };  // end Uniform_size_criterion
@@ -320,13 +315,13 @@ namespace CGAL {
       const FT d23 = gt.compute_squared_distance_3_object() (p2, p3);
 
       if (d12 > d13) {
-	if (d12 > d23)
-	  q =  B / d12;
-	else
-	  q = B / d23;
+        if (d12 > d23)
+          q =  B / d12;
+        else
+          q = B / d23;
       }
       else
-	q = B / d13;
+        q = B / d13;
       return q < FT(1);
     }
 

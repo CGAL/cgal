@@ -1,6 +1,6 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     std::size_t nbf1=sm1.number_of_faces(), nbf2=sm2.number_of_faces();
 
     CGAL::Polygon_mesh_processing::corefine(sm1, sm2);
-    
+
     assert( nbv1 == sm1.number_of_vertices() );
     assert( nbv2 == sm2.number_of_vertices() );
     assert( nbe1 == sm1.number_of_edges() );

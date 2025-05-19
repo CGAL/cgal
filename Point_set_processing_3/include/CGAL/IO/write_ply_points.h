@@ -2,339 +2,80 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_WRITE_PLY_POINTS_H
-#define CGAL_WRITE_PLY_POINTS_H
+#ifndef CGAL_POINT_SET_PROCESSING_WRITE_PLY_POINTS_H
+#define CGAL_POINT_SET_PROCESSING_WRITE_PLY_POINTS_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
-#include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL PLY writer requires a C++11 compiler
-#endif
-
-#include <tuple>
+#include <CGAL/IO/helpers.h>
+#include <CGAL/IO/PLY.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/version.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <iterator>
+#include <tuple>
+#include <type_traits>
 
 namespace CGAL {
 
+namespace IO {
+
+#ifdef DOXYGEN_RUNNING // Document some parts from Stream_support here for convenience
   /**
      \ingroup PkgPointSetProcessing3IOPly
-     
+
      Generates a %PLY property handler to write 3D points. Points are
      written as 3 %PLY properties of type `FT` and named `x`, `y` and
      `z`. `FT` is `float` if the points use
      `CGAL::Simple_cartesian<float>` and `double` otherwise.
 
-     \sa `write_ply_points_with_properties()`
-
      \tparam PointMap the property map used to store points.
+
+     \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
   */
   template <typename PointMap>
-#ifdef DOXYGEN_RUNNING
   std::tuple<PointMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
-#else
-  std::tuple<PointMap,
-             PLY_property<typename GetFTFromMap<PointMap>::type>,
-             PLY_property<typename GetFTFromMap<PointMap>::type>,
-             PLY_property<typename GetFTFromMap<PointMap>::type> >
-#endif
-  make_ply_point_writer(PointMap point_map)
-  {
-    return std::make_tuple (point_map,
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("x"),
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("y"),
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("z"));
-  }
+  make_ply_point_writer(PointMap point_map);
 
   /**
      \ingroup PkgPointSetProcessing3IOPly
-     
+
      Generates a %PLY property handler to write 3D normal
      vectors. Vectors are written as 3 %PLY properties of type `FT`
      and named `nx`, `ny` and `nz`. `FT` is `float` if the vectors use
      `CGAL::Simple_cartesian<float>` and `double` otherwise.
 
-     \sa `write_ply_points_with_properties()`
-
      \tparam VectorMap the property map used to store vectors.
+
+     \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
   */
   template <typename VectorMap>
-#ifdef DOXYGEN_RUNNING
   std::tuple<VectorMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
-#else
-  std::tuple<VectorMap,
-             PLY_property<typename GetFTFromMap<VectorMap>::type>,
-             PLY_property<typename GetFTFromMap<VectorMap>::type>,
-             PLY_property<typename GetFTFromMap<VectorMap>::type> >
+  make_ply_normal_writer(VectorMap normal_map);
 #endif
-  make_ply_normal_writer(VectorMap normal_map)
-  {
-    return std::make_tuple (normal_map,
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nx"),
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("ny"),
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nz"));
-  }
-
-  /// \cond SKIP_IN_MANUAL
-
-namespace internal {
-
-  namespace PLY {
-
-  template <typename T> void property_header_type (std::ostream& stream)
-  {
-    CGAL_assertion_msg (false, "Unknown PLY type");
-    stream << "undefined_type";
-  }
-
-  template <> void property_header_type<char> (std::ostream& stream) { stream << "char"; }
-  template <> void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
-  template <> void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
-  template <> void property_header_type<short> (std::ostream& stream) { stream << "short"; }
-  template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
-  template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
-  template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
-  template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
-  template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
-    
-  template <typename T>
-  void property_header (std::ostream& stream, const PLY_property<T>& prop)
-  {
-    stream << "property ";
-    property_header_type<T>(stream);
-    stream << " " << prop.name << std::endl;
-  }
-
-  template <typename T>
-  void property_header (std::ostream& stream, const PLY_property<std::vector<T> >& prop)
-  {
-    stream << "property list uchar ";
-    property_header_type<T>(stream);
-    stream << " " << prop.name << std::endl;
-  }
-
-  
-  template <std::size_t N>
-  struct Properties_header
-  {
-    template <class PLY_property_tuple>
-    static void write(std::ostream& stream, PLY_property_tuple& wrappers)
-    {
-      Properties_header<N-1>::write(stream, wrappers);
-      property_header (stream, std::get<N+1>(wrappers));
-    }
-  };
-  template <>
-  struct Properties_header<0>
-  {
-    template <class PLY_property_tuple>
-    static void write(std::ostream& stream, PLY_property_tuple& wrappers)
-    {
-      property_header (stream, std::get<1>(wrappers));
-    }
-  };
-
-  template <typename PropertyMap,
-            typename ... T>
-  void output_property_header (std::ostream& stream,
-                               std::tuple<PropertyMap, PLY_property<T>... >&& current)
-  {
-    Properties_header<sizeof...(T)-1>::write(stream, current); 
-  }
-
-
-  template <typename PropertyMap,
-            typename T>
-  void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY_property<T> >&& current)
-  {
-    property_header (stream, current.second);
-  }
-
-  template <typename PropertyMap,
-            typename T,
-            typename NextPropertyHandler,
-            typename ... PropertyHandler>
-  void output_property_header (std::ostream& stream,
-                               std::pair<PropertyMap, PLY_property<T> >&& current,
-                               NextPropertyHandler&& next,
-                               PropertyHandler&& ... properties)
-  {
-    property_header (stream, current.second);
-    output_property_header (stream, std::forward<NextPropertyHandler>(next),
-                            std::forward<PropertyHandler>(properties)...);
-  }
-  template <typename PropertyMap,
-            typename ... T,
-            typename NextPropertyHandler,
-            typename ... PropertyHandler>
-  void output_property_header (std::ostream& stream,
-                               std::tuple<PropertyMap, PLY_property<T>... >&& current,
-                               NextPropertyHandler&& next,
-                               PropertyHandler&& ... properties)
-  {
-    Properties_header<sizeof...(T)-1>::write(stream, current); 
-    output_property_header (stream, std::forward<NextPropertyHandler>(next),
-                            std::forward<PropertyHandler>(properties)...);
-  }
-
-
-  template <typename ForwardIterator,
-            typename PropertyMap>
-  void property_write (std::ostream& stream, ForwardIterator it, PropertyMap map)
-  {
-    stream << CGAL::oformat(get (map, *it));
-  }
-
-  template <typename T>
-  T no_char_character (const T& t) { return t; }
-  int no_char_character (const char& t) { return int(t); }
-  int no_char_character (const signed char& t) { return int(t); }
-  int no_char_character (const unsigned char& t) { return int(t); }
-
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename T>
-  void simple_property_write (std::ostream& stream, ForwardIterator it,
-                              std::pair<PropertyMap, PLY_property<T> > map)
-  {
-    if (CGAL::get_mode(stream) == IO::ASCII)
-      stream << no_char_character(get (map.first, *it));
-    else
-      {
-        typename PropertyMap::value_type value = get(map.first, *it);
-        stream.write (reinterpret_cast<char*>(&value), sizeof(value));
-      }
-  }
-
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename T>
-  void simple_property_write (std::ostream& stream, ForwardIterator it,
-                              std::pair<PropertyMap, PLY_property<std::vector<T> > > map)
-  {
-    const typename PropertyMap::reference value = get(map.first, *it);
-    
-    if (CGAL::get_mode(stream) == IO::ASCII)
-    {
-      stream << value.size();
-      for (std::size_t i = 0; i < value.size(); ++ i)
-        stream << " " << no_char_character(value[i]);
-    }
-    else
-      {
-        unsigned char size = static_cast<unsigned char>(value.size());
-        stream.write (reinterpret_cast<char*>(&size), sizeof(size));
-        for (std::size_t i = 0; i < value.size(); ++ i)
-        {
-          T t = T(value[i]);
-          stream.write (reinterpret_cast<char*>(&t), sizeof(t));
-        }
-      }
-  }
-
-    
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename ... T>
-  void output_properties (std::ostream& stream,
-                          ForwardIterator it,
-                          std::tuple<PropertyMap, PLY_property<T>... >&& current)
-  {
-    property_write (stream, it, std::get<0>(current));
-    if (get_mode(stream) == IO::ASCII)
-      stream << std::endl;
-  }
-
-
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename T>
-  void output_properties (std::ostream& stream,
-                          ForwardIterator it,
-                          std::pair<PropertyMap, PLY_property<T> >&& current)
-  {
-    simple_property_write (stream, it, std::forward<std::pair<PropertyMap, PLY_property<T> > >(current));
-    if (get_mode(stream) == IO::ASCII)
-      stream << std::endl;
-  }
-
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename T,
-            typename NextPropertyHandler,
-            typename ... PropertyHandler>
-  void output_properties (std::ostream& stream,
-                          ForwardIterator it,
-                          std::pair<PropertyMap, PLY_property<T> >&& current,
-                          NextPropertyHandler&& next,
-                          PropertyHandler&& ... properties)
-  {
-    simple_property_write (stream, it, current);
-    if (get_mode(stream) == IO::ASCII)
-      stream << " ";
-    output_properties (stream, it, std::forward<NextPropertyHandler>(next),
-                       std::forward<PropertyHandler>(properties)...);
-  }
-  
-  template <typename ForwardIterator,
-            typename PropertyMap,
-            typename ... T,
-            typename NextPropertyHandler,
-            typename ... PropertyHandler>
-  void output_properties (std::ostream& stream,
-                          ForwardIterator it,
-                          std::tuple<PropertyMap, PLY_property<T>... >&& current,
-                          NextPropertyHandler&& next,
-                          PropertyHandler&& ... properties)
-  {
-    property_write (stream, it, std::get<0>(current));
-    if (get_mode(stream) == IO::ASCII)
-      stream << " ";
-    output_properties (stream, it, std::forward<NextPropertyHandler>(next),
-                       std::forward<PropertyHandler>(properties)...);
-  }
-
-  } // namespace PLY
-    
-} // namespace internal
-
-  /// \endcond
-
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
-   Saves the range of `points` with properties to a
-   .ply stream. %PLY is either ASCII or binary depending on the value
-   of `CGAL::get_mode(stream)`.
+
+   \brief writes the range of `points` with properties using \ref IOStreamPLY.
 
    Properties are handled through a variadic list of property
    handlers. A `PropertyHandler` can either be:
@@ -347,196 +88,290 @@ namespace internal {
    user wants to write a complex object as several %PLY
    properties. In that case, a specialization of `Output_rep` must
    be provided for `PropertyMap::value_type` that handles both ASCII
-   and binary output (see `CGAL::get_mode()`).
+   and binary output (see `CGAL::IO::get_mode()`).
 
-   \sa `make_ply_point_writer()`
-   \sa `make_ply_normal_writer()`
-
-   \cgalRequiresCPP11
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the `PropertyMap` objects provided
+                      within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
-   \return `true` on success.
-*/
-template < typename PointRange,
-           typename ... PropertyHandler>
-bool
-write_ply_points_with_properties(
-  std::ostream& stream, ///< output stream.
-  const PointRange& points, ///< input point range.
-  PropertyHandler&& ... properties) ///< parameter pack of property handlers
-{
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+   \returns `true` if writing was successful, `false` otherwise.
 
-  if(!stream)
+   \sa \ref IOStreamPLY
+   \sa `make_ply_point_writer()`
+   \sa `make_ply_normal_writer()`
+*/
+template <typename PointRange,
+          typename ... PropertyHandler>
+  bool write_PLY_with_properties(std::ostream& os, ///< output stream.
+                                 const PointRange& points, ///< input point range.
+                                 PropertyHandler&& ... properties) ///< parameter pack of property handlers
+{
+  CGAL_precondition(points.begin() != points.end());
+
+  if(!os)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
   // Write header
-  stream << "ply" << std::endl
-         << ((get_mode(stream) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
-         << "comment Generated by the CGAL library" << std::endl
-         << "element vertex " << points.size() << std::endl;
-  
-  internal::PLY::output_property_header (stream, std::forward<PropertyHandler>(properties)...);
-  
-  stream << "end_header" << std::endl;
-  
+  os << "ply" << std::endl
+     << ((get_mode(os) == BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
+     << "comment Generated by the CGAL library" << std::endl
+     << "element vertex " << points.size() << std::endl;
+
+  internal::output_property_header (os, std::forward<PropertyHandler>(properties)...);
+
+  os << "end_header" << std::endl;
 
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
-  {
-    internal::PLY::output_properties (stream, it, std::forward<PropertyHandler>(properties)...);
-  }
+    internal::output_properties (os, it, std::forward<PropertyHandler>(properties)...);
 
-  return ! stream.fail();
+  return !os.fail();
 }
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
-   Saves the range of `points` (positions + normals, if available) to
-   a .ply stream. %PLY is either ASCII or binary depending on the
-   value of `CGAL::get_mode(stream)`.
+
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
+
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param stream output stream.
-   \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param os output stream
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd If this parameter is omitted, normals are not written to the
-     output stream.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{the precision of the stream `os`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return true on success.
-   \cgalRequiresCPP11
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa `write_PLY_with_properties()`
 */
-template <typename PointRange,
-          typename NamedParameters>
-bool
-write_ply_points(
-  std::ostream& stream,
-  const PointRange& points,
-  const NamedParameters& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(boost::is_same<NormalMap,
-                       typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
+  const bool has_normals = NP_helper::has_normal_map(points, np);
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  
-  if (has_normals)
-    return write_ply_points_with_properties(
-      stream, points,
-      make_ply_point_writer(point_map),
-      make_ply_normal_writer(normal_map));
-  // else
-  return write_ply_points_with_properties(
-    stream, points,
-    make_ply_point_writer(point_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
+
+  if(!os)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
+
+  set_stream_precision_from_NP(os, np);
+
+  if(has_normals)
+    return write_PLY_with_properties(os, points,
+                                     make_ply_point_writer(point_map),
+                                     make_ply_normal_writer(normal_map));
+
+  return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-bool
-write_ply_points(
-  std::ostream& stream,
-  const PointRange& points)
+/**
+   \ingroup PkgPointSetProcessing3IOPly
+
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+                      its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the path to the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{stream_precision}
+       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa `write_PLY_with_properties()`
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& filename,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               )
 {
-  return write_ply_points
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(filename, std::ios::binary);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
+    return write_PLY(os, points, np);
+  }
+  else
+  {
+    std::ofstream os(filename);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
+    return write_PLY(os, points, np);
+  }
 }
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template < typename ForwardIterator,
-           typename PointMap,
-           typename VectorMap >
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points_and_normals(), please update your code")
-bool
-write_ply_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
-  VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_ply_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
-}
-  
-// deprecated API
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename ForwardIterator,
-          typename VectorMap
->
+          typename PointMap,
+          typename VectorMap>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points_and_normals(), please update your code")
-bool
-write_ply_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
+bool write_ply_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
+                                  VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_ply_points
-    (stream, points,
-     CGAL::parameters::normal_map (normal_map));
+  return IO::write_PLY(os, points, parameters::point_map(point_map)
+                                              .normal_map(normal_map));
 }
 
-// deprecated API
-template < typename ForwardIterator,
-           typename PointMap >
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points(), please update your code")
-bool
-write_ply_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
+template <typename ForwardIterator,
+          typename VectorMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points_and_normals(), please update your code")
+bool write_ply_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  VectorMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_ply_points
-    (stream, points,
-     CGAL::parameters::point_map(point_map));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return IO::write_PLY(os, points, parameters::normal_map (normal_map));
 }
 
-// deprecated API
-template < typename ForwardIterator >
+template <typename ForwardIterator,
+          typename PointMap >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points(), please update your code")
-bool
-write_ply_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond) ///< past-the-end input point.
+bool write_ply_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond, ///< past-the-end input point.
+                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
+{
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return IO::write_PLY(os, points, parameters::point_map(point_map));
+}
+
+template <typename ForwardIterator >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_ply_points(), please update your code")
+bool write_ply_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_ply_points
-    (stream, points);
+  return IO::write_PLY(os, points);
 }
-#endif // CGAL_NO_DEPRECATED_CODE
+
 /// \endcond
 
 
-} //namespace CGAL
+template <typename PointRange,
+          typename ... PropertyHandler>
+CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< output stream.
+                                                      const PointRange& points, ///< input point range.
+                                                      PropertyHandler&& ... properties) ///< parameter pack of property handlers
+{
+  return IO::write_PLY_with_properties(os, points, std::forward<PropertyHandler>(properties)...);
+}
 
-#endif // CGAL_WRITE_PLY_POINTS_H
+
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  return IO::write_PLY(os, points, np);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
+} // namespace CGAL
+
+#endif // CGAL_POINT_SET_PROCESSING_WRITE_PLY_POINTS_H

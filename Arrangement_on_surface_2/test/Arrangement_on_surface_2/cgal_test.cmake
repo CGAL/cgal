@@ -30,9 +30,6 @@ set(SEGMENT_GEOM_TRAITS 0)
 set(NON_CACHING_SEGMENT_GEOM_TRAITS 1)
 set(POLYLINE_GEOM_TRAITS 2)
 set(NON_CACHING_POLYLINE_GEOM_TRAITS 3)
-set(POLYCURVE_CONIC_GEOM_TRAITS 14)
-set(POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS 15)
-set(POLYCURVE_BEZIER_GEOM_TRAITS 16)
 set(LINEAR_GEOM_TRAITS 4)
 set(CORE_CONIC_GEOM_TRAITS 5)
 set(LINE_ARC_GEOM_TRAITS 6)
@@ -70,14 +67,28 @@ set(CGAL_GMPZ_NT 14)
 set(CORE_INT_NT 15)
 set(CORE_RAT_NT 16)
 
-if($ENV{CGAL_DISABLE_GMP})
-  message(STATUS "GMP is disable. Try to use LEDA instead.")
-  set(GMPZ_NT ${LEDA_INT_NT})
-  set(QUOTIENT_CGAL_GMPZ_NT ${LEDA_RAT_NT})
-  set(CGAL_GMPQ_NT ${LEDA_RAT_NT})
-  set(LAZY_CGAL_GMPQ_NT ${LAZY_LEDA_RAT_NT})
-  set(LAZY_GMPZ_NT ${LAZY_LEDA_RAT_NT})
-  set(CGAL_GMPZ_NT ${LEDA_INT_NT})
+if(CGAL_DISABLE_GMP)
+  set(CGAL_DISABLE_GMP ON)
+endif()
+
+if(CGAL_DISABLE_GMP)
+  if (CGAL_USE_LEDA)
+    message(STATUS "GMP is disabled, try to use LEDA instead.")
+    set(GMPZ_NT ${LEDA_INT_NT})
+    set(QUOTIENT_CGAL_GMPZ_NT ${LEDA_RAT_NT})
+    set(CGAL_GMPQ_NT ${LEDA_RAT_NT})
+    set(LAZY_CGAL_GMPQ_NT ${LAZY_LEDA_RAT_NT})
+    set(LAZY_GMPZ_NT ${LAZY_LEDA_RAT_NT})
+    set(CGAL_GMPZ_NT ${LEDA_INT_NT})
+  else()
+    message(STATUS "GMP is disabled, try to use MP float instead.")
+    set(GMPZ_NT ${MP_FLOAT_NT})
+    set(QUOTIENT_CGAL_GMPZ_NT ${QUOTIENT_MP_FLOAT_NT})
+    set(CGAL_GMPQ_NT ${QUOTIENT_MP_FLOAT_NT})
+    set(LAZY_CGAL_GMPQ_NT ${LAZY_QUOTIENT_MP_FLOAT_NT})
+    set(LAZY_GMPZ_NT ${LAZY_QUOTIENT_MP_FLOAT_NT})
+    set(CGAL_GMPZ_NT ${MP_FLOAT_NT})
+  endif()
 endif()
 
 set(COMPARE 1)
@@ -93,8 +104,6 @@ set(ARE_MERGEABLE 10)
 set(MERGE 11)
 set(ASSERTIONS 12)
 set(CONSTRUCTOR 13)
-set(COMPARE_X_AT_LIMIT 14)
-set(COMPARE_X_NEAR_LIMIT 15)
 set(COMPARE_X_ON_BOUNDARY 16)
 set(COMPARE_X_NEAR_BOUNDARY 17)
 set(COMPARE_Y_NEAR_BOUNDARY 18)
@@ -109,6 +118,7 @@ set(IS_BETWEEN_CW 26)
 set(COMPARE_CW_AROUND_POINT 27)
 set(PUSH_BACK 28)
 set(PUSH_FRONT 29)
+set(APPROXIMATE 30)
 set(NUMBER_OF_POINTS 32)
 set(COMPARE_ENDPOINTS_XY 33)
 set(CONSTRUCT_OPPOSITE 34)
@@ -152,20 +162,25 @@ function(cgal_arr_2_add_target exe_name source_file)
     set(name ${exe_name}_${suffix})
   endif()
   add_executable(${name} ${source_file})
+  target_link_libraries(${name} CGAL::CGAL)
+  if (TARGET CGAL::CGAL_Core)
+    target_link_libraries(${name} CGAL::CGAL_Core)
+  endif()
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${name} )
   separate_arguments(flags UNIX_COMMAND "${TESTSUITE_CXXFLAGS}")
   target_compile_options(${name} PRIVATE ${flags})
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     cgal_add_compilation_test(${name})
-  endif(BUILD_TESTING)
+  endif(CGAL_ENABLE_TESTING)
 
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
     create_single_source_cgal_program( "${source_file}" NO_TESTING)
-    if(BUILD_TESTING)
+    if(CGAL_ENABLE_TESTING)
       cgal_add_compilation_test(${exe_name})
-    endif(BUILD_TESTING)
+    endif(CGAL_ENABLE_TESTING)
   endif()
 endfunction()
 
@@ -178,7 +193,7 @@ endfunction()
 function(run_test_with_flags)
   # ${ARGV0} - executable name
   # ${ARGV1} - test substring name
-  if(NOT BUILD_TESTING)
+  if(NOT CGAL_ENABLE_TESTING)
     return()
   endif()
   cgal_debug_message(STATUS "# run_test_with_flags(${ARGN})")
@@ -186,7 +201,7 @@ function(run_test_with_flags)
 endfunction()
 
 function(run_test_alt name datafile)
-  if(NOT BUILD_TESTING)
+  if(NOT CGAL_ENABLE_TESTING)
     return()
   endif()
   if(suffix)
@@ -194,24 +209,10 @@ function(run_test_alt name datafile)
   endif()
   cgal_debug_message(STATUS "#     run_test_alt(${ARGN})")
   cgal_debug_message(STATUS "#       -> ./${name} ${datafile} ${ARGN}")
-  set(command ${name} ${datafile} ${ARGN})
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
-  add_test(NAME ${test_name} COMMAND ${command}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY DEPENDS "compilation_of__${name}")
-  if(POLICY CMP0066) # CMake 3.7 or later
-    set_tests_properties("${test_name}"
-      PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED ${PROJECT_NAME})
-  endif()
-  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
-
-#  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
+  cgal_add_test(${name}
+    TEST_NAME ${test_name}
+    ARGUMENTS ${datafile} ${ARGN})
 endfunction()
 
 function(run_trapped_test name datafile)
@@ -224,7 +225,7 @@ function(compile_and_run)
   cgal_debug_message(STATUS "# compile_and_run(${ARGN})")
 #  message("   successful compilation of ${name}")
   cgal_arr_2_add_target(${name} ${name}.cpp)
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     cgal_add_test(${name})
   endif()
 endfunction()
@@ -240,22 +241,30 @@ function(execute_commands_old_structure data_dir traits_type_name)
   # the old structure is default, so this function executes all commands
   # except the commands that are given as arguments
 
+  set(commands_indicator_APPROXIMATE 1)
+  set(commands_indicator_ARE_MERGEABLE 1)
+  set(commands_indicator_ASSERTIONS 1)
   set(commands_indicator_COMPARE 1)
-  set(commands_indicator_VERTEX 1)
-  set(commands_indicator_IS_VERTICAL 1)
   set(commands_indicator_COMPARE_Y_AT_X 1)
   set(commands_indicator_COMPARE_Y_AT_X_LEFT 1)
   set(commands_indicator_COMPARE_Y_AT_X_RIGHT 1)
-  set(commands_indicator_MAKE_X_MONOTONE 1)
-  set(commands_indicator_INTERSECT 1)
-  set(commands_indicator_SPLIT 1)
-  set(commands_indicator_ARE_MERGEABLE 1)
-  set(commands_indicator_MERGE 1)
-  set(commands_indicator_ASSERTIONS 1)
   set(commands_indicator_CONSTRUCTOR 1)
+  set(commands_indicator_INTERSECT 1)
+  set(commands_indicator_IS_VERTICAL 1)
+  set(commands_indicator_MAKE_X_MONOTONE 1)
+  set(commands_indicator_MERGE 1)
+  set(commands_indicator_SPLIT 1)
+  set(commands_indicator_VERTEX 1)
+
   foreach(arg ${ARGN})
     set(commands_indicator_${arg} 0)
   endforeach()
+
+  if(commands_indicator_APPROXIMATE)
+    run_trapped_test(test_traits
+      data/empty.zero data/${data_dir}/approximate.xcv
+      data/empty.zero data/${data_dir}/approximate ${traits_type_name})
+  endif()
   if(commands_indicator_COMPARE)
     run_trapped_test(test_traits
       data/compare.pt data/empty.zero
@@ -278,18 +287,21 @@ function(execute_commands_old_structure data_dir traits_type_name)
   endif()
   if(commands_indicator_COMPARE_Y_AT_X_LEFT)
     run_trapped_test(test_traits
-      data/${data_dir}/compare_y_at_x_left.pt data/${data_dir}/compare_y_at_x_left.xcv
+      data/${data_dir}/compare_y_at_x_left.pt
+      data/${data_dir}/compare_y_at_x_left.xcv
       data/empty.zero data/${data_dir}/compare_y_at_x_left ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_Y_AT_X_RIGHT)
     run_trapped_test(test_traits
-      data/${data_dir}/compare_y_at_x_right.pt data/${data_dir}/compare_y_at_x_right.xcv
+      data/${data_dir}/compare_y_at_x_right.pt
+      data/${data_dir}/compare_y_at_x_right.xcv
       data/empty.zero data/${data_dir}/compare_y_at_x_right ${traits_type_name})
   endif()
   if(commands_indicator_MAKE_X_MONOTONE)
     run_trapped_test(test_traits
       data/empty.zero data/${data_dir}/make_x_monotone.xcv
-      data/${data_dir}/make_x_monotone.cv data/${data_dir}/make_x_monotone ${traits_type_name})
+      data/${data_dir}/make_x_monotone.cv
+      data/${data_dir}/make_x_monotone ${traits_type_name})
   endif()
   if(commands_indicator_INTERSECT)
     run_trapped_test(test_traits
@@ -319,7 +331,8 @@ function(execute_commands_old_structure data_dir traits_type_name)
   if(commands_indicator_CONSTRUCTOR)
     run_trapped_test(test_traits
       data/empty.zero data/${data_dir}/constructor.xcv
-      data/${data_dir}/constructor.cv data/${data_dir}/constructor ${traits_type_name})
+      data/${data_dir}/constructor.cv data/${data_dir}/constructor
+      ${traits_type_name})
   endif()
 endfunction()
 
@@ -332,143 +345,166 @@ function(execute_commands_new_structure data_dir traits_type_name)
 # the new structure is not default, so this function executes only
 # commands that are given as arguments
 
+  set(commands_indicator_APPROXIMATE 0)
+  set(commands_indicator_ARE_MERGEABLE 0)
+  set(commands_indicator_ASSERTIONS 0)
   set(commands_indicator_COMPARE 0)
-  set(commands_indicator_VERTEX 0)
-  set(commands_indicator_IS_VERTICAL 0)
-  set(commands_indicator_COMPARE_X_AT_LIMIT 0)
-  set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
-  set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
+  set(commands_indicator_COMPARE_ENDPOINTS_XY 0)
   set(commands_indicator_COMPARE_X_NEAR_BOUNDARY 0)
-  set(commands_indicator_COMPARE_Y_NEAR_BOUNDARY 0)
-  set(commands_indicator_PARAMETER_SPACE_X 0)
-  set(commands_indicator_PARAMETER_SPACE_Y 0)
+  set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
   set(commands_indicator_COMPARE_Y_AT_X 0)
   set(commands_indicator_COMPARE_Y_AT_X_LEFT 0)
   set(commands_indicator_COMPARE_Y_AT_X_RIGHT 0)
-  set(commands_indicator_MAKE_X_MONOTONE 0)
-  set(commands_indicator_INTERSECT 0)
-  set(commands_indicator_SPLIT 0)
-  set(commands_indicator_ARE_MERGEABLE 0)
-  set(commands_indicator_MERGE 0)
-  set(commands_indicator_ASSERTIONS 0)
+  set(commands_indicator_COMPARE_Y_NEAR_BOUNDARY 0)
   set(commands_indicator_CONSTRUCTOR 0)
+  set(commands_indicator_CONSTRUCT_OPPOSITE 0)
   set(commands_indicator_EQUAL 0)
+  set(commands_indicator_INTERSECT 0)
+  set(commands_indicator_IS_VERTICAL 0)
+  set(commands_indicator_MAKE_X_MONOTONE 0)
+  set(commands_indicator_MERGE 0)
+  set(commands_indicator_NUMBER_OF_POINTS 0)
+  set(commands_indicator_PARAMETER_SPACE_X 0)
+  set(commands_indicator_PARAMETER_SPACE_Y 0)
   set(commands_indicator_PUSH_BACK 0)
   set(commands_indicator_PUSH_FRONT 0)
-  set(commands_indicator_NUMBER_OF_POINTS 0)
-  set(commands_indicator_COMPARE_ENDPOINTS_XY 0)
-  set(commands_indicator_CONSTRUCT_OPPOSITE 0)
+  set(commands_indicator_SPLIT 0)
   set(commands_indicator_TRIM 0)
+  set(commands_indicator_VERTEX 0)
+
   foreach(arg ${ARGN})
     set(commands_indicator_${arg} 1)
   endforeach()
+
+  if(commands_indicator_APPROXIMATE)
+    run_trapped_test(test_traits data/${data_dir}/points
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/approximate ${traits_type_name})
+  endif()
   if(commands_indicator_COMPARE)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare ${traits_type_name})
   endif()
   if(commands_indicator_VERTEX)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/vertex ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/vertex ${traits_type_name})
   endif()
   if(commands_indicator_IS_VERTICAL)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/is_vertical ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_AT_LIMIT)
-    run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_at_limit ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_NEAR_LIMIT)
-    run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_near_limit ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/is_vertical ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_X_ON_BOUNDARY)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_on_boundary ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_x_on_boundary ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_X_NEAR_BOUNDARY)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_near_boundary ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_x_near_boundary ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_Y_NEAR_BOUNDARY)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_y_near_boundary ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_y_near_boundary ${traits_type_name})
   endif()
   if(commands_indicator_PARAMETER_SPACE_X)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/parameter_space_x ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/parameter_space_x ${traits_type_name})
   endif()
   if(commands_indicator_PARAMETER_SPACE_Y)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/parameter_space_y ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/parameter_space_y ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_Y_AT_X)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_y_at_x ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_y_at_x ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_Y_AT_X_LEFT)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_y_at_x_left ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_y_at_x_left ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_Y_AT_X_RIGHT)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_y_at_x_right ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_y_at_x_right ${traits_type_name})
   endif()
   if(commands_indicator_MAKE_X_MONOTONE)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/make_x_monotone ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/make_x_monotone ${traits_type_name})
   endif()
   if(commands_indicator_INTERSECT)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/intersect ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/intersect ${traits_type_name})
   endif()
   if(commands_indicator_SPLIT)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/split ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/split ${traits_type_name})
   endif()
   if(commands_indicator_ARE_MERGEABLE)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/are_mergeable ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/are_mergeable ${traits_type_name})
   endif()
   if(commands_indicator_MERGE)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/merge ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/merge ${traits_type_name})
   endif()
   if(commands_indicator_ASSERTIONS)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/assertions ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/assertions ${traits_type_name})
   endif()
   if(commands_indicator_CONSTRUCTOR)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/constructor ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/constructor ${traits_type_name})
   endif()
   if(commands_indicator_EQUAL)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/equal ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/equal ${traits_type_name})
   endif()
   if(commands_indicator_PUSH_BACK)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/push_back ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/push_back ${traits_type_name})
   endif()
   if(commands_indicator_PUSH_FRONT)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/push_front ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/push_front ${traits_type_name})
   endif()
   if(commands_indicator_NUMBER_OF_POINTS)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/number_of_points ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/number_of_points ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_ENDPOINTS_XY)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_endpoints_xy ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/compare_endpoints_xy ${traits_type_name})
   endif()
   if(commands_indicator_CONSTRUCT_OPPOSITE)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/construct_opposite ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/construct_opposite ${traits_type_name})
   endif()
   if(commands_indicator_TRIM)
     run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/trim ${traits_type_name})
+      data/${data_dir}/xcurves data/${data_dir}/curves
+      data/${data_dir}/trim ${traits_type_name})
   endif()
 endfunction()
 
@@ -477,28 +513,32 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
 # the new structure is not default, so this function executes only
 # commands that are given as arguments
 
-  set(commands_indicator_PARAMETER_SPACE_X 0)
-  set(commands_indicator_PARAMETER_SPACE_Y 0)
+  set(commands_indicator_ARE_MERGEABLE 0)
+  set(commands_indicator_COMPARE_CW_AROUND_POINT 0)
   set(commands_indicator_COMPARE_XY 0)
-  set(commands_indicator_COMPARE_X_AT_LIMIT 0)
-  set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
-  set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
+  set(commands_indicator_COMPARE_Y_AT_X_LEFT 0)
   set(commands_indicator_COMPARE_X_NEAR_BOUNDARY 0)
   set(commands_indicator_COMPARE_Y_NEAR_BOUNDARY 0)
-  set(commands_indicator_COMPARE_Y_AT_X_LEFT 0)
-  set(commands_indicator_ARE_MERGEABLE 0)
-  set(commands_indicator_MERGE 0)
-  set(commands_indicator_X_ON_IDENTIFICATION 0)
-  set(commands_indicator_Y_ON_IDENTIFICATION 0)
-  set(commands_indicator_IS_BOUNDED 0)
-  set(commands_indicator_IS_IN_X_RANGE 0)
+  set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
   set(commands_indicator_COMPARE_Y_POSITION 0)
   set(commands_indicator_IS_BETWEEN_CW 0)
-  set(commands_indicator_COMPARE_CW_AROUND_POINT 0)
+  set(commands_indicator_IS_BOUNDED 0)
+  set(commands_indicator_IS_IN_X_RANGE 0)
+  set(commands_indicator_MERGE 0)
+  set(commands_indicator_PARAMETER_SPACE_X 0)
+  set(commands_indicator_PARAMETER_SPACE_Y 0)
+  set(commands_indicator_X_ON_IDENTIFICATION 0)
+  set(commands_indicator_Y_ON_IDENTIFICATION 0)
+
   foreach(arg ${ARGN})
     set(commands_indicator_${arg} 1)
   endforeach()
 
+  if(commands_indicator_ARE_MERGEABLE)
+    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
+      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
+      data/test_adaptor/${data_dir}/are_mergeable ${traits_type_name})
+  endif()
   if(commands_indicator_PARAMETER_SPACE_X)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
@@ -513,16 +553,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
       data/test_adaptor/${data_dir}/compare_xy ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_AT_LIMIT)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/compare_x_at_limit ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_NEAR_LIMIT)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/compare_x_near_limit ${traits_type_name})
   endif()
 
   if(commands_indicator_COMPARE_X_ON_BOUNDARY)
@@ -545,11 +575,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
       data/test_adaptor/${data_dir}/compare_y_at_x_left ${traits_type_name})
-  endif()
-  if(commands_indicator_ARE_MERGEABLE)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/are_mergeable ${traits_type_name})
   endif()
   if(commands_indicator_MERGE)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
@@ -604,7 +629,7 @@ function(test_segment_traits_adaptor)
 
   compile_test_with_flags(test_traits_adaptor segments "${flags}")
 #  if [ -n "${SUCCESS}" ] ; then
-  execute_commands_traits_adaptor( segments segments_traits_adaptor
+  execute_commands_traits_adaptor(segments segments_traits_adaptor
     COMPARE_XY COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
     ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW)
 endfunction()
@@ -620,7 +645,7 @@ function(test_linear_traits_adaptor)
 
   compile_test_with_flags( test_traits_adaptor linear "${flags}")
 
-  execute_commands_traits_adaptor( linear linear_traits_adaptor
+  execute_commands_traits_adaptor(linear linear_traits_adaptor
     COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
@@ -637,7 +662,7 @@ function(test_spherical_arcs_traits_adaptor)
 
   compile_test_with_flags( test_traits_adaptor geodesic_arcs_on_sphere "${flags}")
 
-  execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor
+  execute_commands_traits_adaptor(spherical_arcs spherical_arcs_traits_adaptor
     COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
@@ -665,7 +690,7 @@ function(test_construction_segments)
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${SEGMENT_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
-  compile_and_run_with_flags( test_construction segments "${flags}")
+  compile_and_run_with_flags(test_construction segments "${flags}")
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -677,7 +702,7 @@ function(test_construction_linear_curves)
   set(geom_traits ${LINEAR_GEOM_TRAITS})
   set(topol_traits ${PLANAR_UNBOUNDED_TOPOL_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
-  compile_and_run_with_flags( test_construction linear "${flags}")
+  compile_and_run_with_flags(test_construction linear "${flags}")
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -689,7 +714,7 @@ function(test_construction_spherical_arcs)
   set(geom_traits ${GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS})
   set(topol_traits ${SPHERICAL_TOPOL_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
-  compile_and_run_with_flags( test_construction geodesic_arcs_on_sphere "${flags}")
+  compile_and_run_with_flags(test_construction geodesic_arcs_on_sphere "${flags}")
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -700,7 +725,7 @@ function(test_construction_polylines)
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${POLYLINE_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
-  compile_and_run_with_flags( test_construction polylines "${flags}")
+  compile_and_run_with_flags(test_construction polylines "${flags}")
 endfunction()
 
 
@@ -736,15 +761,6 @@ function(test_point_location_segments)
   set(geom_traits ${SEGMENT_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
   compile_and_run_with_flags(test_point_location segments "${flags}" segments)
-endfunction()
-
-# For backward compatibility
-function(test_point_location_segments_version)
-  set(nt ${CGAL_GMPQ_NT})
-  set(kernel ${CARTESIAN_KERNEL})
-  set(geom_traits ${SEGMENT_GEOM_TRAITS})
-  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ARR_POINT_LOCATION_VERSION=1")
-  compile_and_run_with_flags(test_point_location segments "${flags}" segments_version)
 endfunction()
 
 # For backward compatibility
@@ -868,14 +884,16 @@ function(test_segment_traits)
 
   compile_test_with_flags(test_traits segments "${flags}")
 
-  execute_commands_old_structure( segments segment_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
+  execute_commands_old_structure(segments segment_traits
+    APPROXIMATE ARE_MERGEABLE COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR IS_VERTICAL VERTEX)
 
   execute_commands_new_structure( segments segment_traits
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT ARE_MERGEABLE)
+    ARE_MERGEABLE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
-  run_trapped_test( test_traits
+  run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
     data/empty.zero data/segments/vertex segment_traits)
 endfunction()
@@ -892,11 +910,13 @@ function(test_non_caching_segment_traits)
   compile_test_with_flags(test_traits non_caching_segments "${flags}")
 
   execute_commands_old_structure(segments non_caching_segment_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE ASSERTIONS)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR COMPARE_Y_AT_X_RIGHT
+    IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(segments segment_traits
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
@@ -908,7 +928,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -920,28 +940,25 @@ function(test_polycurve_conic_traits)
   compile_test_with_flags(test_traits conic_polycurve "${flags}")
 
   # The input arguments for the execute_commands_new_structure,
-  # 1. Polycurve_conics is the directory name in "data"
+  # 1. polycurve_conics is the directory name in "data"
   # 2. polycurve_conic_traits is a string
   # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
   # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file.
   execute_commands_new_structure(polycurves_conics polycurve_conic_traits
-    COMPARE_Y_AT_X
-    INTERSECT
-    EQUAL
-    IS_VERTICAL
-    SPLIT
     ARE_MERGEABLE
-    COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT
+    COMPARE_ENDPOINTS_XY COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
+    CONSTRUCT_OPPOSITE
+    EQUAL
+    INTERSECT
+    IS_VERTICAL
     MAKE_X_MONOTONE
+    MERGE
+    NUMBER_OF_POINTS
+    SPLIT
     PUSH_BACK
     PUSH_FRONT
-    NUMBER_OF_POINTS
-    VERTEX
-    CONSTRUCT_OPPOSITE
-    MERGE
-    COMPARE_ENDPOINTS_XY
-    TRIM)
+    TRIM
+    VERTEX)
 
 endfunction()
 
@@ -956,30 +973,28 @@ function(test_polycurve_circular_arc_traits)
 
   compile_test_with_flags(test_traits circular_arc_polycurve "${flags}")
 
-  execute_commands_new_structure(Polycurves_circular_arcs polycurve_circular_arc_traits
-    COMPARE_Y_AT_X
-    EQUAL
-    IS_VERTICAL
-    SPLIT
+  execute_commands_new_structure(polycurves_circular_arcs
+    polycurve_circular_arc_traits
     ARE_MERGEABLE
-    COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT
+    COMPARE_ENDPOINTS_XY COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
+    CONSTRUCT_OPPOSITE
+    EQUAL
+    INTERSECT
+    IS_VERTICAL
     MAKE_X_MONOTONE
+    MERGE
+    NUMBER_OF_POINTS
     PUSH_BACK
     PUSH_FRONT
-    NUMBER_OF_POINTS
-    VERTEX
-    CONSTRUCT_OPPOSITE
-    MERGE
-    COMPARE_ENDPOINTS_XY
-    INTERSECT)
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -990,16 +1005,16 @@ function(test_polycurve_bezier_traits)
 
   compile_test_with_flags(test_traits bezier_polycurve "${flags}")
 
-  execute_commands_new_structure(Polycurves_bezier test_polycurve_bezier_traits
-    MERGE
+  execute_commands_new_structure(polycurves_bezier test_polycurve_bezier_traits
+    ARE_MERGEABLE
+    COMPARE_ENDPOINTS_XY
     EQUAL
     IS_VERTICAL
     NUMBER_OF_POINTS
+    MERGE
     PUSH_BACK
     PUSH_FRONT
     VERTEX
-    ARE_MERGEABLE
-    COMPARE_ENDPOINTS_XY
     # TODO (add data for these tests)
     # COMPARE_Y_AT_X
     # SPLIT
@@ -1024,8 +1039,8 @@ function(test_polyline_traits)
   compile_test_with_flags(test_traits test_polylines "${flags}")
 
   execute_commands_old_structure(polylines polyline_traits
-    CONSTRUCTOR COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1040,8 +1055,8 @@ function(test_non_caching_polyline_traits)
   compile_test_with_flags(test_traits non_caching_polylines "${flags}")
 
   execute_commands_old_structure(polylines non_caching_polyline_traits
-    CONSTRUCTOR COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1056,39 +1071,46 @@ function(test_linear_traits)
   compile_test_with_flags(test_traits linear "${flags}")
 
   execute_commands_old_structure(linear/segments linear_traits.segments
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(linear/segments linear_traits.segments
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/linear/segments/vertex.pt data/linear/segments/xcurves
     data/empty.zero data/linear/segments/vertex linear_traits.segments)
 
   execute_commands_old_structure(linear/rays linear_traits.rays
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    IS_VERTICAL VERTEX)
 
   execute_commands_new_structure(linear/rays linear_traits.rays
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/linear/rays/vertex.pt data/linear/rays/xcurves
     data/empty.zero data/linear/rays/vertex linear_traits.rays)
 
   execute_commands_new_structure(linear/lines linear_traits.lines
-    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT
-    SPLIT MERGE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    IS_VERTICAL
+    INTERSECT
+    MERGE
     PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
+    SPLIT)
 endfunction()
 
 #---------------------------------------------------------------------#
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1100,11 +1122,13 @@ function(test_conic_traits)
   compile_test_with_flags(test_traits conics "${flags}")
 
   execute_commands_old_structure(conics conic_traits
-    INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
+    INTERSECT SPLIT MERGE)
 
   execute_commands_new_structure(conics conic_traits
-    INTERSECT SPLIT MERGE)
+    INTERSECT
+    MERGE
+    SPLIT)
 
   run_trapped_test(test_traits
     data/conics/compare.pt data/empty.zero
@@ -1123,11 +1147,13 @@ function(test_line_arc_traits)
   compile_test_with_flags(test_traits line_arcs "${flags}")
 
   execute_commands_old_structure(circular_lines line_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
+    IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_lines line_arc_traits
-    IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/circular_lines/compare.pt data/empty.zero
@@ -1150,11 +1176,14 @@ function(test_circular_arc_traits)
   compile_test_with_flags(test_traits circular_arcs "${flags}")
 
   execute_commands_old_structure(circular_arcs circular_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT
+    IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_arcs circular_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1169,11 +1198,13 @@ function(test_circular_line_arc_traits)
   compile_test_with_flags(test_traits circular_line_arcs "${flags}")
 
   execute_commands_old_structure(circular_line_arcs circular_line_arc_traits
-    VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    IS_VERTICAL MERGE VERTEX)
 
   execute_commands_new_structure(circular_line_arcs circular_line_arc_traits
-    IS_VERTICAL COMPARE_Y_AT_X)
+    COMPARE_Y_AT_X
+    IS_VERTICAL)
 
   run_trapped_test(test_traits
     data/circular_line_arcs/vertex.pt data/circular_line_arcs/xcurves
@@ -1192,8 +1223,12 @@ function(test_circle_segments_traits)
   compile_test_with_flags(test_traits circle_segments "${flags}")
 
   execute_commands_old_structure(circle_segments circle_segments_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR
+    IS_VERTICAL VERTEX)
+
+  execute_commands_new_structure(circle_segments circle_segments_traits
+    APPROXIMATE)
 
   run_trapped_test(test_traits
     data/circle_segments/points data/circle_segments/xcurves.8
@@ -1219,7 +1254,7 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1231,8 +1266,8 @@ function(test_bezier_traits)
   compile_test_with_flags(test_traits Bezier "${flags}")
 
   execute_commands_old_structure(bezier bezier_traits
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT
-    CONSTRUCTOR ASSERTIONS ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT CONSTRUCTOR SPLIT)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1248,14 +1283,14 @@ function(test_spherical_arc_traits)
   compile_test_with_flags(test_traits geodesic_arcs_on_sphere "${flags}")
 
   execute_commands_old_structure(spherical_arcs spherical_arc_traits
-    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT
-    CONSTRUCTOR
-    COMPARE MAKE_X_MONOTONE SPLIT MERGE ASSERTIONS ARE_MERGEABLE)
+    APPROXIMATE ARE_MERGEABLE ASSERTIONS
+    COMPARE COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT CONSTRUCTOR
+    MAKE_X_MONOTONE MERGE SPLIT)
 
   execute_commands_new_structure(spherical_arcs spherical_arc_traits
-    INTERSECT
-    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY
-    COMPARE_Y_NEAR_BOUNDARY)
+    APPROXIMATE
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    INTERSECT)
 
   run_trapped_test(test_traits
     data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv
@@ -1266,7 +1301,7 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1282,8 +1317,12 @@ function(test_rational_arc_traits)
     data/empty.zero data/compare rational_arc_traits)
 
   execute_commands_new_structure(rational_arcs rational_arc_traits
-    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
-    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
+    COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
+    IS_VERTICAL
+    MERGE
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1291,7 +1330,10 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_gmp)
   #TODO: Adapt
-
+  if(CGAL_DISABLE_GMP)
+    MESSAGE(STATUS "test_traits_algebraic_traits_gmp requires GMP and will not be executed")
+    return()
+  endif()
   set(nt ${CGAL_GMPZ_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
@@ -1301,8 +1343,13 @@ function(test_algebraic_traits_gmp)
 
   execute_commands_new_structure(algebraic algebraic_traits_gmp
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1320,8 +1367,13 @@ function(test_algebraic_traits_leda)
 
   execute_commands_new_structure(algebraic algebraic_traits_leda
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 
@@ -1330,7 +1382,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
   #TODO: Adapt
-  if($ENV{CGAL_DISABLE_GMP})
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
     return()
   endif()
@@ -1343,8 +1395,13 @@ function(test_algebraic_traits_core)
 
   execute_commands_new_structure(algebraic algebraic_traits_core
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
-    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
-    PARAMETER_SPACE_X PARAMETER_SPACE_Y)
+    IS_VERTICAL
+    INTERSECT
+    MAKE_X_MONOTONE
+    MERGE
+    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    SPLIT
+    VERTEX)
 endfunction()
 
 
@@ -1395,7 +1452,6 @@ test_overlay_segments()
 test_overlay_spherical_arcs()
 
 test_point_location_segments()
-test_point_location_segments_version()
 test_point_location_segments_conversion()
 test_point_location_circle_segments()
 test_point_location_linear()
@@ -1428,3 +1484,11 @@ compile_and_run(test_spherical_removal)
 compile_and_run(test_io)
 
 compile_and_run(test_sgm)
+
+compile_and_run(test_polycurve_intersection)
+if(CGAL_DISABLE_GMP)
+  get_directory_property(LIST_OF_TESTS TESTS)
+  foreach(_test ${LIST_OF_TESTS})
+    set_property(TEST ${_test} APPEND PROPERTY ENVIRONMENT CGAL_DISABLE_GMP=1)
+  endforeach()
+endif()

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -26,9 +17,9 @@
 
 
 #include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
-#include <boost/optional.hpp>
+#include <optional>
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal { namespace AABB_tree_with_join {
 
@@ -78,18 +69,14 @@ class First_intersection_traits
 
 public:
   typedef
-  #if CGAL_INTERSECTION_VERSION < 2
-  boost::optional<Object_and_primitive_id> 
-  #else
-  boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-  #endif
+  std::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
     : m_result(), m_traits(traits)
   {}
 
-  bool go_further() const { 
+  bool go_further() const {
     return !m_result;
   }
 
@@ -104,7 +91,7 @@ public:
   }
 
   Result result() const { return m_result; }
-  bool is_intersection_found() const { 
+  bool is_intersection_found() const {
     return m_result;
   }
 
@@ -137,11 +124,7 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    #if CGAL_INTERSECTION_VERSION < 2
-    boost::optional<Object_and_primitive_id>
-    #else
-    boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-    #endif
+    std::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
     intersection = m_traits.intersection_object()(query, primitive);
 
     if(intersection)
@@ -228,7 +211,7 @@ public:
   {
     if( m_traits.do_intersect_object()(query, primitive) )
     {
-      m_result = boost::optional<typename Primitive::Id>(primitive.id());
+      m_result = std::optional<typename Primitive::Id>(primitive.id());
       m_is_found = true;
     }
   }
@@ -238,12 +221,12 @@ public:
     return m_traits.do_intersect_object()(query, node.bbox());
   }
 
-  boost::optional<typename Primitive::Id> result() const { return m_result; }
+  std::optional<typename Primitive::Id> result() const { return m_result; }
   bool is_intersection_found() const { return m_is_found; }
 
 private:
   bool m_is_found;
-  boost::optional<typename Primitive::Id> m_result;
+  std::optional<typename Primitive::Id> m_result;
   const AABBTraits& m_traits;
 };
 
@@ -294,7 +277,7 @@ private:
 template<typename AABBTraits>
 class Do_intersect_joined_traits
 {
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef AABB_node_with_join<AABBTraits> Node;
 
@@ -392,7 +375,7 @@ public:
                     const typename Primitive::Id& hint_primitive,
                     const AABBTraits& traits)
     : m_closest_point(hint),
-      m_closest_primitive(hint_primitive), 
+      m_closest_primitive(hint_primitive),
       m_traits(traits)
   {}
 
@@ -405,7 +388,7 @@ public:
     if(new_closest_point != m_closest_point)
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere 
+      m_closest_point = new_closest_point; // this effectively shrinks the sphere
     }
   }
 

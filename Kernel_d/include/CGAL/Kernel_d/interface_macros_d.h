@@ -4,20 +4,11 @@
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion, Susan Hert
 
@@ -25,7 +16,7 @@
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
-// It is the responsability of the including file to correctly set the 2
+// It is the responsibility of the including file to correctly set the 2
 // macros CGAL_Kernel_pred, CGAL_Kernel_cons and CGAL_Kernel_obj.
 // And they are #undefed at the end of this file.
 

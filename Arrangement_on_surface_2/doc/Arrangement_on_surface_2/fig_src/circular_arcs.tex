@@ -1,0 +1,49 @@
+\documentclass[11pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-3,-3)(6,6)
+  \arraxes(0,0)(-3,-3)(6,6)
+  \pscircle[linecolor=blue,linewidth=0.5pt](0,0){1.414}
+  \rput(1.25,-1.25){\textcolor{blue}{$c_1$}}
+  %
+  \pscircle[linecolor=blue,linewidth=0.5pt](2,3){1.225}
+  \rput(3.25,2.05){\textcolor{blue}{$c_2$}}
+  %
+  \arrMainVertex(-2,-2){s11}
+  \arrMainVertex(2,2){s12}
+  \ncline[linecolor=blue,linewidth=0.5pt]{s11}{s12}
+  \uput[-45]{0}(-1.5,-1.5){\textcolor{blue}{$c_3$}}
+  %
+  \arrMainVertex(3,3){s21}
+  \arrMainVertex(3.873,3.873){s22}
+  \ncline[linecolor=blue,linewidth=0.5pt]{s21}{s22}
+  \uput[-45]{0}(4,4){\textcolor{blue}{$c_4$}}
+  %
+  \psarc[linecolor=blue,linewidth=0.5pt](1,1){1.732}{0}{180}
+  \arrMainVertex(2.732,1){a21}
+  \arrMainVertex(-.732,1){a22}
+  \rput(-0.65,2.28){\textcolor{blue}{$c_5$}}
+  %
+  \psarc[linecolor=blue,linewidth=0.5pt](0,0){1}{60}{120}
+  \arrMainVertex(-0.5,.866){a31}
+  \arrMainVertex(0.5,.866){a32}
+  \rput(-0.25,0.55){\textcolor{blue}{$c_6$}}
+   %
+  \psarc[linecolor=blue,linewidth=0.5pt](0,0){5}{0}{90}
+  \arrMainVertex(0,5){a11}
+  \arrMainVertex(5,0){a12}
+  \rput(5,2){\textcolor{blue}{$c_7$}}
+  %
+  \arrEmptyVertex(-1,-1){x0}
+  \arrEmptyVertex(3.535,3.535){x1}
+  \arrEmptyVertex(1,1){x2}
+  \arrEmptyVertex(-0.7,1.229){x3}
+  \arrEmptyVertex(0.8,2.72){x4}
+  \arrEmptyVertex(1.78,1.78){x5}
+  \arrEmptyVertex(2.46,1.88){x6}
+  \arrEmptyVertex(3.2,3.2){x7}
+  \endpspicture
+}
+\end{document}

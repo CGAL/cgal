@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Spherical_Geometry_Kernel
 \anchor chaptersphericalkernel
 
@@ -11,7 +11,7 @@ namespace CGAL {
 
 The goal of the 3D spherical kernel is to offer to the user a large
 set of functionalities on spheres, circles and circular arcs, in the 3D
-space or restricted on a given sphere. These functionalities require 
+space or restricted on a given sphere. These functionalities require
 computing on algebraic numbers,
 which motivates the creation of a new kernel concept extending the
 \cgal `Kernel` concept, that is restricted to objects
@@ -21,10 +21,10 @@ All the choices (interface, robustness, representation, and so on)
 made here are consistent with the choices made in the \cgal kernel,
 for which we refer the user to the \ref chapterkernel23 "2D and 3D Linear Kernel").
 
-\section sectionSKobjects Spherical Kernel Objects 
+\section sectionSKobjects Spherical Kernel Objects
 
 New main geometric objects are introduced by `Spherical_kernel_3`:
-circular arcs ((model of `SphericalKernel::CircularArc_3`), points
+circular arcs (model of `SphericalKernel::CircularArc_3`), points
 of circular arcs (model of `SphericalKernel::CircularArcPoint_3`),
 and line segments (model of `SphericalKernel::LineArc_3`) whose
 endpoints are points of this new type.
@@ -78,7 +78,7 @@ of the line passing through the poles. A vector \f$ M\f$ whose direction is diff
 line defines a unique meridian on that sphere. The plane of that meridian is defined by the
 direction of \f$ M\f$ and the two poles. The sense of \f$ M\f$ disambiguates the choice among the
 pair of meridians thus defined.
-On \cgalFigureRef{figdefmeridian}, the normal vectors \f$ n_0\f$ and \f$ n_1\f$ define 
+On \cgalFigureRef{figdefmeridian}, the normal vectors \f$ n_0\f$ and \f$ n_1\f$ define
 two meridians of \f$ S\f$: the circular arcs \f$ A_0\f$ and \f$ A_1\f$ respectively.
 
 \cgalFigureBegin{figdefmeridian,def_meridian.png}
@@ -110,7 +110,7 @@ tangency between the circle and a meridian anchored at the poles of
 that sphere. Each normal circle defines two such points;
 the \f$ \theta\f$-extremal point of a polar circle is the pole the circle
 goes through. No such point is defined on a bipolar or a threaded
-circle. 
+circle.
 These definitions are illustrated on \cgalFigureRef{figdefcircles}.
 Notice that the \f$ \theta\f$-extremal points should not be confused with
 the endpoints of an arbitrary arc on a sphere.
@@ -138,26 +138,26 @@ The design of `Spherical_kernel_3` is similar to the design of
 
 It has two template parameters:
 <UL>
-<LI> the first parameter must model the \cgal 
+<LI> the first parameter must model the \cgal
 three dimensional `Kernel` concept. The spherical kernel derives
 from it, and it provides all elementary geometric objects like points,
 lines, spheres, circles and elementary functionality on them.
-<LI> the second parameter is the algebraic kernel, which is 
-responsible for computations on polynomials and algebraic numbers. It 
+<LI> the second parameter is the algebraic kernel, which is
+responsible for computations on polynomials and algebraic numbers. It
 must model the concept `AlgebraicKernelForSpheres`. The
 robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 </UL>
 
 The 3D spherical kernel uses the extensibility scheme presented in the
-kernel manual (see Section \ref sectionextensiblekernel "Extensible Kernel"). 
+kernel manual (see Section \ref sectionextensiblekernel "Extensible Kernel").
 The types of `Kernel` are inherited by the 3D spherical kernel and some
 types are taken from the `AlgebraicKernelForSpheres`
 parameter. `Spherical_kernel_3` introduces new geometric objects
 as mentioned in Section \ref sectionSKobjects.
 
 In fact, the spherical kernel is documented as a concept,
-`SphericalKernel` and two models are provided: 
+`SphericalKernel` and two models are provided:
 <UL>
 <LI> `Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`, the basic kernel,
 <LI> and a predefined kernel `Exact_spherical_kernel_3`.
@@ -183,7 +183,7 @@ then compared.
 
 \section Circular_kernel_3Design Design and Implementation History
 
-This package follows the design of the package 
+This package follows the design of the package
 \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel").
 
 Julien Hazebrouck and Damien Leroy participated in a first
@@ -202,6 +202,6 @@ Framework Programme of the EU as a STREP (FET Open Scheme) Project
 under Contract No IST-006413 (ACS -
 Algorithms for Complex Shapes).
 
-*/ 
+*/
 } /* namespace CGAL */
 

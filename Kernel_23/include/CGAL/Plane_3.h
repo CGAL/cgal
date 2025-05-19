@@ -1,43 +1,36 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
 #ifndef CGAL_PLANE_3_H
 #define CGAL_PLANE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
 template <class R_>
 class Plane_3 : public R_::Kernel_base::Plane_3
 {
+  typedef typename R_::Boolean               Boolean;
+  typedef typename R_::Oriented_side         Oriented_side;
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Point_3               Point_3;
@@ -50,7 +43,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Plane_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Plane_3>::value));
+  static_assert(std::is_same<Self, typename R_::Plane_3>::value);
 
 public:
 
@@ -76,14 +69,23 @@ public:
   Plane_3(const Rep& p)
     : Rep(p) {}
 
+  Plane_3(Rep&& p)
+    : Rep(std::move(p)) {}
+
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, q, r)) {}
+
+  Plane_3(Origin o, const Point_3& q, const Point_3& r)
+    : Rep(typename R::Construct_plane_3()(Return_base_tag(), o, q, r)) {}
 
   Plane_3(const Point_3& p, const Direction_3& d)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, d)) {}
 
   Plane_3(const Point_3& p, const Vector_3& v)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, v)) {}
+
+  Plane_3(Origin o, const Vector_3& v)
+    : Rep(typename R::Construct_plane_3()(Return_base_tag(), o, v)) {}
 
   Plane_3(const RT& a, const RT& b, const RT& c, const RT& d)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), a, b, c, d)) {}
@@ -116,41 +118,41 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename cpp11::result_of<typename R::Compute_a_3( Plane_3)>::type
+  decltype(auto)
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_b_3( Plane_3)>::type
+  decltype(auto)
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_c_3( Plane_3)>::type
+  decltype(auto)
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_d_3( Plane_3)>::type
+  decltype(auto)
   d() const
   {
     return R().compute_d_3_object()(*this);
   }
 
-  bool has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
   }
 
-  bool has_on(const Circle_3 &c) const
+  Boolean has_on(const Circle_3 &c) const
   {
     return R().has_on_3_object()(*this, c);
-  }  
-  
-  bool has_on(const Line_3 &l) const
+  }
+
+  Boolean has_on(const Line_3 &l) const
   {
     return R().has_on_3_object()(*this, l);
   }
@@ -204,33 +206,32 @@ public:
     return R().oriented_side_3_object()(*this, p);
   }
 
-  bool has_on_positive_side(const Point_3 &p) const
+  Boolean has_on_positive_side(const Point_3 &p) const
   {
     return R().has_on_positive_side_3_object()(*this, p);
   }
 
-  bool has_on_negative_side(const Point_3 &p) const
+  Boolean has_on_negative_side(const Point_3 &p) const
   {
     return R().has_on_negative_side_3_object()(*this, p);
   }
 
 /*
-  bool         has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return oriented_side(p) == ON_ORIENTED_BOUNDARY;
   }
-  bool         has_on(const Line_3 &l) const
+  Boolean has_on(const Line_3 &l) const
   {
     return has_on(l.point())
        &&  has_on(l.point() + l.direction().to_vector());
   }
 */
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
   }
-
 };
 
 
@@ -238,7 +239,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Plane_3<R> &p)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
     case IO::BINARY :
@@ -259,9 +260,9 @@ std::istream &
 operator>>(std::istream &is, Plane_3<R> &p)
 {
   typename R::RT a(0), b(0), c(0), d(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);
+        is >> IO::iformat(a) >> IO::iformat(b) >> IO::iformat(c) >> IO::iformat(d);
         break;
     case IO::BINARY :
         read(is, a);
@@ -272,7 +273,7 @@ operator>>(std::istream &is, Plane_3<R> &p)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)

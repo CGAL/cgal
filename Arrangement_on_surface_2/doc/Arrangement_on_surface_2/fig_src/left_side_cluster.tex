@@ -1,0 +1,19 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\usepackage[edges]{forest}
+\usetikzlibrary{shadows.blur,arrows.meta}
+\pagestyle{empty}
+\def\name#1{\textsf{\it #1}}
+\tikzset{concept/.style={rectangle split,rectangle split parts=1,draw,
+    fill=white,blur shadow,rounded corners,align=center}}
+\begin{document}
+\begin{forest}
+    [\name{AosLeftSideTraits\_2},before drawing tree={x=0pt},
+      for tree={concept,edge={-Stealth}}
+      [{\name{AosOpenLeftTraits\_2}}]
+      [{\name{AosClosedLeftTraits\_2}}]
+      [{\name{AosContractedLeftTraits\_2}}]
+      [{\name{AosIdentifiedLeftTraits\_2}}]
+    ]
+\end{forest}
+\end{document}

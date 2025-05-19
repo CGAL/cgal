@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+
 #include <cassert>
 #include <iostream>
 
@@ -6,7 +6,6 @@
 
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 
 struct Traits1 {
   typedef CGAL::Arr_open_side_tag Left_side_category;
@@ -59,7 +58,7 @@ bool dispatch(CGAL::Arr_not_all_sides_non_open_tag) {
 int main ()
 {
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -67,7 +66,7 @@ int main ()
 
   assert(dispatch(result1()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -75,7 +74,7 @@ int main ()
 
   assert(!dispatch(result2()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -83,7 +82,7 @@ int main ()
 
   assert(!dispatch(result3()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
@@ -91,15 +90,15 @@ int main ()
 
   assert(!dispatch(result4()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag >::result result5;
-  
+
   assert(!dispatch(result5()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_closed_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -107,7 +106,7 @@ int main ()
 
   assert(!dispatch(result6()));
 
-  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag<
     CGAL::Arr_contracted_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -117,7 +116,7 @@ int main ()
 
   // all non-open
 
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -125,7 +124,7 @@ int main ()
 
   assert(dispatch(open1()));
 
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -133,15 +132,15 @@ int main ()
 
   assert(!dispatch(open2()));
 
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag >::result open3;
 
   assert(!dispatch(open3()));
-  
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
@@ -149,7 +148,7 @@ int main ()
 
   assert(!dispatch(open4()));
 
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -157,25 +156,25 @@ int main ()
 
   assert(!dispatch(open5()));
 
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_closed_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag >::result open6;
 
   assert(!dispatch(open6()));
-  
-  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag >::result open7;
 
   assert(!dispatch(open7()));
-  
+
   // opposite identified tagging
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
@@ -183,7 +182,7 @@ int main ()
 
   assert(ident1() == true);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
@@ -191,7 +190,7 @@ int main ()
 
   assert(ident2() == true);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -199,7 +198,7 @@ int main ()
 
   assert(ident3() == true);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -208,7 +207,7 @@ int main ()
   assert(ident4() == true);
 
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_closed_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -216,7 +215,7 @@ int main ()
 
   assert(ident5() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -224,7 +223,7 @@ int main ()
 
   assert(ident6() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_contracted_side_tag,
@@ -232,7 +231,7 @@ int main ()
 
   assert(ident7() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -240,7 +239,7 @@ int main ()
 
   assert(ident8() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_closed_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag,
@@ -248,7 +247,7 @@ int main ()
 
   assert(ident9() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_identified_side_tag,
@@ -256,7 +255,7 @@ int main ()
 
   assert(ident10() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_open_side_tag,
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_contracted_side_tag,
@@ -264,7 +263,7 @@ int main ()
 
   assert(ident11() == false);
 
-  typedef CGAL::Arr_sane_identified_tagging< 
+  typedef CGAL::Arr_sane_identified_tagging<
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_open_side_tag,
@@ -272,42 +271,42 @@ int main ()
 
   assert(ident12() == false);
 
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits5 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_left_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits1 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_left_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
-  CGAL_static_assertion(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits5 >::Category,
+  static_assert(
+      (std::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
-  CGAL_static_assertion(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits1 >::Category,
+  static_assert(
+      (std::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits5 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_top_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits1 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_top_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
 
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits5 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_right_side_category< Traits5 >::Category,
        CGAL::Arr_oblivious_side_tag >::value)
   );
-  CGAL_static_assertion(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits1 >::Category,
+  static_assert(
+      (std::is_same< CGAL::internal::Arr_complete_right_side_category< Traits1 >::Category,
        CGAL::Arr_open_side_tag >::value)
   );
-  
+
   return EXIT_SUCCESS;
 
 }

@@ -6,9 +6,9 @@
 #include <vector>
 using namespace CGAL;
 
-typedef Exact_predicates_inexact_constructions_kernel 	 K;
+typedef Exact_predicates_inexact_constructions_kernel          K;
 typedef K::Point_2                                       Point;
-typedef K::FT								        	 FT;
+typedef K::FT                                                                                 FT;
 
 const double RADIUS=1.0;
 int main( )

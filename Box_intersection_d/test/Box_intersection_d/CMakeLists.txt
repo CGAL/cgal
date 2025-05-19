@@ -1,24 +1,21 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Box_intersection_d_Tests)
 
-project( Box_intersection_d_Tests )
+find_package(CGAL REQUIRED)
 
-cmake_minimum_required(VERSION 3.1)
+create_single_source_cgal_program("automated_test.cpp")
+create_single_source_cgal_program("benchmark_box_intersection.cpp")
+create_single_source_cgal_program("random_set_test.cpp")
+create_single_source_cgal_program("test_box_grid.cpp")
+create_single_source_cgal_program("test_Has_member_report.cpp")
 
-find_package(CGAL QUIET)
-
-if ( CGAL_FOUND )
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
-
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(test_box_grid PRIVATE CGAL::TBB_support)
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+  message(STATUS "NOTICE: Intel TBB was not found. Parallel code will not be used.")
 endif()
-

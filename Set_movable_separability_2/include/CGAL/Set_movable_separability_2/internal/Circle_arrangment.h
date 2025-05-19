@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
@@ -251,7 +242,7 @@ public:
    * \param[in] segment_outer_circle - the outer circle of the current segment of
    *        the polygon.
    * \param[in] edge_ite this segment iterator
-   * This is the main funtion of this code. It separates the cells in which the
+   * This is the main function of this code. It separates the cells in which the
    * endpoints of the new arc is contained to two parts and increase m_count
    * for all the cells that the new arc covers. In the end the function
    * merge_adjacent_2_edges_and_remove_empty is called to remove redundant cells
@@ -418,7 +409,7 @@ public:
    * add_segment_outer_circle() which calls
    * merge_adjacent_2_edges_and_remove_empty().
    *
-   * The funtions checks that the whole circle is a single cell, which can
+   * The functions checks that the whole circle is a single cell, which can
    * happen only if this cell is of depth 2, so there is no need to check the
    * depth as well.
    * \return if all of the arrangement is in depth 2+

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -24,6 +15,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Point_with_surface_index.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Point_traits.h>
 
@@ -43,10 +38,6 @@ public:
   Point_with_surface_index() : Point(), index(0) {}
 
   Point_with_surface_index(const Point& p) : Point(p), index(0) {}
-			   
-
-  Point_with_surface_index(const Point_with_surface_index& pi)
-    : Point(pi), index(pi.surface_index()) {}
 
   Point_with_surface_index(const FT& x, const FT& y, const FT& z, const FT& w = FT(1))
     : Point(Point_traits().point(Bare_point(x, y, z, w))), index(0) {}
@@ -77,7 +68,7 @@ std::ostream&
 operator<<(std::ostream &os, const Point_with_surface_index<Point>& p)
 {
   os << static_cast<const Point&>(p);
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
     os << ' ' << p.surface_index();
   else
     write(os, p.surface_index());
@@ -90,7 +81,7 @@ operator>>(std::istream &is, Point_with_surface_index<Point>& p)
 {
   is >>  static_cast<Point&>(p);
   int index;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
     is >> index;
   else
     read(is, index);

@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -35,6 +26,8 @@ template < class R_ >
 class DirectionC2
 {
   typedef DirectionC2<R_>                   Self;
+
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::FT                   FT;
   typedef FT                                RT;
   typedef typename R_::Point_2              Point_2;
@@ -44,7 +37,7 @@ class DirectionC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef cpp11::array<FT, 2>               Rep;
+  typedef std::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -54,12 +47,12 @@ public:
   typedef R_                                     R;
 
   DirectionC2() {}
- 
-  DirectionC2(const FT &x, const FT &y)
-    : base(CGAL::make_array(x, y)) {}
 
-  bool operator==(const DirectionC2 &d) const;
-  bool operator!=(const DirectionC2 &d) const;
+  DirectionC2(const FT &x, const FT &y)
+    : base{x, y} {}
+
+  Boolean operator==(const DirectionC2 &d) const;
+  Boolean operator!=(const DirectionC2 &d) const;
 
   Vector_2 to_vector() const;
 
@@ -75,7 +68,7 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 DirectionC2<R>::operator==(const DirectionC2<R> &d) const
 {
   if (CGAL::identical(base, d.base))
@@ -85,7 +78,7 @@ DirectionC2<R>::operator==(const DirectionC2<R> &d) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 DirectionC2<R>::operator!=(const DirectionC2<R> &d) const
 {
   return !( *this == d );

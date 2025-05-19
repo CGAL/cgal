@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="777px" height="439.8px" viewBox="0 0 777 439.8" style="enable-background:new 0 0 777 439.8;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#B70909;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#F9C316;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#0D7A0A;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st3{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+	.st4{fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st5{font-family:'MyriadPro-Regular';}
+	.st6{font-size:12px;}
+</style>
+<g>
+	<path class="st0" d="M8.1,438.9L0.8,239.4 M8.1,238.9l6.7-195.2 M8.1,38.9l195,7 M208.1,43.9l-6.5,194.2 M216.8,238.6l-11.6,200.1
+		 M3,235.6l195.1,3.3 M1.2,438.9l193-0.2 M68.1,138.9l33.2-36.5 M68,140.6l42,29.6 M103.3,102.6l33.9,30.9 M109.9,170.2l28.6-35.8
+		 M72.3,346l35.2-31.9 M107.5,314.1l26.5,32.8 M71.1,346.6L105,379 M134.1,346.9l-29,32.1"/>
+</g>
+<g>
+	<path class="st1" d="M287.2,437.3l4-199.6 M294.2,237.3L298.2,42 M488,42.6l-195.1-3.8 M487.8,236.4l3.9-194.2 M493.7,437.2
+		l4-200.4 M483,237.5l-195.1-3.9 M478.9,439l-193-3.8 M353.8,138l31.5-38 M393.6,170.1L354,137.4 M422.8,131l-35.3-29.2
+		 M394.5,168.3l29.2-35.3 M357.6,344.8l34.3-32.9 M420.2,344L391,313.6 M389.1,378l-32.5-33.8 M388.8,376.2l31.2-30"/>
+</g>
+<g>
+	<path class="st2" d="M568.4,437.3l4-199.6 M572.4,237.2L576.2,42 M767.7,42.6l-195.1-3.8 M772.4,236.5l3.9-194.2 M768.4,437.1
+		l4-200.4 M762.5,237.5l-195.1-3.9 M758.5,439l-193-3.8 M633.5,138l31.5-38 M673.2,170.1l-39.6-32.8 M702.4,131l-35.3-29.2
+		 M674,168.3l29.3-35.3 M637.2,344.8l34.3-32.9 M699.9,344l-29.2-30.4 M668.8,378l-32.5-33.8 M668.4,376.2l31.2-30"/>
+</g>
+<g>
+	<g>
+		<line class="st3" x1="235.6" y1="233.6" x2="262.4" y2="233.6"/>
+		<g>
+			<polygon points="259.4,237.5 261.1,233.6 259.4,229.7 268.7,233.6 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line class="st3" x1="518.2" y1="233.6" x2="544.9" y2="233.6"/>
+		<g>
+			<polygon points="541.9,237.5 543.5,233.6 541.9,229.7 551.2,233.6 			"/>
+		</g>
+	</g>
+</g>
+<line class="st4" x1="420.7" y1="20.4" x2="369.2" y2="19.9"/>
+<text transform="matrix(1 0 0 1 367.236 10.0439)" class="st5 st6">unit length</text>
+</svg>

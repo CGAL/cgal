@@ -3,18 +3,18 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The `TriangulationDataStructure` concept describes objects responsible for 
+The `TriangulationDataStructure` concept describes objects responsible for
 storing and maintaining the combinatorial part of a
 \f$ d\f$-dimensional pure simplicial complex that has the topology
 of the \f$ d\f$-dimensional sphere \f$ \mathbb{S}^d\f$ with \f$ d\in[-2,D]\f$.
 Since the simplicial \f$ d\f$-complex is pure, all
-faces are sub-faces of some \f$ d\f$-simplex. And since it has the 
-topology of the sphere \f$ \mathbb{S}^d\f$, it is manifold, thus 
+faces are sub-faces of some \f$ d\f$-simplex. And since it has the
+topology of the sphere \f$ \mathbb{S}^d\f$, it is manifold, thus
 any \f$ d-1\f$-face belongs to exactly two \f$ d\f$-dimensional full cells.
 
-The concept `TriangulationDataStructure` includes two sub-concepts 
-`TriangulationDataStructure::Vertex` and 
-`TriangulationDataStructure::FullCell`. 
+The concept `TriangulationDataStructure` includes two sub-concepts
+`TriangulationDataStructure::Vertex` and
+`TriangulationDataStructure::FullCell`.
 
 Possible values for the current dimension \f$ d\f$ include
 
@@ -47,8 +47,7 @@ We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I
 Two full cells are <I>neighbors</I> if they share a facet. Two faces are
 <I>incident</I> if one is included in the other.
 
-Input/Output
---------------
+\cgalHeading{Input/Output}
 
 The information stored in the `iostream` is:
 
@@ -70,7 +69,9 @@ The classes `Vertex` and
 `Full_cell` have to provide the relevant I/O operators
 (possibly empty).
 
-\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::Vertex`
 \sa `TriangulationDataStructure::FullCell`
@@ -84,24 +85,24 @@ class TriangulationDataStructure {
 public:
 
 /// \name Types
-// @{
+/// @{
 
 /*!
-The vertex type, requirements for this type are described 
+The vertex type, requirements for this type are described
 in the concept `TriangulationDataStructure::Vertex`.
-*/ 
+*/
 typedef unspecified_type Vertex;
 
 /*!
-The full cell type, requirements for this type are described 
+The full cell type, requirements for this type are described
 in the concept `TriangulationDataStructure::FullCell`.
 */
 typedef unspecified_type Full_cell;
 
 /*!
 A model of the concept `FullCellData`.
-*/ 
-typedef unspecified_type Full_cell_data; 
+*/
+typedef unspecified_type Full_cell_data;
 
 /*!
 The facet type, for describing faces of the triangulation with codimension 1.
@@ -122,7 +123,8 @@ typedef unspecified_type Face;
 /// \name Handles
 /// Vertices and full cells are manipulated via
 /// <I>handles</I>. Handles support the usual two dereference
-/// operators and `operator->`. 
+/// operators and `operator->`.
+/// @{
 
 /*!
 Handle to a `Vertex`.
@@ -202,7 +204,7 @@ TriangulationDataStructure(int dim = 0);
 
 /*!
 Returns the maximal dimension of
-the full dimensional cells that can be stored in the triangulation `tds`. 
+the full dimensional cells that can be stored in the triangulation `tds`.
 \post the
 returned value is positive.
 */
@@ -245,12 +247,12 @@ bool is_full_cell(const Full_cell_handle & c) const;
 
 /*!
 This function computes (<I>gathers</I>) a connected set of full cells
-satifying a common criterion. Call them <I>good</I> full cells. It is assumed
+satisfying a common criterion. Call them <I>good</I> full cells. It is assumed
 that the argument `start` is a good full cell. The full cells are then
 recursively explored by examining if, from a given good full cell, its adjacent
 full cells are also good.
 
-The argument `tp` is a predicate, i.e.\ a function or a functor providing 
+The argument `tp` is a predicate, i.e.\ a function or a functor providing
 `operator()`, that takes as argument a `Facet`
 whose `Full_cell` is good.
 The predicate must return `true`
@@ -335,7 +337,7 @@ Iterator to the first vertex of `tds`. User has no control on the order.
 Vertex_iterator vertices_begin();
 
 /*!
-Iterator refering beyond the last vertex of `tds`.
+Iterator referring beyond the last vertex of `tds`.
 */
 Vertex_iterator vertices_end();
 
@@ -365,7 +367,7 @@ Iterator to the first full cell of `tds`. User has no control on the order.
 Full_cell_iterator full_cells_begin();
 
 /*!
-Iterator refering beyond the last full cell of `tds`.
+Iterator referring beyond the last full cell of `tds`.
 */
 Full_cell_iterator full_cells_end();
 
@@ -380,7 +382,7 @@ Iterator to the first facet of the triangulation.
 Facet_iterator facets_begin();
 
 /*!
-Iterator refering beyond the last facet of the triangulation.
+Iterator referring beyond the last facet of the triangulation.
 */
 Facet_iterator facets_end();
 
@@ -432,8 +434,9 @@ Inserts a vertex in the triangulation data structure by subdividing the
 Vertex_handle insert_in_facet(const Facet & ft);
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
-Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
+Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex
 at position `p` and fills the hole by connecting
 each face of the boundary to `p`.
 A `Vertex_handle` to the new `Vertex` is
@@ -450,6 +453,7 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
+\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);
@@ -476,7 +480,7 @@ The indexing of the vertices in the
 full cell is such that, if `f` was a full cell of maximal dimension in the
 initial complex, then `(f,v)`, in this order, is the corresponding full cell
 in the updated triangulation. A handle to `v` is returned
-(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
+(see \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre
 If the current dimension is -2 (empty triangulation), then `star`
 can be omitted (it is ignored), otherwise
@@ -537,7 +541,7 @@ void clear();
 /*!
 Contracts the
 `Face f` to a single vertex. Returns a handle to that vertex
-(see Figure \cgalFigureRef{triangulationfigcollapseface}).
+(see \cgalFigureRef{triangulationfigcollapseface}).
 \pre The boundary of the full cells incident to `f`
 is a topological sphere of dimension
 `tds`.`current_dimension()`-1).
@@ -555,9 +559,9 @@ This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
 full cells not containing `star` are removed,
-full cells containing `star` but not `v` loose vertex `star`,
-full cells containing `star` and `v` loose vertex `v`
-(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
+full cells containing `star` but not `v` lose vertex `star`,
+full cells containing `star` and `v` lose vertex `v`
+(see \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation
 and `current_dimension() != -2`.
@@ -570,7 +574,7 @@ void remove_decrease_dimension(Vertex_handle v, Vertex_handle star);
 \cgalAdvancedBegin
 Remove the vertex `v` from the triangulation.
 \cgalAdvancedEnd
-\pre `v` is a vertex of `tds`. 
+\pre `v` is a vertex of `tds`.
 */
 void delete_vertex(Vertex_handle v);
 
@@ -586,7 +590,7 @@ void delete_full_cell(Full_cell_handle c);
 /*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
-Calls `delete_full_cell` over an iterator range of value type `Full_cell_handle`. 
+Calls `delete_full_cell` over an iterator range of value type `Full_cell_handle`.
 \cgalAdvancedEnd
 */
 template< typename ForwardIterator > void
@@ -616,7 +620,7 @@ When `verbose` is set to `true`, messages are printed to give
 a precise indication on the kind of invalidity encountered.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -651,15 +655,17 @@ std::ostream & operator<<(std::ostream & os, const TriangulationDataStructure
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `TriangulationDataStructure::Vertex` describes the type used by a 
-`TriangulationDataStructure` to store the vertices. 
+The concept `TriangulationDataStructure::Vertex` describes the type used by a
+`TriangulationDataStructure` to store the vertices.
 
 It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
-\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>}
+\cgalHasModels{CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -667,10 +673,10 @@ the vertex holds a handle to a full cell incident to it in the triangulation.
 */
 class TriangulationDataStructure::Vertex {
 public:
-  
+
 /// \name Types
 /// @{
-  
+
 /*!
 A handle to a cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
@@ -709,7 +715,7 @@ It must <I>at least</I> check that `v` has an incident full cell, which in
 turn must contain `v` as one of its vertices.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -720,19 +726,19 @@ bool is_valid(bool verbose=false) const;
 /// \name Input/Output
 /// These operators can be used directly and are called by the I/O
 /// operator of class `TriangulationDataStructure`.
-/// 
+///
 /// @{
 /*!
 Writes (possibly) non-combinatorial information about vertex `v` to the stream
 `os`.
 */
-template<class TriangulationDataStructure> 
+template<class TriangulationDataStructure>
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_vertex<TriangulationDataStructure> & v);
 
 /*!
 Reads from stream `is` the vertex information written by `operator<<`.
 */
-template<class TriangulationDataStructure> 
+template<class TriangulationDataStructure>
 std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<TriangulationDataStructure> & v);
 
 /// @}
@@ -750,8 +756,8 @@ std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<Triangulatio
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `TriangulationDataStructure::FullCell` describes the type used by a 
-`TriangulationDataStructure` to store the full cells. 
+The concept `TriangulationDataStructure::FullCell` describes the type used by a
+`TriangulationDataStructure` to store the full cells.
 
 It sets requirements of combinatorial nature
 only, as geometry is not concerned here.
@@ -759,14 +765,16 @@ In the context of triangulation, the term full cell refers to a face of
 <I>maximal</I> dimension. This maximality characteristic is emphasized by using
 the adjective <I>full</I>.
 
-A `TriangulationDataStructure::FullCell` is responsible for 
+A `TriangulationDataStructure::FullCell` is responsible for
 storing handles to the vertices of the
 full cell as well as handles to the adjacent full cells. Two full cells
 are said to be adjacent when they share a facet. Adjacent full cells are
 called hereafter neighbors.
 
-\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>`
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>}
+\cgalHasModels{CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -774,10 +782,10 @@ called hereafter neighbors.
 */
 class TriangulationDataStructure::FullCell {
 public:
-  
+
 /// \name Types
 /// @{
-  
+
 /*!
 A handle to a vertex, which must be the same as the
 nested type `TriangulationDataStructure::Vertex_handle`.
@@ -840,8 +848,8 @@ full cell opposite to the `i`-th vertex of the full cell `c`. \pre \f$0 \leq i \
 Full_cell_handle neighbor(const int i) const;
 
 /*!
-Returns the index of `c` in its \f$ i^{th}\f$ neighbor (`c.neighbor(i)`). 
-If the returned integer is not negative, 
+Returns the index of `c` in its \f$ i^{th}\f$ neighbor (`c.neighbor(i)`).
+If the returned integer is not negative,
 it holds that `c.neighbor(i)->neighbor(j) == c`. Returns
 `-1` if `c` has no adjacent full cell of index `i`.
 \pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
@@ -862,6 +870,7 @@ a vertex of the `c`.
 */
 int index(Vertex_handle v) const;
 
+/// @}
 
 /// \name Internal
 /// \cgalAdvancedBegin
@@ -885,7 +894,7 @@ a non-`const` object.
 TDS_data & tds_data();
 
 /*!
-Returns a handle to the mirror vertex of the `i`-th vertex of full cell `c`. 
+Returns a handle to the mirror vertex of the `i`-th vertex of full cell `c`.
 `cur_dim` is the current dimension of the triangulation data structure.
 \cgalAdvancedBegin
 This function works even if the adjacency information stored in the
@@ -983,7 +992,7 @@ It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
 `c` is also a neighbor of `n`.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
+the documentation for the models of this concept to see the additional (if
 any) validity checks that they implement.
 \cgalDebugEnd
 */
@@ -995,21 +1004,21 @@ bool is_valid(bool verbose=false) const;
 /// \name Input/Output
 /// These operators can be used directly and are called by the I/O
 /// operator of class `TriangulationDataStructure`.
-/// 
+///
 /// @{
-                  
+
 /*!
 Writes (possibly) non-combinatorial information about full cell `c` to the stream
 `os`.
 */
-template<class TriangulationDataStructure> 
+template<class TriangulationDataStructure>
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_full_cell<TriangulationDataStructure> & c);
 
 /*!
-Reads from stream `is` the full cell information written 
+Reads from stream `is` the full cell information written
 by `operator<<`.
 */
-template<class TriangulationDataStructure> 
+template<class TriangulationDataStructure>
 std::istream& operator>>(std::istream & is, Triangulation_ds_full_cell<TriangulationDataStructure> & c);
 
 /// @}

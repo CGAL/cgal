@@ -15,6 +15,7 @@ typedef Traits::face_descriptor face_descriptor;
 void concept_check_surface_mesh()
 {
   boost::function_requires< boost::GraphConcept<Surface_mesh> >();
+  boost::function_requires< boost::AdjacencyGraphConcept<Surface_mesh> >();
   boost::function_requires< boost::VertexListGraphConcept<Surface_mesh> >();
   boost::function_requires< boost::EdgeListGraphConcept<Surface_mesh> >();
   boost::function_requires< boost::IncidenceGraphConcept<Surface_mesh> >();

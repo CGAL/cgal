@@ -1,4 +1,3 @@
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -6,7 +5,6 @@
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
-#include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
@@ -66,7 +64,7 @@ void test_simple_2D_barycentric_coordinatess()
 
   size_t outVertex0;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b0Type;
-  boost::tie(b0Type, outVertex0) = classify_barycentric_coordinates(b0);
+  std::tie(b0Type, outVertex0) = classify_barycentric_coordinates(b0);
 
   CHECK_EQUAL(b0Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex0, 0u);
@@ -79,7 +77,7 @@ void test_simple_2D_barycentric_coordinatess()
 
   size_t outVertex1;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b1Type;
-  boost::tie(b1Type, outVertex1) = classify_barycentric_coordinates(b1);
+  std::tie(b1Type, outVertex1) = classify_barycentric_coordinates(b1);
 
   CHECK_EQUAL(b1Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex1, 1u);
@@ -92,7 +90,7 @@ void test_simple_2D_barycentric_coordinatess()
 
   size_t outVertex2;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type b2Type;
-  boost::tie(b2Type, outVertex2) = classify_barycentric_coordinates(b2);
+  std::tie(b2Type, outVertex2) = classify_barycentric_coordinates(b2);
 
   CHECK_EQUAL(b2Type, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_VERTEX);
   CHECK_EQUAL(outVertex2, 2u);
@@ -102,7 +100,7 @@ void test_simple_2D_barycentric_coordinatess()
 
   size_t dummyOut;
   CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type bLocationType;
-  boost::tie(bLocationType, dummyOut) = classify_barycentric_coordinates(bLocation);
+  std::tie(bLocationType, dummyOut) = classify_barycentric_coordinates(bLocation);
 
   CHECK_EQUAL(bLocationType, CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE);
 
@@ -269,6 +267,7 @@ void detect_is_saddle_vertex()
 
   Traits traits;
   Traits::Is_saddle_vertex is_saddle_vertex(traits.is_saddle_vertex_object());
+  CGAL_USE(is_saddle_vertex);
 
   std::ifstream inFile("data/saddle_vertex_mesh.off");
 
@@ -283,7 +282,7 @@ void detect_is_saddle_vertex()
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
 
-  for (boost::tie(currentVertex, endVertex) = vertices(P); currentVertex != endVertex; ++currentVertex)
+  for (std::tie(currentVertex, endVertex) = vertices(P); currentVertex != endVertex; ++currentVertex)
   {
     if (currentVertexIndex <= 3 || currentVertexIndex == 7)
     {
@@ -306,6 +305,6 @@ int main()
   simple_flattening_triangle_along_edge();
   nonsimple_flattening_triangle_along_edge();
   detect_is_saddle_vertex();
-  
+
   return 0;
 }

@@ -1,20 +1,11 @@
 // Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -45,7 +36,7 @@ typedef K::Point_2 Point;
 void usage(char** argv)
 {
   std::cerr << "Usage: " << std::endl
-	    << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
+            << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -64,30 +55,30 @@ int main(int argc, char** argv)
   while(argv[arg_count][0] == '-' && std::string(argv[arg_count]) != "--")
     {
       if(std::string(argv[arg_count]) == "-Q")
-	terminal_output = false;
+        terminal_output = false;
       else if(std::string(argv[arg_count]) == "-a")
-	{
-	  double area_bound;
-	    if( (argc > arg_count+1) &&
-		std::istringstream(argv[arg_count+1]) >> area_bound )
-	      {
-		criteria.set_area_bound(area_bound);
-		++arg_count;
-	      }
-	    else
-	      {
-		std::cerr << "The area " << argv[arg_count+1]
-			  << " is not a double." << std::endl;
-		usage(argv);
-		return 1;
-	      }
-	}
+        {
+          double area_bound;
+            if( (argc > arg_count+1) &&
+                std::istringstream(argv[arg_count+1]) >> area_bound )
+              {
+                criteria.set_area_bound(area_bound);
+                ++arg_count;
+              }
+            else
+              {
+                std::cerr << "The area " << argv[arg_count+1]
+                          << " is not a double." << std::endl;
+                usage(argv);
+                return 1;
+              }
+        }
       else
-	{
-	  std::cerr << "Unknown option " << argv[arg_count] << std::endl;
-	  usage(argv);
-	  return 1;
-	}
+        {
+          std::cerr << "Unknown option " << argv[arg_count] << std::endl;
+          usage(argv);
+          return 1;
+        }
       ++arg_count;
     }
   if(std::string(argv[arg_count]) == "--")
@@ -102,23 +93,23 @@ int main(int argc, char** argv)
   std::ifstream input(argv[arg_count]);
   if(input)
     {
-      CGAL::read_triangle_poly_file(t, input);
-      CGAL::refine_Delaunay_mesh_2(t, criteria);
+      CGAL::IO::read_triangle_poly_file(t, input);
+      CGAL::refine_Delaunay_mesh_2(t, CGAL::parameters::criteria(criteria));
 
       if(argc==arg_count+1)
-	{
-	  if(terminal_output)
-	    CGAL::write_triangle_poly_file(t, std::cout);
-	}
+        {
+          if(terminal_output)
+            CGAL::IO::write_triangle_poly_file(t, std::cout);
+        }
       else
-	{
-	  std::ofstream output(argv[arg_count+1]);
-	  CGAL::write_triangle_poly_file(t, output);
-	}
+        {
+          std::ofstream output(argv[arg_count+1]);
+          CGAL::IO::write_triangle_poly_file(t, output);
+        }
       if(terminal_output)
-	std::cerr
-	  << "Mesh points: " << t.number_of_vertices() << std::endl
-	  << "Mesh triangles: " << t.number_of_faces () << std::endl;
+        std::cerr
+          << "Mesh points: " << t.number_of_vertices() << std::endl
+          << "Mesh triangles: " << t.number_of_faces () << std::endl;
 
     }
   else

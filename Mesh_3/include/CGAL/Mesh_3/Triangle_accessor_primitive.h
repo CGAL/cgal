@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -33,13 +24,13 @@
 namespace CGAL {
 namespace Mesh_3 {
 
-template<typename TriangleAccessor, typename Gt>
+template<typename TriangleAccessor, typename GT>
 class Triangle_accessor_primitive
 {
 public:
   typedef typename TriangleAccessor::Triangle_handle  Id;
-  typedef typename Gt::Triangle_3                     Datum;
-  typedef typename Gt::Point_3                        Point;
+  typedef typename GT::Triangle_3                     Datum;
+  typedef typename GT::Point_3                        Point;
 
   Triangle_accessor_primitive(const Id& h)
     : handle_(h) {}
@@ -64,15 +55,15 @@ private:
   Id handle_;
 };
 
-//template <typename Gt>
-//class Triangle_accessor_primitive<Triangle_accessor<Polyhedron_3<Gt>,Gt>, Gt>
+//template <typename GT>
+//class Triangle_accessor_primitive<Triangle_accessor<Polyhedron_3<GT>,GT>, GT>
 //{
-//  typedef class Triangle_accessor<Polyhedron_3<Gt>,Gt> Triangle_accessor;
+//  typedef class Triangle_accessor<Polyhedron_3<GT>,GT> Triangle_accessor;
 //
 //public:
 //  typedef typename Triangle_accessor::Triangle_iterator Id;
-//  typedef typename Gt::Triangle_3                       Datum;
-//  typedef typename Gt::Point_3                          Point;
+//  typedef typename GT::Triangle_3                       Datum;
+//  typedef typename GT::Point_3                          Point;
 //
 //  Triangle_accessor_primitive(const Id& h)
 //    : handle_(h) {}

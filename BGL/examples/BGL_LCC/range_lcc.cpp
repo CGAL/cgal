@@ -1,7 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <boost/foreach.hpp>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -35,30 +36,23 @@ struct Fct
 void fct(const LCC& lcc)
 {
   vertex_range vr(vertices(lcc));
-  
-#ifndef CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-#endif
-  
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
-    std::cout << vd->point() << std::endl;
-  }
-  
-  std::cout << "boost::tie + std::for_each" << std::endl;
+
+  std::cout << "std::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
-  boost::tie(vb,ve) = vertices_range(lcc);
+
+  std::tie(vb,ve) = vertices_range(lcc);
   std::for_each(vb,ve, Fct());
 }
 
 int main(int argc, char** argv)
 {
-  LCC lcc;  
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  LCC lcc;
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"), lcc);
 
   fct(lcc);
   return 0;

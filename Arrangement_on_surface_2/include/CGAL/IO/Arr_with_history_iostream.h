@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 
@@ -39,6 +30,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /*!
  * Write an arrangement with history to an output stream using a given
  * formatter.
@@ -49,7 +42,7 @@ namespace CGAL {
 template <class GeomTraits, class TopTraits, class Formatter>
 std::ostream& write
     (const Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
-     std::ostream& os, 
+     std::ostream& os,
      Formatter& format)
 {
   typedef Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>
@@ -63,6 +56,8 @@ std::ostream& write
   return (os);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (importer).
  * \param os The output stream.
@@ -70,7 +65,7 @@ std::ostream& write
  */
 template <class GeomTraits, class TopTraits>
 std::ostream& operator<<
-    (std::ostream& os, 
+    (std::ostream& os,
      const Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr)
 {
   typedef Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>
@@ -86,6 +81,8 @@ std::ostream& operator<<
   return (os);
 }
 
+namespace IO {
+
 /*!
  * Read an arrangement with history from an input stream using a given
  * formatter.
@@ -96,7 +93,7 @@ std::ostream& operator<<
 template <class GeomTraits, class TopTraits, class Formatter>
 std::istream& read
     (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
-     std::istream& is, 
+     std::istream& is,
      Formatter& format)
 {
   typedef Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>
@@ -110,6 +107,8 @@ std::istream& read
   return (is);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (exporter).
  * \param is The input stream.
@@ -117,7 +116,7 @@ std::istream& read
  */
 template <class GeomTraits, class TopTraits>
 std::istream& operator>>
-    (std::istream& is, 
+    (std::istream& is,
      Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr)
 {
   typedef Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>
@@ -128,10 +127,15 @@ std::istream& operator>>
 
   Text_formatter  text_format (is);
   Arr_reader      reader (arr);
-  
+
   reader (text_format);
   return (is);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::read;
+using IO::write;
+#endif
 
 } //namespace CGAL
 

@@ -1,27 +1,40 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Straight_skeleton_2_Tests)
 
-project( Straight_skeleton_2_Tests )
+find_package(CGAL REQUIRED COMPONENTS Qt6 Core)
+find_package(LEDA QUIET)
 
-cmake_minimum_required(VERSION 3.1)
+include_directories(BEFORE "include")
 
-find_package(CGAL QUIET COMPONENTS Core )
+create_single_source_cgal_program("issue4533.cpp")
+create_single_source_cgal_program("issue4684.cpp")
+create_single_source_cgal_program("test_sls.cpp")
+create_single_source_cgal_program("test_sls_previous_issues.cpp")
+create_single_source_cgal_program("test_sls_traits.cpp")
+create_single_source_cgal_program("test_straight_skeleton_copy.cpp")
 
-if ( CGAL_FOUND )
-
-  include(${CGAL_USE_FILE})
-  include_directories (BEFORE "include")
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+if(CGAL_Qt6_FOUND)
+  target_link_libraries(issue4684 PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(test_sls_previous_issues PRIVATE CGAL::CGAL_Basic_viewer)
 endif()
 
+if (CGAL_Core_FOUND OR LEDA_FOUND)
+  create_single_source_cgal_program("issue7149.cpp")
+  create_single_source_cgal_program("issue7284.cpp")
+  create_single_source_cgal_program("test_sls_offset.cpp")
+  create_single_source_cgal_program("test_sls_weighted_offset.cpp")
+  create_single_source_cgal_program("test_sls_simple.cpp")
+  create_single_source_cgal_program("test_sls_weighted_polygons.cpp")
+  create_single_source_cgal_program("test_sls_weighted_polygons_with_holes.cpp")
+  if(CGAL_Qt6_FOUND)
+    target_link_libraries(issue7149 PRIVATE CGAL::CGAL_Basic_viewer)
+    target_link_libraries(issue7284 PRIVATE CGAL::CGAL_Basic_viewer)
+    target_link_libraries(test_sls_offset PRIVATE CGAL::CGAL_Basic_viewer)
+    target_link_libraries(test_sls_weighted_offset PRIVATE CGAL::CGAL_Basic_viewer)
+    target_link_libraries(test_sls_weighted_polygons PRIVATE CGAL::CGAL_Basic_viewer)
+    target_link_libraries(test_sls_weighted_polygons_with_holes PRIVATE CGAL::CGAL_Basic_viewer)
+  endif()
+endif()

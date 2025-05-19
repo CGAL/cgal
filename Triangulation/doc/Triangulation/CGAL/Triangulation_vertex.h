@@ -11,7 +11,7 @@ used by default for representing vertices in the class
 A `Triangulation_vertex` stores a point and an incident full cell.
 
 
-\tparam `TriangulationTraits_` must be a model of the concept `TriangulationTraits`. It
+\tparam TriangulationTraits_ must be a model of the concept `TriangulationTraits`. It
 provides geometric types and predicates for use in the
 `Triangulation<TriangulationTraits_, TriangulationDataStructure_>` class. It is of interest here for its
 declaration of the `Point` type.
@@ -19,17 +19,17 @@ declaration of the `Point` type.
 \tparam Data is an optional type of data to be stored in the vertex class. The
 class template `Triangulation_vertex` accepts that no second parameter be specified. In
 this case, `Data` defaults to `CGAL::No_vertex_data`.
-`CGAL::No_vertex_data` can be explicitely specified to allow to access the
+`CGAL::No_vertex_data` can be explicitly specified to allow to access the
 third parameter.
 
-\tparam `TriangulationDSVertex_` must be a model of the concept `TriangulationDSVertex`. The
+\tparam TriangulationDSVertex_ must be a model of the concept `TriangulationDSVertex`. The
 class template `Triangulation_vertex` accepts that no third parameter be specified. It
 also accepts the tag `CGAL::Default` as third parameter. In both cases,
 `TriangulationDSVertex_` defaults to `CGAL::Triangulation_ds_vertex<>`.
 
-\cgalModels `TriangulationVertex` Additionally, the class
+\cgalModels{TriangulationVertex Additionally, the class
 `Triangulation_vertex` provides the following types, constructors
-and methods:
+and methods:}
 
 \sa `Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`

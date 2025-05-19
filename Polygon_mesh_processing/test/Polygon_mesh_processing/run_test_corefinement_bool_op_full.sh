@@ -14,6 +14,8 @@ for i in `seq 1 $k`; do
   ri=`echo $files | awk '{print $5}'`
   rm=`echo $files | awk '{print $6}'`
   rmr=`echo $files | awk '{print $7}'`
+  f1=`eval echo $f1`
+  f2=`eval echo $f2`
   echo -n "==== " $f1 $f2 " "
 
   if (./test_corefinement_bool_op $f1 $f2 ALL $ru $ri $rm $rmr|| false ) > /dev/null 2>&1; then

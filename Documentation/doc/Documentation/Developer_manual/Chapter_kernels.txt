@@ -7,11 +7,11 @@
 \authors Stefan Schirra
 
 The layer of geometry kernels provides
-basic geometric entities of constant size\cgalFootnote{In dimension \f$ d\f$, an entity of size \f$ O(d)\f$ is considered to be of constant size.} and
+basic geometric entities of constant size\cgalFootnote{In dimension \f$ d\f$, an entity of size \cgalBigO{d} is considered to be of constant size.} and
 primitive operations on them. Each entity is provided as both a
 stand-alone class, which is parameterized by a kernel class, and as a
 type in the kernel class. Each operation in the kernel is provided via
-a functor class\cgalFootnote{A class which defines a member `operator()`.} in the  kernel
+a functor class\cgalFootnote{A class which defines a member \cgalFootnoteCode{operator()}.} in the  kernel
 class and also as either a member function or a global function.
 See \cgalCite{hhkps-aegk-01} for more details about this design.
 Ideally, if the kernel provides all the primitives required, you can
@@ -20,10 +20,10 @@ structure; see also Chapter  \ref devman_traits_classes . If you need
 primitives not provided by the kernel (yet), please read
 Section  \ref secNewKernelTraits  below.
 
-\section secdifferent_kernels Different kernels 
+\section secdifferent_kernels Different kernels
 
 \cgal provides different kernels, they can differ by internal
-representation of objects (e.g.  cartesian versus  homogeneous) 
+representation of objects (e.g.  cartesian versus  homogeneous)
 or provide different functionalities (e.g. circular kernel).
 When creating a new package, the authors have to specify clearly
 the requirements needed by the kernel used.
@@ -33,7 +33,7 @@ The authors may specify a targeted kernel in the list of predefined
 kernels
 (e.g.  `Exact_predicates_inexact_constructions_kernel`).
 
-\subsection secCartesianHomogeneousComputation Cartesian versus homogeneous   computation 
+\subsection secCartesianHomogeneousComputation Cartesian versus homogeneous   computation
 
 Point coordinates can be represented in a homogeneous or cartesian
 way.
@@ -44,43 +44,43 @@ In any way, a package has to work with both representations.
 
 Since \cgal uses homogeneous representation for affine geometry  and not
 for projective geometry, the homogenizing coordinate  is non zero.
-The cartesian 
+The cartesian
 representation corresponding to an homogeneous point
 \f$ (x_0,x_1,...,x_d,w)\f$ is
 \f$ (x_0/w,x_1/w,...,x_d/w)\f$. Hence, homogeneous representation is not unique;
 \f$ (\alpha x,\alpha y,\alpha z,\alpha w)\f$ is an alternative
-representation to \f$ (x,y,z,w)\f$  for any \f$ \alpha\neq 0\f$. 
+representation to \f$ (x,y,z,w)\f$  for any \f$ \alpha\neq 0\f$.
 Internally, \cgal always maintains a non-negative homogenizing coordinate.
 
 \section Developer_manualKerneldesignandconventions Kernel design and conventions
 
-Each kernel object is provided as both a stand-alone class, which is 
-parameterized by a kernel class (`Geo_object_D<K>`), and as a type 
+Each kernel object is provided as both a stand-alone class, which is
+parameterized by a kernel class (`Geo_object_D<K>`), and as a type
 in the kernel class (`K::Geo_object_D`).  While the former use may
 be more natural for users not interested in the flexibility of the kernel
 (and is compatible with the original kernel design \cgalCite{fgkss-dccga-00}), the
 latter syntax should be used in all code distributed with the library
 as it allows types in the kernel to be easily exchanged and modified.
-Similarly, each operation and construction in the kernel is provided via 
-a function object class in the 
-kernel class and also as either a member function or a global function; 
+Similarly, each operation and construction in the kernel is provided via
+a function object class in the
+kernel class and also as either a member function or a global function;
 developers should use the function object classes to gain access to the
-functionality.  See \cgalCite{hhkps-aegk-01} for more details about this 
+functionality.  See \cgalCite{hhkps-aegk-01} for more details about this
 design and how it is accomplished.
 
-The classes for the geometric objects in the kernel have a 
+The classes for the geometric objects in the kernel have a
 standardized interface.
 <UL>
 <LI>All classes (currently only in dimensions 2 and 3) have a `bbox()` member function computing a bounding box.
 <LI>All classes have a `transform(Aff_transformation_d t)` member function
-to compute the object transformed by `t`.  
+to compute the object transformed by `t`.
 <LI>Oriented \f$ d-1\f$ dimensional objects\cgalFootnote{Note that the dimension of an object might depend on its use. A line in the plane has dimension \f$ d-1\f$. As a halfspace, it has dimension \f$ d\f$.} provide member functions
-`has_on_positive_side(Point_d)`, `has_on_boundary(Point_d)`, 
+`has_on_positive_side(Point_d)`, `has_on_boundary(Point_d)`,
 and `has_on_negative_side(Point_d)`. Furthermore, there is a member
 function `oriented_side(Point_d)` returning an object of type
 `CGAL::Oriented_side`.
 <LI>Full-dimensional bounded objects provide member functions
-`has_on_bounded_side(Point_d)`, `has_on_boundary(Point_d)`, 
+`has_on_bounded_side(Point_d)`, `has_on_boundary(Point_d)`,
 and `has_on_unbounded_side(Point_d)`. Furthermore, there is a member
 function `bounded_side(Point_d)` returning an object of type
 `CGAL::Bounded_side`.
@@ -92,22 +92,22 @@ the same object with opposite orientation.
 
 For a number of predicates, there are versions that operate on
 the coordinates directly, not on the geometric objects. These
-number-type based predicates ease re-use with non-<em>CGAL</em> types.
+number-type based predicates ease reuse with non-<em>CGAL</em> types.
 
-\section secNewKernelTraits Missing functionality 
+\section secNewKernelTraits Missing functionality
 
- 
-Kernel traits should avoid 
+
+Kernel traits should avoid
 redundant functionality, or if similar functionality is implemented
 with a different API, then one should really implement the
 functionality and the others call that one.
 
 Whenever you need a predicate that is not present in the current kernel
-traits, you should first try to re-use the available predicates (you
+traits, you should first try to reuse the available predicates (you
 might rewrite the code or implement the new predicate using existing ones).
-If this is not feasible (especially for efficiency reasons), we have to 
-decide on adding the new predicate to the kernel traits. 
-If the new predicate is not too special, it will be added. 
+If this is not feasible (especially for efficiency reasons), we have to
+decide on adding the new predicate to the kernel traits.
+If the new predicate is not too special, it will be added.
 Otherwise you cannot use the kernel as a traits class, but have
 to use additional traits.
 
@@ -122,8 +122,8 @@ When adding a new function object to the kernel you must:
   <li> possibly change `include/CGAL/Kernel/function_objects.h`
      to add a new function object <i>builder</i> in namespace `internal::`
   <li> change `include/CGAL/Kernel/interface_macros.h`
-     to add the actual function object class and its corresponding 
-     member function that returns an object of this class 
+     to add the actual function object class and its corresponding
+     member function that returns an object of this class
   <li> change `test/Kernel/include/CGAL/_test_new_2.h` and/or
      `test/Kernel/include/CGAL/_test_new_3.h` to add the test
      for this function object.
@@ -131,6 +131,6 @@ When adding a new function object to the kernel you must:
   <li> add `New_function_object` to the set of requirements for the Kernel
      concept in the file `Kernel_23/doc/Kernel_23/Concepts/Kernel.h`
   <li> update the classified reference manual in `Kernel_23/doc/Kernel_23/PackageDescription.txt`
-</ul>   
+</ul>
 
 */

@@ -1,6 +1,11 @@
 #include "test_Prefix.h"
-#include <boost/range/distance.hpp>
+
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/IO/OFF.h>
+
+#include <boost/range/distance.hpp>
+
+#include <string>
 
 template < typename Mesh>
 typename boost::graph_traits<Mesh>::
@@ -14,7 +19,7 @@ halfedge_descriptor find_halfedge(double x1, double y1,
 
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
   VPMAP vpmap = get(CGAL::vertex_point, m);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(m))
+  for(halfedge_descriptor h : halfedges(m))
   {
     if(get(vpmap, source(h, m)) == Point(x1,y1,0)
        && get(vpmap, target(h, m)) == Point(x2,y2,0))
@@ -38,9 +43,9 @@ collapse_edge_test()
 
   const std::string fname = "data/flat_hexahedron.off";
   Mesh m;
-  if(!CGAL::read_off(fname, m)) {
+  if(!CGAL::IO::read_OFF(fname, m))
     std::cout << "Error reading file: " << fname << std::endl;
-  }
+
   bool m_is_valid = CGAL::is_valid(m);
   assert(m_is_valid);
 
@@ -61,7 +66,7 @@ collapse_edge_test()
     bool ok = CGAL::Euler::collapse_edge(edge(he, test_mesh), test_mesh) == v1;
     assert(ok);
     char found = 0;
-    BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
+    for(halfedge_descriptor it : CGAL::halfedges_around_target(v1,test_mesh))
     {
       if(it == eno
          || it == eno_prime){
@@ -90,7 +95,7 @@ collapse_edge_test()
     bool ok = CGAL::Euler::collapse_edge(edge(he, test_mesh), test_mesh) == v1;
     assert(ok);
     char found = 0;
-    BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
+    for(halfedge_descriptor it : CGAL::halfedges_around_target(v1,test_mesh))
     {
       if(it == eno
          || it == eno_prime){
@@ -118,7 +123,7 @@ collapse_edge_test()
     bool ok = CGAL::Euler::collapse_edge(edge(he, test_mesh), test_mesh) == v1;
     assert(ok);
     char found = 0;
-    BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
+    for(halfedge_descriptor it : CGAL::halfedges_around_target(v1,test_mesh))
     {
       if(it == eno
          || it == eno_prime){
@@ -156,7 +161,7 @@ collapse_edge_test()
     bool ok = CGAL::Euler::collapse_edge(edge(he, test_mesh), test_mesh) == v1;
     assert(ok);
     char found = 0;
-    BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
+    for(halfedge_descriptor it : CGAL::halfedges_around_target(v1,test_mesh))
     {
       if(it == eno
          || it == eno_prime
@@ -197,7 +202,7 @@ collapse_edge_test()
     bool ok = CGAL::Euler::collapse_edge(edge(he, test_mesh), test_mesh) == v1;
     assert(ok);
     char found = 0;
-    BOOST_FOREACH(halfedge_descriptor it, CGAL::halfedges_around_target(v1,test_mesh))
+    for(halfedge_descriptor it : CGAL::halfedges_around_target(v1,test_mesh))
     {
       if(it == ep)
         ++found;

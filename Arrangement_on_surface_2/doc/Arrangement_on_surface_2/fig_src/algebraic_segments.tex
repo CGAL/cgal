@@ -1,0 +1,90 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+    \begin{pspicture}(-4,-4)(4,4)
+      \arraxes(0,0)(-4,-4)(4,4)
+      \rput(1.5,-2.8){%
+        \psframebox*{%
+          \begin{minipage}{5cm}
+            \textcolor{black}{$c_5: x=0$}\\
+            \textcolor{blue}{$c_3: x^2-y^3=0$}\\
+            \textcolor{olivegreen}{$c_4: y^2-x^2+1=0$}\\
+            \textcolor{orange}{$c_1: x^4+y^3-1=0$}\\
+            \textcolor{purple}{$c_2: 2x^2+5y^2-7=0$}
+          \end{minipage}
+        }
+      }
+      % C1: x^4+y^3-1
+      \psplot[linecolor=orange,plotstyle=curve]{-2.82}{2.82}{
+        /third 1 3 div def
+        /a 1 x 4 exp sub def
+        a 0 ge {a third exp} {a neg third exp neg} ifelse
+      }
+      % C2: 2*x^2+5*y^2-7
+      \parametricplot[linecolor=purple,plotstyle=curve]{0}{180}{
+        7 2 div sqrt t cos mul 7 5 div sqrt t sin mul
+      }
+      \parametricplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=purple,plotstyle=curve]{180}{360}{
+        7 2 div sqrt t cos mul 7 5 div sqrt t sin mul
+      }
+      % C3: x^2-y^3
+      \psplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=blue,plotstyle=curve]{-4}{-2}{
+        /twothirds 2 3 div def
+        x 0 ge {x twothirds exp} {x neg twothirds exp} ifelse
+      }
+      \psplot[linecolor=blue,plotstyle=curve]{-2}{2}{
+        /twothirds 2 3 div def
+        x 0 ge {x twothirds exp} {x neg twothirds exp} ifelse
+      }
+      \psplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=blue,plotstyle=curve]{2}{3}{
+        /twothirds 2 3 div def
+        x 0 ge {x twothirds exp} {x neg twothirds exp} ifelse
+      }
+      \psplot[linecolor=blue,plotstyle=curve]{3}{4}{
+        /twothirds 2 3 div def
+        x 0 ge {x twothirds exp} {x neg twothirds exp} ifelse
+      }
+      % C4: y^2-x^2+1
+      \parametricplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=olivegreen,plotstyle=curve]{-75}{0}
+                     {/cost t cos def 1 cost div t sin cost div}
+      \parametricplot[linecolor=olivegreen,plotstyle=curve]{0}{60}
+                     {/cost t cos def 1 cost div t sin cost div}
+      \parametricplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=olivegreen,plotstyle=curve]{60}{75}
+                     {/cost t cos def 1 cost div t sin cost div}
+      \parametricplot[linestyle=dashed,dash=2pt 2pt,
+        linecolor=olivegreen,plotstyle=curve]{105}{255}
+                     {/cost t cos def 1 cost div t sin cost div}
+      % c5: vertical segment
+      \psline(0,0)(0,1.18321)
+      %
+      \arrEmptyVertex(-1,0){p}             % degree 2
+      \arrEmptyVertex(-1,1){p}             % degree 4
+      \arrMainVertex(-1.87083,0){p}        % degree 1
+      \arrMainVertex(-2,1.5874){p}         % degree 1
+      \arrEmptyVertex(-0.786151,0.8518){p} % degree 4
+      \arrEmptyVertex(0,0){p}              % degree 3
+      \arrEmptyVertex(0,1){p}              % degree 4
+      \arrEmptyVertex(0,1.18322){p}        % degree 3
+      \arrEmptyVertex(0.786151,0.8518){p}  % degree 4
+      \arrEmptyVertex(1,0){p}              % degree 3
+      \arrEmptyVertex(1,1){p}              % degree 4
+      \arrEmptyVertex(1.30931,0.845154){p} % degree 4
+      \arrEmptyVertex(1.77423,1.46557){p}  % degree 4
+      \arrMainVertex(1.87083,0){p}         % degree 1
+      \arrMainVertex(2,1.5874){p}          % degree 1
+      \arrMainVertex(2,1.73205){p}         % degree 1
+      \arrMainVertex(3,2.08008){p}         % degree 1
+      \arrp[45](-1,2){3}             % Isolated
+      \arrp[45](1,2){2}              % Isolated
+      \arrp[45](2,-1.73205){1}       % Isolated
+      \psframe[linewidth=0.25pt](-4,-4)(4,4)
+    \end{pspicture}
+}
+\end{document}

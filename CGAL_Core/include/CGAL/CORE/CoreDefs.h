@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: CoreDefs.h
  * Synopsis:
@@ -23,35 +12,36 @@
  *       For each parameter, we provide corresponding methods to
  *       modify or examine the values.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_COREDEFS_H_
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
-#include <CGAL/atomic.h>
 #include <CGAL/disable_warnings.h>
 
+#include <atomic>
+
 #ifdef CGAL_HEADER_ONLY
-  
+
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
     inline TYPE & get_static_##NAME()               \
     {                                               \
       static TYPE NAME(VALUE);                      \
       return NAME;                                  \
     }
-  
+
 #else // CGAL_HEADER_ONLY
 
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
@@ -63,7 +53,7 @@
 
 #endif // CGAL_HEADER_ONLY
 
-namespace CORE { 
+namespace CORE {
 
 //////////////////////////////////////////////////////////////
 // defined constants
@@ -86,10 +76,10 @@ namespace CORE {
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, AbortFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, AbortFlag, true)
 #endif
 
-/// Invalid Flag -- initiallly value is non-negative
+/// Invalid Flag -- initially value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make
@@ -97,7 +87,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, AbortFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(int, InvalidFlag, 0)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<int>, InvalidFlag, 0)
+CGAL_GLOBAL_STATE_VAR(std::atomic<int>, InvalidFlag, 0)
 #endif
 
 /// Escape Precision in bits
@@ -113,7 +103,7 @@ CGAL_GLOBAL_STATE_VAR(long, EscapePrecFlag, 0)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, EscapePrecWarning, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, EscapePrecWarning, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, EscapePrecWarning, true)
 #endif
 
 // These following two values determine the precision of computing
@@ -126,16 +116,16 @@ CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
-    See also defOutputDigits. 
+    See also defOutputDigits.
     */
 /*  QUESTION: the following comment seems to contradict the above comment:
-	"controls the printout precision of std::cout for BigFloat"
+        "controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
 #ifdef CGAL_NO_ATOMIC
     CGAL_GLOBAL_STATE_VAR(long, defBigFloatOutputDigits, 10)
 #else
-    CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatOutputDigits, 10)
+    CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatOutputDigits, 10)
 #endif
 
 /// default input precision in digits for converting a string to a Real or Expr
@@ -144,12 +134,12 @@ CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 
 /// controls the printout precision of std::cout for Real and Expr
 /** This value cannot be CORE_INFTY
-    See also defBigFloatOutputDigits. 
+    See also defBigFloatOutputDigits.
     (it really should be an int, as in std::cout.setprecision(int)). */
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
 #endif
 
 /// default input precision in digits for converting a string to a BigFloat
@@ -157,7 +147,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, 10) // == get_
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defBigFloatInputDigits, 16)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatInputDigits, 16)
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatInputDigits, 16)
 #endif
 
 inline
@@ -180,7 +170,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, fpFilterFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, fpFilterFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, fpFilterFlag, true)
 #endif
 
 
@@ -188,7 +178,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, fpFilterFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, incrementalEvalFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, incrementalEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, incrementalEvalFlag, true)
 #endif
 
 
@@ -196,7 +186,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, incrementalEvalFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, progressiveEvalFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, progressiveEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, progressiveEvalFlag, true)
 #endif
 
 
@@ -204,20 +194,20 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, progressiveEvalFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, rationalReduceFlag, false)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, rationalReduceFlag, false)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, rationalReduceFlag, false)
 #endif
 
 /// default initial (bit) precision for AddSub Progressive Evaluation
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defInitialProgressivePrec, 64)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defInitialProgressivePrec, 64)
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defInitialProgressivePrec, 64)
 #endif
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters
-// 	including: scientific vs. positional format
-//	All the set methods return the previous global value if any
+//         including: scientific vs. positional format
+//        All the set methods return the previous global value if any
 //////////////////////////////////////////////////////////////
 
 /// set default composite precision [defAbsPrec, defRelPrec]
@@ -315,14 +305,13 @@ inline bool setRationalReduceFlag(bool f) {
 
 /// CORE_init(..) is the CORE initialization function.
 /** We recommend calling it before anything else.  Originally motivated
-    by need to get around gnu's compiler bug in which the variable 
+    by need to get around gnu's compiler bug in which the variable
     "defAbsPrec" was not properly initialized.  But it has other uses,
-    e.g., overriding the default std::cout precision (most systems 
+    e.g., overriding the default std::cout precision (most systems
     initializes this value to 6) to our own */
 inline void CORE_init(long d) {
   get_static_defAbsPrec() = CORE_posInfty;
   get_static_defOutputDigits() = d;
-  std::setprecision(get_static_defOutputDigits());
 }
 
 /// change to scientific output format

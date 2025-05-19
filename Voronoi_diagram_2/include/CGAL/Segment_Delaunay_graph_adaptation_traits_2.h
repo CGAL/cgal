@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -40,7 +31,7 @@ struct Segment_Delaunay_graph_adaptation_traits_2
   : public CGAL_VORONOI_DIAGRAM_2_INS::Adaptation_traits_base_2
   <SDG2,
    CGAL_VORONOI_DIAGRAM_2_INS::Site_accessor<typename SDG2::Site_2,
-					     SDG2,Tag_false>,
+                                             SDG2,Tag_false>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Delaunay_graph_Voronoi_point_2<SDG2>,
    CGAL_VORONOI_DIAGRAM_2_INS::Segment_Delaunay_graph_nearest_site_2<SDG2> >
 {

@@ -4,7 +4,7 @@
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/point_generators_3.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
 #include <fstream>
 #include <limits>
@@ -18,10 +18,10 @@ typedef CGAL::Random_points_on_sphere_3<Point> Point_generator;
 
 typedef CGAL::Point_set_3<Point> Point_set;
 
-typedef CGAL::Shape_detection_3::Shape_detection_traits
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits
 <Kernel, Point_set, Point_set::Point_map, Point_set::Vector_map> Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>        Efficient_ransac;
-typedef CGAL::Shape_detection_3::Sphere<Traits>                  Sphere;
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>          Efficient_ransac;
+typedef CGAL::Shape_detection::Sphere<Traits>                    Sphere;
 
 
 int main (int, char**)
@@ -35,7 +35,6 @@ int main (int, char**)
   for (std::size_t i = 0; i < nb_pts; ++ i)
     point_set.insert (*(generator ++));
 
-
   // Add normal property and estimate normal values
   point_set.add_normal_map();
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>
@@ -43,7 +42,6 @@ int main (int, char**)
      12, // Number of neighbors
      point_set.parameters(). // Named parameters provided by Point_set_3
      degree_fitting(2));     // additional named parameter specific to jet_estimate_normals
-
 
   // Simplify point set
   CGAL::grid_simplify_point_set
@@ -67,10 +65,10 @@ int main (int, char**)
   parameters.min_points = std::size_t(point_set.size() / 3);
   parameters.epsilon = 0.01;
   parameters.cluster_epsilon = 0.5;
-  parameters.normal_threshold = 0.9;   
+  parameters.normal_threshold = 0.9;
   ransac.detect(parameters);
-  
-  BOOST_FOREACH(boost::shared_ptr<Efficient_ransac::Shape> shape, ransac.shapes())
+
+  for(std::shared_ptr<Efficient_ransac::Shape> shape : ransac.shapes())
     if (Sphere* sphere = dynamic_cast<Sphere*>(shape.get()))
       std::cerr << "Detected sphere of center " << sphere->center() // Center should be approx 0, 0, 0
                 << " and of radius " << sphere->radius() << std::endl; // Radius should be approx 1

@@ -18,20 +18,20 @@ int main()
 
   Segment_2 pq(p,q), rs(r,s), rt(r,t), ru(r,u), vw(v,w);
 
-  Point_2 pqrs, pqrt, pqru, pqvw;  
+  Point_2 pqrs, pqrt, pqru, pqvw;
 
   Object o = Intersect_2()(pq,rs);
   assert(assign(pqrs,o));
   assert(pqrs == Point_2(0.5, 0.5, 0.5));
-    
+
   o = Intersect_2()(pq,rt);
   assert(assign(pqrt,o));
   assert(pqrt == Point_2(0.5, 0.5, 0.25));
- 
+
  o = Intersect_2()(pq,ru);
  assert(assign(pqru,o));
  assert(pqru == Point_2(0.5, 0.5, 0));
- 
+
  o = Intersect_2()(pq,vw);
  assert(assign(pqvw,o));
  assert(pqvw == Point_2(0.5, 0.5, 0.25));

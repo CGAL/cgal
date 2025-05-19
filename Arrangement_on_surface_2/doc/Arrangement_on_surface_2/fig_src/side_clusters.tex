@@ -1,0 +1,23 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\usepackage[edges]{forest}
+\usetikzlibrary{shadows.blur,arrows.meta}
+\pagestyle{empty}
+\def\name#1{\textsf{\it #1}}
+\tikzset{concept/.style={rectangle split,rectangle split parts=1,draw,
+    fill=white,blur shadow,rounded corners,align=center}}
+\begin{document}
+\begin{forest}
+    [,phantom,before drawing tree={x=0pt},
+      for tree={concept,edge={-Stealth}}
+      [\name{AosVerticalSideTraits\_2}
+        [\name{AosLeftSideTraits\_2}]
+        [\name{AosRightSideTraits\_2}]
+      ]
+      [\name{AosHorizontalSideTraits\_2}
+        [\name{AosBottomSideTraits\_2}]
+        [\name{AosTopologyTraits\_2}]
+      ]
+    ]
+\end{forest}
+\end{document}

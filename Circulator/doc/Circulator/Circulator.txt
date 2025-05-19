@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Handles_Ranges_and_Circulators
 \anchor chapterCirculators
 
@@ -12,7 +12,7 @@ namespace CGAL {
 
 Most data structures in \cgal use the concept of `Handle` in their user
 interface to refer to the elements they store. This concept describes what is
-sometimes called a trivial iterator. A `Handle` is akeen to a pointer to
+sometimes called a trivial iterator. A `Handle` is akin to a pointer to
 an object providing the dereference operator `operator*()` and member
 access `operator->()` but no increment or decrement operators like
 iterators. A `Handle` is intended to be used whenever the referenced
@@ -94,9 +94,9 @@ range definition as for iterators. The difference lies in the use of
 an iterator `i` the range `[i,i)` denotes the empty range. As
 long as `c != d` the range `[c,d)` behaves like an iterator
 range and could be used in \stl algorithms. For circulators however,
-an additional test `c == NULL` is required that returns true if
+an additional test `c == nullptr` is required that returns true if
 and only if the circular sequence is empty. As for
-\cpp, we recommend the use of 0 instead of `NULL`.
+\cpp, we recommend the use of 0 instead of `nullptr`.
 
 Besides the conceptual cleanness, the main reason for inventing a new
 concept with a similar intent as iterators is efficiency. An iterator
@@ -137,10 +137,10 @@ see the reference pages for circulators, specifically the
 \anchor sectionCirculatorWarning
 \attention Please note that the definition of a range is different
 from that of iterators. An interface of a data structure must declare
-whether it works with iterators, circulators, or both. \stl 
+whether it works with iterators, circulators, or both. \stl
 algorithms always specify only iterators in their interfaces. A range
 `[c, d)` of circulators used in an interface for iterators
-will work as expected as long as `c != d`. A range `[c, c)` will be 
+will work as expected as long as `c != d`. A range `[c, c)` will be
 interpreted as the empty range like for iterators,
 which is different than the full range that it should denote for
 circulators.
@@ -148,7 +148,7 @@ circulators.
 \subsection sectionCirculatorAdaptor Adaptors Between Iterators and Circulators
 
 Algorithms working on iterator ranges can not be applied to circulator
-ranges in full generality, only to subranges as pointed out in the 
+ranges in full generality, only to subranges as pointed out in the
 previous section. The following adaptors
 convert circulators to iterators and vice versa (with the unavoidable
 space and time penalty) to reestablish this generality.
@@ -159,7 +159,7 @@ space and time penalty) to reestablish this generality.
 - `Circulator_from_container` is a circulator for a container
 
 
-The following example applies the generic `std::reverse()` algorithm 
+The following example applies the generic `std::reverse()` algorithm
 from \stl to a sequence given by a bidirectional circulator `c`.
 It uses the `Container_from_circulator` adaptor.
 
@@ -198,6 +198,6 @@ iterator_distance(ic1, ic2); // number of elements in the range [ic2, ic1)
 is_empty_range(ic1, ic2);    // test the range [ic2, ic1) for emptiness
 \endcode
 
-*/ 
+*/
 } /* namespace CGAL */
 

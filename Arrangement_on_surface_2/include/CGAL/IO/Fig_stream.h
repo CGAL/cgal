@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 
 #ifndef CGAL_FIG_STREAM_H
@@ -29,6 +20,7 @@
 
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include <cstdio>
 
 namespace CGAL {
@@ -75,7 +67,7 @@ enum Fig_line_style
 };
 
 #define FIG_DEFAULT_STYLE_VALUE   4.0
-    
+
 /*!
  * FIG fill styles.
  */
@@ -172,7 +164,7 @@ enum Fig_depth
 
 /*!
  * \class A class for writing geometric objects in a FIG format (version 3.2).
- * For more details, see: http://www.xfig.org/userman/fig-format.html
+ * For more details, see: https://mcj.sourceforge.net/
  */
 template <class Kernel_>
 class Fig_stream
@@ -180,7 +172,7 @@ class Fig_stream
 public:
 
   typedef Kernel_                                Kernel;
-  
+
   // Define the kernel objects.
   typedef typename Kernel::FT                    NT;
   typedef typename Kernel::Point_2               Point_2;
@@ -274,7 +266,7 @@ public:
    * \param rect A rectangle bounding the logical drawing area.
    * \param width The physical width of the figure (in FIG units).
    * \param height The physical height of the figure (in FIG units).
-   * \pre The bounding rectangle is valid and the physical dimensions are 
+   * \pre The bounding rectangle is valid and the physical dimensions are
    *      both positive.
    */
   Fig_stream (const char *filename,
@@ -318,7 +310,7 @@ public:
   }
   //@}
 
-  /// \name Openning and closing the file.
+  /// \name Opening and closing the file.
   //@{
 
   /*!
@@ -335,7 +327,7 @@ public:
    * \param rect A rectangle bounding the logical drawing area.
    * \param width The physical width of the figure (in FIG units).
    * \param height The physical height of the figure (in FIG units).
-   * \pre The bounding rectangle is valid and the physical dimensions are 
+   * \pre The bounding rectangle is valid and the physical dimensions are
    *      both positive.
    * \return Whether the file was successfully opened.
    */
@@ -383,7 +375,7 @@ public:
     _ofile << "Landscape" << std::endl;
     _ofile << "Center" << std::endl;
     _ofile << "Inches" << std::endl;
-    _ofile << "Letter" << std::endl;  
+    _ofile << "Letter" << std::endl;
     _ofile << "100.00" << std::endl;
     _ofile << "Single" << std::endl;
     _ofile << "-2" << std::endl;
@@ -407,7 +399,7 @@ public:
 
   /// \name Accessing drawing properties.
   //@{
-  
+
   /*!
    * Get the workspace bounding rectangle.
    */
@@ -427,7 +419,7 @@ public:
 
   /*!
    * Get the physical width of the fig
-   */  
+   */
   int width () const
   {
     return _width;
@@ -435,7 +427,7 @@ public:
 
   /*!
    * Get the physical height of the fig
-   */  
+   */
   int height () const
   {
     return _height;
@@ -514,7 +506,7 @@ public:
   }
 
   /*!
-   * Get the arrow drawing mode (this mode is relevent when drawing segments,
+   * Get the arrow drawing mode (this mode is relevant when drawing segments,
    * polylines, circular arcs or splines).
    */
   Fig_arrow_mode arrow_mode () const
@@ -526,7 +518,7 @@ public:
    * Get the arrow type.
    */
   Fig_arrow_type arrow_type () const
-  {         
+  {
     return (_arrow_type);
   }
 
@@ -580,7 +572,7 @@ public:
 
     return;
   }
-  
+
   /*!
    * Set the color.
    * \pre The color must be defined.
@@ -591,7 +583,7 @@ public:
 
     if (color_defined (color))
         _color = color;
-    
+
     return;
   }
 
@@ -679,7 +671,7 @@ public:
    * Set the arrow type.
    */
   void set_arrow_type (const Fig_arrow_type& type)
-  {         
+  {
     _arrow_type = type;
     return;
   }
@@ -739,7 +731,7 @@ public:
 
   /*!
    * Add a user-defined color.
-   * Use this function after openning the FIG stream and before writing any
+   * Use this function after opening the FIG stream and before writing any
    * other object (i.e. before calling the write_<object> () functions).
    * \param color The color.
    * \param r The red component (0 - 255).
@@ -748,8 +740,8 @@ public:
    * \pre The color must be undefined.
    */
   void define_color (const Fig_color& color,
-                     const unsigned char& r, 
-                     const unsigned char& g, 
+                     const unsigned char& r,
+                     const unsigned char& g,
                      const unsigned char& b)
   {
     CGAL_precondition (color_defined (color));
@@ -758,15 +750,18 @@ public:
     if (color_defined (color))
       return;
 
-    // Prepare a string desribing the color.
-    char    color_desc [10];
+    // Prepare a string describing the color.
 
-    sprintf ("#%02x%02x%02x", r, g, b);
+    std::stringstream out;
+    out << "0x"  << std::hex
+        << std::setfill('0') << std::setw(2) << r
+        << std::setfill('0') << std::setw(2) << g
+        << std::setfill('0') << std::setw(2) << b;
 
     // Write the color to the FIG file.
     _ofile << "0 "                        // Desginates a color pseudo-object.
            << static_cast<int>(color) << ' '
-           << color_desc << std::endl;
+           << out.str() << std::endl;
 
     // Mark that the color is now defined.
     colors[static_cast<int>(color)] = true;
@@ -831,7 +826,7 @@ public:
     {
       // Draw an empty circle (use a solid line with width 1).
       _write_ellipse (p,
-                      CGAL::square(_point_size), 
+                      CGAL::square(_point_size),
                       CGAL::square(_point_size),
                       _color, 1, FIG_SOLID, _style_value,
                       FIG_WHITE, FIG_NOT_FILLED);
@@ -843,7 +838,7 @@ public:
     {
       // Draw a filled disc.
       _write_ellipse (p,
-                      CGAL::square(_point_size), 
+                      CGAL::square(_point_size),
                       CGAL::square(_point_size),
                       _color, 1, FIG_SOLID, _style_value,
                       _color, FIG_FILLED);
@@ -1077,7 +1072,7 @@ public:
                            const Point_2& p3)
   {
     CGAL_precondition (_ofile.is_open());
-    
+
     _write_arc (p1, p2, p3,
                 _color, _line_width, _line_style, _style_value);
     return;
@@ -1123,18 +1118,18 @@ public:
    *              (0 by default).
    */
   void write_text (const Point_2& pos,
-		   const char *text,
-		   const double& angle = 0)
+                   const char *text,
+                   const double& angle = 0)
   {
     CGAL_precondition (_ofile.is_open());
 
-    if (text == NULL || strlen(text) == 0)
+    if (text == nullptr || strlen(text) == 0)
       return;
 
-    _write_text (pos, 
-		 reinterpret_cast<const unsigned char*>(text), strlen(text),
-		 angle,
-		 _color, _font, _font_size);
+    _write_text (pos,
+                 reinterpret_cast<const unsigned char*>(text), strlen(text),
+                 angle,
+                 _color, _font, _font_size);
     return;
   }
   //@}
@@ -1150,7 +1145,7 @@ public:
     set_depth (static_cast<int>(depth));
     return (*this);
   }
-  
+
   /*!
    * Set the color.
    */
@@ -1201,7 +1196,7 @@ public:
    * Set the arrow type.
    */
   Fig_stream& operator<< (const Fig_arrow_type& type)
-  {         
+  {
     set_arrow_type (type);
     return (*this);
   }
@@ -1254,7 +1249,7 @@ public:
     write_line (line);
     return (*this);
   }
-  
+
   /*!
    * Write a triangle.
    */
@@ -1300,9 +1295,9 @@ protected:
   void _convert_point (const Point_2& p,
                        int& ix, int& iy) const
   {
-    ix = static_cast<int> (_scale * 
+    ix = static_cast<int> (_scale *
                            CGAL::to_double(p.x() - _bound_rect.xmin()));
-    iy = static_cast<int> (_scale * 
+    iy = static_cast<int> (_scale *
                            CGAL::to_double( _bound_rect.ymax() - p.y()));
     return;
   }
@@ -1357,11 +1352,11 @@ protected:
 
     // Write the segment properties.
     _ofile << "2 1 "                      // Desginate a polyline.
-           << line_style << ' ' 
-           << line_width << ' ' 
+           << line_style << ' '
+           << line_width << ' '
            << line_color << ' '
            << FIG_WHITE << ' '            // Fill color (dummy).
-           << _depth << ' ' 
+           << _depth << ' '
            << "0 "                        // Pen style (not in use, always 0).
            << FIG_NOT_FILLED << ' '
            << style_value << ' '
@@ -1406,7 +1401,7 @@ protected:
   }
 
   /*!
-   * Write a polygon, reprsented as a range of points.
+   * Write a polygon, represented as a range of points.
    */
   template <class Input_iterator>
   void _write_polygon (const int n_points,
@@ -1420,11 +1415,11 @@ protected:
   {
     // Write the polyline properties.
     _ofile << "2 3 "                      // Desginate a polygon.
-           << line_style << ' ' 
-           << line_width << ' ' 
+           << line_style << ' '
+           << line_width << ' '
            << line_color << ' '
            << fill_color << ' '
-           << _depth << ' ' 
+           << _depth << ' '
            << "0 "                        // Pen style (not in use, always 0).
            << fill_style << ' '
            << style_value << ' '
@@ -1476,17 +1471,17 @@ protected:
                        const Fig_line_style& line_style,
                        const double&         style_value,
                        const Fig_color&      fill_color,
-                       const Fig_fill_style& fill_style) 
+                       const Fig_fill_style& fill_style)
   {
-    
+
 
     // Write the ellipse properties.
     _ofile << "1 1 "                      // Desginate an ellipse.
-           << line_style << ' ' 
-           << line_width << ' ' 
+           << line_style << ' '
+           << line_width << ' '
            << line_color << ' '
            << fill_color << ' '
-           << _depth << ' ' 
+           << _depth << ' '
            << "0 "                        // Pen style (not in use, always 0).
            << fill_style << ' '
            << style_value << ' '
@@ -1500,9 +1495,9 @@ protected:
     _ofile << ' ' << ix << ' ' << iy;
 
     // Write the radii.
-    int  rx = static_cast<int> (_scale * 
+    int  rx = static_cast<int> (_scale *
                                 std::sqrt(CGAL::to_double(squared_radius_x)));
-    int  ry = static_cast<int> (_scale * 
+    int  ry = static_cast<int> (_scale *
                                 std::sqrt(CGAL::to_double(squared_radius_y)));
 
     _ofile << ' ' << rx << ' ' << ry;
@@ -1540,11 +1535,11 @@ protected:
 
     // Write the arc properties.
     _ofile << "5 1 "                      // Desginate an open arc.
-           << line_style << ' ' 
-           << line_width << ' ' 
+           << line_style << ' '
+           << line_width << ' '
            << line_color << ' '
            << FIG_WHITE << ' '            // Fill color (dummy).
-           << _depth << ' ' 
+           << _depth << ' '
            << "0 "                        // Pen style (not in use, always 0).
            << FIG_NOT_FILLED << ' '
            << style_value << ' '
@@ -1562,10 +1557,10 @@ protected:
     // Write the three points defining the arc.
     _convert_point (p1, ix, iy);
     _ofile << ' ' << ix << ' ' << iy;
-    
+
     _convert_point (p2, ix, iy);
     _ofile << ' ' << ix << ' ' << iy;
-    
+
     _convert_point (p3, ix, iy);
     _ofile << ' ' << ix << ' ' << iy << std::endl;
 
@@ -1604,11 +1599,11 @@ protected:
 
     // Write the spline properties.
     _ofile << "3 0 "                      // Desginate an open spline.
-           << line_style << ' ' 
-           << line_width << ' ' 
+           << line_style << ' '
+           << line_width << ' '
            << line_color << ' '
            << FIG_WHITE << ' '            // Fill color (dummy).
-           << _depth << ' ' 
+           << _depth << ' '
            << "0 "                        // Pen style (not in use, always 0).
            << FIG_NOT_FILLED << ' '
            << style_value << ' '
@@ -1668,8 +1663,8 @@ protected:
     int  height = static_cast<int> (_scale * CGAL::to_double(_arrow_height));
 
     _ofile << _arrow_type << ' '
-           << "0 "                        // Arrow style (always 0). 
-           << _line_width << ' ' 
+           << "0 "                        // Arrow style (always 0).
+           << _line_width << ' '
            << width << ' '
            << height << std::endl;
     return;
@@ -1679,12 +1674,12 @@ protected:
    * Write a text box.
    */
   void _write_text (const Point_2& pos,
-		    const unsigned char *text,
-		    const int&          len_text,
-		    const double& angle,
-		    const Fig_color& font_color,
-		    const Fig_font&  font,
-		    const int&       font_size)
+                    const unsigned char *text,
+                    const int&          len_text,
+                    const double& angle,
+                    const Fig_color& font_color,
+                    const Fig_font&  font,
+                    const int&       font_size)
   {
     // Compute the text-box dimensions.
     const int    text_height = font_size * 1200 / 80;
@@ -1692,16 +1687,16 @@ protected:
 
     // Write the text properties.
     _ofile << "4 0 "                      // Desginate left-justified text.
-	   << font_color << ' '
-	   << _depth << ' '
-	   << "0 "                        // Pen style (not in use, always 0).
-	   << font << ' '
-	   << font_size << ' '
-	   << angle << ' '
-	   << "2 "                        // Indicates a special LaTeX font.
-	   << text_height << ' '
-	   << text_width;
-    
+           << font_color << ' '
+           << _depth << ' '
+           << "0 "                        // Pen style (not in use, always 0).
+           << font << ' '
+           << font_size << ' '
+           << angle << ' '
+           << "2 "                        // Indicates a special LaTeX font.
+           << text_height << ' '
+           << text_width;
+
     // Write the position coordinates.
     int     ix, iy;
 
@@ -1709,28 +1704,29 @@ protected:
     _ofile << ' ' << ix << ' ' << iy << ' ';
 
     // Write the text.
-    char    oct[10];
     int     i;
 
     for (i = 0; i < len_text; i++)
     {
       if (text[i] >= ' ' && text[i] < 128 && text[i] != '\\')
       {
-	// If the current character is printable, just write it.
-	_ofile << static_cast<char>(text[i]);
+        // If the current character is printable, just write it.
+        _ofile << static_cast<char>(text[i]);
       }
       else
       {
-	// Convert the current character to an octal string and write it.
-	sprintf (oct, "\\%03o", text[i]);
-	_ofile << oct;
+        // Convert the current character to an octal string and write
+        // it.
+        std::stringstream out;
+        out << "\\" << std::setfill('0') << std::setw(3) << std::oct << text[i];
+        _ofile << out.str();
       }
     }
-   
+
     // Write the end-of-string sequence.
     _ofile << "\\001" << std::endl;
 
-    return;	
+    return;
   }
 
   /*!

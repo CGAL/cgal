@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
@@ -86,7 +77,7 @@ bisect_control_polygon_2(InputIterator ctrl_pts_begin,
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is the midpoint between p[i]  and p[i + 1].
+    // where the new i-th point is the midpoint between p[i]  and p[i + 1].
     for (i = 0; i < last_index; ++i)
       vec[i] = midpoint(vec[i], vec[i + 1]);
 
@@ -143,7 +134,7 @@ typename InputIterator::value_type point_on_Bezier_curve_2
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
+    // where the new i-th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
       vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),
@@ -194,7 +185,7 @@ typename InputIterator::value_type de_Casteljau_2
 
   // The first control point goes to the (front of) the right subcurve,
   // while the last control point goes to the (back of) the left subcurve.
-  const _NT              comp_t0 = _NT(1) - t0; 
+  const _NT              comp_t0 = _NT(1) - t0;
   unsigned int           last_index = n_pts - 1;
 
   *left_ctrl_pts = vec[0];
@@ -206,7 +197,7 @@ typename InputIterator::value_type de_Casteljau_2
   while (last_index > 0)
   {
     // Construct (m - 1) control points from the m point we currently have,
-    // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
+    // where the new i-th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
       vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),

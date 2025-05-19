@@ -26,7 +26,7 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_id_pmap, Hedge_id_pmap
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/plane.off");
+  std::ifstream input(CGAL::data_file_path("meshes/plane.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr<< "Cannot open  data/plane.off";
@@ -35,17 +35,15 @@ int main()
 
   // Init the indices of the vertices from 0 to num_vertices(mesh)-1
   Vertex_id_map vertex_index_map;
-  vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter)
-    vertex_index_map[*vb]=counter;
+  for(vertex_descriptor v : vertices(mesh))
+    vertex_index_map[v]=counter++;
 
   // Init the indices of the halfedges from 0 to 2*num_edges(mesh)-1
   Hedge_id_map hedge_index_map;
   counter = 0;
-  halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter)
-    hedge_index_map[*eb]=counter;
+  for(halfedge_descriptor h : halfedges(mesh))
+    hedge_index_map[h]=counter++;
 
   Surface_mesh_deformation deform_mesh( mesh,
                                         Vertex_id_pmap(vertex_index_map),

@@ -1,24 +1,15 @@
-// Copyright (c) 1999,2003,2004  
+// Copyright (c) 1999,2003,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion, Michael Hemmer
@@ -52,7 +43,7 @@ struct Gmpz_rep
 // maybe the mpz_init_set* functions should move back to Gmpz_rep.
 // But then we should use the Storage_traits::construct/get...
 
-  mpz_t mpZ;
+  mpz_t mpZ; /* coverity[member_decl] */
 
   Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }
@@ -333,9 +324,9 @@ gmpz_new_read(std::istream &is, Gmpz &z)
     // peek() sets also the failbit, one has to check for EOL twice.
     //
     // See the LWG C++ Issue 2036, classified as Not-A-Defect:
-    //   http://lwg.github.com/issues/lwg-closed.html#2036
+    //   https://lwg.github.io/issues/lwg-closed.html#2036
     // and a StackOverflow related question:
-    //   http://stackoverflow.com/a/9020292/1728537
+    //   https://stackoverflow.com/a/9020292/1728537
     // --
     // Laurent Rineau, 2013/10/10
     while (!is.eof()) {

@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 //
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_GLOBAL_H
@@ -30,17 +21,16 @@
  * Global insertion functions for the Arrangement_2 class.
  */
 
-#include <boost/type_traits.hpp>
-#include <boost/mpl/if.hpp>
+#include <list>
 #include <boost/type_traits.hpp>
 #include <list>
 
-#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_zone_2.h>
 #include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_ss_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_ss_visitor.h>
@@ -69,25 +59,29 @@ namespace Ss2 = Surface_sweep_2;
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation, typename ZoneVisitor>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::Curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
 
   typedef Arrangement_on_surface_2<Gt2, Tt>             Arr;
   typedef ZoneVisitor                                   Zone_visitor;
+
+  typedef typename Gt2::Point_2                         Point_2;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
 
   // Obtain an arrangement accessor.
   Arr_accessor<Arr> arr_access(arr);
@@ -97,20 +91,15 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   Arrangement_zone_2<Arr, Zone_visitor> arr_zone(arr, &visitor);
 
   // Break the input curve into x-monotone subcurves and isolated points.
-  std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
-  const typename Gt2::X_monotone_curve_2* x_curve;
-  const typename Gt2::Point_2* iso_p;
-
-  arr.geometry_traits()->
-    make_x_monotone_2_object()(c, std::back_inserter(x_objects));
+  std::list<Make_x_monotone_result> x_objects;
+  const auto* traits = arr.geometry_traits();
+  traits->make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (const auto& x_obj : x_objects) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
-
-    if (x_curve != NULL) {
+    const auto* x_curve = std::get_if<X_monotone_curve_2>(&x_obj);
+    if (x_curve != nullptr) {
       // Inserting an x-monotone curve:
       // Initialize the zone-computation object with the given curve.
       arr_zone.init(*x_curve, pl);
@@ -125,14 +114,13 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
       // Notify the arrangement observers that the global operation has been
       // completed.
       arr_access.notify_after_global_change();
+      continue;
     }
-    else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
-      CGAL_assertion(iso_p != NULL);
+    const auto* iso_p = std::get_if<Point_2>(&x_obj);
+    CGAL_assertion(iso_p != nullptr);
 
-      // Inserting a point into the arrangement:
-      insert_point(arr, *iso_p, pl);
-    }
+    // Inserting a point into the arrangement:
+    insert_point(arr, *iso_p, pl);
   }
 }
 
@@ -142,12 +130,12 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -155,7 +143,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
             const PointLocation& pl, ZoneVisitor &visitor,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -194,8 +182,8 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 {
   typedef GeometryTraits_2                              Gt2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
-    Is_x_monotone;
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
+                                                        Is_x_monotone;
 
   insert(arr, c, pl, visitor, Is_x_monotone());
 }
@@ -203,7 +191,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // In some compilers there is a template deduction disambiguity between this
 // function and the function receiving two InputIterator.
 // For now the solution is to add a dummy variable at the end (referring
-// to point-location). Maybe the proper solution is to use boost::enable_if
+// to point-location). Maybe the proper solution is to use std::enable_if
 // together with appropriate tag.
 template <typename GeometryTraits_2, typename TopologyTraits, typename Curve,
           typename PointLocation>
@@ -240,7 +228,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -276,12 +264,12 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * If the type C_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
@@ -292,9 +280,9 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 /*! Insert a range of x-monotone curves and a range of isolated points into
  * an empty arrangement
  * \param arr the resulting arrangement
- * \param begin_xcurves the begining of the curve range
+ * \param begin_xcurves the beginning of the curve range
  * \param end_xcurves past-the-end curve range
- * \param begin_points the begining of the point range
+ * \param begin_points the beginning of the point range
  * \param end_points past-the-end point range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -331,12 +319,12 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * If the type C_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
@@ -346,7 +334,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -384,12 +372,12 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * If the type Igt2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -416,18 +404,18 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, double>::type)
+            std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -470,18 +458,18 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // The last parameter is used to resolve ambiguity between this function and
 // insert of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator begin, InputIterator end,
-            boost::is_same<int, int>::type)
+            std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -523,7 +511,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
   typedef typename std::iterator_traits<InputIterator>::value_type
                                                         Iterator_value_type;
 
-  typedef typename boost::is_same<Iterator_value_type,X_monotone_curve_2>::type
+  typedef typename std::is_same<Iterator_value_type,X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return insert(arr, begin, end, Is_x_monotone());
@@ -538,7 +526,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
 template <typename GeometryTraits_2, typename TopologyTraits>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
-            const Object& obj)
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeometryTraits_2,
+                                       TopologyTraits> >::type obj)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -606,7 +596,8 @@ template <typename GeometryTraits_2, typename TopologyTraits>
 CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  const typename GeometryTraits_2::X_monotone_curve_2& c,
- const Object& obj)
+ typename Arr_point_location_result<
+   Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >::type obj)
 {
   insert(arr, c, obj);
 }
@@ -647,7 +638,7 @@ void insert_curves(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
@@ -667,6 +658,7 @@ insert_non_intersecting_curve
                                                         Traits_adaptor_2;
   typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
   typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle               Face_const_handle;
   CGAL_USE_TYPE(Halfedge_const_handle);
 
   const Traits_adaptor_2* geom_traits =
@@ -675,13 +667,13 @@ insert_non_intersecting_curve
 
   // Check whether the left end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Arr_parameter_space bx1 =
-    geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
-  const Arr_parameter_space by1 =
-    geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
-  CGAL::Object obj1;
-  const Vertex_const_handle* vh1 = NULL;
+  auto bx1 = geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
+  auto by1 = geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
+  const Vertex_const_handle* vh1 = nullptr;
 
+  typedef Arr_point_location_result<Arr>        Pl_result;
+
+  typename Pl_result::type obj1;
   if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
     // We have a normal left endpoint with no boundary conditions:
     // use a point-location query.
@@ -689,33 +681,26 @@ insert_non_intersecting_curve
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh1.
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj1) == NULL,
-       "The curve must not intersect an existing edge.");
+    CGAL_precondition_msg(std::get_if<Halfedge_const_handle>(&obj1) == nullptr,
+                          "The curve must not intersect an existing edge.");
 
-    vh1 = object_cast<Vertex_const_handle>(&obj1);
   }
   else {
     // We have a left end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
     obj1 = arr_access.locate_curve_end(c, ARR_MIN_END, bx1, by1);
-
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj1) == NULL,
-       "The curve must not overlap an existing edge.");
-
-    vh1 = object_cast<Vertex_const_handle>(&obj1);
+    CGAL_precondition_msg(std::get_if<Halfedge_const_handle>(&obj1) == nullptr,
+                          "The curve must not overlap an existing edge.");
   }
+  vh1 = Pl_result::template assign<Vertex_const_handle>(&obj1);
 
   // Check whether the right end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Arr_parameter_space  bx2 =
-    geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
-  const Arr_parameter_space  by2 =
-    geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
-  CGAL::Object obj2;
-  const Vertex_const_handle* vh2 = NULL;
+  auto bx2 = geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
+  auto by2 = geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
+  const Vertex_const_handle* vh2 = nullptr;
 
+  typename Pl_result::type obj2;
   if ((bx2 == ARR_INTERIOR) && (by2 == ARR_INTERIOR)) {
     // We have a normal right endpoint with no boundary conditions:
     // use a point-location query.
@@ -723,11 +708,8 @@ insert_non_intersecting_curve
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh2.
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj2) == NULL,
-       "The curve must not intersect an existing edge.");
-
-    vh2 = object_cast<Vertex_const_handle>(&obj2);
+    CGAL_precondition_msg(std::get_if<Halfedge_const_handle>(&obj2) == nullptr,
+                          "The curve must not intersect an existing edge.");
   }
   else {
     // We have a right end with boundary conditions. Use the accessor to locate
@@ -737,13 +719,10 @@ insert_non_intersecting_curve
     //           << ", by2: " << by2
     //           << std::endl;
     obj2 = arr_access.locate_curve_end(c, ARR_MAX_END, bx2, by2);
-
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj2) == NULL,
-       "The curve must not overlap an existing edge.");
-
-    vh2 = object_cast<Vertex_const_handle>(&obj2);
+    CGAL_precondition_msg(std::get_if<Halfedge_const_handle>(&obj2) == nullptr,
+                          "The curve must not overlap an existing edge.");
   }
+  vh2 = Pl_result::template assign<Vertex_const_handle>(&obj2);
 
   // Notify the arrangement observers that a global operation is about to
   // take place.
@@ -754,9 +733,9 @@ insert_non_intersecting_curve
   // accordingly.
   typename Arr::Halfedge_handle new_he;
 
-  if (vh1 != NULL) {
-    if (vh2 != NULL) {
-      // Both endpoints are associated with a existing vertices.
+  if (vh1 != nullptr) {
+    if (vh2 != nullptr) {
+      // Both endpoints are associated with existing vertices.
       // In this case insert_at_vertices() already returns a halfedge
       // directed from left to right.
       new_he = arr.insert_at_vertices(c,
@@ -772,7 +751,7 @@ insert_non_intersecting_curve
     }
   }
   else {
-    if (vh2 != NULL) {
+    if (vh2 != nullptr) {
       // Only the right endpoint is associated with an existing vertex.
       // In this case insert_from_left_vertex() returns a halfedge directed
       // to the new vertex it creates, so it is directed from right to left
@@ -785,10 +764,8 @@ insert_non_intersecting_curve
       // we must insert the curve in the interior of a face.
       // In this case insert_in_face_interior() already returns a halfedge
       // directed from left to right.
-      const typename Arr::Face_const_handle* fh1 =
-        object_cast<typename Arr::Face_const_handle>(&obj1);
-      const typename Arr::Face_const_handle* fh2 =
-        object_cast<typename Arr::Face_const_handle>(&obj2);
+      const Face_const_handle* fh1 = std::get_if<Face_const_handle>(&obj1);
+      const Face_const_handle* fh2 = std::get_if<Face_const_handle>(&obj2);
 
       // std::cout << arr << std::endl;
       // std::cout << "(*fh1)->number_of_outer_ccbs(): "
@@ -797,10 +774,10 @@ insert_non_intersecting_curve
       //           << (*fh2)->number_of_outer_ccbs() << std::endl;
 
       CGAL_assertion_msg
-        ((fh1 != NULL) && (fh2 != NULL) && ((*fh1) == (*fh2)),
+        ((fh1 != nullptr) && (fh2 != nullptr) && ((*fh1) == (*fh2)),
          "The curve intersects the interior of existing edges.");
 
-      if ((fh1 != NULL) && (fh2 != NULL) && (*fh1 == *fh2)) {
+      if ((fh1 != nullptr) && (fh2 != nullptr) && (*fh1 == *fh2)) {
         new_he = arr.insert_in_face_interior(c, arr.non_const_handle (*fh1));
       }
     }
@@ -817,7 +794,7 @@ insert_non_intersecting_curve
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
 // interior does not intersect with any existing edge or vertex in the
-// arragement (incremental insertion).
+// arrangement (incremental insertion).
 // Overloaded version with no point location object.
 //
 template <typename GeometryTraits_2, typename TopologyTraits>
@@ -837,7 +814,7 @@ insert_non_intersecting_curve
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -886,7 +863,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -937,7 +914,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -995,12 +972,12 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * If the type Nxi_visitor::Geometry_traits_2 is the same as the type
    * GeometryTraits_2, use a reference to GeometryTraits_2 to avoid constructing
    * a new one.  Otherwise, instantiate a local variable of the former and
-   * provide the later as a single parameter to the constructor.
+   * provide the latter as a single parameter to the constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -1024,7 +1001,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 //-----------------------------------------------------------------------------
 // Insert a range of pairwise interior-disjoint x-monotone curves into
 // the arrangement, such that the curve interiors do not intersect with
-// any existing edge or vertex in the arragement (aggregated insertion).
+// any existing edge or vertex in the arrangement (aggregated insertion).
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -1094,7 +1071,7 @@ remove_edge(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     (v_ends[1]->is_at_open_boundary() || (v_ends[1]->degree() == 1));
 
   // Remove the edge from the arrangement.
-  typename Arr::Face_handle    face = arr.remove_edge (e);
+  typename Arr::Face_handle face = arr.remove_edge(e);
 
   // Examine the end-vertices: If a vertex has now two incident edges, and the
   // curves associated with these edges can be merged, merge the two edges and
@@ -1149,49 +1126,49 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   typedef Arrangement_on_surface_2<Gt2, Tt>             Arr;
 
+  typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
+  typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle               Face_const_handle;
+
   // Act according to the type of arrangement feature that contains the point.
-  const typename Arr::Face_const_handle* fh;
-  const typename Arr::Halfedge_const_handle* hh;
-  const typename Arr::Vertex_const_handle* vh;
   typename Arr::Vertex_handle vh_for_p;
 
   // Locate the given point in the arrangement.
-  CGAL::Object obj = pl.locate (p);
+  auto obj = pl.locate(p);
 
   // Notify the arrangement observers that a global operation is about to
   // take place.
-  Arr_accessor<Arr> arr_access (arr);
+  Arr_accessor<Arr> arr_access(arr);
 
   arr_access.notify_before_global_change();
 
-  if ((fh = object_cast<typename Arr::Face_const_handle>(&obj)) != NULL) {
+  const Face_const_handle* fh = std::get_if<Face_const_handle>(&obj);
+  if (fh != nullptr) {
     // p lies inside a face: Insert it as an isolated vertex it the interior of
     // this face.
-    vh_for_p = arr.insert_in_face_interior(p, arr.non_const_handle (*fh));
-  }
-  else if ((hh = object_cast<typename Arr::Halfedge_const_handle>(&obj)) !=
-           NULL)
-  {
-    // p lies in the interior of an edge: Split this edge to create a new
-    // vertex associated with p.
-    typename Gt2::X_monotone_curve_2 sub_cv1, sub_cv2;
-    typename Arr::Halfedge_handle split_he;
-
-    arr.geometry_traits()->split_2_object()((*hh)->curve(), p,
-                                            sub_cv1, sub_cv2);
-
-    split_he = arr.split_edge(arr.non_const_handle(*hh), sub_cv1, sub_cv2);
-
-    // The new vertex is the target of the returned halfedge.
-    vh_for_p = split_he->target();
+    vh_for_p = arr.insert_in_face_interior(p, arr.non_const_handle(*fh));
   }
   else {
-    // In this case p lies on an existing vertex, so we just update this
-    // vertex.
-    vh = object_cast<typename Arr::Vertex_const_handle>(&obj);
-    CGAL_assertion (vh != NULL);
+    const Halfedge_const_handle* hh = std::get_if<Halfedge_const_handle>(&obj);
+    if (hh != nullptr) {
+      // p lies in the interior of an edge: Split this edge to create a new
+      // vertex associated with p.
+      typename Gt2::X_monotone_curve_2 sub_cv1, sub_cv2;
+      typename Arr::Halfedge_handle split_he;
 
-    vh_for_p = arr.modify_vertex (arr.non_const_handle (*vh), p);
+      const auto* gt = arr.geometry_traits();
+      gt->split_2_object()((*hh)->curve(), p, sub_cv1, sub_cv2);
+      split_he = arr.split_edge(arr.non_const_handle(*hh), sub_cv1, sub_cv2);
+
+      // The new vertex is the target of the returned halfedge.
+      vh_for_p = split_he->target();
+    }
+    else {
+      // p lies on an existing vertex, so we just update this vertex.
+      const Vertex_const_handle* vh = std::get_if<Vertex_const_handle>(&obj);
+      CGAL_assertion(vh != nullptr);
+      vh_for_p = arr.modify_vertex (arr.non_const_handle (*vh), p);
+    }
   }
 
   // Notify the arrangement observers that the global operation has been
@@ -1246,7 +1223,7 @@ bool remove_vertex(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 
   if (v->is_isolated()) {
     // In case v is an isolated vertex, simply remove it.
-    arr.remove_isolated_vertex (v);
+    arr.remove_isolated_vertex(v);
     removed = true;
   }
   else if (v->degree() == 2) {
@@ -1316,7 +1293,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
   typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep_2;
 
   // First use the internal validity check.
-  if (!arr.is_valid()) return (false);
+  if (!arr.is_valid()) return false;
 
   // Perform a sweep over all subcurves associated with arrangement edges.
   std::vector<X_monotone_curve_2> curves_vec(arr.number_of_edges());
@@ -1361,8 +1338,7 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
       is_first = true;
 
       do {
-        if (ccb->face() != fit)
-          return (false);
+        if (ccb->face() != fit) return false;
 
         if (is_first ||
             compare_xy (ccb->target()->point(), left_v->point()) == SMALLER)
@@ -1375,82 +1351,69 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
       } while (ccb != *ic_it);
 
-      vf_list.push_back (std::make_pair (left_v, fh));
+      vf_list.push_back (std::make_pair(left_v, fh));
     }
 
     // Check all isolated vertices in the current face.
     for (iv_it = fh->isolated_vertices_begin();
          iv_it != fh->isolated_vertices_end(); ++iv_it)
     {
-      if (iv_it->face() != fit) return (false);
+      if (iv_it->face() != fit) return false;
 
-      vf_list.push_back (std::make_pair (Vertex_const_handle(iv_it), fh));
+      vf_list.push_back(std::make_pair(Vertex_const_handle(iv_it), fh));
     }
   }
 
   // Shoot a vertical ray from each vertex we have collected downward, and
   // check that this vertex is really contained in the proper face.
-  typename Gt2::Compare_y_at_x_right_2 comp_y_at_x_right =
-    traits->compare_y_at_x_right_2_object();
-  typename Gt2::Compare_y_at_x_left_2 comp_y_at_x_left =
-    traits->compare_y_at_x_left_2_object();
+  auto comp_y_at_x_right = traits->compare_y_at_x_right_2_object();
+  auto comp_y_at_x_left = traits->compare_y_at_x_left_2_object();
 
-  typename std::list<std::pair<Vertex_const_handle,
-                               Face_const_handle> >::iterator    vf_iter;
   typename Tt::Default_point_location_strategy def_pl(arr);
-  Vertex_const_handle curr_v;
-  Object obj;
-  Halfedge_const_handle he_below;
-  Vertex_const_handle v_below;
-  Face_const_handle in_face;
-  Halfedge_around_vertex_const_circulator first, circ;
-  bool assign_ok;
   const Halfedge_const_handle invalid_he;
 
-  for (vf_iter = vf_list.begin(); vf_iter != vf_list.end(); ++vf_iter) {
+  Face_const_handle in_face;
+  for (auto vf_iter = vf_list.begin(); vf_iter != vf_list.end(); ++vf_iter) {
     // Perform ray-shooting from the current vertex.
-    curr_v = vf_iter->first;
-    obj = def_pl.ray_shoot_down(curr_v->point());
+    Vertex_const_handle curr_v = vf_iter->first;
+    auto obj = def_pl.ray_shoot_down(curr_v->point());
 
-    if (CGAL::assign(he_below, obj)) {
-      // Hit an edge - take the incident face of the halfedge directed to the
+    // if (CGAL::assign(he_below, obj)) {
+    if (auto* he_below_p = std::get_if<Halfedge_const_handle>(&obj)) {
+      // Hit an edge; take the incident face of the halfedge directed to the
       // right.
-      if (he_below->direction() == ARR_RIGHT_TO_LEFT)
-        he_below = he_below->twin();
-
-      in_face = he_below->face();
+      auto he_below = *he_below_p;
+      in_face = (he_below->direction() == ARR_RIGHT_TO_LEFT) ?
+        he_below->twin()->face() : he_below->face();
     }
-    else if (CGAL::assign(v_below, obj)) {
+    else if (auto* v_below_p = std::get_if<Vertex_const_handle>(&obj)) {
+      auto v_below = *v_below_p;
       // Hit a vertex.
       if (v_below->is_isolated()) in_face = v_below->face();
       else {
         // Get the first halfedge around v_below that is directed from left to
         // right and the first halfedge that is directed from right to left.
-        first = circ = v_below->incident_halfedges();
+        Halfedge_around_vertex_const_circulator circ =
+          v_below->incident_halfedges();
+        Halfedge_around_vertex_const_circulator first = circ;
         Halfedge_const_handle he_left;  // A halfedge to the left of v_below.
         Halfedge_const_handle he_right; // A halfedge to the right of v_below.
-
         do {
-          if (circ->direction() == ARR_LEFT_TO_RIGHT) {
-            he_left = circ;
-          }
+          if (circ->direction() == ARR_LEFT_TO_RIGHT) he_left = circ;
           else {
             he_right = circ;
-            if (he_left != invalid_he && he_right != invalid_he)
-              break;
+            if ((he_left != invalid_he) && (he_right != invalid_he)) break;
           }
-          ++circ;
+        } while(++circ != first);
 
-        } while(circ != first);
-
-        CGAL_assertion (he_left != invalid_he || he_right != invalid_he);
+        CGAL_assertion((he_left != invalid_he) || (he_right != invalid_he));
 
         if (he_left != invalid_he && he_right != invalid_he) {
           while (he_left->direction() == ARR_LEFT_TO_RIGHT)
             he_left = he_left->next()->twin();
 
           he_left = he_left->twin()->prev();
-          CGAL_assertion (he_left->direction() == ARR_LEFT_TO_RIGHT);
+          CGAL_assertion(he_left->direction() == ARR_LEFT_TO_RIGHT);
           in_face = he_left->face();
         }
         else if (he_left != invalid_he) {
@@ -1469,30 +1432,27 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
         else {
           Comparison_result res;
           Halfedge_const_handle he_curr = he_right;
-
-          do // as long as we have he_right halfedge which is below
-          {
+          do {
+            // as long as we have he_right halfedge which is below
             he_right = he_curr;
             he_curr = he_right->next()->twin();
-            res = comp_y_at_x_right (he_curr->curve(),
-                                     he_right->curve(),
-                                     v_below->point());
+            res = comp_y_at_x_right(he_curr->curve(), he_right->curve(),
+                                    v_below->point());
           } while(res == SMALLER);
           in_face = he_right->face();
         }
       }
     }
     else {
+      auto* in_face_p = std::get_if<Face_const_handle>(&obj);
+      CGAL_assertion(in_face_p);
+      in_face = *in_face_p;
       // Hit nothing (an unbounded face is returned).
-      assign_ok = CGAL::assign(in_face, obj);
-
-      CGAL_assertion (assign_ok && in_face->is_unbounded());
-
-      if (! assign_ok) return false;
+      CGAL_assertion(in_face->is_unbounded());
     }
 
     if (vf_iter->second != in_face) {
-      CGAL_warning_msg (false,
+      CGAL_warning_msg(false,
                         "An inner component is located in the wrong face.");
       return false;
     }
@@ -1504,10 +1464,10 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
 //-----------------------------------------------------------------------------
 // Compute the zone of the given x-monotone curve in the existing arrangement.
-// Meaning, it output the arrangment's vertices, edges and faces that the
+// Meaning, it output the arrangement's vertices, edges and faces that the
 // x-monotone curve intersects.
 template <typename GeometryTraits_2, typename TopologyTraits,
-  typename OutputIterator, typename PointLocation>
+          typename OutputIterator, typename PointLocation>
 OutputIterator
 zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
      const typename GeometryTraits_2::X_monotone_curve_2& c,
@@ -1560,18 +1520,18 @@ zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // Checks whether the given x-monotone curve intersects the existing arrangement.
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of Curve_2 in case that X_monotone_curve_2 and Curve_2 are the
-// same class. The last parameter should be boost::true_type but we used a
+// same class. The last parameter should be std::true_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
              const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, int>::type)
+             const PointLocation& pl, std::is_same<int, int>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1597,19 +1557,19 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // The last parameter is used to resolve ambiguity between this function and
 // do_intersect of X_monotone_curve_2 in case that X_monotone_curve_2 and
 // Curve_2 are the same class.
-// The last parameter should be boost::false_type but we used a
+// The last parameter should be std::false_type but we used a
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to
 // `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
 bool
 do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-             const typename GeometryTraits_2::X_monotone_curve_2& c,
-             const PointLocation& pl, boost::is_same<int, double>::type)
+             const typename GeometryTraits_2::Curve_2& c,
+             const PointLocation& pl, std::is_same<int, double>::type)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -1620,35 +1580,34 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   // Break the input curve into x-monotone subcurves and isolated points.
   typedef Arr_traits_adaptor_2<Gt2>                     Traits_adaptor_2;
 
+  typedef typename Gt2::Point_2                         Point_2;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef typename Arr::Face_const_handle               Face_const_handle;
+
   const Traits_adaptor_2* traits =
     static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
 
-  std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
-  const typename Gt2::X_monotone_curve_2* x_curve;
-  const typename Gt2::Point_2* iso_p;
-
+  std::list<Make_x_monotone_result> x_objects;
   traits->make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (const auto& x_obj : x_objects) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
-    if (x_curve != NULL) {
+    const X_monotone_curve_2* x_curve = std::get_if<X_monotone_curve_2>(&x_obj);
+    if (x_curve != nullptr) {
       // Check if the x-monotone subcurve intersects the arrangement.
-      if (do_intersect(arr, *x_curve, pl) == true)
-        return true;
+      if (do_intersect(arr, *x_curve, pl) == true) return true;
+      continue;
     }
-    else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
-      CGAL_assertion(iso_p != NULL);
 
-      // Check whether the isolated point lies inside a face (otherwise,
-      // it conincides with a vertex or an edge).
-      CGAL::Object  obj = pl.locate (*iso_p);
+    const Point_2* iso_p = std::get_if<Point_2>(&x_obj);
+    CGAL_assertion(iso_p != nullptr);
 
-      return (object_cast<typename Arr::Face_const_handle>(&obj) != NULL);
-    }
+    // Check whether the isolated point lies inside a face (otherwise,
+    // it coincides with a vertex or an edge).
+    auto obj = pl.locate(*iso_p);
+    if (std::get_if<Face_const_handle>(&obj) != nullptr) return true;
   }
 
   // If we reached here, the curve does not intersect the arrangement.
@@ -1660,14 +1619,14 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 template <typename GeometryTraits_2, typename TopologyTraits, typename Curve,
           typename PointLocation>
 bool
-do_intersect (Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
-              const Curve& c, const PointLocation& pl)
+do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
+             const Curve& c, const PointLocation& pl)
 {
   typedef GeometryTraits_2                              Gt2;
 
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
 
-  typedef typename boost::is_same<Curve, X_monotone_curve_2>::type
+  typedef typename std::is_same<Curve, X_monotone_curve_2>::type
                                                         Is_x_monotone;
 
   return do_intersect(arr, c, pl, Is_x_monotone());

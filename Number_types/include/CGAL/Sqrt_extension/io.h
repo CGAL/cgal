@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -36,7 +27,7 @@ template<class NT, class ROOT, class ACDE_TAG, class FP_TAG>
 void
 input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
 
-  typedef Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> EXT; 
+  typedef Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> EXT;
 
     char c;
     NT a0;
@@ -47,21 +38,21 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
     swallow(is, 'X');
     swallow(is, 'T');
     swallow(is, '[');
-    is >> iformat(a0);
+    is >> IO::iformat(a0);
     do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-    is >> iformat(a1);
+    is >> IO::iformat(a1);
     do is.get(c); while (isspace(c));
     if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-    is >> iformat(root);
+    is >> IO::iformat(root);
     do is.get(c); while (isspace(c));
     if (c != ']') CGAL_error_msg( "input error: ] expected" );
 
     if ( root  < ROOT(0)) CGAL_error_msg("input error: non-negative root expected");
 
-    if ( root == ROOT(0)) 
+    if ( root == ROOT(0))
         result =  EXT(a0);
     else
         result = EXT(a0,a1,root);
@@ -70,13 +61,13 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
 template<class NT, class ROOT, class ACDE_TAG, class FP_TAG>
 void
 output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x){
-    CGAL::IO::Mode o_mode=::CGAL::get_mode(os);
-    ::CGAL::set_mode(os,CGAL::IO::PRETTY);
-    
+    CGAL::IO::Mode o_mode=::CGAL::IO::get_mode(os);
+    ::CGAL::IO::set_mode(os,CGAL::IO::PRETTY);
+
     if ( x.a0() != NT(0)){
         if ( x.a1() != NT(0)){
             os << x.a0()
-               << "+" << CGAL::oformat(x.a1(),CGAL::Parens_as_product_tag())
+               << "+" << CGAL::IO::oformat(x.a1(),CGAL::Parens_as_product_tag())
                << "*sqrt(" << x.root() << ")";
         }else{
             os << x.a0();
@@ -84,13 +75,13 @@ output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x)
     }
     else{
         if (x.a1() != NT(0)){
-            os << CGAL::oformat(x.a1(),CGAL::Parens_as_product_tag())
+            os << CGAL::IO::oformat(x.a1(),CGAL::Parens_as_product_tag())
                << "*sqrt(" << x.root() << ")";
         }else{
             os << 0;
         }
     }
-    ::CGAL::set_mode(os,o_mode);
+    ::CGAL::IO::set_mode(os,o_mode);
     return;
 }
 
@@ -101,7 +92,7 @@ output_benchmark( std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG
        << ", " << bmformat( x.root()) << " )";
 }
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template < class NT, class ROOT, class ACDE_TAG, class FP_TAG >
 class Benchmark_rep< CGAL::Sqrt_extension< NT,ROOT, ACDE_TAG, FP_TAG> > {
     const CGAL::Sqrt_extension< NT,ROOT,ACDE_TAG,FP_TAG>& t;
@@ -109,14 +100,14 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const CGAL::Sqrt_extension< NT,ROOT,ACDE_TAG,FP_TAG>& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
         output_benchmark( out, t );
         return out;
     }
-    
+
     static std::string get_benchmark_name() {
         std::stringstream ss;
-        ss << "Sqrt_extension< " << Benchmark_rep< NT >::get_benchmark_name() 
+        ss << "Sqrt_extension< " << Benchmark_rep< NT >::get_benchmark_name()
            << ", " << Benchmark_rep< ROOT>::get_benchmark_name() << " >";
         return ss.str();
     }
@@ -142,9 +133,9 @@ public:
 template <class NT,class ROOT, class ACDE_TAG,class FP_TAG>
 std::ostream& operator << (std::ostream& os,
         const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext){
-    switch(CGAL::get_mode(os)) {
+    switch(CGAL::IO::get_mode(os)) {
     case CGAL::IO::PRETTY:
-        output_maple(os,ext); break; 
+        output_maple(os,ext); break;
     default:
         os<<"EXT["<<ext.a0()<<","<<ext.a1()<<","<<ext.root()<<"]"; break;
     }
@@ -160,7 +151,7 @@ std::ostream& operator << (std::ostream& os,
  */
 template <class NT,class ROOT, class ACDE_TAG, class FP_TAG>
 std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext) {
-    CGAL_precondition(!CGAL::is_pretty(is));
+    CGAL_precondition(!CGAL::IO::is_pretty(is));
     input_ascii(is,ext);
     return is;
 }

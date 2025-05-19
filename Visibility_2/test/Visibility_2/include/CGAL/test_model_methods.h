@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
@@ -23,7 +14,6 @@
 #ifndef CGAL_TEST_MODEL_METHODS_H
 #define CGAL_TEST_MODEL_METHODS_H
 
-#include <CGAL/basic.h>
 #include <CGAL/test_utils.h>
 #include <cassert>
 #include <vector>
@@ -91,7 +81,7 @@ void test_model_methods_for_arr(
   arr_out.clear();
   typename Arrangement_2::Halfedge_const_iterator hit;
   VFH face_check_he;
-  for (hit = arr.halfedges_begin(); 
+  for (hit = arr.halfedges_begin();
     hit != arr.halfedges_end(); ++hit) {
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
@@ -110,7 +100,7 @@ void test_model_methods_for_arr(
   arr_out_check.clear();
   visibility.compute_visibility(query_pt2, hit, arr_out_check);
   assert((true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-          (arr_out, arr_out_check)));  
+          (arr_out, arr_out_check)));
 
   // Now consider the query point as the target of a halfedge
   typename Arrangement_2::Halfedge_const_iterator hit_snd;
@@ -130,7 +120,7 @@ void test_model_methods_for_arr(
         assert(false);
       }
     }
-  }   
+  }
 }
 
 template <class Visibility_2, class Visibility_arrangement_2>

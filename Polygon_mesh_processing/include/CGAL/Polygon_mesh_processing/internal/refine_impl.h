@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -23,12 +14,6 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
-
-
-#include <cmath>
-#include <map>
-#include <set>
-#include <list>
 
 #include <CGAL/assertions.h>
 #ifdef CGAL_PMP_FAIR_DEBUG
@@ -39,7 +24,13 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/property_map.h>
+
+#include <cmath>
+#include <map>
+#include <set>
+#include <list>
 
 namespace CGAL {
 
@@ -51,6 +42,8 @@ template<class PolygonMesh, class VertexPointMap>
 class Refine_Polyhedron_3 {
 //// typedefs
   typedef typename boost::property_traits<VertexPointMap>::value_type     Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::reference      Point_3_ref;
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
@@ -58,20 +51,33 @@ class Refine_Polyhedron_3 {
   typedef Halfedge_around_face_circulator<PolygonMesh>    Halfedge_around_facet_circulator;
   typedef Halfedge_around_target_circulator<PolygonMesh>  Halfedge_around_vertex_circulator;
 
+  typedef typename CGAL::Kernel_traits<Point_3>::type                     Traits;
+
 private:
   PolygonMesh& pmesh;
   VertexPointMap vpmap;
-  
-  bool flippable(halfedge_descriptor h) {
+  Traits traits = {};
+
+  bool flippable(halfedge_descriptor h)
+  {
     // this check is added so that edge flip does not break manifoldness
     // it might happen when there is an edge where flip_edge(h) will be placed (i.e. two edges collide after flip)
     vertex_descriptor v_tip_0 = target(next(h,pmesh),pmesh);
     vertex_descriptor v_tip_1 = target(next(opposite(h,pmesh),pmesh),pmesh);
+
+#ifdef CGAL_PMP_REFINE_DEBUG_PP
+    std::cout << "flippable() " << h << std::endl;
+    std::cout << "\t" << source(h, pmesh) << ": " << pmesh.point(source(h, pmesh)) << std::endl;
+    std::cout << "\t" << target(h, pmesh) << ": " << pmesh.point(target(h, pmesh)) << std::endl;
+    std::cout << "\t" << v_tip_0 << ": " << pmesh.point(v_tip_0) << std::endl;
+    std::cout << "\t" << v_tip_1 << ": " << pmesh.point(v_tip_1) << std::endl;
+#endif
+
     Halfedge_around_vertex_circulator v_cir(next(h,pmesh), pmesh), v_end(v_cir);
     do {
       if(target(opposite(*v_cir, pmesh),pmesh) == v_tip_1) { return false; }
     } while(++v_cir != v_end);
-    
+
     // also eliminate collinear triangle generation
     if( CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(h, pmesh))) ||
         CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(opposite(h, pmesh),pmesh))) ) {
@@ -83,13 +89,20 @@ private:
 
   bool relax(halfedge_descriptor h)
   {
-    typedef typename boost::property_traits<VertexPointMap>::reference Point_3_ref;
-    Point_3_ref p = get(vpmap, target(h,pmesh));
-    Point_3_ref q = get(vpmap, target(opposite(h,pmesh),pmesh));
+#ifdef CGAL_PMP_REFINE_DEBUG_PP
+    Point_3_ref p = get(vpmap, source(h,pmesh));
+    Point_3_ref q = get(vpmap, target(h,pmesh));
     Point_3_ref r = get(vpmap, target(next(h,pmesh),pmesh));
     Point_3_ref s = get(vpmap, target(next(opposite(h,pmesh),pmesh),pmesh));
-    if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
-        (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
+
+    std::cout << "relax() " << h << std::endl;
+    std::cout << "\t" << source(h, pmesh) << ": " << p << std::endl;
+    std::cout << "\t" << target(h, pmesh) << ": " << q << std::endl;
+    std::cout << "\t" << target(next(h,pmesh),pmesh) << ": " << r << std::endl;
+    std::cout << "\t" << target(next(opposite(h,pmesh),pmesh),pmesh) << ": " << s << std::endl;
+#endif
+
+    if(internal::should_flip(edge(h, pmesh), pmesh, vpmap, traits))
     {
       if(flippable(h)) {
         Euler::flip_edge(h,pmesh);
@@ -104,15 +117,15 @@ private:
            class FaceRange>
   bool subdivide(const FaceRange& faces,
                  const std::set<halfedge_descriptor>& border_edges,
-                 std::map<vertex_descriptor, double>& scale_attribute, 
+                 std::map<vertex_descriptor, double>& scale_attribute,
                  VertexOutputIterator& vertex_out,
                  FaceOutputIterator& facet_out,
                  std::vector<face_descriptor>& new_faces,
                  double alpha)
   {
-    BOOST_FOREACH(face_descriptor fd, faces)
+    for(face_descriptor fd : faces)
     {
-      CGAL_assertion(fd  != boost::graph_traits<PolygonMesh>::null_face());
+      CGAL_assertion(is_valid_face_descriptor(fd, pmesh));
 
       vertex_descriptor vi = target(halfedge(fd,pmesh),pmesh);
       vertex_descriptor vj = target(next(halfedge(fd,pmesh),pmesh),pmesh);
@@ -134,12 +147,12 @@ private:
           scale_attribute[target(h,pmesh)] = sac;
           *vertex_out++ = target(h,pmesh);
 
-          // collect 2 new facets for next round 
+          // collect 2 new facets for next round
           face_descriptor h1 = face(opposite(next(h,pmesh),pmesh),pmesh);
           face_descriptor h2 = face(opposite(h,pmesh),pmesh);
           new_faces.push_back(h1); new_faces.push_back(h2);
           *facet_out++ = h1;    *facet_out++ = h2;
-          // relax edges of the  patching mesh 
+          // relax edges of the  patching mesh
           halfedge_descriptor e_ij = prev(h,pmesh);
           halfedge_descriptor e_ik = next(opposite(h,pmesh),pmesh);
           halfedge_descriptor e_jk = prev(opposite(next(h,pmesh),pmesh),pmesh);
@@ -165,7 +178,7 @@ private:
   {
     int flips = 0;
     std::list<halfedge_descriptor> interior_edges;
-    std::set<halfedge_descriptor> included_map; 
+    std::set<halfedge_descriptor> included_map;
 
     collect_interior_edges(faces, border_edges, interior_edges, included_map);
     collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
@@ -174,7 +187,7 @@ private:
     std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
     #endif
     //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
-    BOOST_FOREACH(halfedge_descriptor h, interior_edges)
+    for(halfedge_descriptor h : interior_edges)
     {
       if (relax(h)) {
         ++flips;
@@ -193,13 +206,13 @@ private:
         std::list<halfedge_descriptor>& interior_edges,
         std::set<halfedge_descriptor>& included_map)
   {
-    BOOST_FOREACH(face_descriptor fd, faces)
+    for(face_descriptor fd : faces)
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd, pmesh), pmesh), done(circ);
       do {
         halfedge_descriptor h = *circ;
         if (border_edges.find(h) == border_edges.end()){
-          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
+          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) }
           // which will change the order of edges from run to run
           halfedge_descriptor oh = opposite(h, pmesh);
           halfedge_descriptor h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
@@ -212,10 +225,10 @@ private:
   }
 
   double average_length(vertex_descriptor vh,
-                        const std::set<face_descriptor>& interior_map, 
+                        const std::set<face_descriptor>& interior_map,
                         bool accept_internal_facets)
   {
-    const Point_3& vp = get(vpmap, vh);
+    const Point_3_ref vp = get(vpmap, vh);
     Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,pmesh),pmesh), done(circ);
     int deg = 0;
     double sum = 0;
@@ -227,7 +240,7 @@ private:
         { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
       }
 
-      const Point_3& vq = get(vpmap, target(opposite(*circ,pmesh),pmesh));
+      const Point_3_ref vq = get(vpmap, target(opposite(*circ,pmesh),pmesh));
       sum += to_double(CGAL::approximate_sqrt(CGAL::squared_distance(vp, vq)));
       ++deg;
     } while(++circ != done);
@@ -240,15 +253,14 @@ private:
   void calculate_scale_attribute(const FaceRange& faces,
                                  const std::set<face_descriptor>& interior_map,
                                  std::map<vertex_descriptor, double>& scale_attribute,
-                                 bool accept_internal_facets) 
+                                 bool accept_internal_facets)
   {
-    BOOST_FOREACH(face_descriptor fd, faces)
+    for(face_descriptor fd : faces)
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
-        std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert 
-          = scale_attribute.insert(std::make_pair(v, 0));
+        auto v_insert = scale_attribute.emplace(v, 0);
         if(!v_insert.second) { continue; } // already calculated
         v_insert.first->second = average_length(v, interior_map, accept_internal_facets);
       } while(++circ != done);
@@ -259,7 +271,7 @@ private:
   bool contain_internal_facets(const FaceRange& faces,
                                const std::set<face_descriptor>& interior_map) const
   {
-    BOOST_FOREACH(face_descriptor fd, faces)
+    for(face_descriptor fd : faces)
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
@@ -271,7 +283,7 @@ private:
           if(interior_map.find(f) == interior_map.end() || interior_map.find(f_op) == interior_map.end()) {
             internal_v = false;
             break;
-          } 
+          }
         } while(++circ_v != done_v);
 
         if(internal_v) { return true; }
@@ -294,11 +306,11 @@ public:
               double alpha)
   {
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<face_descriptor> interior_map(boost::begin(faces), boost::end(faces));
+    std::set<face_descriptor> interior_map(std::begin(faces), std::end(faces));
 
-    // store boundary edges - to be used in relax 
+    // store boundary edges - to be used in relax
     std::set<halfedge_descriptor> border_edges;
-    BOOST_FOREACH(face_descriptor f, faces)
+    for(face_descriptor f : faces)
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(f,pmesh),pmesh), done(circ);
       do {
@@ -313,7 +325,7 @@ public:
     std::map<vertex_descriptor, double> scale_attribute;
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
-    std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    std::vector<face_descriptor> all_faces(std::begin(faces), std::end(faces));
     #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
     #endif

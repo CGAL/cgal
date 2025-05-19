@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
@@ -405,7 +396,7 @@ void
 Periodic_3_triangulation_hierarchy_3<PTr>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   CGAL_expensive_precondition(is_vertex(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
@@ -421,12 +412,12 @@ typename Periodic_3_triangulation_hierarchy_3<PTr>::Vertex_handle
 Periodic_3_triangulation_hierarchy_3<PTr>::
 move_point(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
   Vertex_handle old, ret;
 
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    CGAL_triangulation_assertion(hierarchy[l]->is_valid());
+    CGAL_assertion(hierarchy[l]->is_valid());
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
       ret = w;
@@ -532,7 +523,7 @@ random_level()
        && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
     ++level_mult_cover;
 
-  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::geometric_distribution<> proba(1.0/static_cast<double>(ratio));
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
       die(random, proba);
   return (std::min)(die()-1, level_mult_cover);

@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -34,13 +25,14 @@ namespace CGAL {
 template < class R_ >
 class SegmentC3
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
 
-  typedef cpp11::array<Point_3, 2>          Rep;
+  typedef std::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -51,13 +43,13 @@ public:
   SegmentC3() {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : base(CGAL::make_array(sp, ep)) {}
+    : base{sp, ep} {}
 
-  bool        has_on(const Point_3 &p) const;
-  bool        collinear_has_on(const Point_3 &p) const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean collinear_has_on(const Point_3 &p) const;
 
-  bool        operator==(const SegmentC3 &s) const;
-  bool        operator!=(const SegmentC3 &s) const;
+  Boolean operator==(const SegmentC3 &s) const;
+  Boolean operator!=(const SegmentC3 &s) const;
 
   const Point_3 &   source() const
   {
@@ -82,12 +74,12 @@ public:
   Line_3      supporting_line() const;
   Segment_3   opposite() const;
 
-  bool        is_degenerate() const;
+  Boolean is_degenerate() const;
 };
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 {
   if (CGAL::identical(base, s.base))
@@ -97,7 +89,7 @@ SegmentC3<R>::operator==(const SegmentC3<R> &s) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::operator!=(const SegmentC3<R> &s) const
 {
   return !(*this == s);
@@ -193,7 +185,7 @@ SegmentC3<R>::opposite() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::is_degenerate() const
 {
   return source() == target();
@@ -201,7 +193,7 @@ SegmentC3<R>::is_degenerate() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::
 has_on(const typename SegmentC3<R>::Point_3 &p) const
 {
@@ -210,7 +202,7 @@ has_on(const typename SegmentC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 SegmentC3<R>::
 collinear_has_on(const typename SegmentC3<R>::Point_3 &p) const
 {

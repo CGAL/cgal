@@ -1,28 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_2_H
 #define CGAL_HOMOGENEOUS_DIRECTION_2_H
 
@@ -45,7 +36,7 @@ class DirectionH2
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef cpp11::array<RT, 3>               Rep;
+  typedef std::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -61,11 +52,11 @@ public:
   {
     return static_cast<const Self& >(*this);
   }
-  
+
    DirectionH2() {}
 
    DirectionH2(const RT& x, const RT& y)
-      : base(CGAL::make_array(x, y, RT(1))) {}
+      : base{x, y, RT(1)} {}
 
    // TODO Not documented : should not exist, not used.
    // we should also change array<RT, 3> -> array<RT, 2>
@@ -73,9 +64,8 @@ public:
      : base( w > RT(0) ? CGAL::make_array(x, y, w)
                        : CGAL::make_array<RT>(-x, -y, -w) ) {}
 
-    bool    operator==( const DirectionH2<R>& d) const;
-    bool    operator!=( const DirectionH2<R>& d) const;
-
+    typename R_::Boolean operator==( const DirectionH2<R>& d) const;
+    typename R_::Boolean operator!=( const DirectionH2<R>& d) const;
 
     Vector_2       to_vector() const;
 
@@ -90,7 +80,7 @@ public:
 
 template <class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 DirectionH2<R>::operator==( const DirectionH2<R>& d) const
 {
   return (  ( x() * d.y() == y() * d.x() )
@@ -100,7 +90,7 @@ DirectionH2<R>::operator==( const DirectionH2<R>& d) const
 
 template <class R >
 inline
-bool
+typename R::Boolean
 DirectionH2<R>::operator!=( const DirectionH2<R>& d) const
 { return !(*this == d); }
 

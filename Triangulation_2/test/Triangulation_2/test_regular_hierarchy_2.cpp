@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : test/Triangulation/test_regular_hierarchy_2.C
 // revision      : $revision$
@@ -21,8 +21,6 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-
-#include <CGAL/_test_types.h>
 
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
@@ -47,8 +45,8 @@ template class CGAL::Triangulation_hierarchy_2<Rt>;
 
 int main()
 {
-  std::cout << "Testing Triangulation_hierarchy_2<Regular_triangulation_2>" 
-	    <<std::endl;
+  std::cout << "Testing Triangulation_hierarchy_2<Regular_triangulation_2>"
+            <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
   //_test_cls_regular_hierarchy_2( Rt());
   _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());

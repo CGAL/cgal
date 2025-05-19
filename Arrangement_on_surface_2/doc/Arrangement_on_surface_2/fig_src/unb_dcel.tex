@@ -1,0 +1,135 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \begin{tikzpicture}[scale=0.93]
+    \fill[lightyellow](0,0)rectangle(1,7);
+    \fill[lightyellow](9,0)rectangle(10,7);
+    \fill[lightyellow](1,0)rectangle(9,1);
+    \fill[lightyellow](1,6)rectangle(9,7);
+    \draw[line width=0.25pt](0,0)rectangle(10,7);
+    %
+    \arrMainLabeledVertexZ[225](1,1){bl}{$v_{\mathrm{bl}}$}
+    \arrMainLabeledVertexZ[135](1,6){tl}{$v_{\mathrm{tl}}$}
+    \arrMainLabeledVertexZ[315](9,1){br}{$v_{\mathrm{br}}$}
+    \arrMainLabeledVertexZ[45](9,6){tr}{$v_{\mathrm{tr}}$}
+    \arrvZ[180](1,2.5){1}
+    \arrvZ[180](1,4){2}
+    \arrvZ[180](1,5){3}
+    \arrvZ[270](5,1){4}
+    \arrvZ[90](5,6){5}
+    \arrvZ[0](9,1.5){6}
+    \arrvZ[0](9,4){7}
+    \arrvZ[0](9,5.5){8}
+    %
+    \node[point=white] (9) at (intersection of 2--7 and 4--5) {};
+    \node[point=white] (10) at (intersection of 2--7 and 3--6) {};
+    \node[point=white] (11) at (intersection of 3--6 and 4--5) {};
+    \node[point=white] (12) at (intersection of 3--6 and 1--8) {};
+    %
+    \draw[dashed,line width=0.5pt](bl)--(1);
+    \draw[halfedge](bl)to(1);
+    \draw[halfedge](1)to(bl);
+    %
+    \draw[dashed,line width=0.5pt](1)--(2);
+    \draw[halfedge](1)to(2);
+    \draw[halfedge,shorten >=1pt](2)to(1);
+    %
+    \draw[dashed,line width=0.5pt](2)--(3);
+    \draw[halfedge](2)to(3);
+    \draw[halfedge,shorten <=2pt](3)to(2);
+    %
+    \draw[dashed,line width=0.5pt](3)--(tl);
+    \draw[halfedge](3)to(tl);
+    \draw[halfedge](tl)to(3);
+    %
+    \draw[dashed,line width=0.5pt](tl)--(5);
+    \draw[halfedge](tl)to(5);
+    \draw[halfedge](5)to(tl);
+    %
+    \draw[dashed,line width=0.5pt](5)--(tr);
+    \draw[halfedge](5)to(tr);
+    \draw[halfedge](tr)to(5);
+    %
+    \draw[dashed,line width=0.5pt](tr)--(8);
+    \draw[halfedge](tr)to(8);
+    \draw[halfedge](8)to(tr);
+    %
+    \draw[dashed,line width=0.5pt](8)--(7);
+    \draw[halfedge](8)to(7);
+    \draw[halfedge,shorten >=1pt](7)to(8);
+    %
+    \draw[dashed,line width=0.5pt](7)--(6);
+    \draw[halfedge](7)to(6);
+    \draw[halfedge,shorten <=1.8pt](6)to(7);
+    %
+    \draw[dashed,line width=0.5pt](6)--(br);
+    \draw[halfedge](6)to(br);
+    \draw[halfedge](br)to(6);
+    %
+    \draw[dashed,line width=0.5pt](br)--(4);
+    \draw[halfedge](br)to(4);
+    \draw[halfedge](4)to(br);
+    %
+    \draw[dashed,line width=0.5pt](4)--(bl);
+    \draw[halfedge](4)to(bl);
+    \draw[halfedge](bl)to(4);
+    %
+    \draw[edge](3)--(10);
+    \draw[halfedge](3)to(10);
+    \draw[halfedge,shorten <=11pt,shorten >=1.6pt](10)to(3);
+    \draw[edge](10)--(12);
+    \draw[halfedge,shorten <=4pt](12)to(10);
+    \draw[halfedge,shorten <=10pt,shorten >=-1.8pt](10)to(12);
+    \draw[edge](12)--(11);
+    \draw[halfedge](11)to(12);
+    \draw[halfedge,shorten <=4.2pt,shorten >=1.2pt](12)to(11);
+    \draw[edge](11)--(6);
+    \draw[halfedge,shorten >=1.6pt](11)to(6);
+    \draw[halfedge,shorten >=1.6pt](6)to(11);
+
+    \draw[edge](1)--(12);
+    \draw[halfedge,shorten <=1.4pt,shorten >=4pt](1)to(12);
+    \draw[halfedge](12)to(1);
+    \draw[edge](12)--(9);
+    \draw[halfedge,shorten >=11.6pt](12)to(9);
+    \draw[halfedge,shorten <=2pt,shorten >=3.6pt](9)to(12);
+    \draw[edge](9)--(8);
+    \draw[halfedge,shorten <=1.4pt](9)to(8);
+    \draw[halfedge,shorten <=1.8pt,shorten >=11.8pt](8)to(9);
+
+    \draw[edge](2)--(10);
+    \draw[halfedge,shorten >=10pt](2)to(10);
+    \draw[halfedge](10)to(2);
+
+    \draw[edge](10)--(9);
+    \draw[halfedge](10)to(9);
+    \draw[halfedge,shorten <=13pt,shorten >=9.4pt](9)to(10);
+
+    \draw[edge](9)--(7);
+    \draw[halfedge,shorten <=13pt](9)to(7);
+    \draw[halfedge](7)to(9);
+
+    \draw[edge](4)--(11);
+    \draw[halfedge](4)to(11);
+    \draw[halfedge,shorten <=2pt](11)to(4);
+
+    \draw[edge](11)--(9);
+    \draw[halfedge](9)to(11);
+    \draw[halfedge,shorten <=2pt,shorten >=1pt](11)to(9);
+
+    \draw[edge](9)--(5);
+    \draw[halfedge](9)to(5);
+    \draw[halfedge,shorten >=1.2pt](5)to(9);
+    %
+    \node at(2,6.5){$\tilde{f}$};
+    \node at(6.2,5.2){$f_1$};
+    \node at(8.5,4.4){$f_2$};
+    \node at(8.3,3.4){$f_3$};
+    \node at(6.2,2){$f_4$};
+    \node at(3.8,2){$f_5$};
+    \node at(1.7,3.4){$f_6$};
+    \node at(1.5,4.4){$f_7$};
+    \node at (3.8,5.2){$f_8$};
+  \end{tikzpicture}
+\end{document}

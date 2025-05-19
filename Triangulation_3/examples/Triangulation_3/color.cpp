@@ -8,7 +8,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 
-typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::Color, K> Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::IO::Color, K> Vb;
 typedef CGAL::Delaunay_triangulation_cell_base_3<K>                 Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
@@ -28,9 +28,9 @@ int main()
 
   // Set the color of finite vertices of degree 6 to red.
   Delaunay::Finite_vertices_iterator vit;
-  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
-      if (T.degree(vit) == 6)
-          vit->info() = CGAL::RED;
+  for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
+      if (T.degree(v) == 6)
+        v->info() = CGAL::IO::red();
 
   return 0;
 }

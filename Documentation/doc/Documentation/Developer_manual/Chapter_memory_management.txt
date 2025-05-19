@@ -5,7 +5,7 @@
 \authors Michael Seel (<TT>seel@mpi-sb.mpg.de</TT>)
 \authors Efi Fogel (<TT>efif@post.tau.ac.il</TT>)
 
-One of the design goals of \cgal (Section  \ref secdesign_goals ) is 
+One of the design goals of \cgal (Section  \ref secdesign_goals ) is
 efficiency,
 and this means not only implementing efficient algorithms
 but also implementing them efficiently. One way to improve the efficiency
@@ -13,24 +13,24 @@ of an implementation is through efficient memory management. This can be
 done by making the library data structures independent of the underlying
 memory model. However, to avoid unacceptable efficiency degradations
 complete abstraction of the memory model should be avoided. Here we
-describe one way to address this using allocators. An allocator 
+describe one way to address this using allocators. An allocator
 encapsulates the information about an allocation model.
 
 We adopted the definition of the Standard \cpp
 allocator \cgalCite{cgal:ansi-is14882-98}. The `std::allocator` is the
 only predefined and required allocator imposed by [\cpp] on all \cpp
 compiler implementations. The exact specification can also be found at
-<A HREF="http://en.wikipedia.org/wiki/Allocator_(C++)"><TT>http://en.wikipedia.org/wiki/Allocator_(C++)</TT></A>.
+<A HREF="https://en.wikipedia.org/wiki/Allocator_(C++)"><TT>https://en.wikipedia.org/wiki/Allocator_(C++)</TT></A>.
 
-Objects of type `std::allocator<T>` can be used to obtain small, typed 
-chunks of memory to be used, for example, as static members of a class. 
+Objects of type `std::allocator<T>` can be used to obtain small, typed
+chunks of memory to be used, for example, as static members of a class.
 This is especially interesting with classes of a constant size that are
 frequently allocated and deallocated (e.g., points, lines, circles),
 since a memory allocator can maintain the corresponding memory chunks
 in local blocks and thus can answer allocation and deallocation calls
 much faster than the corresponding system calls.
 
-\section secallocator_macro The allocator macro 
+\section secallocator_macro The allocator macro
 
 The macro `CGAL_ALLOCATOR(T)`
 is defined as `std::allocator<T>` in the file `<CGAL/memory.h>`.
@@ -44,7 +44,7 @@ any \cgal header file) as follows:
 #define CGAL_ALLOCATOR(t) leda_allocator<t>
 \endcode
 
-\section secusing_memory_allocator Using the allocator 
+\section secusing_memory_allocator Using the allocator
 
 How should a data structure use the allocator mechanism? Just make the
 allocator one of the template arguments of the data structure. Then
@@ -55,12 +55,12 @@ show an example using a trivial list structure:
 \code{.cpp}
 #include <CGAL/memory.h>
 
-template <typename T> 
-class dlink 
+template <typename T>
+class dlink
 { T some_member; };
 
 template < typename T, typename Alloc = CGAL_ALLOCATOR(dlink<T>) >
-class list 
+class list
 {
 public:
   typedef dlink<T>* dlink_ptr;
@@ -94,7 +94,7 @@ int main()
 }
 \endcode
 
-\section secmemory_req_and_rec Requirements and recommendations 
+\section secmemory_req_and_rec Requirements and recommendations
 
 Recommendations:
 <UL>

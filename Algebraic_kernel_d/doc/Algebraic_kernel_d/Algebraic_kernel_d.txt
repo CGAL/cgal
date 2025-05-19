@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Algebraic_Kernel
 \anchor chapteralgebraickerneld
 \cgalAutoToc
@@ -9,13 +9,13 @@ namespace CGAL {
 
 \section Algebraic_kernel_dIntroduction Introduction
 
-Real solving of polynomials is a fundamental problem with a wide application range. 
-This package is targeted at providing black-box implementations of state-of-the-art 
+Real solving of polynomials is a fundamental problem with a wide application range.
+This package provides black-box implementations of
 algorithms to determine, compare, and approximate real roots of univariate polynomials
-and bivariate polynomial systems. Such a black-box is called an *Algebraic Kernel*. 
-Since this package is aimed at providing more than one implementation, the interface of 
-the algebraic kernels is expressed in concepts. The main concepts provided by this package are the 
-`AlgebraicKernel_d_1` for univariate polynomial systems and `AlgebraicKernel_d_2` 
+and bivariate polynomial systems. Such a black-box is called an *Algebraic Kernel*.
+Since this package is aimed at providing more than one implementation, the interface of
+the algebraic kernels is expressed in concepts. The main concepts provided by this package are the
+`AlgebraicKernel_d_1` for univariate polynomial systems and `AlgebraicKernel_d_2`
 for bivariate polynomial systems, the latter being a refinement of the first.
 
 \section Algebraic_kernel_dAlgebraic Algebraic Kernel Concepts
@@ -24,18 +24,18 @@ for bivariate polynomial systems, the latter being a refinement of the first.
 
 \subsection Algebraic_kernel_dMajorTypes Major Types
 
-First of all, the univariate algebraic kernel provides construction, comparison and 
-approximation of real roots of univariate polynomials. 
-Thus, the major public types the `AlgebraicKernel_d_1` provides are: 
+First of all, the univariate algebraic kernel provides construction, comparison and
+approximation of real roots of univariate polynomials.
+Thus, the major public types the `AlgebraicKernel_d_1` provides are:
 
 `AlgebraicKernel_d_1::Polynomial_1` - the type representing univariate polynomials,
 
-`AlgebraicKernel_d_1::Coefficient` - the coefficient type of these polynomials, 
+`AlgebraicKernel_d_1::Coefficient` - the coefficient type of these polynomials,
 
 `AlgebraicKernel_d_1::Algebraic_real_1` - the type representing real roots,
 
-`AlgebraicKernel_d_1::Bound` - the type which is used to approximate these algebraic reals, 
-in particular, it is used to represent the boundaries of isolating intervals. 
+`AlgebraicKernel_d_1::Bound` - the type which is used to approximate these algebraic reals,
+in particular, it is used to represent the boundaries of isolating intervals.
 
 \subsection Algebraic_kernel_dConstructionofAlgebraic Construction of Algebraic Real Numbers
 
@@ -64,22 +64,22 @@ comparison with int, the coefficient type and the bound type.
 
 There are several ways to approximate an `AlgebraicKernel_d_1::Algebraic_real_1`:
 
-`AlgebraicKernel_d_1::Approximate_absolute_1` - provides an approximation that is 
+`AlgebraicKernel_d_1::Approximate_absolute_1` - provides an approximation that is
 better than the passed absolute error bound,
 
-`AlgebraicKernel_d_1::Approximate_relative_1` - provides an approximation that is 
+`AlgebraicKernel_d_1::Approximate_relative_1` - provides an approximation that is
 better than the passed relative error bound,
 
-`AlgebraicKernel_d_1::Isolate_1` - returns an isolating interval with respect to 
+`AlgebraicKernel_d_1::Isolate_1` - returns an isolating interval with respect to
 a given univariate polynomial,
 
-A related function object is `AlgebraicKernel_d_1::Bound_between_1`, which computes 
+A related function object is `AlgebraicKernel_d_1::Bound_between_1`, which computes
 a number that isolates two algebraic real numbers.
 
 \subsection Algebraic_kernel_dInterplaywithPolynomials Interplay with Polynomials
 
 It is also possible to retrieve a representing polynomial from an
-algebraic real using `AlgebraicKernel_d_1::Compute_polynomial_1`, 
+algebraic real using `AlgebraicKernel_d_1::Compute_polynomial_1`,
 which guarantees that the algebraic real is a root of the returned
 polynomial. As the name already indicates, this operation may be very
 costly since the polynomial may not be computed yet. Moreover, it is
@@ -116,17 +116,17 @@ provides several function objects to handle polynomials:
 
 `AlgebraicKernel_d_1::Make_coprime_1` - decomposes two polynomials into the coprime factors and their common factor.
 
-Though the polynomial package provides similar functionality we suggest to use 
-the function objects provided by the kernel, since the design of the algebraic kernel 
+Though the polynomial package provides similar functionality we suggest to use
+the function objects provided by the kernel, since the design of the algebraic kernel
 allows for instance internal caching by the kernel.
 
-Also note that `AlgebraicKernel_d_1::Square_free_factorize_1` only computes the square free 
-factorization up to a constant factor. This is a slight modification with respect to its 
-counterpart in `Polynomial_traits_d`. In this way it was possible that the concepts just require 
-the coefficient type to be a model of `IntegralDomain`, instead of `Field` or `UniqueFactorizationDomain`. 
+Also note that `AlgebraicKernel_d_1::Square_free_factorize_1` only computes the square free
+factorization up to a constant factor. This is a slight modification with respect to its
+counterpart in `Polynomial_traits_d`. In this way it was possible that the concepts just require
+the coefficient type to be a model of `IntegralDomain`, instead of `Field` or `UniqueFactorizationDomain`.
 For more details see also:
 
-- \ref PolynomialTraits_d::SquareFreeFactorize 
+- \ref PolynomialTraits_d::SquareFreeFactorize
 - \ref PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor
 
 \subsection Algebraic_kernel_dDesignRationale Design Rationale
@@ -142,12 +142,12 @@ one can also imagine the representation by a polynomial and the index
 of the root, e.g., as the \f$ i\f$th real root when enumerated from minus
 to plus infinity. Moreover, it may very well be that the kernel just
 computes an approximation of the number, whereas the representing
-polynomial is not computed yet. 
+polynomial is not computed yet.
 This is in particular relevant in relation to the `AlgebraicKernel_d_2`,
 where `AlgebraicKernel_d_1::Algebraic_real_1` is used to represent coordinates of solutions of bivariate systems.
 Hence, the design does
-not allow a direct access to any, seemingly obvious, members of an
-`AlgebraicKernel_d_1::Algebraic_real_1`. Instead there is, e.g.,
+not allow direct access to any, seemingly obvious, members of an
+`AlgebraicKernel_d_1::Algebraic_real_1`. Instead, there is, e.g.,
 `AlgebraicKernel_d_1::Compute_polynomial_1` which emphasizes
 that the requested polynomial may not be computed yet. Similarly,
 there is no way to directly ask for the refinement of the current
@@ -156,10 +156,10 @@ an `AlgebraicKernel_d_1::Algebraic_real_1`.
 
 \subsection Algebraic_kernel_dBivariateAlgebraicKernel Bivariate Algebraic Kernel
 
-The concept `AlgebraicKernel_d_2` is a refinement of `AlgebraicKernel_d_1`, 
-that is, a model of `AlgebraicKernel_d_2` is also a model of `AlgebraicKernel_d_1`. 
-Hence, the `AlgebraicKernel_d_2` concept is designed such that occurring 
-names and functionalities are as similar as possible to those in the 
+The concept `AlgebraicKernel_d_2` is a refinement of `AlgebraicKernel_d_1`,
+that is, a model of `AlgebraicKernel_d_2` is also a model of `AlgebraicKernel_d_1`.
+Hence, the `AlgebraicKernel_d_2` concept is designed such that occurring
+names and functionalities are as similar as possible to those in the
 `AlgebraicKernel_d_1` concept.
 The following are a direct generalization of their univariate counterparts:
 
@@ -192,22 +192,22 @@ The following are a direct generalization of their univariate counterparts:
 `AlgebraicKernel_d_2::Is_zero_at_2`.
 
 For instance, `AlgebraicKernel_d_2::Solve_2`
-provides the solution for a bivariate polynomial system. 
-However, it is also possible to obtain the coordinates of these 
+provides the solution for a bivariate polynomial system.
+However, it is also possible to obtain the coordinates of these
 solutions with the additional functors:
 
 `AlgebraicKernel_d_2::Compute_x_2`,
 
 `AlgebraicKernel_d_2::Compute_y_2`.
 
-In principal this would be sufficient generalization, 
-since functions such as isolating, approximating algebraic real numbers 
-could be implemented using these access functions ant 
-the corresponding functionalities in the univariate algebraic kernel. 
+In principal this would be sufficient generalization,
+since functions such as isolating, approximating algebraic real numbers
+could be implemented using these access functions ant
+the corresponding functionalities in the univariate algebraic kernel.
 However, one should be aware that an `AlgebraicKernel_d_2::Algebraic_real_2`
-is not necessarily represented as a pair of univariate solutions, that is, 
-using `AlgebraicKernel_d_2::Compute_y_2` may entail considerable 
-computations. Therefore, the concept also requires the following 
+is not necessarily represented as a pair of univariate solutions, that is,
+using `AlgebraicKernel_d_2::Compute_y_2` may entail considerable
+computations. Therefore, the concept also requires the following
 additional functors that may allow a model to bypass this issue:
 
 `AlgebraicKernel_d_2::Compute_polynomial_x_2`,
@@ -238,33 +238,33 @@ additional functors that may allow a model to bypass this issue:
 
 \subsection Algebraic_kernel_dGenericAlgebraicKernels Generic Algebraic Kernels
 
-The package provides generic models of the univariate and bivariate algebraic 
+The package provides generic models of the univariate and bivariate algebraic
 kernel, namely `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>`,
-respectively. Both kernels support a large set of number types as their 
-template argument, which defines the supported coefficient type. The supported 
+respectively. Both kernels support a large set of number types as their
+template argument, which defines the supported coefficient type. The supported
 types are, for instance, `Gmpz` and `Gmpq` as well as the corresponding types
 of LEDA and CORE.
 
-The `Algebraic_kernel_d_1<Coeff>` represents an algebraic real root by a square 
-free polynomial and an isolating interval that uniquely defines the root. 
+The `Algebraic_kernel_d_1<Coeff>` represents an algebraic real root by a square
+free polynomial and an isolating interval that uniquely defines the root.
 The current method to isolate roots is the Bitstream Descartes
-method \cgalCite{eigenwillig-phd-08}. 
-The used method to refine the approximation of an algebraic real root is a 
-slightly modified (filtered) version of the one presented in \cgalCite{abbott-qir-06}. 
+method \cgalCite{eigenwillig-phd-08}.
+The used method to refine the approximation of an algebraic real root is a
+slightly modified (filtered) version of the one presented in \cgalCite{abbott-qir-06}.
 The method has quadratic convergence.
 
-`Algebraic_kernel_d_2<Coeff>` is based on an algorithm computing a 
+`Algebraic_kernel_d_2<Coeff>` is based on an algorithm computing a
 geometric-topological analysis of a single curve \cgalCite{ekw-fast-07} and of a
 pair of curves \cgalCite{ek-exact-08}.
 The main idea behind both analyses is to compute the critical
 x-coordinates of curves and curve pairs by projection (resultants), and compute
 additional information about the critical fibers using subresultants
-and Sturm-Habicht sequences \cgalCite{grlr-sturm-habicht-98}. 
-With that information, the fiber at 
+and Sturm-Habicht sequences \cgalCite{grlr-sturm-habicht-98}.
+With that information, the fiber at
 critical x-coordinates is computed by a variant of the Bitstream
 Descartes method.
 See also \cgalCite{kerber-phd-09} for a comprehensive description of
-these techniques. 
+these techniques.
 Almost all functors in the class that take a `Polynomial_2`
 object as argument trigger such an analysis as a main computation
 step. For efficiency, these analyses (of single curves and curve
@@ -278,71 +278,36 @@ by its \f$ x\f$-coordinate \f$ x_0\f$ (as described in the `Algebraic_kernel_d_1
 paragraph above), an algebraic curve where \f$ p\f$ lies on, and an
 integer \f$ i\f$, denoting that \f$ p\f$ is the \f$ i\f$th point in the fiber at \f$ x_0\f$,
 counted from the bottom (ignoring a possible vertical line at \f$ x_0\f$).
-Note that this determines the point uniquely, but the \f$ y\f$-coordinate 
+Note that this determines the point uniquely, but the \f$ y\f$-coordinate
 is not stored internally in terms of an `Algebraic_real_1` object.
 Querying such a representation by calling `Compute_y_2` is a
 time-consuming step, and should be avoided for efficiency reasons if possible.
 
-\subsection Algebraic_kernel_dAlgebraicKernelsBasedon Algebraic Kernels Based on RS
-
-The package offers two univariate algebraic kernels that are based on 
-the library RS \cgalCite{cgal:r-rs}, namely `Algebraic_kernel_rs_gmpz_d_1`
-and `Algebraic_kernel_rs_gmpq_d_1`. As the names indicate, 
-the kernels are based on the library RS \cgalCite{cgal:r-rs} and support univariate 
-polynomials over `Gmpz` or `Gmpq`, respectively.
-
-In general we encourage to use `Algebraic_kernel_rs_gmpz_d_1`
-instead of `Algebraic_kernel_rs_gmpq_d_1`. This is caused by
-the fact that the most efficient way to compute operations (such as gcd)
-on polynomials with rational coefficients is to use the corresponding
-implementation for polynomials with integer coefficients. That is,
-the `Algebraic_kernel_rs_gmpq_d_1` is slightly slower due to
-overhead caused by the necessary conversions. However, since this may
-not always be a major issue, the `Algebraic_kernel_rs_gmpq_d_1`
-is provided for convenience.
-
-The core of both kernels is the implementation of the interval Descartes 
-algorithm \cgalCite{cgal:rz-jcam-04} of the library RS \cgalCite{cgal:r-rs}, 
-which is used to isolate the roots of the polynomial. 
-The RS library restricts its attention to univariate integer
-polynomials and some substantial gain of efficiency can be made by using a kernel
-that does not follow the generic programming paradigm, by avoiding
-interfaces between layers. Specifically, working with
-only one number type allows to optimize some polynomial operations
-as well as memory handling. The implementation of these kernels
-make heavy use of the <span class="textsc">Mpfr</span> \cgalCite{cgal:mt-mpfr} and <span class="textsc">Mpfi</span> \cgalCite{cgal:r-mpfi}
-libraries, and of their \cgal interfaces, `Gmpfr` and `Gmpfi`.
-The algebraic numbers (roots of the polynomials) are represented
-in the two RS kernels by a `Gmpfi` interval and a pointer to
-the polynomial of which they are roots. See \cgalCite{cgal:lpt-wea-09} 
-for more details on the implementation, tests of these kernels,
-comparisons with other algebraic kernels and discussions about the
-efficiency.
 
 \section Algebraic_kernel_dExamples Examples
 
 \subsection CGALAK1ConstructionExamples Construction of Algebraic Real Numbers
 
-The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
+The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1`
 using `AlgebraicKernel_d_1::Construct_algebraic_real_1`:
 \cgalExample{Algebraic_kernel_d/Construct_algebraic_real_1.cpp}
 
 \subsection CGALAK1Solving Solving Univariate Polynomials
 
-The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
-using `AlgebraicKernel_d_1::Solve_1`: \cgalExample{Algebraic_kernel_d/Solve_1.cpp} 
+The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1`
+using `AlgebraicKernel_d_1::Solve_1`: \cgalExample{Algebraic_kernel_d/Solve_1.cpp}
 
 \subsection CGALAK1EGCompare_1 Comparison and Approximation of Algebraic Real Numbers
 
-The following example illustrates the comparison of `AlgebraicKernel_d_1::Algebraic_real_1` numbers: 
+The following example illustrates the comparison of `AlgebraicKernel_d_1::Algebraic_real_1` numbers:
 \cgalExample{Algebraic_kernel_d/Compare_1.cpp}
 
-\subsection CGALAK1EGIsolate_1 Isolation of Algebraic Real Numbers with respect to roots of other polynomials 
+\subsection CGALAK1EGIsolate_1 Isolation of Algebraic Real Numbers with respect to roots of other polynomials
 
-The following example illustrates the isolation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers: 
+The following example illustrates the isolation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers:
 \cgalExample{Algebraic_kernel_d/Isolate_1.cpp}
 
-\subsection CGALAK1EGSign_at_1 Interplay with Polynomials 
+\subsection CGALAK1EGSign_at_1 Interplay with Polynomials
 
 The following example illustrates the sign evaluation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers in polynomials:
 \cgalExample{Algebraic_kernel_d/Sign_at_1.cpp}
@@ -353,9 +318,9 @@ This package is clearly split into a univariate and bivariate
 kernel. However, with respect to its history the package splits into
 a design part and an implementation part.
 
-The concepts, which make up the design part, 
+The concepts, which make up the design part,
 were written by Eric Berberich, Michael Hemmer, and
-Monique Teillaud. 
+Monique Teillaud.
 The design history of the package is fairly old and several
 ideas that influenced this package can already be found
 in \cgalCite{cgal:bhkt-risak-07}. Since then, the initial design underwent
@@ -368,20 +333,21 @@ ideas that was brought to them throughout the last years. In particular,
 they want to thank Menelaos Karavelas and Elias Tsigaridas for their
 initial contributions.
 
-The two generic models where initially developed as part of the <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} project. 
-However, the models are now fully integrated into the \cgal library, 
-since also the relevant layers of <span class="textsc">Exacus</span> are now part of \cgal.
-The main authors for `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>` are 
-Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors also want to emphasize the 
-contribution of all authors of the <span class="textsc">Exacus</span> project, 
+The two generic models where initially developed as part of the \exacus \cgalCite{beh-eeeafcs-05} project.
+However, the models are now fully integrated into the \cgal library,
+since also the relevant layers of \exacus are now part of \cgal.
+The main authors for `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>` are
+Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors also want to emphasize the
+contribution of all authors of the \exacus project,
 particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko.
 
-The two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were 
-written by Luis Pe&ntilde;aranda and Sylvain Lazard. 
-Both models interface the library RS \cgalCite{cgal:r-rs} by Fabrice Rouillier. 
-The authors want to thank Fabrice Rouillier and Elias Tsigaridas for 
+In 2010, two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were
+written by Luis Peñaranda and Sylvain Lazard \cgalCite{cgal:2009-ESA}.
+Both models interface the library RS \cgalCite{cgal:r-rs} by Fabrice Rouillier.
+The authors want to thank Fabrice Rouillier and Elias Tsigaridas for
 strong support and many useful discussions that lead to the integration of RS.
+Due to lack of maintenance, these kernels have been removed in 2024.
 
-*/ 
+
+*/
 } /* namespace CGAL */
-

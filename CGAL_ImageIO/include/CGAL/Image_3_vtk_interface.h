@@ -1,21 +1,12 @@
 // Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Laurent Rineau
 
 
@@ -64,35 +55,36 @@ struct VTK_type_generator<char> {
 };
 
 template <>
-struct VTK_type_generator<boost::uint8_t> {
+struct VTK_type_generator<std::uint8_t> {
   static const int type = VTK_UNSIGNED_CHAR;
   typedef vtkUnsignedCharArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::int16_t> {
+struct VTK_type_generator<std::int16_t> {
   static const int type = VTK_SHORT;
   typedef vtkShortArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::uint16_t> {
+struct VTK_type_generator<std::uint16_t> {
   static const int type = VTK_UNSIGNED_SHORT;
   typedef vtkUnsignedShortArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::int32_t> {
+struct VTK_type_generator<std::int32_t> {
   static const int type = VTK_INT;
   typedef vtkIntArray ArrayType;
 };
 
 template <>
-struct VTK_type_generator<boost::uint32_t> {
+struct VTK_type_generator<std::uint32_t> {
   static const int type = VTK_UNSIGNED_INT;
   typedef vtkUnsignedIntArray ArrayType;
 };
 
+inline
 ::vtkImageData* vtk_image_sharing_same_data_pointer(Image_3& image)
 {
   vtkImageData* vtk_image = vtkImageData::New();
@@ -119,6 +111,9 @@ struct VTK_type_generator<boost::uint32_t> {
   vtk_image->SetSpacing(image.vx(),
                         image.vy(),
                         image.vz());
+  vtk_image->SetOrigin(image.tx(),
+                       image.ty(),
+                       image.tz());
   vtk_image->AllocateScalars(type, 1);
   vtk_image->GetPointData()->SetScalars(data_array);
   return vtk_image;

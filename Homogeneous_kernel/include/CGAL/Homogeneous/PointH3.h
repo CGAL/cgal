@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -27,9 +18,10 @@
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -60,9 +52,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
-          typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
-                                                                         boost::is_convertible<Ty, RT> >,
-                                                       boost::is_convertible<Tz, RT> > >::type* = 0)
+          std::enable_if_t<std::is_convertible_v<Tx, RT> &&
+                           std::is_convertible_v<Ty, RT> &&
+                           std::is_convertible_v<Tz, RT>>* = 0)
     : base(x, y, z) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)
@@ -98,8 +90,8 @@ public:
   Direction_3 direction() const;
   Point_3     transform( const Aff_transformation_3 & t) const;
 
-  bool  operator==( const PointH3<R>& p) const;
-  bool  operator!=( const PointH3<R>& p) const;
+  typename R::Boolean operator==( const PointH3<R>& p) const;
+  typename R::Boolean operator!=( const PointH3<R>& p) const;
 };
 
 
@@ -183,7 +175,7 @@ PointH3<R>::direction() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
   return base == p.base;
@@ -191,7 +183,7 @@ PointH3<R>::operator==( const PointH3<R> & p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
 

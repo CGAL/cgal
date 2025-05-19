@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 #ifndef QGLVIEWER_FRAME_H
 #define QGLVIEWER_FRAME_H
 
@@ -70,7 +62,7 @@ class Constraint;
 
   The position and the orientation of a Frame are actually defined with respect
   to a referenceFrame(). The default referenceFrame() is the world coordinate
-  system (represented by a \c NULL referenceFrame()). If you setReferenceFrame()
+  system (represented by a \c nullptr referenceFrame()). If you setReferenceFrame()
   to a different Frame, you must then differentiate:
 
   \arg the \e local translation() and rotation(), defined with respect to the
@@ -86,7 +78,7 @@ class Constraint;
   This terminology for \e local (translation() and rotation()) and \e global
   (position() and orientation()) definitions is used in all the methods' names
   and should be sufficient to prevent ambiguities. These notions are obviously
-  identical when the referenceFrame() is \c NULL, i.e. when the Frame is defined
+  identical when the referenceFrame() is \c nullptr, i.e. when the Frame is defined
   in the world coordinate system (the one you are in at the beginning of the
   CGAL::QGLViewer::draw() method, see the <a href="../introduction.html">introduction
   page</a>).
@@ -111,10 +103,10 @@ class Constraint;
   An interesting feature of Frames is that their displacements can be
   constrained. When a Constraint is attached to a Frame, it filters the input of
   translate() and rotate(), and only the resulting filtered motion is applied to
-  the Frame. The default constraint() is \c NULL resulting in no filtering. Use
+  the Frame. The default constraint() is \c nullptr resulting in no filtering. Use
   setConstraint() to attach a Constraint to a frame.
 
-  Constraints are especially usefull for the ManipulatedFrame instances, in
+  Constraints are especially useful for the ManipulatedFrame instances, in
   order to forbid some mouse motions. See the <a
   href="../examples/constrainedFrame.html">constrainedFrame</a>, <a
   href="../examples/constrainedCamera.html">constrainedCamera</a> and <a
@@ -127,7 +119,7 @@ class Constraint;
   <h3>Derived classes</h3>
 
   The ManipulatedFrame class inherits Frame and implements a mouse motion
-  convertion, so that a Frame (and hence an object) can be manipulated in the
+  conversion, so that a Frame (and hence an object) can be manipulated in the
   scene with the mouse.
 
   \nosubgrouping */
@@ -156,7 +148,7 @@ Q_SIGNALS:
   \note If your Frame is part of a Frame hierarchy (see referenceFrame()), a
   modification of one of the parents of this Frame will \e not emit this signal.
   Use code like this to change this behavior (you can do this recursively for
-  all the referenceFrame() until the \c NULL world root frame is encountered):
+  all the referenceFrame() until the \c nullptr world root frame is encountered):
   \code
   // Emits the Frame modified() signal when its referenceFrame() is modified().
   connect(myFrame->referenceFrame(), SIGNAL(modified()), myFrame,
@@ -249,14 +241,14 @@ public:
   referenceFrame().
 
   Use position() to get the result in the world coordinates. These two values
-  are identical when the referenceFrame() is \c NULL (default).
+  are identical when the referenceFrame() is \c nullptr (default).
 
   See also setTranslation() and setTranslationWithConstraint(). */
   Vec translation() const { return t_; }
   /*! Returns the Frame rotation, defined with respect to the referenceFrame().
 
   Use orientation() to get the result in the world coordinates. These two values
-  are identical when the referenceFrame() is \c NULL (default).
+  are identical when the referenceFrame() is \c nullptr (default).
 
   See also setRotation() and setRotationWithConstraint(). */
 
@@ -274,12 +266,12 @@ public:
   defined.
 
   The translation() and rotation() of the Frame are defined with respect to the
-  referenceFrame() coordinate system. A \c NULL referenceFrame() (default value)
+  referenceFrame() coordinate system. A \c nullptr referenceFrame() (default value)
   means that the Frame is defined in the world coordinate system.
 
   Use position() and orientation() to recursively convert values along the
   referenceFrame() chain and to get values expressed in the world coordinate
-  system. The values match when the referenceFrame() is \c NULL.
+  system. The values match when the referenceFrame() is \c nullptr.
 
   Use setReferenceFrame() to set this value and create a Frame hierarchy.
   Convenient functions allow you to convert 3D coordinates from one Frame to an
@@ -359,7 +351,7 @@ public:
 
   // When In (resp. From) is appended to the names, the functions transform from
   // (resp. To) the frame that is given as an argument. The frame does not need
-  // to be in the same branch or the hierarchical tree, and can be \c NULL (the
+  // to be in the same branch or the hierarchical tree, and can be \c nullptr (the
   // world coordinates system).
 
   // Combining any of these functions with its inverse (in any order) leads to
@@ -386,7 +378,7 @@ public:
   //@{
   /*! Returns the current constraint applied to the Frame.
 
-  A \c NULL value (default) means that no Constraint is used to filter Frame
+  A \c nullptr value (default) means that no Constraint is used to filter Frame
   translation and rotation. See the Constraint class documentation for details.
 
   You may have to use a \c dynamic_cast to convert the result to a Constraint
@@ -394,7 +386,7 @@ public:
   Constraint *constraint() const { return constraint_; }
   /*! Sets the constraint() attached to the Frame.
 
-  A \c NULL value means no constraint. The previous constraint() should be
+  A \c nullptr value means no constraint. The previous constraint() should be
   deleted by the calling method if needed. */
   void setConstraint(Constraint *const constraint) { constraint_ = constraint; }
   //@}
@@ -423,7 +415,7 @@ public:
   original orientation. Its position() is the negated and inverse rotated image
   of the original position.
 
-  The result Frame has a \c NULL referenceFrame() and a \c NULL constraint().
+  The result Frame has a \c nullptr referenceFrame() and a \c nullptr constraint().
 
   Use inverse() for a local (i.e. with respect to referenceFrame())
   transformation inverse. */
@@ -433,14 +425,6 @@ public:
   }
   //@}
 
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  //@}
 
 private:
   // P o s i t i o n   a n d   o r i e n t a t i o n

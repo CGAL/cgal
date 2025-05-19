@@ -1,24 +1,15 @@
-// Copyright (c) 2002,2003  
+// Copyright (c) 2002,2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
@@ -26,10 +17,13 @@
 #ifndef CGAL_MPQ_CLASS_H
 #define CGAL_MPQ_CLASS_H
 
-#include <CGAL/number_type_basic.h>
-#include <CGAL/gmpxx_coercion_traits.h>
-#include <CGAL/mpz_class.h> // for GCD in Type traits
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 #include <CGAL/IO/io.h>
+#include <mpfr.h>
+#include <gmpxx.h>
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -40,12 +34,11 @@
 // Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
 // while ::__gmp_expr<T, U> is the others "expressions".
 
-#define CGAL_CHECK_GMP_EXPR                                             \
-    CGAL_static_assertion(                                                \
-            (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
+#define CGAL_CHECK_GMP_EXPR_MPQ_CLASS                                     \
+    static_assert(                                                \
+            (::std::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 namespace CGAL {
-
 
 // AST for mpq_class
 template<>
@@ -60,7 +53,7 @@ class Algebraic_structure_traits< mpq_class  >
     struct Is_zero: public CGAL::cpp98::unary_function< mpq_class , bool > {
         template <class T, class U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return ::sgn(x) == 0;
         }
     };
@@ -68,7 +61,7 @@ class Algebraic_structure_traits< mpq_class  >
     struct Is_one: public CGAL::cpp98::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return x == 1;
         }
     };
@@ -98,7 +91,7 @@ class Algebraic_structure_traits< mpq_class  >
         mpq_class operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 > & y) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             mpq_class result = x / y;
             CGAL_precondition_msg( result * y == x,
             "'x' must be divisible by 'y' in "
@@ -134,14 +127,14 @@ class Real_embeddable_traits< mpq_class >
     struct Is_zero: public CGAL::cpp98::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return ::sgn(x) == 0;
         }
     };
     struct Is_finite: public CGAL::cpp98::unary_function<mpq_class,bool> {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >&) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return true;
         }
     };
@@ -149,7 +142,7 @@ class Real_embeddable_traits< mpq_class >
     struct Is_positive: public CGAL::cpp98::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return ::sgn(x) > 0;
         }
     };
@@ -157,7 +150,7 @@ class Real_embeddable_traits< mpq_class >
     struct Is_negative: public CGAL::cpp98::unary_function< mpq_class , bool > {
         template <typename T, typename U>
         bool operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return ::sgn(x) < 0;
         }
     };
@@ -165,7 +158,7 @@ class Real_embeddable_traits< mpq_class >
     struct Abs: public CGAL::cpp98::unary_function< mpq_class , mpq_class > {
         template <typename T, typename U>
         mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return ::abs(x);
         }
     };
@@ -176,7 +169,7 @@ class Real_embeddable_traits< mpq_class >
         template <typename T, typename U>
         ::CGAL::Sign
         operator()( const ::__gmp_expr< T , U >& x ) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             return (::CGAL::Sign) ::sgn( x );
         }
     };
@@ -188,7 +181,7 @@ class Real_embeddable_traits< mpq_class >
         Comparison_result operator()(
                 const ::__gmp_expr< T , U1 >& x,
                 const ::__gmp_expr< T , U2 >& y ) const {
-            CGAL_CHECK_GMP_EXPR;
+            CGAL_CHECK_GMP_EXPR_MPQ_CLASS;
             // cmp returns any int value, not just -1/0/1...
             return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
@@ -209,37 +202,45 @@ class Real_embeddable_traits< mpq_class >
         std::pair<double, double>
         operator()( const mpq_class& x ) const {
 #if MPFR_VERSION_MAJOR >= 3
-	  mpfr_exp_t emin = mpfr_get_emin();
-	  mpfr_set_emin(-1073);
-	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
-	  int r = mpfr_set_q (y, x.get_mpq_t(), MPFR_RNDA);
-	  r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
-	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	  mpfr_set_emin(emin); /* Restore old value, users may care */
-	  // With mpfr_set_emax(1024) we could drop the is_finite test
-	  if (r == 0 && is_finite (i))
-	    return std::pair<double, double>(i, i);
-	  else
-	    {
-	      double s = nextafter (i, 0);
-	      if (i < 0)
-		return std::pair<double, double>(i, s);
-	      else
-		return std::pair<double, double>(s, i);
-	    }
+          mpfr_exp_t emin = mpfr_get_emin();
+          mpfr_set_emin(-1073);
+          MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+          int r = mpfr_set_q (y, x.get_mpq_t(), MPFR_RNDA);
+          r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
+          double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+          mpfr_set_emin(emin); /* Restore old value, users may care */
+          // With mpfr_set_emax(1024) we could drop the is_finite test
+          if (r == 0 && is_finite (i))
+            return std::pair<double, double>(i, i);
+          else
+            {
+              double s = nextafter (i, 0);
+              if (i < 0)
+                return std::pair<double, double>(i, s);
+              else
+                return std::pair<double, double>(s, i);
+            }
 #else
-	  mpfr_t y;
-	  mpfr_init2 (y, 53); /* Assume IEEE-754 */
-	  mpfr_set_q (y, x.get_mpq_t(), GMP_RNDD);
-	  double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-	  mpfr_set_q (y, x.get_mpq_t(), GMP_RNDU);
-	  double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-	  mpfr_clear (y);
-	  return std::pair<double, double>(i, s);
+          mpfr_t y;
+          mpfr_init2 (y, 53); /* Assume IEEE-754 */
+          mpfr_set_q (y, x.get_mpq_t(), GMP_RNDD);
+          double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+          mpfr_set_q (y, x.get_mpq_t(), GMP_RNDU);
+          double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+          mpfr_clear (y);
+          return std::pair<double, double>(i, s);
 #endif
         }
     };
 };
+
+} // namespace CGAL
+
+#include <CGAL/gmpxx_coercion_traits.h>
+#include <CGAL/mpz_class.h> // for GCD in Type traits
+#include <CGAL/Fraction_traits.h>
+
+namespace CGAL {
 
 /*! \ingroup NiX_Fraction_traits_spec
  *  \brief Specialization of Fraction_traits for mpq_class
@@ -310,6 +311,6 @@ namespace internal {
 
 } //namespace CGAL
 
-#undef CGAL_CHECK_GMP_EXPR
+#undef CGAL_CHECK_GMP_EXPR_MPQ_CLASS
 
 #endif // CGAL_MPQ_CLASS_H

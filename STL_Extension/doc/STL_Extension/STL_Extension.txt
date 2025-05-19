@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_STL_Extensions_for_CGAL
 
 \cgalAutoToc
@@ -69,24 +69,24 @@ when the container used to contain lots of elements, but now has far less. In
 this case, we suggest to do a copy of the container in order to "defragment"
 the internal representation.
 
-The objects stored in this container can optionally store an 
+The objects stored in this container can optionally store an
 "erase counter". If it exists, i.e.\ if the object is a model of the
-`ObjectWithEraseCounter` concept, each time an object is erased from the 
+`ObjectWithEraseCounter` concept, each time an object is erased from the
 container, the erase counter of the object will be incremented.
-For example, this erase counter can be exploited using the `CC_safe_handle` 
+For example, this erase counter can be exploited using the `CC_safe_handle`
 helper class, so that one can know if a handle is still pointing to the same
 element.
-Note that this is meaningful only because the container doesn't 
+Note that this is meaningful only because the container doesn't
 deallocate elements until the destruction or clear() of the container.
 For example, this counter is used by
 the parallel 3D mesh generation engine to lazily manage the queues of bad cells:
-an element in the queue is a pair containing a cell iterator and the 
+an element in the queue is a pair containing a cell iterator and the
 erase counter value of the cell when it has been inserted. When an element
 is popped from the queue, the algorithm checks if the current value of
 the erase counter matches the stored value. If it doesn't match, it means
 the cell has been destroyed in the meantime and the algorithm ignores it. Without this
 lazy management, each time a cell is destroyed, the algorithm has to look
-for it in the queue and remove it. This mechanism is even more useful for the parallel 
+for it in the queue and remove it. This mechanism is even more useful for the parallel
 version of the meshing process, since each thread has its own queue and looking
 for a cell in all the queues would be very slow.
 
@@ -94,11 +94,11 @@ This container has been developed in order to efficiently handle large data
 structures like the triangulation and halfedge data structures. It can
 probably be useful for other kinds of graphs as well.
 
-The class `Concurrent_compact_container<T, Allocator>` 
+The class `Concurrent_compact_container<T, Allocator>`
 provides the same features, but enables concurrency-safe
 `insert` and `erase` operations. Other operations are not concurrency-safe.
-It requires the program to be linked against 
-the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+It requires the program to be linked against
+the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 
 \section stl_multi Multiset with Extended Functionality
 
@@ -142,7 +142,7 @@ For handles and indices of vertices, halfedges, faces, etc., we provide speciali
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
-This class is similar to `boost::any`.
+This class is similar to `std::any`.
 
 \section stl_uncertainty Uncertainty Management
 
@@ -182,16 +182,6 @@ list. Specifying that one wishes to use the default is simply done by omitting
 it. This is however possible only at the end of the list. `Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
-
-\section stl_wrappers C++ 11 Wrappers
-
-Wrappers for the classes `array` and `tuple` which, based on
-availability, either use the version of <I>Boost</I> or the one
-provided by the standard library are provided in the namespace
-`CGAL::cpp11`. The namespace alias `CGAL::cpp11` is provided
-for backward compatibility. Those are documented for completeness and
-implementers. They are not intended to be used by users of the
-library.
 
 \section secchecks Checks
 
@@ -274,7 +264,7 @@ example.
 
 Note that the setting of the standard macro `NDEBUG` sets `CGAL_NDEBUG`,
 unless `CGAL_DEBUG` is also defined. If both `NDEBUG` and `CGAL_DEBUG` are
-defined, then the the standard `assert` macro is disabled, but not the CGAL
+defined, then the standard `assert` macro is disabled, but not the CGAL
 assertions and preconditions.
 
 Not all checks are on by default.
@@ -403,3 +393,35 @@ void foo()
 */
 } /* namespace CGAL */
 
+/*!
+\page FromBoostNPtoCGALNP Upgrading Code using \boost Parameters to \cgal Named Function Parameters
+
+Prior to \cgal 5.6, some packages were using Boost parameters to provide a user friendly
+way to set parameters of classes and functions. In an attempt to remove a dependency and
+to get a more uniform API across packages, these packages have been updated to now use
+\cgal \ref bgl_namedparameters inspired by the function named parameters from
+the \boost graph library. In practice this means that the following call:
+\code
+Mesh_criteria criteria(edge_size = 8,
+                       facet_angle = 25,
+                       facet_size = 8,
+                       facet_distance = 0.2,
+                       cell_radius_edge_ratio = 3,
+                       cell_size = 10);
+\endcode
+should now be written as follows:
+\code
+Mesh_criteria criteria(edge_size(8).
+                       facet_angle(25).
+                       facet_size(8).
+                       facet_distance(0.2).
+                       cell_radius_edge_ratio(3).
+                       cell_size(10));
+\endcode
+
+Note that we have tried to preserve the backward compatibility by allowing previous API
+to remain valid. However, if new parameters are introduced for those functions, there is
+no guarantee that they will be ported to the old API. So we strongly encourage users to
+upgrade to the new API. Additionally, passing parameters without names is deprecated
+and even removed for some functions.
+*/

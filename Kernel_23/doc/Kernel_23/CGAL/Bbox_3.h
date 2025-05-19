@@ -4,17 +4,19 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object `b` of the class `Bbox_3` is a bounding 
-box in the three-dimensional Euclidean space \f$ \E^3\f$. 
+An object `b` of the class `Bbox_3` is a bounding
+box in the three-dimensional Euclidean space \f$ \E^3\f$.
 
-\sa `CGAL::Bbox_2` 
+\cgalModels{Hashable}
+
+\sa `CGAL::Bbox_2`
 
 */
 
 class Bbox_3 {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -27,81 +29,81 @@ and with upper right corner point at
   Bbox_3();
 
 /*!
-introduces a bounding box `b` with lexicographically 
-smallest corner point at `(xmin, ymin, zmin)` 
+introduces a bounding box `b` with lexicographically
+smallest corner point at `(xmin, ymin, zmin)`
 and lexicographically largest corner point at
-`(xmax, ymax, zmax)`. 
-*/ 
-Bbox_3(double x_min, double y_min, double z_min, 
-double x_max, double y_max, double z_max); 
+`(xmax, ymax, zmax)`.
+*/
+Bbox_3(double x_min, double y_min, double z_min,
+double x_max, double y_max, double z_max);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Test for equality. 
-*/ 
-bool operator==(const Bbox_3 &c) const; 
+Test for equality.
+*/
+bool operator==(const Bbox_3 &c) const;
 
 /*!
-Test for inequality. 
-*/ 
-bool operator!=(const Bbox_3 &q) const; 
+Test for inequality.
+*/
+bool operator!=(const Bbox_3 &q) const;
 
 /*!
-Returns 3. 
-*/ 
-int dimension() const; 
-
-/*!
-
-*/ 
-double xmin() const; 
+Returns 3.
+*/
+int dimension() const;
 
 /*!
 
-*/ 
-double ymin() const; 
+*/
+double xmin() const;
 
 /*!
 
-*/ 
-double zmin() const; 
+*/
+double ymin() const;
 
 /*!
 
-*/ 
-double xmax() const; 
+*/
+double zmin() const;
 
 /*!
 
-*/ 
-double ymax() const; 
+*/
+double xmax() const;
 
 /*!
 
-*/ 
-double zmax() const; 
+*/
+double ymax() const;
 
 /*!
-Returns `xmin()` if `i==0` or `ymin()` if `i==1` 
-or `zmin()` if `i==2`. 
-\pre i>=0 and i<=2 
-*/ 
-double min(int i) const; 
+
+*/
+double zmax() const;
 
 /*!
-Returns `xmax()` if `i==0` or `ymax()` if `i==1` 
-or `zmax()` if `i==2`. 
-\pre i>=0 and i<=2 
-*/ 
-double max(int i) const; 
+Returns `xmin()` if `i==0` or `ymin()` if `i==1`
+or `zmin()` if `i==2`.
+\pre `i>=0` and `i<=2`
+*/
+double min(int i) const;
 
 /*!
-returns a bounding box of `b` and `c`. 
-*/ 
+Returns `xmax()` if `i==0` or `ymax()` if `i==1`
+or `zmax()` if `i==2`.
+\pre `i>=0` and `i<=2`
+*/
+double max(int i) const;
+
+/*!
+returns a bounding box of `b` and `c`.
+*/
 Bbox_3 operator+(const Bbox_3 &c) const;
 
 /*!
@@ -113,6 +115,13 @@ Bbox_3& operator+=(const Bbox_3 &c);
 dilates the bounding box by a specified number of ULP.
 */
 void dilate(int dist);
+
+/*!
+scales the bounding box by `factor`, while keeping its center fixed.
+\pre `factor > 0`
+*/
+void scale(double factor);
+
 /// @}
 
 }; /* end Bbox_3 */
@@ -144,7 +153,7 @@ Bbox_3 bbox_3(InputIterator begin, InputIterator past_end);
 returns the bounding box of the objects in the range `[first,past_end[`.
 `Traits` must provide a functor `Traits::Construct_bbox_3` having an
 operator returning the bounding box of each object in the range.
-`Traits` must also have a member function 
+`Traits` must also have a member function
 `Traits::Construct_bbox_3 construct_bbox_3_object() const`.
 
 \relates Bbox_3

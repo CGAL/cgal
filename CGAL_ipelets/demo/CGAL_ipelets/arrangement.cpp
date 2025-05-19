@@ -1,20 +1,11 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
@@ -96,11 +87,11 @@ void ArrPolyIpelet::protected_run(int fn){
 
   for (std::list<Circular_arc_2>::iterator it=arc_list.begin();it!=arc_list.end();++it)
     input_curves.push_back(
-      Curve_2( CGAL::cpp11::get<0>(*it).center(),
-               sqrt(CGAL::to_double(CGAL::cpp11::get<0>(*it).squared_radius())),
-               CGAL::cpp11::get<3>(*it),
-               Traits::Point_2(CGAL::cpp11::get<1>(*it).x(),CGAL::cpp11::get<1>(*it).y()),
-               Traits::Point_2(CGAL::cpp11::get<2>(*it).x(),CGAL::cpp11::get<2>(*it).y())
+      Curve_2( std::get<0>(*it).center(),
+               sqrt(CGAL::to_double(std::get<0>(*it).squared_radius())),
+               std::get<3>(*it),
+               Traits::Point_2(std::get<1>(*it).x(),std::get<1>(*it).y()),
+               Traits::Point_2(std::get<2>(*it).x(),std::get<2>(*it).y())
              )
       );
 

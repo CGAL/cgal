@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Efi Fogel   <efifogel@gmail.com>
 
@@ -86,12 +77,15 @@ private:
 
   // An arrangement observer, used to receive notifications of face splits and
   // face mergers.
-  class My_observer : public CGAL::Arr_observer<Arrangement_2> {
+  class My_observer : public Arrangement_2::Observer {
   public:
-    My_observer(Arrangement_2& arr) : Arr_observer<Arrangement_2>(arr) {}
+    using Base_aos = typename Arrangement_2::Base_aos;
+    using Face_handle = typename Base_aos::Face_handle;
+
+    My_observer(Base_aos& arr) : Arrangement_2::Observer(arr) {}
 
     virtual void after_split_face(Face_handle f, Face_handle new_f,
-                                  bool /* is_hole */)
+                                  bool /* is_hole */) override
     { if (f->contained()) new_f->set_contained(true); }
   };
 
@@ -102,18 +96,40 @@ private:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;    // inidicates whether the kernel should be freed up.
+  bool m_own_traits;    // indicates whether the kernel should be freed up.
 
   Compare_x_2 f_cmp_x;
   Intersect_2 f_intersect;
   Equal_2     f_equal;
 
 public:
+  // The pointer to the traits and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Polygon_vertical_decomposition_2() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  /*! Copy constructor. */
+  Polygon_vertical_decomposition_2
+  (const Polygon_vertical_decomposition_2& other) :
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  /*! Copy assignment. */
+  Polygon_vertical_decomposition_2&
+  operator=(const Polygon_vertical_decomposition_2& other) {
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   /*! Constructor */
   Polygon_vertical_decomposition_2(const Traits_2& traits) :
@@ -125,7 +141,7 @@ public:
   void init()
   {
     // Allocate the traits if not provided.
-    if (m_traits == NULL) {
+    if (m_traits == nullptr) {
       m_traits = new Traits_2;
       m_own_traits = true;
     }
@@ -143,7 +159,7 @@ public:
     if (m_own_traits) {
       if (m_traits) {
         delete m_traits;
-        m_traits = NULL;
+        m_traits = nullptr;
       }
       m_own_traits = false;
     }
@@ -261,13 +277,13 @@ private:
   // Construct the vertical decomposition of the given arrangement.
   void vertical_decomposition(Arrangement_2& arr) const
   {
-    // For each vertex in the arrangment, locate the feature that lies
+    // For each vertex in the arrangement, locate the feature that lies
     // directly below it and the feature that lies directly above it.
     Vert_decomp_list vd_list;
     CGAL::decompose(arr, std::back_inserter(vd_list));
 
     // Go over the vertices (given in ascending lexicographical xy-order),
-    // and add segements to the feautres below and above it.
+    // and add segments to the features below and above it.
     typename Vert_decomp_list::iterator it, prev = vd_list.end();
     for (it = vd_list.begin(); it != vd_list.end(); ++it) {
       // If the feature above the previous vertex is not the current vertex,

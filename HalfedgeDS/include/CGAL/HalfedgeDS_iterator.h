@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -61,11 +52,11 @@ public:
 
     // pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t CGAL_assertion_code(p)) const {
+    bool operator==( std::nullptr_t CGAL_assertion_code(p)) const {
         CGAL_assertion( p == 0);
         return It::operator==( It());
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i)    const { return  It::operator==(i); }
     bool operator!=( const Self& i)    const { return !(*this == i); }
 
@@ -121,11 +112,11 @@ public:
 
     // pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t CGAL_assertion_code(p)) const {
+    bool operator==( std::nullptr_t CGAL_assertion_code(p)) const {
         CGAL_assertion( p == 0);
         return It::operator==( It());
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i)    const { return  It::operator==(i); }
     bool operator!=( const Self& i)    const { return !(*this == i); }
 
@@ -190,7 +181,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_facet_circ() : It(0) {}
+    _HalfedgeDS_facet_circ() : It(nullptr) {}
     //_HalfedgeDS_facet_circ( pointer p) : It(p) {}
     _HalfedgeDS_facet_circ( It i) : It(i) {}
 
@@ -199,17 +190,17 @@ public:
 
     pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return It::operator==( It(NULL));
+        CGAL_assertion( p == nullptr);
+        return It::operator==( It(nullptr));
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next();
+        this->nt = typename It::Iterator((*this->nt).next());
         return *this;
     }
     Self  operator++(int) {
@@ -222,7 +213,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).prev();
+        this->nt = typename It::Iterator((*this->nt).prev());
         return *this;
     }
     Self  operator--(int) {
@@ -250,7 +241,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_facet_const_circ() : It(0) {}
+    _HalfedgeDS_facet_const_circ() : It(nullptr) {}
     _HalfedgeDS_facet_const_circ( pointer p) : It(p) {}
     _HalfedgeDS_facet_const_circ( It i) : It(i) {}
 
@@ -263,17 +254,19 @@ public:
 
     pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return It::operator==( It(NULL));
+        CGAL_assertion( p == nullptr);
+        return It::operator==( It(nullptr));
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
+    bool operator==( const It& i) const { return  It::operator==(i); }
+    bool operator!=( const It& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next();
+        this->nt = typename It::Iterator((*this->nt).next());
         return *this;
     }
     Self  operator++(int) {
@@ -286,7 +279,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).prev();
+        this->nt = typename It::Iterator((*this->nt).prev());
         return *this;
     }
     Self  operator--(int) {
@@ -313,7 +306,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_vertex_circ() : It(0) {}
+    _HalfedgeDS_vertex_circ() : It(nullptr) {}
     //_HalfedgeDS_vertex_circ( pointer p) : It(p) {}
     _HalfedgeDS_vertex_circ( It i) : It(i) {}
 
@@ -322,17 +315,18 @@ public:
 
     pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return It::operator==( It(NULL));
+        CGAL_assertion( p == nullptr);
+        return It::operator==( It(nullptr));
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
+    bool operator==( const It& i) const { return  It::operator==(i); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next()->opposite();
+        this->nt = typename It::Iterator((*this->nt).next()->opposite());
         return *this;
     }
     Self  operator++(int) {
@@ -345,7 +339,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).opposite()->prev();
+        this->nt = typename It::Iterator((*this->nt).opposite()->prev());
         return *this;
     }
     Self  operator--(int) {
@@ -373,7 +367,7 @@ public:
 // CREATION
 // --------
 
-    _HalfedgeDS_vertex_const_circ() : It(0) {}
+    _HalfedgeDS_vertex_const_circ() : It(nullptr) {}
     _HalfedgeDS_vertex_const_circ( pointer p) : It(p) {}
     _HalfedgeDS_vertex_const_circ( It i) : It(i) {}
 
@@ -386,17 +380,17 @@ public:
 
     pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return It::operator==( It(NULL));
+        CGAL_assertion( p == nullptr);
+        return It::operator==( It(nullptr));
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next()->opposite();
+      this->nt = typename It::Iterator((*this->nt).next()->opposite());
         return *this;
     }
     Self  operator++(int) {
@@ -409,7 +403,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).opposite()->prev();
+        this->nt = typename It::Iterator((*this->nt).opposite()->prev());
         return *this;
     }
     Self  operator--(int) {

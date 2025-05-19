@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec
 //               : Olivier Devillers  (remove)
@@ -31,9 +22,9 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+
 #include <CGAL/tss.h>
-#include <boost/iterator/zip_iterator.hpp>
+
 #include <boost/mpl/and.hpp>
 
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -97,7 +88,12 @@ public:
   Delaunay_triangulation_2(
          const Delaunay_triangulation_2<Gt,Tds> &tr)
        : Triangulation_2<Gt,Tds>(tr)
-  {   CGAL_triangulation_postcondition(is_valid());  }
+  {   CGAL_postcondition(is_valid());  }
+
+  Delaunay_triangulation_2(Delaunay_triangulation_2&&) = default;
+  Delaunay_triangulation_2& operator=(const Delaunay_triangulation_2&) = default;
+  Delaunay_triangulation_2& operator=(Delaunay_triangulation_2&&) = default;
+  ~Delaunay_triangulation_2() = default;
 
  template <class InputIterator>
  Delaunay_triangulation_2(InputIterator first, InputIterator last,
@@ -114,7 +110,7 @@ public:
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
 
   bool does_conflict(const Point &p, Face_handle fh) const;// deprecated
-  bool test_conflict(const Point &p, Face_handle fh, bool strict = true) const;
+  bool test_conflict(const Point &p, Face_handle fh) const;
   bool find_conflicts(const Point &p,               //deprecated
                       std::list<Face_handle>& conflicts,
                       Face_handle start= Face_handle()) const;
@@ -197,7 +193,7 @@ private:
   void propagating_flip(const Face_handle& f,int i);
 #endif
 
-// auxilliary functions for remove
+// auxiliary functions for remove
   void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
          std::vector<Vertex_handle> &w, std::vector<int> &i,int&d,int&maxd);
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
@@ -273,7 +269,7 @@ private:
          std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
          std::vector<Vertex_handle> &w, std::vector<int> &i);
-// end of auxilliary functions for remove
+// end of auxiliary functions for remove
 
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
   Vertex_handle nearest_vertex_1D(const Point& p) const;
@@ -304,12 +300,12 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         typename boost::enable_if<
-         boost::is_convertible<
-         typename std::iterator_traits<InputIterator>::value_type,
-         Point
-         >
-         >::type* = NULL)
+         std::enable_if_t<
+           std::is_convertible<
+             typename std::iterator_traits<InputIterator>::value_type,
+             Point
+           >::value
+         >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -329,16 +325,11 @@ public:
   }
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
 private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  using Triangulation::top_get_first;
+  using Triangulation::top_get_second;
 
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
@@ -367,10 +358,8 @@ private:
       it = indices.begin(), end = indices.end();
       it != end; ++it) {
       v_hint = insert(points[*it], hint);
-      if(v_hint!=Vertex_handle()) {
-        v_hint->info()=infos[*it];
-        hint=v_hint->face();
-      }
+      v_hint->info()=infos[*it];
+      hint=v_hint->face();
     }
 
     return this->number_of_vertices() - n;
@@ -382,11 +371,11 @@ public:
   std::ptrdiff_t
   insert(InputIterator first,
          InputIterator last,
-         typename boost::enable_if<
-           boost::is_convertible<
+         std::enable_if_t<
+           std::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-           > >::type* = NULL)
+           >::value >* = nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -395,12 +384,10 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-         typename boost::enable_if<
-           boost::mpl::and_<
-             boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >
-         >::type* = NULL)
+         std::enable_if_t<
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+         >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -411,10 +398,9 @@ public:
   get_conflicts_and_boundary(const Point  &p,
                              OutputItFaces fit,
                              OutputItBoundaryEdges eit,
-                             Face_handle start = Face_handle(),
-                             bool strict = true) const
+                             Face_handle start = Face_handle()) const
   {
-    CGAL_triangulation_precondition(this->dimension() == 2);
+    CGAL_precondition(this->dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = this->locate(p,lt,li, start);
@@ -427,12 +413,12 @@ public:
       case Triangulation::OUTSIDE_CONVEX_HULL:
         *fit++ = fh; //put fh in OutputItFaces
         std::pair<OutputItFaces,OutputItBoundaryEdges> pit = std::make_pair(fit,eit);
-        pit = propagate_conflicts(p,fh,0,pit, strict);
-        pit = propagate_conflicts(p,fh,1,pit, strict);
-        pit = propagate_conflicts(p,fh,2,pit, strict);
+        pit = propagate_conflicts(p,fh,0,pit);
+        pit = propagate_conflicts(p,fh,1,pit);
+        pit = propagate_conflicts(p,fh,2,pit);
         return pit;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return std::make_pair(fit,eit);
   }
 
@@ -440,11 +426,10 @@ public:
   OutputItFaces
   get_conflicts (const Point  &p,
                  OutputItFaces fit,
-                 Face_handle start= Face_handle(),
-                 bool strict = true) const
+                 Face_handle start= Face_handle()) const
   {
     std::pair<OutputItFaces,Emptyset_iterator> pp =
-      get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start, strict);
+      get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
     return pp.first;
   }
 
@@ -452,11 +437,10 @@ public:
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p,
                             OutputItBoundaryEdges eit,
-                            Face_handle start= Face_handle(),
-                            bool strict = true) const
+                            Face_handle start= Face_handle()) const
   {
     std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp =
-      get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start, strict);
+      get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
     return pp.second;
   }
 
@@ -467,18 +451,16 @@ private:
   propagate_conflicts (const Point &p,
                        const Face_handle fh,
                        const int i,
-                       std::pair<OutputItFaces,OutputItBoundaryEdges>
-                       pit,
-                       bool strict = true) const
+                       std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
   {
     Face_handle fn = fh->neighbor(i);
-    if(! test_conflict(p,fn,strict)) {
+    if(! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit,strict);
-      pit = propagate_conflicts(p,fn,cw(j), pit,strict);
+      pit = propagate_conflicts(p,fn,ccw(j),pit);
+      pit = propagate_conflicts(p,fn,cw(j), pit);
     }
     return pit;
   }
@@ -488,8 +470,7 @@ private:
   non_recursive_propagate_conflicts(const Point  &p,
                                     const Face_handle fh,
                                     const int i,
-                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit,
-                                    bool strict = true)  const
+                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
   {
     std::stack<std::pair<Face_handle, int> > stack;
     stack.push(std::make_pair(fh,i));
@@ -499,13 +480,17 @@ private:
       const int i=stack.top().second;
       stack.pop();
       Face_handle fn = fh->neighbor(i);
-      if(! test_conflict(p,fn,strict)) {
+      if(! test_conflict(p,fn))
+      {
         *(pit.second)++ = Edge(fn, fn->index(fh));
       } else {
         *(pit.first)++ = fn;
         int j = fn->index(fh);
-        stack.push(std::make_pair(fn,ccw(j)));
+
+        // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
+        // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
         stack.push(std::make_pair(fn,cw(j)));
+        stack.push(std::make_pair(fn,ccw(j)));
       }
     }
     return pit;
@@ -516,22 +501,20 @@ private:
   propagate_conflicts (const Point  &p,
                        const Face_handle fh,
                        const int i,
-                       std::pair<OutputItFaces,OutputItBoundaryEdges>
-                       pit,
-                       bool strict = true,
+                       std::pair<OutputItFaces,OutputItBoundaryEdges> pit,
                        int depth=0) const
   {
     if(depth == 100)
-      return non_recursive_propagate_conflicts(p, fh, i, pit, strict);
+      return non_recursive_propagate_conflicts(p, fh, i, pit);
 
     Face_handle fn = fh->neighbor(i);
-    if(! test_conflict(p,fn,strict)) {
+    if(! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit, strict, depth+1);
-      pit = propagate_conflicts(p,fn,cw(j), pit, strict, depth+1);
+      pit = propagate_conflicts(p,fn,ccw(j),pit, depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit, depth+1);
     }
     return pit;
   }
@@ -636,12 +619,8 @@ protected:
 template < class Gt, class Tds >
 inline bool
 Delaunay_triangulation_2<Gt,Tds>::
-test_conflict(const Point  &p, Face_handle fh, bool strict) const
+test_conflict(const Point  &p, Face_handle fh) const
 {
-  if(! strict) {
-    Oriented_side os = side_of_oriented_circle(fh,p,false);
-    return os == ON_POSITIVE_SIDE;
-  }
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
@@ -691,7 +670,7 @@ is_valid(bool verbose, int level) const
         result = result && ON_POSITIVE_SIDE !=
             side_of_oriented_circle(it, this->mirror_vertex(it,i)->point(), false);
       }
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
     }
   }
   return result;
@@ -722,7 +701,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-  CGAL_triangulation_precondition(this->dimension() == 2);
+  CGAL_precondition(this->dimension() == 2);
   f = this->locate(p,f);
 
   typename Geom_traits::Compare_distance_2
@@ -792,8 +771,8 @@ typename Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual(Face_handle f) const
 {
-  CGAL_triangulation_precondition(this->_tds.is_face(f));
-  CGAL_triangulation_precondition(this->dimension()==2);
+  CGAL_precondition(this->_tds.is_face(f));
+  CGAL_precondition(this->dimension()==2);
   return circumcenter(f);
 }
 
@@ -802,12 +781,12 @@ Object
 Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge &e) const
 {
-  CGAL_triangulation_precondition(this->_tds.is_edge(e.first,e.second));
+  CGAL_precondition(this->_tds.is_edge(e.first,e.second));
 
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
-  CGAL_triangulation_precondition (!this->is_infinite(e));
+  CGAL_precondition (!this->is_infinite(e));
   if(this->dimension()== 1) {
     const Point& p = (e.first)->vertex(cw(e.second))->point();
     const Point& q = (e.first)->vertex(ccw(e.second))->point();
@@ -1048,8 +1027,8 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!this->is_infinite(v));
 
   if(this->number_of_vertices() == 1) this->remove_first(v);
   else if(this->number_of_vertices() == 2) this->remove_second(v);
@@ -1088,8 +1067,8 @@ remove(Vertex_handle v)
 {
   int d;
 
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(!this->is_infinite(v));
 
   if(this->dimension() <= 1) { Triangulation::remove(v); return; }
 
@@ -2136,7 +2115,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   const int dim = this->dimension();
 
@@ -2184,7 +2163,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
       Face_handle f = v->face();
       int i = f->index(v);
       if(i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Face_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -2194,7 +2173,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
       Face_handle f_ins = inserted->face();
       i = f_ins->index(inserted);
       if(i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Face_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);
@@ -2266,7 +2245,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -2281,9 +2260,9 @@ bool
 Delaunay_triangulation_2<Gt,Tds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
-  CGAL_triangulation_precondition(this->dimension() == 2);
-  CGAL_triangulation_precondition(!this->test_dim_down(v));
+  CGAL_precondition(!this->is_infinite(v));
+  CGAL_precondition(this->dimension() == 2);
+  CGAL_precondition(!this->test_dim_down(v));
   if(v->point() == p) return true;
   Point ant = v->point();
   v->set_point(p);
@@ -2337,7 +2316,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
                                         const Point &p,
                                         OutputItFaces oif)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
 
   const int dim = this->dimension();
@@ -2391,7 +2370,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       Face_handle f = v->face();
       int i = f->index(v);
       if(i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
+      CGAL_assertion(f->index(v) == 1);
       Face_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
       f->set_neighbor(0,g->neighbor(0));
@@ -2402,7 +2381,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       Face_handle f_ins = inserted->face();
       i = f_ins->index(inserted);
       if(i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
+      CGAL_assertion(f_ins->index(inserted) == 1);
       Face_handle g_ins = f_ins->neighbor(0);
       f_ins->set_vertex(1, v);
       g_ins->set_vertex(0, v);

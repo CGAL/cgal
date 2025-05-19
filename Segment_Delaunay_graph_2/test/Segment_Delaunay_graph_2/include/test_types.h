@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <sstream>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -63,7 +64,7 @@ struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
   typedef Segment_Delaunay_graph_2<Gt,SDGDS,LTag> SDG;
 
   typedef typename SDG::size_type      size_type;
-  typedef typename SDG::Vertex_handle  Vertex_handle; 
+  typedef typename SDG::Vertex_handle  Vertex_handle;
 
   size_type operator()(Vertex_handle ) const { return 0; }
 };
@@ -72,12 +73,12 @@ struct Level_finder< Segment_Delaunay_graph_2<Gt,SDGDS,LTag> >
 //========================================================================
 
 template<class SDG, class InputStream>
-bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
-	      bool test_remove)
+bool test_sdg(InputStream&, const SDG&, const char* ifname,
+              bool test_remove)
 {
-  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
-
   typedef SDG SDG2;
+
+  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
 
   typedef SDG2 Segment_Delaunay_graph_2;
 
@@ -167,7 +168,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   start_testing("assignment operator");
   sdg.insert(site_list.begin(), site_list.end());
 
-  sdg = (Segment_Delaunay_graph_2&)sdg;
+  Segment_Delaunay_graph_2 tmp;
+  tmp = sdg;
   sdg2 = sdg;
 
   assert( sdg.is_valid() );
@@ -209,7 +211,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     Vertex_handle fin_v = sdg.finite_vertex();
     null_os << fin_v;
   }
-  
+
 
   Data_structure ds = sdg.data_structure();
   Point_container pc = sdg.point_container();
@@ -226,7 +228,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     All_vertices_iterator ait = sdg.all_vertices_begin();
     for (; ait != sdg.all_vertices_end(); ++ait) {
       Vertex_handle v(ait);
-      null_os << v << ait;      
+      null_os << v << ait;
     }
   }
   {
@@ -239,7 +241,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     All_faces_iterator ait = sdg.all_faces_begin();
     for (; ait != sdg.all_faces_end(); ++ait) {
       Face_handle f(ait);
-      null_os << f << ait;      
+      null_os << f << ait;
     }
   }
   {
@@ -252,7 +254,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     All_edges_iterator ait = sdg.all_edges_begin();
     for (; ait != sdg.all_edges_end(); ++ait) {
       Edge e = *ait;
-      null_os << e << ait;      
+      null_os << e << ait;
     }
   }
   {
@@ -260,25 +262,25 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       Vertex_circulator vc = sdg.incident_vertices(sdg.infinite_vertex());
       Vertex_circulator vc_start = vc;
       do {
-	null_os << vc;
-	vc++;
+        null_os << vc;
+        vc++;
       } while ( vc != vc_start );
 
       Face_circulator fc = sdg.incident_faces(sdg.infinite_vertex());
       Face_circulator fc_start = fc;
       do {
-	null_os << fc;
-	fc++;
+        null_os << fc;
+        fc++;
       } while ( fc != fc_start );
 
       Edge_circulator ec = sdg.incident_edges(sdg.infinite_vertex());
       Edge_circulator ec_start = ec;
       do {
-	null_os << ec;
-	ec++;
+        null_os << ec;
+        ec++;
       } while ( ec != ec_start );
     }
-    
+
   }
   //  sdg.insert(t5);
   //  sdg2.clear();
@@ -315,15 +317,15 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       null_os << is_inf;
 
       is_inf = sdg.is_infinite( f, 0 );
-      null_os << is_inf;      
+      null_os << is_inf;
 
       Edge e = *sdg.finite_edges_begin();
       is_inf = sdg.is_infinite( e );
-      null_os << is_inf;      
+      null_os << is_inf;
 
       Edge_circulator ec = sdg.incident_edges(sdg.infinite_vertex());
       is_inf = sdg.is_infinite( ec );
-      null_os << is_inf;    
+      null_os << is_inf;
     }
   }
   end_testing("predicates");
@@ -366,7 +368,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       assert( ifs );
       Site_2 t;
       while ( ifs >> t ) {
-	sdg.insert(t);
+        sdg.insert(t);
       }
       std::cerr << std::endl;
       assert( sdg.is_valid(true, 1) );
@@ -375,8 +377,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
       std::vector<Vertex_handle> vec;
       for (vit = sdg.finite_vertices_begin();
-	   vit != sdg.finite_vertices_end(); ++vit) {
-	vec.push_back(vit);
+           vit != sdg.finite_vertices_end(); ++vit) {
+        vec.push_back(vit);
       }
       CGAL::cpp98::random_shuffle(vec.begin(), vec.end());
 
@@ -384,19 +386,19 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       std::cerr << std::endl;
       Level_finder<SDG> level;
       do {
-	Site_2 tt = (*it)->site();
-	std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
-	if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
-	std::cerr << "  - LEVEL of v: " << level(*it)
-		  << " -  " << std::flush;
-	bool success = sdg.remove(*it);
-	std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
-	if ( success ) {
-	  vec.erase(it);
-	  it = vec.begin();
-	} else {
-	  ++it;
-	}
+        Site_2 tt = (*it)->site();
+        std::cerr << "  *** attempting to remove: " << tt << "\t" << std::flush;
+        if ( tt.is_point() ) { std::cerr << "\t" << std::flush; }
+        std::cerr << "  - LEVEL of v: " << level(*it)
+                  << " -  " << std::flush;
+        bool success = sdg.remove(*it);
+        std::cerr << (success ? " successful" : " UNSUCCESSFUL") << std::endl;
+        if ( success ) {
+          vec.erase(it);
+          it = vec.begin();
+        } else {
+          ++it;
+        }
       } while ( it != vec.end() );
 
       // second test case
@@ -407,12 +409,12 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
       vit = sdg.finite_vertices_begin();
       do {
-	bool success = sdg.remove(vit);
-	if ( success ) {
-	  vit = sdg.finite_vertices_begin();
-	} else {
-	  ++vit;
-	}
+        bool success = sdg.remove(vit);
+        if ( success ) {
+          vit = sdg.finite_vertices_begin();
+        } else {
+          ++vit;
+        }
       } while ( vit != sdg.finite_vertices_end() );
     }
     end_testing("removal methods");
@@ -439,7 +441,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     vnearest = sdg.nearest_neighbor(p2, vnearest);
   }
   end_testing("nearest neighbor methods");
-
+  /*
   start_testing("drawing methods");
   {
     sdg.draw_dual(null_os);
@@ -448,7 +450,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.draw_dual_edge(sdg.finite_edges_begin(), null_os);
   }
   end_testing("drawing methods");
-
+  */
   start_testing("swap method");
   {
     sdg.swap(sdg);
@@ -468,7 +470,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     assert( sdg.is_valid() );
 
     //--------------------------------------------
- 
+
     sdg2.swap(sdg); // back to original setting (before swap)
 
     sdg2.insert(p4);
@@ -524,19 +526,17 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     size_type npc1 = sdg.point_container().size();
     size_type nv1 = sdg.number_of_vertices();
 
-    std::ofstream ofs(ofname);
-    assert( ofs );
-    sdg.file_output(ofs);
+    std::ostringstream oss;
+    sdg.file_output(oss);
     assert( sdg.is_valid() );
-    ofs.close();
+    oss.flush();
+    std::string input = oss.str();
 
     sdg.clear();
 
-    std::ifstream ifs(ofname);
-    assert( ifs );
-    sdg.file_input(ifs);
+    std::istringstream iss(input);
+    sdg.file_input(iss);
     assert( sdg.is_valid() );
-    ifs.close();
 
     size_type nisc2 = sdg.number_of_input_sites();
     size_type npc2 = sdg.point_container().size();

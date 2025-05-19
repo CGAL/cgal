@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h> // because CGAL::copy_n is deprecated
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h> // because CGAL::copy_n is deprecated
 
 #include <boost/config.hpp>
 
@@ -13,11 +13,11 @@
 
 int main()
 {
-  CGAL::cpp0x::array<int, 3> arr;
-  CGAL::cpp11::array<int, 3> arr2;
+  CGAL::cpp0x::array<int, 3> arr{1, 2, 3};
+  std::array<int, 3> arr2;
 
   CGAL::cpp0x::tuple<double, int> tuple;
-  CGAL::cpp11::tuple<double, int> tuple2;
+  std::tuple<double, int> tuple2;
 
   CGAL_USE(tuple);
   CGAL_USE(tuple2);
@@ -25,11 +25,13 @@ int main()
   CGAL::copy_n(arr.begin(), 3, arr2.begin());
 
   CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
-  CGAL::cpp11::copy_n(arr.begin(), 3, arr2.begin());
-  
-  CGAL::cpp0x::prev(arr.end());
-  CGAL::cpp11::prev(arr.end());
-  CGAL::cpp0x::next(arr.begin());
-  CGAL::cpp11::next(arr.begin());
+  std::copy_n(arr.begin(), 3, arr2.begin());
+
+  CGAL::cpp0x::array<int, 3>::iterator it = CGAL::cpp0x::prev(arr.end());
+  it = std::prev(arr.end());
+  it = CGAL::cpp0x::next(arr.begin());
+  it = std::next(arr.begin());
+  CGAL_USE(it);
+
   return 0;
 }

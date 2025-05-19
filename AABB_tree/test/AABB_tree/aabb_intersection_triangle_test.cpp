@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pierre Alliez
 //
@@ -35,7 +26,7 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include "AABB_test_util.h"
 
@@ -88,7 +79,7 @@ void test_speed_for_query(const Tree& tree,
         }
         nb++;
     }
-    unsigned int speed = (unsigned int)(nb / timer.time());
+    unsigned int speed = static_cast<unsigned int>(nb / timer.time());
     std::cout.precision(10);
     std::cout.width(15);
     std::cout << speed << " intersections/s with " << query_name << std::endl;
@@ -115,9 +106,9 @@ void test_impl(Tree& tree, Polyhedron&, const double duration)
 int main()
 {
     const double duration = 0.1; // duration of each test
-    test_kernels<TRIANGLE>("./data/cube.off",duration);
-    test_kernels<TRIANGLE>("./data/coverrear.off",duration);
-    test_kernels<TRIANGLE>("./data/finger.off",duration);
-    test_kernels<TRIANGLE>("./data/pinion.off",duration);
+    test_kernels<TRIANGLE>("data/cube.off",duration);
+    test_kernels<TRIANGLE>("data/coverrear.off",duration);
+    test_kernels<TRIANGLE>("data/finger.off",duration);
+    test_kernels<TRIANGLE>(CGAL::data_file_path("meshes/pinion_small.off"),duration);
     return EXIT_SUCCESS;
 }

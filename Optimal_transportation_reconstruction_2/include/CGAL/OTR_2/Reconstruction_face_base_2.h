@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -25,7 +16,6 @@
 
 
 #include <CGAL/OTR_2/Cost.h>
-#include <CGAL/OTR_2/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 #include <vector>
@@ -51,7 +41,7 @@ public:
   typedef typename Base::Face_handle    Face_handle;
 
   template < typename TDS2 >
-  struct Rebind_TDS 
+  struct Rebind_TDS
   {
     typedef typename Base::template Rebind_TDS<TDS2>::Other   Fb2;
     typedef Reconstruction_face_base_2<Traits_,Fb2>           Other;
@@ -60,7 +50,7 @@ public:
   typedef typename Traits_::FT    FT;
   typedef OTR_2::Cost<FT>          Cost_;
   typedef OTR_2::Sample<Traits_>   Sample_;
-  typedef std::vector<Sample_*>   Sample_vector;
+  typedef std::vector<int>   Sample_vector;
 
 private:
   Sample_vector m_samples[3];
@@ -168,7 +158,7 @@ public:
 
   const Cost_& cost(int edge) const
   {
-    if (plan(edge) == 0) 
+    if (plan(edge) == 0)
       return vertex_cost(edge);
     return edge_cost(edge);
   }
@@ -185,7 +175,7 @@ public:
   const Sample_vector& samples(int edge) const { return m_samples[edge]; }
   Sample_vector& samples(int edge) { return m_samples[edge]; }
 
-  void add_sample(int edge, Sample_* sample)
+  void add_sample(int edge, int sample)
   {
     m_samples[edge].push_back(sample);
   }

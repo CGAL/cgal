@@ -2,17 +2,8 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -28,7 +19,7 @@ template <class Point>
 bool
 file_input(std::ifstream& is, std::list<Point>& L, int nb=0)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   if(nb != 0 && nb <= n) n=nb;
@@ -56,9 +47,9 @@ _test_cls_alpha_shape_3()
 
   std::list<Point> L;
   bool verbose = false;
-  
+
   // test a bigger alpha_shapes
-  std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
+  std::ifstream is("data/P3DT3_alpha_shape_test.pts", std::ios::in);
   assert(is);
   file_input(is, L);
 
@@ -80,10 +71,10 @@ _test_cls_alpha_shape_3()
 
   if(verbose) {
     std::cerr << " optimal de 1 " << *opt
-              << "nb of componants " << a1.number_of_solid_components(*opt)
+              << "nb of components " << a1.number_of_solid_components(*opt)
               << std::endl;
     std::cerr << " previous " << *previous
-              << "nb of componants "
+              << "nb of components "
               << a1.number_of_solid_components(*previous) << std::endl;
   }
   assert(a1.number_of_solid_components(*opt) == 1);
@@ -200,7 +191,7 @@ _test_cls_alpha_shape_3_exact()
   test_filtration(a1, verbose);
 
   std::cout << std::endl;
-  std::cout << "test additionnal creators and set mode" << std::endl;
+  std::cout << "test additional creators and set mode" << std::endl;
 
   Triangulation dt2(Lc.begin(), Lc.end());
   Alpha_shape_3 a2(dt2, 0, Alpha_shape_3::REGULARIZED);

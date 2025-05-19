@@ -1,0 +1,46 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.7}
+  \pspicture[](-4,-4.5)(4,4.5)
+  \arraxes(0,0)(-4,-4.5)(4,4.5)
+  \pnode(-4,-4){a1}
+  \pnode(4,4){a2}
+  \pnode(-4,4){b1}
+  \pnode(4,-4){b2}
+  \arrEmptyVertex(0,0){0}
+  \arrEmptyVertex(-3,-3){1}
+  \arrEmptyVertex(3,-3){2}
+  \arrEmptyVertex(3,3){3}
+  \arrEmptyVertex(-3,3){4}
+  %
+  \ncline[linewidth=1pt,linecolor=blue]{a1}{1}
+  \ncline[linewidth=1pt,linecolor=blue]{1}{0}
+  \ncline[linewidth=1pt,linecolor=blue]{0}{3}
+  \ncline[linewidth=1pt,linecolor=blue]{3}{a2}
+  %
+  \ncline[linewidth=1pt,linecolor=blue]{b1}{4}
+  \ncline[linewidth=1pt,linecolor=blue]{4}{0}
+  \ncline[linewidth=1pt,linecolor=blue]{0}{2}
+  \ncline[linewidth=1pt,linecolor=blue]{2}{b2}
+  %
+  \ncline[linewidth=1pt,linecolor=red]{1}{2}
+  \ncline[linewidth=1pt,linecolor=red]{2}{3}
+  \ncline[linewidth=1pt,linecolor=red]{3}{4}
+  \ncline[linewidth=1pt,linecolor=red]{4}{1}
+  %
+  \rput(-3.5,1){\textcolor{purple}{$A_1$}}
+  \rput(1,3.5){\textcolor{purple}{$B_1$}}
+  \rput(3.5,-1){\textcolor{purple}{$C_1$}}
+  \rput(-1,-3.5){\textcolor{purple}{$D_1$}}
+  %
+  \rput(-2,-1){\textcolor{purple}{$A_2$}}
+  \rput(-1,2){\textcolor{purple}{$B_2$}}
+  \rput(2,1){\textcolor{purple}{$C_2$}}
+  \rput(1,-2){\textcolor{purple}{$D_2$}}
+  %
+  \psframe[linewidth=0.25pt](-4,-4.5)(4,4.5)
+  \endpspicture
+}
+\end{document}

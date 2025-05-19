@@ -2,7 +2,7 @@
 # CGAL_SetupGMP
 # -------------
 #
-# The module searchs for the `GMP` and `MPFR` headers and libraries,
+# The module searches for the `GMP` and `MPFR` headers and libraries,
 # by calling
 #
 # .. code-block:: cmake
@@ -17,17 +17,19 @@ if(CGAL_SetupGMP_included OR CGAL_DISABLE_GMP)
 endif()
 set(CGAL_SetupGMP_included TRUE)
 
+# Locally setting of CMAKE_MODULE_PATH, not exported to parent scope.
+# That is required to find the FindGMP and FindMPFR modules.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
+
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
+find_package(GMPXX QUIET)
 
-if(NOT DEFINED WITH_GMPXX)
+if(NOT GMPXX_FOUND)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
+else()
+  option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" ON)
 endif()
-set(CGAL_GMPXX_find_package_keyword QUIET)
-if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-  set(CGAL_GMPXX_find_package_keyword REQUIRED)
-endif()
-find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 
 #.rst:
 # Provided Functions
@@ -44,35 +46,29 @@ find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 #    keyword, or ``PUBLIC`` otherwise.
 
 function(use_CGAL_GMP_support target)
-  if(ARGV1 STREQUAL INTERFACE)
-    set(keyword INTERFACE)
-  else()
-    set(keyword PUBLIC)
-  endif()
   if(NOT GMP_FOUND OR NOT MPFR_FOUND)
     message(FATAL_ERROR "CGAL requires GMP and MPFR.")
     return()
   endif()
 
-  if(NOT GMP_IN_CGAL_AUXILIARY)
-    target_include_directories(${target} SYSTEM ${keyword} ${GMP_INCLUDE_DIR})
+  if(NOT GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
+    target_include_directories(${target} SYSTEM INTERFACE ${GMP_INCLUDE_DIR})
   else()
-    target_include_directories(${target} SYSTEM ${keyword}
+    target_include_directories(${target} SYSTEM INTERFACE
       $<BUILD_INTERFACE:${GMP_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${GMP_LIBRARIES})
-  if(NOT MPFR_IN_CGAL_AUXILIARY)
-    target_include_directories(${target} SYSTEM ${keyword} ${MPFR_INCLUDE_DIR})
+  if(NOT MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
+    target_include_directories(${target} SYSTEM INTERFACE ${MPFR_INCLUDE_DIR})
   else()
-    target_include_directories(${target} SYSTEM ${keyword}
+    target_include_directories(${target} SYSTEM INTERFACE
       $<BUILD_INTERFACE:${MPFR_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${MPFR_LIBRARIES})
   if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-    target_include_directories(${target} SYSTEM ${keyword}  ${GMPXX_INCLUDE_DIR})
-    target_link_libraries(${target}  ${keyword} ${GMPXX_LIBRARIES})
-    target_compile_definitions(${target} ${keyword} CGAL_USE_GMPXX=1)
+    target_include_directories(${target} SYSTEM INTERFACE  ${GMPXX_INCLUDE_DIR})
+    target_link_libraries(${target}  INTERFACE ${GMPXX_LIBRARIES})
+    target_compile_definitions(${target} INTERFACE CGAL_USE_GMPXX=1)
   endif()
+  target_link_libraries(${target} INTERFACE ${MPFR_LIBRARIES} ${GMP_LIBRARIES})
 endfunction()

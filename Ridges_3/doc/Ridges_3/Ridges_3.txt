@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes
 \anchor chapRidges3
 
@@ -20,7 +20,7 @@ umbilic is a point at which both principal curvatures are
 equal. Ridges define a singular curve, i.e., a self-intersecting
 curve, and umbilics are special points on this curve. Ridges are
 curves of <I>extremal</I> curvature and therefore encode important
-informations used in segmentation, registration, matching and surface
+information used in segmentation, registration, matching and surface
 analysis. Based on the results of the article
 \cgalCite{cgal:cp-tdare-05}, we propose algorithms to identify and extract
 different parts of this singular ridge curve as well as umbilics on a
@@ -40,12 +40,12 @@ umbilics (of a smooth surface) from a triangle mesh. Section
 \ref Ridges_3Software gives the package specifications, while example calls to
 functions of the package are provided in Section \ref Ridges_3Examples.
 
-\section smooth Ridges and Umbilics of a Smooth Surface 
+\section smooth Ridges and Umbilics of a Smooth Surface
 
 For a detailed introduction to ridges and related topics, the reader
-may consult 
-\cgalCite{cgal:hgygm-ttdpf-99},cgal:p-gd-01, as well as
-the following survey article \cgalCite{cgal:cp-ssulc-05}.
+may consult
+\cgalCite{cgal:hgygm-ttdpf-99},\cgalCite{cgal:p-gd-01}, as well as
+the survey article \cgalCite{cgal:cp-ssulc-05}.
 In the sequel, we just introduce the basic notions so as to explain
 our algorithms. Consider a smooth embedded surface, and denote \f$ k_1\f$
 and \f$ k_2\f$ the principal curvatures, with \f$ k_1\geq k_2\f$. Umbilics are
@@ -57,7 +57,7 @@ induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
 gradients of the principal curvatures. Ridges, illustrated in
 \cgalFigureRef{ellipsoidridges} for the standard ellipsoid, are defined by:
 
-<B>Definition.</B> <EM>\anchor defridgeextrema
+<B>Definition.</B> \anchor defridgeextrema
 A non umbilical point is called
 <UL>
 <LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
@@ -67,7 +67,6 @@ dk_1,d_1 \rangle\f$ vanishes, i.e.\ \f$ b_0=0\f$.
 \f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e.\ \f$ b_3=0\f$
 \cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
 </UL>
-</EM>
 
 The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
@@ -130,7 +129,7 @@ coefficients on the Monge form of the surface.<BR>
 
 <BR>
 
-Hence ridge types are characterized by 
+Hence ridge types are characterized by
 <UL>
 <LI>max ridge if \f$ b_0=0\f$
 <LI>\ref MAX_ELLIPTIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$
@@ -324,11 +323,11 @@ All classes of this package are templated by the parameter
 approximation algorithms operate.
 
 The differential quantities are provided at vertices of this mesh via
-property maps, a concept commonly used in the Boost library. 
+property maps, a concept commonly used in the Boost library.
 Property maps enables the user
 to store scalars and vectors associated to a vertex either
 <I>internally</I> in extended vertices or <I>externally</I>
-with a `std::map` combined with 
+with a `std::map` combined with
 a <A href="https://www.boost.org/libs/property_map/doc/associative_property_map.html">`boost::associative_property_map`</a>.
 
 Output of ridges or umbilics are provided via output iterators.
@@ -368,7 +367,7 @@ just notice max and min crests cannot intersect over a triangle.<BR>
 <BR>
 
 The ridge lines are stored in
-`Ridge_line` objects and output through an iterator. 
+`Ridge_line` objects and output through an iterator.
 Each ridge line is represented as a list of halfedges of the mesh it
 crosses with a scalar defining the barycentric coordinate of the
 crossing point with respect to the half-egde endpoints. Each ridge
@@ -400,8 +399,8 @@ neighborhood.
 \subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJetFitting3 to estimate the differential
-quantities. 
+file. It uses the package \ref PkgJetFitting3 to estimate the differential
+quantities.
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are
 <UL>
@@ -427,7 +426,7 @@ hyperbolic ridges, \f$ t\f$ is 3 (default) or 4;
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 
-#include <CGAL/Ridges.h> 
+#include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
 
 
@@ -454,22 +453,22 @@ typedef CGAL::Ridge_approximation <PolyhedralSurf,
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-                                      VertexFT_property_map, 
+                                      VertexFT_property_map,
                                       VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-VertexFT_map vertex_k1_map, vertex_k2_map, 
-  vertex_b0_map, vertex_b3_map, 
+VertexFT_map vertex_k1_map, vertex_k2_map,
+  vertex_b0_map, vertex_b3_map,
   vertex_P1_map, vertex_P2_map;
   VertexVector_map vertex_d1_map, vertex_d2_map;
 
-VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map), 
-  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map), 
+VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map),
+  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map),
   vertex_P1_pm(vertex_P1_map), vertex_P2_pm(vertex_P2_map);
   VertexVector_property_map vertex_d1_pm(vertex_d1_map), vertex_d2_pm(vertex_d2_map);
 
 int main(int argc, char *argv[])
-{ 
+{
   //compute differential quantities with the jet fitting package
   ...
   //initialize the property maps
@@ -477,7 +476,7 @@ int main(int argc, char *argv[])
 
   //Ridges
   //--------------------------------------------------------------------------
-  Ridge_approximation ridge_approximation(P, 
+  Ridge_approximation ridge_approximation(P,
                                           vertex_k1_pm, vertex_k2_pm,
                                           vertex_b0_pm, vertex_b3_pm,
                                           vertex_P1_pm, vertex_P2_pm,
@@ -486,14 +485,14 @@ int main(int argc, char *argv[])
   std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
   //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
-  ridge_approximation.compute_max_ridges(ii, tag_order); 
-  ridge_approximation.compute_min_ridges(ii, tag_order); 
-  ridge_approximation.compute_crest_ridges(ii, tag_order); 
+  ridge_approximation.compute_max_ridges(ii, tag_order);
+  ridge_approximation.compute_min_ridges(ii, tag_order);
+  ridge_approximation.compute_crest_ridges(ii, tag_order);
 
 
   // UMBILICS
   //--------------------------------------------------------------------------
-  Umbilic_approximation umbilic_approximation(P, 
+  Umbilic_approximation umbilic_approximation(P,
                                               vertex_k1_pm, vertex_k2_pm,
                                               vertex_d1_pm, vertex_d2_pm);
   std::vector<Umbilic*> umbilics;
@@ -533,12 +532,8 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 
 \subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
-\cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering 
-of crest ridges on a mechanical model, and has been computed as follows:
-
-\code{.cpp}
-./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
-\endcode
+\cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering
+of crest ridges on a mechanical model.
 
 \cgalFigureBegin{figmechanical_crest_filteredintro,mecanic-sub1_crest-jpg.png}
 Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
@@ -549,6 +544,6 @@ first two figures is unavoidable. It is however easily filtered out with
 the sharpness as can be seen on the right figure.
 \cgalFigureEnd
 
-*/ 
+*/
 } /* namespace CGAL */
 

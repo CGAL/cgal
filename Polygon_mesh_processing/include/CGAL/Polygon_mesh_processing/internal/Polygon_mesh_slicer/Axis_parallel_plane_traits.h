@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Sebastien Loriot
@@ -23,8 +14,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/array.h>
 
-#include <boost/optional.hpp>
-#include <boost/variant.hpp>
+#include <optional>
+#include <variant>
 
 
 #ifndef CGAL_INTERNAL_POLYGON_MESH_SLICER_AXIS_PARALLEL_PLANE_TRAITS_H
@@ -104,8 +95,8 @@ public:
     const typename Traits::Construct_source_3 m_source_3;
     const typename Traits::Construct_target_3 m_target_3;
 
-    typedef boost::variant<typename Traits::Point_3, typename Traits::Segment_3> Variant_type;
-    typedef boost::optional< Variant_type > result_type;
+    typedef std::variant<typename Traits::Point_3, typename Traits::Segment_3> Variant_type;
+    typedef std::optional< Variant_type > result_type;
 
     Intersect_3(const Axis_parallel_plane_traits<Traits>& traits)
       : m_cst_coord(traits.m_cst_coord)
@@ -123,10 +114,10 @@ public:
       const typename Traits::Point_3& src = m_source_3(s);
       const typename Traits::Point_3& tgt = m_target_3(s);
 
-      cpp11::array<FT,3> src_coords = {{ *m_coord_iterator(src),
+      std::array<FT,3> src_coords = {{ *m_coord_iterator(src),
                                          *(m_coord_iterator(src)+1),
                                          *(m_coord_iterator(src)+2) }};
-      cpp11::array<FT,3> tgt_coords = {{ *m_coord_iterator(tgt),
+      std::array<FT,3> tgt_coords = {{ *m_coord_iterator(tgt),
                                          *(m_coord_iterator(tgt)+1),
                                          *(m_coord_iterator(tgt)+2) }};
 

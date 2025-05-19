@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
@@ -107,20 +98,20 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = 0);
+  MainWindow(QWidget* parent = nullptr);
 
 public Q_SLOTS:
   // File menu
   void on_actionSave_triggered();
-  void on_actionLoad_triggered();  
+  void on_actionLoad_triggered();
   void on_actionImportOFF_triggered();
   void on_actionImport3DTDS_triggered();
   void on_actionImportMoka_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
   void on_actionClear_triggered();
-  
+
   // Creations menu
-  Dart_handle on_actionCreate_cube_triggered();
+  Dart_descriptor on_actionCreate_cube_triggered();
   void on_actionCreate3Cubes_triggered();
   void on_actionCreate2Volumes_triggered();
   void on_actionCreate_mesh_triggered();
@@ -161,7 +152,7 @@ public Q_SLOTS:
   void onHeaderClicked(int);
 
   void onCreateMeshOk();
-  
+
   void onMengerInc();
   void onMengerDec();
   void onMengerChange(int);
@@ -191,52 +182,52 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void sceneChanged();
-  
+
 protected:
   void clear_all();
-  void on_new_volume(Dart_handle adart);
-  void on_delete_volume(Dart_handle adart);
+  void on_new_volume(Dart_descriptor adart);
+  void on_delete_volume(Dart_descriptor adart);
   void init_all_new_volumes();
   void mark_all_filled_and_visible_volumes(LCC::size_type amark);
 
-  Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
+  Dart_descriptor make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
 
   void connect_actions();
   void update_operations_entries(bool show);
 
-  bool is_volume_in_list(LCC::Attribute_handle<3>::type ah);
+  bool is_volume_in_list(LCC::Attribute_descriptor<3>::type ah);
   void recreate_whole_volume_list();
   void update_volume_list_all_ckeckstates();
-  void update_volume_list_add(LCC::Attribute_handle<3>::type ah);
+  void update_volume_list_add(LCC::Attribute_descriptor<3>::type ah);
   void update_volume_list_remove(int);
-  void update_volume_list_remove(LCC::Attribute_handle<3>::type ah);
+  void update_volume_list_remove(LCC::Attribute_descriptor<3>::type ah);
 
-  void split_edge_in_three     (Dart_handle dh);
-  void split_face_in_three     (Dart_handle dh);
-  void split_face_in_nine      (Dart_handle dh);
-  void split_vol_in_three      (Dart_handle dh, bool removecenter);
-  void split_vol_in_nine       (Dart_handle dh, bool removecenter);
-  void split_vol_in_twentyseven(Dart_handle dh);
-  void process_full_slice(Dart_handle init,
-                          std::vector<Dart_handle>& faces,
+  void split_edge_in_three     (Dart_descriptor dh);
+  void split_face_in_three     (Dart_descriptor dh);
+  void split_face_in_nine      (Dart_descriptor dh);
+  void split_vol_in_three      (Dart_descriptor dh, bool removecenter);
+  void split_vol_in_nine       (Dart_descriptor dh, bool removecenter);
+  void split_vol_in_twentyseven(Dart_descriptor dh);
+  void process_full_slice(Dart_descriptor init,
+                          std::vector<Dart_descriptor>& faces,
                           LCC::size_type markVols);
-  void process_inter_slice(Dart_handle init,
-                           std::vector<Dart_handle>& faces,
+  void process_inter_slice(Dart_descriptor init,
+                           std::vector<Dart_descriptor>& faces,
                            LCC::size_type markVols);
 
-  void sierpinski_carpet_copy_attributes_and_embed_vertex(Dart_handle dh,
+  void sierpinski_carpet_copy_attributes_and_embed_vertex(Dart_descriptor dh,
                                                           LCC::Point& p);
   void sierpinski_carpet_update_geometry();
   void sierpinski_carpet_compute_geometry();
   void sierpinski_carpet_compute_4x4_geometry_matrix(LCC::Point p[4][4],
   LCC::Point& p00, LCC::Point& p03, LCC::Point& p33, LCC::Point& p30);
-  void sierpinski_carpet_split_edge_in_three(Dart_handle dh);
-  void sierpinski_carpet_split_face_in_three(Dart_handle dh,
+  void sierpinski_carpet_split_edge_in_three(Dart_descriptor dh);
+  void sierpinski_carpet_split_face_in_three(Dart_descriptor dh,
                                              bool removecenter);
-  void sierpinski_carpet_split_face_in_nine(Dart_handle dh);
+  void sierpinski_carpet_split_face_in_nine(Dart_descriptor dh);
 
-  void sierpinski_triangle_split_edge_in_two(Dart_handle dh);
-  void sierpinski_triangle_split_face_in_four(Dart_handle dh,
+  void sierpinski_triangle_split_edge_in_two(Dart_descriptor dh);
+  void sierpinski_triangle_split_face_in_four(Dart_descriptor dh,
                                               bool removecenter);
 
   Scene scene;
@@ -250,7 +241,7 @@ protected:
 
   int mengerLevel;
   bool mengerUpdateAttributes;
-  std::vector<Dart_handle> mengerVolumes;
+  std::vector<Dart_descriptor> mengerVolumes;
 
   int sierpinskiCarpetLevel;
   std::size_t nbfacesinit;
@@ -262,15 +253,15 @@ protected:
   bool updateAttributesMethodStdMap;
   bool updateAttributesMethodTraversal;
   bool isComputableGeometry;*/
-  std::vector<Dart_handle> sierpinskiCarpetSurfaces;
+  std::vector<Dart_descriptor> sierpinskiCarpetSurfaces;
   // utilisés seulement lorsque pas de mise à jour d'attributs
-  std::map<Dart_handle, LCC::Point> dart_map;
-  std::vector<Dart_handle> new_darts;
+  std::map<Dart_descriptor, LCC::Point> dart_map;
+  std::vector<Dart_descriptor> new_darts;
 
   int sierpinskiTriangleLevel;
   bool sierpinskiTriangleUpdateAttributes;
-  std::vector<Dart_handle> sierpinskiTriangleSurfaces;
-  std::vector< Triplet<Dart_handle, Dart_handle, Dart_handle> > removedTriangles;
+  std::vector<Dart_descriptor> sierpinskiTriangleSurfaces;
+  std::vector< Triplet<Dart_descriptor, Dart_descriptor, Dart_descriptor> > removedTriangles;
 
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;

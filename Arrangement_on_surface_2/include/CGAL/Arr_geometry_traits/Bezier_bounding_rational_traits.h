@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Iddo Hanniel <iddoh@cs.technion.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
@@ -31,8 +22,8 @@
  */
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Polygon_2_algorithms.h> 
-#include <CGAL/Arr_geometry_traits/de_Casteljau_2.h> 
+#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Arr_geometry_traits/de_Casteljau_2.h>
 
 #include <deque>
 #include <list>
@@ -46,7 +37,7 @@ namespace CGAL {
  * equals B(t) for some point t_min <= t <= t_max. We also store a bounding
  * polynomial for the point (obtain by de Casteljau's algorithm).
  */
-template <class Kernel_> 
+template <class Kernel_>
 struct _Bez_point_bound
 {
   /*! \enum Type
@@ -84,7 +75,7 @@ struct _Bez_point_bound
   /*! Constructor with parameters. */
   _Bez_point_bound (Type _type,
                     const Control_points& _ctrl,
-                    const NT& _t_min, const NT& _t_max, 
+                    const NT& _t_min, const NT& _t_max,
                     bool _can_refine) :
     type (_type),
     ctrl (_ctrl),
@@ -96,7 +87,7 @@ struct _Bez_point_bound
 /*! \struct _Bez_point_bbox
  * A bounding box for a point on a Bezier curve.
  */
-template <class Kernel_> 
+template <class Kernel_>
 struct _Bez_point_bbox
 {
   typedef Kernel_                       Kernel;
@@ -116,7 +107,7 @@ struct _Bez_point_bbox
 
   /*! Constructor with parameters. */
   _Bez_point_bbox (const NT& _min_x, const NT& _max_x,
-                   const NT& _min_y, const NT& _max_y) : 
+                   const NT& _min_y, const NT& _max_y) :
     min_x(_min_x), max_x(_max_x),
     min_y(_min_y), max_y(_max_y)
   {}
@@ -388,7 +379,7 @@ public:
     const NT&              t_max2 = in_pt.bound2.t_max;
     bool                   can_refine2 = can_refine (cp2, t_min2, t_max2);
 
-    if (! can_refine1 || ! can_refine2) 
+    if (! can_refine1 || ! can_refine2)
     {
       // Failed in the bounded approach - stop the subdivision and indicate
       // that the subdivision has failed.
@@ -407,7 +398,7 @@ public:
                               std::back_inserter(cp1a),
                               std::front_inserter(cp1b));
 
-    Control_points         cp2a, cp2b; 
+    Control_points         cp2a, cp2b;
     const NT               t_mid2 = (t_min2 + t_max2) / 2;
 
     bisect_control_polygon_2 (cp2.begin(), cp2.end(),
@@ -420,7 +411,7 @@ public:
     const bool can_refine_pt_cp1b = can_refine (cp1b, t_mid1, t_max1);
     const bool can_refine_pt_cp2a = can_refine (cp2a, t_min2, t_mid2);
     const bool can_refine_pt_cp2b = can_refine (cp2b, t_mid2, t_max2);
-    
+
     if (! can_refine_pt_cp1a || ! can_refine_pt_cp1b ||
         ! can_refine_pt_cp2a || ! can_refine_pt_cp2b)
     {
@@ -728,7 +719,7 @@ public:
 
   /*!
    * Construct a bounding box for the given control polygon.
-   * \param cp A sequence of control point (the control polgon).
+   * \param cp A sequence of control point (the control polygon).
    * \param bbox Output: The bounding box.
    * \pre cp is not empty.
    */
@@ -761,10 +752,10 @@ public:
     }
 
     // Set the bounding box.
-    bez_bbox.min_x = min_x->x(); 
-    bez_bbox.max_x = max_x->x(); 
-    bez_bbox.min_y = min_y->y(); 
-    bez_bbox.max_y = max_y->y(); 
+    bez_bbox.min_x = min_x->x();
+    bez_bbox.max_x = max_x->x();
+    bez_bbox.min_y = min_y->y();
+    bez_bbox.max_y = max_y->y();
     return;
   }
   //@}
@@ -785,11 +776,11 @@ private:
     Comparison_result                  res = EQUAL;
 
     // Look for the first pair of consecutive points whose x-coordinate
-    // (or y-coordinate) are not equal. Their comparsion result will be
+    // (or y-coordinate) are not equal. Their comparison result will be
     // set as the "reference" comparison result.
     typename Control_points::const_iterator  pt_curr = cp.begin();
     typename Control_points::const_iterator  pt_end = cp.end();
-    typename Control_points::const_iterator  pt_next = pt_curr; 
+    typename Control_points::const_iterator  pt_next = pt_curr;
 
     ++pt_next;
     while (pt_next != pt_end)
@@ -904,7 +895,7 @@ private:
           updated_span = true;
         }
       }
-      else 
+      else
       {
         // Check if we need to update the maximal vector in the span.
         if (f_orientation (f_construct_point (ORIGIN, v),
@@ -953,14 +944,14 @@ private:
     const Direction_2     dir_r1 = f_construct_direction (v_max1);
     const Direction_2     dir_l2 = f_construct_direction (v_min2);
     const Direction_2     dir_r2 = f_construct_direction (v_max2);
-    
+
     //use the directions to test equality of spans
     if ( f_equal (dir_l1, dir_l2) && f_equal (dir_r1, dir_r2)) //spans are identical
-      return (true);   
+      return (true);
 
     if ( f_equal (dir_l1, dir_r1) && f_equal (dir_r2, dir_l2) && f_equal (dir_l1, -dir_l2)) //spans are identical but opposite
-      return (true);    
-    
+      return (true);
+
     // Check whether any of the vectors of the second span (or their
     // opposite vectors) is between the vectors of the first span.
     if (! f_equal (dir_l1, dir_r1) &&
@@ -1063,7 +1054,7 @@ private:
     const Point_2&  s2 = cp2.front();
     const Point_2&  t2 = cp2.back();
 
-    // Check whether any pair of these endpoints conincide.
+    // Check whether any pair of these endpoints coincide.
     NT      x, y;               // Coordinate of a common endpoint.
     NT      t_val1, t_val2;     // Its respective parameters.
 
@@ -1123,7 +1114,7 @@ private:
   }
 
   /*!
-   * An auxilary recursive function for computing the approximated
+   * An auxiliary recursive function for computing the approximated
    * intersection points between two Bezier curves.
    * \param cp1 The control points of the first curve.
    * \param t_min1 The lower bound of the parameter range of the first curve.
@@ -1144,11 +1135,11 @@ private:
                                      std::set<NT>& iept_params,
                                      std::list<Intersection_point>& ipts)
   {
-    // Check if we got to subdivision termination criteria. 
+    // Check if we got to subdivision termination criteria.
     const bool  can_refine1 = can_refine (cp1, t_min1, t_max1);
     const bool  can_refine2 = can_refine (cp2, t_min2, t_max2);;
 
-    if (! can_refine1 || ! can_refine2) 
+    if (! can_refine1 || ! can_refine2)
     {
       // It is not possible to further refine the approximation, so we stop
       // the recursive subdivision, and construct an output intersection point
@@ -1248,10 +1239,10 @@ private:
       const Oriented_side  or_2b_s1 = f_oriented_side (skew2b, s1);
       const Oriented_side  or_2b_t1 = f_oriented_side (skew2b, t1);
 
-      const bool           s1_t1_are_opposite = 
+      const bool           s1_t1_are_opposite =
           ((or_2a_s1 == CGAL::opposite (or_2a_t1)) &&
            (or_2b_s1 == CGAL:: opposite (or_2b_t1))
-          ) || 
+          ) ||
           ( skew2a==skew2b && or_2a_s1!=or_2a_t1 );
 
       const Oriented_side  or_1a_s2 = f_oriented_side (skew1a, s2);
@@ -1262,45 +1253,35 @@ private:
 
       const bool           s2_t2_are_opposite =
           ((or_1a_s2 == CGAL::opposite (or_1a_t2)) &&
-           (or_1b_s2 == CGAL::opposite (or_1b_t2)))|| 
+           (or_1b_s2 == CGAL::opposite (or_1b_t2)))||
           ( skew1a==skew1b && or_1a_s2!=or_1a_t2 );
 
-      if (s1_t1_are_opposite && s2_t2_are_opposite) 
+      if (s1_t1_are_opposite && s2_t2_are_opposite)
       {
         // Construct a finer bounding box for the intersection point from
         // the intersection of the two skewed bounding boxes.
         Bez_point_bbox  ipt_bbox;
         Control_points  aux_vec;
-        CGAL::Object    res;
-        Point_2         p;
 
-        res = f_intersect (skew1a, skew2a);
-        if (! assign (p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res1 = f_intersect(skew1a, skew2a);
+        const Point_2* p1 = std::get_if<Point_2>(&*res1);
+        if (! p1) CGAL_error();
+        aux_vec.push_back(*p1);
 
-        res = f_intersect (skew1a, skew2b);
-        if (! assign(p, res)) 
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res2 = f_intersect(skew1a, skew2b);
+        const Point_2* p2 = std::get_if<Point_2>(&*res2);
+        if (! p2) CGAL_error();
+        aux_vec.push_back(*p2);
 
-        res = f_intersect (skew1b, skew2a);
-        if (! assign(p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res3 = f_intersect(skew1b, skew2a);
+        const Point_2* p3 = std::get_if<Point_2>(&*res3);
+        if (! p3) CGAL_error();
+        aux_vec.push_back(*p3);
 
-        res = f_intersect (skew1b, skew2b);
-        if (!assign(p, res)) 
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res4 = f_intersect (skew1b, skew2b);
+        const Point_2* p4 = std::get_if<Point_2>(&*res4);
+        if (! p4) CGAL_error();
+        aux_vec.push_back(*p4);
 
         construct_bbox (aux_vec, ipt_bbox);
 
@@ -1322,7 +1303,7 @@ private:
     // Apply de Casteljau's algorithm and bisect both bounding polylines.
     Control_points         cp1a, cp1b;
     const NT               t_mid1 = (t_min1 + t_max1) / 2;
-    
+
     bisect_control_polygon_2 (cp1.begin(), cp1.end(),
                               std::back_inserter(cp1a),
                               std::front_inserter(cp1b));
@@ -1366,13 +1347,13 @@ private:
                                   ipts);
 
     _compute_intersection_points (cp1a, t_min1, t_mid1,
-                                  cp2b, t_mid2, t_max2, 
+                                  cp2b, t_mid2, t_max2,
                                   spans_overlap,
                                   iept_params,
                                   ipts);
 
     _compute_intersection_points (cp1b, t_mid1, t_max1,
-                                  cp2a, t_min2, t_mid2, 
+                                  cp2a, t_min2, t_mid2,
                                   spans_overlap,
                                   iept_params,
                                   ipts);
@@ -1388,7 +1369,7 @@ private:
   }
 
   /*!
-   * An auxilary recursive function for computing the approximated vertical
+   * An auxiliary recursive function for computing the approximated vertical
    * tangency points of a Bezier curves.
    * \param cp The control points of the curve.
    * \param t_min The lower bound of the parameter range of the curve.
@@ -1402,7 +1383,7 @@ private:
   {
     // \todo Handle the special case of degree two curves.
 
-    // Check if we got to subdivision termination criteria. 
+    // Check if we got to subdivision termination criteria.
     if (! can_refine (cp, t_min, t_max))
     {
       // It is not possible to further refine the approximation, so we stop

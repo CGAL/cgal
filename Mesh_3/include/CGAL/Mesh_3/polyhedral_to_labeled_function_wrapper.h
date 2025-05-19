@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -32,7 +23,7 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
 
@@ -77,7 +68,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_triangle_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 
@@ -99,7 +90,7 @@ public:
     , step_size_(step_size)
     , first_level_(first_level)
   {
-    tree_->accelerate_distance_queries();
+
   }
 
   // Default copy constructor and assignment operator are ok
@@ -198,7 +189,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_triangle_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 
@@ -216,7 +207,6 @@ public:
     , sq_tolerance_size_(tolerance_size*tolerance_size)
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
-    tree_->accelerate_distance_queries();
   }
 
   // Default copy constructor and assignment operator are ok
@@ -274,7 +264,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_edge_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 
@@ -292,7 +282,6 @@ public:
     , sq_tolerance_size_(tolerance_size*tolerance_size)
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
-    tree_->accelerate_distance_queries();
   }
 
   // Default copy constructor and assignment operator are ok

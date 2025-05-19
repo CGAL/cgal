@@ -2,20 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
@@ -38,8 +28,11 @@ namespace CGAL {
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
-{
+init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "init_with_hint()" << std::endl;
+#endif
+
   // Set the curve and check whether its ends are bounded, therefore
   // associated with valid endpoints.
   m_cv = cv;
@@ -82,12 +75,15 @@ init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
 }
 
 //-----------------------------------------------------------------------------
-// Compute the zone of the given curve and issue the apporpriate
+// Compute the zone of the given curve and issue the appropriate
 // notifications for the visitor.
 //
 template <typename Arrangement, typename ZoneVisitor>
-void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
-{
+void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone() {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "compute_zone()" << std::endl;
+#endif
+
   // Initialize flags and set all handles to be invalid.
   bool done = false;
 
@@ -104,9 +100,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   // curve (currently m_obj stores the object containing it).
   const Vertex_const_handle* vh;
   const Halfedge_const_handle* hh;
-  const Face_const_handle* fh;
 
-  if ((vh = object_cast<Vertex_const_handle>(&m_obj)) != NULL) {
+  if ((vh = std::get_if<Vertex_const_handle>(&m_obj)) != nullptr) {
     CGAL_assertion(m_has_left_pt);
 
     // The left endpoint coincides with an existing vertex:
@@ -128,7 +123,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 #endif
 
   }
-  else if ((hh = object_cast<Halfedge_const_handle>(&m_obj)) != NULL) {
+  else if ((hh = std::get_if<Halfedge_const_handle>(&m_obj)) != nullptr) {
     if (m_has_left_pt) {
       // Obtain the right halfedge from the halfedge-pair containing m_left_pt
       // in their interior.
@@ -140,9 +135,9 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       if (m_found_overlap) {
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve.
-        bool dummy;
-        m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        Arr_parameter_space dummy;
+        auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+        m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -152,13 +147,13 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       }
     }
     else {
-      // In case the unbounded left end conicides with an edge, then our curve
+     // In case the unbounded left end conicides with an edge, then our curve
       // overlaps the curve associated with this edge.
       m_intersect_he = m_arr.non_const_handle(*hh);
 
-      bool dummy;
-      m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-      m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+      Arr_parameter_space dummy;
+      auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+      m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
       // Remove the overlap from the map.
       _remove_next_intersection(m_intersect_he);
@@ -169,15 +164,14 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   }
   else {
     // The left endpoint lies inside a face.
-    fh = object_cast<Face_const_handle>(&m_obj);
+    const Face_const_handle* fh = std::get_if<Face_const_handle>(&m_obj);
 
-    CGAL_assertion_msg(fh != NULL,
+    CGAL_assertion_msg(fh != nullptr,
                        "Invalid object returned by the point-location query.");
 
     // Compute the zone of the curve at the interior of the face.
     // m_left_pt is not on the face boundary.
     done = _zone_in_face(m_arr.non_const_handle(*fh), false);
-
     // In case we have just discovered an overlap, compute the overlapping
     // zone as well.
     if (! done && m_found_overlap) done = _zone_in_overlap();
@@ -215,9 +209,9 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       if (m_found_overlap) {
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve to the right of curr_v.
-        bool dummy;
-        m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        Arr_parameter_space dummy;
+        auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+        m_overlap_cv = std::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -257,24 +251,28 @@ template <typename Arrangement, typename ZoneVisitor>
 bool  Arrangement_zone_2<Arrangement, ZoneVisitor>::
 do_overlap_impl(const X_monotone_curve_2& cv1,
                 const X_monotone_curve_2& cv2,
-                const Point_2& p, Arr_not_all_sides_oblivious_tag) const
-{
+                const Point_2& p, Arr_not_all_sides_oblivious_tag) const {
   typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_right =
     m_geom_traits->compare_y_at_x_right_2_object();
 
-  Arr_parameter_space psx =
-    m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END);
-  Arr_parameter_space psy =
-    m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END);
+  auto psx1 = m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END);
+  auto psy1 = m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END);
 
-  if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+  if ((psx1 == ARR_INTERIOR) && (psy1 == ARR_INTERIOR))
     return (cmp_right(cv1, cv2, p) == EQUAL);
 
   bool vertical1 = m_geom_traits->is_vertical_2_object()(cv1);
   bool vertical2 = m_geom_traits->is_vertical_2_object()(cv2);
   if (vertical1 != vertical2) return false;
 
-  if (psx == ARR_LEFT_BOUNDARY) {
+  auto psx2 = m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END);
+  auto psy2 = m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MIN_END);
+
+  // If, for example, both curves are vertical and the bottom boundary is
+  // contracted, they may have different parameter space in x values.
+  if ((psx1 != psx2) || (psy1 != psy2)) return false;
+
+  if (psx1 == ARR_LEFT_BOUNDARY) {
     // If both curves are vertical and their common min endpoint lies on the
     // left boundary, they completely lie on the left boundary and they overlap.
     if (vertical1) return true;
@@ -286,337 +284,18 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
 
   // If the common min endpoint lies on the right boundary, both curves are
   // vertical, they completely lie on the right boundary, and they overlap.
-  if (psx == ARR_RIGHT_BOUNDARY) return true;
+  if (psx1 == ARR_RIGHT_BOUNDARY) return true;
 
-  // If the curves are not vertical, we can safly call the standard function.
+  // If the curves are not vertical, we can safely call the standard function.
   // Observe that this case covers the case where (psy == ARR_TOP_BOUNDARY).
   if (! vertical1) return (cmp_right(cv1, cv2, p) == EQUAL);
 
-  CGAL_assertion(psy == ARR_BOTTOM_BOUNDARY);
-  // Observe, that if both curves are vertical and have a common min endpoint
-  // that lies on the bottom boundary, and the bottom boundary is contracted
-  // the curves do not necessarily overlap.
-  // In this case it is sufficient to test whether the x-coordinates on the
-  // boundary are equal.
-  typename Traits_adaptor_2::Compare_x_on_boundary_2 cmp_x_on_bd =
-    m_geom_traits->compare_x_on_boundary_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bd =
-    m_geom_traits->compare_x_near_boundary_2_object();
+  // The common end point lies either on the bottom or the top boundary.
+  auto cmp_x_on_bd = m_geom_traits->compare_x_on_boundary_2_object();
+  auto cmp_x_near_bd = m_geom_traits->compare_x_near_boundary_2_object();
   Comparison_result res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
   if (res == EQUAL) res = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
   return (res == EQUAL);
-}
-
-//-----------------------------------------------------------------------------
-// Check whether the given query curve is encountered when rotating the
-// first curve in a clockwise direction around a given point until reaching
-// the second curve.
-template <typename Arrangement, typename ZoneVisitor>
-bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
-                   const X_monotone_curve_2& cv1, bool cv1_to_right,
-                   const X_monotone_curve_2& cv2, bool cv2_to_right,
-                   const Point_2& p,
-                   bool& cv_equal_cv1, bool& cv_equal_cv2,
-                   Arr_not_all_sides_oblivious_tag) const
-{
-  cv_equal_cv1 = false;
-  cv_equal_cv2 = false;
-
-  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 ps_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
-  typename Traits_adaptor_2::Is_between_cw_2 is_bcw =
-    m_geom_traits->is_between_cw_2_object();
-
-  bool vertical = m_geom_traits->is_vertical_2_object()(cv);
-  bool vertical1 = m_geom_traits->is_vertical_2_object()(cv1);
-  bool vertical2 = m_geom_traits->is_vertical_2_object()(cv2);
-
-  typename Traits_adaptor_2::Compare_x_on_boundary_2 cmp_x_on_bd =
-    m_geom_traits->compare_x_on_boundary_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bd =
-    m_geom_traits->compare_x_near_boundary_2_object();
-  typename Traits_adaptor_2::Compare_y_near_boundary_2 cmp_y_near_bd =
-    m_geom_traits->compare_y_near_boundary_2_object();
-
-  ////
-  if (!cv1_to_right) {
-    Arr_parameter_space psx = ps_in_x(cv1, ARR_MAX_END);
-    Arr_parameter_space psy = ps_in_y(cv1, ARR_MAX_END);
-    if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
-      return is_bcw(cv, cv_to_right, cv1, cv1_to_right, cv2, cv2_to_right,
-                    p, cv_equal_cv1, cv_equal_cv2);
-
-    if (!cv2_to_right) {
-      // Case 1: Both cv1 and cv2 are defined to the left of p.
-
-      CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
-
-      if (psx == ARR_LEFT_BOUNDARY) {
-        // Case 1.1 The point resides on the right boundary.
-        CGAL_assertion(vertical);
-
-        /* Case 1.1.1 cv1 is vertical
-         *       o
-         *       |cv
-         *   cv2 |
-         * o-----o v
-         *       |
-         *       |cv1
-         *       o
-         */
-        if (vertical1) return false;
-
-        /* Case 1.1.2 cv2 is vertical,
-         *       o
-         *       |cv
-         *   cv1 |
-         * o-----o v
-         *       |
-         *       |cv2
-         *       o
-         */
-        if (vertical2) return true;
-
-        /* Case 1.1.3
-         *    o  o
-         *     \ |cv
-         *      \|
-         *       o
-         *      /
-         *     /
-         *    o
-         */
-        return (cmp_y_near_bd(cv1, cv2, ARR_MAX_END) == LARGER);
-      }
-
-      CGAL_assertion((psy == ARR_TOP_BOUNDARY) || (psy == ARR_BOTTOM_BOUNDARY));
-      // Case 1.2 & 1.3 The point resides on the top or bottom boundaries
-      Comparison_result res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-      if (res == SMALLER) return (psy == ARR_TOP_BOUNDARY);
-      if (res == LARGER) return (psy != ARR_TOP_BOUNDARY);
-
-      res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-      if (res == SMALLER) return (psy == ARR_TOP_BOUNDARY);
-      CGAL_assertion(res == LARGER);
-      return (psy != ARR_TOP_BOUNDARY);
-    }
-
-    CGAL_assertion(!cv1_to_right && cv2_to_right);
-    /* Case 3: cv1 is defined to the left of p, and cv2 to its right.
-     *   cv1   cv2
-     * o-----o-----o
-     */
-    if (psx == ARR_LEFT_BOUNDARY) {
-      /* Case 3.1
-       *   cv2
-       * o-----o
-       * |
-       * |cv1
-       * o
-       */
-      CGAL_assertion(vertical1);
-      if (vertical) return true;
-
-      Comparison_result res = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
-      if (res == EQUAL) {
-        cv_equal_cv2 = true;
-        return false;
-      }
-      return (res == LARGER);
-    }
-
-    if (psx == ARR_RIGHT_BOUNDARY) {
-      /* Case 3.2
-       *       o
-       *       |cv2
-       *   cv1 |
-       * o-----o
-       */
-      CGAL_assertion(vertical2);
-      CGAL_assertion(vertical);
-      cv_equal_cv2 = true;
-      return false;
-    }
-
-    /* Case 3.3 & Case 4.4
-     * o       o       o
-     *  \     /    cv1/ \cv2
-     *   \   /       /   \
-     * cv1\ /cv2    /     \
-     *     o       o       o
-     */
-    Comparison_result res2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
-    if (res2 == EQUAL) res2 = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
-    if (res2 == SMALLER) return (psy == ARR_BOTTOM_BOUNDARY);
-    if (res2 == EQUAL) {
-      cv_equal_cv2 = true;
-      return false;
-    }
-    CGAL_assertion(res2 == LARGER);
-    return (psy == ARR_TOP_BOUNDARY);
-  }
-
-  ////////
-  Arr_parameter_space psx = ps_in_x(cv1, ARR_MIN_END);
-  Arr_parameter_space psy = ps_in_y(cv1, ARR_MIN_END);
-  if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
-    return is_bcw(cv, cv_to_right, cv1, cv1_to_right, cv2, cv2_to_right,
-                  p, cv_equal_cv1, cv_equal_cv2);
-  if (cv2_to_right) {
-    // Case 2: Both cv1 and cv2 are defined to the right of p.
-    CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
-    if (psx == ARR_LEFT_BOUNDARY) {
-      /* case 2.1.1 cv1 is vertical
-       * o
-       * |cv1
-       * |
-       * o------o
-       *    cv2
-       */
-      if (vertical1) {
-        if (vertical) {
-          cv_equal_cv1 = true;
-          return false;
-        }
-
-        Comparison_result res = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
-        if (res == EQUAL) {
-          cv_equal_cv2 = true;
-          return false;
-        }
-        return (res == LARGER);
-      }
-
-      /* case 2.1.2 cv2 is vertical
-       * o
-       * |cv2
-       * |
-       * o------o
-       *    cv1
-       */
-      if (vertical2) {
-        if (vertical) {
-          cv_equal_cv2 = true;
-          return false;
-        }
-
-        Comparison_result res = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
-        if (res == EQUAL) {
-          cv_equal_cv1 = true;
-          return false;
-        }
-        return (res == SMALLER);
-      }
-
-      // case 2.1.3 cv is vertical
-      if (vertical) {
-        Comparison_result res = cmp_y_near_bd(cv1, cv2, ARR_MIN_END);
-        return (res == LARGER);
-      }
-
-      // case 2.1.4 none are vertical
-      Comparison_result res1 = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
-      if (res1 == EQUAL) {
-        cv_equal_cv1 = true;
-        return false;
-      }
-      Comparison_result res2 = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
-      if (res2 == EQUAL) {
-        cv_equal_cv2 = true;
-        return false;
-      }
-      Comparison_result res = cmp_y_near_bd(cv1, cv2, ARR_MIN_END);
-
-      if ((res1 == LARGER) && (res2 == SMALLER)) return false;
-      if ((res1 == SMALLER) && (res2 == LARGER)) return true;
-      if ((res1 == LARGER) && (res2 == LARGER)) return (res == SMALLER);
-      CGAL_assertion((res1 == SMALLER) && (res2 == SMALLER));
-      return (res == LARGER);
-    }
-
-    CGAL_assertion((psy == ARR_TOP_BOUNDARY) || (psy == ARR_BOTTOM_BOUNDARY));
-    // Case 2.2 & 2.3 The point resides on the top or bottom boundaries
-    Comparison_result res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
-    if (res1 == EQUAL) res1 = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
-    Comparison_result res2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
-    if (res2 == EQUAL) res2 = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
-    Comparison_result res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
-    if (res == EQUAL) res = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
-
-    if (res1 == EQUAL) {
-      cv_equal_cv1 = true;
-      return false;
-    }
-    if (res2 == EQUAL) {
-      cv_equal_cv2 = true;
-      return false;
-    }
-    if ((res1 == LARGER) && (res2 == SMALLER)) return (psy != ARR_TOP_BOUNDARY);
-    if ((res1 == SMALLER) && (res2 == LARGER)) return (psy == ARR_TOP_BOUNDARY);
-    if ((res1 == LARGER) && (res2 == LARGER))
-      return (res == SMALLER) ?
-        (psy == ARR_TOP_BOUNDARY) : (psy != ARR_TOP_BOUNDARY);
-    CGAL_assertion((res1 == SMALLER) && (res2 == SMALLER));
-    return (res == LARGER) ?
-      (psy != ARR_TOP_BOUNDARY) : (psy == ARR_TOP_BOUNDARY);
-  }
-
-  CGAL_assertion(cv1_to_right && ! cv2_to_right);
-  /* Case 4: cv1 is defined to the right of p, and cv2 to its left.
-   *   cv2   cv1
-   * o-----o-----o
-   */
-  if (psx == ARR_LEFT_BOUNDARY) {
-    /* Case 4.1
-     *   cv1
-     * o-----o
-     * |
-     * |cv2
-     * o
-     */
-    CGAL_assertion(vertical2);
-    if (vertical) return true;
-
-    Comparison_result res = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
-    if (res == EQUAL) {
-      cv_equal_cv1 = true;
-      return false;
-    }
-    return (res == SMALLER);
-  }
-
-  if (psx == ARR_RIGHT_BOUNDARY) {
-    /* Case 4.2
-     *       o
-     *       |cv1
-     *   cv2 |
-     * o-----o
-     */
-    CGAL_assertion(vertical1);
-    CGAL_assertion(vertical);
-    cv_equal_cv1 = true;
-    return false;
-  }
-
-  /* Case 4.3 & Case 4.4
-   * o       o       o
-   *  \     /    cv2/ \cv1
-   *   \   /       /   \
-   * cv2\ /cv1    /     \
-   *     o       o       o
-   */
-  Comparison_result res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
-  if (res1 == EQUAL) res1 = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
-  if (res1 == LARGER) return (psy == ARR_TOP_BOUNDARY);
-  if (res1 == EQUAL) {
-    cv_equal_cv1 = true;
-    return false;
-  }
-  CGAL_assertion(res1 == SMALLER);
-  return (psy != ARR_TOP_BOUNDARY);
 }
 
 //-----------------------------------------------------------------------------
@@ -625,14 +304,15 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
-{
+_find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_find_prev_around_vertex(" << v->point() << ")" << std::endl;
+#endif
 
   // Go over the incident halfedges of v, going in a clockwise order.
-  typename Arrangement_2::Halfedge_around_vertex_circulator he_first =
-    v->incident_halfedges();
-  typename Arrangement_2::Halfedge_around_vertex_circulator he_curr = he_first;
-  typename Arrangement_2::Halfedge_around_vertex_circulator he_next = he_curr;
+  auto he_first = v->incident_halfedges();
+  auto he_curr = he_first;
+  auto he_next = he_curr;
   ++he_next;
 
   if (he_curr == he_next) {
@@ -658,13 +338,18 @@ _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
     // and the next curve, going in a clockwise direction around v.
     bool cv_equals_curr;
     bool cv_equals_next;
-    bool is_between = is_between_cw(m_cv, true,
-                                    he_curr->curve(),
-                                    (he_curr->direction() == ARR_RIGHT_TO_LEFT),
-                                    he_next->curve(),
-                                    (he_next->direction() == ARR_RIGHT_TO_LEFT),
-                                    v->point(),
-                                    cv_equals_curr, cv_equals_next);
+
+    auto is_between_cw = m_geom_traits->is_between_cw_2_object();
+    auto between = is_between_cw(m_cv, true,
+                                 he_curr->curve(),
+                                 (he_curr->direction() == ARR_RIGHT_TO_LEFT),
+                                 he_next->curve(),
+                                 (he_next->direction() == ARR_RIGHT_TO_LEFT),
+                                 v->point(),
+                                 cv_equals_curr, cv_equals_next);
+    // std::cout << "between: " << between << std::endl;
+    // std::cout << "cv_equals_curr: " << cv_equals_curr << std::endl;
+    // std::cout << "cv_equals_next: " << cv_equals_next << std::endl;
 
     // Check the case of overlaps:
     if (cv_equals_curr) {
@@ -678,7 +363,7 @@ _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
       return true;
     }
 
-    if (is_between) {
+    if (between) {
       // We can conclude that m_cv should be placed between he_curr and
       // he_next (in a clockwise order), and no overlap occurs.
       he = he_curr;
@@ -704,8 +389,14 @@ typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Halfedge_handle
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _direct_intersecting_edge_to_right(const X_monotone_curve_2& cv_ins,
                                    const Point_2& cv_left_pt,
-                                   Halfedge_handle query_he)
-{
+                                   Halfedge_handle query_he) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_direct_intersecting_edge_to_right() " << cv_left_pt
+            << std::endl;
+  std::cout << "  " << cv_ins << std::endl;
+  std::cout << "  " << query_he->curve() << std::endl;
+#endif
+
   // Make sure that the left endpoint of cv_ins lies on query_he.
   CGAL_exactness_assertion(m_geom_traits->compare_y_at_x_2_object()
                            (cv_left_pt, query_he->curve()) == EQUAL);
@@ -750,8 +441,11 @@ template <typename Arrangement, typename ZoneVisitor>
 typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Halfedge_handle
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
-                                  Halfedge_handle query_he)
-{
+                                  Halfedge_handle query_he) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_direct_intersecting_edge_to_left()" << std::endl;
+#endif
+
   // Make sure that the right endpoint of cv_ins lies on query_he.
   CGAL_exactness_assertion
     (m_geom_traits->compare_y_at_x_2_object()
@@ -805,92 +499,148 @@ _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
   }
 }
 
+//! Implementation for no boundary conditions.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& /* intersection_location */,
+                           Arr_all_sides_oblivious_tag) const
+{ return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER); }
+
+//! Implementation for left and right identified boundaries.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& intersection_location,
+                           Arr_has_identified_side_tag) const {
+  auto equal = m_geom_traits->equal_2_object();
+  auto is_on_y_ident = m_geom_traits->is_on_y_identification_2_object();
+  // Case 1: the curve lies on the y-identification
+  if (is_on_y_ident(m_cv)) {
+    if (equal(ip, m_left_pt)) return false;
+    // We set the location to be on the left as a convention
+    intersection_location = ARR_LEFT_BOUNDARY;
+    return true;
+  }
+
+  // Case 2: The left-end lies on the left boundary
+  // (It cannot lie on the right boundary)
+  // If the intersection point is not equal to the left-end, it must lie to
+  // its right; thus valid.
+  if (m_left_on_boundary) return ! equal(ip, m_left_pt);
+
+  // Case 3: The right-end lies on the right boundary
+  if (m_right_on_boundary && equal(ip, m_right_pt)) {
+    intersection_location = ARR_RIGHT_BOUNDARY;
+    return true;
+  }
+
+  // We have a simple intersection point;
+  // make sure it lies to the right of m_left_pt.
+  return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER);
+}
+
+/*! Implementation for all the rest.
+ * It would be better to split into the various cases, which is the cartesian
+ * product of (contructed, closed, open) X (contructed, closed, open)
+ */
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_intersection_valid_impl(const Point_2& ip,
+                           Arr_parameter_space& intersection_location,
+                           Arr_boundary_cond_tag) const {
+  auto equal = m_geom_traits->equal_2_object();
+  if (m_left_on_boundary) {
+    // The left-end lies on the left boundary. If the intersection point is not
+    // equal to the left-end, the intersection is valid, because it must lie to
+    // its right.
+    if (m_has_left_pt) return ! equal(ip, m_left_pt);
+    else return true;
+  }
+  if (m_has_right_pt && m_right_on_boundary && equal(ip, m_right_pt)) {
+    intersection_location = ARR_RIGHT_BOUNDARY;
+    return true;
+  }
+
+  // We have a simple intersection point;
+  // make sure it lies to the right of m_left_pt.
+  return (m_geom_traits->compare_xy_2_object()(ip, m_left_pt) == LARGER);
+}
+
 //-----------------------------------------------------------------------------
 // Get the next intersection of cv with the given halfedge.
 //
 template <typename Arrangement, typename ZoneVisitor>
-CGAL::Object
+typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Optional_intersection
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _compute_next_intersection(Halfedge_handle he,
                            bool skip_first_point,
-                           bool& intersection_on_right_boundary)
-{
+                           Arr_parameter_space& intersection_location) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_compute_next_intersection(" << he->curve() << ", "
+            << skip_first_point << ")" << std::endl;
+#endif
+
+  auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto ctr_min = m_geom_traits->construct_min_vertex_2_object();
+  auto is_closed = m_geom_traits->is_closed_2_object();
+
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2* p_curve = &(he->curve());
 
   // Try to locate the intersections with this curve in the intersections map.
-  Intersect_map_iterator iter = m_inter_map.find(p_curve);
-  const Intersect_point_2* ip;
+  auto iter = m_inter_map.find(p_curve);
+  const Intersection_point* ip;
   const X_monotone_curve_2* icv;
   bool valid_intersection;
 
-  intersection_on_right_boundary = false;
+  intersection_location = ARR_INTERIOR;
   if (iter != m_inter_map.end()) {
     // The intersections with the curve have already been computed.
     // Retrieve the intersections list from the map.
     Intersect_list& inter_list = iter->second;
 
-    if (inter_list.empty()) return CGAL::Object();
+    if (inter_list.empty()) return Optional_intersection();
 
     // Locate the first intersection that lies to the right of m_left_pt
     // (if the left point exists).
     while (! inter_list.empty()) {
       // Compare that current object with m_left_pt (if exists).
-      ip = object_cast<Intersect_point_2>(&(inter_list.front()));
-
-      if (m_left_on_boundary) {
-        // The left end lie on the left boundary, so all intersections are
-        // valid, as they lie to its right.
-        valid_intersection = true;
-      }
-      else if (ip != NULL) {
-        if (m_has_right_pt && m_right_on_boundary &&
-            m_geom_traits->equal_2_object()(ip->first, m_right_pt))
-        {
-          valid_intersection = true;
-          intersection_on_right_boundary = true;
-        }
-        else {
-          // We have a simple intersection point - make sure it lies to the
-          // right of m_left_pt.
-          valid_intersection =
-            (m_geom_traits->compare_xy_2_object()(ip->first, m_left_pt) ==
-             LARGER);
-        }
+      ip = std::get_if<Intersection_point>(&(inter_list.front()));
+      if (ip != nullptr) {
+        // We have an intersection point -
+        valid_intersection =
+          is_intersection_valid(ip->first, intersection_location);
       }
       else {
         // We have an overlapping subcurve.
-        icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
-        CGAL_assertion(icv != NULL);
+        icv = std::get_if<X_monotone_curve_2>(&(inter_list.front()));
+        CGAL_assertion(icv != nullptr);
 
-        if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
+        if (is_closed(*icv, ARR_MIN_END)) {
           // The curve has a valid left point - make sure it lies to the
           // right of m_left_pt.
           valid_intersection =
-            (m_geom_traits->compare_xy_2_object()
-             (m_geom_traits->construct_min_vertex_2_object()(*icv), m_left_pt) !=
-             SMALLER);
+            (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
         }
-        else {
-          // In this case the overlap is not valid.
-          valid_intersection = false;
-        }
+        // In this case the overlap is not valid.
+        else valid_intersection = false;
       }
 
       // Found an intersection to m_left_pt's right.
-      if (valid_intersection) return (inter_list.front());
+      if (valid_intersection) return Optional_intersection(inter_list.front());
 
       // Discard the current intersection, which lies to m_left_pt's left.
       inter_list.pop_front();
     }
 
     // If we reached here, the list of intersections is empty:
-    return CGAL::Object();
+    return Optional_intersection();
   }
 
   // The intersections with the curve have not been computed yet, so we
   // have to compute them now. Note that the first curve we intersect is
-  // always the subcurve associated with the given halfegde and the second
+  // always the subcurve associated with the given halfedge and the second
   // curve is the one we insert. Even though the order seems unimportant, we
   // exploit this fact in some of the traits classes in order to optimize
   // computations.
@@ -903,24 +653,13 @@ _compute_next_intersection(Halfedge_handle he,
   // Discard all intersection lying to the left of m_left_pt (if exists).
   while (! inter_list.empty()) {
     // Compare that current object with m_left_pt (if exists).
-    ip = object_cast<Intersect_point_2>(&(inter_list.front()));
+    ip = std::get_if<Intersection_point>(&(inter_list.front()));
 
-    if (ip != NULL) {
-      // We have a simple intersection point - if we don't have to skip it,
-      // make sure it lies to the right of m_left_pt (if m_left_pt is on the
-      // left boundary, all points lie to it right).
-      if (is_first && skip_first_point) valid_intersection = false;
-      else if (m_left_on_boundary) valid_intersection = true;
-      else if (m_has_right_pt && m_right_on_boundary &&
-               m_geom_traits->equal_2_object()(ip->first, m_right_pt))
-      {
-        valid_intersection = true;
-        intersection_on_right_boundary = true;
-      }
-      else {
-        valid_intersection =
-          (m_geom_traits->compare_xy_2_object()(ip->first, m_left_pt) == LARGER);
-      }
+    if (ip != nullptr) {
+      // We have an intersection point -
+      // Check whether we need to skip the first intersection
+      valid_intersection = (is_first && skip_first_point) ? false :
+        is_intersection_valid(ip->first, intersection_location);
     }
     else if (m_left_on_boundary) {
       // The left end is on the boundary, so all overlapping curves are valid,
@@ -929,16 +668,13 @@ _compute_next_intersection(Halfedge_handle he,
     }
     else {
       // We have an overlapping subcurve.
-      icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
-      CGAL_assertion(icv != NULL);
+      icv = std::get_if<X_monotone_curve_2>(&(inter_list.front()));
+      CGAL_assertion(icv != nullptr);
 
-      if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
+      if (is_closed(*icv, ARR_MIN_END)) {
         // The curve has a valid left point - make sure it lies to the
         // right of m_left_pt.
-        valid_intersection =
-          (m_geom_traits->compare_xy_2_object()
-           (m_geom_traits->construct_min_vertex_2_object()(*icv), m_left_pt) !=
-           SMALLER);
+        valid_intersection = (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
       }
       // In this case the overlap is not valid.
       else valid_intersection = false;
@@ -956,8 +692,8 @@ _compute_next_intersection(Halfedge_handle he,
   m_inter_map[p_curve] = inter_list;
 
   // Return the first intersection object computed (may be empty).
-  if (inter_list.empty()) return CGAL::Object();
-  else return (inter_list.front());
+  if (inter_list.empty()) return Optional_intersection();
+  else return Optional_intersection(inter_list.front());
 }
 
 //-----------------------------------------------------------------------------
@@ -965,13 +701,12 @@ _compute_next_intersection(Halfedge_handle he,
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_remove_next_intersection(Halfedge_handle he)
-{
+_remove_next_intersection(Halfedge_handle he) {
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2* p_curve = &(he->curve());
 
   // Locate the intersections with this curve in the intersections map.
-  Intersect_map_iterator iter = m_inter_map.find(p_curve);
+  auto iter = m_inter_map.find(p_curve);
 
   CGAL_assertion(iter != m_inter_map.end());
   CGAL_assertion(! iter->second.empty());
@@ -981,74 +716,77 @@ _remove_next_intersection(Halfedge_handle he)
 }
 
 //-----------------------------------------------------------------------------
-// Check if the given point lies completely to the left of the given egde.
+// Check if the given point lies completely to the left of the given edge.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                 Arr_not_all_sides_oblivious_tag) const
-{
+                 Arr_not_all_sides_oblivious_tag) const {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_is_to_left_impl(" << p << "," << he->curve() << ")"
+            << std::endl;
+#endif
+
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
-  const Arr_parameter_space ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MIN_END);
+  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_min = ps_in_x(he->curve(), ARR_MIN_END);
 
-  // The minimal end of the curve is to the left of any other point:
-  if (ps_x == ARR_LEFT_BOUNDARY) return false;
+  // Any point is not to the left of the left boundary.
+  if (ps_x_min == ARR_LEFT_BOUNDARY) return false;
 
-  const Arr_parameter_space ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MIN_END);
-
-  if (ps_y != ARR_INTERIOR) {
+  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y_min = ps_in_y(he->curve(), ARR_MIN_END);
+  if (ps_y_min != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
-    const Comparison_result res =
-      m_geom_traits->compare_x_point_curve_end_2_object()(p, he->curve(),
-                                                          ARR_MIN_END);
-
-    return ((res == SMALLER) || (res == EQUAL && ps_y == ARR_TOP_BOUNDARY));
+    auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
+    const auto res = cmp_x(p, he->curve(), ARR_MIN_END);
+    return ((res == SMALLER) || (res == EQUAL && ps_y_min == ARR_TOP_BOUNDARY));
   }
 
   // In case the minimal curve-end does not have boundary conditions, simply
   // compare p with the left endpoint of the curve.
-  Vertex_const_handle v_left =
-    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->source() : he->target();
-
+  auto v_left = (he->direction() == ARR_LEFT_TO_RIGHT) ?
+    he->source() : he->target();
   return (m_geom_traits->compare_xy_2_object()(p, v_left->point()) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
-// Check if the given point lies completely to the right of the given egde.
+// Determine whether a given point lies completely to the right of a given
+// curve.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                  Arr_not_all_sides_oblivious_tag) const
-{
+                  Arr_not_all_sides_oblivious_tag) const {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_is_to_right_impl(" << p << "," << he->curve() << ")"
+            << std::endl;
+#endif
+
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
-  const Arr_parameter_space ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MAX_END);
+  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_max = ps_in_x(he->curve(), ARR_MAX_END);
 
-    // The maximal end of the curve is to the right of any other point:
-  if (ps_x == ARR_RIGHT_BOUNDARY) return false;
+  // Any point is not to the right of the right boundary.
+  if (ps_x_max == ARR_RIGHT_BOUNDARY) return false;
+  // Any interior point is to the right of the left boundary.
+  if (ps_x_max == ARR_LEFT_BOUNDARY) return true;
 
-  const Arr_parameter_space ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MAX_END);
-
-  if (ps_y != ARR_INTERIOR) {
+  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y_max = ps_in_y(he->curve(), ARR_MAX_END);
+  if (ps_y_max != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
-    const Comparison_result   res =
-      m_geom_traits->compare_x_point_curve_end_2_object()(p, he->curve(),
-                                                          ARR_MAX_END);
-
-    return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
+    auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
+    auto res = cmp_x(p, he->curve(), ARR_MAX_END);
+    return ((res == LARGER) || (res == EQUAL && ps_y_max == ARR_BOTTOM_BOUNDARY));
   }
 
   // In case the maximal curve-end does not have boundary conditions, simply
   // compare p with the right endpoint of the curve.
-  Vertex_const_handle   v_right =
-    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
-
+  auto v_right = (he->direction() == ARR_LEFT_TO_RIGHT) ?
+    he->target() : he->source();
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
 }
 
@@ -1058,15 +796,16 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
-                       bool& leftmost_on_right_boundary)
-{
+                       Arr_parameter_space& leftmost_location) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_leftmost_intersection(" << he_curr->curve() << ", "
+            << on_boundary << ")" << std::endl;
+#endif
+
   // Obtain some geometry-traits functors.
-  typename Traits_adaptor_2::Compare_xy_2 compare_xy =
-    m_geom_traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-    m_geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex =
-    m_geom_traits->construct_min_vertex_2_object();
+  auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
+  auto min_vertex = m_geom_traits->construct_min_vertex_2_object();
 
   // If this edge is fictitious, skip it.
   if (he_curr->is_fictitious()) return;
@@ -1081,7 +820,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   // entirely to the right of m_intersect_p, its intersection with m_cv (if any)
   // cannot lie to the left of this point. We therefore do not need to compute
   // this intersection.
-  if (m_found_intersect && ! leftmost_on_right_boundary &&
+  if (m_found_intersect && (leftmost_location == ARR_INTERIOR) &&
       _is_to_left(m_intersect_p, he_curr))
     return;
 
@@ -1109,27 +848,27 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
   // do not intersect.
   if (! left_equals_curr_endpoint &&
       ((! m_left_on_boundary && _is_to_right(m_left_pt, he_curr)) ||
-       ! is_in_x_range(m_cv, he_curr->curve())))
+       ! is_in_x_range(m_cv, he_curr->curve()))) {
     return;
+  }
 
   // Compute the next intersection of m_cv and the current halfedge.
-  bool intersection_on_right_boundary;
-  CGAL::Object iobj =
-    _compute_next_intersection(he_curr, left_equals_curr_endpoint,
-                               intersection_on_right_boundary);
+  Arr_parameter_space intersection_location;
+  auto iobj = _compute_next_intersection(he_curr, left_equals_curr_endpoint,
+                                         intersection_location);
 
-  if (! iobj.is_empty()) {
+  if (iobj) {
     // We have found an intersection (either a simple point or an
     // overlapping x-monotone curve).
-    const Intersect_point_2* int_p = object_cast<Intersect_point_2>(&iobj);
-    if (int_p != NULL) {
+    const Intersection_point* int_p = std::get_if<Intersection_point>(&*iobj);
+    if (int_p != nullptr) {
       Point_2 ip = int_p->first;
 
       // Found a simple intersection point. Check if it is the leftmost
       // intersection point so far.
       if (! m_found_intersect ||
-          (! intersection_on_right_boundary &&
-           (leftmost_on_right_boundary ||
+          ((intersection_location != ARR_RIGHT_BOUNDARY) &&
+           ((leftmost_location == ARR_RIGHT_BOUNDARY) ||
             compare_xy(ip, m_intersect_p) == SMALLER)))
       {
         // Store the leftmost intersection point and the halfedge handle.
@@ -1137,14 +876,14 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
         m_ip_multiplicity = int_p->second;
         m_intersect_he = he_curr;
         m_found_overlap = false;
-        leftmost_on_right_boundary = intersection_on_right_boundary;
+        leftmost_location = intersection_location;
       }
     }
     else {
       // We have located an overlapping curve. Assign ip as its left
       // endpoint.
-      const X_monotone_curve_2* icv = object_cast<X_monotone_curve_2>(&iobj);
-      CGAL_assertion(icv != NULL);
+      const X_monotone_curve_2* icv = std::get_if<X_monotone_curve_2>(&*iobj);
+      CGAL_assertion(icv != nullptr);
       Point_2 ip = min_vertex(*icv);
 
       // Check if this endpoint it is the leftmost intersection point so far.
@@ -1169,59 +908,55 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
-{
+_leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_leftmost_intersection_with_face_boundary(" << on_boundary
+            << ")" << std::endl;
+#endif
   // Mark that we have not found any intersection (or overlap) yet.
   m_found_intersect = false;
   m_found_overlap = false;
   m_found_iso_vert = false;
 
   // Obtain some geometry-traits functors.
-  typename Traits_adaptor_2::Compare_xy_2 compare_xy =
-    m_geom_traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-    m_geom_traits->is_in_x_range_2_object();
+  auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
 
-  bool leftmost_on_right_boundary = false;
+  Arr_parameter_space leftmost_location = ARR_INTERIOR;
 
   // Traverse the face outer-boundaries; iterate through all outer CCBs.
-  typedef typename Arrangement_2::Outer_ccb_iterator    Outer_ccb_iterator;
-  for (Outer_ccb_iterator occb_it = face->outer_ccbs_begin();
-       occb_it != face->outer_ccbs_end(); ++occb_it)
-  {
+  for (auto occb_it = face->outer_ccbs_begin();
+       occb_it != face->outer_ccbs_end(); ++occb_it) {
     Ccb_halfedge_circulator he_first = *occb_it;
     Ccb_halfedge_circulator he_curr = he_first;
-    do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
+    do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
     while (++he_curr != he_first);
   }
 
   // Traverse the face inner-boundaries; iterate through all inner CCBs (holes).
-  typedef typename Arrangement_2::Inner_ccb_iterator    Inner_ccb_iterator;
-  for (Inner_ccb_iterator iccb_it = face->inner_ccbs_begin();
-       iccb_it != face->inner_ccbs_end(); ++iccb_it)
-  {
+  for (auto iccb_it = face->inner_ccbs_begin();
+       iccb_it != face->inner_ccbs_end(); ++iccb_it) {
     Ccb_halfedge_circulator he_first = *iccb_it;
     Ccb_halfedge_circulator he_curr = he_first;
-    do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
+    do _leftmost_intersection(he_curr, on_boundary, leftmost_location);
     while (++he_curr != he_first);
   }
 
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-    m_geom_traits->compare_y_at_x_2_object();
+  auto compare_y_at_x = m_geom_traits->compare_y_at_x_2_object();
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
-  typedef typename Arrangement_2::Isolated_vertex_iterator
-    Isolated_vertex_iterator;
-  for (Isolated_vertex_iterator iv_it = face->isolated_vertices_begin();
-       iv_it != face->isolated_vertices_end(); ++iv_it)
-  {
+  // MSVC17 requires an explicit (non-const) type for the iterator.
+  typename Arrangement_2::Isolated_vertex_iterator iv_it;
+  for (iv_it = face->isolated_vertices_begin();
+       iv_it != face->isolated_vertices_end(); ++iv_it) {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
     if (! is_in_x_range(m_cv, iv_it->point())) continue;
 
     // If we already have an intersection point, compare it to the current
     // isolated vertex, in order to filter unnecessary computations.
-    if (m_found_intersect && compare_xy(iv_it->point(), m_intersect_p) == LARGER)
+    if (m_found_intersect &&
+        (compare_xy(iv_it->point(), m_intersect_p) == LARGER))
       continue;
 
     // In case the isolated vertex lies on the curve, update the intersection
@@ -1239,7 +974,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 
   // Remove the next intersection associated with m_intersect_he, as we have
   // now reported it and do not want to encounter it again.
-  if (m_found_intersect && !m_found_iso_vert)
+  if (m_found_intersect && ! m_found_iso_vert)
     _remove_next_intersection(m_intersect_he);
 }
 
@@ -1250,8 +985,11 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
-_zone_in_face(Face_handle face, bool on_boundary)
-{
+_zone_in_face(Face_handle face, bool on_boundary) {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_zone_in_face(" << on_boundary << ")" << std::endl;
+#endif
+
   // Obtain some geometry-traits functors.
   typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
 
@@ -1270,7 +1008,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
     m_visitor->found_subcurve(m_cv, face, m_left_v, m_left_he,
                               m_invalid_v, m_invalid_he);
 
-    // Inidicate that we are done with the zone-computation process.
+    // Indicate that we are done with the zone-computation process.
     return true;
   }
 
@@ -1301,7 +1039,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
     m_cv = m_sub_cv2;
   }
 
-  const X_monotone_curve_2*p_orig_curve = NULL;
+  const X_monotone_curve_2* p_orig_curve = nullptr;
 
   if (! m_found_iso_vert) {
     // Check whether m_intersect_p coincides with one of the end-vertices of the
@@ -1364,8 +1102,8 @@ _zone_in_face(Face_handle face, bool on_boundary)
       // subcurves that result from splitting m_intersect_he->curve() at the
       // intersection point we have just detected, one extends to the left
       // and one to the right of this split point.
-      const X_monotone_curve_2* p_left_subcurve = NULL;
-      const X_monotone_curve_2* p_right_subcurve = NULL;
+      const X_monotone_curve_2* p_left_subcurve = nullptr;
+      const X_monotone_curve_2* p_right_subcurve = nullptr;
 
       if (inserted_he->next()->direction() == ARR_LEFT_TO_RIGHT) {
         // The next halfedge extends to the right of the split point:
@@ -1381,7 +1119,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
       // Associate the intersection list of the original curve with the
       // right subcurve, while we can associate an empty list with the
       // left subcurve, as we are now done with it.
-      Intersect_map_iterator iter = m_inter_map.find(p_orig_curve);
+      auto iter = m_inter_map.find(p_orig_curve);
       Intersect_list empty_inter_list;
 
       m_inter_map[p_right_subcurve] = iter->second;
@@ -1438,7 +1176,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
         m_left_he = (m_right_he->direction() == ARR_LEFT_TO_RIGHT) ?
           inserted_he : m_right_he;
       else {
-        // Mutliplicity is unkown:
+        // Multiplicity is unknown:
         m_left_he = m_invalid_he;
       }
     }
@@ -1476,28 +1214,32 @@ _zone_in_face(Face_handle face, bool on_boundary)
 // curve currently associated with m_intersect_he.
 //
 template <typename Arrangement, typename ZoneVisitor>
-bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
-{
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap() {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_zone_in_overlap()" << std::endl;
+#endif
+
   // Obtain some geometry-traits functors.
   typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
+  typename Traits_adaptor_2::Is_closed_2 is_closed =
+    m_geom_traits->is_closed_2_object();
+  typename Traits_adaptor_2::Construct_max_vertex_2 ctr_max_vertex =
+    m_geom_traits->construct_max_vertex_2_object();
 
   // Check if the right end of m_overlap_cv is bounded. If so, compute its
   // right endpoint.
-  const bool cv_has_right_pt =
-    m_geom_traits->is_closed_2_object()(m_overlap_cv, ARR_MAX_END);
+  const bool cv_has_right_pt = is_closed(m_overlap_cv, ARR_MAX_END);
 
   Point_2 cv_right_pt;
-
   if (cv_has_right_pt)
-    cv_right_pt = m_geom_traits->construct_max_vertex_2_object()(m_overlap_cv);
+    cv_right_pt = ctr_max_vertex(m_overlap_cv);
 
   // Get right end-vertex of the overlapping halfedge m_intersect_he. Also make
   // sure that the overlapping halfedge is always directed to the right.
   Vertex_handle he_right_v;
 
-  if (m_intersect_he->direction() == ARR_LEFT_TO_RIGHT) {
+  if (m_intersect_he->direction() == ARR_LEFT_TO_RIGHT)
     he_right_v = m_intersect_he->target();
-  }
   else {
     he_right_v = m_intersect_he->source();
     m_intersect_he = m_intersect_he->twin();
@@ -1523,7 +1265,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     // In this case m_overlap_cv has a finite right endpoint. In this case,
     // if the right vertex of m_intersect_he is associated with a finite point,
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
-    // m_intersect_he extends to the the right of m_overlap_cv, and there is no
+    // m_intersect_he extends to the right of m_overlap_cv, and there is no
     // vertex currently associated with m_overlap_cv's right endpoint.
     if (! he_right_v->is_at_open_boundary() &&
         equal(cv_right_pt, he_right_v->point()))

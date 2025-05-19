@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -33,12 +24,12 @@
 #include <fstream>
 
 const char* const filenames[] = {
-  "data/patches/patch-01.off",
-  "data/patches/patch-13.off",
-  "data/patches/patch-20.off",
-  "data/patches/patch-21.off",
-  "data/patches/patch-23.off",
-  "data/patches/patch-30.off",
+  "meshes/patch-01.off",
+  "meshes/patch-13.off",
+  "meshes/patch-20.off",
+  "meshes/patch-21.off",
+  "meshes/patch-23.off",
+  "meshes/patch-30.off"
 };
 
 const std::pair<int, int> incident_subdomains[] = {
@@ -72,9 +63,9 @@ struct Polyhedral_complex_tester : public Tester<K>
 
     std::vector<Polyhedron> patches(nb_patches);
     for (std::size_t i = 0; i < nb_patches; ++i) {
-      std::ifstream input(filenames[i]);
+      std::ifstream input(CGAL::data_file_path(filenames[i]));
       if (!(input >> patches[i])) {
-        std::cerr << "Error reading " << filenames[i] << " as a polyhedron!\n";
+        std::cerr << "Error reading " << CGAL::data_file_path(filenames[i]) << " as a polyhedron!\n";
         return;
       }
     }
@@ -106,7 +97,7 @@ struct Polyhedral_complex_tester : public Tester<K>
       true /*nonlinear_growth_of_balls*/);
     domain.add_vertices_to_c3t3_on_patch_without_feature_edges(c3t3);
 
-    CGAL::refine_mesh_3<C3t3>(c3t3, domain, criteria);
+    CGAL::refine_mesh_3(c3t3, domain, criteria);
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
@@ -122,7 +113,7 @@ int main()
   Polyhedral_complex_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedral complex:\n";
   test_epic();
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   Polyhedral_complex_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a polyhedral complex:\n";

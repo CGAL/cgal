@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -24,7 +15,7 @@
 #include <CGAL/Dart_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 // TODO do all the orbit iterator of any orbit ?
 
@@ -56,7 +47,7 @@ namespace CGAL {
     typedef CMap_cell_iterator<Map_,Ite,i,dim,Const,Tag_true> Self;
     typedef Ite Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
   protected:
@@ -87,15 +78,16 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    CMap_cell_iterator(Map& amap, Dart_handle adart):
+    CMap_cell_iterator(Map& amap, Dart_descriptor adart):
       Ite(amap, adart, amap.get_new_mark()),
       mcell_mark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Ite::Basic_iterator,
+                              Tag_true>::value);
       CGAL_assertion(amap.is_whole_map_unmarked(mcell_mark_number));
 
-      mark_cell<Map,i,dim>(amap, adart, mcell_mark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(amap, adart, mcell_mark_number); }
     }
 
     /// Destructor.
@@ -135,7 +127,8 @@ namespace CGAL {
     {
       unmark_treated_darts();
       Ite::rewind();
-      mark_cell<Map,i,dim>(*this->mmap, (*this), mcell_mark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mcell_mark_number); }
     }
 
     /// Prefix ++ operator.
@@ -177,7 +170,7 @@ namespace CGAL {
     typedef CMap_cell_iterator<Map_,Ite,i,dim,Const,Tag_false> Self;
     typedef Ite Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
   protected:
@@ -201,14 +194,15 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    CMap_cell_iterator(Map& amap, Dart_handle adart):
+    CMap_cell_iterator(Map& amap, Dart_descriptor adart):
       Ite(amap, adart),
       mmark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Ite::Basic_iterator,
+                              Tag_true>::value);
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
-      mark_cell<Map,i,dim>(amap, adart, mmark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(amap, adart, mmark_number); }
     }
 
     /// Destructor.
@@ -243,7 +237,8 @@ namespace CGAL {
     {
       unmark_treated_darts();
       Ite::rewind();
-      mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
     }
 
     /// Postfix ++ operator.
@@ -262,7 +257,7 @@ namespace CGAL {
              this->mmap->is_marked((*this), mmark_number));
 
       if (this->cont())
-        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
       return *this;
     }
 
@@ -284,7 +279,7 @@ namespace CGAL {
     typedef CMap_dart_iterator_basic_of_all<Map_,Const> Base;
     typedef CMap_cell_iterator<Map_,Base,i,dim,Const,Tag_false> Self;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
   protected:
@@ -312,19 +307,20 @@ namespace CGAL {
       Base(amap),
       mmark_number(amap.get_new_mark())
     {
-      CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Base::Basic_iterator,
+                              Tag_true>::value);
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
-      mark_cell<Map,i,dim>(amap, (*this), mmark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(amap, (*this), mmark_number); }
     }
 
    /// Constructor with a dart in parameter (for end iterator).
-    CMap_cell_iterator(Map& amap, Dart_handle adart):
+    CMap_cell_iterator(Map& amap, Dart_descriptor adart):
       Base(amap, adart),
       mmark_number(amap.get_new_mark())
     {
-      if (adart!=this->mmap->null_handle)
-        mark_cell<Map,i,dim>(amap, (*this), mmark_number);
+      if (this->cont())
+      { mark_cell<Map,i,dim>(amap, (*this), mmark_number); }
     }
 
     /// Destructor.
@@ -359,7 +355,8 @@ namespace CGAL {
     {
       unmark_treated_darts();
       Base::rewind();
-      mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
     }
 
     /// Postfix ++ operator.
@@ -378,7 +375,7 @@ namespace CGAL {
              this->mmap->is_marked((*this), mmark_number));
 
       if (this->cont())
-        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
       return *this;
     }
 
@@ -404,14 +401,14 @@ namespace CGAL {
                                                                 dim,Const>,
                                i,dim,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
     typedef Tag_false Use_mark;
     typedef Tag_false Basic_iterator;
 
     /// Main constructor.
-    CMap_one_dart_per_incident_cell_iterator(Map& amap, Dart_handle adart):
+    CMap_one_dart_per_incident_cell_iterator(Map& amap, Dart_descriptor adart):
       Base(amap, adart)
     {}
   };
@@ -431,7 +428,7 @@ namespace CGAL {
                                CMap_dart_iterator_basic_of_all<Map_,Const>,
                                i,dim,Const> Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
     typedef typename Base::Map Map;
 
     typedef Tag_false Use_mark;
@@ -441,8 +438,8 @@ namespace CGAL {
     CMap_one_dart_per_cell_iterator(Map& amap): Base(amap)
     {}
     /// Constructor with a dart in parameter (for end iterator).
-    CMap_one_dart_per_cell_iterator(Map& amap, Dart_handle adart):
-	     Base(amap, adart)
+    CMap_one_dart_per_cell_iterator(Map& amap, Dart_descriptor adart):
+             Base(amap, adart)
     {}
   };
 //****************************************************************************

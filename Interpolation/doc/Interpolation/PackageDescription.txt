@@ -43,7 +43,7 @@ these interpolation functions depend on the properties of the
 barycentric coordinates. They are provided in this package under the
 names `linear_interpolation()` and `quadratic_interpolation()`.
 
-## Natural Neighbor Interpolation ##
+\cgalCRPSection{Natural Neighbor Interpolation}
 
 Natural neighbor coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural
@@ -74,11 +74,11 @@ User Manual \endlink.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `InterpolationTraits`
 - `GradientFittingTraits`
 
-## Interpolation Functions ##
+\cgalCRPSection{Interpolation Functions}
 - `CGAL::linear_interpolation()`
 - `CGAL::sibson_c1_interpolation()`
 - `CGAL::farin_c1_interpolation()`
@@ -88,11 +88,11 @@ User Manual \endlink.
 - `CGAL::Interpolation_traits_2<K>`
 - `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
-## Natural neighbor coordinate computation ##
+\cgalCRPSection{Natural Neighbor Coordinate Computation}
 - `CGAL::natural_neighbor_coordinates_2()`
 - `CGAL::regular_neighbor_coordinates_2()`
 
-## Surface neighbor and surface neighbor coordinate computation ##
+\cgalCRPSection{Surface Neighbor and Surface Neighbor Coordinate Computation}
 - `CGAL::Voronoi_intersection_2_traits_3<K>`
 - `CGAL::surface_neighbor_coordinates_3()`
 - `CGAL::surface_neighbors_3()`

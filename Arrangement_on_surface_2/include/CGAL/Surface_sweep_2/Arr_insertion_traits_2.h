@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -27,7 +18,7 @@
 
 /*! \file
  *
- * Defintion of the Arr_insertion_traits_2<Traits,Arrangement> class.
+ * Definition of the Arr_insertion_traits_2<Traits,Arrangement> class.
  */
 
 #include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
@@ -79,7 +70,7 @@ public:
   typedef Tag_false                                   Has_merge_category;
 
 public:
-  /*! Constructor with a traits class. */
+  /*! constructs from a traits class. */
   Arr_insertion_traits_2(const Gt2& tr) : Base(tr) {}
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -89,17 +80,13 @@ public:
   protected:
     //! The base operators.
     Base_intersect_2 m_base_intersect;
-    Halfedge_handle invalid_he;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Intersect_2(const Base_intersect_2& base) :
-      m_base_intersect (base),
-      invalid_he()
-    {}
+    Intersect_2(const Base_intersect_2& base) :  m_base_intersect (base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_insertion_traits_2<Gt2, Arrangement_2>;
@@ -110,6 +97,14 @@ public:
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi)
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      typedef std::variant<Intersection_point, Base_x_monotone_curve_2>
+                                                        Intersection_base_result;
+
+      Halfedge_handle invalid_he;
+
       if ((cv1.halfedge_handle() != invalid_he) &&
           (cv2.halfedge_handle() != invalid_he) &&
           (cv1.halfedge_handle() != cv2.halfedge_handle()))
@@ -119,44 +114,36 @@ public:
         return oi;
       }
 
-      OutputIterator oi_end = m_base_intersect(cv1.base(), cv2.base(), oi);
-      const Base_x_monotone_curve_2* base_overlap_cv;
-      const std::pair<Base_point_2, unsigned int>* intersect_p;
-
+      std::vector<Intersection_base_result> xections;
+      m_base_intersect(cv1.base(), cv2.base(), std::back_inserter(xections));
       // convert objects that are associated with Base_x_monotone_curve_2 to
       // X_monotone_curve_2
-      for(; oi != oi_end; ++oi) {
-        base_overlap_cv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-        if (base_overlap_cv != NULL) {
-          // Add halfedge handles to the resulting curve.
-          Halfedge_handle he;
-
-          if (cv1.halfedge_handle() != invalid_he) he = cv1.halfedge_handle();
-          else if (cv2.halfedge_handle() != invalid_he)
-            he = cv2.halfedge_handle();
-
-          X_monotone_curve_2 overlap_cv (*base_overlap_cv, he);
-
-          overlap_cv.set_overlapping();
-          *oi = make_object (overlap_cv);
+      for (const auto& xection : xections) {
+        const Intersection_point*
+          p_p = std::get_if<Intersection_point>(&xection);
+        if (p_p != nullptr) {
+          *oi++ = Intersection_result(*p_p);
+          continue;
         }
-        else {
-          intersect_p =
-            object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
+        const Base_x_monotone_curve_2* base_cv_p =
+          std::get_if<Base_x_monotone_curve_2>(&xection);
+        CGAL_assertion(base_cv_p);
 
-          CGAL_assertion (intersect_p != NULL);
-
-          *oi = make_object(std::make_pair(Point_2(intersect_p->first),
-                                           intersect_p->second));
-        }
+        // Add halfedge handles to the resulting curve.
+        Halfedge_handle he;
+        if (cv1.halfedge_handle() != invalid_he) he = cv1.halfedge_handle();
+        else if (cv2.halfedge_handle() != invalid_he)
+          he = cv2.halfedge_handle();
+        X_monotone_curve_2 cv(*base_cv_p, he);
+        cv.set_overlapping();
+        *oi++ = Intersection_result(cv);
       }
-
-      // Return a past-the-end iterator.
-      return oi_end;
+      xections.clear();
+      return oi;
     }
   };
 
-  /*! Obtain a Intersect_2 function object */
+  /*! obtains a Intersect_2 function object */
   Intersect_2 intersect_2_object () const
   { return (Intersect_2(this->m_base_traits->intersect_2_object())); }
 
@@ -166,7 +153,7 @@ public:
     //! The base operator.
     Base_split_2 m_base_split;
 
-    /*! Constructor.
+    /*! constructs.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
@@ -186,7 +173,7 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 function object */
+  /*! obtains a Split_2 function object */
   Split_2 split_2_object() const
   { return (Split_2(this->m_base_traits->split_2_object())); }
 };

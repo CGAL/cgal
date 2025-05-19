@@ -17,19 +17,19 @@ typedef CGAL::Surface_mesh_deformation<Mesh> Surface_mesh_deformation;
 int main()
 {
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, "data/plane.off");
+  OpenMesh::IO::read_mesh(mesh, CGAL::data_file_path("meshes/plane.off"));
 
   // Create a deformation object
   Surface_mesh_deformation deform_mesh(mesh);
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Select two control vertices ...
-  vertex_descriptor control_1 = *CGAL::cpp11::next(vb, 213);
-  vertex_descriptor control_2 = *CGAL::cpp11::next(vb, 157);
+  vertex_descriptor control_1 = *std::next(vb, 213);
+  vertex_descriptor control_2 = *std::next(vb, 157);
 
   // ... and insert them
   deform_mesh.insert_control_vertex(control_1);
@@ -42,7 +42,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position 
+  // Use set_target_position() to set the constrained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
@@ -52,7 +52,7 @@ int main()
   // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
-  // Set the constained position of control_2
+  // Set the constrained position of control_2
   Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
@@ -64,7 +64,7 @@ int main()
   OpenMesh::IO::write_mesh(mesh,"deform_1.off");
 
   // Add another control vertex which requires another call to preprocess
-  vertex_descriptor control_3 = *CGAL::cpp11::next(vb, 92);
+  vertex_descriptor control_3 = *std::next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
 
   // The prepocessing step is again needed

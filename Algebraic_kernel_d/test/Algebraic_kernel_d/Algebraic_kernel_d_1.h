@@ -1,22 +1,7 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-//
-//
-// Author(s)     : Sebastian Limbach <slimbach@mpi-inf.mpg.de>
-//                 Michael Hemmer    <hemmer@mpi-inf.mpg.de>
-//
-// ============================================================================
-
 // Test of Algebraic_kernel
 
 #define CGAL_TEST_ALL_AK_VARIANTS 1
 
-#include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>

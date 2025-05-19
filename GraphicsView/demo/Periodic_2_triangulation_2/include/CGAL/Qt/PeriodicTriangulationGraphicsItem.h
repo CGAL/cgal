@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -33,14 +33,14 @@
 
 namespace CGAL {
   namespace Qt {
-    
+
     template <typename T>
     class PeriodicTriangulationGraphicsItem : public GraphicsItem
     {
       typedef typename T::Geom_traits Geom_traits;
     public:
       PeriodicTriangulationGraphicsItem(T* t_);
-      
+
       void modelChanged();
 
       enum Iterator_type {
@@ -53,18 +53,18 @@ namespace CGAL {
       void setEmphasizedSimplices(Iterator_type type) { this->type = type; }
       Iterator_type getEmphasizedSimplices() { return this->type; }
     public:
-      
+
       QRectF boundingRect() const;
-      
+
       void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-      
+
       virtual void operator()(typename T::Face_handle fh);
-      
+
       const QPen& verticesPen() const
       {
         return vertices_pen;
       }
-      
+
       const QPen& edgesPen() const
       {
         return edges_pen;
@@ -74,17 +74,17 @@ namespace CGAL {
       {
         return faces_pen;
       }
-      
+
       const QPen& domainPen() const
       {
         return domain_pen;
       }
-      
+
       void setVerticesPen(const QPen& pen)
       {
         vertices_pen = pen;
       }
-      
+
       void setEdgesPen(const QPen& pen)
       {
         edges_pen = pen;
@@ -94,49 +94,49 @@ namespace CGAL {
       {
         edges_pen = pen;
       }
-      
+
       void setDomainPen(const QPen& pen)
       {
         domain_pen = pen;
       }
-      
+
       bool visibleVertices() const
       {
         return visible_vertices;
       }
-      
+
       void setVisibleVertices(const bool b)
       {
         visible_vertices = b;
         update();
       }
-      
+
       bool visibleEdges() const
       {
         return visible_edges;
       }
-      
+
       void setVisibleEdges(const bool b)
       {
         visible_edges = b;
         update();
       }
-      
+
     protected:
       virtual void drawAll(QPainter *painter);
       void paintVertices(QPainter *painter);
       void paintOneVertex(const typename T::Point& point);
       virtual void paintVertex(typename T::Vertex_handle vh);
       void updateBoundingBox();
-      
+
       T * t;
       QPainter* m_painter;
       PainterOstream<Geom_traits> painterostream;
-      
+
       typename T::Vertex_handle vh;
       typename T::Point p;
       QRectF bounding_rect;
-      
+
       QPen vertices_pen;
       QPen edges_pen;
       QPen faces_pen;
@@ -146,15 +146,15 @@ namespace CGAL {
 
       Iterator_type type;
     };
-    
-    
+
+
     template <typename T>
     PeriodicTriangulationGraphicsItem<T>::PeriodicTriangulationGraphicsItem(T * t_)
-    :  t(t_), painterostream(0),
+    :  t(t_), painterostream(nullptr),
        visible_edges(true), visible_vertices(true),
        type(NONE)
     {
-      setVerticesPen(QPen(::Qt::red, 1.));      
+      setVerticesPen(QPen(::Qt::red, 1.));
       setFacesPen(QPen(QColor(100,100,100)));
       setDomainPen(QPen(::Qt::blue, .01));
       setEdgesPen(QPen(::Qt::black, .01));
@@ -164,17 +164,17 @@ namespace CGAL {
       updateBoundingBox();
       setZValue(3);
     }
-    
+
     template <typename T>
-    QRectF 
+    QRectF
     PeriodicTriangulationGraphicsItem<T>::boundingRect() const
     {
       return bounding_rect;
     }
-    
-    
+
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     {
       if(visible_edges) {
@@ -191,9 +191,9 @@ namespace CGAL {
         }
       }
     }
-    
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     {
       painterostream = PainterOstream<Geom_traits>(painter);
@@ -220,11 +220,11 @@ namespace CGAL {
           itype = T::STORED;
           break;
         }
-        
+
         Converter<Geom_traits> convert;
 
-        QMatrix matrix = painter->matrix();
-        painter->resetMatrix();
+        QTransform matrix = painter->worldTransform();
+        painter->resetTransform();
 
         { // Faces
           painter->setPen(QPen());
@@ -254,26 +254,26 @@ namespace CGAL {
           }
         }
 
-        painter->setMatrix(matrix);
-      }      
+        painter->setWorldTransform(matrix);
+      }
 
       if(visibleEdges()) {
         painter->setPen(this->edgesPen());
         t->draw_triangulation(painterostream);
       }
-      
+
       paintVertices(painter);
     }
-    
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     {
       if(visibleVertices()) {
         Converter<Geom_traits> convert;
-        
-        QMatrix matrix = painter->matrix();
-        painter->resetMatrix();
+
+        QTransform matrix = painter->worldTransform();
+        painter->resetTransform();
 
         QPen pen = verticesPen();
         if (t->number_of_vertices() < 8) {
@@ -290,7 +290,7 @@ namespace CGAL {
 
             ++v_index;
           }
-          
+
         } else {
           painter->setPen(verticesPen());
           for (typename T::Periodic_point_iterator ppit = t->periodic_points_begin();
@@ -301,39 +301,39 @@ namespace CGAL {
             }
         }
 
-        painter->setMatrix(matrix);
+        painter->setWorldTransform(matrix);
       }
     }
-    
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
     {
       Converter<Geom_traits> convert;
-      
+
       m_painter->setPen(this->verticesPen());
-      QMatrix matrix = m_painter->matrix();
-      m_painter->resetMatrix();
+      QTransform matrix = m_painter->worldTransform();
+      m_painter->resetTransform();
       m_painter->drawPoint(matrix.map(convert(point)));
-      m_painter->setMatrix(matrix);
+      m_painter->setWorldTransform(matrix);
     }
-    
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
     {
       Converter<Geom_traits> convert;
-      
+
       m_painter->setPen(this->verticesPen());
-      QMatrix matrix = m_painter->matrix();
-      m_painter->resetMatrix();
+      QTransform matrix = m_painter->worldTransform();
+      m_painter->resetTransform();
       m_painter->drawPoint(matrix.map(convert(vh->point())));
-      m_painter->setMatrix(matrix);
+      m_painter->setWorldTransform(matrix);
     }
-    
+
     template <typename T>
-    void 
-    PeriodicTriangulationGraphicsItem<T>::paint(QPainter *painter, 
+    void
+    PeriodicTriangulationGraphicsItem<T>::paint(QPainter *painter,
                                                 const QStyleOptionGraphicsItem *,
                                                 QWidget *)
     {
@@ -353,21 +353,21 @@ namespace CGAL {
       }
       m_painter = painter;
     }
-    
+
     // We let the bounding box only grow, so that when vertices get removed
     // the maximal bbox gets refreshed in the GraphicsView
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::updateBoundingBox()
     {
       prepareGeometryChange();
-      
+
       CGAL::Bbox_2 bb = t->domain().bbox();
       for (typename T::Periodic_triangle_iterator tit = t->periodic_triangles_begin(T::STORED_COVER_DOMAIN);
            tit != t->periodic_triangles_end(T::STORED_COVER_DOMAIN); ++tit) {
         bb = bb + t->triangle(*tit).bbox();
       }
-      
+
       double xmin = bb.xmin();
       double ymin = bb.ymin();
       double dx = bb.xmax() - xmin;
@@ -381,10 +381,10 @@ namespace CGAL {
 
       bounding_rect = QRectF(xmin, ymin, dx, dy);
     }
-    
-    
+
+
     template <typename T>
-    void 
+    void
     PeriodicTriangulationGraphicsItem<T>::modelChanged()
     {
       if((t->number_of_vertices() == 0) ){
@@ -395,8 +395,8 @@ namespace CGAL {
       updateBoundingBox();
       update();
     }
-    
-    
+
+
   } // namespace Qt
 } // namespace CGAL
 

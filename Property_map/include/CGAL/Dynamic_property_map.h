@@ -1,19 +1,10 @@
 // Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -22,10 +13,14 @@
 #define CGAL_DYNAMIC_PROPERTY_MAP_H
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/property_map.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+
+#include <memory>
+
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -39,7 +34,7 @@ struct Dynamic_property_map {
   typedef const value_type& reference;
   typedef boost::read_write_property_map_tag  category;
 
-  Dynamic_property_map(const V& default_value = V())
+  Dynamic_property_map(const V default_value = V())
     : map_(new Map()), default_value_(default_value)
   {}
 
@@ -66,19 +61,19 @@ struct Dynamic_property_map {
     (*(m.map_))[k] = v;
   }
 
-  
+
   const V& default_value() const
   {
     return default_value_;
   }
 
 
-  typedef boost::unordered_map<K,V> Map;
-  boost::shared_ptr<Map> map_;
+  typedef std::unordered_map<K,V> Map;
+  std::shared_ptr<Map> map_;
   V default_value_;
 };
 
-  
+
 template <typename M, typename PM>
 struct Dynamic_property_map_deleter {
   M& mesh;
@@ -100,35 +95,65 @@ struct Dynamic {
   typedef typename PM::key_type key_type;
   typedef typename PM::value_type value_type;
   typedef typename PM::reference reference;
-  typedef typename PM::category category;
+  typedef boost::read_write_property_map_tag category;
 
   typedef Dynamic_property_map_deleter<Mesh,PM> Deleter;
 
   Dynamic()
     : map_()
   {}
-  
+
   Dynamic(const Mesh& mesh, PM* pm)
     : map_(pm, Deleter(mesh))
   {}
-             
+
   friend reference get(const Dynamic& m, const key_type& k)
   {
     return get(*(m.map_), k);
   }
-    
+
 
   friend void put(const Dynamic& m, const key_type& k, const value_type& v)
   {
     put(*(m.map_), k, v);
   }
-   
-  boost::shared_ptr<PM> map_;
+
+  std::shared_ptr<PM> map_;
 };
-  
+
+template <typename Key, typename Value>
+struct Dynamic_with_index
+{
+  typedef Key key_type;
+  typedef Value value_type;
+  typedef std::conditional_t<  std::is_same_v<bool, Value>,
+                               value_type,
+                               value_type&> reference;
+  typedef boost::read_write_property_map_tag category;
+
+  Dynamic_with_index()
+    : m_values()
+  {}
+
+  Dynamic_with_index(std::size_t num_features, Value default_value = Value())
+    : m_values( new std::vector<value_type>(num_features, default_value) )
+  {}
+
+  friend reference get(const Dynamic_with_index& m, const key_type& k)
+  {
+    return (*m.m_values)[k.idx()];
+  }
+
+  friend void put(const Dynamic_with_index& m, const key_type& k, const value_type& v)
+  {
+    (*m.m_values)[k.idx()]=v;
+  }
+
+  std::shared_ptr<std::vector<value_type> > m_values;
+};
+
 } // namespace internal
 
-  
 template <typename T>
 struct dynamic_vertex_property_t
 {
@@ -203,34 +228,34 @@ namespace CGAL {
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_vertex_property_t<T> >::const_type
-get(const CGAL::dynamic_vertex_property_t<T>&, const G&)
+get(const CGAL::dynamic_vertex_property_t<T>&, const G&, const T& default_value = T())
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  return internal::Dynamic_property_map<vertex_descriptor,T>();
+  return internal::Dynamic_property_map<vertex_descriptor,T>(default_value);
 }
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_halfedge_property_t<T> >::const_type
-get(const CGAL::dynamic_halfedge_property_t<T>&, const G&)
+get(const CGAL::dynamic_halfedge_property_t<T>&, const G&, const T& default_value = T())
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
-  return internal::Dynamic_property_map<halfedge_descriptor,T>();
+  return internal::Dynamic_property_map<halfedge_descriptor,T>(default_value);
 }
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_edge_property_t<T> >::const_type
-get(const CGAL::dynamic_edge_property_t<T>&, const G&)
+get(const CGAL::dynamic_edge_property_t<T>&, const G&, const T& default_value = T())
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  return internal::Dynamic_property_map<edge_descriptor,T>();
+  return internal::Dynamic_property_map<edge_descriptor,T>(default_value);
 }
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_face_property_t<T> >::const_type
-get(const CGAL::dynamic_face_property_t<T>&, const G&)
+get(const CGAL::dynamic_face_property_t<T>&, const G&, const T& default_value = T())
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
-  return internal::Dynamic_property_map<face_descriptor,T>();
+  return internal::Dynamic_property_map<face_descriptor,T>(default_value);
 }
 
 template<typename G, typename Descriptor, typename T>

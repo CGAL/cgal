@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
@@ -31,7 +22,7 @@
 namespace CGAL {
 
 template <class Arrangement_>
-class Gps_bfs_xor_visitor : 
+class Gps_bfs_xor_visitor :
 public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_xor_visitor<Arrangement_> >
 {
   typedef  Arrangement_                                  Arrangement;
@@ -44,13 +35,13 @@ public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_xor_visitor<Arrangement_> >
 
 public:
 
-  Gps_bfs_xor_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash, 
+  Gps_bfs_xor_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash,
                       unsigned int n_pgn) :
     Base(edges_hash, faces_hash, n_pgn)
   {}
 
     //! contained_criteria
-/*! contained_criteria is used to the determine if the face which has 
+/*! contained_criteria is used to the determine if the face which has
   inside count should be marked as contained.
   \param ic the inner count of the talked-about face.
   \return true if the face of ic, otherwise false.
@@ -63,9 +54,9 @@ public:
 
   //! after_scan post-processing after bfs scan.
 /*! The function fixes some of the curves, to be in the same direction as the
-    half-edges. 
-  
-  \param arr The given arrangment.
+    half-edges.
+
+  \param arr The given arrangement.
 */
   void after_scan(Arrangement& arr)
   {
@@ -87,11 +78,11 @@ public:
       Halfedge_iterator         he = eit;
       const X_monotone_curve_2& cv = he->curve();
       const bool                is_cont = he->face()->contained();
-      const Comparison_result   he_res = 
+      const Comparison_result   he_res =
         ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ?
                                          SMALLER : LARGER;
       const bool has_same_dir = (cmp_endpoints(cv) == he_res);
-      
+
       if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
         arr.modify_edge(he, ctr_opp(cv));
     }

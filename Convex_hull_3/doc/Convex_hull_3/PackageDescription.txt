@@ -6,14 +6,14 @@
 /// \defgroup PkgConvexHull3Traits Traits Classes
 /// \ingroup PkgConvexHull3Ref
 
-/*! \defgroup PkgConvexHull3Functions Convex Hull Functions 
+/*! \defgroup PkgConvexHull3Functions Convex Hull Functions
    \ingroup PkgConvexHull3Ref
-The function `convex_hull_3()` computes the convex hull of a given set of 
+The function `convex_hull_3()` computes the convex hull of a given set of
 three-dimensional points.
- 
-Two versions of this function are available. The first can be used when it 
-is known that the result will be a polyhedron and the second when a 
-degenerate hull may also be possible. 
+
+Two versions of this function are available. The first can be used when it
+is known that the result will be a polyhedron and the second when a
+degenerate hull may also be possible.
 */
 
 /// \defgroup PkgConvexityChecking Convexity Checking
@@ -35,7 +35,7 @@ degenerate hull may also be possible.
 \cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3 "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -51,40 +51,39 @@ and arbitrary dimensions as well as functions for testing if a given set of
 points in is strongly convex or not.  This chapter describes the functions
 available for three dimensions.
 
-## Assertions ##
-The assertion flags for the convex hull and extreme point algorithms
-use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
+\cgalCRPSection{Assertions}
 For the convex hull algorithms, the postcondition
 check tests only convexity (if not disabled), but not containment of the
 input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
-defining `CGAL_CH_CHECK_EXPENSIVE`.
+defining `CGAL_CHECK_EXPENSIVE`.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `ConvexHullTraits_3`
 - `IsStronglyConvexTraits_3`
 
-## Traits Classes ##
+\cgalCRPSection{Traits Classes}
 
 - `CGAL::Convex_hull_traits_3<R>`
 - `CGAL::Extreme_points_traits_adapter_3`
 
-## Convex Hull Functions ##
+\cgalCRPSection{Convex Hull Functions}
 
 - `CGAL::convex_hull_3`
 - `CGAL::extreme_points_3`
 - `CGAL::make_extreme_points_traits_adapter`
 
-## Convexity Checking Function ##
+\cgalCRPSection{Convexity Checking Function}
 
 - `CGAL::is_strongly_convex_3`
 
-## Halfspace Intersection Functions ##
+\cgalCRPSection{Halfspace Intersection Functions}
 
-- `CGAL::halfspace_intersection_3`
-- `CGAL::halfspace_intersection_with_constructions_3`
+- `CGAL::halfspace_intersection_3()`
+- `CGAL::halfspace_intersection_with_constructions_3()`
+- `CGAL::halfspace_intersection_interior_point_3()`
 
 */

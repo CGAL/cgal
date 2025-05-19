@@ -2,25 +2,21 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
 //                 Franz Wessendorp
 //                 Kaspar Fischer
+
+#ifndef CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H
+#define CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
 
 namespace CGAL {
 
@@ -64,7 +60,7 @@ ET QP_solver<Q, ET, Tags>::upper_bound(int i) const
   // Given an index of an original variable, returns its upper bound.
 {
   CGAL_qpe_assertion(i < qp_n); // Note: slack variables cannot have
-				// finite upper bounds.
+                                // finite upper bounds.
   CGAL_qpe_assertion(has_finite_upper_bound(i));
   return *(qp_u+i);
 }
@@ -98,3 +94,5 @@ QP_solver<Q, ET, Tags>::upper_bnd(int i) const
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H

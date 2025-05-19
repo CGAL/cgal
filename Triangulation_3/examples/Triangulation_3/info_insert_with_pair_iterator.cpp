@@ -23,15 +23,12 @@ int main()
   points.push_back( std::make_pair(Point(2,2,2),4) );
   points.push_back( std::make_pair(Point(-1,0,1),5) );
 
-  
+
   Delaunay T( points.begin(),points.end() );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
-  Delaunay::Finite_vertices_iterator vit;
-  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
-    if( points[ vit->info() ].first != vit->point() ){
+  for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
+    if( points[ v->info() ].first != v->point() ){
       std::cerr << "Error different info" << std::endl;
       exit(EXIT_FAILURE);
     }

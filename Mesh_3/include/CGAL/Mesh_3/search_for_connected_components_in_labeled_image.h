@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -41,16 +32,14 @@
 #  include <boost/format.hpp>
 #endif // CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
 template <typename PointsOutputIterator,
-	  typename DomainsOutputIterator,
-	  typename TransformOperator,
-          typename Construct_point,
+          typename DomainsOutputIterator,
+          typename TransformOperator,
           typename Image_word_type>
 void
 search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
                                                  PointsOutputIterator it,
                                                  DomainsOutputIterator dom_it,
                                                  TransformOperator transform,
-                                                 Construct_point point,
                                                  Image_word_type)
 {
   const std::size_t nx = image.xdim();
@@ -58,7 +47,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
   const std::size_t nz = image.zdim();
   const std::size_t size = nx * ny * nz;
 
-  typedef boost::uint16_t uint;
+  typedef std::uint16_t uint;
 
   if(nx > 65535 || ny > 65535 || nz > 65535)
   {
@@ -82,15 +71,14 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
       for(uint i=0; i<nx; i++)
       {
         using CGAL::IMAGEIO::static_evaluate;
-
-        if(visited[voxel_index] | second_pass[voxel_index]) {
+        if(visited[voxel_index] || second_pass[voxel_index]) {
           ++voxel_index;
           continue;
         }
         const Label current_label =
           transform(static_evaluate<Image_word_type>(image.image(),
                                                      voxel_index));
-	*dom_it++ = current_label;
+        *dom_it++ = current_label;
         if(current_label == Label()) {
           visited[voxel_index] = true;
           second_pass[voxel_index] = true;
@@ -107,9 +95,9 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
           % (long)static_evaluate<Image_word_type>(image.image(), i, j, k)
           % number_of_connected_components
           % (int)current_label;
-#endif // CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
 
         int nb_voxels = 0;
+#endif // CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
 
         Indices_queue queue;
         Indices indices(i, j ,k, 0);
@@ -147,7 +135,9 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
             {
               visited[offset] = true;
               second_pass[offset] = false;
+#ifdef CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
               ++nb_voxels;
+#endif
               boost::get<0>(bbox_min) = (std::min)(i, boost::get<0>(bbox_min));
               boost::get<0>(bbox_max) = (std::max)(i, boost::get<0>(bbox_max));
               boost::get<1>(bbox_min) = (std::min)(j, boost::get<1>(bbox_min));
@@ -218,18 +208,17 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
             }
             else // end of second pass, return the last visited voxel
             {
-// 	      if(nb_voxels >= 100)
-	      {
-		*it++ = std::make_pair(point(i, j, k),
-                                       depth+1);
+//               if(nb_voxels >= 100)
+              {
+                *it++ = { i, j, k, std::size_t(depth + 1) };
 #if CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE > 1
-		std::cerr << boost::format("Found seed %5%, which is voxel "
+                std::cerr << boost::format("Found seed %5%, which is voxel "
                                            "(%1%, %2%, %3%), value=%4%\n")
-		  % i % j % k
+                  % i % j % k
                   % (long)static_evaluate<Image_word_type>(image.image(), i, j, k)
                   % point(i, j, k);
 #endif // CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE>1
-	      }
+              }
             }
           } // end if queue.empty()
         } // end while !queue.empty() (with local indices i, j, k)

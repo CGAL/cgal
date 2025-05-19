@@ -4,20 +4,11 @@
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Menelaos Karavelas <mkaravel@cse.nd.edu>
@@ -59,7 +50,7 @@ template < class K1, class K2,
 class Cartesian_converter_d : public Enum_converter
 {
     typedef Enum_converter   Base;
-    typedef Cartesian_converter_d<K1, K2, Converter>	Self;
+    typedef Cartesian_converter_d<K1, K2, Converter>        Self;
 
 public:
     typedef K1         Source_kernel;
@@ -88,16 +79,16 @@ public:
 #endif
 
     Cartesian_converter_d() // To shut up a warning with SunPRO.
-	: c(), k(), result_point_(20) {}
+        : c(), k(), result_point_(20) {}
 
     Origin
-    operator()(const Origin& o) const
+    operator()(Origin o) const
     {
         return o;
     }
 
     Null_vector
-    operator()(const Null_vector& n) const
+    operator()(Null_vector n) const
     {
         return n;
     }
@@ -106,6 +97,14 @@ public:
     operator()(const typename K1::FT &a) const
     {
         return c(a);
+    }
+
+    template <typename T>
+    T
+    operator()(const T t,
+               std::enable_if_t<std::is_fundamental<T>::value>* = nullptr) const
+    {
+        return t;
     }
 
     std::vector<Object>
@@ -119,99 +118,94 @@ public:
       return res;
     }
 
-    int operator()(const int &a)
-    {
-	return a;
-    }
-
     typename K2::Point_d
     operator()(const typename K1::Point_d &a) const
     {
         typedef typename K2::Point_d Point_d;
-	typedef typename K1::Point_d::Cartesian_const_iterator Coord_iter;
-	typedef Iterator_transform<Coord_iter, Converter> It;
-	return Point_d(a.dimension(), It(a.cartesian_begin()), It(a.cartesian_end()));
+        typedef typename K1::Point_d::Cartesian_const_iterator Coord_iter;
+        typedef Iterator_transform<Coord_iter, Converter> It;
+        return Point_d(a.dimension(), It(a.cartesian_begin()), It(a.cartesian_end()));
     }
 
     typename K2::Vector_d
     operator()(const typename K1::Vector_d &a) const
     {
         typedef typename K2::Vector_d  Vector_d;
-	typedef typename K1::Point_d::Cartesian_const_iterator Coord_iter;
-	typedef Iterator_transform<Coord_iter, Converter> It;
-	return Vector_d(a.dimension(), It(a.cartesian_begin()), It(a.cartesian_end()));
+        typedef typename K1::Point_d::Cartesian_const_iterator Coord_iter;
+        typedef Iterator_transform<Coord_iter, Converter> It;
+        return Vector_d(a.dimension(), It(a.cartesian_begin()), It(a.cartesian_end()));
     }
 
     typename K2::Direction_d
     operator()(const typename K1::Direction_d &a) const
     {
         typedef typename K2::Direction_d  Direction_d;
-	return Direction_d(operator()(a.vector()));
+        return Direction_d(operator()(a.vector()));
     }
 
     typename K2::Segment_d
     operator()(const typename K1::Segment_d &a) const
     {
         typedef typename K2::Segment_d  Segment_d;
-	return Segment_d(operator()(a.source()), operator()(a.target()));
+        return Segment_d(operator()(a.source()), operator()(a.target()));
     }
 
     typename K2::Line_d
     operator()(const typename K1::Line_d &a) const
     {
         typedef typename K2::Line_d Line_d;
-	return Line_d(operator()(a.point(0)), operator()(a.direction()));
+        return Line_d(operator()(a.point(0)), operator()(a.direction()));
     }
 
     typename K2::Ray_d
     operator()(const typename K1::Ray_d &a) const
     {
         typedef typename K2::Ray_d  Ray_d;
-	return Ray_d(operator()(a.source()), operator()(a.second_point()));
+        return Ray_d(operator()(a.source()), operator()(a.second_point()));
     }
 
     typename K2::Sphere_d
     operator()(const typename K1::Sphere_d &a) const
     {
-        typedef typename K2::Sphere_d	Sphere_d;
-	typedef typename K1::Sphere_d::point_iterator Coord_iter;
-	// TODO: Check that the use of Iterator_transform is correct
-	typedef Iterator_transform<Coord_iter, Converter> It;
-	return Sphere_d(a.dimension(), It(a.points_begin()), It(a.points_end()));
+        typedef typename K2::Sphere_d        Sphere_d;
+        typedef typename K1::Sphere_d::point_iterator Coord_iter;
+        // TODO: Check that the use of Iterator_transform is correct
+        typedef Iterator_transform<Coord_iter, Converter> It;
+        return Sphere_d(a.dimension(), It(a.points_begin()), It(a.points_end()));
     }
 
     typename K2::Hyperplane_d
     operator()(const typename K1::Hyperplane_d &a) const
     {
-	typedef typename K2::Hyperplane_d	Hyperplane_d;
-	typedef typename K1::Hyperplane_d::Coefficient_const_iterator	Coord_iter;
-	// TODO: Check that the use of Iterator_transform is correct
-	typedef Iterator_transform<Coord_iter, Converter> It;
-	return Hyperplane_d(a.dimension(), It(a.coefficients_begin()), It(a.coefficients_end()));
+        typedef typename K2::Hyperplane_d        Hyperplane_d;
+        typedef typename K1::Hyperplane_d::Coefficient_const_iterator        Coord_iter;
+        // TODO: Check that the use of Iterator_transform is correct
+        typedef Iterator_transform<Coord_iter, Converter> It;
+        return Hyperplane_d(a.dimension(), It(a.coefficients_begin()), It(a.coefficients_end()));
     }
 
     typename K2::Iso_box_d
     operator()(const typename K1::Iso_box_d &a) const
     {
-	typedef typename K2::Iso_box_d  Iso_box_d;
-	return Iso_box_d(operator()((a.min)()), operator()((a.max)()));
+        typedef typename K2::Iso_box_d  Iso_box_d;
+        return Iso_box_d(operator()((a.min)()), operator()((a.max)()));
     }
 
     /*std::vector<int> &
     operator()(const std::vector<int> & a) const
     {
-	return const_cast<std::vector<int> &>(a);
+        return const_cast<std::vector<int> &>(a);
     }*/
     std::vector<int>::iterator
     operator()(const std::vector<int>::iterator & a) const
     {
-	return a;
+        return a;
     }
 
     template<typename T>
     Referenced_argument<T> & operator()(const Referenced_argument<T> & a) const
     {
-	return const_cast<Referenced_argument<T> &> (a);
+        return const_cast<Referenced_argument<T> &> (a);
     }
 
     // ---- The following allows to convert iterators to Point_d, Vector_d,
@@ -223,23 +217,23 @@ public:
     template<typename IterBase>
     struct Specialized_converter : public Self
     {
-	typedef typename IterBase::value_type		argument_type;
-	typedef typename argument_type::
-	    	template WithAnotherKernel<K2>::Type	result_type;
+        typedef typename IterBase::value_type                argument_type;
+        typedef typename argument_type::
+                    template WithAnotherKernel<K2>::Type        result_type;
     };
 
     template<typename IterBase>
     Iterator_transform<IterBase, Specialized_converter<IterBase> >
     operator()(const IterBase & a) const
     {
-	return Iterator_transform<IterBase, Specialized_converter<IterBase> >(a);
+        return Iterator_transform<IterBase, Specialized_converter<IterBase> >(a);
     }
     // ---- ---- ---- ---- ---- ---- //
 
 private:
     Converter c;
     K2 k;
-	typename K2::Point_d result_point_;
+        typename K2::Point_d result_point_;
 };
 
 // Specialization when converting to the same kernel,

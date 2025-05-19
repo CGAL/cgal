@@ -1,25 +1,20 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
-# 
+#
 # This file is part of CGAL (www.cgal.org).
-# You can redistribute it and/or modify it under the terms of the GNU
-# General Public License as published by the Free Software Foundation,
-# either version 3 of the License, or (at your option) any later version.
-# 
-# Licensees holding a valid commercial license may use this file in
-# accordance with the commercial license agreement provided with the software.
-# 
-# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-# 
-# $URL:
-# $Id:
-# 
-# 
+#
+# $URL$
+# $Id$
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+#
 # Author(s)     : Philipp Moeller
 
-import argparse 
+#NOTE : if args.diff2 is not given, then it is considered that something went
+# wrong during the build of doxygen_master or the generation of the doc.
+
+import argparse
 import shutil
 import sys
 import subprocess
@@ -79,7 +74,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
     page_footer='''<table border="1" cellspacing="2" cellpadding="5" class="test-results">
-    <tr><td/><th colspan="3">Doxygen 1.8.4</th><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen master</th></tr>
+    <tr><td/><th colspan="3">Doxygen 1.8.13(patched)</th><th colspan="3">Doxygen 1.9.6(patched)</th><th colspan="3">Doxygen master</th></tr>
 <tr>
 <th>Package Name</th>
 <th>Logs </th>
@@ -93,7 +88,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <th>Errors</th>
 </tr>
 </table></body></html>'''
-    
+
     if args.publish and args.do_copy_results:
       suffix=''
       if args.doxygen_version1:
@@ -106,7 +101,9 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
-      link_master="\n<br><a href=\"master/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/doxygen/doxygen\">the master version of Doxygen {_suffix}</a> (buggy), so that we see progress/regression of doxygen development as far as CGAL is concerned.\n".format(_suffix=suffix)
+        link_master="\n<br><a href=\"master/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/doxygen/doxygen\">the master version of Doxygen {_suffix}</a> (buggy), so that we see progress/regression of doxygen development as far as CGAL is concerned.\n".format(_suffix=suffix)
+      else:
+        link_master="\n<p style=\"color:red\"><br>/!\\ Documentation with the master version of Doxygen FAILED /!\\ </p>\n"
       d = pq(page_header+link1+"   "+link2+"   "+link_master+page_footer)
     else:
       d = pq(page_header+page_footer)
@@ -137,19 +134,23 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         basename=os.path.basename(log)
         result = [(basename, pretty_name, res)]
         results2.extend(result)
+    if args.doc_log_dir_master:
+      os.chdir(args.doc_log_dir_master)
+      if(args.diff2):
+        logs=sorted(glob.glob('./*.log'))
 
-    os.chdir(args.doc_log_dir_master)
-    logs=sorted(glob.glob('./*.log'))
-
-    for log in logs:
-        res=count_errors_and_warnings(log)
-        err_war_sum_master=tuple(map(operator.add, err_war_sum_master, res))
-        basename=os.path.basename(log)
-        pretty_name=basename[0:-4]
-        result = [(basename, pretty_name, res)]
-        results_master.extend(result)
-
-    for index in range(0, len(results1)-1):
+        for log in logs:
+            res=count_errors_and_warnings(log)
+            err_war_sum_master=tuple(map(operator.add, err_war_sum_master, res))
+            basename=os.path.basename(log)
+            pretty_name=basename[0:-4]
+            result = [(basename, pretty_name, res)]
+            results_master.extend(result)
+      else:
+        for index in range(0, len(results1)):
+          result = [('./build_logs', './build_logs', (0,1))]
+          results_master.extend(result)
+    for index in range(0, len(results1)):
         status='class="package-good"'
         no_errors = True
         no_warn = True
@@ -204,9 +205,9 @@ def main():
     parser.add_argument('--doxygen-version1', default ='', help='Specify this argument if you want to add a version number to the name of the link to the first documentation.')
     parser.add_argument('--doxygen-version2', default ='', help='Specify this argument if you want to add a version number to the name of the link to the second documentation.')
     parser.add_argument('--master-describe', default ='', help='Specify this argument if you want to add a suffix to the name of the link to the doxygen master documentation.')
-    
+
     args = parser.parse_args()
-    
+
     if args.cgal_version:
       version_string="CGAL-"+args.cgal_version
       version_date=datetime.datetime.now().strftime("%Y-%m-%d")
@@ -254,7 +255,7 @@ def main():
         try:
             with open(publish_dir + 'index.html') as f: pass
         except IOError as e:
-            print('No index.html in the publish directory found. Writing a skeleton.')               
+            print('No index.html in the publish directory found. Writing a skeleton.')
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
 <style type="text/css">
@@ -266,10 +267,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen 1.9.6</th><th colspan="2">Doxygen master</th><td/><td/></tr>
 <tr><th>Revision</th><th>Date</th><th>Warnings</th>
 <th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
-<th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
+<th>Diff with doxygen master</th><th>Diff with doxygen 1.9.6</th></tr></table></body>''')
                 args_list=''
                 for arg in sys.argv[0:]:
                   args_list+=arg+' '
@@ -284,13 +285,16 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           diff1='<a href="{log_path}/diff1.txt">Diff between {test_version} and {master_version}.</a>'.format(
           log_path=version_string, test_version=args.doxygen_version1, master_version=args.doxygen_version2)
 
-        with open(diff_file2, 'r') as myfile:
-          diff2=myfile.read()
-        if not diff2:
-          diff2='none'
+        if args.diff2:
+          with open(diff_file2, 'r') as myfile:
+            diff2=myfile.read()
+          if not diff2:
+            diff2='none'
+          else:
+            diff2='<a href="{log_path}/diff2.txt">Diff between {test_version} and {master_version}.</a>'.format(
+            log_path=version_string, test_version=args.doxygen_version1, master_version=args.master_describe)
         else:
-          diff2='<a href="{log_path}/diff2.txt">Diff between {test_version} and {master_version}.</a>'.format(
-          log_path=version_string, test_version=args.doxygen_version1, master_version=args.master_describe)
+          diff2='<p style="color:red">Documentation with the master version of Doxygen FAILED</p>'
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
@@ -327,10 +331,12 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           shutil.copytree(args.doc_log_dir1, log_target+'/logs1/')
           shutil.copyfile(args.doc_log_dir1+'/index.html', log_target+'/index.html')
           shutil.copytree(args.doc_log_dir2, log_target+'/logs2/')
-          shutil.copytree(args.doc_log_dir_master, log_target+'/logs_master/')
+          if args.doc_log_dir_master:
+            shutil.copytree(args.doc_log_dir_master, log_target+'/logs_master/')
           #copy diff
           shutil.copyfile(diff_file1, log_target+'/diff1.txt')
-          shutil.copyfile(diff_file2, log_target+'/diff2.txt')
+          if args.diff2:
+              shutil.copyfile(diff_file2, log_target+'/diff2.txt')
           try:
             #copy documentation
             if args.do_copy_results:
@@ -355,6 +361,6 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
           raise
-        
+
 if __name__ == "__main__":
     main()

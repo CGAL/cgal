@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -34,6 +25,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
@@ -62,6 +54,19 @@ public:
 private:
   const Traits_adaptor_2* m_traits;     // A geometric-traits object.
   Event** m_curr_event;                 // Points to the current event point.
+
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
+
+  /*!
+   */
+  typedef typename Arr_sides_category<Left_side_category,
+                                      Bottom_side_category,
+                                      Top_side_category,
+                                      Right_side_category>::result
+    Sides_category;
 
 public:
   /*! Construct. */
@@ -93,10 +98,9 @@ public:
     Arr_parameter_space ps_y1 =
       m_traits->parameter_space_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
 
-    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
-    {
+    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
       // The first curve has a valid left endpoint. Compare the y-position
-      // of this endpoint to the second subcurve.
+      // of this endpoint with the second subcurve.
       return m_traits->compare_y_at_x_2_object()
         (m_traits->construct_min_vertex_2_object()(c1->last_curve()),
          c2->last_curve());
@@ -110,7 +114,7 @@ public:
     if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
 
     // For similar reasons, if c1 begins on the bottom boundary it is below
-    // c2, if it is on the top boundary it is above it.
+    // c2, if it begins on the top boundary it is above it.
     CGAL_assertion (ps_y1 != ARR_INTERIOR);
     return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
@@ -118,7 +122,52 @@ public:
   /*! Compare the relative y-order of the given point and the given subcurve.
    */
   Comparison_result operator()(const Point_2& pt, const Subcurve* sc) const
-  { return m_traits->compare_y_at_x_2_object()(pt, sc->last_curve()); }
+  { return compare_point_curve(pt, sc->last_curve(), Sides_category()); }
+
+private:
+  Comparison_result compare_point_curve(const Point_2& pt,
+                                        const X_monotone_curve_2& cv,
+                                        Arr_all_sides_oblivious_tag) const
+  { return m_traits->compare_y_at_x_2_object()(pt, cv); }
+
+  Comparison_result compare_point_curve(const Point_2& pt,
+                                        const X_monotone_curve_2& cv,
+                                        Arr_all_sides_not_finite_tag) const
+  { return m_traits->compare_y_at_x_2_object()(pt, cv); }
+
+  Comparison_result compare_point_curve(const Point_2& pt,
+                                        const X_monotone_curve_2& cv,
+                                        Arr_not_all_sides_not_finite_tag) const
+  {
+    Arr_parameter_space ps_y1 = (*m_curr_event)->parameter_space_in_y();
+
+#if 0
+    Arr_parameter_space ps_x1 = (*m_curr_event)->parameter_space_in_x();
+    typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+      m_traits->parameter_space_in_x_2_object();
+    Arr_parameter_space ps_x_min = ps_x_op(cv, ARR_MIN_END);
+    Arr_parameter_space ps_x_max = ps_x_op(cv, ARR_MAX_END);
+    typename Traits_adaptor_2::Parameter_space_in_y_2 ps_y_op =
+      m_traits->parameter_space_in_y_2_object();
+    Arr_parameter_space ps_y_min = ps_y_op(cv, ARR_MIN_END);
+    Arr_parameter_space ps_y_max = ps_y_op(cv, ARR_MAX_END);
+
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << "\n FUNCTOR pt-cv" << std::endl;
+    std::cout << "pt: " << pt << std::endl;
+    std::cout << "ps_x1: " << ps_x1 << std::endl;
+    std::cout << "ps_y1: " << ps_y1 << std::endl;
+    std::cout << "cv: " << cv << std::endl;
+    std::cout << "ps_x_min: " << ps_x_min << std::endl;
+    std::cout << "ps_y_min: " << ps_y_min << std::endl;
+    std::cout << "ps_x_max: " << ps_x_max << std::endl;
+    std::cout << "ps_y_max: " << ps_y_max << std::endl;
+#endif
+
+    if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
+    if (ps_y1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
+    return m_traits->compare_y_at_x_2_object()(pt, cv);
+  }
 };
 
 } // namespace Surface_sweep_2

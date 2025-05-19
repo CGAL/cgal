@@ -24,7 +24,7 @@ int main ()
     pts.push_back (*(rdpts ++));
 
   Tree tree (pts.begin(), pts.end());
-    
+
   Point_2 center(0., 0.);
   Fuzzy_circle circle (center, 0.5);
   std::vector<Point_2> result;
@@ -33,6 +33,6 @@ int main ()
   std::cout << "with fuzzy radius (0.5) are: " << std::endl;
   for (std::size_t i = 0; i < result.size(); ++ i)
     std::cout << " * " << result[i] << std::endl;
-  
+
   return 0;
 }

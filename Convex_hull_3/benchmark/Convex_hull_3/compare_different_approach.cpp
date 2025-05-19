@@ -4,7 +4,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convex_hull_3_to_polyhedron_3.h>
+#include <CGAL/convex_hull_3_to_face_graph.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_incremental_3.h>
 #include <CGAL/Timer.h>
@@ -36,14 +36,14 @@ void load_from_file(const char* path,std::vector<Point_3>& points)
   }
   while (--nbpt>0);
 }
-  
+
 int main(int argc,char** argv)
 {
   std::vector<Point_3> points;
   if (argc==1){
     CGAL::Random_points_in_sphere_3<Point_3, PointCreator> gen(1.0);
     int nbpt=1000000;
-    CGAL::cpp11::copy_n( gen, nbpt, std::back_inserter(points) );
+    std::copy_n( gen, nbpt, std::back_inserter(points) );
     std::cout << "Using " << 1000000 << " random points in the unit ball\n";
   }
   else{
@@ -68,7 +68,7 @@ int main(int argc,char** argv)
   time.stop();
   std::cout << "Delaunay " << time.time() << std::endl;
   time.start();
-  CGAL::convex_hull_3_to_polyhedron_3(T,poly);
+  CGAL::convex_hull_3_to_face_graph(T,poly);
   time.stop();
   std::cout << "Delaunay+to_poly " << time.time() <<" "<< poly.size_of_vertices() << std::endl;
   poly.clear();
@@ -91,6 +91,6 @@ int main(int argc,char** argv)
   CGAL::convex_hull_incremental_3( ek_points.begin(), ek_points.end(), poly2, false);
   time.stop();
   std::cout << "incremental EPEC " << time.time() <<" "<< poly2.size_of_vertices() << std::endl;
-  
+
   return 0;
 }

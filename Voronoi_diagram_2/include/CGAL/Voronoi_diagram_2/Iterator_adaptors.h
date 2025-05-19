@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -48,7 +39,7 @@ class Iterator_adaptor_base
   typedef typename Base_iterator::difference_type    difference_type;
   typedef typename Base_iterator::iterator_category  iterator_category;
 
-  Iterator_adaptor_base(const VDA* vda = NULL) : vda_(vda), value_() {}
+  Iterator_adaptor_base(const VDA* vda = nullptr) : vda_(vda), value_() {}
   Iterator_adaptor_base(const VDA* vda, const Base_iterator& cur)
     : vda_(vda), value_(), cur_(cur) {}
   Iterator_adaptor_base(const Self& other) { copy_from(other); }
@@ -94,13 +85,13 @@ class Iterator_adaptor_base
     return tmp;
   }
 
-  bool operator==(const Iterator& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+  bool operator==(const Self& other) const {
+    if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
+    if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
     return ( vda_ == other.vda_ && cur_ == other.cur_ );
   }
 
-  bool operator!=(const Iterator& other) const {
+  bool operator!=(const Self& other) const {
     return !(*this == other);
   }
 
@@ -108,7 +99,7 @@ class Iterator_adaptor_base
   void copy_from(const Self& other) {
     vda_ = other.vda_;
     value_ = other.value_;
-    if ( vda_ != NULL ) {
+    if ( vda_ != nullptr ) {
       cur_ = other.cur_;
     }
   }
@@ -126,9 +117,9 @@ class Iterator_adaptor_base
 template<class VDA, class Base_it, class Tag = CGAL::Tag_true>
 class Edge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Edge_iterator_adaptor<VDA,Base_it,Tag>,
-				 Base_it,
-				 typename VDA::Halfedge>
+                                 Edge_iterator_adaptor<VDA,Base_it,Tag>,
+                                 Base_it,
+                                 typename VDA::Halfedge>
 {
  protected:
   typedef Triangulation_cw_ccw_2   CW_CCW_2;
@@ -146,7 +137,7 @@ class Edge_iterator_adaptor
   friend class Iterator_adaptor_base<VDA,Self,Base_iterator,Value>;
 
  public:
-  Edge_iterator_adaptor(const VDA* vda = NULL) : Base(vda) {}
+  Edge_iterator_adaptor(const VDA* vda = nullptr) : Base(vda) {}
   Edge_iterator_adaptor(const VDA* vda, const Base_iterator& cur)
     : Base(vda, cur) {}
 
@@ -171,8 +162,8 @@ class Edge_iterator_adaptor
       int cw_i  = CW_CCW_2::cw( this->cur_->second );
       int ccw_i = CW_CCW_2::ccw( this->cur_->second );
       this->value_ =
-	Halfedge(this->vda_, this->cur_->first->vertex(ccw_i),
-		 this->cur_->first->vertex(cw_i));
+        Halfedge(this->vda_, this->cur_->first->vertex(ccw_i),
+                 this->cur_->first->vertex(cw_i));
       return;
     }
 
@@ -209,9 +200,9 @@ class Edge_iterator_adaptor
 template<class VDA, class Base_it>
 class Halfedge_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Halfedge_iterator_adaptor<VDA,Base_it>,
-				 Base_it,
-				 typename VDA::Halfedge>
+                                 Halfedge_iterator_adaptor<VDA,Base_it>,
+                                 Base_it,
+                                 typename VDA::Halfedge>
 {
 private:
   typedef Halfedge_iterator_adaptor<VDA,Base_it>   Self;
@@ -227,7 +218,7 @@ private:
   friend class Iterator_adaptor_base<VDA,Self,Base_iterator,Value>;
 
  public:
-  Halfedge_iterator_adaptor(const VDA* vda = NULL) : Base(vda) {}
+  Halfedge_iterator_adaptor(const VDA* vda = nullptr) : Base(vda) {}
   Halfedge_iterator_adaptor(const VDA* vda, Base_iterator cur)
     : Base(vda, cur), is_first_(true) {}
 
@@ -244,12 +235,12 @@ private:
     return *this;
   }
 
-  bool operator==(const Self& other) const {
-    return Base::operator==(other) && is_first_ == other.is_first_;
+  friend bool operator==(const Self& i, const Self& other) {
+    return i.Base::operator==(other) && i.is_first_ == other.is_first_;
   }
 
-  bool operator!=(const Self& other) const {
-    return !(*this == other);
+  friend bool operator!=(const Self& i, const Self& other) {
+    return !(i == other);
   }
 
  private:
@@ -293,7 +284,7 @@ private:
     this->vda_ = other.vda_;
     this->value_ = other.value_;
     is_first_ = other.is_first_;
-    if ( this->vda_ != NULL ) {
+    if ( this->vda_ != nullptr ) {
       this->cur_ = other.cur_;
     }
   }
@@ -309,9 +300,9 @@ private:
 template<class VDA, class Base_it>
 class Face_iterator_adaptor
   : public Iterator_adaptor_base<VDA,
-				 Face_iterator_adaptor<VDA,Base_it>,
-				 Base_it,
-				 typename VDA::Face>
+                                 Face_iterator_adaptor<VDA,Base_it>,
+                                 Base_it,
+                                 typename VDA::Face>
 {
  private:
   typedef Face_iterator_adaptor<VDA,Base_it>    Self;
@@ -327,10 +318,10 @@ class Face_iterator_adaptor
   friend class Iterator_adaptor_base<VDA,Self,Base_iterator,Value>;
 
  public:
-  Face_iterator_adaptor(const VDA* vda = NULL) : Base(vda) {}
+  Face_iterator_adaptor(const VDA* vda = nullptr) : Base(vda) {}
 
   Face_iterator_adaptor(const VDA* vda,
-			const Base_iterator& cur)
+                        const Base_iterator& cur)
     : Base(vda, cur) {}
 
   operator Face_handle() const {
@@ -359,9 +350,9 @@ class Face_iterator_adaptor
 template<class VDA, class Base_it>
 class Vertex_iterator_adaptor :
   public Iterator_adaptor_base<VDA,
-			       Vertex_iterator_adaptor<VDA,Base_it>,
-			       Base_it,
-			       typename VDA::Vertex>
+                               Vertex_iterator_adaptor<VDA,Base_it>,
+                               Base_it,
+                               typename VDA::Vertex>
 {
  private:
   typedef Vertex_iterator_adaptor<VDA,Base_it>    Self;
@@ -376,7 +367,7 @@ class Vertex_iterator_adaptor :
   friend class Iterator_adaptor_base<VDA,Self,Base_iterator,Value>;
 
  public:
-  Vertex_iterator_adaptor(const VDA* vda = NULL) : Base(vda) {}
+  Vertex_iterator_adaptor(const VDA* vda = nullptr) : Base(vda) {}
 
   Vertex_iterator_adaptor(const VDA* vda, const Base_iterator& cur)
     : Base(vda, cur) {}

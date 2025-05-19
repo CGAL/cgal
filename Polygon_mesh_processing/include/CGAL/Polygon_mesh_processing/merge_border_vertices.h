@@ -2,37 +2,32 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
-#include <boost/unordered_set.hpp>
-#include <boost/bind.hpp>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+#include <utility>
 
 namespace CGAL {
 
@@ -67,6 +62,87 @@ struct Less_on_point_of_target
   const VertexPointMap& vpm;
 };
 
+// Given a container of vectors of halfedges whose target are geometrically identical,
+// check that the intervals described by these pairs are either disjoint or nested.
+// This is done to ensure valid combinatorics when we merge the vertices.
+// If incompatible (overlapping) intervals are found, the pair representing the longest
+// interval (arbitrary choice) is removed from the candidate list.
+template <typename VPM, typename PolygonMesh>
+void sanitize_candidates(const std::vector<std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, std::size_t> >& cycle_hedges,
+                         std::vector<std::vector<std::size_t> >& candidate_hedges_with_id,
+                         const VPM vpm,
+                         const PolygonMesh& pm)
+{
+  if(candidate_hedges_with_id.empty())
+    return;
+
+  std::size_t nm_vertices_n = candidate_hedges_with_id.size();
+  for(std::size_t fr_id=0, fr_end=nm_vertices_n-1; fr_id<fr_end; ++fr_id)
+  {
+    std::vector<std::size_t>& first_candidates = candidate_hedges_with_id[fr_id];
+    CGAL_assertion(first_candidates.size() >= 2);
+
+    for(std::size_t i=0, ie=first_candidates.size()-1; i<ie; ++i)
+    {
+      const std::size_t first_left = cycle_hedges[first_candidates[i]].second;
+      const std::size_t first_right = cycle_hedges[first_candidates[i+1]].second;
+      CGAL_assertion(first_left < first_right);
+
+      for(std::size_t sr_id=i+1, sr_end=nm_vertices_n; sr_id<sr_end; ++sr_id)
+      {
+        std::vector<std::size_t>& second_candidates = candidate_hedges_with_id[sr_id];
+        CGAL_assertion(second_candidates.size() >= 2);
+
+        for(std::size_t j=0, je=second_candidates.size()-1; j<je; ++j)
+        {
+          const std::size_t second_left = cycle_hedges[second_candidates[j]].second;
+          const std::size_t second_right = cycle_hedges[second_candidates[j+1]].second;
+          CGAL_assertion(second_left < second_right);
+
+          // The pair of intervals should be either disjoint or nested
+          // so reject:
+          // sl -- fl -- sr -- fr and fl -- sl -- fr -- sr
+          if((second_left < first_left && first_left < second_right && second_right < first_right) ||
+             (first_left < second_left && second_left < first_right && first_right < second_right))
+          {
+            // Remove the candidate with largest range
+            const std::size_t first_candidates_range =
+                cycle_hedges[first_candidates.back()].second - cycle_hedges[first_candidates.front()].second;
+            const std::size_t second_candidates_range =
+                cycle_hedges[second_candidates.back()].second - cycle_hedges[second_candidates.front()].second;
+
+            CGAL_assertion(first_candidates_range <= cycle_hedges.size());
+            CGAL_assertion(second_candidates_range <= cycle_hedges.size());
+
+#ifdef CGAL_PMP_MERGE_BORDER_VERTICES_DEBUG
+            std::cout << "Incompatible ranges:\n";
+            std::cout << "first range: " << first_left << " to " << first_right << std::endl;
+            std::cout << "second range: " << second_left << " to " << second_right << std::endl;
+            std::cout << "Full ranges:" << std::endl;
+            std::cout << cycle_hedges[first_candidates.front()].second << " to " << cycle_hedges[first_candidates.back()].second;
+            std::cout << " (" << first_candidates.size() << " halfedges)";
+            std::cout << " at " << get(vpm, target(cycle_hedges[first_candidates.front()].first, pm)) << std::endl;
+            std::cout << cycle_hedges[second_candidates.front()].second << " to " << cycle_hedges[second_candidates.back()].second;
+            std::cout << " (" << second_candidates.size() << " halfedges)";
+            std::cout << " at " << get(vpm, target(cycle_hedges[second_candidates.front()].first, pm)) << std::endl;
+#endif
+
+            std::vector<std::vector<std::size_t> >::iterator to_remove_iter = candidate_hedges_with_id.begin();
+            if(first_candidates_range > second_candidates_range)
+              std::advance(to_remove_iter, fr_id);
+            else
+              std::advance(to_remove_iter, sr_id);
+
+            candidate_hedges_with_id.erase(to_remove_iter);
+
+            // restart the whole thing
+            return sanitize_candidates(cycle_hedges, candidate_hedges_with_id, vpm, pm);
+          }
+        } // entries of the second range
+      } // second range
+    } // entries of the first range
+  } // first range
+}
 
 // warning: cycle_hedges will be altered (sorted)
 template <class PolygonMesh, class Vpm, class halfedge_descriptor>
@@ -84,26 +160,23 @@ void detect_identical_mergeable_vertices(
   std::size_t nbv=cycle_hedges.size();
   std::size_t i=1;
 
-  std::set< std::pair<std::size_t, std::size_t> > intervals;
+  // IDs of cycle_hedges
+  std::vector<std::vector<std::size_t> > candidate_hedges_with_id;
 
-  while(i!=nbv)
+  while(i != nbv)
   {
-    if ( get(vpm, target(cycle_hedges[i].first, pm)) ==
-         get(vpm, target(cycle_hedges[i-1].first, pm)) )
+    if(get(vpm, target(cycle_hedges[i].first, pm)) ==
+       get(vpm, target(cycle_hedges[i-1].first, pm)) )
     {
-      hedges_with_identical_point_target.push_back( std::vector<halfedge_descriptor>() );
-      hedges_with_identical_point_target.back().push_back(cycle_hedges[i-1].first);
-      hedges_with_identical_point_target.back().push_back(cycle_hedges[i].first);
-      intervals.insert( std::make_pair(cycle_hedges[i-1].second, cycle_hedges[i].second) );
-      std::size_t previous = cycle_hedges[i].second;
-      while(++i!=nbv)
+      candidate_hedges_with_id.resize(candidate_hedges_with_id.size() + 1);
+      candidate_hedges_with_id.back().push_back(i-1);
+      candidate_hedges_with_id.back().push_back(i);
+      while(++i != nbv)
       {
-        if ( get(vpm, target(cycle_hedges[i].first, pm)) ==
-             get(vpm, target(cycle_hedges[i-1].first, pm)) )
+        if(get(vpm, target(cycle_hedges[i].first, pm)) ==
+           get(vpm, target(cycle_hedges[i-1].first, pm)))
         {
-          hedges_with_identical_point_target.back().push_back(cycle_hedges[i].first);
-          intervals.insert( std::make_pair(previous, cycle_hedges[i].second) );
-          previous = cycle_hedges[i].second;
+          candidate_hedges_with_id.back().push_back(i);
         }
         else
         {
@@ -113,32 +186,26 @@ void detect_identical_mergeable_vertices(
       }
     }
     else
+    {
       ++i;
+    }
   }
 
-  // check that intervals are disjoint or strictly nested
-  // if there is only one issue we drop the whole cycle.
-  /// \todo shall we try to be more conservative?
-  if (hedges_with_identical_point_target.empty()) return;
-  std::set< std::pair<std::size_t, std::size_t> >::iterator it1 = intervals.begin(),
-                                                            end2 = intervals.end(),
-                                                            end1 = cpp11::prev(end2),
-                                                            it2;
-  for (; it1!=end1; ++it1)
-    for(it2=cpp11::next(it1); it2!= end2; ++it2 )
+  // Check that intervals are disjoint or strictly nested
+  sanitize_candidates(cycle_hedges, candidate_hedges_with_id, vpm, pm);
+
+  for(const std::vector<std::size_t>& candidates : candidate_hedges_with_id)
+  {
+    hedges_with_identical_point_target.resize(hedges_with_identical_point_target.size() + 1);
+    for(const std::size_t hid : candidates)
     {
-      CGAL_assertion(it1->first<it2->first);
-      CGAL_assertion(it1->first < it1->second && it2->first < it2->second);
-      if (it1->second > it2->first && it2->second > it1->second)
-      {
-        std::cerr << "Merging is skipt to avoid bad cycle connections\n";
-        hedges_with_identical_point_target.clear();
-        return;
-      }
+      hedges_with_identical_point_target.back().push_back(cycle_hedges[hid].first);
     }
+  }
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
+//
 // merges target vertices of a list of halfedges.
 // Halfedges must be sorted in the list.
 //
@@ -155,19 +222,19 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-  halfedge_descriptor in_h_kept = *boost::begin(sorted_hedges);
+  halfedge_descriptor in_h_kept = *std::begin(sorted_hedges);
   halfedge_descriptor out_h_kept = next(in_h_kept, pm);
   vertex_descriptor v_kept = target(in_h_kept, pm);
 
   std::vector<vertex_descriptor> vertices_to_rm;
 
-  BOOST_FOREACH(halfedge_descriptor in_h_rm, sorted_hedges)
+  for(halfedge_descriptor in_h_rm : sorted_hedges)
   {
     vertex_descriptor vd = target(in_h_rm, pm);
     if (vd==v_kept) continue; // skip identical vertices (in particular this skips the first halfedge)
     if (edge(vd, v_kept, pm).second) continue; // skip null edges
     bool shall_continue=false;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v_kept, pm))
+    for(halfedge_descriptor h : halfedges_around_target(v_kept, pm))
     {
       if (edge(vd, source(h, pm), pm).second)
       {
@@ -186,40 +253,49 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
     out_h_kept=out_h_rm;
   }
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices_to_rm)
+  for(vertex_descriptor vd : vertices_to_rm)
     remove_vertex(vd, pm);
 }
 
 } // end of internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
+///
 /// merges identical vertices around a cycle of boundary edges.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param h a halfedge that belongs to a boundary cycle.
 /// @param pm the polygon mesh which contains the boundary cycle.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
-template <class PolygonMesh, class NamedParameter>
-void merge_duplicated_vertices_in_boundary_cycle(
-        typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-        PolygonMesh& pm,
-        const NamedParameter& np)
+///
+/// \see `merge_duplicated_vertices_in_boundary_cycles()`
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+void merge_duplicated_vertices_in_boundary_cycle(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                                                 PolygonMesh& pm,
+                                                 const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(vertex_point, pm));
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pm));
+
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, pm));
 
   // collect all the halfedges of the cycle
   std::vector< std::pair<halfedge_descriptor, std::size_t> > cycle_hedges;
@@ -234,7 +310,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
   std::vector< std::vector<halfedge_descriptor> > hedges_with_identical_point_target;
   internal::detect_identical_mergeable_vertices(cycle_hedges, hedges_with_identical_point_target, pm, vpm);
 
-  BOOST_FOREACH(const std::vector<halfedge_descriptor>& hedges,
+  for(const std::vector<halfedge_descriptor>& hedges :
                 hedges_with_identical_point_target)
   {
     start=hedges.front();
@@ -243,49 +319,38 @@ void merge_duplicated_vertices_in_boundary_cycle(
   }
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
+///
 /// extracts boundary cycles and merges the duplicated vertices of each cycle.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param pm the polygon mesh which contains the cycles.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa `merge_duplicated_vertices_in_boundary_cycle()`
-template <class PolygonMesh, class NamedParameter>
+template <class PolygonMesh,
+          class NamedParameters = parameters::Default_named_parameters>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
-                                                  const NamedParameter& np)
+                                                  const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
   std::vector<halfedge_descriptor> cycles;
   extract_boundary_cycles(pm, std::back_inserter(cycles));
 
-  BOOST_FOREACH(halfedge_descriptor h, cycles)
+  for(halfedge_descriptor h : cycles)
     merge_duplicated_vertices_in_boundary_cycle(h, pm, np);
-}
-
-template <class PolygonMesh>
-void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
-{
-  merge_duplicated_vertices_in_boundary_cycles(pm, parameters::all_default());
-}
-
-template <class PolygonMesh>
-void merge_duplicated_vertices_in_boundary_cycle(
-  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-  PolygonMesh& pm)
-{
-  merge_duplicated_vertices_in_boundary_cycle(h, pm, parameters::all_default());
 }
 
 } } // end of CGAL::Polygon_mesh_processing

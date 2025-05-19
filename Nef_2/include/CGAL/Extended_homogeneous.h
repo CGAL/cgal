@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_EXTENDED_HOMOGENEOUS_H
@@ -26,10 +17,10 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/Homogeneous.h> 
-#include <CGAL/Point_2.h> 
-#include <CGAL/Line_2_Line_2_intersection.h> 
-#include <CGAL/squared_distance_2.h> 
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Intersections_2/Line_2_Line_2.h>
+#include <CGAL/Distance_2/Point_2_Point_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Nef_polynomial.h>
 #undef CGAL_NEF_DEBUG
@@ -49,12 +40,12 @@ struct Is_extended_kernel<Extended_homogeneous<T> > {
 };
 
 /*{\Moptions outfile=ExtendedKernelTraits_2.man}*/
-/*{\Moptions print_title=yes }*/ 
-/*{\Msubst Extended_homogeneous ExtendedKernelTraits_2}*/ 
+/*{\Moptions print_title=yes }*/
+/*{\Msubst Extended_homogeneous ExtendedKernelTraits_2}*/
 /*{\Manpage {ExtendedKernelTraits_2}{}{Extended Kernel Traits}{K}}*/
 
 template <class RT_>
-class Extended_homogeneous : public 
+class Extended_homogeneous : public
   CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> > { public:
 
 /*{\Mdefinition |\Mname| is a kernel concept providing extended
@@ -123,7 +114,7 @@ on the extended geometric objects.}*/
   typedef typename Standard_kernel::Ray_2       Standard_ray_2;
   /*{\Mtypemember standard rays.}*/
 
-  typedef typename Standard_kernel::Aff_transformation_2 
+  typedef typename Standard_kernel::Aff_transformation_2
     Standard_aff_transformation_2;
   /*{\Mtypemember standard affine transformations.}*/
 
@@ -144,35 +135,35 @@ on the extended geometric objects.}*/
   typedef typename Base::Line_2       Line_2;
   // used only internally
 
-  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER, 
+  enum Point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
                     BOTTOMFRAME, STANDARD, TOPFRAME,
                     SECORNER, RIGHTFRAME, NECORNER };
   /*{\Menum a type descriptor for extended points.}*/
 
 
   public:
-  Point_2 epoint(const Standard_RT& m1, const Standard_RT& n1, 
-                 const Standard_RT& m2, const Standard_RT& n2, 
+  Point_2 epoint(const Standard_RT& m1, const Standard_RT& n1,
+                 const Standard_RT& m2, const Standard_RT& n2,
                                 const Standard_RT& n3) const
   { return Point_2(RT(n1,m1),RT(n2,m2),RT(n3)); }
 
   Point_2 construct_point(const Standard_line_2& l, Point_type& t) const
-  { 
+  {
     t = (Point_type)Line_to_epoint<Standard_kernel>::determine_type(l);
     Point_2 res;
     switch (t) {
       case SWCORNER:   res = epoint(-1, 0, -1, 0, 1); break;
       case NWCORNER:   res = epoint(-1, 0,  1, 0, 1); break;
-      case SECORNER:   res = epoint( 1, 0, -1, 0, 1); break; 
-      case NECORNER:   res = epoint( 1, 0,  1, 0, 1); break;  
-      case LEFTFRAME:  
-        res = epoint(-l.b(), 0,  l.a(), -l.c(), l.b()); break; 
-      case RIGHTFRAME: 
-        res = epoint( l.b(), 0, -l.a(), -l.c(), l.b()); break; 
-      case BOTTOMFRAME: 
-        res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); break; 
+      case SECORNER:   res = epoint( 1, 0, -1, 0, 1); break;
+      case NECORNER:   res = epoint( 1, 0,  1, 0, 1); break;
+      case LEFTFRAME:
+        res = epoint(-l.b(), 0,  l.a(), -l.c(), l.b()); break;
+      case RIGHTFRAME:
+        res = epoint( l.b(), 0, -l.a(), -l.c(), l.b()); break;
+      case BOTTOMFRAME:
+        res = epoint( l.b(), -l.c(), -l.a(), 0, l.a()); break;
       case TOPFRAME:
-        res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); break; 
+        res = epoint(-l.b(), -l.c(),  l.a(), 0, l.a()); break;
       default: CGAL_error_msg("EPoint type not correct!");
     }
     return res;
@@ -185,8 +176,8 @@ on the extended geometric objects.}*/
     while ( start != end ) {
       Point_2 p = *start++;
       if ( is_standard(p) ) {
-        R = (CGAL::max)(CGAL_NTS abs(p.hx()[0])/p.hw()[0], 
-			CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
+        R = (CGAL::max)(CGAL_NTS abs(p.hx()[0])/p.hw()[0],
+                        CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
         RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
         mx = ( rx.degree()>0 ? rx[1] : Standard_RT(0) ); nx = rx[0];
@@ -204,15 +195,15 @@ on the extended geometric objects.}*/
   /*{\Mtext \headerline{Interfacing the affine kernel types}}*/
 
   Point_2 construct_point(const Standard_point_2& p) const
-  /*{\Mop creates an extended point and initializes it to the 
+  /*{\Mop creates an extended point and initializes it to the
   standard point |p|.}*/
   { return Point_2(p.hx(), p.hy(), p.hw()); }
 
-  Point_2 construct_point(const Standard_point_2& p1, 
-                          const Standard_point_2& p2, 
+  Point_2 construct_point(const Standard_point_2& p1,
+                          const Standard_point_2& p2,
                           Point_type& t) const
   /*{\Xop creates an extended point and initializes it to the equivalence
-  class of all the rays underlying the oriented line |l(p1,p2)|. 
+  class of all the rays underlying the oriented line |l(p1,p2)|.
   |t| returns the type of the new extended point.}*/
   { return construct_point(Standard_line_2(p1,p2),t); }
 
@@ -221,13 +212,13 @@ on the extended geometric objects.}*/
   class of all the rays underlying the oriented line |l|. }*/
   { Point_type dummy; return construct_point(l,dummy); }
 
-  Point_2 construct_point(const Standard_point_2& p1, 
+  Point_2 construct_point(const Standard_point_2& p1,
                           const Standard_point_2& p2) const
   /*{\Mop creates an extended point and initializes it to the equivalence
   class of all the rays underlying the oriented line |l(p1,p2)|.}*/
   { return construct_point(Standard_line_2(p1,p2)); }
 
-  Point_2 construct_point(const Standard_point_2& p, 
+  Point_2 construct_point(const Standard_point_2& p,
                           const Standard_direction_2& d) const
   /*{\Mop creates an extended point and initializes it to the equivalence
   class of all the rays underlying the ray starting in |p| in direction |d|.}*/
@@ -244,7 +235,7 @@ on the extended geometric objects.}*/
   {
     CGAL_assertion(p.hx().degree()>=0 && p.hy().degree()>=0 );
     CGAL_assertion(p.hw().degree()==0);
-    if (p.hx().degree() == 0 && p.hy().degree() == 0) 
+    if (p.hx().degree() == 0 && p.hy().degree() == 0)
       return STANDARD;
     // now we are on the square frame
     RT rx = p.hx();
@@ -261,7 +252,7 @@ on the extended geometric objects.}*/
       if (sy > 0) return TOPFRAME;
       else        return BOTTOMFRAME;
     }
-    // now (rx == ry) 
+    // now (rx == ry)
     if (sx==sy) {
       if (sx < 0) return SWCORNER;
       else        return NECORNER;
@@ -285,7 +276,7 @@ on the extended geometric objects.}*/
   }
 
   Standard_line_2 standard_line(const Point_2& p) const
-  /*{\Mop returns the oriented line representing the 
+  /*{\Mop returns the oriented line representing the
   bundle of rays defining |p|.
   \precond |!\Mvar.is_standard(p)|.}*/
   { CGAL_assertion(type(p)!=STANDARD);
@@ -374,7 +365,7 @@ on the extended geometric objects.}*/
     common = RT::gcd(common,c);
     l =  Line_2(a/common,b/common,c/common);
       CGAL_NEF_TRACEN("canceled="<<l);
-    return l; 
+    return l;
   }
 
   int orientation(const Segment_2& s, const Point_2& p) const
@@ -382,23 +373,23 @@ on the extended geometric objects.}*/
   through |s|.}*/
   { typename Base::Orientation_2 _orientation =
       this->orientation_2_object();
-    return static_cast<int> ( _orientation(source(s),target(s),p) ); 
+    return static_cast<int> ( _orientation(source(s),target(s),p) );
   }
 
-  int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+  int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3)
   const
   /*{\Mop returns the orientation of |p3| with respect to the line
   through |p1p2|.}*/
   { typename Base::Orientation_2 _orientation =
       this->orientation_2_object();
-    return static_cast<int> ( _orientation(p1,p2,p3) ); 
+    return static_cast<int> ( _orientation(p1,p2,p3) );
   }
 
-  bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3) 
+  bool left_turn(const Point_2& p1, const Point_2& p2, const Point_2& p3)
   const
   /*{\Mop return true iff the |p3| is left of the line through |p1p2|.}*/
   { return orientation(p1,p2,p3) > 0; }
-   
+
   bool is_degenerate(const Segment_2& s) const
   /*{\Mop return true iff |s| is degenerate.}*/
   { typename Base::Is_degenerate_2 _is_degenerate =
@@ -428,13 +419,13 @@ on the extended geometric objects.}*/
 
   Point_2 intersection(
     const Segment_2& s1, const Segment_2& s2) const
-  /*{\Mop returns the point of intersection of the lines supported by 
+  /*{\Mop returns the point of intersection of the lines supported by
   |s1| and |s2|. \precond the intersection point exists.}*/
   { typename Base::Intersect_2 _intersect =
       this->intersect_2_object();
     typename Base::Construct_line_2 _line =
       this->construct_line_2_object();
-    Point_2 p; 
+    Point_2 p;
     CGAL::Object result =
       _intersect(_line(s1),_line(s2));
     if ( !CGAL::assign(p, result) )
@@ -450,11 +441,11 @@ on the extended geometric objects.}*/
       this->construct_direction_2_object();
     return _direction(construct_line(p1,p2)); }
 
-  bool strictly_ordered_ccw(const Direction_2& d1, 
+  bool strictly_ordered_ccw(const Direction_2& d1,
     const Direction_2& d2, const Direction_2& d3) const
   /*{\Mop returns |true| iff |d2| is in the interior of the
   counterclockwise angular sector between |d1| and |d3|.}*/
-  { 
+  {
     if ( d1 < d2 )  return ( d2 < d3 )||( d3 <= d1 );
     if ( d1 > d2 )  return ( d2 < d3 )&&( d3 <= d1 );
     return false;
@@ -476,7 +467,7 @@ on the extended geometric objects.}*/
   }
 
   bool first_pair_closer_than_second(
-    const Point_2& p1, const Point_2& p2, 
+    const Point_2& p1, const Point_2& p2,
     const Point_2& p3, const Point_2& p4) const
   /*{\Mop returns true iff $\Labs{p1-p2} < \Labs{p3-p4}$.}*/
   { return ( squared_distance(p1,p2) < squared_distance(p3,p4) ); }
@@ -485,12 +476,12 @@ on the extended geometric objects.}*/
   { CGAL_assertion(w.degree()==0&&w!=RT(0)&& r2[1]!=Standard_RT(0));
     Standard_RT w_res = w[0]*r2[1];
     int sm2 = CGAL_NTS sign(r2[1]);
-    RT r2_res = RT(Standard_RT(0),sm2 * w_res); 
+    RT r2_res = RT(Standard_RT(0),sm2 * w_res);
     RT r1_res = RT(r2[1]*r1[0]-r1[1]*r2[0], w[0]*r1[1]*sm2);
     r1 = r1_res; r2 = r2_res; w = w_res;
   }
 
-  Point_2 transform(const Point_2& p, 
+  Point_2 transform(const Point_2& p,
                     const Standard_aff_transformation_2& t) const
   {
     RT tpx = t.homogeneous(0,0)*p.hx() + t.homogeneous(0,1)*p.hy() +
@@ -501,7 +492,7 @@ on the extended geometric objects.}*/
     if ( is_standard(p) ) {
       Point_2 res(tpx,tpy,tpw); simplify(res);
       return res;
-    } 
+    }
     RT tpxa = CGAL_NTS abs(tpx);
     RT tpya = CGAL_NTS abs(tpy);
     if ( tpxa > tpya ) {

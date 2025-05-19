@@ -7,9 +7,7 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  type "ORTHOGONAL"
-}
+Viewpoint { type "ORTHOGONAL" }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 

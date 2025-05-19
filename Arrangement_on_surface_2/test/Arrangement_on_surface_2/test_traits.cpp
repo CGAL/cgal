@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+
 #include "test_configuration.h"
 #include <iostream>
 
@@ -23,7 +23,7 @@ int main()
 {
 //  bool   UNTESTED_GEOM_TRAITS_AS_LEDA_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: LEDA is not installed, "
+            << "NOTE: LEDA is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -38,7 +38,7 @@ int main()
 
 //  bool   UNTESTED_GEOM_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: GMP and/or MPFI are not installed, "
+            << "NOTE: GMP and/or MPFI are not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -52,7 +52,7 @@ int main()
 {
 //  bool   UNTESTED_GEOM_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "NOTE: CORE is not installed, "
+            << "NOTE: CORE is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
 {
 
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 #endif
 
   Geom_traits traits;
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
    * and read_xcurve() for construction from "IO_base_test.h"
    *
    * read_point(), read_curve() and read_xcurve() from "IO_base_test.h"
-   * construct the appriopriate point, curve and xcurve using appropriate
+   * construct the appropriate point, curve and xcurve using appropriate
    * GEOM_TRAITS i.e. in this case POLYCURVE_CONIC_GEOM_TRAITS and using
    * overridden functions. Note: these functions only make 1 curve. So if we
    * want a polycurve, it should be taken care of in these function.

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU
 
@@ -23,30 +14,35 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Implicit_surface_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 
 #include <functional>
-#include <CGAL/function.h>
+#include <functional>
 
 namespace CGAL {
 
   template<
     typename GT,
-    typename Function_ = cpp11::function<typename GT::FT(typename GT::Point_3)>
+    typename Function_ = std::function<typename GT::FT(typename GT::Point_3)>
     // The type of the argument `Function` will be ignored anyway.
     // The parameter is here only for backward-compatibility.
     >
-  class Implicit_surface_3 
+  class Implicit_surface_3
   {
   public:
     typedef GT Geom_traits;
     typedef typename Geom_traits::Sphere_3 Sphere_3;
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
-    typedef cpp11::function<FT(Point)> Function;
+    typedef std::function<FT(Point)> Function;
     typedef Implicit_surface_3<Geom_traits, Function_> Self;
 
     Function& function() { return func; }
@@ -56,15 +52,15 @@ namespace CGAL {
       Self> Surface_mesher_traits_3;
 
     Implicit_surface_3(Function f,
-		       const Sphere_3 bounding_sphere,
-		       const FT error_bound = FT(1e-3),
-		       Geom_traits gt = Geom_traits())
+                       const Sphere_3 bounding_sphere,
+                       const FT error_bound = FT(1e-3),
+                       Geom_traits gt = Geom_traits())
       : func(f),
-	sphere(bounding_sphere),
-	gt(gt)
+        sphere(bounding_sphere),
+        gt(gt)
     {
       squared_error = error_bound * error_bound;
-      squared_error = squared_error * 
+      squared_error = squared_error *
         gt.compute_squared_radius_3_object()(bounding_sphere);
     }
 
@@ -114,8 +110,8 @@ namespace CGAL {
   template <typename GT, typename Function>
   Implicit_surface_3<GT, Function>
   make_implicit_surface_3(GT, Function f,
-			  typename GT::Sphere_3 sphere,
-			  typename GT::FT error_bound)
+                          typename GT::Sphere_3 sphere,
+                          typename GT::FT error_bound)
   {
     typedef Implicit_surface_3<GT> surface;
     return surface(f, sphere, error_bound);
@@ -126,7 +122,7 @@ namespace CGAL {
 //   {
 //     typedef Implicit_surface_3<GT, Function> Surface_type;
 //     typedef typename Surface_mesher::Implicit_surface_oracle_3<GT,
-// 							     Surface_type> Type;
+//                                                              Surface_type> Type;
 //     typedef Type type; // Boost meta-programming compatibility
 //   };
 

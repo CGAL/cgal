@@ -20,10 +20,10 @@
 
 template <typename AK>
 void test_polynomial_utils(){
-  //CGAL::set_pretty_mode(std::cout);
-  
+  //CGAL::IO::set_pretty_mode(std::cout);
+
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
 //  typedef CGAL::Sqrt_extension<Integer,Integer> EXT_INT;
 //  typedef CGAL::Sqrt_extension<Rational,Integer> EXT_RAT;
 
@@ -31,14 +31,14 @@ void test_polynomial_utils(){
   typedef CGAL::Polynomial_traits_d<POLY_INT_3>     PT_3;
   typedef typename PT_3::Innermost_coefficient_type ICOEFF;
   typedef typename PT_3::Coefficient_type           COEFF;
-  
-  typename CGAL::Polynomial_traits_d<POLY_INT_3>::Shift shift; 
+
+  typename CGAL::Polynomial_traits_d<POLY_INT_3>::Shift shift;
   POLY_INT_3 x = shift(POLY_INT_3(1),1,0);
   POLY_INT_3 y = shift(POLY_INT_3(1),1,1);
   POLY_INT_3 z = shift(POLY_INT_3(1),1,2);
 
-  POLY_INT_3 p = -5*x*x*x*y+7*z*z*y;  
-  //std::cout << p << std::endl; 
+  POLY_INT_3 p = -5*x*x*x*y+7*z*z*y;
+  //std::cout << p << std::endl;
 
 // GetCoefficient
   assert(CGAL::get_coefficient(x*x*y+z,1)== 1);
@@ -78,23 +78,23 @@ void test_polynomial_utils(){
 // Evaluate
   assert(CGAL::evaluate(p,COEFF(2)) ==  (-5*x*x*x + 28)*y );
 // EvaluateHomogeneous
-  assert(CGAL::evaluate_homogeneous(p,COEFF(2),COEFF(3)) 
+  assert(CGAL::evaluate_homogeneous(p,COEFF(2),COEFF(3))
       == (-45*x*x*x + 28)*y );
 // Substitute
-  std::vector<Rational> vec; 
+  std::vector<Rational> vec;
   vec.push_back(Rational(1));
   vec.push_back(Rational(2));
   vec.push_back(Rational(3));
-  assert(CGAL::substitute(p,vec.begin(), vec.end()) == Rational(116)); 
+  assert(CGAL::substitute(p,vec.begin(), vec.end()) == Rational(116));
 // IsZeroAt
-  assert(CGAL::is_zero_at(p,vec.begin(), vec.end()) == false); 
+  assert(CGAL::is_zero_at(p,vec.begin(), vec.end()) == false);
 // SignAt
   assert(CGAL::sign_at(p,vec.begin(), vec.end()) == CGAL::POSITIVE);
   vec.push_back(Rational(4));
 // SubstituteHomogeneous
-  assert(CGAL::substitute_homogeneous(p,vec.begin(), vec.end()) == Rational(494)); 
+  assert(CGAL::substitute_homogeneous(p,vec.begin(), vec.end()) == Rational(494));
 // IsZeroAtHomogeneous
-  assert(CGAL::is_zero_at_homogeneous(p,vec.begin(), vec.end()) == false); 
+  assert(CGAL::is_zero_at_homogeneous(p,vec.begin(), vec.end()) == false);
 // SignAtHomogeneous
   assert(CGAL::sign_at_homogeneous(p,vec.begin(), vec.end()) == CGAL::POSITIVE);
 
@@ -102,7 +102,7 @@ void test_polynomial_utils(){
   assert(CGAL::compare(p,p)  == CGAL::EQUAL);
   assert(CGAL::compare(p,-p) == CGAL::LARGER);
   assert(CGAL::compare(p,2*p) == CGAL::SMALLER);
-  
+
 // UnivariateContent
   assert(CGAL::univariate_content(p) == y);
 // MultivariateContent
@@ -114,7 +114,7 @@ void test_polynomial_utils(){
     std::vector<std::pair<POLY_INT_3,int> > sqff_vec;
     CGAL::square_free_factorize(p*p,std::back_inserter(sqff_vec));
     POLY_INT_3 tmp(1);
-    assert(sqff_vec.size() >= 2);  
+    assert(sqff_vec.size() >= 2);
     for(unsigned int i = 0; i < sqff_vec.size();i++){
       tmp *= CGAL::ipower(sqff_vec[i].first,sqff_vec[i].second);
     }
@@ -125,24 +125,24 @@ void test_polynomial_utils(){
 // IsSquareFree
   assert(CGAL::is_square_free(p*p*y) == false);
   assert(CGAL::is_square_free(p) == true);
-  
-  
+
+
 // PseudoDivision
   {
     POLY_INT_3 q,r;
     COEFF D;
     POLY_INT_3 g = 5*z-x*y*z;
     CGAL::pseudo_division(p,g,q,r,D);
-    assert(D*p == q*g+r);  
+    assert(D*p == q*g+r);
 // PseudoDivisionQuotient
-    assert(CGAL::pseudo_division_quotient(p,g) == q); 
+    assert(CGAL::pseudo_division_quotient(p,g) == q);
 // PseudoDivisionRemainder
-    assert(CGAL::pseudo_division_remainder(p,g) == r); 
+    assert(CGAL::pseudo_division_remainder(p,g) == r);
   }
 // GcdUpToConstantFactor
   assert(CGAL::gcd_up_to_constant_factor(5*p,5*y) == y);
 // IntegralDivisionUpToConstantFactor
-  assert(CGAL::integral_division_up_to_constant_factor(-5*p,y) 
+  assert(CGAL::integral_division_up_to_constant_factor(-5*p,y)
       == CGAL::integral_division(p,y));
 // UnivariateContentUpToConstantFactor
   assert(CGAL::univariate_content_up_to_constant_factor(-5*p) == y);
@@ -152,7 +152,7 @@ void test_polynomial_utils(){
     CGAL::square_free_factorize_up_to_constant_factor
       (25*p*p,std::back_inserter(sqff_vec));
     POLY_INT_3 tmp(1);
-    assert(sqff_vec.size() >= 2);  
+    assert(sqff_vec.size() >= 2);
     for(unsigned int i = 0; i < sqff_vec.size();i++){
       tmp *= CGAL::ipower(sqff_vec[i].first,sqff_vec[i].second);
     }
@@ -192,13 +192,13 @@ void test_polynomial_utils(){
   assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2),2) == x*x+y*y+4*z*z);
   assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2)) ==   x*x+y*y+4*z*z);
 //ScaleHomogeneous
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),0) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),0)
       == 4*x*x+9*y*y+9*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),1) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),1)
       == 9*x*x+4*y*y+9*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),2) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),2)
       == 9*x*x+9*y*y+4*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3)) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3))
       == 9*x*x+9*y*y+4*z*z);
 //Resultant
   assert(CGAL::is_zero(CGAL::resultant(p,p)));
@@ -208,48 +208,48 @@ void test_polynomial_utils(){
 
 template <typename AK>
 void test_canonicalize(){
-  
+
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
   typedef CGAL::Sqrt_extension<Integer,Integer> EXT_INT;
   typedef CGAL::Sqrt_extension<Rational,Integer> EXT_RAT;
 
   {
-    typedef Integer NT; 
+    typedef Integer NT;
     typedef typename CGAL::Polynomial_type_generator<NT,2>::Type POLY_2;
     POLY_2 x = CGAL::shift(POLY_2(1),1,0);
     POLY_2 y = CGAL::shift(POLY_2(1),1,1);
     POLY_2 p = -5*x*x*x*y+7*y;
-    POLY_2 q = CGAL::canonicalize(2 * p); 
+    POLY_2 q = CGAL::canonicalize(2 * p);
     assert(CGAL::innermost_leading_coefficient(q) == NT(5));
     assert(CGAL::canonicalize(p) == CGAL::canonicalize(-p));
   }{
-    typedef Rational NT; 
+    typedef Rational NT;
     typedef typename CGAL::Polynomial_type_generator<NT,2>::Type POLY_2;
     POLY_2 x = CGAL::shift(POLY_2(1),1,0);
     POLY_2 y = CGAL::shift(POLY_2(1),1,1);
     POLY_2 p = -5*x*x*x*y+7*y;
-    POLY_2 q = CGAL::canonicalize(2 * p); 
+    POLY_2 q = CGAL::canonicalize(2 * p);
     assert(CGAL::innermost_leading_coefficient(q) == NT(1));
     assert(CGAL::canonicalize(p) == CGAL::canonicalize(-p));
   }{
-    typedef EXT_INT NT; 
+    typedef EXT_INT NT;
     typedef typename CGAL::Polynomial_type_generator<NT,2>::Type POLY_2;
     POLY_2   x = CGAL::shift(POLY_2(1),1,0);
     POLY_2   y = CGAL::shift(POLY_2(1),1,1);
     POLY_2   p = -5*x*x*x*y+7*y;
     EXT_INT ex(Integer(2),Integer(5),Integer(7));
-    POLY_2   q = CGAL::canonicalize(ex * p); 
+    POLY_2   q = CGAL::canonicalize(ex * p);
     assert(CGAL::innermost_leading_coefficient(q) == NT(5));
     assert(CGAL::canonicalize(p) == CGAL::canonicalize(-p));
   }{
-    typedef EXT_RAT NT; 
+    typedef EXT_RAT NT;
     typedef typename CGAL::Polynomial_type_generator<NT,2>::Type POLY_2;
     POLY_2   x = CGAL::shift(POLY_2(1),1,0);
     POLY_2   y = CGAL::shift(POLY_2(1),1,1);
     POLY_2   p = -5*x*x*x*y+7*y;
     EXT_RAT ex(Integer(2),Integer(5),Integer(7));
-    POLY_2   q = CGAL::canonicalize(ex * p); 
+    POLY_2   q = CGAL::canonicalize(ex * p);
     assert(CGAL::innermost_leading_coefficient(q) == NT(1));
     assert(CGAL::canonicalize(p) == CGAL::canonicalize(-p));
   }
@@ -257,10 +257,10 @@ void test_canonicalize(){
 
 
 int main(){
-#if CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 
-  typedef CGAL::Arithmetic_kernel AK; 
+#if CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+  typedef CGAL::Arithmetic_kernel AK;
   test_polynomial_utils<AK>();
   test_canonicalize<AK>();
-#endif 
+#endif
 
 }

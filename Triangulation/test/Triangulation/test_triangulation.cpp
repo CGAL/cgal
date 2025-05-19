@@ -1,13 +1,4 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
-#include <iostream>
-int main()
-{
-  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
-}
-
-#else
-
+#include <CGAL/config.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
@@ -25,7 +16,7 @@ void test(const int d, const string & type, int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that T contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename T::Full_cell_handle Full_cell_handle;
     typedef typename T::Point Point;
     typedef typename T::Geom_traits::RT RT;
@@ -44,7 +35,7 @@ void test(const int d, const string & type, int N)
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 1.0, rng);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+    std::copy_n(rand_it, N, std::back_inserter(points));
 
     cerr << '\n' << points.size() << " points in the grid.";
 
@@ -107,11 +98,11 @@ void test(const int d, const string & type, int N)
     assert( tri.maximal_dimension() == tri2.maximal_dimension() );
     assert( tri.number_of_vertices() == tri2.number_of_vertices() );
     assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
-    
+
     std::ofstream ofs("tri", std::ios::binary);
     ofs << tri;
     ofs.close();
-    
+
     std::ifstream ifs("tri", std::ios::binary);
     ifs >> tri2;
     ifs.close();
@@ -154,7 +145,7 @@ void go(int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);
@@ -167,5 +158,3 @@ int main(int argc, char **argv)
     cerr << std::endl;
     return 0;
 }
-
-#endif

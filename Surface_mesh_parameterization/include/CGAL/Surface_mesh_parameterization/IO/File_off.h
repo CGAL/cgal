@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -32,12 +23,11 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/circulator.h>
 
-#include <boost/foreach.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cstddef>
 #include <fstream>
 #include <sstream>
@@ -88,7 +78,7 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
     halfedge_descriptor hd = halfedge(fd, mesh);
 
     os << "3";
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
+    for(vertex_descriptor vd : vertices_around_face(hd, mesh)){
       os << " " << renumbering_vector[get(vimap, vd)];
     }
     os << '\n';
@@ -106,11 +96,11 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef boost::unordered_map<vertex_descriptor, std::size_t> Vertex_index_map;
+  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_index_map;
   Vertex_index_map vium;
   boost::associative_property_map<Vertex_index_map> vimap(vium);
 
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
@@ -122,16 +112,16 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   std::ostringstream out_vertices, out_faces;
   std::size_t vertices_counter = 0, faces_counter = 0;
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices){
+  for(vertex_descriptor vd : vertices){
     put(vimap, vd, vertices_counter++);
     out_vertices << get(uvmap, vd) << " 0" << '\n';
   }
 
-  BOOST_FOREACH(face_descriptor fd, faces){
+  for(face_descriptor fd : faces){
     halfedge_descriptor hd = halfedge(fd, mesh);
 
     out_faces << "3";
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
+    for(vertex_descriptor vd : vertices_around_face(hd, mesh)){
       out_faces << " " << get(vimap, vd);
     }
     out_faces << '\n';

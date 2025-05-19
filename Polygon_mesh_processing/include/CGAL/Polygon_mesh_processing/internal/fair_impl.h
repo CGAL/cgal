@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -28,7 +19,7 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/boost/graph/helpers.h>
 #ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
 #endif
@@ -68,13 +59,13 @@ public:
     , weight_calculator(weight_calculator)
     , ppmap(vpmap)
   { }
-  
+
 private:
   double sum_weight(vertex_descriptor v) {
   double weight = 0;
   Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
   do {
-    weight += weight_calculator.w_ij(*circ);
+    weight += CGAL::to_double(weight_calculator.w_ij(*circ));
     } while(++circ != done);
     return weight;
   }
@@ -84,8 +75,8 @@ private:
   void compute_row(
     vertex_descriptor v,
     int row_id,                            // which row to insert in [ frees stay left-hand side ]
-    Solver_matrix& matrix, 
-    double& x, double& y, double& z,               // constants transfered to right-hand side
+    Solver_matrix& matrix,
+    double& x, double& y, double& z,               // constants transferred to right-hand side
     double multiplier,
     const std::map<vertex_descriptor, std::size_t>& vertex_id_map,
     unsigned int depth)
@@ -96,7 +87,7 @@ private:
         int col_id = static_cast<int>(vertex_id_it->second);
         matrix.add_coef(row_id, col_id, multiplier);
       }
-      else { 
+      else {
         typename boost::property_traits<VertexPointMap>::reference p = get(ppmap, v);
         x += multiplier * - to_double(p.x());
         y += multiplier * - to_double(p.y());
@@ -104,11 +95,11 @@ private:
       }
     }
     else {
-      double w_i = weight_calculator.w_i(v);
+      double w_i = CGAL::to_double(weight_calculator.w_i(v));
 
       Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
       do {
-        double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
+        double w_i_w_ij = w_i * CGAL::to_double(weight_calculator.w_ij(*circ)) ;
 
         vertex_descriptor nv = target(opposite(*circ,pmesh),pmesh);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
@@ -127,12 +118,12 @@ public:
   {
     int depth = static_cast<int>(fc) + 1;
     if(depth < 0 || depth > 3) {
-      CGAL_warning(!"Continuity should be between 0 and 2 inclusively!");
-      return false; 
+      CGAL_warning_msg(false, "Continuity should be between 0 and 2 inclusively!");
+      return false;
     }
 
-    std::set<vertex_descriptor> interior_vertices(boost::begin(vertices),
-                                                  boost::end(vertices));
+    std::set<vertex_descriptor> interior_vertices(std::begin(vertices),
+                                                  std::end(vertices));
     if(interior_vertices.empty()) { return true; }
 
     #ifdef CGAL_PMP_FAIR_DEBUG
@@ -145,10 +136,10 @@ public:
 
     std::map<vertex_descriptor, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       if( !vertex_id_map.insert(std::make_pair(vd, id)).second ) {
-        CGAL_warning(!"Duplicate vertex is found!");
+        CGAL_warning_msg(false, "Duplicate vertex is found!");
         return false;
       }
       ++id;
@@ -156,20 +147,20 @@ public:
 
     Solver_matrix A(nb_vertices);
 
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       int v_id = static_cast<int>(vertex_id_map[vd]);
       compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
-    std:cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    std::cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
     #endif
 
     // factorize
     double D;
     bool prefactor_ok = solver.factor(A, D);
     if(!prefactor_ok) {
-      CGAL_warning(!"pre_factor failed!");
+      CGAL_warning_msg(false, "pre_factor failed!");
       return false;
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
@@ -179,27 +170,27 @@ public:
     // solve
     bool is_all_solved = solver.linear_solver(Bx, X) && solver.linear_solver(By, Y) && solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
-      CGAL_warning(!"linear_solver failed!"); 
-      return false; 
+      CGAL_warning_msg(false, "linear_solver failed!");
+      return false;
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
     std::cerr << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
     #endif
 
-    
-    /* This relative error is to large for cases that the results are not good */ 
+
+    /* This relative error is to large for cases that the results are not good */
     /*
     double rel_err_x = (A.eigen_object()*X - Bx).norm() / Bx.norm();
     double rel_err_y = (A.eigen_object()*Y - By).norm() / By.norm();
     double rel_err_z = (A.eigen_object()*Z - Bz).norm() / Bz.norm();
-    CGAL_TRACE_STREAM << "rel error: " << rel_err_x 
+    CGAL_TRACE_STREAM << "rel error: " << rel_err_x
                                 << " " << rel_err_y
                                 << " " << rel_err_z << std::endl;
                                 */
 
-    // update 
+    // update
     id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       put(ppmap, vd, Point_3(X[id], Y[id], Z[id]));
       ++id;

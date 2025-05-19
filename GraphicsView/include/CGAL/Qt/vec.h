@@ -4,27 +4,19 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifndef QGLVIEWER_VEC_H
 #define QGLVIEWER_VEC_H
 
+#include <QtGlobal>
+
 #include <iostream>
 #include <math.h>
-
-#include <QDomElement>
 
 // Included by all files as vec.h is at the end of the include hierarchy
 #include <CGAL/export/Qt.h>
@@ -115,13 +107,14 @@ and can hence be used in place of Vec. See also operator const qreal*() .*/
   // Vec(const Vec& v) : x(v.x), y(v.y), z(v.z) {}
 
   /*! Equal operator. */
+#ifdef DOXYGEN_RUNNING
   Vec &operator=(const Vec &v) {
     x = v.x;
     y = v.y;
     z = v.z;
     return *this;
   }
-
+#endif
   /*! Set the current value. May be faster than using operator=() with a
    * temporary Vec(x,y,z). */
   void setValue(qreal X, qreal Y, qreal Z) {
@@ -341,12 +334,6 @@ Normalizing a null vector will result in \c NaN values. */
   void projectOnPlane(const Vec &normal);
   //@}
 
-  /*! @name XML representation */
-  //@{
-  explicit Vec(const QDomElement &element);
-  QDomElement domElement(const QString &name, QDomDocument &document) const;
-  void initFromDOMElement(const QDomElement &element);
-//@}
 
 #ifdef DOXYGEN
   /*! @name Output stream */

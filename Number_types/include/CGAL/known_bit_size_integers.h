@@ -1,24 +1,15 @@
-// Copyright (c) 1999-2005  
+// Copyright (c) 1999-2005
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
@@ -33,29 +24,30 @@
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/known_bit_size_integers.h>"
-#define CGAL_REPLACEMENT_HEADER "<boost/cstdint.hpp>"
-#include <CGAL/internal/deprecation_warning.h>
+#define CGAL_REPLACEMENT_HEADER "<cstdint>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/number_type_basic.h>
 #include <boost/cstdint.hpp>
+#include <cstdint>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {
 
-  typedef boost::int8_t    Integer8;
-  typedef boost::int16_t   Integer16;
-  typedef boost::int32_t   Integer32;
+  typedef std::int8_t    Integer8;
+  typedef std::int16_t   Integer16;
+  typedef std::int32_t   Integer32;
 
-  typedef boost::uint8_t   UInteger8;
-  typedef boost::uint16_t  UInteger16;
-  typedef boost::uint32_t  UInteger32;
+  typedef std::uint8_t   UInteger8;
+  typedef std::uint16_t  UInteger16;
+  typedef std::uint32_t  UInteger32;
 
 #ifndef BOOST_NO_INT64_T
 // this macro is still provided but its use is discouraged
 #   define CGAL_HAS_INTEGER64
-  typedef boost::int64_t   Integer64;
-  typedef boost::uint64_t  UInteger64;
+  typedef std::int64_t   Integer64;
+  typedef std::uint64_t  UInteger64;
 #endif
 
 } //namespace CGAL

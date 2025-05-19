@@ -1,25 +1,16 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -31,10 +22,11 @@
 #include <CGAL/config.h>
 #include <utility>
 #include <functional>
+#include <type_traits>
 #include <boost/functional/hash.hpp>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
-// We recommend that you use cpp11::tuple or cpp11::array instead
+// We recommend that you use std::tuple or std::array instead
 // for new uses.
 
 namespace CGAL {
@@ -290,33 +282,6 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
                    (!(y.third < x.third) && x.fourth < y.fourth)) ) ) ) );
 }
 
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || \
-    defined(CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES) || \
-    BOOST_VERSION < 105000 || \
-    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
-template <class T, class Compare>
-inline
-std::pair<  T, T >
-make_sorted_pair(const T& t1, const T& t2, Compare comp)
-{
-  return comp(t1, t2) ? std::make_pair(t1,t2) : std::make_pair(t2,t1);
-}
-
-template <class T>
-inline
-std::pair<T,T>
-make_sorted_pair(const T& t1, const T& t2)
-{
-  return make_sorted_pair(t1,t2, std::less<T>());
-}
-#else
-
-} //end of namespace CGAL
-
-#include <type_traits>
-
-namespace CGAL {
-
 struct Default_using_type
 {
   template <typename Argument, typename Value>
@@ -330,22 +295,8 @@ struct Default_using_type
   };
 };
 
-template <class T_ = Default_using_type>
-struct less_cpp14
-{
-  template <class T1, class T2>
-  bool operator() (T1&& t1, T2&& t2) const
-  {
-    typedef typename Default_using_type::Get<
-      T_,
-      typename std::common_type<typename std::decay<T1>::type,
-                                typename std::decay<T2>::type> >::type T;
-    return std::less<T>()(t1,t2);
-  }
-};
-
 template <class T = Default_using_type,
-          class Compare = less_cpp14<T>,
+          class Compare = std::less<>,
           class T1, class T2,
           class A = typename Default_using_type::Get<T,
             typename std::common_type<
@@ -357,8 +308,65 @@ inline P make_sorted_pair(T1&& t1, T2&& t2, Compare comp = Compare())
   return comp(t1, t2) ? P(std::forward<T1>(t1), std::forward<T2>(t2))
                       : P(std::forward<T2>(t2), std::forward<T1>(t1));
 }
-#endif
+
+template <class Pair>
+auto make_sorted_pair(Pair&& pair) {
+  auto&& [a, b] = std::forward<Pair>(pair);
+  return make_sorted_pair(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
+}
+
+template <class F>
+class [[nodiscard]] Scope_exit {
+  CGAL_NO_UNIQUE_ADDRESS F exit_function;
+
+public:
+  template <typename G>
+  explicit Scope_exit(G&& g, std::enable_if_t<!std::is_same_v<std::decay_t<G>, Scope_exit>>* = nullptr)
+      : exit_function(std::forward<G>(g))
+  {
+  }
+
+  Scope_exit(const Scope_exit&) = delete;
+  Scope_exit& operator=(const Scope_exit&) = delete;
+  Scope_exit(Scope_exit&&) = delete;
+  Scope_exit& operator=(Scope_exit&&) = delete;
+
+  ~Scope_exit() {
+    exit_function();
+  }
+};
+
+template<typename F> Scope_exit(F) -> Scope_exit<F>;
+
+template <typename F>
+Scope_exit<F> make_scope_exit(F&& f) {
+  return Scope_exit<F>(std::forward<F>(f));
+}
 
 } //namespace CGAL
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+template <class T1, class T2, class T3>
+struct hash<CGAL::Triple<T1,T2,T3>>
+{
+  std::size_t operator()(const CGAL::Triple<T1,T2,T3>& t) const
+  {
+    return hash_value(t);
+  }
+};
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // std namespace
 
 #endif // CGAL_UTILITY_H

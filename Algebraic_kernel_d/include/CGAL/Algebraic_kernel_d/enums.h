@@ -1,21 +1,12 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -40,14 +31,14 @@ namespace internal {
 } // namespace internal
 
 /*!
- * \brief Represents different strategies how to handle 
+ * \brief represents different strategies how to handle
  * degenerate cases during the analysis
  *
- * Currently, there are two possible strategies implemented. See the 
+ * Currently, there are two possible strategies implemented. See the
  * constructor of \c Curve_analysis_2 for more details.
  */
 enum Degeneracy_strategy {
-    
+
     SHEAR_STRATEGY = 0,
     EXCEPTION_STRATEGY = 1,
     SHEAR_ONLY_AT_IRRATIONAL_STRATEGY = 2

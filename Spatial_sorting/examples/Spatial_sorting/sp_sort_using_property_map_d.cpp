@@ -33,30 +33,43 @@ int main()
 {
   double coords[] ={ 1.0, 1.0, 1.0, 1.0,
                      2.0, 2.0, 2.0, 2.0 };
-  
+
   Data_vector points;
   points.push_back(std::make_pair(Point_d(4,coords  ,coords+4) , 1));
   points.push_back(std::make_pair(Point_d(4,coords+4,coords+8) , 2));
 
   std::vector<Vect_ppmap::key_type> indices;
-  indices.reserve(points.size());  
-  
+  indices.reserve(points.size());
+
   std::copy(
     boost::counting_iterator<Vect_ppmap::key_type>(0),
     boost::counting_iterator<Vect_ppmap::key_type>(points.size()),
     std::back_inserter(indices) );
-  
-  CGAL::spatial_sort( 
+
+  std::cout << "Order using default policy (median)\n";
+  CGAL::spatial_sort(
     indices.begin(),
     indices.end(),
-    Search_traits_d(Vect_ppmap(points)) );
+    Search_traits_d(Vect_ppmap(points))
+   );
 
-  std::vector<Vect_ppmap::key_type>::iterator it=indices.begin();
-  for (;it!=indices.end();++it)
-    std::cout << points[*it].second << " ";
+  for (auto i : indices)
+    std::cout << points[i].second << " ";
+  std::cout << std::endl;
+
+  std::cout << "Order using middle policy\n";
+  CGAL::spatial_sort(
+    indices.begin(),
+    indices.end(),
+    Search_traits_d(Vect_ppmap(points)),
+    CGAL::Hilbert_sort_middle_policy()
+   );
+
+  for (auto i : indices)
+    std::cout << points[i].second << " ";
   std::cout << std::endl;
 
   std::cout << "done" << std::endl;
-  
+
   return 0;
 }

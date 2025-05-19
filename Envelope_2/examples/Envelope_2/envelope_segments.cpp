@@ -10,6 +10,7 @@
 
 #include <list>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Exact_rational                            Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
@@ -23,7 +24,7 @@ typedef CGAL::Envelope_diagram_1<Traits_2>              Diagram_1;
 
 int main ()
 {
-  // Consrtuct the input segments and label them 'A' ... 'H'.
+  // Construct the input segments and label them 'A' ... 'H'.
   std::list<Labeled_segment_2>   segments;
 
   segments.push_back (Labeled_segment_2 (Segment_2 (Point_2 (0, 1),
@@ -74,7 +75,7 @@ int main ()
 
     e = v->right();
   }
-  CGAL_assertion (e->is_empty());
+  assert(e->is_empty());
   std::cout << "Edge: [empty]" << std::endl;
 
   return (0);

@@ -2,3 +2,6 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - IO Streams"
 
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true

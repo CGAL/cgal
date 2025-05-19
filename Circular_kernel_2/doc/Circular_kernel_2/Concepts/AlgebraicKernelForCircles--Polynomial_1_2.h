@@ -3,15 +3,15 @@
 \ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalConcept
 
-Concept to represent bivariate polynomials of degree 1 whose 
-coefficients are of a type that is a model of the concept 
-`RingNumberType`. 
+Concept to represent bivariate polynomials of degree 1 whose
+coefficients are of a type that is a model of the concept
+`RingNumberType`.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible 
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel CGAL::Polynomial_1_2 
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polynomial_1_2}
+\cgalHasModelsEnd
 
 \sa `AlgebraicKernelForCircles`
 
@@ -19,8 +19,6 @@ coefficients are of a type that is a model of the concept
 
 class AlgebraicKernelForCircles::Polynomial_1_2 {
 public:
-
-/// @}
 
 }; /* end AlgebraicKernelForCircles::Polynomial_1_2 */
 

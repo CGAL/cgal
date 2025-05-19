@@ -16,7 +16,7 @@
 #include <CGAL/Qt/PointsGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Largest_empty_rectangle_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -34,14 +34,14 @@ class MainWindow :
   public Ui::Largest_empty_rectangle_2
 {
   Q_OBJECT
-  
+
 private:
 
   Iso_rectangle_2 square;
   Largest_empty_iso_rectangle_2 ler;
   CGAL::Qt::Converter<K> convert;
-  std::vector<Point_2> points; 
-  QGraphicsScene scene;  
+  std::vector<Point_2> points;
+  QGraphicsScene scene;
 
   CGAL::Qt::PointsGraphicsItem<std::vector<Point_2> > * pgi;
   QGraphicsRectItem * rgi;
@@ -62,8 +62,8 @@ private:
     G pg(radius);
     bool ok = false;
 
-    const int number_of_points = 
-      QInputDialog::getInt(this, 
+    const int number_of_points =
+      QInputDialog::getInt(this,
                                tr("Number of random points"),
                                tr("Enter number of random points"),
                                100,
@@ -85,7 +85,7 @@ private:
       ler.insert(points.back());
       ++pg;
     }
-    
+
     // default cursor
     QApplication::restoreOverrideCursor();
     Q_EMIT( changed());
@@ -98,6 +98,8 @@ public Q_SLOTS:
 
   void on_actionClear_triggered();
 
+  void on_actionOpen_triggered();
+
   void processInput(CGAL::Object);
 
   void on_actionRecenter_triggered();
@@ -105,7 +107,7 @@ public Q_SLOTS:
   void on_actionGeneratePointsInSquare_triggered();
   void on_actionGeneratePointsInDisc_triggered();
   void clear();
-
+  void open(QString fileName);
   void update_largest_empty_rectangle();
 
 Q_SIGNALS:
@@ -134,10 +136,10 @@ MainWindow::MainWindow()
     frame[i]->setPen(QPen(::Qt::black, 0));
 
   QObject::connect(this, SIGNAL(changed()),
-		   pgi, SLOT(modelChanged()));
+                   pgi, SLOT(modelChanged()));
 
   QObject::connect(this, SIGNAL(changed()),
-		   this, SLOT(update_largest_empty_rectangle()));
+                   this, SLOT(update_largest_empty_rectangle()));
 
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   rgi->setBrush(QBrush(Qt::cyan));
@@ -149,17 +151,17 @@ MainWindow::MainWindow()
   scene.addItem(frame[2]);
   scene.addItem(frame[3]);
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
- 
+
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1, false); // inputs a list with one point
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-   
+                   this, SLOT(processInput(CGAL::Object)));
+
   scene.installEventFilter(pi);
   //
   // Setup the scene and the view
@@ -173,7 +175,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -187,10 +189,10 @@ MainWindow::MainWindow()
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -230,10 +232,54 @@ MainWindow::on_actionClear_triggered()
 }
 
 void
+MainWindow::on_actionOpen_triggered()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+                                                  tr("Open points file"),
+                                                  "."
+                                                  ,tr("xy files (*.xy)")
+                                                  );
+  if(! fileName.isEmpty()){
+    open(fileName);
+  }
+
+}
+
+void
+MainWindow::open(QString fileName)
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  std::ifstream ifs(qPrintable(fileName));
+
+  clear();
+
+  Point_2 p;
+  while(ifs >> p){
+    points.push_back(p);
+  }
+
+  CGAL::Bbox_2 bbox = CGAL::bbox_2(points.begin(), points.end());
+  square = Iso_rectangle_2(bbox);
+
+  ler = Largest_empty_iso_rectangle_2(square);
+  ler.insert(points.begin(), points.end());
+
+  frame[0]->setLine(convert(Segment_2(square.vertex(0),square.vertex(1))));
+  frame[1]->setLine(convert(Segment_2(square.vertex(1), square.vertex(2))));
+  frame[2]->setLine(convert(Segment_2(square.vertex(2), square.vertex(3))));
+  frame[3]->setLine(convert(Segment_2(square.vertex(3), square.vertex(0))));
+
+  QApplication::restoreOverrideCursor();
+  on_actionRecenter_triggered();
+  Q_EMIT( changed());
+}
+
+void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(convert(square));
-  this->graphicsView->fitInView(convert(square), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(convert(square), Qt::KeepAspectRatio);
 }
 
 void
@@ -281,8 +327,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Largest_empty_rectangle_2 demo");
 
-  // Import resources from libCGAL (Qt5).
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  // Import resources from libCGAL (Qt6).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Largest_empty_rectangle_2);
 

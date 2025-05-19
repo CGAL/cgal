@@ -1,5 +1,6 @@
 Algebraic_foundations
 Arithmetic_kernel
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -16,7 +17,6 @@ Kernel_d
 Modular_arithmetic
 Number_types
 Periodic_3_triangulation_3
-Polygon
 Profiling_tools
 Property_map
 STL_Extension

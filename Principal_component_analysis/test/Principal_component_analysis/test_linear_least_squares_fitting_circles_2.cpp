@@ -1,17 +1,17 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function on a set of circles in 2D
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 
 #include <list>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_2            Line;
-typedef K::Point_2           Point;
-typedef K::Circle_2          Circle;
+typedef double                      FT;
+typedef CGAL::Simple_cartesian<FT>  K;
+typedef K::Line_2                   Line;
+typedef K::Point_2                  Point;
+typedef K::Circle_2                 Circle;
 
 int main()
 {

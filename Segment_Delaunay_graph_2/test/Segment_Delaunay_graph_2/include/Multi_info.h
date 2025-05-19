@@ -68,7 +68,6 @@ template<class Info_t>
 struct Multi_info_convert_info
 {
   typedef Info_t             Info;
-  typedef Multi_info<Info>   result_type;
 
   inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0, bool) const
@@ -78,7 +77,7 @@ struct Multi_info_convert_info
 
   inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0,
-			      const Multi_info<Info>& , bool) const
+                              const Multi_info<Info>& , bool) const
   {
     return minfo0;
   }
@@ -88,16 +87,15 @@ template<class Info_t>
 struct Multi_info_merge_info
 {
   typedef Info_t            Info;
-  typedef Multi_info<Info>  result_type;
 
   inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0,
-			      const Multi_info<Info>& minfo1) const
+                              const Multi_info<Info>& minfo1) const
   {
     typedef typename Multi_info<Info>::Info_list       Info_list;
 
-    Info_list merged_info = minfo0.info_list(); 
-    Info_list copy = minfo1.info_list(); 
+    Info_list merged_info = minfo0.info_list();
+    Info_list copy = minfo1.info_list();
 
     merged_info.splice(merged_info.end(), copy);
     return merged_info;

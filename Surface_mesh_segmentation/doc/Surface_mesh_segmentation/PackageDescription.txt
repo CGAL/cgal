@@ -11,8 +11,8 @@
 \cgalPkgPicture{segmentation_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Ilker %O. Yaz, Liubomyr Piadyk, and Sébastien Loriot}
-\cgalPkgDesc{This package provides 2 methods to generate a segmentation of
+\cgalPkgAuthors{Ilker %O. Yaz, Liubomyr Piadyk, and Sébastien Loriot}
+\cgalPkgDesc{This package provides two methods to generate a segmentation of
               a triangulated surface mesh. The first algorithm computes the
               <em>Shape Diameter Function</em> (SDF) for all facets and applies a
               graph-cut based algorithm over these values. Low level functions are
@@ -27,17 +27,17 @@
 \cgalPkgDependsOn{\ref PkgAABBTree and \ref PkgConvexHull3}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `#SegmentationGeomTraits`
 
-## Main Functions ##
+\cgalCRPSection{Main Functions}
 - `#CGAL::approximate_convex_segmentation()`
 - `#CGAL::concavity_values()`
 - `#CGAL::sdf_values()`

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -34,10 +25,10 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/foreach.hpp>
-#include <boost/function_output_iterator.hpp>
-
+#include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/has_range_iterator.hpp>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -61,7 +52,7 @@ bool has_flips(const TriangleMesh& mesh,
   typedef typename Kernel::Vector_3                                   Vector_3;
 
   // Fill containers
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
@@ -73,7 +64,7 @@ bool has_flips(const TriangleMesh& mesh,
   Vector_3 first_triangle_normal(0., 0., 0.);
   bool is_normal_set = false;
 
-  BOOST_FOREACH(face_descriptor fd, faces) {
+  for(face_descriptor fd : faces) {
     // Get 3 vertices of the facet
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
@@ -123,7 +114,8 @@ class Intersect_facets
   typename Kernel::Construct_triangle_2 triangle_functor;
   typename Kernel::Do_intersect_2 do_intersect_2_functor;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   const TriangleMesh& mesh;
   const VertexUVMap uvmap;
@@ -140,7 +132,7 @@ public:
     halfedge_descriptor h = halfedge(a->info(), mesh);
     halfedge_descriptor g = halfedge(b->info(), mesh);
 
-    // check for shared egde
+    // check for shared edge
     if(face(opposite(h, mesh), mesh) == b->info() ||
        face(opposite(prev(h, mesh), mesh), mesh) == b->info() ||
        face(opposite(next(h, mesh), mesh), mesh) == b->info()) {
@@ -241,7 +233,7 @@ public:
   { }
 };
 
-/// Check if the 3D -> 2D mapping is one-to-one.
+/// returns whether the 3D -> 2D mapping is one-to-one.
 /// This function is stronger than "has_flips()" because the parameterized
 /// surface can loop over itself without creating any flips.
 template <typename TriangleMesh,
@@ -249,7 +241,10 @@ template <typename TriangleMesh,
           typename VertexUVMap>
 bool is_one_to_one_mapping(const TriangleMesh& mesh,
                            const Faces_Container& faces,
-                           const VertexUVMap uvmap)
+                           const VertexUVMap uvmap,
+                           std::enable_if_t<
+                              boost::has_range_iterator<Faces_Container>::value
+                           >* = nullptr)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -260,12 +255,13 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename Kernel::FT                                         NT;
   typedef typename Kernel::Point_2                                    Point_2;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
 
-  BOOST_FOREACH(face_descriptor fd, faces) {
+  for(face_descriptor fd : faces) {
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
     vertex_descriptor vd1 = target(next(hd, mesh), mesh);
@@ -276,25 +272,24 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
     const Point_2& p1 = get(uvmap, vd1);
     const Point_2& p2 = get(uvmap, vd2);
 
-    Bbox_2 b = p0.bbox();
-    b += p1.bbox();
-    b += p2.bbox();
-
-    boxes.push_back(Box(b, fd));
+    NT bx[2] = { (std::min)(p0[0], (std::min)(p1[0], p2[0])),
+                 (std::min)(p0[1], (std::min)(p1[1], p2[1])) };
+    NT by[2] = { (std::max)(p0[0], (std::max)(p1[0], p2[0])),
+                 (std::max)(p0[1], (std::max)(p1[1], p2[1])) };
+    boxes.emplace_back(bx, by, fd);
   }
 
   std::vector<const Box*> boxes_ptr;
   boxes_ptr.reserve(boxes.size());
 
-  BOOST_FOREACH(Box& b, boxes)
+  for(Box& b : boxes)
     boxes_ptr.push_back(&b);
 
   // Run the self intersection algorithm with all defaults
   unsigned int counter = 0;
   Intersect_facets<TriangleMesh, VertexUVMap> intersect_facets(mesh, uvmap, counter);
   std::ptrdiff_t cutoff = 2000;
-  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
-                                intersect_facets, cutoff);
+  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(), intersect_facets, cutoff);
   return (counter == 0);
 }
 
@@ -307,7 +302,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
 
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);

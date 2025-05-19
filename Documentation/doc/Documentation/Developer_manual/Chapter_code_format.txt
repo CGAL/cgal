@@ -1,4 +1,4 @@
-/*! 
+/*!
 
 \page devman_code_format Coding Conventions
 
@@ -12,7 +12,7 @@ rules for the code format
 (Section  \ref seccode_format ), and a mandatory heading for each
 source file (Section  \ref secfile_header )
 
-\section secnaming_scheme Naming scheme 
+\section secnaming_scheme Naming scheme
 
 The \cgal naming scheme is intended to help the user
 use the library and the developer develop the
@@ -30,7 +30,7 @@ there are <I>convincing</I> reasons.
 <LI>Words in the names of concepts (<I>e.g.</I>, template parameters)
       should be separated using capital letters.  The only use of underscores
       in concept names is before the dimension suffix.  For example, one
-      should use a name such as ConvexHullTraits_2 for the concept
+      should use a name such as `ConvexHullTraits_2` for the concept
       in contrast to `Convex_hull_traits_2` for the name of the class that
       is a model of this concept.  This different naming scheme for concepts
       and classes was adopted mainly for two reasons (a) it is consistent with
@@ -49,12 +49,12 @@ there are <I>convincing</I> reasons.
       <LI>The first word of a class or enumeration name should be capitalized
       (<I>e.g.</I>, `Quotient`, `Orientation`).
 <LI>Function names are in lowercase
-      (<I>e.g.</I>, `is_zero`).
+      (<I>e.g.</I>, `is_zero()`).
 <LI>Boolean function names should begin with a verb.  For example, use
-      `is_empty` instead of simply `empty` and
-      `has_on_bounded_side` instead of `on_bounded_side`.
+      `is_empty()` instead of simply `empty()` and
+      `has_on_bounded_side()` instead of `on_bounded_side()`.
 <LI>Names of macros should begin with the prefix `CGAL_`.
-      
+
 </UL>
 
 \subsection Developer_manualGeometricobjects Geometric objects
@@ -72,23 +72,23 @@ there are <I>convincing</I> reasons.
 
 <UL>
 <LI>Names for geometric data structures and algorithms should follow
-      the "spirit" of the rules given so far, <I>e.g.</I> a data structure for
+      the "spirit" of the rules given so far, <I>e.g.</I>, a data structure for
       triangulations in the plane is named `Triangulation_2`, and a
-      convex hull algorithm in 3-space is named `convex_hull_3`.
+      convex hull algorithm in 3-space is named `convex_hull_3()`.
 <LI>Member functions realizing predicates should start with `is_` or
-      `has_`, <I>e.g.</I> the data structure `Min_ellipse_2` has member
-      functions `is_empty` and `has_on_bounded_side`.
+      `has_`, <I>e.g.</I>, the data structure `Min_ellipse_2` has member
+      functions `is_empty()` and `has_on_bounded_side()`.
 <LI>Access to data structures is given via iterators and
       circulators (Chapter  \ref devman_iterators_and_circulators ).
       For iterators and functions
       returning them we extend
       the \stl names with a prefix describing the items to be accessed.
-      For example, the functions `vertices_begin` and `vertices_end`
+      For example, the functions `vertices_begin()` and `vertices_end()`
       return a `Vertex_iterator`. (Note that we use the name of the items
       in singular for the iterator type name and in plural for the functions
       returning the iterator.) Names related to circulators are handled
       similarly, using the suffix `_circulator`. For example, the
-      function `edges_circulator` returns an `Edge_circulator`.
+      function `edges_circulator()` returns an `Edge_circulator`.
 </UL>
 
 \subsection Developer_manualKerneltraits Kernel traits
@@ -183,7 +183,7 @@ In addition, for each functor the kernel traits class has a member
 function that returns an instance of this functor.  The name of this
 function should be the (uncapitalized) name of the
 functor followed by the suffix `_object`.For example, the function that returns an instance of the
-`Less_xy_2` functor is called `less_xy_2_object`.
+`Less_xy_2` functor is called `less_xy_2_object()`.
 
 \subsection Developer_manualFilenames File names
 
@@ -206,12 +206,11 @@ functor followed by the suffix `_object`.For example, the function that returns 
       all the platforms the library supports.  In particular, it should not
       contain the characters ':', '*', or ' '.
 <LI>Internal header files - which are not documented to the user - should
-      have <TT>/internal/</TT> as a directory higher up in their hierarchy.
-      For example <TT>CGAL/internal/foo.h</TT> or
-      <TT>CGAL/Package/internal/predicates/my_pred.h</TT>.
+      have <TT>Package/internal/</TT> as a directory higher up in their hierarchy.
+      For example <TT>CGAL/Triangulation_2/internal/predicates/my_pred.h</TT>.
 </UL>
 
-\section secprogramming_conventions Programming conventions 
+\section secprogramming_conventions Programming conventions
 
 The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
 
@@ -244,42 +243,19 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   modify the object to which it is applied,
   <I>e.g.</I>, `class A { int f( void) const; };`. This should also be
   done when it is only conceptually `const`.
-  This means that the member function `f()` is `c`onst as seen from
+  This means that the member function `f()` is `const` as seen from
   the outside, but internally it may modify some data members
-  that are declared `m`utable. An example
+  that are declared `mutable`. An example
   is the caching of results from expensive computations.  For more
-  information about conceptually `c`onst functions and mutable data
+  information about conceptually `const` functions and `mutable` data
   members see \cgalCite{cgal:m-ec-97}.
-- Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(`double)i.
+- Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(double)i`.
 - Protect header files against multiple inclusion, <I>e.g.</I> the file <TT>This_is_an_example.h</TT> should begin/end with
   \code{.cpp}
   #ifndef CGAL_THIS_IS_AN_EXAMPLE_H
   #define CGAL_THIS_IS_AN_EXAMPLE_H
   ...
   #endif // CGAL_THIS_IS_AN_EXAMPLE_H
-  \endcode
-- Support the
-  <A HREF="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
-  protocol whenever your functors have more than one return type
-  otherwise provide a `result_type` member typedef.
-  An example for this is a C++03 style `identity` functor:
-  \code{.cpp}
-        struct Identity {
-          template<typename T>
-          T& operator()(T& t) { return t; }
-          template<typename T>
-          const T& operator()(const T& t) { return t; }
-          template<typename>
-          struct result;
-          template<typename F, typename T>
-          struct result<F(T&)> {
-            typedef T& type;
-          };
-          template<typename F, typename T>
-          struct result<F(const T&)> {
-            typedef const T& type;
-          };
-        };
   \endcode
 
 The following items can be seen as recommendations
@@ -292,15 +268,9 @@ in contrast to the rules of previous paragraph.
   explicit casting if necessary.
 <LI>Do not call global functions unqualified, that is, always
   specify explicitly the namespace where the function is defined.
-<LI>Do not give private types or typedefs a name likely to be used as
-  a public interface by an other class, <I>e.g.</I> prefer `Point_3_`
-  to `Point_3` (in general, add an underscore as suffix). The reason for this convention is that
-  <A HREF="https://sympa.inria.fr/sympa/arc/cgal-develop/2010-10/msg00118.html">SFINAE
-  does not extend to access control before C++11</A> (meaning that the existence of a
-  private type can break overloading for other classes).
 </UL>
 
-\section seccode_format Code format 
+\section seccode_format Code format
 
 <UL>
 <LI>Use indentation with at least two spaces extra per level.
@@ -308,28 +278,28 @@ in contrast to the rules of previous paragraph.
 <LI>Use \cpp-style comments, <I>e.g.</I>, `//` some comment.
 </UL>
 
-\section secfile_header File header 
+\section secfile_header File header
 
 Each \cgal source file must start with a heading that allows for an easy
 identification of the file.  The file header contains:
 <UL>
 <LI>a copyright notice, specifying all the years during which the file has
 been written or modified, as well as the owner(s) (typically the institutions
-employing the authors) of this work,
-<LI>the corresponding license (at the moment, only LGPLv3+ and GPLv3+
-are allowed in \cgal), and a pointer to the file containing its text in the
+employing the authors) of this work, a pointer to the file containing its text in the
 \cgal distribution,
-<LI>a disclaimer notice,
 <LI>then, there are 2 keywords, which are automatically expanded at the creation of a new release:
 <UL>
 <LI>\$URL\$ : canonical path to the file on github,
 <LI>\$Id\$ : the release version the file is from.
 </UL>
-<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0+`,
-and  `SPDX-License-Identifier: LGPL-3.0+` for LGPL-3+.
+<LI> Then [SPDX license identifier](https://spdx.dev/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
+and  `SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.
 </UL>
+
+Note that since \cgal 5.0 the license text is not present in headers anymore,
+only SPDX tags are present.
 
 For example and demo programs, the inclusion of the copyright notice is not
 necessary as this will get in the way if the program is included in the
@@ -351,19 +321,10 @@ Here follows what this gives for a file under the GPL :
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -380,32 +341,23 @@ Here follows what this gives for a file under the LGPL :
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode
 
-\section seccode_format_doc_req_and_rec Requirements and recommendations 
+\section seccode_format_doc_req_and_rec Requirements and recommendations
 
 Requirements:
 <UL>
    <LI>Follow the naming schemes outlined above.
    <LI>Provide typedefs of template arguments as necessary to make the
          template parameters accessible elsewhere.
-   <LI>Label member function and parameters with `const` where 
+   <LI>Label member function and parameters with `const` where
          appropriate
    <LI>Use \cpp-style type casts.
    <LI>Protect header files from multiple inclusions.

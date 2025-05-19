@@ -2,30 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
-//                 Eric Berberich    <eric.berberich@cgal.org>
-//                 (based on old version by: Iddo Hanniel,
-//                                           Eyal Flato,
-//                                           Oren Nechushtan,
-//                                           Ester Ezra,
-//                                           Shai Hirsch,
-//                                           and Eugene Lipovetsky)
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            Eric Berberich    <eric.berberich@cgal.org>
+//            (based on old version by: Iddo Hanniel,
+//                                      Eyal Flato,
+//                                      Oren Nechushtan,
+//                                      Ester Ezra,
+//                                      Shai Hirsch,
+//                                      and Eugene Lipovetsky)
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
@@ -40,6 +30,8 @@
  * Member-function definitions for the Arrangement_2<GeomTraits, TopTraits>
  * class-template.
  */
+
+#include <variant>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
@@ -96,11 +88,9 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2() :
 template <typename GeomTraits, typename TopTraits>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 Arrangement_on_surface_2(const Self& arr) :
-  m_geom_traits(NULL),
+  m_geom_traits(nullptr),
   m_own_traits(false)
-{
-  assign(arr);
-}
+{ assign(arr); }
 
 //-----------------------------------------------------------------------------
 // Constructor given a traits object.
@@ -175,16 +165,13 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   m_topol_traits.assign(arr.m_topol_traits);
 
   // Go over the vertices and create duplicates of the stored points.
-  Point_2* dup_p;
-  DVertex* p_v;
-
   typename Dcel::Vertex_iterator vit;
   for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit) {
-    p_v = &(*vit);
+    DVertex* p_v = &(*vit);
 
     if (! p_v->has_null_point()) {
       // Create the duplicate point and store it in the points container.
-      dup_p = _new_point(p_v->point());
+      Point_2* dup_p = _new_point(p_v->point());
 
       // Associate the vertex with the duplicated point.
       p_v->set_point(dup_p);
@@ -206,9 +193,9 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   }
 
   // Take care of the traits object.
-  if (m_own_traits && (m_geom_traits != NULL)) {
+  if (m_own_traits && (m_geom_traits != nullptr)) {
     delete m_geom_traits;
-    m_geom_traits = NULL;
+    m_geom_traits = nullptr;
   }
 
   m_geom_traits = (arr.m_own_traits) ? new Traits_adaptor_2 : arr.m_geom_traits;
@@ -237,9 +224,9 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::~Arrangement_on_surface_2()
       _delete_curve(eit->curve());
 
   // Free the traits object, if necessary.
-  if (m_own_traits && (m_geom_traits != NULL)) {
+  if (m_own_traits && (m_geom_traits != nullptr)) {
     delete m_geom_traits;
-    m_geom_traits = NULL;
+    m_geom_traits = nullptr;
   }
 
   // Detach all observers still attached to the arrangement.
@@ -261,7 +248,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::~Arrangement_on_surface_2()
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::clear()
 {
-  // Notify the observers that we are about to clear the arragement.
+  // Notify the observers that we are about to clear the arrangement.
   _notify_before_clear();
 
   // Free all stored points.
@@ -278,7 +265,7 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::clear()
   _dcel().delete_all();
   m_topol_traits.init_dcel();
 
-  // Notify the observers that we have just cleared the arragement.
+  // Notify the observers that we have just cleared the arrangement.
   _notify_after_clear();
 }
 
@@ -298,15 +285,26 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
   std::cout << "face : " << &(*f) << std::endl;
 #endif
 
+  // Obtain the boundary conditions:
+  auto ps_x = m_geom_traits->parameter_space_in_x_2_object()(p);
+  auto ps_y = m_geom_traits->parameter_space_in_y_2_object()(p);
+
   // Create a new vertex associated with the given point.
-  // We assume the point has no boundary conditions.
-  DVertex* v = _create_vertex(p);
-  Vertex_handle vh(v);
+  // The point is either the interior of the parameter space or on the boundary.
+  DVertex* v(nullptr);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Insert v as an isolated vertex inside the given face.
   _insert_isolated_vertex(p_f, v);
 
   // Return a handle to the new isolated vertex.
+  Vertex_handle vh(v);
   return vh;
 }
 
@@ -333,7 +331,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
   const Arr_parameter_space  ps_y1 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
-  DHalfedge* fict_prev1 = NULL;
+  DHalfedge* fict_prev1 = nullptr;
 
   DVertex* v1 = ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) ?
     // The curve has a valid left endpoint: Create a new vertex associated
@@ -349,7 +347,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
   const Arr_parameter_space  ps_y2 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
-  DHalfedge* fict_prev2 = NULL;
+  DHalfedge* fict_prev2 = nullptr;
 
   DVertex* v2 = ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) ?
     // The curve has a valid right endpoint: Create a new vertex associated
@@ -363,15 +361,15 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
   // lexicographically smaller than v2).
   DHalfedge* new_he;
 
-  if ((fict_prev1 == NULL) && (fict_prev2 == NULL))
+  if ((fict_prev1 == nullptr) && (fict_prev2 == nullptr))
     // Both vertices represent valid points.
     new_he = _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2);
-  else if ((fict_prev1 == NULL) && (fict_prev2 != NULL)) {
+  else if ((fict_prev1 == nullptr) && (fict_prev2 != nullptr)) {
     // v1 represents a valid point and v2 is inserted using its predecessor.
     new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v1);
     new_he = new_he->opposite();
   }
-  else if ((fict_prev1 != NULL) && (fict_prev2 == NULL))
+  else if ((fict_prev1 != nullptr) && (fict_prev2 == nullptr))
     // v1 is inserted using its predecessor and v2 represents a valid point.
     new_he = _insert_from_vertex(fict_prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
@@ -401,7 +399,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT,
                                  fict_prev2->next(), new_face_created,
                                  check_swapped_predecessors);
-    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minumum so far
+    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minimum so far
     CGAL_assertion(!check_swapped_predecessors);
     // usually one would expect to have an new_he (and its twin) lying on the
     // same _inner_ CCB ...
@@ -451,12 +449,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   // Check if cv's right end has boundary conditions. If not, create a vertex
   // that corresponds to the right endpoint.
-  const Arr_parameter_space  ps_x2 =
-    m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
-  const Arr_parameter_space  ps_y2 =
-    m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
-  DVertex* v2 = NULL;
-  DHalfedge* fict_prev2 = NULL;
+  auto ps_x2 = m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+  auto ps_y2 = m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
+  DVertex* v2 = nullptr;
+  DHalfedge* fict_prev2 = nullptr;
 
   if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR))
     // The curve has a valid right endpoint: Create a new vertex associated
@@ -469,8 +465,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // The given vertex is an isolated one: We should in fact insert the curve
     // in the interior of the face containing this vertex.
     DVertex* v1 = _vertex(v);
-    DIso_vertex* iv = NULL;
-    DFace* p_f = NULL;
+    DIso_vertex* iv = nullptr;
+    DFace* p_f = nullptr;
 
     if (v->is_isolated()) {
       // Obtain the face from the isolated vertex.
@@ -485,13 +481,13 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
     // If the vertex that corresponds to cv's right end has boundary
     // conditions, create it now.
-    if (v2 == NULL)
+    if (v2 == nullptr)
       // Locate the DCEL features that will be used for inserting the curve's
       // right end.
       v2 = _place_and_set_curve_end(p_f, cv, ARR_MAX_END, ps_x2, ps_y2,
                                     &fict_prev2);
 
-    if (iv != NULL) {
+    if (iv != nullptr) {
       // Remove the isolated vertex v1, as it will not be isolated any more.
       p_f->erase_isolated_vertex(iv);
       _dcel().delete_isolated_vertex(iv);
@@ -500,7 +496,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
     DHalfedge* new_he;
-    if (fict_prev2 == NULL)
+    if (fict_prev2 == nullptr)
       new_he = _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2);
     else {
       new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v1);
@@ -516,7 +512,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   // which the new curve should be inserted.
   DHalfedge* prev1 = _locate_around_vertex(_vertex(v), cv, ARR_MIN_END);
   CGAL_assertion_msg
-    (prev1 != NULL,
+    (prev1 != nullptr,
      "The inserted curve cannot be located in the arrangement.");
 
   DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
@@ -524,7 +520,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   // If the vertex that corresponds to cv's right end has boundary conditions,
   // create it now.
-  if (v2 == NULL)
+  if (v2 == nullptr)
     // Locate the DCEL features that will be used for inserting the curve's
     // right end.
     v2 =
@@ -534,7 +530,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   // than v2).
   DHalfedge* new_he;
 
-  if (fict_prev2 == NULL)
+  if (fict_prev2 == nullptr)
     // Insert the halfedge given the predecessor halfedge of v1.
     new_he = _insert_from_vertex(prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
@@ -617,7 +613,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle prev)
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
   const Arr_parameter_space  ps_y2 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
-  DHalfedge* fict_prev2 = NULL;
+  DHalfedge* fict_prev2 = nullptr;
 
   DVertex* v2 = ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) ?
     // The curve has a valid right endpoint: Create a new vertex associated
@@ -631,7 +627,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle prev)
   // than v2).
   DHalfedge* new_he;
 
-  if (fict_prev2 == NULL)
+  if (fict_prev2 == nullptr)
     // Insert the halfedge given the predecessor halfedge of the left vertex.
     new_he = _insert_from_vertex(prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
@@ -693,8 +689,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
   const Arr_parameter_space  ps_y1 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
-  DVertex* v1 = NULL;
-  DHalfedge* fict_prev1 = NULL;
+  DVertex* v1 = nullptr;
+  DHalfedge* fict_prev1 = nullptr;
 
   if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
     // The curve has a valid left endpoint: Create a new vertex associated
@@ -707,8 +703,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // The given vertex is an isolated one: We should in fact insert the curve
     // in the interior of the face containing this vertex.
     DVertex* v2 = _vertex(v);
-    DIso_vertex* iv = NULL;
-    DFace* p_f = NULL;
+    DIso_vertex* iv = nullptr;
+    DFace* p_f = nullptr;
 
     if (v->is_isolated()) {
       // Obtain the face from the isolated vertex.
@@ -723,13 +719,13 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
     // If the vertex that corresponds to cv's left end has boundary
     // conditions, create it now.
-    if (v1 == NULL)
+    if (v1 == nullptr)
       // Locate the DCEL features that will be used for inserting the curve's
       // left end.
       v1 = _place_and_set_curve_end(p_f, cv, ARR_MIN_END, ps_x1, ps_y1,
                                     &fict_prev1);
 
-    if (iv != NULL) {
+    if (iv != nullptr) {
       // Remove the isolated vertex v2, as it will not be isolated any more.
       p_f->erase_isolated_vertex(iv);
       _dcel().delete_isolated_vertex(iv);
@@ -737,7 +733,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
-    DHalfedge* new_he = (fict_prev1 == NULL) ?
+    DHalfedge* new_he = (fict_prev1 == nullptr) ?
       _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2) :
       _insert_from_vertex(fict_prev1, cv, ARR_LEFT_TO_RIGHT, v2);
 
@@ -750,14 +746,14 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   // which the new curve should be inserted.
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v), cv, ARR_MAX_END);
   CGAL_assertion_msg
-    (prev2 != NULL, "The inserted curve cannot be located in the arrangement.");
+    (prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
   DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
     prev2->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's left end has boundary conditions,
   // create it now.
-  if (v1 == NULL)
+  if (v1 == nullptr)
     // Locate the DCEL features that will be used for inserting the curve's
     // left end.
     v1 =
@@ -767,7 +763,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   // than v1).
   DHalfedge* new_he;
 
-  if (fict_prev1 == NULL)
+  if (fict_prev1 == nullptr)
     // Insert the halfedge given the predecessor halfedge of v2.
     new_he = _insert_from_vertex(prev2, cv, ARR_RIGHT_TO_LEFT, v1);
   else {
@@ -852,7 +848,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
   const Arr_parameter_space  ps_y1 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
-  DHalfedge* fict_prev1 = NULL;
+  DHalfedge* fict_prev1 = nullptr;
 
   DVertex* v1 = ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) ?
     // The curve has a valid left endpoint: Create a new vertex associated
@@ -866,7 +862,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   // than v1).
   DHalfedge* new_he;
 
-  if (fict_prev1 == NULL)
+  if (fict_prev1 == nullptr)
     // Insert the halfedge given the predecessor halfedge of the right vertex.
     new_he = _insert_from_vertex(prev2, cv, ARR_RIGHT_TO_LEFT, v1);
   else {
@@ -986,9 +982,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
          "One of the input vertices should be the left curve end.");
     }
     else {
-      Arr_parameter_space  ps_x1 =
+      Arr_parameter_space ps_x1 =
         m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-      Arr_parameter_space  ps_y1 =
+      Arr_parameter_space ps_y1 =
         m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
       // Check which vertex should be associated with the minimal curve-end
@@ -1023,8 +1019,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   if (v1->degree() == 0) {
     // Get the face containing the isolated vertex v1.
     DVertex* p_v1 = _vertex(v1);
-    DIso_vertex* iv1 = NULL;
-    DFace* f1 = NULL;
+    DIso_vertex* iv1 = nullptr;
+    DFace* f1 = nullptr;
 
     if (p_v1->is_isolated()) {
       // Obtain the containing face from the isolated vertex record.
@@ -1041,8 +1037,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       // Both end-vertices are isolated. Make sure they are contained inside
       // the same face.
       DVertex* p_v2 = _vertex(v2);
-      DIso_vertex* iv2 = NULL;
-      DFace* f2 = NULL;
+      DIso_vertex* iv2 = nullptr;
+      DFace* f2 = nullptr;
 
       if (p_v2->is_isolated()) {
         // Obtain the containing face from the isolated vertex record.
@@ -1050,14 +1046,14 @@ insert_at_vertices(const X_monotone_curve_2& cv,
         f2 = iv2->face();
 
         CGAL_assertion_msg
-          ((f1 == NULL) || (f1 == f2),
+          ((f1 == nullptr) || (f1 == f2),
            "The two isolated vertices must be located inside the same face.");
 
         // Remove the isolated vertex v2, as it will not be isolated any more.
         f2->erase_isolated_vertex(iv2);
         _dcel().delete_isolated_vertex(iv2);
       }
-      else if (f1 == NULL)
+      else if (f1 == nullptr)
         // In this case the containing face must be given by the user.
         CGAL_precondition(f != Face_handle());
 
@@ -1073,7 +1069,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // which the new curve should be inserted.
     DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
     CGAL_assertion_msg
-      (prev2 != NULL,
+      (prev2 != nullptr,
        "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code
@@ -1081,7 +1077,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        prev2->outer_ccb()->face());
 
     CGAL_assertion_msg
-      ((f1 == NULL) || (f1 == f2),
+      ((f1 == nullptr) || (f1 == f2),
        "The inserted curve should not intersect the existing arrangement.");
 
     // Perform the insertion. Note that the returned halfedge is directed
@@ -1095,8 +1091,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   else if (v2->degree() == 0) {
     // Get the face containing the isolated vertex v2.
     DVertex* p_v2 = _vertex(v2);
-    DIso_vertex* iv2 = NULL;
-    DFace* f2 = NULL;
+    DIso_vertex* iv2 = nullptr;
+    DFace* f2 = nullptr;
 
     if (v2->is_isolated()) {
       // Obtain the containing face from the isolated vertex record.
@@ -1112,7 +1108,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // which the new curve should be inserted.
     DHalfedge* prev1 = _locate_around_vertex(_vertex(v1), cv, ind1);
     CGAL_assertion_msg
-      (prev1 != NULL,
+      (prev1 != nullptr,
        "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code
@@ -1120,7 +1116,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        prev1->outer_ccb()->face());
 
     CGAL_assertion_msg
-      ((f2 == NULL) || (f2 == f1),
+      ((f2 == nullptr) || (f2 == f1),
        "The inserted curve should not intersect the existing arrangement.");
 
     // Perform the insertion.
@@ -1137,7 +1133,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
 
   CGAL_assertion_msg
-    (((prev1 != NULL) && (prev2 != NULL)),
+    (((prev1 != nullptr) && (prev2 != nullptr)),
      "The inserted curve cannot be located in the arrangement.");
 
   // Perform the insertion.
@@ -1259,8 +1255,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   if (v2->degree() == 0) {
     // Get the face containing the isolated vertex v2.
     DVertex* p_v2 = _vertex(v2);
-    DIso_vertex* iv2 = NULL;
-    DFace* f2 = NULL;
+    DIso_vertex* iv2 = nullptr;
+    DFace* f2 = nullptr;
 
     if (v2->is_isolated()) {
       iv2 = p_v2->isolated_vertex();
@@ -1287,7 +1283,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // which the new curve should be inserted.
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
   CGAL_assertion_msg
-    (prev2 != NULL, "The inserted curve cannot be located in the arrangement.");
+    (prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
   // Perform the insertion.
   return (insert_at_vertices(cv, prev1, Halfedge_handle(prev2)));
@@ -1302,8 +1298,7 @@ template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_at_vertices(const X_monotone_curve_2& cv,
-                   Halfedge_handle prev1,
-                   Halfedge_handle prev2)
+                   Halfedge_handle prev1, Halfedge_handle prev2)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: insert_at_vertices (interface)" << std::endl;
@@ -1329,7 +1324,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   Comparison_result  res;
 
   if (! at_obnd1) {
-    CGAL_precondition_code(Vertex_handle  v_right);
+    CGAL_precondition_code(Vertex_handle v_right);
 
     if (! prev1->target()->is_at_open_boundary() &&
         m_geom_traits->equal_2_object()
@@ -1492,7 +1487,7 @@ remove_isolated_vertex(Vertex_handle v)
   DFace* p_f = iv->face();
   Face_handle f = Face_handle(p_f);
 
-  // Notify the observers that we are abount to remove a vertex.
+  // Notify the observers that we are about to remove a vertex.
   _notify_before_remove_vertex(v);
 
   // Remove the isolated vertex from the face that contains it.
@@ -1542,91 +1537,58 @@ split_edge(Halfedge_handle e,
 {
   CGAL_precondition_msg(! e->is_fictitious(), "The edge must be a valid one.");
 
-  // Get the split halfedge and its twin, its source and target.
+  // Find the point where we split the halfedge, and determine which curve
+  // should be associated with which pair of split halfedges.
   DHalfedge* he1 = _halfedge(e);
   DHalfedge* he2 = he1->opposite();
   DVertex* source = he2->vertex();
-  CGAL_precondition_code(DVertex* target = he1->vertex());
 
-  // Determine the point where we split the halfedge. We also determine which
-  // curve should be associated with he1 (and he2), which is the curve who
-  // has an endpoint that equals e's source, and which should be associated
-  // with the new pair of halfedges we are about to split (the one who has
-  // an endpoint which equals e's target).
-  if ((m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MAX_END) ==
-       ARR_INTERIOR) &&
-      (m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MAX_END) ==
-       ARR_INTERIOR))
-  {
-    const Point_2 & cv1_right =
-      m_geom_traits->construct_max_vertex_2_object()(cv1);
+  /* The halfedge we return and e must have a common source vertex.
+   * There are 4 cases:
+   */
 
-    if ((m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END) ==
-         ARR_INTERIOR) &&
-        (m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MIN_END) ==
-         ARR_INTERIOR) &&
-        m_geom_traits->equal_2_object()(m_geom_traits->
-                                        construct_min_vertex_2_object()(cv2),
-                                        cv1_right))
-    {
-      // cv1's right endpoint and cv2's left endpoint are equal, so this should
-      // be the split point. Now we check whether cv1 is incident to e's source
-      // and cv2 to its target, or vice versa.
-      if (_are_equal(source, cv1, ARR_MIN_END)) {
-        CGAL_precondition_msg
-          (_are_equal(target, cv2, ARR_MAX_END),
-           "The subcurve endpoints must match e's end vertices.");
-
-        return (Halfedge_handle(_split_edge(he1, cv1_right, cv1, cv2)));
-      }
-
-      CGAL_precondition_msg
-        (_are_equal(source, cv2, ARR_MAX_END) &&
-         _are_equal(target, cv1, ARR_MIN_END),
-         "The subcurve endpoints must match e's end vertices.");
-
-      return (Halfedge_handle(_split_edge(he1, cv1_right, cv2, cv1)));
-    }
+  // 1. o---cv1---o---cv2---o
+  //    o---------e-------->o
+  if (_are_equal(source, cv1, ARR_MIN_END)) {
+    const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv1);
+    CGAL_precondition_code
+      (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv2));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MAX_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv1, cv2)));
   }
 
-  if ((m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END) ==
-       ARR_INTERIOR) &&
-      (m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END) ==
-       ARR_INTERIOR))
-  {
-    const Point_2 & cv1_left =
-      m_geom_traits->construct_min_vertex_2_object()(cv1);
-
-    if ((m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MAX_END) ==
-         ARR_INTERIOR) &&
-        (m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MAX_END) ==
-         ARR_INTERIOR) &&
-        m_geom_traits->equal_2_object()(m_geom_traits->
-                                        construct_max_vertex_2_object()(cv2),
-                                        cv1_left))
-    {
-      // cv1's left endpoint and cv2's right endpoint are equal, so this should
-      // be the split point. Now we check whether cv1 is incident to e's source
-      // and cv2 to its target, or vice versa.
-      if (_are_equal(source, cv2, ARR_MIN_END)) {
-        CGAL_precondition_msg
-          (_are_equal(target, cv1, ARR_MAX_END),
-           "The subcurve endpoints must match e's end vertices.");
-
-        return (Halfedge_handle(_split_edge(he1, cv1_left, cv2, cv1)));
-      }
-
-      CGAL_precondition_msg
-        (_are_equal(source, cv1, ARR_MAX_END) &&
-         _are_equal(target, cv2, ARR_MIN_END),
-         "The subcurve endpoints must match e's end vertices.");
-
-      return (Halfedge_handle(_split_edge(he1, cv1_left, cv1, cv2)));
-    }
+  // 2. o---cv2---o---cv1---o
+  //    o<--------e---------o
+  if (_are_equal(source, cv1, ARR_MAX_END)) {
+    const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv1);
+    CGAL_precondition_code
+      (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv2));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MIN_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv1, cv2)));
   }
 
-  CGAL_error_msg("The two subcurves must have a common endpoint.");
-  return Halfedge_handle();
+  // 3. o---cv2---o---cv1---o
+  //    o---------e-------->o
+  if (_are_equal(source, cv2, ARR_MIN_END)) {
+    const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv2);
+    CGAL_precondition_code
+      (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv1));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MAX_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv2, cv1)));
+  }
+
+  // 4. o---cv1---o---cv2---o
+  //    o<--------e---------o
+  CGAL_precondition(_are_equal(source, cv2, ARR_MAX_END));
+  const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv2);
+  CGAL_precondition_code
+    (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv1));
+  CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+  CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MIN_END));
+  return (Halfedge_handle(_split_edge(he1, p, cv2, cv1)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1652,10 +1614,10 @@ merge_edge(Halfedge_handle e1, Halfedge_handle e2,
   //
   DHalfedge* _e1 = _halfedge(e1);
   DHalfedge* _e2 = _halfedge(e2);
-  DHalfedge* he1 = NULL;
-  DHalfedge* he2 = NULL;
-  DHalfedge* he3 = NULL;
-  DHalfedge* he4 = NULL;
+  DHalfedge* he1 = nullptr;
+  DHalfedge* he2 = nullptr;
+  DHalfedge* he3 = nullptr;
+  DHalfedge* he4 = nullptr;
 
   if (_e1->vertex() == _e2->opposite()->vertex()) {
     he1 = _e1;
@@ -1709,11 +1671,11 @@ merge_edge(Halfedge_handle e1, Halfedge_handle e2,
 
   // Keep pointers to the components that contain two halfedges he3 and he2,
   // pointing at the end vertices of the merged halfedge.
-  DInner_ccb* ic1 = (he3->is_on_inner_ccb()) ? he3->inner_ccb() : NULL;
-  DOuter_ccb* oc1 = (ic1 == NULL) ? he3->outer_ccb() : NULL;
+  DInner_ccb* ic1 = (he3->is_on_inner_ccb()) ? he3->inner_ccb() : nullptr;
+  DOuter_ccb* oc1 = (ic1 == nullptr) ? he3->outer_ccb() : nullptr;
 
-  DInner_ccb* ic2 = (he4->is_on_inner_ccb()) ? he4->inner_ccb() : NULL;
-  DOuter_ccb* oc2 = (ic2 == NULL) ? he4->outer_ccb() : NULL;
+  DInner_ccb* ic2 = (he4->is_on_inner_ccb()) ? he4->inner_ccb() : nullptr;
+  DOuter_ccb* oc2 = (ic2 == nullptr) ? he4->outer_ccb() : nullptr;
 
   // Notify the observers that we are about to merge an edge.
   _notify_before_merge_edge(e1, e2, cv);
@@ -1723,14 +1685,14 @@ merge_edge(Halfedge_handle e1, Halfedge_handle e2,
   // the CCBs they belong to. If so, replace he3 by he1 and he4 by he2. Note
   // that as we just change the component representatives, we do not have to
   // notify the observers on the change.
-  if (oc1 != NULL && oc1->halfedge() == he3)
+  if (oc1 != nullptr && oc1->halfedge() == he3)
     oc1->set_halfedge(he1);
-  else if (ic1 != NULL && ic1->halfedge() == he3)
+  else if (ic1 != nullptr && ic1->halfedge() == he3)
     ic1->set_halfedge(he1);
 
-  if (oc2 != NULL && oc2->halfedge() == he4)
+  if (oc2 != nullptr && oc2->halfedge() == he4)
     oc2->set_halfedge(he2);
-  else if (ic2 != NULL && ic2->halfedge() == he4)
+  else if (ic2 != nullptr && ic2->halfedge() == he4)
     ic2->set_halfedge(he2);
 
   // If he3 is the incident halfedge to its target, replace it by he1.
@@ -1791,7 +1753,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
 {
   // Comment EBEB 2012-08-06: this has become a simple forwarding function
-  // the intelligence of wether to swap he with he->opposite()
+  // the intelligence of whether to swap he with he->opposite()
   // has been moved to _remove_edge itself, as additional computed
   // data is reused there
 
@@ -1832,7 +1794,7 @@ _locate_around_vertex(DVertex* v,
   DHalfedge* first = v->halfedge();
   DHalfedge* curr = first;
 
-  if (curr == NULL) return NULL;
+  if (curr == nullptr) return nullptr;
 
   DHalfedge* next = curr->next()->opposite();
 
@@ -1854,7 +1816,7 @@ _locate_around_vertex(DVertex* v,
   {
     // If cv equals one of the curves associated with the halfedges, it is
     // an illegal input curve, as it already exists in the arrangement.
-    if (eq_curr || eq_next) return NULL;
+    if (eq_curr || eq_next) return nullptr;
 
     // Move to the next pair of incident halfedges.
     curr = next;
@@ -1862,7 +1824,7 @@ _locate_around_vertex(DVertex* v,
 
     // If we completed a full traversal around v without locating the
     // place for cv, it follows that cv overlaps and existing curve.
-    if (curr == first) return NULL;
+    if (curr == first) return nullptr;
   }
 
   // Return the halfedge we have located.
@@ -2144,8 +2106,32 @@ _create_vertex(const Point_2& p)
   v->set_boundary(ARR_INTERIOR, ARR_INTERIOR);
 
   // Notify the observers that we have just created a new vertex.
-  Vertex_handle   vh(v);
+  Vertex_handle vh(v);
   _notify_after_create_vertex(vh);
+
+  return v;
+}
+
+// Create a new vertex on boundary
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_create_boundary_vertex(const Point_2& p,
+                        Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
+
+  // Notify the observers that we are about to create a new boundary vertex.
+  _notify_before_create_boundary_vertex(p, ps_x, ps_y);
+
+  // Create a new vertex and set its boundary conditions.
+  DVertex* v = _dcel().new_vertex();
+  v->set_boundary(ps_x, ps_y);
+  v->set_point(_new_point(p));
+
+  // Notify the observers that we have just created a new boundary vertex.
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
 
   return v;
 }
@@ -2173,7 +2159,7 @@ _create_boundary_vertex(const X_monotone_curve_2& cv, Arr_curve_end ind,
   if (is_open(ps_x, ps_y))
     // The curve-end lies on open boundary so the vertex is not associated
     // with a valid point.
-    v->set_point(NULL);
+    v->set_point(nullptr);
   else {
     // Create a boundary vertex associated with a valid point.
     Point_2* p_p = (ind == ARR_MIN_END) ?
@@ -2184,10 +2170,56 @@ _create_boundary_vertex(const X_monotone_curve_2& cv, Arr_curve_end ind,
   }
 
   // Notify the observers that we have just created a new boundary vertex.
-  Vertex_handle   vh(v);
-  _notify_after_create_boundary_vertex(vh);
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
 
   return v;
+}
+
+//-----------------------------------------------------------------------------
+// Locate the DCEL features that will be used for inserting the given point,
+// which has a boundary condition, and set a proper vertex there.
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_place_and_set_point(DFace* f, const Point_2& p,
+                     Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  // Use the topology traits to locate the DCEL feature that contains the
+  // given point.
+  CGAL::Object obj = m_topol_traits.place_boundary_vertex(f, p, ps_x, ps_y);
+  DVertex* v;
+
+  // Act according to the result type.
+  DHalfedge* fict_he;
+  if (CGAL::assign(fict_he, obj)) {
+    // The point is located on a fictitious edge.
+    // Create a new vertex that corresponds to the point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Split the fictitious halfedge at the newly created vertex.
+    // The returned halfedge is the predecessor for the insertion of the curve
+    // end around v.
+    _notify_before_split_fictitious_edge(Halfedge_handle(fict_he),
+                                         Vertex_handle(v));
+    DHalfedge* p_pred = m_topol_traits.split_fictitious_edge(fict_he, v);
+    _notify_after_split_fictitious_edge(Halfedge_handle(p_pred),
+                                        Halfedge_handle((*p_pred)->next()));
+  }
+  else if (obj.is_empty()) {
+    // Create a new vertex that represents the given point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
+  else {
+    CGAL_assertion(CGAL::assign(v, obj));
+    // The vertex coincides with an existing vertex that represents the point.
+    // Do nothing.
+  }
+
+  return v;     // return the vertex that represents the point.
 }
 
 //-----------------------------------------------------------------------------
@@ -2204,16 +2236,30 @@ _place_and_set_curve_end(DFace* f,
 {
   // Use the topology traits to locate the DCEL feature that contains the
   // given curve end.
-  CGAL::Object obj =
-    m_topol_traits.place_boundary_vertex(f, cv, ind, ps_x, ps_y);
-  DVertex* v;
-  DHalfedge* fict_he;
-
+  auto obj = m_topol_traits.place_boundary_vertex(f, cv, ind, ps_x, ps_y);
   // Act according to the result type.
-  if (CGAL::assign(fict_he, obj)) {
+
+  if (! obj) {
+    // We have to create a new vertex that represents the given curve end.
+    DVertex* v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, cv, ind, ps_x, ps_y);
+
+    // There are no edges incident to v, therefore no predecessor halfedge.
+    *p_pred = nullptr;
+
+    // Return the vertex that represents the curve end.
+    return v;
+  }
+
+  DHalfedge** fict_he_p = std::get_if<DHalfedge*>(&*obj);
+  if (fict_he_p != nullptr) {
+    DHalfedge* fict_he = *fict_he_p;
+    CGAL_assertion(fict_he != nullptr);
     // The curve end is located on a fictitious edge. We first create a new
     // vertex that corresponds to the curve end.
-    v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
+    DVertex* v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
 
     // Split the fictitious halfedge at the newly created vertex.
     // The returned halfedge is the predecessor for the insertion of the curve
@@ -2225,29 +2271,16 @@ _place_and_set_curve_end(DFace* f,
 
     _notify_after_split_fictitious_edge(Halfedge_handle(*p_pred),
                                         Halfedge_handle((*p_pred)->next()));
+    return v;
   }
-  else if (CGAL::assign(v, obj)) {
-    // In this case we are given an existing vertex that represents the curve
-    // end. We now have to locate the predecessor edge for the insertion of cv
-    // around this vertex.
-    *p_pred =
-      m_topol_traits.locate_around_boundary_vertex(v, cv, ind, ps_x, ps_y);
-  }
-  else {
-    CGAL_assertion(obj.is_empty());
-
-    // In this case we have to create a new vertex that reprsents the given
-    // curve end.
-    v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
-
-    // Notify the topology traits on the creation of the boundary vertex.
-    m_topol_traits.notify_on_boundary_vertex_creation(v, cv, ind, ps_x, ps_y);
-
-    // There are no edges incident to v, therefore no predecessor halfedge.
-    *p_pred = NULL;
-  }
-
-  // Return the vertex that represents the curve end.
+  DVertex** v_p = std::get_if<DVertex*>(&*obj);
+  CGAL_assertion(v_p != nullptr);
+  DVertex* v = *v_p;
+  CGAL_assertion(v != nullptr);
+  // In this case we are given an existing vertex that represents the curve
+  // end. We now have to locate the predecessor edge for the insertion of cv
+  // around this vertex.
+  *p_pred = m_topol_traits.locate_around_boundary_vertex(v, cv, ind, ps_x, ps_y);
   return v;
 }
 
@@ -2326,7 +2359,7 @@ _insert_in_face_interior(DFace* f,
 // Insert an x-monotone curve into the arrangement, such that one of its
 // endpoints corresponds to a given arrangement vertex, given the exact
 // place for the curve in the circular list around this vertex. The other
-// endpoint corrsponds to a free vertex (a newly created vertex or an
+// endpoint corresponds to a free vertex (a newly created vertex or an
 // isolated vertex).
 //
 template <typename GeomTraits, typename TopTraits>
@@ -2353,8 +2386,8 @@ _insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv,
 
   // Get the incident face of the previous halfedge. Note that this will also
   // be the incident face of the two new halfedges we are about to create.
-  DInner_ccb* ic = (he_to->is_on_inner_ccb()) ? he_to->inner_ccb() : NULL;
-  DOuter_ccb* oc = (ic == NULL) ? he_to->outer_ccb() : NULL;
+  DInner_ccb* ic = (he_to->is_on_inner_ccb()) ? he_to->inner_ccb() : nullptr;
+  DOuter_ccb* oc = (ic == nullptr) ? he_to->outer_ccb() : nullptr;
 
   // The first vertex is the one that the he_to halfedge points to.
   // The second vertex is given by v.
@@ -2376,7 +2409,7 @@ _insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv,
   he2->set_vertex(v2);
 
   // Set the component for the new halfedge pair.
-  if (oc != NULL) {
+  if (oc != nullptr) {
     // On an outer component:
     he1->set_outer_ccb(oc);
     he2->set_outer_ccb(oc);
@@ -2459,8 +2492,8 @@ _insert_at_vertices(DHalfedge* he_to,
                              he_away->outer_ccb()->face()) << std::endl;
 #endif
 
-  CGAL_precondition(he_to != NULL);
-  CGAL_precondition(he_away != NULL);
+  CGAL_precondition(he_to != nullptr);
+  CGAL_precondition(he_away != nullptr);
 
   // TODO EBEB 2012-10-21 rewrite the code in terms of he_to and he_away instead of prev1 and prev2
   // the remainder of the function we deal with this situation adds he1 and
@@ -2471,8 +2504,8 @@ _insert_at_vertices(DHalfedge* he_to,
   DHalfedge* prev1 = he_to;
   DHalfedge* prev2 = he_away->prev();
 
-  CGAL_precondition(prev1 != NULL);
-  CGAL_precondition(prev2 != NULL);
+  CGAL_precondition(prev1 != nullptr);
+  CGAL_precondition(prev2 != nullptr);
   CGAL_precondition(prev1 != prev2);
 
   // in general we do not swap ...
@@ -2491,17 +2524,17 @@ _insert_at_vertices(DHalfedge* he_to,
 
     // Comment EBEB 2012-08-05 hole1/hole2 appear later as ic1/ic2, but we keep
     // them here, as the usage is rather local to decide swapping
-    DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
-    DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
+    DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : nullptr;
+    DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : nullptr;
 
-    if ((hole1 == hole2) && (hole1 != NULL)) {
-      // .. only in this special case, we have to check wether swapping should
+    if ((hole1 == hole2) && (hole1 != nullptr)) {
+      // .. only in this special case, we have to check whether swapping should
       // take place
 
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
       // - search only local minima to find leftmost vertex
-      // - re-use of signs of ccbs
+      // - reuse of signs of ccbs
       // signs1/2 are only used when hole1 == hole2,
       // thus we have to init them now
       Arr_halfedge_direction cv_dir1 = cv_dir;
@@ -2605,13 +2638,13 @@ _insert_at_vertices(DHalfedge* he_to,
 
   // Get the components containing the two previous halfedges and the incident
   // face (which should be the same for the two components).
-  DInner_ccb* ic1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
-  DOuter_ccb* oc1 = (ic1 == NULL) ? prev1->outer_ccb() : NULL;
-  DFace* f = (ic1 != NULL) ? ic1->face() : oc1->face();
-  DInner_ccb* ic2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
-  DOuter_ccb* oc2 = (ic2 == NULL) ? prev2->outer_ccb() : NULL;
+  DInner_ccb* ic1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : nullptr;
+  DOuter_ccb* oc1 = (ic1 == nullptr) ? prev1->outer_ccb() : nullptr;
+  DFace* f = (ic1 != nullptr) ? ic1->face() : oc1->face();
+  DInner_ccb* ic2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : nullptr;
+  DOuter_ccb* oc2 = (ic2 == nullptr) ? prev2->outer_ccb() : nullptr;
 
-  CGAL_precondition_code(DFace* f2 = (ic2 != NULL) ? ic2->face() : oc2->face());
+  CGAL_precondition_code(DFace* f2 = (ic2 != nullptr) ? ic2->face() : oc2->face());
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "ic1: " << ic1 << std::endl;
@@ -2672,7 +2705,7 @@ _insert_at_vertices(DHalfedge* he_to,
   bool split_new_face = true;
   bool is_split_face_contained = false;
 
-  if ((ic1 != NULL) && (ic1 == ic2)) {
+  if ((ic1 != nullptr) && (ic1 == ic2)) {
 
     // EBEB 2012-08-06:
     // This is new code. It relies on the (computed) signs and replaces to
@@ -2722,7 +2755,7 @@ _insert_at_vertices(DHalfedge* he_to,
 
   // Check the various cases of insertion (in the design document: the
   // various sub-cases of case 3 in the insertion procedure).
-  if (((ic1 != NULL) || (ic2 != NULL)) && (ic1 != ic2)) {
+  if (((ic1 != nullptr) || (ic2 != nullptr)) && (ic1 != ic2)) {
     // In case we have to connect two disconnected components, no new face
     // is created.
     new_face = false;
@@ -2732,7 +2765,7 @@ _insert_at_vertices(DHalfedge* he_to,
     // of the face.
     Face_handle fh(f);
 
-    if ((ic1 != NULL) && (ic2 != NULL)) {
+    if ((ic1 != nullptr) && (ic2 != nullptr)) {
       // In this case (3.1) we have to connect to inner CCBs (holes) inside f.
       // Notify the observers that we are about to merge two holes in the face.
       _notify_before_merge_inner_ccb(fh,
@@ -2748,14 +2781,24 @@ _insert_at_vertices(DHalfedge* he_to,
       he1->set_inner_ccb(ic1);
       he2->set_inner_ccb(ic1);
 
-      // Make all halfedges along ic2 to point to ic1.
-      DHalfedge* curr;
+      if (m_sweep_mode)
+      {
+        // Inner CCB are obtained using Halfedge::inner_ccb() which
+        // performs path reduction and always return valid iCCB
+        CGAL_assertion(ic1->is_valid());
+        CGAL_assertion(ic2->is_valid());
+        ic2->set_next(ic1);
+      }
+      else
+      {
+        // Make all halfedges along ic2 to point to ic1.
+        DHalfedge* curr;
+        for (curr = he2->next(); curr != he1; curr = curr->next())
+          curr->set_inner_ccb(ic1);
 
-      for (curr = he2->next(); curr != he1; curr = curr->next())
-        curr->set_inner_ccb(ic1);
-
-      // Delete the redundant inner CCB.
-      _dcel().delete_inner_ccb(ic2);
+        // Delete the redundant inner CCB.
+        _dcel().delete_inner_ccb(ic2);
+      }
 
       // Notify the observers that we have merged the two inner CCBs.
       _notify_after_merge_inner_ccb(fh, (Halfedge_handle(he1))->ccb());
@@ -2769,7 +2812,7 @@ _insert_at_vertices(DHalfedge* he_to,
       DHalfedge* ccb_first;
       DHalfedge* ccb_last;
 
-      if (ic1 != NULL) {
+      if (ic1 != nullptr) {
         // We remove the inner CCB ic1 and merge in with the outer CCB oc2.
         del_ic = ic1;
         oc = oc2;
@@ -2809,7 +2852,7 @@ _insert_at_vertices(DHalfedge* he_to,
   }
   else if (! split_new_face) {
     // RWRW: NEW!
-    CGAL_assertion((ic1 == ic2) && (ic1 != NULL));
+    CGAL_assertion((ic1 == ic2) && (ic1 != nullptr));
 
     // Handle the special case where we close an inner CCB, such that
     // we form two outer CCBs of the same face.
@@ -2872,7 +2915,7 @@ _insert_at_vertices(DHalfedge* he_to,
   }
   else if ((ic1 == ic2) && (oc1 == oc2)) {
     // In this case we created a pair of halfedge that connect halfedges that
-    // already belong to the same component. This means we have to cretae a
+    // already belong to the same component. This means we have to create a
     // new face by splitting the existing face f.
     // Notify the observers that we are about to split a face.
     Face_handle fh(f);
@@ -2920,8 +2963,8 @@ _insert_at_vertices(DHalfedge* he_to,
     // or on the same outer CCB (distinguish case 3.3 and case 3.4).
     bool   is_hole;
 
-    if (ic1 != NULL) {
-      // In this case (3.3) we have two distinguish two sub-cases.
+    if (ic1 != nullptr) {
+      // In this case (3.3) we have too distinguish two sub-cases.
       if (is_split_face_contained) {
         // Comment: This is true for all non-identification topologies
 
@@ -3009,7 +3052,7 @@ _insert_at_vertices(DHalfedge* he_to,
             // *oc_it is already closed, so we do a full round
             // (default = false)
             std::pair<Sign, Sign> signs_oc =
-              _compute_signs(*oc_it, Has_identified_sides_category());
+              _compute_signs(*oc_it, Has_identified_sides());
 
             bool move = false;
 
@@ -3049,7 +3092,7 @@ _insert_at_vertices(DHalfedge* he_to,
       // In this case, he1 lies on an outer CCB of f.
       he1->set_outer_ccb(oc1);
 
-      // As the outer component of the exisitng face f may associated with
+      // As the outer component of the existing face f may associated with
       // one of the halfedges along the boundary of the new face, we set it
       // to be he1.
       oc1->set_halfedge(he1);
@@ -3068,7 +3111,7 @@ _insert_at_vertices(DHalfedge* he_to,
     else {
       // Use the topology traits to determine whether each of the split
       // faces is unbounded. Note that if the new face is bounded, then f
-      // obviously reamins unbounded and there is no need for further checks.
+      // obviously remains unbounded and there is no need for further checks.
       new_f->set_unbounded(m_topol_traits.is_unbounded(new_f));
 
       if (new_f->is_unbounded())
@@ -3079,7 +3122,7 @@ _insert_at_vertices(DHalfedge* he_to,
     _notify_after_split_face(fh, Face_handle(new_f), is_hole);
   }
   else {
-    CGAL_assertion((oc1 != NULL) && (oc2 != NULL) && (oc1 != oc2));
+    CGAL_assertion((oc1 != nullptr) && (oc2 != nullptr) && (oc1 != oc2));
 
     // In case prev1 and prev2 belong to different outer CCBs of the same
     // face f (case 3.5), we have to merge this ccbs into one. Note that we
@@ -3122,12 +3165,12 @@ _insert_at_vertices(DHalfedge* he_to,
 #if 0
   {
     DHalfedge* he1 = he2->opposite();
-    DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-    DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-    DFace* f1 = (ic1 != NULL) ? ic1->face() : oc1->face();
-    DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-    DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
-    DFace* f2 = (ic2 != NULL) ? ic2->face() : oc2->face();
+    DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
+    DFace* f1 = (ic1 != nullptr) ? ic1->face() : oc1->face();
+    DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+    DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
+    DFace* f2 = (ic2 != nullptr) ? ic2->face() : oc2->face();
     CGAL_postcondition((ic1 != ic2) || (f1 == f2));
   }
 #endif
@@ -3194,6 +3237,9 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_isolated_vertices_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _relocate_isolated_vertices_in_new_face" << std::endl;
+#endif
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace* new_face = (new_he->is_on_inner_ccb()) ?
@@ -3237,6 +3283,11 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2 _relocate_in_new_face" << std::endl;
+  std::cout << "HeCv: " << new_he->curve() << std::endl;
+  std::cout << "HeDi: " << new_he->direction() << std::endl;
+#endif
   _relocate_inner_ccbs_in_new_face(new_he);
   _relocate_isolated_vertices_in_new_face(new_he);
 }
@@ -3317,8 +3368,18 @@ _split_edge(DHalfedge* e, const Point_2& p,
             const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2)
 {
   // Allocate a new vertex and associate it with the split point.
-  // Note that this point must not have any boundary conditions.
-  DVertex* v = _create_vertex(p);
+  // Obtain the boundary conditions:
+  auto ps_x = m_geom_traits->parameter_space_in_x_2_object()(p);
+  auto ps_y = m_geom_traits->parameter_space_in_y_2_object()(p);
+
+  DVertex* v(nullptr);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Split the edge from the given vertex.
   return (_split_edge(e, v, cv1, cv2));
@@ -3337,10 +3398,10 @@ _split_edge(DHalfedge* e, DVertex* v,
   // Get the split halfedge and its twin, its source and target.
   DHalfedge* he1 = e;
   DHalfedge* he2 = he1->opposite();
-  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-  DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-  DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
+  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+  DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
+  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+  DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
 
   // Notify the observers that we are about to split an edge.
   _notify_before_split_edge(Halfedge_handle(e), Vertex_handle(v), cv1, cv2);
@@ -3370,7 +3431,7 @@ _split_edge(DHalfedge* e, DVertex* v,
     // he1 and he2 form an "antenna", so he4 becomes he3's successor.
     he3->set_next(he4);
 
-  if (oc1 != NULL)
+  if (oc1 != nullptr)
     he3->set_outer_ccb(oc1);
   else
     he3->set_inner_ccb(ic1);
@@ -3379,7 +3440,7 @@ _split_edge(DHalfedge* e, DVertex* v,
   he4->set_vertex(v);
   he4->set_next(he2);
 
-  if (oc2 != NULL)
+  if (oc2 != nullptr)
     he4->set_outer_ccb(oc2);
   else
     he4->set_inner_ccb(ic2);
@@ -3418,14 +3479,14 @@ _compute_indices(Arr_parameter_space /* ps_x_curr */,
                  Arr_parameter_space /* ps_x_next */,
                  Arr_parameter_space /* ps_y_next */,
                  int& /* x_index */, int& /* y_index */,
-                 boost::mpl::bool_<false>) const
+                 Arr_false) const
 { /* nothing if no identification */ }
 
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_<true>) const
+                 int& x_index, int& y_index,  Arr_true) const
 {
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
@@ -3470,10 +3531,10 @@ _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
 // newly inserted curve.
 //
 // Precondition The OutputIterator must be a back inserter.
-// Precondition The traveresed ccb is an inner ccb; thus, it cannot be
+// Precondition The traversed ccb is an inner ccb; thus, it cannot be
 //              on an open boundary.
-// Postcondition If NULL is a local minimum, it is inserted first.
-//                No other local minima can be NULL.
+// Postcondition If nullptr is a local minimum, it is inserted first.
+//                No other local minima can be nullptr.
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
 std::pair<Sign, Sign>
@@ -3498,10 +3559,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   // one. Note that we do this carefully, keeping track of the number of
   // times we crossed the identification curve in x or in y (if they exist).
   // Note that the path must not be incident to any vertex on open boundary.
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
+  auto parameter_space_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto parameter_space_in_y = m_geom_traits->parameter_space_in_y_2_object();
 
   // TODO 2012-09-20 check "correction" here too (as in "other" function of this kind
   int x_index = 0;
@@ -3553,12 +3612,12 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 
   if ((cv_dir == ARR_RIGHT_TO_LEFT) &&
       (he_away->direction() == ARR_LEFT_TO_RIGHT)) {
-    const DHalfedge* null_he = NULL;
+    const DHalfedge* null_he = nullptr;
     *local_mins_it++ = std::make_pair(null_he, x_index);
   }
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                   x_index, y_index, Has_identified_sides_category());
+                   x_index, y_index, Has_identified_sides());
 
   const DHalfedge* he = he_away;
   while (he != he_to) {
@@ -3590,7 +3649,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
       *local_mins_it++  = std::make_pair(he, x_index);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // Move to the next halfedge.
     he = he->next();
@@ -3609,7 +3668,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     *local_mins_it++  = std::make_pair(he_to, x_index);
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next, x_index, y_index,
-                   Has_identified_sides_category());
+                   Has_identified_sides());
 
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
@@ -3620,7 +3679,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
+_compute_signs(const DHalfedge* /* he_anchor */, Arr_false) const
 { return (std::make_pair(ZERO, ZERO)); }
 
   // Computes the signs of a closed ccb (loop) when deleting he_anchor and its
@@ -3628,7 +3687,7 @@ _compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
+_compute_signs(const DHalfedge* he_anchor, Arr_true) const
 {
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3687,7 +3746,7 @@ _compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
     ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -3712,7 +3771,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
                        int& index_min) const
 {
   // Initialize
-  const DHalfedge* he_min = NULL;
+  const DHalfedge* he_min = nullptr;
   ps_x_min = ARR_INTERIOR;
   ps_y_min = ARR_INTERIOR;
   index_min = 0;
@@ -3795,7 +3854,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
       // Test the halfedge incident to the leftmost vertex.
       // Note that we may visit the same vertex several times.
 
-      if ((he_min == NULL) ||
+      if ((he_min == nullptr) ||
           (index_curr < index_min) ||
           ((index_curr == index_min) &&
            ((he_curr->vertex() != he_min->vertex()) &&
@@ -3811,7 +3870,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
     }
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -4011,11 +4070,10 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                InputIterator lm_begin,
                                InputIterator lm_end) const
 {
+  // std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
   // Search for the leftmost vertex among the local minima
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
+  auto parameter_space_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto parameter_space_in_y = m_geom_traits->parameter_space_in_y_2_object();
 
   // check all reported local minima
   InputIterator lm_it = lm_begin;
@@ -4023,9 +4081,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   int index_min = lm_it->second;
   const DHalfedge* he_min = lm_it->first;
   const DVertex* v_min =
-    (he_min == NULL) ? he_away->opposite()->vertex() : he_min->vertex();
+    (he_min == nullptr) ? he_away->opposite()->vertex() : he_min->vertex();
   const X_monotone_curve_2* cv_min =
-    (he_min == NULL) ? &cv : &(he_min->curve());
+    (he_min == nullptr) ? &cv : &(he_min->curve());
   Arr_parameter_space ps_x_min = parameter_space_in_x(*cv_min, ARR_MIN_END);
   Arr_parameter_space ps_y_min = parameter_space_in_y(*cv_min, ARR_MIN_END);
 
@@ -4049,7 +4107,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     //   - No smallest has bin recorded so far, or
     //   - The current target vertex and the recorded vertex are the same and
     //       * The current curve is smaller than the recorded curve, or
-    //   - The current curve end is smaller then the recorded curve end.
+    //   - The current curve end is smaller than the recorded curve end.
     // smaller than its source, so we should check whether it is also smaller
     // Note that we compare the vertices lexicographically: first by the
     // indices, then by x, then by y.
@@ -4077,7 +4135,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     }
   }
 
-  CGAL_assertion(v_min != NULL);
+  CGAL_assertion(v_min != nullptr);
   CGAL_assertion(!v_min->has_null_point());
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
@@ -4086,7 +4144,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   if (he_min)
     std::cout << he_min->opposite()->vertex()->point()
               << " => " << he_min->vertex()->point();
-  else std::cout << "NULL";
+  else std::cout << "nullptr";
   std::cout << std::endl;
 #endif
 
@@ -4096,7 +4154,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   // to the right of the leftmost vertex. We compare them to the right of this
   // point to determine whether he_to (the curve) and he_away are incident to
   // the hole to be created or not.
-  const X_monotone_curve_2& cv_next = (he_min == NULL) ?
+  const X_monotone_curve_2& cv_next = (he_min == nullptr) ?
     he_away->curve() : ((he_min == he_to) ? cv : he_min->next()->curve());
   return _is_above(*cv_min, cv_next, v_min->point(), ps_y_min,
                    Top_or_bottom_sides_category());
@@ -4134,7 +4192,7 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we know that their left ends must have
     // a boundary condition of type identification in y.
-    Arr_parameter_space  ps_y2 =
+    Arr_parameter_space ps_y2 =
       m_geom_traits->parameter_space_in_y_2_object()(xcv2, ARR_MIN_END);
 
     // Check if the curves lie on opposite sides of the identification curve.
@@ -4175,9 +4233,19 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   {
     // Compare the horizontal position of the two curve-ends at the point
     // of contraction.
-    Comparison_result x_res =
-      m_geom_traits->compare_x_curve_ends_2_object()(xcv1, ARR_MIN_END,
-                                                     xcv2, ARR_MIN_END);
+    typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
+      m_geom_traits->compare_x_curve_ends_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+      m_geom_traits->parameter_space_in_x_2_object();
+
+    Arr_parameter_space ps_x1 = ps_x_op(xcv1, ARR_MIN_END);
+    Arr_parameter_space ps_x2 = ps_x_op(xcv2, ARR_MIN_END);
+    Comparison_result x_res = (ps_x1 != ps_x2) ?
+      ((ps_x1 == ARR_LEFT_BOUNDARY) ? SMALLER :
+       ((ps_x1 == ARR_RIGHT_BOUNDARY) ? LARGER :
+        ((ps_x2 == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
+      ((ps_x1 != ARR_INTERIOR) ? EQUAL :
+       cmp_x_curve_ends(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END));
 
     // Observe that if x_res == EQUAL the given subsequence is always exterior.
     return (((ps_y1 == ARR_BOTTOM_BOUNDARY) && (x_res == SMALLER)) ||
@@ -4202,12 +4270,12 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // belong to and their incident faces.
   DHalfedge* he1 = e;
   DHalfedge* he2 = e->opposite();
-  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-  DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-  DFace* f1 = (oc1 != NULL) ? oc1->face() : ic1->face();
-  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-  DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
-  DFace* f2 = (oc2 != NULL) ? oc2->face() : ic2->face();
+  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+  DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
+  DFace* f1 = (oc1 != nullptr) ? oc1->face() : ic1->face();
+  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+  DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
+  DFace* f2 = (oc2 != nullptr) ? oc2->face() : ic2->face();
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
@@ -4245,7 +4313,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   }
   else {
     // If f1 == f2 (same_face-case), then we consider two loops that occur when
-    // he1 and he2 get removed; if f1 != f2, then he1 and he2 seperates the two
+    // he1 and he2 get removed; if f1 != f2, then he1 and he2 separates the two
     // faces that will be merged upon their removal---here both he1 and he2
     // belong to a full cycle, and THAT IS WHY we give the f1 == f2 test to
     // determine whether end of loop should be he1->opposite() and
@@ -4419,8 +4487,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #endif
 
   // Now the real removal starts.
-  DHalfedge* prev1 = NULL;
-  DHalfedge* prev2 = NULL;
+  DHalfedge* prev1 = nullptr;
+  DHalfedge* prev2 = nullptr;
 
   // Notify the observers that we are about to remove an edge.
   Halfedge_handle  hh(e);
@@ -4432,7 +4500,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   if (f1 == f2) {
     // Check whether the two halfedges are successors along the face boundary.
     if ((he1->next() == he2) && (he2->next() == he1)) {
-      CGAL_assertion((ic1 != NULL) && (ic1 == ic2));
+      CGAL_assertion((ic1 != nullptr) && (ic1 == ic2));
 
       // The two halfedges form a "singleton" hole inside the incident face
       // (case 1 of the removal procedure, as detailed in the design document),
@@ -4463,7 +4531,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
             (v1->parameter_space_in_y() != ARR_INTERIOR))
         {
-          v1->set_halfedge(NULL);    // disconnect the end vertex
+          v1->set_halfedge(nullptr);    // disconnect the end vertex
           _remove_vertex_if_redundant(v1, f1);
         }
         else {
@@ -4485,7 +4553,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
             (v2->parameter_space_in_y() != ARR_INTERIOR))
         {
-          v2->set_halfedge(NULL);    // disconnect the end vertex
+          v2->set_halfedge(nullptr);    // disconnect the end vertex
           _remove_vertex_if_redundant(v2, f1);
         }
         else {
@@ -4533,10 +4601,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // In case the halfedges to be deleted are represantatives of their
       // CCB (note that noth should belong to the same CCB, be it an outer
       // CCB or an inner one), make prev1 the components representative.
-      if ((oc1 != NULL) &&
+      if ((oc1 != nullptr) &&
           ((oc1->halfedge() == he1) || (oc1->halfedge() == he2)))
         oc1->set_halfedge(prev1);
-      else if ((ic1 != NULL) &&
+      else if ((ic1 != nullptr) &&
                ((ic1->halfedge() == he1) || (ic1->halfedge() == he2)))
         ic1->set_halfedge(prev1);
 
@@ -4565,7 +4633,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
             (v1->parameter_space_in_y() != ARR_INTERIOR))
         {
-          v1->set_halfedge(NULL);    // disconnect the end vertex
+          v1->set_halfedge(nullptr);    // disconnect the end vertex
           _remove_vertex_if_redundant(v1, f1);
         }
         else {
@@ -4598,7 +4666,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     prev1 = he1->prev();
     prev2 = he2->prev();
 
-    if ((ic1 != NULL) && (ic1 == ic2)) {
+    if ((ic1 != nullptr) && (ic1 == ic2)) {
 
       // If both halfedges lie on the same inner component (hole) inside the
       // face (case 3.1), we have to split this component into two holes.
@@ -4639,9 +4707,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     }
     else if (oc1 != oc2) {
       // RWRW: NEW!
-      CGAL_assertion((oc1 != NULL) && (oc2 != NULL));
+      CGAL_assertion((oc1 != nullptr) && (oc2 != nullptr));
 
-      // In case both halfegdes he1 and he2 are incident to the same face
+      // In case both halfedges he1 and he2 are incident to the same face
       // but lie on different outer CCBs of this face, removing this pair of
       // halfedge causes the two components two merge and to become an
       // inner CCB in the face.
@@ -4665,7 +4733,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       add_inner_ccb = true;
     }
     else {
-      CGAL_assertion((oc1 != NULL) && (oc1 == oc2));
+      CGAL_assertion((oc1 != nullptr) && (oc1 == oc2));
 
       // If both halfedges are incident to the same outer CCB of their
       // face (case 3.2), we have to distinguish two sub-cases:
@@ -4753,7 +4821,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // As the outer CCB of f1 may be represented by any of the
         // halfedges in between he1 -> ... -> he2 (the halfedges in between
         // are on the new outer CCB we have just created), we represent the
-        // former outer CCB by prev1, which definately stays on it.
+        // former outer CCB by prev1, which definitely stays on it.
         oc1->set_halfedge(prev1);
 
         // Notify the observers that a new outer CCB has been formed.
@@ -4851,9 +4919,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   prev1 = he1->prev();
   prev2 = he2->prev();
 
-  CGAL_assertion((ic1 == NULL) || (ic2 == NULL));
+  CGAL_assertion((ic1 == nullptr) || (ic2 == nullptr));
 
-  if ((ic1 == NULL) && (ic2 == NULL)) {
+  if ((ic1 == nullptr) && (ic2 == nullptr)) {
     bool add_inner_ccb = false;
 
     // Comment EFEF 2013-05-31: if we ever find the need to use signs1 and
@@ -4872,13 +4940,13 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // assumes that non of the (other) boundaries is open. A 3rd version
     // that supports the remaining case, (for example the cylinder), should
     // be developed and used.
-    signs1 = _compute_signs(he1, Has_identified_sides_category());
+    signs1 = _compute_signs(he1, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
 #endif
 
-      signs2 = _compute_signs(he2, Has_identified_sides_category());
+      signs2 = _compute_signs(he2, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;
@@ -5017,15 +5085,15 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // inside it (case 3.3). We first make sure that f1 contains the hole f2, so
   // we can merge f2 with it (we swap roles between the halfedges if
   // necessary).
-  if (ic2 != NULL) {
+  if (ic2 != nullptr) {
     he1 = he2;
     he2 = he1->opposite();
 
     ic1 = ic2;
-    ic2 = NULL;
+    ic2 = nullptr;
 
     oc2 = oc1;
-    oc1 = NULL;
+    oc1 = nullptr;
 
     DFace* tf = f1;
     f1 = f2;
@@ -5046,7 +5114,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   _move_all_isolated_vertices(f2, f1);  // move all iso vertices from f2 to f1
 
   // Notice that f2 will be merged with f1, but its boundary will still be
-  // a hole inside this face. In case he1 is a represantative of this hole,
+  // a hole inside this face. In case he1 is a representative of this hole,
   // replace it by its predecessor.
   if (ic1->halfedge() == he1)
     ic1->set_halfedge(prev1);
@@ -5139,7 +5207,7 @@ _remove_vertex_if_redundant(DVertex* v, DFace* f)
 
   // In case the vertex has no incident halfedges, remove it if it is
   // redundant. Otherwise, make it an isolated vertex.
-  if (v->halfedge() == NULL) {
+  if (v->halfedge() == nullptr) {
     if (m_topol_traits.is_redundant(v)) {
       // Remove the vertex and notify the observers on doing so.
       _notify_before_remove_vertex(Vertex_handle(v));

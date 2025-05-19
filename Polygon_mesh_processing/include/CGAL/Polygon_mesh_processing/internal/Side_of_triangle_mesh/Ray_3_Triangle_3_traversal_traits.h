@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -29,9 +20,9 @@
 #include <boost/logic/tribool.hpp>
 #include <CGAL/tags.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Triangle_3_Ray_3_do_intersect.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
+#include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
 
 namespace CGAL {
 namespace internal {
@@ -60,16 +51,16 @@ public:
   template<class Query>
   void intersection(const Query& query, const Primitive& primitive)
   {
-    internal::r3t3_do_intersect_endpoint_position_visitor visitor;
-    std::pair<bool,internal::R3T3_intersection::type> res=
-      internal::do_intersect(m_helper.get_primitive_datum(primitive, m_aabb_traits), query,Kernel(),visitor);
+    Intersections::internal::r3t3_do_intersect_endpoint_position_visitor visitor;
+    std::pair<bool,Intersections::internal::R3T3_intersection::type> res=
+      Intersections::internal::do_intersect(m_helper.get_primitive_datum(primitive, m_aabb_traits), query,Kernel(),visitor);
 
     if (res.first){
       switch (res.second){
-        case internal::R3T3_intersection::CROSS_FACET:
+        case Intersections::internal::R3T3_intersection::CROSS_FACET:
           ++m_status.second;
         break;
-        case internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
+        case Intersections::internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
           m_status.first=false;
           m_stop=true;
         break;
@@ -159,7 +150,7 @@ public:
       //check if the ray source is above or below the triangle and compare it
       //with the direction of the ray
       //TODO and if yes return
-      //this is just an optimisation, the current code is valid
+      //this is just an optimization, the current code is valid
 
       this->m_status.first=boost::logic::indeterminate;
       this->m_stop=true;
@@ -224,6 +215,60 @@ public:
       ++(this->m_status.second);
   }
 };
+
+//special case when ray query is from another Kernel K1 is the kernel compatible with the AABB-tree
+template<typename AABBTraits, class K1, class K2, class Helper>
+class K2_Ray_3_K1_Triangle_3_traversal_traits
+{
+  //the status indicates whether the query point is strictly inside the polyhedron, and the number of intersected triangles if yes
+  std::pair<boost::logic::tribool,std::size_t>& m_status;
+  bool m_stop;
+  const AABBTraits& m_aabb_traits;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef CGAL::AABB_node<AABBTraits> Node;
+  Helper m_helper;
+  CGAL::Cartesian_converter<K1,K2> to_K2;
+
+public:
+  K2_Ray_3_K1_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status,
+                                          const AABBTraits& aabb_traits,
+                                          const Helper& h)
+    :m_status(status), m_stop(false), m_aabb_traits(aabb_traits), m_helper(h)
+  {m_status.first=true;}
+
+  bool go_further() const { return !m_stop; }
+
+  template<class Query>
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    Intersections::internal::r3t3_do_intersect_endpoint_position_visitor visitor;
+    std::pair<bool,Intersections::internal::R3T3_intersection::type> res=
+      Intersections::internal::do_intersect(to_K2(m_helper.get_primitive_datum(primitive, m_aabb_traits)),
+                                            query, K2(), visitor);
+
+    if (res.first){
+      switch (res.second){
+        case Intersections::internal::R3T3_intersection::CROSS_FACET:
+          ++m_status.second;
+        break;
+        case Intersections::internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
+          m_status.first=false;
+          m_stop=true;
+        break;
+        default:
+          m_status.first=boost::logic::indeterminate;
+          m_stop=true;
+      }
+    }
+  }
+
+  template<class Query>
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return CGAL::do_intersect(query, m_helper.get_node_bbox(node));
+  }
+};
+
 
 }// namespace internal
 }// namespace CGAL

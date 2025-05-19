@@ -246,7 +246,7 @@ Circulator_from_iterator();
 /*!
 a circulator `c` initialized to refer to the element
 `*cur` in a range `[begin, end)`.
-The circulator `c` refers to a empty sequence
+The circulator `c` refers to an empty sequence
 if `begin==end`.
 
 */
@@ -255,7 +255,7 @@ const I& end, const I& cur = begin);
 
 /*!
 a copy of circulator `d` referring to the element `*cur`.
-The circulator `c` refers to a empty sequence
+The circulator `c` refers to an empty sequence
 if `d` does so.
 
 */
@@ -543,7 +543,7 @@ is `true` if the range `[i, j)` is empty, `false` otherwise.
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
-while for circulators it would be `c == NULL`, the empty sequence test.
+while for circulators it would be `c == nullptr`, the empty sequence test.
 The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.
@@ -619,7 +619,7 @@ Iterator_tag query_circulator_or_iterator( const I& i);
 /*!
 \ingroup PkgHandlesAndCirculatorsFunctions
 
-This functiona matches for type `C` if the iterator category of `C` belongs to a circulator.
+This function matches for type `C` if the iterator category of `C` belongs to a circulator.
 
 \sa `Circulator_tag`
 \sa `Circulator_traits`
@@ -640,7 +640,7 @@ Circulator_tag query_circulator_or_iterator( const C& c);
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
-while for circulators it would be `c == NULL`, the empty sequence test.
+while for circulators it would be `c == nullptr`, the empty sequence test.
 The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.

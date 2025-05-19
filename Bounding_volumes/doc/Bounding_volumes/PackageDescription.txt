@@ -3,7 +3,6 @@
 /// \ingroup PkgBoundingVolumesRef
 /*!
 \addtogroup PkgBoundingVolumesRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumes}
 \cgalPkgPicture{minCircle.png}
 \cgalPkgSummaryBegin
@@ -20,16 +19,10 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-## Assertions ##
-
-The optimization code uses infix `OPTIMISATION` in the assertions,
-e.g. defining the compiler flag
-`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
-## Bounding Areas and Volumes ##
+\cgalCRPSection{Bounding Areas and Volumes}
 
 - `CGAL::Min_circle_2<Traits>`
 - `CGAL::Min_circle_2_traits_2<K>`
@@ -62,4 +55,3 @@ checking off, cf. Section  \ref secchecks.
 - `CGAL::Min_sphere_of_spheres_d<Traits>`
 - `MinSphereOfSpheresTraits`
 */
-

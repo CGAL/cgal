@@ -17,7 +17,7 @@ bool test_info(SDG& sdg, const char* fname)
   assert( ifs );
 
   sdg.clear();
-  typename SDG::Site_2  site;
+  typename SDG::Site_2  site = SDG::Site_2::construct_site_2(CGAL::ORIGIN);
 
   // read the sites and insert them in the segment Delaunay graph
   int info_id = 1;
@@ -26,7 +26,7 @@ bool test_info(SDG& sdg, const char* fname)
     Multi_info<int> info = info_id;
     info_id++;
     std::cout << "SITE TO BE INSERTED: "
-	      << site << " " << info << std::endl;
+              << site << " " << info << std::endl;
     sdg.insert(site, info);
   }
   std::cout << std::endl;
@@ -35,7 +35,7 @@ bool test_info(SDG& sdg, const char* fname)
   for (FVIT it = sdg.finite_vertices_begin();
        it != sdg.finite_vertices_end(); ++it) {
     std::cout << it->site() << " "
-	      << it->storage_site().info() << std::endl;
+              << it->storage_site().info() << std::endl;
   }
   std::cout << std::endl;
 

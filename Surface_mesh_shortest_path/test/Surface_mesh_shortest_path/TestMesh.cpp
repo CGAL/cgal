@@ -1,8 +1,5 @@
 #include <CGAL/config.h>
 #include <iostream>
-
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
-
 #include <iomanip>
 #include <fstream>
 #include <utility>
@@ -61,18 +58,24 @@ struct TestMeshProgramInstance
   typedef typename Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
-  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::type VIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::edge_index_t>::type EIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::type HIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::type FIM;
+  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::const_type VIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::edge_index_t>::const_type EIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::const_type HIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::const_type FIM;
 
   TestMeshProgramInstance()
   {
     debugMode = false;
-    randomizer = NULL;
+    randomizer = nullptr;
     numVertices = 0;
     numIterations = 1;
+  }
+
+  ~TestMeshProgramInstance()
+  {
+    if (randomizer)
+      delete randomizer;
   }
 
   size_t numIterations;
@@ -165,7 +168,7 @@ struct TestMeshProgramInstance
 
     std::vector<vertex_descriptor> vertices;
 
-    boost::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
+    std::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
 
     for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
     {
@@ -177,7 +180,7 @@ struct TestMeshProgramInstance
 
     std::vector<face_descriptor> faces;
 
-    boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
+    std::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
 
     for (face_iterator it = facesStart; it != facesEnd; ++it)
     {
@@ -267,7 +270,7 @@ void run_program_instance(po::variables_map& vm)
 
   if (vm.count("randomseed"))
   {
-    programInstance.randomizer = new CGAL::Random(vm["randomSeed"].as<unsigned int>());
+    programInstance.randomizer = new CGAL::Random(vm["randomseed"].as<unsigned int>());
   }
 
   programInstance.debugMode = vm["debugmode"].as<bool>();
@@ -311,9 +314,9 @@ int main(int argc, char** argv)
 
   options.add_options()
     ("help,h", "Display help message")
-    ("polyhedron,p", po::value<std::string>(), "Polyhedron input file")
+    ("polyhedron,p", po::value<std::string>()->default_value("./data/test_mesh_6.off"), "Polyhedron input file")
     ("debugmode,d", po::value<bool>()->default_value(false), "Enable debug output")
-    ("randomseed,r", po::value<unsigned int>(), "Randomization seed value")
+    ("randomseed,r", po::value<unsigned int>()->default_value(0), "Randomization seed value")
     ("trials,t", po::value<size_t>()->default_value(1), "Number of trials to run")
     ("kernel,k", po::value<std::string>()->default_value("epick"), "Kernel to use.  One of \'ipick\', \'epick\', \'epeck\'")
     ;
@@ -350,12 +353,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-
-#else 
- int main()
- {
-   std::cout << "TestMesh.cpp needs Boost Program Options" << std::endl;
-   return 0;
- }
-#endif

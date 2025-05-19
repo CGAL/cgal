@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -24,6 +15,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Point_traits.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/assertions.h>
@@ -32,15 +27,15 @@ namespace CGAL {
 
   template <class P>
   struct Is_weighted : public Tag_false {} ;
-  
+
   template <typename K>
   struct Is_weighted< ::CGAL::Weighted_point_3<K> > :
     public Tag_true {} ;
-  
+
   namespace details {
 
     template <class P, typename FT, bool>
-    struct Point_traits_aux 
+    struct Point_traits_aux
     {
       // should give errors
     };
@@ -53,7 +48,7 @@ namespace CGAL {
       typedef typename Kernel_traits<P>::type K;
       typedef typename ::CGAL::Weighted_point_3<K> Weighted_point;
       typedef Tag_false Is_weighted;
-     
+
       const Bare_point& bare_point(const Point& bp)
       {
         return bp;
@@ -82,7 +77,7 @@ namespace CGAL {
       typedef P Weighted_point;
       typedef typename Point::Point Bare_point;
       typedef Tag_true Is_weighted;
-     
+
       const Bare_point& bare_point(const Point& wp)
       {
         return wp.point();
@@ -105,7 +100,7 @@ namespace CGAL {
     }; // end class Point_traits_aux<P, FT, true>
 
     template <class Point>
-    struct FT_of_point 
+    struct FT_of_point
     {
       typedef typename CGAL::Kernel_traits<Point>::Kernel::FT type;
     };

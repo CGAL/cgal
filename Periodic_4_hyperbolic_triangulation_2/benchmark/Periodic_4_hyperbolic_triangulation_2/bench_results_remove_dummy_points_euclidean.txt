@@ -1,0 +1,13 @@
+Test ran on 04/06/2018, 11:18am
+=================================================
+Finished 100 iterations!
+Minimum number of points inserted: 30
+Maximum number of points inserted: 147
+Average number of points inserted: 61.66
+
+
+Context
+=================================================
+There were some doubts about how correct it is to say that we used random points
+uniformly distributed in the hyperbolic metric. I ran the test with points
+distributed uniformly in the Euclidean metric, and these are the results.

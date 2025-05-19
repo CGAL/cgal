@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
@@ -72,7 +63,7 @@ namespace CGAL {
     typedef std::map<const DVertex*, int>                 Vertex_index_map;
     typedef std::map<const DHalfedge*, int>               Halfedge_index_map;
 
-    // Data memebrs:
+    // Data members:
     const Arrangement_2&   m_arr;
     const Dcel*            m_dcel;
     int                    m_curr_v;
@@ -88,10 +79,10 @@ namespace CGAL {
 
   public:
 
-    /*! Constructor. */
+    /*! constructs. */
     Arrangement_2_writer(const Arrangement_2& arr) :
       m_arr(arr),
-      m_dcel(NULL),
+      m_dcel(nullptr),
       m_curr_v(0),
       m_curr_he(0)
     {
@@ -99,11 +90,11 @@ namespace CGAL {
       m_dcel = &(arr_access.dcel());
     }
 
-    /*! Destructor. */
+    /*! destructs. */
     virtual ~Arrangement_2_writer()
     {}
 
-    /*! Write the arrangement. */
+    /*! writes the arrangement. */
     template <class Formatter>
     void operator()(Formatter& formatter)
     {
@@ -150,7 +141,7 @@ namespace CGAL {
 
   protected:
 
-    /*! Write a vertex. */
+    /*! writes a vertex. */
     template <class Formatter>
     void _write_vertex(Formatter& formatter, Vertex_const_iterator vit)
     {
@@ -183,7 +174,7 @@ namespace CGAL {
       formatter.write_vertex_end();
     }
 
-    /*! Write an edge (a pair of halfedges). */
+    /*! writes an edge (a pair of halfedges). */
     template <class Formatter>
     void _write_edge(Formatter& formatter, Edge_const_iterator hit)
     {
@@ -224,7 +215,7 @@ namespace CGAL {
       formatter.write_edge_end();
     }
 
-    /*! Write a face. */
+    /*! writes a face. */
     template <class Formatter>
     void _write_face(Formatter& formatter, Face_const_iterator fit) const
     {
@@ -293,7 +284,7 @@ namespace CGAL {
       formatter.write_face_end();
     }
 
-    /*! Write the edges along a given CCB. */
+    /*! writes the edges along a given CCB. */
     template <class Formatter>
     void _write_ccb(Formatter& formatter, const DHalfedge* ccb) const
     {
@@ -307,7 +298,7 @@ namespace CGAL {
       formatter.write_ccb_halfedges_end();
     }
 
-    /*! Get the mapped index of a given vertex. */
+    /*! obtains the mapped index of a given vertex. */
     int _index(const DVertex* v) const
     {
       typename Vertex_index_map::const_iterator   pos = m_v_index.find(v);
@@ -316,7 +307,7 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the mapped index of a given halfegde. */
+    /*! obtains the mapped index of a given halfedge. */
     int _index(const DHalfedge* he) const
     {
       typename Halfedge_index_map::const_iterator  pos = m_he_index.find(he);
@@ -325,10 +316,10 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the number of edges along a given CCB. */
+    /*! obtains the number of edges along a given CCB. */
     std::size_t _circulator_size(const DHalfedge* ccb) const
     {
-      CGAL_assertion(ccb != NULL);
+      CGAL_assertion(ccb != nullptr);
 
       std::size_t       n = 0;
       const DHalfedge*  curr = ccb;
@@ -342,6 +333,6 @@ namespace CGAL {
     }
   };
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_IO_ARRANGEMENT_2_WRITER_H
+#endif

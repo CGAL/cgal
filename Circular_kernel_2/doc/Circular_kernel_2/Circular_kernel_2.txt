@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Circular_Geometry_Kernel
 \cgalAutoToc
 
@@ -24,21 +24,21 @@ package.
 
 The design is done in such a way that the algebraic concepts and the
 geometric concepts are clearly separated. `Circular_kernel_2`
-has therefore two template parameters: 
+has therefore two template parameters:
 <UL>
-<LI> the first parameter must model the \cgal 
+<LI> the first parameter must model the \cgal
 three dimensional `Kernel` concept. The circular kernel derives
 from it, and it provides all elementary geometric objects like points,
-lines, circles, and elementary functionality on them. 
-<LI> the second parameter is the algebraic kernel, which is 
-responsible for computations on polynomials and algebraic numbers. It 
+lines, circles, and elementary functionality on them.
+<LI> the second parameter is the algebraic kernel, which is
+responsible for computations on polynomials and algebraic numbers. It
 has to be a model of concept `AlgebraicKernelForCircles`. The
 robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 </UL>
 
 The circular kernel uses the extensibility scheme presented in the 2D
-kernel manual (see Section \ref sectionextensiblekernel). 
+kernel manual (see Section \ref sectionextensiblekernel).
 The types of `Kernel` are inherited
 by the circular kernel and some types are taken from the
 `AlgebraicKernelForCircles` parameter. Three new main geometric objects are
@@ -47,14 +47,14 @@ circular arcs (used in particular for endpoints of arcs and
 intersection points between arcs) and line segments whose endpoints
 are points of this new type.
 
-In fact, the circular kernel is documented as a concept, `CircularKernel`, 
-and two models are provided: 
+In fact, the circular kernel is documented as a concept, `CircularKernel`,
+and two models are provided:
 <UL>
-<LI> `Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`, the basic kernel, 
+<LI> `Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`, the basic kernel,
 <LI> and
-a predefined filtered kernel `Exact_circular_kernel_2`, 
-that is based on similar techniques as 
-`Exact_predicates_exact_constructions_kernel`. 
+a predefined filtered kernel `Exact_circular_kernel_2`,
+that is based on similar techniques as
+`Exact_predicates_exact_constructions_kernel`.
 </UL>
 
 \section Circular_kernel_2Examples Examples
@@ -90,7 +90,7 @@ also added more functionality in 2008.
 
 This work was partially supported by the IST Programme of the EU as a
 Shared-cost RTD (FET Open) Project under Contract No IST-2000-26473
-(<A HREF="http://www-sop.inria.fr/prisme/ECG/">ECG</A> - Effective
+(<A HREF="https://www-sop.inria.fr/prisme/ECG/">ECG</A> - Effective
 Computational Geometry for Curves and Surfaces) and by the IST
 Programme of the 6th Framework Programme of the EU as a STREP (FET
 Open Scheme) Project under Contract No IST-006413
@@ -107,18 +107,18 @@ Shapes).
 @todo clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
 used in solve to check that solutions are the same)
 
-@todo rendre Bbox filtered kernel completement generique -> 
-	utilisation dans linear kernel aussi
+@todo rendre Bbox filtered kernel completement generique ->
+        utilisation dans linear kernel aussi
 
-@todo echecs de filtres 
+@todo echecs de filtres
 
-@todo voir make_x_monotone pour que ca retourne des arcs 
+@todo voir make_x_monotone pour que ca retourne des arcs
 (necessite bricolage de la traits car Arr_2 demande des Object)
 
 @todo interface intersect avec plusieurs outputIt types (types de retour differents)
 
-@todo --> a transferer dans linear kernel ? 
-	- unoriented equal (pb general orientation dans noyau cgal...)
+@todo --> a transferer dans linear kernel ?
+        - unoriented equal (pb general orientation dans noyau cgal...)
 
 @todo construct intersection for *arcs* should use solve or solve in range
 
@@ -126,8 +126,8 @@ used in solve to check that solutions are the same)
 
 @todo memory leaks in Filtered_bbox_circular_kernel_2
 
-@todo from Andreas: 
-  there are new statements in constructors having no corresponding 
+@todo from Andreas:
+  there are new statements in constructors having no corresponding
   delete statements.
   This concerns the files in the directory:
   CGAL-3.3.1/include/CGAL/Filtered_bbox_circular_kernel_2/...with_bbox_2.h
@@ -135,9 +135,9 @@ used in solve to check that solutions are the same)
   deletes.
 
 @todo  Reading the code I think that the IO routines also don't
-  do what they should do, namely computing new bboxes. 
+  do what they should do, namely computing new bboxes.
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

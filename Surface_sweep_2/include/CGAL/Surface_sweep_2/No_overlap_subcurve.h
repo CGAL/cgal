@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Tali Zvi <talizvi@post.tau.ac.il>,
 //             Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -28,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_subcurve class, which is an
+ * Definition of the No_overlap_subcurve class, which is an
  * extended curve type, referred to as Subcurve, used by the surface-sweep
  * framework.
  *
@@ -72,6 +63,7 @@ public:
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
   typedef Allocator_                                    Allocator;
+  typedef Tag_false                                     Handle_overlaps;
 
 private:
   typedef Geometry_traits_2                             Gt2;
@@ -130,7 +122,7 @@ public:
  * No_overlap_subcurve_base class template.
  *
  * The information contained in this class (in addition to the information
- * contaisn in its base) is:
+ * contained in its base) is:
  * - the remaining x-monotone curve that is to the right of the current sweep
  *   line.
  * \tparam GeometryTraits_2 the geometry traits.
@@ -140,7 +132,7 @@ public:
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *                   overriden it implies that the type is No_overlap_subcurve.
+ *                   overridden it implies that the type is No_overlap_subcurve.
  */
 template <typename GeometryTraits_2, typename Event_,
           typename Allocator_ = CGAL_ALLOCATOR(int),
@@ -174,7 +166,7 @@ protected:
   // Data members:
   X_monotone_curve_2 m_last_curve;  // The portion of the curve that lies to
                                     // the right of the last event point
-                                    // that occured on the curve.
+                                    // that occurred on the curve.
 
 public:
   /*! Construct default. */
@@ -199,7 +191,7 @@ public:
   /*! Get the last intersecing curve so far (non-const version). */
   X_monotone_curve_2& last_curve() { return m_last_curve; }
 
-  /*! Set the last intersecing curve so far.
+  /*! Set the last intersecting curve so far.
    */
   void set_last_curve(const X_monotone_curve_2& cv) { m_last_curve = cv; }
 

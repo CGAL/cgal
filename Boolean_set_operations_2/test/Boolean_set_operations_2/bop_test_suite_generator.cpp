@@ -16,10 +16,7 @@
 // leda_rational, or Gmpq, or Quotient<MP_float>
 typedef CGAL::Exact_rational        Number_type;
 
-// instead of
-//typedef CGAL::Simple_cartesian<Number_type>            Kernel;
-// workaround for VC++ 
-struct Kernel : public CGAL::Simple_cartesian<Number_type> {};
+typedef CGAL::Simple_cartesian<Number_type>            Kernel;
 
 typedef CGAL::Polygon_2<Kernel>                        Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>             Polygon_with_holes_2;
@@ -32,7 +29,7 @@ bool are_polygons_valid(const std::vector<Polygon_with_holes_2>& vec)
   for(; i < vec.size(); ++i)
   {
     if(!is_valid_polygon_with_holes(vec[i],tr))
-      return false; 
+      return false;
   }
   return true;
 }
@@ -44,7 +41,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   Traits_2 tr;
   std::vector<Polygon_with_holes_2> res;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(res);
- 
+
   Polygon_with_holes_2 res_pgn;
   bool intersect = CGAL::join(p1, p2, res_pgn);
   if(intersect)
@@ -98,7 +95,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   if(!are_polygons_valid(res))
     std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
-  
+
   return out;
 }
 
@@ -162,7 +159,7 @@ int main(int argc, char *argv[])
       char c = std::cin.get();
       if(c != 'y')
         return 0;
-   
+
   }
   std::ofstream out (argv[3]);
   if(!out.is_open())
@@ -187,7 +184,7 @@ int main(int argc, char *argv[])
       std::cout << "warning: first input polygon is invalid!!!" << std::endl;
     }
   }
-  else 
+  else
   {
     inp1 >> pwh1;
     out  << pwh1;
@@ -222,7 +219,7 @@ int main(int argc, char *argv[])
     }
   }
   out <<std::endl;
-  
+
 
   if(type1 == 0 && type2 == 0)
   {
@@ -230,7 +227,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -242,7 +239,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -254,7 +251,7 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
@@ -266,13 +263,13 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd"
+      " was generated successfully, don't forget to add it to test_bop.cmd"
              << std::endl;
 
     return (0);
   }
 
-  std::cout << "unkown polygon type" << std::endl;
+  std::cout << "unknown polygon type" << std::endl;
 
   return (0);
 }

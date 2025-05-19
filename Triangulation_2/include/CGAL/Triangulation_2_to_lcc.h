@@ -1,26 +1,20 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
 #ifndef CGAL_TRIANGULATION_2_TO_LCC_H
 #define CGAL_TRIANGULATION_2_TO_LCC_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/assertions.h>
 #include <map>
@@ -31,33 +25,33 @@ namespace CGAL {
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_2.
    * @param aface_to_dart a pointer to a std::map associating to each
-   *        triangle of atr a corresponding dart in alcc. Not used if NULL.
+   *        triangle of atr a corresponding dart in alcc. Not used if nullptr.
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
-  typename LCC::Dart_handle import_from_triangulation_2
+  typename LCC::Dart_descriptor import_from_triangulation_2
   (LCC& alcc, const Triangulation &atr,
    std::map<typename Triangulation::Face_handle,
-            typename LCC::Dart_handle >* aface_to_dart=NULL)
+            typename LCC::Dart_descriptor >* aface_to_dart=nullptr)
   {
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
-    
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==2 );
+
     // Case of empty triangulations.
-    if (atr.number_of_vertices()==0) return LCC::null_handle;
+    if (atr.number_of_vertices()==0) return LCC::null_descriptor;
 
     // Check the dimension.
-    if (atr.dimension()!=2) return LCC::null_handle;
+    if (atr.dimension()!=2) return LCC::null_descriptor;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle         TVertex_handle;
     typedef typename Triangulation::All_vertices_iterator TVertex_iterator;
     typedef typename Triangulation::All_faces_iterator    TFace_iterator;
     typedef typename std::map
-      < TFace_iterator, typename LCC::Dart_handle >::iterator itmap_tcell;
+      < TFace_iterator, typename LCC::Dart_descriptor >::iterator itmap_tcell;
 
     // Create vertices in the map and associate in a map
     // TVertex_handle and vertices in the map.
-    std::map< TVertex_handle, typename LCC::Vertex_attribute_handle > TV;
+    std::map< TVertex_handle, typename LCC::Vertex_attribute_descriptor > TV;
     for (TVertex_iterator itv = atr.all_vertices_begin();
          itv != atr.all_vertices_end(); ++itv)
     {
@@ -68,14 +62,14 @@ namespace CGAL {
     // and triangles.
     TFace_iterator it;
 
-    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle> TC;
-    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle>*
-      mytc = (aface_to_dart==NULL?&TC:aface_to_dart);
-    
+    std::map<typename Triangulation::Face_handle, typename LCC::Dart_descriptor> TC;
+    std::map<typename Triangulation::Face_handle, typename LCC::Dart_descriptor>*
+      mytc = (aface_to_dart==nullptr?&TC:aface_to_dart);
+
     itmap_tcell maptcell_it;
 
-    typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
-    typename LCC::Dart_handle cur=LCC::null_handle, neighbor=LCC::null_handle;
+    typename LCC::Dart_descriptor res=LCC::null_descriptor, dart=LCC::null_descriptor;
+    typename LCC::Dart_descriptor cur=LCC::null_descriptor, neighbor=LCC::null_descriptor;
 
     for (it = atr.all_faces_begin(); it != atr.all_faces_end(); ++it)
     {
@@ -89,7 +83,7 @@ namespace CGAL {
                                  TV[it->vertex(1)],
                                  TV[it->vertex(2)]);
 
-        if ( dart==LCC::null_handle )
+        if ( dart==LCC::null_descriptor )
         {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
@@ -98,7 +92,7 @@ namespace CGAL {
           else if ( it->vertex(2) == atr.infinite_vertex() )
             dart = alcc.previous(res);
         }
-        
+
         for (unsigned int i=0; i<3; ++i)
         {
           switch (i)
@@ -126,10 +120,10 @@ namespace CGAL {
       }
     }
 
-    CGAL_assertion(dart!=LCC::null_handle);
+    CGAL_assertion(dart!=LCC::null_descriptor);
     return dart;
   }
-  
+
 } // namespace CGAL
 
 #endif // CGAL_TRIANGULATION_2_TO_LCC_H

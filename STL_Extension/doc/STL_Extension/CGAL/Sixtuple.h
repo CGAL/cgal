@@ -4,131 +4,131 @@ namespace CGAL {
 /*!
 \ingroup PkgSTLExtensionUtilities
 
-The `Sixtuple` class stores a homogeneous (same type) 
-sixtuple of objects of type `T`. A `Sixtuple` is much like a 
-container, in that it "owns" its elements. It is not actually a model of 
-container, though, because it does not support the standard methods (such as 
-iterators) for accessing the elements of a container. 
+The `Sixtuple` class stores a homogeneous (same type)
+sixtuple of objects of type `T`. A `Sixtuple` is much like a
+container, in that it "owns" its elements. It is not actually a model of
+container, though, because it does not support the standard methods (such as
+iterators) for accessing the elements of a container.
 
-\deprecated This class is deprecated, and will be removed in some future \cgal release. 
-Please use CGAL::cpp11::array instead. 
+\deprecated This class is deprecated, and will be removed in some future \cgal release.
+Please use std::array instead.
 
-\tparam `T` must be `Assignable`.
+\tparam T must be `Assignable`.
 */
 template< typename T >
 class Sixtuple {
 public:
 
-/// \name Types 
-/// @{ 
+/// \name Types
+/// @{
 /*!
 
-*/ 
-typedef T value_type; 
+*/
+typedef T value_type;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-first element 
-*/ 
-T e0; 
+first element
+*/
+T e0;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-second element 
-*/ 
-T e1; 
+second element
+*/
+T e1;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-third element 
-*/ 
-T e2; 
+third element
+*/
+T e2;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-fourth element 
-*/ 
-T e3; 
+fourth element
+*/
+T e3;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-fifth element 
-*/ 
-T e4; 
+fifth element
+*/
+T e4;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-sixth element 
-*/ 
-T e5; 
+sixth element
+*/
+T e5;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-introduces a `Sixtuple` using the default 
-constructor of the elements. 
-*/ 
-Sixtuple(); 
+introduces a `Sixtuple` using the default
+constructor of the elements.
+*/
+Sixtuple();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-constructs a 
-`Sixtuple` such that `e0` is constructed from `x`, `e1` from 
-`y`, `e2` from `z`, `e3` from `t`, `e4` from 
-`u` and `e5` from `v`. 
-*/ 
-Sixtuple(T x, T y, T z, T t, T u, T v); 
+constructs a
+`Sixtuple` such that `e0` is constructed from `x`, `e1` from
+`y`, `e2` from `z`, `e3` from `t`, `e4` from
+`u` and `e5` from `v`.
+*/
+Sixtuple(T x, T y, T z, T t, T u, T v);
 
 
 
-/// @} 
+/// @}
 
 
 

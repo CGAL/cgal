@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Quincy Tse, Weisheng Si
@@ -41,7 +32,7 @@
 
 namespace CGAL {
 
-/* This namespace contains the internal implementation of the tree for builiding Theta graph.
+/* This namespace contains the internal implementation of the tree for building Theta graph.
  * This is not meant to be imported by other code.
  */
 namespace ThetaDetail {
@@ -98,18 +89,18 @@ public:
     /* Explicit Constructor. */
     explicit Plane_scan_tree (const key_compare& comp = key_compare(),
                               const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
-          m_max (NULL), _size (0) {}
+        : less (comp), vless (vcomp), root (nullptr), m_min (nullptr),
+          m_max (nullptr), _size (0) {}
 
     /* Constructor */
     template <typename InputIterator>
     Plane_scan_tree (InputIterator first, InputIterator last,
                      const key_compare& comp = key_compare(),
                      const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
-          m_max (NULL), _size (0)
+        : less (comp), vless (vcomp), root (nullptr), m_min (nullptr),
+          m_max (nullptr), _size (0)
     {
-        // buids the tree
+        // builds the tree
         /* Note: a more efficient algorithm building the tree bottom up may be
           worth implementing later */
         for (; first != last; ++first)
@@ -121,9 +112,9 @@ public:
      */
     ~Plane_scan_tree () {
         delete root;
-        root = NULL;
-        m_min = NULL;
-        m_max = NULL;
+        root = nullptr;
+        m_min = nullptr;
+        m_max = nullptr;
         _size = 0;;
     }
 
@@ -141,7 +132,7 @@ public:
      * @param v   The value
      */
     void add (const key_type& k, const mapped_type& v) {
-        if (NULL == root) {
+        if (nullptr == root) {
             m_min = new _leaf_type (less, vless, this);
             m_max = m_min;
             root = m_min;
@@ -163,14 +154,14 @@ public:
         return const_iterator (l, k);
     }
 
-    /* Returns the the minimum value that has a key strictly greater than
+    /* Returns the minimum value that has a key strictly greater than
      * the specified key.
      *
      * @param x The threshold key
      * @return  The minimum value whose key is strictly greater than x.
      */
     const mapped_type* minAbove (const key_type& x) const {
-        if (NULL == root) return NULL;
+        if (nullptr == root) return nullptr;
         return root->minAbove(x);
     }
 

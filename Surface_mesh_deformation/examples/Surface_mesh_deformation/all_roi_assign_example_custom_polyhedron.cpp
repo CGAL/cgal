@@ -1,28 +1,33 @@
+#include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/algorithm.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Surface_mesh_deformation.h>
+
+#include <cmath>
 #include <fstream>
 #include <map>
-#include <cmath>
-#include <CGAL/property_map.h>
-#include <CGAL/algorithm.h>
 
+template <typename Kernel>
 struct Custom_point_3{
   // Required by File_scanner_OFF
-  struct R{
-    typedef double RT;
-  };
+  typedef Kernel R;
+  typedef typename Kernel::FT FT;
 
-  double coords[3];
+  FT coords[3];
   Custom_point_3(){}
-  Custom_point_3(double x, double y, double z)
+  Custom_point_3(FT x, FT y, FT z)
   { coords[0]=x; coords[1]=y; coords[2]=z; }
-  Custom_point_3(double x, double y, double z, double w)
+  Custom_point_3(FT x, FT y, FT z, FT w)
   { coords[0]=x/w; coords[1]=y/w; coords[2]=z/w; }
 
-  double x() const {return coords[0];}
-  double y() const {return coords[1];}
-  double z() const {return coords[2];}
+  FT x() const { return coords[0]; }
+  FT y() const { return coords[1]; }
+  FT z() const { return coords[2]; }
 
-  double& operator[](int i)       { return coords[i]; }
-  double  operator[](int i) const { return coords[i]; }
+  FT& operator[](int i)       { return coords[i]; }
+  FT  operator[](int i) const { return coords[i]; }
 
   friend std::ostream& operator<<(std::ostream& out, const Custom_point_3& p)
   {
@@ -37,15 +42,15 @@ struct Custom_point_3{
   }
 };
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_deformation.h>
-
-struct Custom_traits{
-  typedef Custom_point_3 Point_3;
+template <typename Kernel>
+struct Custom_traits
+{
+  typedef Custom_point_3<Kernel> Point_3;
   struct Plane_3{};
 };
 
-typedef CGAL::Polyhedron_3<Custom_traits>       Polyhedron;
+typedef CGAL::Simple_cartesian<double>                        Kernel;
+typedef CGAL::Polyhedron_3<Custom_traits<Kernel> >            Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
@@ -63,7 +68,7 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_index_map, Hedge_index
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/plane.off");
+  std::ifstream input(CGAL::data_file_path("meshes/plane.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr<< "Cannot open  data/plane.off" << std::endl;
@@ -76,7 +81,7 @@ int main()
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
+  for(std::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
     put(vertex_index_map, *vb, counter);
   }
 
@@ -84,19 +89,19 @@ int main()
   Hedge_index_map hedge_index_map(internal_hedge_index_map);
   counter = 0;
   halfedge_iterator eb, ee;
-  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
+  for(std::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
     put(hedge_index_map, *eb, counter);
   }
 
   Surface_mesh_deformation deform_mesh(mesh, vertex_index_map, hedge_index_map);
 
   // Insert the whole mesh as region of interest
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Insert two control vertices
-  vertex_descriptor control_1 = *CGAL::cpp11::next(vb, 213);
-  vertex_descriptor control_2 = *CGAL::cpp11::next(vb, 157);
+  vertex_descriptor control_1 = *std::next(vb, 213);
+  vertex_descriptor control_2 = *std::next(vb, 157);
   deform_mesh.insert_control_vertex(control_1);
   deform_mesh.insert_control_vertex(control_2);
 
@@ -107,7 +112,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position
+  // Use set_target_position() to set the constrained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
@@ -117,7 +122,7 @@ int main()
   // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
-  // Set the constained position of control_2
+  // Set the constrained position of control_2
   Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
@@ -131,7 +136,7 @@ int main()
   output.close();
 
   // Add another control vertex
-  vertex_descriptor control_3 = *CGAL::cpp11::next(vb, 92);
+  vertex_descriptor control_3 = *std::next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
 
   // The prepocessing step is again needed

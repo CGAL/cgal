@@ -1,19 +1,35 @@
 /// \defgroup PkgSurface_mesh Surface Mesh Reference
 
-/*! Draw.
-  \code
-   #include <CGAL/draw_surface_mesh.h>
-  \endcode
+/*!
+\cgalInclude{CGAL/draw_surface_mesh.h}
 */
 /// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
 /// \ingroup PkgSurface_mesh
+
+/// \defgroup PkgSurfaceMeshIOFunc I/O Functions
+/// \ingroup PkgSurface_mesh
+
+/// \defgroup PkgSurfaceMeshIOFuncOFF I/O Functions (OFF)
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncPLY I/O Functions (PLY)
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFunc3MF I/O Functions (3MF)
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgSurfaceMeshIOFunc
 
 /*!
 \addtogroup PkgSurface_mesh
 \cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMesh}
 \cgalPkgPicture{Surface_mesh_teaser.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Mario Botsch, Daniel Sieger, Philipp Moeller, and Andreas Fabri}
+\cgalPkgAuthors{Mario Botsch, Daniel Sieger, Philipp Moeller, and Andreas Fabri}
 \cgalPkgDesc{The surface mesh class provided by this package is an implementation
  of the halfedge data structure allowing to represent polyhedral surfaces. It is
 an alternative to the packages \ref PkgHalfedgeDS and \ref PkgPolyhedron.
@@ -29,17 +45,19 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-
 \cgalClassifedRefPages
 
-
-
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Surface_mesh<P>`
-                
-### Draw a Surface Mesh ###
-- `CGAL::draw<SM>`
 
+\cgalCRPSection{Draw a Surface Mesh}
+
+- \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
+
+\cgalCRPSection{I/O Functions}
+- \link PkgSurfaceMeshIOFuncOFF I/O for `OFF` files \endlink
+- \link PkgSurfaceMeshIOFuncPLY I/O for `PLY` files \endlink
+- `read_3MF()`
 */
 

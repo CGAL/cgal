@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -26,7 +17,7 @@
 #include <cassert>
 #include "helper_functions.h"
 #include <list>
-#include <boost/variant.hpp>
+#include <variant>
 
 
 template<class DG, class AS>
@@ -119,7 +110,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
     // constructors that take an iterator range
     std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
     DG dg4(v.begin(), v.end());
@@ -144,7 +135,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
 
   if ( dg.tds().number_of_edges() > 0 ) {
     test_is_convertible_to<Edge>(*dg.all_edges_begin());
-    test_is_convertible_to<Edge>(*dg.finite_edges_begin());    
+    test_is_convertible_to<Edge>(*dg.finite_edges_begin());
   }
 
   if ( dg.dimension() == 2 ) {
@@ -226,7 +217,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
     DG dg1;
     std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
     assert( v.size() > 0 );
@@ -519,7 +510,7 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
   typedef typename Site_inserter::result_type      result_type;
 
   Site_inserter si = ap.site_inserter_object();
-  
+
   if ( dg.number_of_vertices() == 0 ) { return; }
 
   DG dg2;
@@ -546,7 +537,7 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
   oit = si(dg2, t, oit);
 
   assert( v_list.size() == 1 );
-  assert( dg2.number_of_vertices() == 1 );  
+  assert( dg2.number_of_vertices() == 1 );
 }
 
 //============================================================================
@@ -576,11 +567,11 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 
   result_type qr = ns(dg, p);
 
-  if ( Face_handle* f = boost::get<Face_handle>(&qr) ) {
+  if ( Face_handle* f = std::get_if<Face_handle>(&qr) ) {
     kill_warning(f);
-  } else if ( Edge* e = boost::get<Edge>(&qr) ) {
+  } else if ( Edge* e = std::get_if<Edge>(&qr) ) {
     kill_warning(e);
-  } else if ( Vertex_handle* v = boost::get<Vertex_handle>(&qr) ) {
+  } else if ( Vertex_handle* v = std::get_if<Vertex_handle>(&qr) ) {
     kill_warning(v);
   } else {
     // we should have reached this line

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Tali Zvi <talizvi@post.tau.ac.il>,
 //             Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -28,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Default_event_base class.
+ * Definaition of the Default_event_base class.
  */
 
 #include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
@@ -39,7 +30,7 @@ namespace Surface_sweep_2 {
 /*! \class Default_event_base
  *
  * A class associated with an event in a sweep line algorithm.
- * An intersection point in the sweep line algorithm is refered to as an event.
+ * An intersection point in the sweep line algorithm is referred to as an event.
  * This class contains the information that is associated with any given
  * event point. This information contains the following:
  * - the actual point
@@ -95,7 +86,7 @@ public:
       if ((curve == *iter) || (*iter)->is_inner_node(curve)) return;
 
       // Replace the existing curve in case of overlap, only if the set of
-      // ancesters of curve contains the set of ancesters of *iter
+      // ancestors of curve contains the set of ancestors of *iter
       if (curve->has_common_leaf(*iter)) {
         if (curve->number_of_original_curves() >
             (*iter)->number_of_original_curves())
@@ -166,13 +157,28 @@ public:
     return std::make_pair(false, --iter);
   }
 
+  Subcurve_iterator
+  get_curve_after_on_right(Subcurve* curve)
+  {
+    Subcurve_iterator iter = this->right_curves_begin();
+    for (Subcurve_iterator end = this->right_curves_end(); iter!=end; ++iter)
+    {
+      // TODO refine the condition
+      if ( (*iter)->is_leaf(curve) || curve->is_leaf(*iter) || curve->has_common_leaf(*iter) )
+        break;
+    }
+    CGAL_assertion( iter!=this->right_curves_end() );
+    ++iter;
+    return iter;
+  }
+
   /*! Remove a curve from the set of left curves. */
   void remove_curve_from_left(Subcurve* curve)
   {
     for (Subcurve_iterator iter = this->left_curves_begin();
          iter != this->left_curves_end(); ++iter)
     {
-      if ((curve == *iter) || curve->are_all_leaves_contained(*iter)) {
+      if (curve == *iter) {
         this->left_curves_erase(iter);
         return;
       }
@@ -217,6 +223,8 @@ public:
     return tr->compare_y_at_x_right_2_object()
       (c1->last_curve(), c2->last_curve(), this->point()) == LARGER;
   }
+
+  std::vector< std::pair<Subcurve*, Subcurve*> > overlaps_on_right;
 };
 
 } // namespace Surface_sweep_2

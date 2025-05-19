@@ -32,7 +32,8 @@ struct Myattrib : public  CGAL::Cell_attribute_with_point
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
+  MonInfo(long long int i=0) : mnb(i==0?rand():static_cast<int>(i)),
+                               ptr(reinterpret_cast<char*>(this))
   {}
 
   bool operator==(const MonInfo& info) const
@@ -43,25 +44,39 @@ struct MonInfo
   char *ptr;
 };
 
+struct Min_items: public CGAL::Linear_cell_complex_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Myitems_2b
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+  using Index_type=std::uint16_t;
+#endif
   template <class LCC>
   struct Dart_wrapper
   {
     typedef MonInfo Dart_info;
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib>
     Attributes;
   };
 };
 
 struct Myitems_2c
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class LCC>
   struct Dart_wrapper
   {
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib>
     Attributes;
   };
 };
@@ -72,13 +87,14 @@ int main()
 
   // ****************** TEST FOR CMAP ******************
   trace_display_msg("\ntest_LCC_2<LCC2>");
-  typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC2;
+  typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
+      CGAL::Linear_cell_complex_traits<2>, Min_items> LCC2;
   if ( !test_LCC_2<LCC2>() )
   {
     std::cout<<" Error during Test_LCC_2<LCC2>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_2<LCC2b>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,
@@ -88,7 +104,7 @@ int main()
     std::cout<<" Error during Test_LCC_2<LCC2b>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_2<LCC2c>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,
@@ -101,7 +117,8 @@ int main()
 
   // ****************** TEST FOR GMAP ******************
   trace_display_msg("\ntest_LCC_2<GLCC2>");
-  typedef CGAL::Linear_cell_complex_for_generalized_map<2> GLCC2;
+  typedef CGAL::Linear_cell_complex_for_generalized_map<2,2,
+      CGAL::Linear_cell_complex_traits<2>, Min_items> GLCC2;
   if ( !test_LCC_2<GLCC2>() )
   {
     std::cout<<" Error during Test_LCC_2<GLCC2>."<<std::endl;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -25,7 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/internal/Triangulation/utilities.h>
+#include <CGAL/Triangulation/internal/utilities.h>
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/Triangulation_full_cell.h>
 #include <CGAL/Triangulation_vertex.h>
@@ -36,17 +27,18 @@
 #include <CGAL/Default.h>
 #include <CGAL/Random.h>
 
+#include <boost/container/small_vector.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
 // Iterator which iterates over vertex_handle's, but returns a point when
-// dereferenced. If the current 
+// dereferenced. If the current
 // vertex_handle vh == vh_where_point_should_be_substituted, it returns
 // "subtitute_point", otherwise, it returns vh->point()
 template<class VertexHandleConstIter>
-class Substitute_point_in_vertex_iterator 
+class Substitute_point_in_vertex_iterator
 {
   typedef typename std::iterator_traits<VertexHandleConstIter>::value_type Vertex_handle;
   typedef typename Vertex_handle::value_type Vertex;
@@ -64,7 +56,7 @@ public:
 
   result_type operator()(Vertex_handle vh) const
   {
-    if (vh == vh_where_point_should_be_substituted_) 
+    if (vh == vh_where_point_should_be_substituted_)
       return *subtitute_point_;
     else
       return vh->point();
@@ -87,32 +79,32 @@ class Triangulation
                         Triangulation_full_cell<TriangulationTraits> >
                         >::type                      TDS;
     typedef Triangulation<TriangulationTraits, TDS_> Self;
-    
+
 protected:
     typedef typename TriangulationTraits::Flat_orientation_d Flat_orientation_d;
     typedef typename TriangulationTraits::Construct_flat_orientation_d Construct_flat_orientation_d;
     typedef typename TriangulationTraits::In_flat_orientation_d In_flat_orientation_d;
-    
+
     // Wrapper
-    struct Coaffine_orientation_d 
+    struct Coaffine_orientation_d
     {
-      boost::optional<Flat_orientation_d>* fop;
+      std::optional<Flat_orientation_d>* fop;
       Construct_flat_orientation_d cfo;
       In_flat_orientation_d ifo;
 
       Coaffine_orientation_d(
-        boost::optional<Flat_orientation_d>& x, 
-        Construct_flat_orientation_d const&y, 
+        std::optional<Flat_orientation_d>& x,
+        Construct_flat_orientation_d const&y,
         In_flat_orientation_d const&z)
       : fop(&x), cfo(y), ifo(z) {}
-      
-      template<class Iter> 
+
+      template<class Iter>
       CGAL::Orientation operator()(Iter a, Iter b) const
       {
         if (*fop)
-          return ifo(fop->get(),a,b);
+          return ifo(fop->value(),a,b);
         *fop = cfo(a,b);
-        CGAL_assertion(ifo(fop->get(),a,b) == CGAL::POSITIVE);
+        CGAL_assertion(ifo(fop->value(),a,b) == CGAL::POSITIVE);
         return CGAL::POSITIVE;
       }
     };
@@ -121,11 +113,11 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
-        flat_orientation_ = boost::none;
+        flat_orientation_ = std::nullopt;
     }
 
     typedef typename TriangulationTraits::Orientation_d
@@ -153,7 +145,7 @@ public:
     typedef typename TDS::Full_cell_iterator        Full_cell_iterator;
     typedef typename TDS::Full_cell_const_handle    Full_cell_const_handle;
     typedef typename TDS::Full_cell_const_iterator  Full_cell_const_iterator;
-    
+
     typedef typename TDS::Facet_iterator            Facet_iterator;
 
     typedef typename TDS::size_type                 size_type;
@@ -196,10 +188,9 @@ protected: // DATA MEMBERS
     Triangulation_ds                            tds_;
     const Geom_traits                           kernel_;
     Vertex_handle                               infinity_;
-    mutable std::vector<Oriented_side>          orientations_;
-    mutable boost::optional<Flat_orientation_d> flat_orientation_;
-    // The user can specify a Flat_orientation_d object to be used for 
-    // orienting simplices of a specific dimension 
+    mutable std::optional<Flat_orientation_d> flat_orientation_;
+    // The user can specify a Flat_orientation_d object to be used for
+    // orienting simplices of a specific dimension
     // (= preset_flat_orientation_.first)
     // preset_flat_orientation_.first = numeric_limits<int>::max() otherwise)
     std::pair<int, const Flat_orientation_d *>  preset_flat_orientation_;
@@ -238,35 +229,35 @@ public:
     {
         return tds().index_of_covertex(f);
     }
-    
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
-    
+
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    typedef std::tuple<Full_cell_handle, int, int>    Rotor;
 
     // Commented out because it was causing "internal compiler error" in MSVC
     /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<0>(r);
+        return std::get<0>(r);
     }
     int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<1>(r);
+        return std::get<1>(r);
     }
     int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<2>(r);
+        return std::get<2>(r);
     }*/
     Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
     {
-        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
-        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
-        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
+        int opposite = std::get<0>(r)->mirror_index(std::get<1>(r));
+        Full_cell_handle s = std::get<0>(r)->neighbor(std::get<1>(r));
+        int new_second = s->index(std::get<0>(r)->vertex(std::get<2>(r)));
         return Rotor(s, new_second, opposite);
     }
-    
+
     // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
     Triangulation(int dim, const Geom_traits &k = Geom_traits())
@@ -274,7 +265,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -284,13 +275,13 @@ public:
     }
 
     // With this constructor,
-    // the user can specify a Flat_orientation_d object to be used for 
-    // orienting simplices of a specific dimension 
+    // the user can specify a Flat_orientation_d object to be used for
+    // orienting simplices of a specific dimension
     // (= preset_flat_orientation_.first)
     // It it used for by dark triangulations created by DT::remove
     Triangulation(
       int dim,
-      const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation, 
+      const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
       const Geom_traits k = Geom_traits())
         : tds_(dim)
         , kernel_(k)
@@ -303,20 +294,20 @@ public:
     {
         clear();
     }
-    
+
     Triangulation(const Triangulation & t2)
         : tds_(t2.tds_)
         , kernel_(t2.kernel_)
         , infinity_()
-        , preset_flat_orientation_((std::numeric_limits<int>::max)(), 
-                                   (Flat_orientation_d*) NULL)
+        , preset_flat_orientation_((std::numeric_limits<int>::max)(),
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();
@@ -326,8 +317,6 @@ public:
             ++infinity_;
             ++inf2;
         }
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
     }
@@ -341,19 +330,19 @@ public:
        if we manage to passe the information that flags/TDS_data is available or not
        for marking simplices in Delaunay_triangulation::remove. This would be useful
        to make it a little faster, instead of binary searching if a simplex is marked
-       or not... 
-    // NOT DOCUMENTED -- 
+       or not...
+    // NOT DOCUMENTED --
     bool get_visited(Full_cell_handle s) const
     {
         return tds().get_visited(s);
     }
-    // NOT DOCUMENTED -- 
+    // NOT DOCUMENTED --
     bool get_visited(Full_cell_const_handle s) const
     {
         return tds().get_visited(s);
     }
 
-    // NOT DOCUMENTED -- 
+    // NOT DOCUMENTED --
     void set_visited(Full_cell_handle s, bool b) const
     {
         tds().set_visited(s, b);
@@ -362,8 +351,8 @@ public:
     Coaffine_orientation_d coaffine_orientation_predicate() const
     {
       return Coaffine_orientation_d (
-        flat_orientation_, 
-        geom_traits().construct_flat_orientation_d_object(), 
+        flat_orientation_,
+        geom_traits().construct_flat_orientation_d_object(),
         geom_traits().in_flat_orientation_d_object()
       );
     }
@@ -561,7 +550,7 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
 
-    
+
     template< typename OutputIterator >
     OutputIterator incident_full_cells(const Face & f, OutputIterator out) const
     {
@@ -622,8 +611,6 @@ public:
     {
         tds_.clear();
         infinity_ = tds().insert_increase_dimension();
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -637,7 +624,7 @@ public:
     }
 
     Full_cell_handle new_full_cell()
-    { 
+    {
         return tds().new_full_cell();
     }
 
@@ -646,7 +633,7 @@ public:
       return tds().new_vertex();
     }
 
-    Vertex_handle new_vertex(const Point & p) 
+    Vertex_handle new_vertex(const Point & p)
     {
         return tds().new_vertex(p);
     }
@@ -706,7 +693,7 @@ public:
         return insert_in_hole(p, start, end, ft, out);
     }
     template< typename ForwardIterator, typename OutputIterator >
-    Vertex_handle insert_in_hole(const Point & p, ForwardIterator start, ForwardIterator end, const Facet & ft, 
+    Vertex_handle insert_in_hole(const Point & p, ForwardIterator start, ForwardIterator end, const Facet & ft,
                                  OutputIterator out)
     {
         Vertex_handle v = tds().insert_in_hole(start, end, ft, out);
@@ -790,7 +777,7 @@ protected:
 
 }; // Triangulation<...>
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // CLASS MEMBER FUNCTIONS
 
@@ -813,7 +800,7 @@ Triangulation<TT, TDS>
     }
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
 template < class TT, class TDS >
@@ -828,7 +815,7 @@ Triangulation<TT, TDS>
     return v;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
 template < class TT, class TDS >
@@ -856,7 +843,6 @@ Triangulation<TT, TDS>
             return insert_in_face(p, f);
             break;
         case ON_VERTEX:
-            s->vertex(f.index(0))->set_point(p);
             return s->vertex(f.index(0));
             break;
     }
@@ -989,15 +975,15 @@ Triangulation<TT, TDS>
             if( NEGATIVE == o )
                 reorient_full_cells();
 
-            
+
         // We just inserted the second finite point and the right infinite
         // cell is like : (inf_v, v), but we want it to be (v, inf_v) to be
         // consistent with the rest of the cells
         if (current_dimension() == 1)
         {
-            // Is "inf_v_cell" the right infinite cell? 
+            // Is "inf_v_cell" the right infinite cell?
             // Then inf_v_index should be 1
-            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                 && inf_v_index == 0)
             {
                 inf_v_cell->swap_vertices(
@@ -1006,11 +992,11 @@ Triangulation<TT, TDS>
             // Otherwise, let's find the right infinite cell
             else
             {
-                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
+                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) & 1);
                 inf_v_index = inf_v_cell->index(infinite_vertex());
-                // Is "inf_v_cell" the right infinite cell? 
+                // Is "inf_v_cell" the right infinite cell?
                 // Then inf_v_index should be 1
-                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                     && inf_v_index == 0)
                 {
                     inf_v_cell->swap_vertices(
@@ -1022,7 +1008,7 @@ Triangulation<TT, TDS>
     return v;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - THE MAIN LOCATE(...) FUNCTION
 
 template < class TT, class TDS >
@@ -1099,6 +1085,8 @@ Triangulation<TT, TDS>
     // of one |orientation| predicate
     Full_cell_handle previous = Full_cell_handle();
     bool full_cell_not_found = true;
+    // A full_cell has at most dimension + 1 facets:
+    boost::container::small_vector<signed char, 8> orientations_ (cur_dim + 1);
     while(full_cell_not_found) // we walk until we locate the query point |p|
     {
     #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -1107,9 +1095,14 @@ Triangulation<TT, TDS>
         // For the remembering stochastic walk, we need to start trying
         // with a random index:
         int j, i = rng_.get_int(0, cur_dim);
+
+        // i = (i + 1) % m where 0 <= i < m
+        auto incr_mod = [] (int&i, int m) {
+          if( ++i >= m ) i = 0; // >= or ==
+        };
+
         // we check |p| against all the full_cell's hyperplanes in turn
-       
-        for(j = 0; j <= cur_dim; ++j, i = (i + 1) % (cur_dim + 1) )
+        for(j = 0; j <= cur_dim; ++j, incr_mod(i, cur_dim + 1))
         {
             Full_cell_handle next = s->neighbor(i);
             if( previous == next )
@@ -1119,12 +1112,12 @@ Triangulation<TT, TDS>
             }
 
             Substitute_point_in_vertex_iterator<
-              typename Full_cell::Vertex_handle_const_iterator> 
+              typename Full_cell::Vertex_handle_const_iterator>
               spivi(s->vertex(i), &p);
 
             orientations_[i] = orientation_pred(
               boost::make_transform_iterator(s->vertices_begin(), spivi),
-              boost::make_transform_iterator(s->vertices_begin() + cur_dim + 1, 
+              boost::make_transform_iterator(s->vertices_begin() + cur_dim + 1,
                                              spivi));
 
             if( orientations_[i] != NEGATIVE )
@@ -1138,6 +1131,9 @@ Triangulation<TT, TDS>
             // full_cell because orientation_[i] == NEGATIVE
             previous = s;
             s = next;
+            // We only need to test is_infinite(next->vertex(next->index(previous)))
+            // or equivalently is_infinite(next->vertex(previous->mirror_index(i)))
+            // but it does not seem to help, even when storing mirror indices.
             if( is_infinite(next) )
             {   // we have arrived OUTSIDE the convex hull of the triangulation,
                 // so we stop the search
@@ -1213,7 +1209,7 @@ Triangulation<TT, TDS>
         return do_locate(p, loc_type, face, facet, start, coaffine_orientation_predicate());
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - the locate(...) variants
 
 template < class TT, class TDS >
@@ -1257,7 +1253,7 @@ template < class TT, class TDS >
 bool
 Triangulation<TT, TDS>
 ::is_valid(bool verbose, int level) const
-{ 
+{
     if( ! tds().is_valid(verbose, level) )
         return false;
 
@@ -1330,7 +1326,7 @@ bool Triangulation<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
 template < class TT, class TDS >
-std::istream & 
+std::istream &
 operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
   // reads :
   // - the dimensions (maximal and current)
@@ -1347,7 +1343,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     // read current dimension and number of vertices
     size_t n;
     int cd;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> cd >> n;
     else
     {
@@ -1382,7 +1378,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
 }
 
 template < class TT, class TDS >
-std::ostream & 
+std::ostream &
 operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
   // writes :
   // - the dimensions (maximal and current)
@@ -1399,7 +1395,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << tr.current_dimension() << std::endl << n << std::endl;
     else
     {
@@ -1416,16 +1412,16 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << *tr.infinite_vertex() <<"\n";
     else
       write(os, *tr.infinite_vertex());
-       
+
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
         if( tr.is_infinite(it) )
             continue;
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << *it <<"\n"; // write the vertex
         else
           write(os, *it);

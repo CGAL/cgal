@@ -1,20 +1,11 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Frédérik Paradis
@@ -38,15 +29,11 @@ typedef Kernel::Direction_2                                            Direction
 
 /* Note: due to a bug in the boost library, using a directed graph
  * will cause a compilation error with g++ and clang++ when using c++11 standard.
- * See http://lists.boost.org/Archives/boost/2016/05/229458.php.
+ * See https://lists.boost.org/Archives/boost/2016/05/229458.php.
  */
 typedef boost::adjacency_list<boost::listS,
                               boost::vecS,
-                              #ifdef CGAL_CXX11
                               boost::undirectedS,
-                              #else
-                              boost::directedS,
-                              #endif
                               Point_2
                              > Graph;
 
@@ -73,7 +60,7 @@ private:
 void Cone_spanners_ipelet::protected_run(int fn)
 {
   std::vector<Point_2> lst;
-  int number_of_cones;
+  int number_of_cones = 0;
   switch (fn){
     case 0:
     case 1:
@@ -99,7 +86,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
 
       int ret_val;
-      boost::tie(ret_val,number_of_cones)=request_value_from_user<int>("Enter the number of cones");
+      std::tie(ret_val,number_of_cones)=request_value_from_user<int>("Enter the number of cones");
       if (ret_val < 0) {
         print_error_message("Incorrect value");
         return;
@@ -142,7 +129,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
     }
     boost::graph_traits<Graph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       boost::graph_traits<Graph>::edge_descriptor e = *ei;
       boost::graph_traits<Graph>::vertex_descriptor  u = source(e, g);
       boost::graph_traits<Graph>::vertex_descriptor  v = target(e, g);

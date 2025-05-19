@@ -28,7 +28,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::ETHZ_random_forest_classifier                           Classifier;
+typedef Classification::ETHZ::Random_forest_classifier                           Classifier;
 
 typedef Classification::Planimetric_grid<Kernel, Point_set, Point_map>        Planimetric_grid;
 typedef Classification::Point_set_neighborhood<Kernel, Point_set, Point_map>  Neighborhood;
@@ -50,7 +50,7 @@ int main (int, char**)
 
   float grid_resolution = 0.34f;
   float radius_dtm = 15.0f;
-  
+
   Planimetric_grid grid (points, points.point_map(), bbox, grid_resolution);
   Neighborhood neighborhood (points, points.point_map());
   Local_eigen_analysis eigen
@@ -74,7 +74,7 @@ int main (int, char**)
     for (std::size_t j = 0; j < 100; ++ j)
       training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = int(i);
   }
-  
+
   Classifier classifier (labels, features);
   classifier.train (training_set);
 
@@ -87,13 +87,18 @@ int main (int, char**)
   std::ifstream inf ("output_config.gz", std::ios::binary);
   classifier2.load_configuration(inf);
 
-  std::vector<std::size_t> label_indices;
-  std::vector<std::size_t> label_indices_2;
-    
+  Classifier classifier3 (classifier, features);
+
+  std::vector<std::size_t> label_indices (points.size());
+  std::vector<std::size_t> label_indices_2 (points.size());
+  std::vector<std::size_t> label_indices_3 (points.size());
+
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier, label_indices);
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier2, label_indices_2);
+  Classification::classify<CGAL::Sequential_tag> (points, labels, classifier3, label_indices_3);
 
   assert (label_indices == label_indices_2);
-  
+  assert (label_indices == label_indices_3);
+
   return EXIT_SUCCESS;
 }

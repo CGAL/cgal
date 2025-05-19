@@ -1,20 +1,11 @@
 // Copyright (c) 2011  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers
 
@@ -28,26 +19,26 @@
 namespace CGAL {
 
 template <class K,  class Hilbert_policy >
-  class Hilbert_sort_d;
+class Hilbert_sort_d;
 
-template <class K>  
-  class Hilbert_sort_d<K, Hilbert_sort_median_policy >
-  : public Hilbert_sort_median_d<K>
+template <class K>
+class Hilbert_sort_d<K, Hilbert_sort_median_policy >
+    : public Hilbert_sort_median_d<K>
 {
- public:
- Hilbert_sort_d (const K &k=K() , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_median_d<K> (k,limit)
-    {}
+public:
+  Hilbert_sort_d (const K &k=K() , std::ptrdiff_t limit=1 )
+    : Hilbert_sort_median_d<K> (k,limit)
+  {}
 };
 
 template <class K>
-  class Hilbert_sort_d<K, Hilbert_sort_middle_policy >
-  : public Hilbert_sort_middle_d<K>
+class Hilbert_sort_d<K, Hilbert_sort_middle_policy >
+    : public Hilbert_sort_middle_d<K>
 {
- public:
- Hilbert_sort_d (const K &k=K() , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_middle_d<K> (k,limit)
-    {}
+public:
+  Hilbert_sort_d (const K &k=K() , std::ptrdiff_t limit=1 )
+    : Hilbert_sort_middle_d<K> (k,limit)
+  {}
 };
 
 } // namespace CGAL

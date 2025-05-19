@@ -27,21 +27,21 @@ opposite to the `i`-th vertex of `s`. The function
 then `s` and `t` share `dcur` vertices, namely all but the vertex
 with index `i` of `s` and the vertex with index
 `C.index_of_vertex_in_opposite_simplex(s,i)` of `t`. Assume that
-`t` exists and let `j = C.index_of_vertex_in_opposite_simplex(s,i)`. 
-Then `s = C.opposite_simplex(t,j)` 
+`t` exists and let `j = C.index_of_vertex_in_opposite_simplex(s,i)`.
+Then `s = C.opposite_simplex(t,j)`
 and `i = C.index_of_vertex_in_opposite_simplex(t,j)`.
 
 The boundary of the hull is also a simplicial complex. All simplices
 in this complex have dimension `dcur - 1`. For each boundary
 simplex there is a handle of type `Facet_handle`. Each facet has
-`dcur` vertices indexed from `0` to `dcur - 1`. If `dcur> 1` 
-then for each facet `f` and each index `i`, `0 <= i < dcur`, there 
+`dcur` vertices indexed from `0` to `dcur - 1`. If `dcur> 1`
+then for each facet `f` and each index `i`, `0 <= i < dcur`, there
 is a facet `g` opposite to the `i`-th vertex of
 `f`. The function `C.opposite_facet(f,i)` returns `g`. Two
 neighboring facets `f` and `g` share `dcur - 1` vertices, namely
 all but the vertex with index `i` of `f` and the vertex with index
 `C.index_of_vertex_in_opposite_facet(f,i)` of `g`. Let `j =
-C.index_of_vertex_in_opposite_facet(f,i)`. Then 
+C.index_of_vertex_in_opposite_facet(f,i)`. Then
 `f = C.opposite_facet(g,j)` and `i =C.index_of_vertex_in_opposite_facet(g,j)`.
 
 \tparam R must be a model of the concept `ConvexHullTraits_d`.
@@ -64,12 +64,12 @@ The implementation of type `Convex_hull_d` is based on
 of the implementation can be found in the implementation document
 available at the download site of this package.
 
-The time and space requirements are input dependent. Let \f$C_1\f$, \f$C_2\f$, \f$C_3\f$, 
+The time and space requirements are input dependent. Let \f$C_1\f$, \f$C_2\f$, \f$C_3\f$,
 \f$\ldots\f$ be the sequence of hulls constructed and for a point \f$ x\f$
 let \f$ k_i\f$ be the number of facets of \f$ C_i\f$ that are visible from \f$ x\f$
-and that are not already facets of \f$ C_{i-1}\f$. 
+and that are not already facets of \f$ C_{i-1}\f$.
 
-Then the time for inserting \f$ x\f$ is \f$ O(dim \sum_i k_i)\f$ and
+Then the time for inserting \f$ x\f$ is \cgalBigO{dim \sum_i k_i} and
 the number of new simplices constructed during the insertion of \f$x\f$
 is the number of facets of the hull which were not already facets
 of the hull before the insertion.
@@ -352,7 +352,7 @@ void print_statistics() ;
 
 /*!
 checks the
-validity of the data structure. If `throw_exceptions == thrue`
+validity of the data structure. If `throw_exceptions == true`
 then the program throws the following exceptions to inform about the
 problem.
 `chull_has_center_on_wrong_side_of_hull_facet` the
@@ -476,6 +476,8 @@ returns a list of
 all facets of `C`.
 */
 std::list<Facet_handle> all_facets() ;
+
+/// @}
 
 }; /* end Convex_hull_d */
 } /* end namespace CGAL */

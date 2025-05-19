@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -94,12 +85,12 @@ protected:
   Indices_list m_emptylist;
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_bounded_planar_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits())
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_bounded_planar_construction_helper()
   {}
 
@@ -124,20 +115,20 @@ public:
 
   Indices_list& halfedge_indices_list() { return m_emptylist; }
 
-  /*! Collect a subcurve index that does not see any status-line from below. */
+  /*! collects a subcurve index that does not see any status-line from below. */
   void add_subcurve_in_top_face(unsigned int /* index */) { return; }
 
   /*! A notification invoked before the given event it deallocated. */
   void before_deallocate_event(Event* /* event */) { return; }
   //@}
 
-  /*! Set the map that maps each halfedge to the list of subcurve indices
+  /*! sets the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& /* table */)
   { return; }
 
-  /*! Determine if we should swap the order of predecessor halfedges when
+  /*! determines if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
   bool swap_predecessors(Event* /* event */) const
@@ -147,7 +138,7 @@ public:
     return false;
   }
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   Face_handle top_face() const { return m_unb_face; }
 };
 

@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -66,7 +57,7 @@ double Real_timer::get_real_time() const {
     return double(t.time) + double(t.millitm) / 1000.0;
 #else // ! _MSC_VER && ! __MINGW32__//
     struct timeval t;
-    int ret = gettimeofday( &t, NULL);
+    int ret = gettimeofday( &t, nullptr);
     CGAL_warning_msg( ret == 0, "Call to gettimeofday() in class "
                       "CGAL::Real_timer failed - timings will be 0.");
     if ( ret == 0) {

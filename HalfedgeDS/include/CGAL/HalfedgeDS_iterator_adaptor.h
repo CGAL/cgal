@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -33,7 +24,7 @@ namespace CGAL {
 //  The iterator identity adaptor will be used for the HDS implementations
 //  that are based on STL (or other) container classes which do not
 //  guarantee that the default construction of its iterator gives always
-//  the same singular value (i.e. something like NULL). This adaptor
+//  the same singular value (i.e. something like nullptr). This adaptor
 //  assumes that iterator traits are fully supported. It works for all
 //  kinds of iterators, from input iterators to random access iterators.
 //  It does no longer require that these iterators have a constructor
@@ -42,7 +33,7 @@ namespace CGAL {
 
 //  Instead, we rely now on a static local variable. Static variables are
 //  first of all zero-initialized (Section 3.6.2), which guarantees that
-//  pointers and such are set to zero even if the construtor does not
+//  pointers and such are set to zero even if the constructor does not
 //  initialize them (Section 8.5). With static variables, the order of
 //  initialization could be critical, if the initialization of one
 //  requires another one to be initialized already (I have not seen such a
@@ -57,7 +48,7 @@ namespace CGAL {
 //  for weird static initialization situations. Usually the std::vector
 //  class uses a plain C-pointer as iterator, which would be a POD and
 //  thus efficient. However, the std::list iterators might not be POD's if
-//  they define their own copy contructor. This is the case for
+//  they define their own copy constructor. This is the case for
 //  std::list::iterator of the current SGI STL, but not for the
 //  std::list::const_iterator, which is a funny side-effect of having
 //  only a single class for both and a constructor that allows iterator to

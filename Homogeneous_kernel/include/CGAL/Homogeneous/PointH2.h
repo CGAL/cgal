@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -27,10 +18,10 @@
 #define CGAL_HOMOGENEOUS_POINT_2_H
 
 #include <CGAL/Origin.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -62,8 +53,8 @@ public:
 
     template < typename Tx, typename Ty >
     PointH2(const Tx & x, const Ty & y,
-            typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
-                                                        boost::is_convertible<Ty, RT> > >::type* = 0)
+            std::enable_if_t< std::is_convertible_v<Tx, RT> &&
+                              std::is_convertible_v<Ty, RT> >* = 0)
       : base(x, y) {}
 
     PointH2(const FT& x, const FT& y)
@@ -72,8 +63,8 @@ public:
     PointH2(const RT& hx, const RT& hy, const RT& hw)
       : base(hx, hy, hw) {}
 
-    bool    operator==( const PointH2<R>& p) const;
-    bool    operator!=( const PointH2<R>& p) const;
+    typename R::Boolean operator==( const PointH2<R>& p) const;
+    typename R::Boolean operator!=( const PointH2<R>& p) const;
 
     const RT & hx() const { return base.hx(); }
     const RT & hy() const { return base.hy(); }
@@ -103,7 +94,7 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH2<R>::operator==( const PointH2<R>& p) const
 {
   return base == p.base;
@@ -111,7 +102,7 @@ PointH2<R>::operator==( const PointH2<R>& p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH2<R>::operator!=( const PointH2<R>& p) const
 { return !(*this == p); }
 

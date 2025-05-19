@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -27,19 +18,20 @@
 #define CGAL_RAY_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
 template <class R_>
 class Ray_2 : public R_::Kernel_base::Ray_2
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
@@ -51,7 +43,7 @@ class Ray_2 : public R_::Kernel_base::Ray_2
   typedef typename R_::Kernel_base::Ray_2    RRay_2;
 
   typedef Ray_2                              Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Ray_2>::value));
+  static_assert(std::is_same<Self, typename R_::Ray_2>::value);
 
 public:
 
@@ -77,6 +69,9 @@ public:
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}
 
+  Ray_2(RRay_2&& r)
+    : RRay_2(std::move(r)) {}
+
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, secondp)) {}
 
@@ -90,53 +85,50 @@ public:
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2)>::type
+  decltype(auto)
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
+  decltype(auto)
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
   }
 
-
-  Point_2
-  point(int i) const
+  Point_2 point(const FT i) const
   {
-    CGAL_kernel_precondition( i >= 0 );
-    
+    CGAL_kernel_precondition(i >= FT(0));
+
     typename R::Construct_vector_2 construct_vector;
     typename R::Construct_scaled_vector_2 construct_scaled_vector;
     typename R::Construct_translated_point_2 construct_translated_point;
-    if (i == 0) return source();
-    if (i == 1) return second_point();
+
+    if (i == FT(0)) return source();
+    if (i == FT(1)) return second_point();
+
     return construct_translated_point(source(),
-				      construct_scaled_vector(construct_vector(source(), 
-									       second_point()),
-							      FT(i)));
+             construct_scaled_vector(construct_vector(source(), second_point()), i));
   }
 
-
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2 )>::type
+  decltype(auto)
   start() const
   {
     return source();
   }
 
-  bool is_horizontal() const
+  Boolean is_horizontal() const
   {
     return R().equal_y_2_object()(source(), second_point());
   }
 
-  bool is_vertical() const
+  Boolean is_vertical() const
   {
     return R().equal_x_2_object()(source(), second_point());
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_2_object()(*this);
   }
@@ -157,7 +149,7 @@ public:
     return construct_vector(source(), second_point());
   }
 
-  bool
+  Boolean
   has_on(const Point_2 &p) const
   {
     typename R::Construct_vector_2  construct_vector;
@@ -166,9 +158,7 @@ public:
            Direction_2(construct_vector( source(), p)) == direction() );
   }
 
-
-
-  bool
+  Boolean
   collinear_has_on(const Point_2 &p) const
   {
     return R().collinear_has_on_2_object()(*this, p);
@@ -186,19 +176,7 @@ public:
     return R().construct_line_2_object()(source(), second_point());
   }
 
-  bool
-  operator==(const Ray_2& r) const
-  {
-    return R().equal_2_object()(*this, r);
-  }
-
-  bool
-  operator!=(const Ray_2& r) const
-  {
-    return !(*this == r);
-  }
-
-  Ray_2 
+  Ray_2
   transform(const Aff_transformation_2 &t) const
   {
     return Ray_2(t.transform(source()), t.transform(second_point()));
@@ -209,9 +187,9 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&) 
+insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();
     case IO::BINARY :
@@ -225,7 +203,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_2<R>& r, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();
@@ -246,7 +224,7 @@ operator<<(std::ostream& os, const Ray_2<R>& r)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&) 
+extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&)
 {
     typename R::Point_2 p, q;
     is >> p >> q;
@@ -258,7 +236,7 @@ extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_2<R>& r, const Homogeneous_tag&) 
+extract(std::istream& is, Ray_2<R>& r, const Homogeneous_tag&)
 {
   typename R::Point_2 p, q;
   is >> p >> q;

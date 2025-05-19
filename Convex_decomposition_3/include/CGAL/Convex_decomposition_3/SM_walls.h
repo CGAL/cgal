@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_SM_WALLS_H
@@ -23,6 +14,8 @@
 
 #include <CGAL/license/Convex_decomposition_3.h>
 
+#include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 227
@@ -42,7 +35,7 @@ class SM_walls : SM_decorator<SMap> {
   typedef typename Base::Sphere_circle    Sphere_circle;
   typedef typename Base::Sphere_direction Sphere_direction;
   typedef typename Base::Sphere_segment   Sphere_segment;
-  
+
   typedef typename Base::SVertex_handle   SVertex_handle;
   typedef typename Base::SFace_handle     SFace_handle;
   typedef typename Base::SHalfedge_handle SHalfedge_handle;
@@ -55,13 +48,13 @@ class SM_walls : SM_decorator<SMap> {
   typedef typename Sphere_point::FT             FT;
 
 
-  typedef typename Base::SHalfedge_around_svertex_circulator 
+  typedef typename Base::SHalfedge_around_svertex_circulator
     SHalfedge_around_svertex_circulator ;
-  typedef typename Base::SHalfedge_around_sface_circulator 
+  typedef typename Base::SHalfedge_around_sface_circulator
     SHalfedge_around_sface_circulator ;
   typedef typename Base::SFace_cycle_iterator
     SFace_cycle_iterator;
-  
+
   using Base::new_svertex;
   using Base::link_as_face_cycle;
   using Base::unlink_as_face_cycle;
@@ -81,25 +74,25 @@ class SM_walls : SM_decorator<SMap> {
 
   SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp, Sphere_circle c) {
     CGAL_USE(sp);
-    CGAL_NEF_TRACEN( "find_cap " << sv->source()->point() << ":" << sv->point() 
-	      << " , sp : " << sp );
+    CGAL_NEF_TRACEN( "find_cap " << sv->source()->point() << ":" << sv->point()
+              << " , sp : " << sp );
     /*
     SHalfedge_handle se = sv->out_sedge();
     if(se != SHalfedge_handle())
       while(CGAL::spherical_orientation(cas(se)->twin()->source()->point(),
-					sp,
-					se->twin()->source()->point()) > 0)
-	se = cas(se);    
+                                        sp,
+                                        se->twin()->source()->point()) > 0)
+        se = cas(se);
 
     if(se != SHalfedge_handle()) {
-      CGAL_assertion(Sphere_circle(sv->point(),sp) != 
-		     Sphere_circle(sv->point(), se->twin()->source()->point()));
+      CGAL_assertion(Sphere_circle(sv->point(),sp) !=
+                     Sphere_circle(sv->point(), se->twin()->source()->point()));
     }
     */
-    
+
     SM_decorator SD(&*sv->source());
     if( SD.is_isolated(sv))
-      return SHalfedge_handle();    
+      return SHalfedge_handle();
 
     //    Sphere_circle c(sv->point(), sp);
     CGAL_NEF_TRACEN( "sv    " << sv->point() );
@@ -109,7 +102,7 @@ class SM_walls : SM_decorator<SMap> {
     Plane_3 pl(Point_3(0,0,0),Vector_3(sv->point()-CGAL::ORIGIN));
     Sphere_circle cc(pl);
 
-    SHalfedge_around_svertex_circulator shnext(sh);      
+    SHalfedge_around_svertex_circulator shnext(sh);
     ++shnext;
     if(sh == shnext)
       return sh;
@@ -123,20 +116,20 @@ class SM_walls : SM_decorator<SMap> {
       Sphere_segment seg(sh->circle().orthogonal_vector(), shnext->circle().orthogonal_vector(),cc);
       CGAL_NEF_TRACEN( "seg " << seg );
       if(seg.has_on(c.orthogonal_vector()))
-	return sh;
+        return sh;
     }
     CGAL_error_msg( "should not be executed");
     return SHalfedge_handle();
   }
 
   void insert_new_svertex_into_sedge(SVertex_handle sv, SHalfedge_handle se) {
-    
-    CGAL_NEF_TRACEN( "insert new svertex into sedge " << sv->point() << " | " 
-	      << se->source()->point() << "->" << se->twin()->source()->point() );
+
+    CGAL_NEF_TRACEN( "insert new svertex into sedge " << sv->point() << " | "
+              << se->source()->point() << "->" << se->twin()->source()->point() );
 
     CGAL_NEF_TRACEN( "double coords " << CGAL::to_double(sv->point().x())
-	      << ", " << CGAL::to_double(sv->point().y())
-	      << ", " << CGAL::to_double(sv->point().z()) );
+              << ", " << CGAL::to_double(sv->point().y())
+              << ", " << CGAL::to_double(sv->point().z()) );
 
     //    SM_decorator SD(sphere_map());
     //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
@@ -150,7 +143,7 @@ class SM_walls : SM_decorator<SMap> {
 
     se_new->circle() = se->circle();
     CGAL_assertion(se_new->circle().has_on(se_new->source()->point()) &&
-		   se_new->circle().has_on(se_opp->source()->point()));
+                   se_new->circle().has_on(se_opp->source()->point()));
     se_opp->circle() = se->twin()->circle();
     se->twin()->source() = sv;
     se_new->mark() = se_opp->mark() = se->mark();
@@ -237,31 +230,31 @@ class SM_walls : SM_decorator<SMap> {
     if(assign(sv, o)) {
       CGAL_NEF_TRACEN( "  found svertex " << sv->point() );
       if(is_isolated(sv))
-	return sv->incident_sface()->mark();
+        return sv->incident_sface()->mark();
       else {
-	bool collinear;
-	Sphere_direction d(seg.sphere_circle().opposite());
-	SHalfedge_handle e_res = P.out_wedge(sv, d, collinear);
-	if(collinear) {
-	  CGAL_NEF_TRACEN(" collinear ");
-	  o = Object_handle(e_res);
-	  return false;
-	} else {
+        bool collinear;
+        Sphere_direction d(seg.sphere_circle().opposite());
+        SHalfedge_handle e_res = P.out_wedge(sv, d, collinear);
+        if(collinear) {
+          CGAL_NEF_TRACEN(" collinear ");
+          o = Object_handle(e_res);
+          return false;
+        } else {
           if ( e_res->circle().has_on_negative_side(seg.source()) )
             e_res = e_res->sprev();
-	  o = Object_handle(e_res->incident_sface());
-	  CGAL_NEF_TRACEN("  sface " << e_res->incident_sface()->mark());
-	  return e_res->incident_sface()->mark();
-	}
+          o = Object_handle(e_res->incident_sface());
+          CGAL_NEF_TRACEN("  sface " << e_res->incident_sface()->mark());
+          return e_res->incident_sface()->mark();
+        }
       }
     }
     */
     if(assign(sf, o)) {
       CGAL_NEF_TRACEN( "  found sface" );
       return sf->mark();
-    } 
+    }
 
-    /*    
+    /*
     if(assign(se,o))
       CGAL_error_msg("wrong handle");
 
@@ -277,10 +270,10 @@ class SM_walls : SM_decorator<SMap> {
     SM_point_locator pl(this->sphere_map());
     Object_handle o = pl.locate(sp);
     //        CGAL_NEF_SETDTHREAD(1);
-	
+
     if(assign(sv, o))
       return false;
-    
+
     SHalfedge_handle se;
     if(assign(se, o)) {
       sv = new_svertex(sp);
@@ -288,17 +281,17 @@ class SM_walls : SM_decorator<SMap> {
       insert_new_svertex_into_sedge(sv, se);
       return true;
     }
-    
+
     SFace_handle sf;
     if(assign(sf, o)) {
       if(sf->mark() == false)
-	return false;
+        return false;
       sv = new_svertex(sp);
       sv->mark() = sf->mark();
       link_as_isolated_vertex(sv, sf);
       return true;
     }
-    
+
     SHalfloop_handle sl;
     if(assign(sl, o)) {
       sv = new_svertex(sp);
@@ -306,11 +299,11 @@ class SM_walls : SM_decorator<SMap> {
       insert_new_svertex_into_sloop(sv, sl);
       return true;
     }
-    
+
     CGAL_error_msg( "wrong handle");
     return false;
   }
-  
+
   SVertex_handle add_ray_svertex(Sphere_point sp) {
 
     CGAL_NEF_TRACEN( "add_ray_svertex " << sp );
@@ -324,7 +317,7 @@ class SM_walls : SM_decorator<SMap> {
 
     return add_svertex_into_object(sp,o);
   }
-  
+
   SVertex_handle add_svertex_into_object(Sphere_point sp, Object_handle o) {
 
     CGAL_NEF_TRACEN( "add_svertex_into_object " << sp );
@@ -342,7 +335,7 @@ class SM_walls : SM_decorator<SMap> {
       link_as_isolated_vertex(sv,sf);
       return sv;
     }
-    
+
     if(assign(sv, o)) {
       CGAL_NEF_TRACEN( "  found svertex" );
       return sv;
@@ -356,7 +349,7 @@ class SM_walls : SM_decorator<SMap> {
       insert_new_svertex_into_sedge(sv, se);
       return sv;
     }
-    
+
     SHalfloop_handle sl;
     if(assign(sl, o)) {
       CGAL_NEF_TRACEN( " found sloop" );
@@ -370,9 +363,9 @@ class SM_walls : SM_decorator<SMap> {
     return SVertex_handle();
   }
 
-  SVertex_handle add_lateral_svertex(Sphere_segment sphere_ray, 
-				     bool compare_to_dir = false, 
-				     const Sphere_point& dir = Sphere_point()) {
+  SVertex_handle add_lateral_svertex(Sphere_segment sphere_ray,
+                                     bool compare_to_dir = false,
+                                     const Sphere_point& dir = Sphere_point()) {
 
     CGAL_NEF_TRACEN( "add_lateral_svertex " << sphere_ray );
 
@@ -381,11 +374,11 @@ class SM_walls : SM_decorator<SMap> {
     Sphere_point sp1(sphere_ray.source());
     Sphere_point sp2(sphere_ray.target());
     CGAL_NEF_TRACEN( "double coords " << CGAL::to_double(sp1.x())
-	      << ", " << CGAL::to_double(sp1.y())
-	      << ", " << CGAL::to_double(sp1.z())
-	      << "->" << CGAL::to_double(sp2.x())
-	      << ", " << CGAL::to_double(sp2.y())
-	      << ", " << CGAL::to_double(sp2.z()) );
+              << ", " << CGAL::to_double(sp1.y())
+              << ", " << CGAL::to_double(sp1.z())
+              << "->" << CGAL::to_double(sp2.x())
+              << ", " << CGAL::to_double(sp2.y())
+              << ", " << CGAL::to_double(sp2.z()) );
 
     Sphere_point ip;
     SM_point_locator P(this->sphere_map());
@@ -393,13 +386,13 @@ class SM_walls : SM_decorator<SMap> {
     if(compare_to_dir && dir != sphere_ray.source() && dir != ip) {
       Sphere_segment test_seg(sphere_ray.source(), ip, sphere_ray.sphere_circle());
       if(test_seg.has_on(dir)) {
-	SFace_handle sf;
-	o = P.locate(dir);
-	CGAL_assertion(assign(sf,o));
-	SVertex_handle sv = new_svertex(Sphere_point(dir));
-	sv->mark() = sf->mark();
-	link_as_isolated_vertex(sv, sf);
-	return sv;
+        SFace_handle sf;
+        o = P.locate(dir);
+        CGAL_assertion(assign(sf,o));
+        SVertex_handle sv = new_svertex(Sphere_point(dir));
+        sv->mark() = sf->mark();
+        link_as_isolated_vertex(sv, sf);
+        return sv;
       }
     }
 
@@ -410,9 +403,9 @@ class SM_walls : SM_decorator<SMap> {
       SVertex_handle sv = new_svertex(ip);
       sv->mark() = se->mark();
       insert_new_svertex_into_sedge(sv,se);
-      return sv;    
+      return sv;
     }
-    
+
     SVertex_handle sv;
     if(assign(sv,o)) {
       CGAL_NEF_TRACEN( "  found svertex " << sv->point() );
@@ -443,37 +436,37 @@ class SM_walls : SM_decorator<SMap> {
       */
       return sv;
     }
-    
+
     CGAL_error_msg( "wrong handle");
     return SVertex_handle();
   }
 
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2, 
-			 int& index1, int& index2,
-			 Sphere_circle c) {
+  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2,
+                         int& index1, int& index2,
+                         Sphere_circle c) {
 
 #else
-  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2, 
-			 Sphere_circle c) { // = Sphere_circle(sv1->point(),sv2->point())) {
+  void add_sedge_between(SVertex_handle sv1, SVertex_handle sv2,
+                         Sphere_circle c) { // = Sphere_circle(sv1->point(),sv2->point())) {
 #endif
-    CGAL_NEF_TRACEN( "add sedges between " << sv1->point() 
-	      << ", " << sv2->point() 
-	      << " at " << sv1->source()->point() );
+    CGAL_NEF_TRACEN( "add sedges between " << sv1->point()
+              << ", " << sv2->point()
+              << " at " << sv1->source()->point() );
 
     bool split_sface = true;
 
     if(is_isolated(sv1)) {
       split_sface = false;
       if(!is_sm_boundary_object(sv1)) {
-	CGAL_NEF_TRACEN( "error " << sv1->point() << "at " << sv1->source()->point() );
+        CGAL_NEF_TRACEN( "error " << sv1->point() << "at " << sv1->source()->point() );
       }
       unlink_as_isolated_vertex(sv1);
     }
     if(is_isolated(sv2)) {
       split_sface = false;
       if(!is_sm_boundary_object(sv2)) {
-	CGAL_NEF_TRACEN( "error " << sv2->point() << "at " << sv2->source()->point() );
+        CGAL_NEF_TRACEN( "error " << sv2->point() << "at " << sv2->source()->point() );
       }
       unlink_as_isolated_vertex(sv2);
     }
@@ -483,75 +476,73 @@ class SM_walls : SM_decorator<SMap> {
     SHalfedge_handle cap2 = find_cap(sv2,sv1->point(),c.opposite());
     if(cap2 != SHalfedge_handle()) CGAL_assertion(cap2->source()==sv2);
 
-    if(split_sface && 
+    if(split_sface &&
        cap1->incident_sface() == cap2->incident_sface()) {
       SHalfedge_around_sface_circulator sfc(cap1), send(sfc);
       CGAL_For_all(sfc,send)
-	if(is_sm_boundary_object(sfc))
-	  unlink_as_face_cycle(sfc);
+        if(is_sm_boundary_object(sfc))
+          unlink_as_face_cycle(sfc);
     }
 
     /*
      bool same_sface;
      SHalfedge_handle entry;
 
-     if(split_sface) {      
-       same_sface = 
-	 cap1->incident_sface() == cap2->incident_sface();
+     if(split_sface) {
+       same_sface =
+         cap1->incident_sface() == cap2->incident_sface();
 
       std::cerr << "cap1 " << cap1->source()->point()
-		 << "->" << cap1->twin()->source()->point() << std::endl;
+                 << "->" << cap1->twin()->source()->point() << std::endl;
        std::cerr << "cap2 " << cap2->source()->point()
-		 << "->" << cap2->twin()->source()->point() << std::endl;
+                 << "->" << cap2->twin()->source()->point() << std::endl;
 
        if(same_sface) {
-	 SHalfedge_around_sface_circulator sfc(cap1), send(sfc);
-	 CGAL_For_all(sfc,send) {
-	   std::cerr << "check " << sfc->source()->point()
-		     << "->" << sfc->twin()->source()->point() << std::endl;
-	   if(is_sm_boundary_object(sfc))
-	     entry = sfc;
-	   if(sfc == cap2)
-	     same_sface = false;
-	 }
+         SHalfedge_around_sface_circulator sfc(cap1), send(sfc);
+         CGAL_For_all(sfc,send) {
+           std::cerr << "check " << sfc->source()->point()
+                     << "->" << sfc->twin()->source()->point() << std::endl;
+           if(is_sm_boundary_object(sfc))
+             entry = sfc;
+           if(sfc == cap2)
+             same_sface = false;
+         }
        }
      }
     */
     SHalfedge_handle se_new;
     if(cap1 != SHalfedge_handle()) {
       if(cap2 != SHalfedge_handle())
-	se_new = new_shalfedge_pair(cap1, cap2, this->AFTER, this->AFTER);
-      else 
-	se_new = new_shalfedge_pair(cap1, sv2, this->AFTER);
+        se_new = new_shalfedge_pair(cap1, cap2, this->AFTER, this->AFTER);
+      else
+        se_new = new_shalfedge_pair(cap1, sv2, this->AFTER);
       se_new->incident_sface() = se_new->twin()->incident_sface() = cap1->incident_sface();
     } else {
       if(cap2 != SHalfedge_handle()) {
-	se_new = new_shalfedge_pair(sv1, cap2, this->AFTER);
-	se_new->incident_sface() = se_new->twin()->incident_sface() = cap2->incident_sface();
+        se_new = new_shalfedge_pair(sv1, cap2, this->AFTER);
+        se_new->incident_sface() = se_new->twin()->incident_sface() = cap2->incident_sface();
       } else {
-	se_new = new_shalfedge_pair(sv1, sv2);
-	se_new->incident_sface() = se_new->twin()->incident_sface() = sv1->incident_sface();
+        se_new = new_shalfedge_pair(sv1, sv2);
+        se_new->incident_sface() = se_new->twin()->incident_sface() = sv1->incident_sface();
       }
     }
-    
+
     se_new->mark() = se_new->twin()->mark() = se_new->incident_sface()->mark();
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     CGAL_assertion(index1==0 || index1!=index2);
     if(index1==0) {
-      se_new->set_index();
-      se_new->twin()->set_index();
-      index1 = se_new->get_index();
-      index2 = se_new->twin()->get_index();
-    } else { 
+      index1 = se_new->new_index();
+      index2 = se_new->twin()->new_index();
+    } else {
       se_new->set_index(index1);
       se_new->twin()->set_index(index2);
     }
-#endif 
-    CGAL_NEF_TRACEN( sv1->point() << "->" << sv2->point() << "==" 
-	      << se_new->source()->point() << "->" << se_new->twin()->source()->point() );
+#endif
+    CGAL_NEF_TRACEN( sv1->point() << "->" << sv2->point() << "=="
+              << se_new->source()->point() << "->" << se_new->twin()->source()->point() );
 
-    CGAL_assertion(sv1 == se_new->source() && 
-		   sv2 == se_new->twin()->source());
+    CGAL_assertion(sv1 == se_new->source() &&
+                   sv2 == se_new->twin()->source());
 
     se_new->circle() = c;
     se_new->twin()->circle() = c.opposite();
@@ -561,27 +552,27 @@ class SM_walls : SM_decorator<SMap> {
 
     if(split_sface) {
       if(cap1->incident_sface() == cap2->incident_sface()) {
-	SFace_handle sf_new = this->new_sface();
-	SFace_handle sf_old = cap1->incident_sface();
-      
-	CGAL_NEF_TRACEN("sf_new->mark()=" << sf_old->mark());
-	sf_new->mark() = sf_old->mark();
-	CGAL_assertion(sf_old->mark());
-	link_as_face_cycle(se_new, sf_new);
-	link_as_face_cycle(se_new->twin(), sf_old);
+        SFace_handle sf_new = this->new_sface();
+        SFace_handle sf_old = cap1->incident_sface();
+
+        CGAL_NEF_TRACEN("sf_new->mark()=" << sf_old->mark());
+        sf_new->mark() = sf_old->mark();
+        CGAL_assertion(sf_old->mark());
+        link_as_face_cycle(se_new, sf_new);
+        link_as_face_cycle(se_new->twin(), sf_old);
       } else {
-	/*
-	SHalfedge_handle se = cap2;
-	while(se->incident_sface() != cap1->incident_sface()) {
-	  se->incident_sface() = cap1->incident_sface();
-	  se=se->snext();
-	}
-	*/
-	SFace_handle sf1 = cap1->incident_sface();
-	delete_face(cap2->incident_sface());
-	// TODO: some relinkings are redundant
-	SHalfedge_around_sface_circulator hfc(cap1), hend(hfc);
-	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf1;	
+        /*
+        SHalfedge_handle se = cap2;
+        while(se->incident_sface() != cap1->incident_sface()) {
+          se->incident_sface() = cap1->incident_sface();
+          se=se->snext();
+        }
+        */
+        SFace_handle sf1 = cap1->incident_sface();
+        delete_face(cap2->incident_sface());
+        // TODO: some relinkings are redundant
+        SHalfedge_around_sface_circulator hfc(cap1), hend(hfc);
+        CGAL_For_all(hfc,hend) hfc->incident_sface() = sf1;
       }
     }
 
@@ -589,7 +580,7 @@ class SM_walls : SM_decorator<SMap> {
     //    SM_io_parser<SM_decorator>::dump(SD1,std::cerr);
 
     // TODO: handle inner face cycles
-  }    
+  }
 };
 
 } //namespace CGAL

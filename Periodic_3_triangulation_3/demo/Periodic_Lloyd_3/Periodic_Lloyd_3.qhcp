@@ -8,15 +8,4 @@
      <enableAddressBar>false</enableAddressBar>
      <enableFilterFunctionality>false</enableFilterFunctionality>
     </assistant>
-    <docFiles>
-        <generate>
-            <file>
-                <input>Periodic_Lloyd_3.qhp</input>
-                <output>Periodic_Lloyd_3.qch</output>
-                </file>
-            </generate>
-        <register>
-            <file>Periodic_Lloyd_3.qch</file>
-            </register>
-        </docFiles>
     </QHelpCollectionProject>

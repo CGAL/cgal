@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -31,11 +22,7 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
 
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_cv.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 
 namespace CGAL {
@@ -43,20 +30,22 @@ namespace CGAL {
   namespace internal{
     template <class SearchTraits,class Point>
     struct Is_from_point_from_adapter_traits{
-      typedef boost::false_type type;
+      typedef std::false_type type;
+      static const bool value = false;
     };
-    
-    
+
+
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
-      typedef typename boost::is_same<Point,typename Base::Point_d> type;
+      typedef typename std::is_same<Point,typename Base::Point_d> type;
+      static const bool value = type::value;
     };
   } //namespace internal
-  
+
   template <class SearchTraits>
   class Fuzzy_iso_box{
     SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -70,9 +59,8 @@ namespace CGAL {
 
     private:
 
-    typename boost::remove_cv< 
-      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type 
-      >::type min, max;
+    CGAL::cpp20::remove_cvref_t<std::invoke_result_t<Construct_min_vertex_d, Iso_box_d> > min;
+    CGAL::cpp20::remove_cvref_t<std::invoke_result_t<Construct_max_vertex_d, Iso_box_d> > max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
     unsigned int dim;
@@ -94,7 +82,7 @@ namespace CGAL {
       min_begin = construct_it(min);
       max_begin = construct_it(max);
     }
-   
+
     public:
 
     // default constructor
@@ -107,11 +95,11 @@ namespace CGAL {
       CGAL_precondition(epsilon >= 0);
       construct<Point_d,typename SearchTraits::Construct_iso_box_d>(p,q);
     }
-        
+
   //additional constructor if SearchTraits = Search_traits_adapter
   template <class Point>
   Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
-                typename boost::enable_if<typename internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::type>::type* = 0)
+                std::enable_if_t<internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::value>* = 0)
     : traits(traits_), eps(epsilon)
   {
     CGAL_precondition(epsilon >= 0);
@@ -129,6 +117,17 @@ namespace CGAL {
     return true;
   }
 
+  template <typename Coord_iterator>
+  bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+          Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+          Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+                for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
+                        if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
+        return false;
+    }
+    return true;
+  }
+
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box eroded by 'eps' intersects 'rectangle'
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
@@ -139,7 +138,6 @@ namespace CGAL {
     }
     return true;
   }
-
 
   bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box dilated by 'eps' contains 'rectangle'

@@ -6,7 +6,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -15,22 +15,22 @@ typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
     CGAL::Default, CGAL::Tag_true, CGAL::Tag_true> Primitive2;
-typedef CGAL::AABB_traits<K, Primitive2> Traits2;
+typedef CGAL::AABB_traits_3<K, Primitive2> Traits2;
 typedef CGAL::AABB_tree<Traits2> Tree2;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
     CGAL::Default, CGAL::Tag_false, CGAL::Tag_true> Primitive3;
-typedef CGAL::AABB_traits<K, Primitive3> Traits3;
+typedef CGAL::AABB_traits_3<K, Primitive3> Traits3;
 typedef CGAL::AABB_tree<Traits3> Tree3;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
     CGAL::Default, CGAL::Tag_false, CGAL::Tag_false> Primitive4;
-typedef CGAL::AABB_traits<K, Primitive4> Traits4;
+typedef CGAL::AABB_traits_3<K, Primitive4> Traits4;
 typedef CGAL::AABB_tree<Traits4> Tree4;
 
 int main(void)
@@ -43,17 +43,17 @@ int main(void)
     std::cout << "error reading bunny" << std::endl;
     return 1;
   }
-  
+
   Tree t1(faces(m).begin(), faces(m).end(), m);
   Tree2 t2(faces(m).begin(), faces(m).end(), m);
   Tree3 t3(faces(m).begin(), faces(m).end(), m);
   Tree4 t4(faces(m).begin(), faces(m).end(), m);
-  
+
   t1.build();
   t2.build();
   t3.build();
   t4.build();
-  
+
   Primitive p1(faces(m).begin(), m);
   Primitive2 p2(faces(m).begin(), m);
   Primitive3 p3(faces(m).begin(), m);

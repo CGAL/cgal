@@ -3,12 +3,12 @@ Algebraic_foundations
 Alpha_shapes_3
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-Geomview
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
@@ -23,9 +23,7 @@ Modifier
 Modular_arithmetic
 Number_types
 Point_set_processing_3
-Polygon
 Polyhedron
-Polyhedron_IO
 Profiling_tools
 Property_map
 Random_numbers

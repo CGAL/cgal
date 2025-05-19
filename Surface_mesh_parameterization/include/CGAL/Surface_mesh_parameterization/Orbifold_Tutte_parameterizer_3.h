@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -25,41 +16,39 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
-
 #include <CGAL/Surface_mesh_parameterization/orbifold_enums.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
-
-#include <CGAL/Polygon_mesh_processing/Weights.h>
-
+#include <CGAL/Weights/tangent_weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
+
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>
+#include <CGAL/use.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
 #include <Eigen/UmfPackSupport>
 #endif
 #endif
 
-#include <boost/array.hpp>
-#include <boost/foreach.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <utility>
+#include <type_traits>
 
 /// \file Orbifold_Tutte_parameterizer_3.h
 
@@ -74,8 +63,8 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Read a serie of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh tm`, using
+/// reads a series of cones from an input stream. Cones are passed as an
+/// integer value that is the index of a vertex handle in the mesh `tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
 /// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
@@ -110,7 +99,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   while(in >> cone_index)
     cones.push_back(cone_index);
 
-#ifdef CGAL_PARAMETERIZATION_ORBIFOLD_CONE_VERBOSE
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
   std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
@@ -132,7 +121,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
 
   // Since the cones are unique, we only need to loop all the vertices once
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit) {
     for(std::size_t i=0; i<cones.size(); ++i) {
       TM_vertex_descriptor vd = *vit;
@@ -161,11 +150,11 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
 
-  boost::unordered_map<TM_vertex_descriptor, int> m;
+  std::unordered_map<TM_vertex_descriptor, int> m;
   int counter = 0;
 
   TM_vertex_iterator vit, end;
-  boost::tie(vit, end) = vertices(tm);
+  std::tie(vit, end) = vertices(tm);
   for(; vit!=end; ++vit)
   {
     TM_vertex_descriptor vd = *vit;
@@ -199,7 +188,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Locate the cones on the seam mesh (that is, find the corresponding seam mesh
+/// locates the cones on the seam mesh (that is, find the corresponding seam mesh
 /// `vertex_descriptor`) and mark them with a tag to indicate whether the cone is a
 /// simple cone or a duplicated cone (see \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink).
 ///
@@ -209,7 +198,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///                  but is passed here as a template parameter for convenience, to avoid
 ///                  having to pass the multiple template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
-///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
+///                  with value type `boost::graph_traits<SeamMesh::Triangle_mesh>::%vertex_descriptor`.
 /// \tparam ConeMap must be a model of `AssociativeContainer`
 ///                 with `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
 ///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
@@ -223,20 +212,20 @@ bool locate_cones(const SeamMesh& mesh,
                   ConeInputBidirectionalIterator first, ConeInputBidirectionalIterator beyond,
                   ConeMap& cones)
 {
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
+  typedef typename SeamMesh::Triangle_mesh                                 Triangle_mesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor   TM_vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
 
   // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM              PM_PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM             PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
   typedef typename internal::Kernel_traits<SeamMesh>::PPM                  PPM;
   const PPM ppmap = get(boost::vertex_point, mesh);
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  for(vertex_descriptor vd : vertices(mesh)) {
     for(ConeInputBidirectionalIterator cit=first; cit!=beyond; ++cit) {
       ConeInputBidirectionalIterator last = (--beyond)++;
 
@@ -271,15 +260,15 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   CGAL_precondition(cones.empty());
   CGAL_precondition(std::distance(first, beyond) == 3 || std::distance(first, beyond) == 4);
 
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
+  typedef typename SeamMesh::Triangle_mesh                                 Triangle_mesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor   TM_vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor      halfedge_descriptor;
 
   // find a vertex on the seam
   vertex_descriptor vertex_on_seam;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+  for(vertex_descriptor vd : vertices(mesh)) {
     if(mesh.has_on_seam(vd)) {
       vertex_on_seam = vd;
       break;
@@ -289,7 +278,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   CGAL_assertion(vertex_on_seam != vertex_descriptor());
 
   // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM            PM_PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM           PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
@@ -365,7 +354,8 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 /// shows how to select cones on the input mesh and automatically construct
 /// the seams and the cones on the `Seam_mesh`.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \attention The global function `CGAL::Surface_mesh_parameterization::parameterize()` cannot be used
+/// with this parameterizer. Users should use this class's member function `parameterize()` instead.
 ///
 /// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceListGraph` and `HalfedgeListGraph`.
 ///
@@ -377,7 +367,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///   CGAL::Eigen_solver_traits<
 ///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
-///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         Moreover, if SuiteSparse solvers are available, which is greatly preferable for speed,
 ///         then the default parameter is:
 /// \code
 ///   CGAL::Eigen_solver_traits<
@@ -392,10 +382,15 @@ class Orbifold_Tutte_parameterizer_3
 {
 public:
 #ifndef DOXYGEN_RUNNING
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    #ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
       CGAL::Eigen_solver_traits<
         Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
     #else
@@ -403,17 +398,19 @@ public:
         Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
     #endif
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
 
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
+
 private:
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::face_descriptor      face_descriptor;
 
   typedef typename boost::graph_traits<SeamMesh>::vertex_iterator      vertex_iterator;
@@ -503,7 +500,7 @@ private:
     // ( L A' ) ( Xf ) = ( C )
     // ( A 0  ) ( Xf ) = ( 0 )
 
-    // Iterate on both rows ot the 2x2 matrix T
+    // Iterate on both rows of the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
       // building up the equations by summing up the terms
 
@@ -701,17 +698,6 @@ private:
     CGAL_postcondition(current_line_id_in_M - initial_line_id == number_of_linear_constraints(mesh));
   }
 
-  // MVC computations
-  NT compute_w_ij_mvc(const Point_3& pi, const Point_3& pj, const Point_3& pk) const
-  {
-    //                                                               ->     ->
-    // Compute the angle (pj, pi, pk), the angle between the vectors ij and ik
-    const NT angle = internal::compute_angle_rad<Kernel>(pj, pi, pk);
-    const NT weight = std::tan(0.5 * angle);
-
-    return weight;
-  }
-
   // Computes the coefficients of the mean value Laplacian matrix for the edge.
   // `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
@@ -729,29 +715,27 @@ private:
     // The other parts of M(i,j) and M(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // Compute: - tan(alpha / 2)
-    const NT w_i_base = 1.0 * compute_w_ij_mvc(pi, pj, pk);
+    // @fixme inefficient: lengths are computed (and inversed!) twice per edge
 
-    // @fixme unefficient: lengths are computed (and inversed!) twice per edge
+    // Set w_i_base: - tan(alpha / 2)
+    const Point_3& p = pk;
+    const Point_3& q = pi;
+    const Point_3& r = pj;
+    const CGAL::Weights::Tangent_weight<NT> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
-    const Vector_3 edge_ij = pi - pj;
-    const NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
-    CGAL_assertion(len_ij != 0.0); // two points are identical!
-    const NT w_ij = w_i_base / len_ij;
+    const NT w_ij = tangent_weight.get_w_r();
     M.add_coef(2*i, 2*j, w_ij);
-    M.add_coef(2*i +1, 2*j + 1, w_ij);
+    M.add_coef(2*i + 1, 2*j + 1, w_ij);
 
     // Set w_ik in matrix
-    Vector_3 edge_ik = pi - pk;
-    const NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
-    CGAL_assertion(len_ik != 0.0); // two points are identical!
-    const NT w_ik = w_i_base / len_ik;
+    const NT w_ik = tangent_weight.get_w_p();
     M.add_coef(2*i, 2*k, w_ik);
     M.add_coef(2*i + 1, 2*k + 1, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
     const NT w_ii = - w_ij - w_ik;
+
     M.add_coef(2*i, 2*i, w_ii);
     M.add_coef(2*i + 1, 2*i + 1, w_ii);
   }
@@ -764,7 +748,7 @@ private:
   {
     const PPM ppmap = get(vertex_point, mesh);
 
-    BOOST_FOREACH(face_descriptor fd, faces(mesh)) {
+    for(face_descriptor fd : faces(mesh)) {
       const halfedge_descriptor hd = halfedge(fd, mesh);
 
       const vertex_descriptor vd_i = target(hd, mesh);
@@ -789,35 +773,29 @@ private:
                            VertexIndexMap vimap,
                            Matrix& M) const
   {
-    const PPM ppmap = get(vertex_point, mesh);
+    const PPM pmap = get(vertex_point, mesh);
+    for (const halfedge_descriptor hd : halfedges(mesh)) {
 
-    // not exactly sure which cotan weights should be used:
-    // 0.5 (cot a + cot b) ? 1/T1 cot a + 1/T2 cot b ? 1/Vor(i) (cot a + cot b?)
-    // Comparing to the matlab code, the basic Cotangent_weight gives the same results.
-    typedef CGAL::internal::Cotangent_weight<SeamMesh>                      Cotan_weights;
-//    typedef CGAL::internal::Cotangent_weight_with_triangle_area<SeamMesh>   Cotan_weights;
-
-    Cotan_weights cotan_weight_calculator(mesh, ppmap);
-
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)) {
       const vertex_descriptor vi = source(hd, mesh);
       const vertex_descriptor vj = target(hd, mesh);
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
-      if(i > j)
+      if (i > j)
         continue;
 
-      // times 2 because Cotangent_weight returns 1/2 (cot alpha + cot beta)...
-      const NT w_ij = 2 * cotan_weight_calculator(hd);
+      const CGAL::Weights::Cotangent_weight<SeamMesh, PPM> cotangent_weight(mesh, pmap);
+
+      // x2 because Cotangent_weight returns 0.5 * (cot alpha + cot beta)...
+      const NT w_ij = NT(2) * cotangent_weight(hd);
 
       // ij
       M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
-      M.set_coef(2*i +1, 2*j + 1, w_ij, true /* new coef */);
+      M.set_coef(2*i + 1, 2*j + 1, w_ij, true /* new coef */);
 
       // ji
       M.set_coef(2*j, 2*i, w_ij, true /* new coef */);
-      M.set_coef(2*j +1, 2*i + 1, w_ij, true /* new coef */);
+      M.set_coef(2*j + 1, 2*i + 1, w_ij, true /* new coef */);
 
       // ii
       M.add_coef(2*i, 2*i, - w_ij);
@@ -838,7 +816,7 @@ private:
   {
     CGAL_assertion(X.dimension() == static_cast<int>(2 * num_vertices(mesh)));
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+    for(vertex_descriptor vd : vertices(mesh)) {
       const int index = get(vimap, vd);
       const NT u = X(2*index);
       const NT v = X(2*index + 1);
@@ -860,7 +838,7 @@ private:
     const int big_n = M.row_dimension();
     const std::size_t n = 2 * num_vertices(mesh);
 
-    NT D;
+    double D;
     Vector Xf(big_n);
 
     CGAL::Timer task_timer;
@@ -878,7 +856,7 @@ private:
       X[i] = Xf[i];
     }
 
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream outf("matrices/X.txt");
     for(std::size_t i=0; i<n; ++i) {
       outf << X[i] << " ";
@@ -891,7 +869,7 @@ private:
   }
 
 public:
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
@@ -912,8 +890,8 @@ public:
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink
   ///             classification.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The underlying mesh of `mesh` is a topological ball.
@@ -939,6 +917,10 @@ public:
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
+    CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(is_triangle_mesh(mesh));
+    CGAL_USE(bhd);
+
     Error_code status;
 
     status = check_cones(cmap);
@@ -981,7 +963,7 @@ public:
     else // weight_type == Mean_value
       mean_value_laplacian(mesh, vimap, M);
 
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream outM("matrices/M.txt");
     outM.precision(20);
     outM << total_size << " " << total_size << std::endl;
@@ -1003,7 +985,7 @@ public:
     outB.precision(20);
     outB << total_size << std::endl;
     outB << B << std::endl;
-#endif // CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#endif // CGAL_SMP_ORBIFOLD_DEBUG
 
     // compute the flattening by solving the boundary conditions
     // while satisfying the convex combination property with L
@@ -1011,8 +993,10 @@ public:
     if(status != OK)
       return status;
 
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream out("orbifold_result.off");
     IO::output_uvmap_to_off(mesh, bhd, uvmap, out);
+#endif
 
     return OK;
   }

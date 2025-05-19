@@ -7,10 +7,12 @@ The concept `TriangulationFullCell` describes the requirements on the type used 
 class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`, and its derived classes, to
 represent a full cell.
 
-\cgalRefines `TriangulationDSFullCell` We only list below the
-additional specific requirements of `TriangulationFullCell`.
+\cgalRefines{TriangulationDSFullCell We only list below the
+additional specific requirements of `TriangulationFullCell`}
 
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_full_cell<TriangulationTraits_, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 \sa `TriangulationVertex`

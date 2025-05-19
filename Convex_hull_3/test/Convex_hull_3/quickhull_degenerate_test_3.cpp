@@ -1,5 +1,5 @@
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <fstream>
@@ -12,15 +12,15 @@
 
 
 typedef CGAL::Exact_rational Exact_rational;
-typedef CGAL::Cartesian< Exact_rational >     R;
+typedef CGAL::Simple_cartesian<Exact_rational>  R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
 typedef Traits::Polygon_mesh                    Polyhedron_3;
 
-typedef R::Point_2				Point_2;
-typedef R::Point_3				Point_3;
-typedef R::Segment_3				Segment_3;
-typedef R::Triangle_3				Triangle_3;
-typedef R::Plane_3   				Plane_3;
+typedef R::Point_2                                Point_2;
+typedef R::Point_3                                Point_3;
+typedef R::Segment_3                                Segment_3;
+typedef R::Triangle_3                                Triangle_3;
+typedef R::Plane_3                                   Plane_3;
 
 
 typedef CGAL::Creator_uniform_3<Exact_rational, Point_3>    Creator;
@@ -88,7 +88,7 @@ void test_coplanar_triangle(){
   CGAL::Object ch_object;
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
   Triangle_3 T;
-  assert( CGAL::assign(T, ch_object) );  
+  assert( CGAL::assign(T, ch_object) );
 }
 
 void test_coplanar_arbitrary()
@@ -122,7 +122,8 @@ void test_coplanar_arbitrary()
    CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
    Segment_3 seg;
-   assert( CGAL::assign(P, ch_object) || CGAL::assign(seg, ch_object));
+   Triangle_3 tri;
+   assert( CGAL::assign(P, ch_object) || CGAL::assign(seg, ch_object) || CGAL::assign(tri, ch_object) );
 }
 
 void test_collinear()
@@ -132,16 +133,16 @@ void test_collinear()
 
   // generate 100 points on the segment with endpoints (0,0) and (1,0)
   CGAL::Random_points_on_segment_2<Point_2>    g(Point_2(0,0), Point_2(1,0));
-  CGAL::cpp11::copy_n(g, 100, std::back_inserter(point_2_list));
+  std::copy_n(g, 100, std::back_inserter(point_2_list));
 
   std::list<Point_2>::iterator point_it = point_2_list.begin();
   point_3_list.push_back(Point_3(0,0,0));
   point_3_list.push_back(Point_3(1,0,0));
-  
+
   for (; point_it != point_2_list.end(); point_it++)
   {
      point_3_list.push_back(Point_3((*point_it).x(), (*point_it).y(), 0));
-  } 
+  }
   CGAL::Object ch_object;
   CGAL::convex_hull_3(point_3_list.begin(), point_3_list.end(), ch_object,
                       Traits());
@@ -152,9 +153,6 @@ void test_collinear()
 
 }
 
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-
-
 int main()
 {
   std::vector<Point_3> points;
@@ -162,7 +160,7 @@ int main()
   Traits ch_traits;
 
   std::cout << "Testing hull of no points " << std::endl;
-  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, 
+  CGAL::convex_hull_3(points.begin(), points.end(), ch_object,
                       ch_traits);
   assert(ch_object.is_empty());
 

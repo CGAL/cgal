@@ -1,26 +1,16 @@
 // Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michael Hemmer, Dominik Hülse
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <cassert>
@@ -30,7 +20,7 @@
 
 template<class Integer>
 void test_extended_euclidean_algorithm() {
-    Integer a, b, e, u, v;  
+    Integer a, b, e, u, v;
 
     // common factor is 2
     a = Integer(1008);
@@ -64,15 +54,15 @@ void test_extended_euclidean_algorithm() {
     assert(Integer(1) == e);
     assert(e == a*u + b*v);
 
-    // special cases 
+    // special cases
     // common factor is 1
     a = Integer(17);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
     assert(Integer(1) == e);
     assert(e == a*u + b*v);
- 
-    // one number is 0 
+
+    // one number is 0
     a = Integer(0);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
@@ -94,7 +84,7 @@ void test_extended_euclidean_algorithm() {
 }
 
 int main(){
-    test_extended_euclidean_algorithm<long>();     
+    test_extended_euclidean_algorithm<long>();
     return 0;
 }
 

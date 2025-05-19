@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -29,14 +20,11 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/Time_stamper.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -44,6 +32,8 @@
 #include <limits>
 #include <utility>
 #include <vector>
+#include <type_traits>
+
 
 namespace CGAL {
 
@@ -52,17 +42,17 @@ namespace Mesh_3 {
 template<typename Tr>
 class Triangulation_helpers
 {
-  typedef typename Tr::Geom_traits              Gt;
+  typedef typename Tr::Geom_traits              GT;
 
-  typedef typename Gt::FT                       FT;
-  typedef typename Gt::Vector_3                 Vector_3;
+  typedef typename GT::FT                       FT;
+  typedef typename GT::Vector_3                 Vector_3;
 
   // If `Tr` is not a triangulation that has defined Bare_point,
   // use Point_3 as defined in the traits class.
   typedef typename boost::mpl::eval_if_c<
     CGAL::internal::Has_nested_type_Bare_point<Tr>::value,
     typename CGAL::internal::Bare_point_type<Tr>,
-    boost::mpl::identity<typename Gt::Point_3>
+    boost::mpl::identity<typename GT::Point_3>
   >::type                                       Bare_point;
 
   // 'Point' is either a bare point or a weighted point, depending on the triangulation.
@@ -118,8 +108,8 @@ public:
   ~Triangulation_helpers() {}
 
   /**
-   * Returns true if moving \c v to \c p makes no topological
-   * change in \c tr
+   * Returns `true` if moving `v` to `p` makes no topological
+   * change in `tr`.
    */
   bool no_topological_change(Tr& tr,
                              const Vertex_handle v,
@@ -146,7 +136,7 @@ public:
                                const Bare_point& p) const;
 
   /**
-   * Returns the squared distance from \c vh to its closest vertex
+   * Returns the squared distance from `vh` to its closest vertex.
    *
    * \pre `vh` is not the infinite vertex
    */
@@ -154,18 +144,18 @@ public:
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::enable_if_c<Tag::value>::type* = NULL) const;
+                                       typename std::enable_if_t<Tag::value>* = nullptr) const;
 
   // @todo are the two versions really worth it, I can't tell the difference from a time POV...
   template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::disable_if_c<Tag::value>::type* = NULL) const;
+                                       typename std::enable_if_t<!Tag::value>* = nullptr) const;
 
 private:
   /**
-   * Returns true if \c v is well_oriented on each cell of \c cell_tos
+   * Returns `true` if `v` is well_oriented on each cell of `cell_tos`.
    */
   // For sequential version
   bool well_oriented(const Tr& tr,
@@ -196,10 +186,10 @@ no_topological_change(Tr& tr,
   //
   // Note that the function was nevertheless adapted to work with periodic triangulation
   // so this hack can be disabled if one day 'side_of_power_sphere()' is improved.
-  if(boost::is_same<typename Tr::Periodic_tag, Tag_true>::value)
+  if(std::is_same<typename Tr::Periodic_tag, Tag_true>::value)
     return false;
 
-  typename Gt::Construct_opposite_vector_3 cov =
+  typename GT::Construct_opposite_vector_3 cov =
       tr.geom_traits().construct_opposite_vector_3_object();
 
   bool np = true;
@@ -301,21 +291,24 @@ no_topological_change__without_set_point(
       cj->set_facet_visited(mj);
 
       Vertex_handle v1 = c->vertex(j);
+      typedef typename Tr::Triangulation_data_structure TDS;
+      typedef typename TDS::Cell_range Cell_range;
+      typedef typename TDS::Vertex_range Vertex_range;
       if(tr.is_infinite(v1))
       {
         // Build a copy of c, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type c_copy (*c);
+        Cell_range::Time_stamper_impl::initialize_time_stamp(&c_copy);
         int i_v0;
         typename Vertex_handle::value_type v;
+        Vertex_range::Time_stamper_impl::initialize_time_stamp(&v);
         if (c_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          c_copy.set_vertex(i_v0,
-            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
+          c_copy.set_vertex(i_v0, Vertex_range::s_iterator_to(v));
         }
 
-        Cell_handle c_copy_h =
-          Tr::Triangulation_data_structure::Cell_range::s_iterator_to(c_copy);
+        Cell_handle c_copy_h = Cell_range::s_iterator_to(c_copy);
         if(tr.side_of_power_sphere(c_copy_h, pg(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
@@ -327,17 +320,17 @@ no_topological_change__without_set_point(
       {
         // Build a copy of cj, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type cj_copy (*cj);
+        Cell_range::Time_stamper_impl::initialize_time_stamp(&cj_copy);
         int i_v0;
         typename Vertex_handle::value_type v;
+        Vertex_range::Time_stamper_impl::initialize_time_stamp(&v);
         if (cj_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          cj_copy.set_vertex(i_v0,
-            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
+          cj_copy.set_vertex(i_v0, Vertex_range::s_iterator_to(v));
         }
 
-        Cell_handle cj_copy_h =
-          Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cj_copy);
+        Cell_handle cj_copy_h = Cell_range::s_iterator_to(cj_copy);
         if(tr.side_of_power_sphere(cj_copy_h, pg(v1), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
@@ -388,11 +381,16 @@ inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
 {
-  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+  if(tr.number_of_vertices() == 0)
+    return false;
+
+  typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
 
-  Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
+  Cell_handle hint = (v == Vertex_handle()) ? Cell_handle() : v->cell();
+  Vertex_handle nv = tr.nearest_power_vertex(p, hint);
   const Point& nvwp = tr.point(nv);
+
   if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
   {
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
@@ -413,17 +411,17 @@ Triangulation_helpers<Tr>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
-                                  typename boost::enable_if_c<Tag::value>::type*) const
+                                  typename std::enable_if_t<Tag::value>*) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
   typedef std::vector<Vertex_handle>              Vertex_container;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
-  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -472,7 +470,7 @@ Triangulation_helpers<Tr>::
 get_sq_distance_to_closest_vertex(const Tr& tr,
                                   const Vertex_handle& vh,
                                   const Cell_vector& incident_cells,
-                                  typename boost::disable_if_c<Tag::value>::type*) const
+                                  typename std::enable_if_t<!Tag::value>*) const
 {
   CGAL_precondition(!tr.is_infinite(vh));
 
@@ -481,10 +479,10 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   typedef typename Vertex_container::iterator                VC_it;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
-  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -506,8 +504,8 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
          tr.is_infinite(vn))
         continue;
 
-      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
-      if(! is_insert_succesful.second) // vertex has already been treated
+      std::pair<VC_it, bool> is_insert_successful = treated_vertices.insert(vn);
+      if(! is_insert_successful.second) // vertex has already been treated
         continue;
 
       const Point& wpvn = tr.point(c, n);
@@ -530,9 +528,9 @@ Triangulation_helpers<Tr>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos) const
 {
-  typedef typename Tr::Geom_traits Gt;
-  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typedef typename Tr::Geom_traits GT;
+  typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -576,9 +574,9 @@ well_oriented(const Tr& tr,
               const Cell_vector& cells_tos,
               const Point_getter& pg) const
 {
-  typedef typename Tr::Geom_traits Gt;
-  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typedef typename Tr::Geom_traits GT;
+  typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)

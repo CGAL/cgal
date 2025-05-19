@@ -1,7 +1,6 @@
 /// \defgroup PkgSurfaceSweep2Ref 2D Intersection of Curves Reference
 /*!
 \addtogroup PkgSurfaceSweep2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Intersection of Curves,PkgSurfaceSweep2}
 \cgalPkgPicture{Curve_intersections_2.png}
 \cgalPkgSummaryBegin
@@ -18,7 +17,7 @@
 \cgalPkgDescriptionEnd
 
 This chapter describes three functions implemented using the
-sweep-line algorithm: given a collection \f$ {\mathcal C}\f$ of 
+sweep-line algorithm: given a collection \f$ {\mathcal C}\f$ of
 planar curves, compute all intersection points among them,
 obtain the set of maximal pairwise interior-disjoint subcurves
 of the curves in \f$ {\mathcal C}\f$, or check whether there is at
@@ -30,7 +29,7 @@ manner.
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::compute_intersection_points`
 - `CGAL::compute_subcurves`
 - `CGAL::do_curves_intersect`

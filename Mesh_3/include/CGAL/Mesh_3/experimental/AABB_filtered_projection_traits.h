@@ -3,24 +3,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb, Laurent Rineau
 //
-// File adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// File adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 //
 
 #ifndef CGAL_MESH_3_AABB_FILTERED_PROJECTION_TRAITS_H
@@ -31,8 +22,8 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -46,7 +37,7 @@ template <typename AABBTraits,
 class Filtered_projection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point_3;
+  typedef typename AABBTraits::Point Point_3;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -57,7 +48,7 @@ class Filtered_projection_traits
 
   typedef typename boost::property_traits<IndexPropertyMap>::value_type Index_type;
 
-  typedef std::set<typename boost::remove_const<Index_type>::type> Set_of_indices;
+  typedef std::set<Index_type> Set_of_indices;
 
 public:
   template <typename IndexToIgnoreIterator>
@@ -66,25 +57,40 @@ public:
                              IndexToIgnoreIterator end,
                              const AABBTraits& aabb_traits,
                              IndexPropertyMap index_map = IndexPropertyMap())
-    : m_closest_point(hint),
-      m_closest_point_initialized(true),
-      set_of_indices(begin, end),
-      aabb_traits(aabb_traits),
-      index_map(index_map)
+    : Filtered_projection_traits(begin, end, aabb_traits, index_map)
   {
+    m_closest_point = hint;
+    m_closest_point_initialized = true;
   }
 
   Filtered_projection_traits(const Point_3& hint,
                              Index_type index,
                              const AABBTraits& aabb_traits,
                              IndexPropertyMap index_map = IndexPropertyMap())
-    : m_closest_point(hint),
-      m_closest_point_initialized(true),
-      set_of_indices(),
-      aabb_traits(aabb_traits),
-      index_map(index_map)
+    : Filtered_projection_traits(index, aabb_traits, index_map)
   {
-    set_of_indices.insert(index);
+    m_closest_point = hint;
+    m_closest_point_initialized = true;
+  }
+
+  template <typename IndexToIgnoreIterator>
+  Filtered_projection_traits(const Point_and_primitive_id& hint,
+                             IndexToIgnoreIterator begin,
+                             IndexToIgnoreIterator end,
+                             const AABBTraits& aabb_traits,
+                             IndexPropertyMap index_map = IndexPropertyMap())
+    : Filtered_projection_traits(hint.first, begin, end, aabb_traits, index_map)
+  {
+    m_closest_primitive = hint.second;
+  }
+
+  Filtered_projection_traits(const Point_and_primitive_id& hint,
+                             Index_type index,
+                             const AABBTraits& aabb_traits,
+                             IndexPropertyMap index_map = IndexPropertyMap())
+    : Filtered_projection_traits(hint.first, index, aabb_traits, index_map)
+  {
+    m_closest_primitive = hint.second;
   }
 
   template <typename IndexToIgnoreIterator>
@@ -92,8 +98,7 @@ public:
                              IndexToIgnoreIterator end,
                              const AABBTraits& aabb_traits,
                              IndexPropertyMap index_map = IndexPropertyMap())
-    : m_closest_point_initialized(false),
-      set_of_indices(begin, end),
+    : set_of_indices(begin, end),
       aabb_traits(aabb_traits),
       index_map(index_map)
   {
@@ -102,12 +107,10 @@ public:
   Filtered_projection_traits(Index_type index,
                              const AABBTraits& aabb_traits,
                              IndexPropertyMap index_map = IndexPropertyMap())
-    : m_closest_point_initialized(false),
-      set_of_indices(),
+    : set_of_indices({index}),
       aabb_traits(aabb_traits),
       index_map(index_map)
   {
-    set_of_indices.insert(index);
   }
 
   bool go_further() const { return true; }
@@ -160,7 +163,7 @@ public:
 private:
   Point_3 m_closest_point;
   typename Primitive::Id m_closest_primitive;
-  bool m_closest_point_initialized;
+  bool m_closest_point_initialized = false;
   Set_of_indices set_of_indices;
   const AABBTraits& aabb_traits;
   IndexPropertyMap index_map;

@@ -27,7 +27,7 @@ main() {
   //inserting N points one-by-one, thus the use of "reserve" is recommended, and we use it
   tree.reserve(N);
 
-  //to test wether the tree.capacity() function works properly.
+  //to test whether the tree.capacity() function works properly.
   if( tree.capacity() < N)
   {
     std::cerr << "ERROR: Something is wrong with allocating points memory." << std::endl;
@@ -59,7 +59,7 @@ main() {
 
   result.clear();
   // Searching a fuzzy range
-  // using value 0.1 for fuzziness paramater
+  // using value 0.1 for fuzziness parameter
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
   std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: "

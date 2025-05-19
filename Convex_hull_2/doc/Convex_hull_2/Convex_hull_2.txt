@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Convex_Hulls_and_Extreme_Points
 \anchor chapconvexhull2
 \cgalAutoToc
@@ -11,31 +11,31 @@ namespace CGAL {
 
 A subset \f$ S \subseteq \mathbb{R}^2\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
-in \f$ S\f$. The convex hull of a set \f$ S\f$ 
+in \f$ S\f$. The convex hull of a set \f$ S\f$
 is the smallest convex set containing
-\f$ S\f$. The convex hull of a set of points \f$ P\f$ is a convex 
-polygon with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point 
-(with respect to \f$ P\f$) if it is a vertex of 
-the convex hull of \f$ P\f$. A set of points is said to be strongly convex 
+\f$ S\f$. The convex hull of a set of points \f$ P\f$ is a convex
+polygon with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point
+(with respect to \f$ P\f$) if it is a vertex of
+the convex hull of \f$ P\f$. A set of points is said to be strongly convex
 if it consists of only extreme points.
 
 This chapter describes the functions provided in
 \cgal for producing convex hulls in two dimensions as well as
-functions for checking if sets of points are strongly convex are not. 
-There are also a number of functions described for computing particular 
-extreme points and subsequences of hull points, such as the lower and 
+functions for checking if sets of points are strongly convex are not.
+There are also a number of functions described for computing particular
+extreme points and subsequences of hull points, such as the lower and
 upper hull of a set of points.
 
 \image html saarhull.png
 \image latex saarhull.png
 
-\section secconvex_hull_2 Convex Hull 
+\section secconvex_hull_2 Convex Hull
 
 \cgal provides implementations of several classical algorithms for
-computing the counterclockwise sequence of extreme points for a set of 
-points in two dimensions (<I>i.e.</I>, the counterclockwise sequence 
+computing the counterclockwise sequence of extreme points for a set of
+points in two dimensions (<I>i.e.</I>, the counterclockwise sequence
 of points on the convex hull). The algorithms have different asymptotic
-running times and require slightly different sets of geometric primitives. 
+running times and require slightly different sets of geometric primitives.
 Thus you may choose the algorithm that best fits your setting.
 
 Each of the convex hull functions presents the same interface to the
@@ -52,72 +52,87 @@ class need not be specified and defaults to types and operations defined
 in the kernel in which the input point type is defined.
 
 Given a sequence of \f$ n\f$ input points with \f$ h\f$ extreme points,
-the function `convex_hull_2()` uses either the output-sensitive \f$ O(n h)\f$ algorithm of Bykat \cgalCite{b-chfsp-78}
-(a non-recursive version of the quickhull \cgalCite{bdh-qach-96} algorithm) or the algorithm of Akl and Toussaint, which requires \f$ O(n \log n)\f$ time
-in the worst case. The algorithm chosen depends on the kind of 
+the function `convex_hull_2()` uses either the output-sensitive \cgalBigO{n h} algorithm of Bykat \cgalCite{b-chfsp-78}
+(a non-recursive version of the quickhull \cgalCite{bdh-qach-96} algorithm) or the algorithm of Akl and Toussaint, which requires \cgalBigO{n \log n} time
+in the worst case. The algorithm chosen depends on the kind of
 iterator used to specify the input points. These two algorithms are
 also available via the functions `ch_bykat()` and `ch_akl_toussaint()`,
-respectively. Also available are 
-the \f$ O(n \log n)\f$ Graham-Andrew scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84} 
-(`ch_graham_andrew()`), 
-the \f$ O(n h)\f$ Jarvis march algorithm \cgalCite{j-ichfs-73}
+respectively. Also available are
+the \cgalBigO{n \log n} Graham-Andrew scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}
+(`ch_graham_andrew()`),
+the \cgalBigO{n h} Jarvis march algorithm \cgalCite{j-ichfs-73}
 (`ch_jarvis()`),
-and Eddy's \f$ O(n h)\f$ algorithm \cgalCite{e-nchap-77}
-(`ch_eddy()`), which corresponds to the 
+and Eddy's \cgalBigO{n h} algorithm \cgalCite{e-nchap-77}
+(`ch_eddy()`), which corresponds to the
 two-dimensional version of the quickhull algorithm.
-The linear-time algorithm of Melkman for producing the convex hull of 
+The linear-time algorithm of Melkman for producing the convex hull of
 simple polygonal chains (or polygons) is available through the function
-`ch_melkman()`. 
+`ch_melkman()`.
 
 \section Convex_hull_2Example Example using Graham-Andrew's Algorithm
 
-In the following example a convex hull is constructed from point data read 
-from standard input using `Graham_Andrew` algorithm. The resulting convex 
-polygon is shown at the standard output console. The same results could be 
-achieved by substituting the function `ch_graham_andrew()` by other 
+In the following example a convex hull is constructed from point data read
+from standard input using `Graham_Andrew` algorithm. The resulting convex
+polygon is shown at the standard output console. The same results could be
+achieved by substituting the function `ch_graham_andrew()` by other
 functions such as `ch_bykat()`.
 
 \cgalExample{Convex_hull_2/ch_from_cin_to_cout.cpp}
+
+
+\section Convex_hull_2ExampleIndex  Example using a Property Map
+
+In the following example we have as input a vector of points,
+and we retrieve the indices of the points which are on the convex hull.
+The convex hull function takes as fourth argument a traits class
+that must be model of the concept `ConvexHullTraits_2`. It provides
+predicates such as orientation tests.
+The class `Convex_hull_traits_adapter_2` in combination with a
+`Pointer_property_map`, is such a model. The indices `i` are then "points",
+and the adapter performs the predicates on `points[i]`.
+
+\cgalExample{Convex_hull_2/convex_hull_indices_2.cpp}
+
 
 \section Convex_hull_2Extreme Extreme Points and Hull Subsequences
 
 In addition to the functions for producing convex hulls, there are a
 number of functions for computing sets and sequences of points related
-to the convex hull. 
+to the convex hull.
 
 The functions `lower_hull_points_2()` and `upper_hull_points_2()`
-provide the computation of the counterclockwise 
+provide the computation of the counterclockwise
 sequence of extreme points on the lower hull and upper hull,
 respectively. The algorithm used in these functions is
 Andrew's variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84},
-which has worst-case running time of \f$ O(n \log n)\f$.
+which has worst-case running time of \cgalBigO{n \log n}.
 
-There are also functions available for computing certain subsequences 
+There are also functions available for computing certain subsequences
 of the sequence of extreme points on the convex hull. The function
 `ch_jarvis_march()` generates the counterclockwise ordered subsequence of
 extreme points between a given pair of points and
 `ch_graham_andrew_scan()` computes the sorted sequence of extreme points that are
 not left of the line defined by the first and last input points.
 
-Finally, a set of functions (`ch_nswe_point()`, `ch_ns_point()`, 
+Finally, a set of functions (`ch_nswe_point()`, `ch_ns_point()`,
 `ch_we_point()`, `ch_n_point()`, `ch_s_point()`, `ch_w_point()`, `ch_e_point()`)
-is provided for computing extreme points of a 
-2D point set in the coordinate directions. 
+is provided for computing extreme points of a
+2D point set in the coordinate directions.
 
 \section Convex_hull_2Traits Traits Classes
 
 Each of the functions used to compute convex hulls or extreme points
 is parameterized by a traits class, which specifies the types and geometric
-primitives to be used in the computation. There are several implementations 
+primitives to be used in the computation. There are several implementations
 of 2D traits classes provided in the library. The class
-`Convex_hull_traits_2` corresponds to the default traits class that provides the types and 
-predicates presented in the 2-dimensional \cgal kernel in which the input 
+`Convex_hull_traits_2` corresponds to the default traits class that provides the types and
+predicates presented in the 2-dimensional \cgal kernel in which the input
 points lie. The class `Convex_hull_constructive_traits_2` is a second traits class
  based on \cgal primitives but differs from `Convex_hull_traits_2` in that some of its primitives reuse
 intermediate results to speed up computation.
 
-In addition, the 2D and 3D Linear Geometric Kernel provides three projective traits classes 
-(`Projection_traits_xy_3`, `Projection_traits_xz_3`, and `Projection_traits_yz_3`), 
+In addition, the 2D and 3D Linear Geometric Kernel provides three projective traits classes
+(`Projection_traits_xy_3`, `Projection_traits_xz_3`, and `Projection_traits_yz_3`),
 which may be used to compute the convex hull of a set of three-dimensional
 points projected into each of the three coordinate planes.
 
@@ -128,6 +143,10 @@ check whether a given sequence of 2D points forms a (counter)clockwise strongly
 convex polygon. These are used in postcondition
 testing of the two-dimensional convex hull functions.
 
-*/ 
-} /* namespace CGAL */
+In case you want to keep collinear points you can use the 2D Delaunay triangulation as
+in the following example. This sequence is then <em>not</em> strongly convex.
 
+\cgalExample{Convex_hull_2/ch_delaunay_2.cpp}
+
+*/
+} /* namespace CGAL */

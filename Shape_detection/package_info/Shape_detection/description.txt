@@ -1,0 +1,5 @@
+Shape Detection
+
+This CGAL package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
+for detecting arbitrary shapes in an unorganized point set with unoriented normals
+and the Region Growing approach for detecting shapes in a set of arbitrary items.

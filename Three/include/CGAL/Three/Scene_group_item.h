@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -26,7 +17,7 @@
 #include <CGAL/license/Three.h>
 
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;
 
@@ -43,53 +34,51 @@ namespace Three {
 //! user to apply several actions to multiple items at the same time.
 //! A custom Scene_item can derive from it to have children. They appear
 //! hierarchically in the Geometric Objects list.
-class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
+class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item_rendering_helper
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
-    ~Scene_group_item() {}
-    //!Sets the scene;
-    void setScene(Scene_interface* s) { scene = s; }
+    Scene_group_item(QString name = QString("New group"));
+    ~Scene_group_item() { delete children;}
     //!Returns false to avoid disturbing the BBox of the scene.
-    bool isFinite() const Q_DECL_OVERRIDE;
+    bool isFinite() const override;
     //!Returns true to avoid disturbing the BBox of the scene.
-    bool isEmpty() const Q_DECL_OVERRIDE;
+    bool isEmpty() const override;
     /*!
-         * \brief Locks a child
+         * \brief locks a child
          *
          * A locked child cannot be moved out of the group nor can it be deleted.
          * Use it to prevent a child to be destroyed without its parent.
          */
         void lockChild(CGAL::Three::Scene_item*);
         /*!
-        * \brief Locks a child
+        * \brief locks a child
         *
         * A locked child cannot be moved out of the group nor can it be deleted.
         * Use it to prevent a child to be destroyed without its parent.
         */
         void lockChild(Scene_interface::Item_id id);
-    
+
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(CGAL::Three::Scene_item*);
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(Scene_interface::Item_id id);
         /*!
-         * \brief Tells if a child is locked.
+         * \brief tells if a child is locked.
          * \return true if the child is locked.
          * @see lockChild()
          */
         bool isChildLocked(CGAL::Three::Scene_item*);
         /*!
-             * \brief Tells if a child is locked.
+             * \brief tells if a child is locked.
              * \return true if the child is locked.
              * @see lockChild()
              */
@@ -103,15 +92,15 @@ public :
     //! @see isExpanded().
     void setExpanded(bool);
     //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
-    Bbox bbox() const Q_DECL_OVERRIDE;
+    Bbox bbox() const override;
     //!Not supported.
-    Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
+    Scene_item* clone() const override {return nullptr;}
     //! Indicates if the rendering mode is supported.
     //! \returns true for all rendering modes that are shared by
     //! all of the children.
-    bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
+    bool supportsRenderingMode(RenderingMode m) const override;
     //!\returns a string containing the number of children.
-    QString toolTip() const Q_DECL_OVERRIDE;
+    QString toolTip() const override;
 
     /// Draw functions
     /// Scene_group_item's children are not drawn by the scene, they are drawn by the group.
@@ -120,23 +109,23 @@ public :
     //!
     //! Calls `Scene_item::draw()`, then calls `Scene_item::drawEdges()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
-    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void draw(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
-    virtual void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawEdges()` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const override;
     //!
        //! \brief deals with the rendering, selecting and picking of
        //! the group's children.
@@ -148,7 +137,7 @@ public :
        virtual void renderChildren(Viewer_interface *,
                  QMap<float, int>& picked_item_IDs, const QPoint &picked_pixel,
                  bool with_names);
-    
+
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children.
@@ -163,11 +152,11 @@ public :
     Scene_item* getChild(Scene_interface::Item_id id) { return scene->item(id);}
     Scene_item* getChild(Scene_interface::Item_id id) const{ return scene->item(id);}
     //!Sets all the children to the specified color.
-    void setColor(QColor c) Q_DECL_OVERRIDE;
+    void setColor(QColor c) override;
     //!Sets all the children in the specified rendering mode.
-    void setRenderingMode(RenderingMode m) Q_DECL_OVERRIDE;
+    void setRenderingMode(RenderingMode m) override;
     //!Sets all the children to the specified visibility.
-    void setVisible(bool b) Q_DECL_OVERRIDE;
+    void setVisible(bool b) override;
     //!Sets all the children in points mode.
     void setPointsMode() {
       setRenderingMode(Points);
@@ -201,22 +190,22 @@ public :
       setRenderingMode(PointsPlusNormals);
     }
     //!Sets the alpha value for the froup and all its children.
-        virtual void setAlpha(int) Q_DECL_OVERRIDE;
-    
-    //! \brief Returns a list of all the direct children.
+        virtual void setAlpha(int) override;
+
+    //! \brief returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
-    QList<Scene_interface::Item_id> getChildren() const {return children;}
+    QList<Scene_interface::Item_id> getChildren() const {return *children;}
 
     //! \brief getChildrenForSelection returns the list of
     //! children to select along with the group.
     //!
     //! When a `Scene_group_item` is added to the selection of the scene,
     //! this function defines which of its children will be added too.
-    //! Typically overriden to allow applying an operation from the
+    //! Typically overridden to allow applying an operation from the
     //! Operation menu only to the parent item and not to its children.
-    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return children;}
+    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return *children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
@@ -224,8 +213,8 @@ public :
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
-     item->moveToGroup(0);
-     children.removeOne(scene->item_id(item));
+     item->moveToGroup(nullptr);
+     children->removeOne(scene->item_id(item));
     }
     //!Removes a Scene_item from the list of children using its index.
     //!@see getChildren() @see addChild()
@@ -238,8 +227,9 @@ public :
     //!Moves a child down in the list.
     void moveDown(int);
 
+    void compute_bbox() const override{};
 public Q_SLOTS:
-    //!\brief Redraws children.
+    //!\brief redraws children.
     //!
     //! As each drawing function of a group draws all parts of its children,
     //! once any of these functions is called, we skip all drawing calls
@@ -253,10 +243,14 @@ public Q_SLOTS:
     //!
     void adjustIds(Scene_interface::Item_id removed_id)
     {
-      for(int i = 0; i < children.size(); ++i)
+      for(int i = 0; i < children->size(); ++i)
       {
-        if(children[i] >= removed_id)
-          --children[i];
+        if((*children)[i] > removed_id)
+          --(*children)[i];
+        else if((*children)[i] == removed_id)//child has been removed from the scene, it doesn't exist anymore.
+        {
+          children->removeAll(removed_id);
+        }
       }
     }
 private:
@@ -266,7 +260,7 @@ private:
 protected:
     Scene_interface *scene;
     //!Contains a reference to all the children of this group.
-    QList<Scene_interface::Item_id> children;
+    QList<Scene_interface::Item_id>* children;
 
 }; //end of class Scene_group_item
 

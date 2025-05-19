@@ -1,28 +1,24 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
 
 
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -32,6 +28,7 @@ _test_cls_aff_transformation_3(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
+ const bool nonexact = std::is_floating_point<FT>::value;
 
  typename R::Aff_transformation_3 ia;
  CGAL::Aff_transformation_3<R> a1(ia);
@@ -56,13 +53,14 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Vector_3<R> tvec;
  CGAL::Point_3<R>  pnt( n8, n1, n9, n10 );  // ( 6,-5, 3)
  CGAL::Point_3<R>  tpnt;
- CGAL::Point_3<R>  pvec = CGAL::ORIGIN + vec;
+ CGAL::Point_3<R>  pvec = CGAL::ORIGIN + vec; CGAL_USE(pvec);
  CGAL::Vector_3<R> vpnt = pnt - CGAL::ORIGIN;
 
  CGAL::Point_3<R>  p1(-n3, n7, n11, n3 );   // (-1, 2,-3)
  CGAL::Point_3<R>  p2( n5, n4,-n12, n4 );   // ( 5, 1,-4)
  CGAL::Point_3<R>  p3( n1, n0, n14, n4 );   // (-3, 0, 7)
  CGAL::Point_3<R>  p4( n7, n2, n8, -n6 );   // ( 4,11, 9)
+ CGAL::Weighted_point_3<R> wp4( p4, n7 );
 
  CGAL::Direction_3<R> d0(n13, n0, n0);
  CGAL::Direction_3<R> d1(n0, n13, n0);
@@ -77,6 +75,7 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Point_3<R>   tp2;
  CGAL::Point_3<R>   tp3;
  CGAL::Point_3<R>   tp4;
+ CGAL::Weighted_point_3<R>   twp4;
  CGAL::Segment_3<R> seg(p1,p2);
  CGAL::Segment_3<R> tseg;
  CGAL::Ray_3<R>     ray(p3,p2);
@@ -98,7 +97,7 @@ _test_cls_aff_transformation_3(const R& )
                                      n5, n11, n10,  n4,
                                      n3,  n6, n12,  n2,
                                                     n3 );
- assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() )  );
+ assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() ) || nonexact );
 
  CGAL::Aff_transformation_3<R> gat2( n7,  n9,  n8,  n2,
                                      n5, n11, n10,  n4,
@@ -151,6 +150,16 @@ _test_cls_aff_transformation_3(const R& )
  assert( ident.is_even() );
  assert( xrefl.is_odd() );
 
+ // translation
+ assert( translate.is_translation() );
+ assert( ! scale11.is_translation() );
+ assert( ! gtrans.is_translation() );
+
+ // scaling
+ assert( scale11.is_scaling() );
+ assert( ! translate.is_scaling() );
+ assert( ! gscale.is_scaling() );
+
  CGAL::Aff_transformation_3<R> a[11];
 
  std::cout << '.';
@@ -176,13 +185,16 @@ _test_cls_aff_transformation_3(const R& )
     tp2 = p2.transform( a[i] );
     tp3 = p3.transform( a[i] );
     tp4 = p4.transform( a[i] );
+    twp4 = wp4.transform( a[i] );
     tpla = pla.transform( a[i] );
     tseg = seg.transform( a[i] );
     tray = ray.transform( a[i] );
     tlin = lin.transform( a[i] );
     ttri = tri.transform( a[i] );
     ttet = tet.transform( a[i] );
-    assert( tpla == CGAL::Plane_3<R>( tp1, tp2, tp3) );
+    assert( twp4.point() == tp4 );
+    assert( twp4.weight() == wp4.weight() );
+    assert( tpla == CGAL::Plane_3<R>( tp1, tp2, tp3) || nonexact );
     assert( tseg == CGAL::Segment_3<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_3<R>(tp3, tp2) );
     assert( tlin == CGAL::Line_3<R>(tp2, tp4) );
@@ -190,19 +202,21 @@ _test_cls_aff_transformation_3(const R& )
     assert( ttet == CGAL::Tetrahedron_3<R>(tp1, tp2, tp3, tp4) );
     inv = a[i].inverse();
     tp4  = tp4.transform(  inv );
+    twp4 = twp4.transform( inv );
     tpla = tpla.transform( inv );
     tseg = tseg.transform( inv );
     tray = tray.transform( inv );
     tlin = tlin.transform( inv );
     ttri = ttri.transform( inv );
     ttet = ttet.transform( inv );
-    assert( tp4  == p4 );
-    assert( tpla == pla );
-    assert( tseg == seg );
-    assert( tray == ray );
-    assert( tlin == lin );
-    assert( ttri == tri );
-    assert( ttet == tet );
+    assert( tp4  == p4 || nonexact );
+    assert( twp4 == wp4 || nonexact );
+    assert( tpla == pla || nonexact );
+    assert( tseg == seg || nonexact );
+    assert( tray == ray || nonexact );
+    assert( tlin == lin || nonexact );
+    assert( ttri == tri || nonexact );
+    assert( ttet == tet || nonexact );
  };
 
  std::cout << '.';
@@ -211,7 +225,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( vec.transform(ident) == vec );
  assert( dir.transform(ident) == dir );
  assert( pnt.transform(ident) == pnt );
- assert( pla.transform(ident) == pla );
+ assert( pla.transform(ident) == pla || nonexact );
 
  // scale11 and gscale
  tpnt = pnt.transform(scale11);
@@ -234,7 +248,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( vec.transform(scale11) == vec.transform(gscale) );
  assert( dir.transform(scale11) == dir.transform(gscale) );
  assert( pnt.transform(scale11) == pnt.transform(gscale) );
- assert( pla.transform(scale11) == pla.transform(gscale) );
+ assert( pla.transform(scale11) == pla.transform(gscale) || nonexact );
 
  // translate and gtrans
  tvec = vec.transform(translate);
@@ -256,7 +270,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( vec.transform(translate) == vec.transform(gtrans) );
  assert( dir.transform(translate) == dir.transform(gtrans) );
  assert( pnt.transform(translate) == pnt.transform(gtrans) );
- assert( pla.transform(translate) == pla.transform(gtrans) );
+ assert( pla.transform(translate) == pla.transform(gtrans) || nonexact );
 
  // xrefl
  tdir = d0.transform(xrefl);
@@ -272,7 +286,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( pnt.transform(xrefl).transform(xrefl) == pnt );
  assert( dir.transform(xrefl).transform(xrefl) == dir );
  assert( vec.transform(xrefl).transform(xrefl) == vec );
- assert( pla.transform(xrefl).transform(xrefl) == pla );
+ assert( pla.transform(xrefl).transform(xrefl) == pla || nonexact );
  CGAL::Aff_transformation_3<R> co1 = xrefl * xrefl;
  assert( pnt.transform(xrefl).transform(xrefl) == pnt.transform(co1) );
  assert( dir.transform(xrefl).transform(xrefl) == dir.transform(co1) );
@@ -282,7 +296,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( pnt.transform(gat3).transform(gat2) == pnt.transform(co1) );
  assert( dir.transform(gat3).transform(gat2) == dir.transform(co1) );
  assert( vec.transform(gat3).transform(gat2) == vec.transform(co1) );
- assert( pla.transform(gat3).transform(gat2) == pla.transform(co1) );
+ assert( pla.transform(gat3).transform(gat2) == pla.transform(co1) || nonexact );
  co1 = ident * gat1;
  assert( vec.transform(gat1) == vec.transform(co1) );
  assert( dir.transform(gat1) == dir.transform(co1) );
@@ -294,10 +308,10 @@ _test_cls_aff_transformation_3(const R& )
  assert( pnt.transform(gat1) == pnt.transform(co1) );
  assert( pla.transform(gat1) == pla.transform(co1) );
  co1 = gat1 * gat1.inverse() ;
- assert( vec == vec.transform(co1) );
- assert( dir == dir.transform(co1) );
- assert( pnt == pnt.transform(co1) );
- assert( pla == pla.transform(co1) );
+ assert( vec == vec.transform(co1) || nonexact );
+ assert( dir == dir.transform(co1) || nonexact );
+ assert( pnt == pnt.transform(co1) || nonexact );
+ assert( pla == pla.transform(co1) || nonexact );
 
  assert( vec.transform( gat5 ) == vec.transform( gat2 ) );
  assert( dir.transform( gat5 ) == dir.transform( gat2 ) );
@@ -548,7 +562,7 @@ _test_cls_aff_transformation_3(const R& )
      a3(0,1,0,1,0,1,1,0,1,0,0,1), a4(0,0,1,1,0,0,1,1,0,0,1,1);
  assert(a2 == a3);
  assert(a3 != a4);
- 
+
  std::cout << "done" << std::endl;
  return true;
 }

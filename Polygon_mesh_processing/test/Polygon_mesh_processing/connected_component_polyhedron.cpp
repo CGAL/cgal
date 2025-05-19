@@ -10,10 +10,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
-typedef CGAL::Polyhedron_3<Kernel> Mesh;
+typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(const char* argv1, const bool save_output)
+void mesh_with_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -23,34 +23,70 @@ void mesh_with_id(const char* argv1, const bool save_output)
   in >> sm;
 
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  } 
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
   boost::vector_property_map<int,
-    boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-      fccmap(get(boost::face_index,sm));
+    boost::property_map<Mesh_with_id, CGAL::face_index_t>::type>
+      fccmap(static_cast<unsigned>(num_faces(sm)), get(CGAL::face_index,sm));
 
-  std::size_t num = PMP::connected_components(sm,
-                                              fccmap);
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  const std::size_t num = PMP::connected_components(sm, fccmap);
+
+  if(argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
     assert(num == 3);
+  }
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  const std::size_t nb_faces = num_faces(sm);
 
-  PMP::keep_largest_connected_components(sm,2);
+  std::vector<face_descriptor> faces_to_remove;
+  std::size_t nb_to_remove = PMP::keep_large_connected_components(
+                               sm, 1000,
+                               CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                                .dry_run(true)
+                                                .output_iterator(std::back_inserter(faces_to_remove)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
+    assert(num_faces(sm) == nb_faces);
+  }
+
+  faces_to_remove.clear();
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                    .dry_run(true)
+                                    .output_iterator(std::back_inserter(faces_to_remove)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
+    assert(num_faces(sm) == nb_faces);
+  }
+
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces(sm).size() == 2737);
+  }
 
   if (!save_output)
     return;
@@ -60,7 +96,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
   ofile.close();
 }
 
-void mesh_no_id(const char* argv1, const bool save_output)
+void mesh_no_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -68,42 +104,32 @@ void mesh_no_id(const char* argv1, const bool save_output)
   std::ifstream in(argv1);
   in >> sm;
 
-  
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  PMP::connected_component(fd,
-                           sm,
-                           std::back_inserter(cc));
-
+  PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
-  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
+  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim
     = get(boost::vertex_external_index,sm);
 
-  boost::property_map<Mesh,boost::face_external_index_t>::type fim 
+  boost::property_map<Mesh,boost::face_external_index_t>::type fim
     = get(boost::face_external_index,sm);
 
   boost::vector_property_map<int,
     boost::property_map<Mesh, boost::face_external_index_t>::type>
-      fccmap(fim);
+      fccmap(static_cast<unsigned>(num_faces(sm)), fim);
 
-  std::size_t num = PMP::connected_components(sm,
-    fccmap,
-    PMP::parameters::face_index_map(fim));
-  
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  std::size_t num = PMP::connected_components(sm, fccmap);
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  //BOOST_FOREACH(face_descriptor f , faces(sm)){
+  //for(face_descriptor f : faces(sm)){
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm
-    , 2
-    , PMP::parameters::vertex_index_map(vim).
-      face_index_map(fim));
-
+  PMP::keep_largest_connected_components(sm, 2, CGAL::parameters::vertex_index_map(vim));
   if (save_output)
     return;
 
@@ -118,20 +144,21 @@ void test_border_cases()
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
 
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   Mesh_with_id sm;
   input >> sm;
 
   std::size_t i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm))
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm))
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
 
   boost::vector_property_map<int,
     boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-      fccmap(get(boost::face_index,sm));
+      fccmap(static_cast<unsigned>(num_faces(sm)), get(boost::face_index,sm));
 
   PMP::connected_components(sm, fccmap);
   std::size_t nb_faces=num_faces(sm);
@@ -158,7 +185,7 @@ void test_border_cases()
   assert(num_vertices(copy)==0);
 }
 
-void keep_nothing(const char* argv1)
+void keep_nothing(const std::string argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -170,13 +197,12 @@ void keep_nothing(const char* argv1)
     return;
   }
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
-  }
+
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
-  }
 
   PMP::keep_largest_connected_components(sm, 0);
   assert(num_vertices(sm) == 0);
@@ -184,14 +210,15 @@ void keep_nothing(const char* argv1)
   assert(num_faces(sm) == 0);
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  const bool save_output = (argc > 2) ? true : false;
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const bool save_output = (argc > 2);
 
   mesh_with_id(filename, save_output);
   mesh_no_id(filename, save_output);
   test_border_cases();
   keep_nothing(filename);
-  return 0;
+
+  return EXIT_SUCCESS;
 }

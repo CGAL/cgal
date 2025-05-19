@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_VECTOR_3_H
 #define CGAL__TEST_FCT_VECTOR_3_H
@@ -32,6 +26,8 @@ _test_fct_vector_3(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
+
+ typedef typename R::Non_zero_coordinate_index_3 Non_zero_coordinate_index_3;
 
  RT  n0(  0 );
  RT  n1( 12 );
@@ -49,6 +45,8 @@ _test_fct_vector_3(const R& )
 
 
  CGAL::Vector_3<R>  v0(CGAL::NULL_VECTOR);  // ( 0, 0, 0)
+ CGAL::Vector_3<R>  v001(n0,n0,n1);  // ( 0, 0, 12)
+ CGAL::Vector_3<R>  v011(n0,n1,n1);  // ( 0, 12, 12)
  CGAL::Vector_3<R>  v1(n1, n2, n3, n4);    // ( 6,-2, 3)
  CGAL::Vector_3<R>  v2(n5, n6, n7, n8);    // ( 3,-6,12)
  CGAL::Vector_3<R>  v3(n5, n10, n9);       // ( 9,-8,15)
@@ -58,6 +56,12 @@ _test_fct_vector_3(const R& )
  CGAL::Vector_3<R>  v10( n8,-n2,-n5, n4);  // (1.5,2,-4.5)
  CGAL::Vector_3<R>  v11(-n6, n11,-n12, n8);// ( 6, 8, -18)
  CGAL::Vector_3<R>  v12(n1, n2, -n3, n4);  // ( 6,-2, -3)
+
+ Non_zero_coordinate_index_3 nzd;
+ assert( nzd(v0) == -1 );
+ assert( nzd(v001) == 2 );
+ assert( nzd(v011) == 1 );
+ assert( nzd(v1) == 0 );
 
  assert( orientation(v0, v0, v0) == CGAL::COPLANAR );
  assert( orientation(v1, v1, v1) == CGAL::COPLANAR );
@@ -97,6 +101,7 @@ _test_fct_vector_3(const R& )
 
  std::cout << '.';
 
+ assert( v1.squared_length() == CGAL::squared_length(v1) );
  assert( v1.squared_length() == FT(49) );
  assert( v1 * v2 == FT(66) );
  assert( v1 * v0 == FT(0) );

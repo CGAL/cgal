@@ -4,11 +4,13 @@
 A CombinationElement can be used as template parameter for the class
 `Combination_enumerator<CombinationElement>`.
 
-\cgalHasModel Any integer type (`char`, `short`, `int`, `long`, etc.)
-\cgalHasModel Pointers
-\cgalHasModel Random access iterators
+\cgalHasModelsBegin
+\cgalHasModelsBare{Any integer type (`char`, `short`, `int`, `long`, etc.)}
+\cgalHasModelsBare{Pointers}
+\cgalHasModelsBare{Random access iterators}
+\cgalHasModelsEnd
 
-\sa `Combination_enumerator<CombinationElement>`
+\sa `CGAL::Combination_enumerator<CombinationElement>`
 
 
 */
@@ -27,32 +29,32 @@ CombinationElement(const CombinationElement & e2);
 /// @}
 
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-the type of point being generated. 
-*/ 
-typedef unspecified_type value_type; 
+the type of point being generated.
+*/
+typedef unspecified_type value_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 Incrementation
-*/ 
+*/
 void operator++();
 
 /*!
 Decrementation
-*/ 
+*/
 void operator--();
 
 /*!
 Total order comparison
-*/ 
+*/
 bool operator<(const CombinationElement & e2);
 
 /*!
@@ -64,7 +66,7 @@ bool operator==(const CombinationElement & e2);
 /*!
 Equivalent to calling `++(*this)` `i` times if i is positive.
 Equivalent to calling `--(*this)` `-i` times if i is negative.
-*/ 
+*/
 CombinationElement operator+(int i);
 
 /*!
@@ -76,8 +78,3 @@ int operator-(const CombinationElement & e2);
 /// @}
 
 }; /* end CombinationElement */
-
-
-
-
-

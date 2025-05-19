@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -36,6 +27,8 @@ namespace CGAL {
 template <class R_>
 class SphereC3
 {
+  typedef typename R_::Boolean              Boolean;
+  typedef typename R_::Bounded_side         Bounded_side;
   typedef typename R_::FT                   FT;
 // https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Point_3              Point_3_;
@@ -75,7 +68,7 @@ public:
 
   // Sphere with great circle passing through p,q,r, oriented by o
   SphereC3(const Point_3_ &p, const Point_3_ &q, const Point_3_ &r,
-	   const Orientation &o = COUNTERCLOCKWISE)
+           const Orientation &o = COUNTERCLOCKWISE)
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 
@@ -133,17 +126,17 @@ public:
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_POSITIVE_SIDE, R::ON_ORIENTED_BOUNDARY or
   // R::ON_NEGATIVE_SIDE
-  typename R::Boolean   has_on(const Circle_3 &p) const;
-  typename R::Boolean   has_on(const Point_3_ &p) const;
-  typename R::Boolean   has_on_boundary(const Point_3_ &p) const;
-  typename R::Boolean   has_on_positive_side(const Point_3_ &p) const;
-  typename R::Boolean   has_on_negative_side(const Point_3_ &p) const;
+  Boolean has_on(const Circle_3 &p) const;
+  Boolean has_on(const Point_3_ &p) const;
+  Boolean has_on_boundary(const Point_3_ &p) const;
+  Boolean has_on_positive_side(const Point_3_ &p) const;
+  Boolean has_on_negative_side(const Point_3_ &p) const;
 
-  typename R_::Bounded_side bounded_side(const Point_3_ &p) const;
+  Bounded_side bounded_side(const Point_3_ &p) const;
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_BOUNDED_SIDE, R::ON_BOUNDARY or R::ON_UNBOUNDED_SIDE
-  typename R::Boolean   has_on_bounded_side(const Point_3_ &p) const;
-  typename R::Boolean   has_on_unbounded_side(const Point_3_ &p) const;
+  Boolean has_on_bounded_side(const Point_3_ &p) const;
+  Boolean has_on_unbounded_side(const Point_3_ &p) const;
 };
 
 template < class R >
@@ -172,6 +165,7 @@ typename R::Oriented_side
 SphereC3<R>::
 oriented_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Oriented_side Oriented_side;
   return enum_cast<Oriented_side>(bounded_side(p)) * orientation();
 }
 
@@ -181,6 +175,7 @@ typename R::Bounded_side
 SphereC3<R>::
 bounded_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Bounded_side Bounded_side;
   return enum_cast<Bounded_side>(compare(squared_radius(),
                                          squared_distance(center(), p)));
 }

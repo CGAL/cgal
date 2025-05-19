@@ -1,7 +1,10 @@
 Algebraic_foundations
 Arithmetic_kernel
 Arrangement_on_surface_2
+BGL
+Basic_viewer
 Boolean_set_operations_2
+CGAL_Core
 Cartesian_kernel
 Circular_kernel_2
 Circulator
@@ -21,7 +24,12 @@ Modular_arithmetic
 Number_types
 Polygon
 Profiling_tools
+Property_map
+Random_numbers
 STL_Extension
+Spatial_sorting
 Stream_support
 Surface_sweep_2
+TDS_2
+Triangulation_2
 Union_find

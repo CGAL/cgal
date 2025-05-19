@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
@@ -25,6 +16,11 @@
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 
 #include <CGAL/license/Surface_mesher.h>
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Complex_2_in_triangulation_cell_base_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
@@ -69,20 +65,20 @@ namespace CGAL {
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3)
       : Cb (v0, v1, v2, v3), bits()// , c_surface_facets(0)
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3,
-					    Cell_handle n0,
-					    Cell_handle n1,
-					    Cell_handle n2,
-					    Cell_handle n3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3,
+                                            Cell_handle n0,
+                                            Cell_handle n1,
+                                            Cell_handle n2,
+                                            Cell_handle n3)
       : Cb (v0, v1, v2, v3, n0, n1, n2, n3), bits()// c_surface_facets(0)
     {}
 
@@ -129,7 +125,7 @@ operator>>(std::istream &is, Complex_2_in_triangulation_cell_base_3<GT, Cb> &c)
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> b;
     else
     {
@@ -151,7 +147,7 @@ operator<<(std::ostream &os,
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << ' ' << c.is_facet_on_surface(i);
     else
       write(os, static_cast<int>(c.is_facet_on_surface(i)));

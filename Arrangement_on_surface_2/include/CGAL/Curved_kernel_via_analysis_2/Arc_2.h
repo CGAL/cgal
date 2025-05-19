@@ -1,20 +1,11 @@
 // Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -22,8 +13,11 @@
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h
- *\brief Defines class \c Arc_2 that represents an arc on a curve that
+ *\brief defines class \c Arc_2 that represents an arc on a curve that
  * can be analyzed.
  */
 
@@ -31,9 +25,9 @@
 #include <CGAL/Handle_with_policy.h>
 
 #include <iostream>
-#include <boost/optional.hpp>
+#include <type_traits>
+#include <optional>
 #include <boost/none.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Arr_enums.h>
@@ -45,6 +39,8 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h>
+
+#include <CGAL/kernel_assertions.h>
 
 namespace CGAL {
 
@@ -162,13 +158,13 @@ public:
     mutable bool _m_left_to_right;
 
     //! stores the index of an interval this arc belongs to
-    mutable boost::optional<int> _m_interval_id;
+    mutable std::optional<int> _m_interval_id;
 
     //! stores boundary value in x-range of non-vertical interval
-    mutable boost::optional< Bound > _m_boundary_in_interval;
+    mutable std::optional< Bound > _m_boundary_in_interval;
 
     //! stores a bbox for an arc
-    mutable boost::optional< CGAL::Bbox_2 > _m_bbox;
+    mutable std::optional< CGAL::Bbox_2 > _m_bbox;
 
     //!@}
 };
@@ -239,7 +235,7 @@ public:
     //!@}
 
     #if !defined(CGAL_NO_ASSERTIONS)
-    static const bool Kernel_arc_2_equals_Arc_2 = boost::is_same<Arc_2, Kernel_arc_2>::value;
+    static const bool Kernel_arc_2_equals_Arc_2 = std::is_same<Arc_2, Kernel_arc_2>::value;
     #endif
 
 public:
@@ -382,10 +378,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING
     Arc_2(const Self& a) :
         Base(static_cast<const Base&>(a)) {
     }
-
+#endif
     //!@}
 
 public:
@@ -574,7 +571,7 @@ public:
                           compare_xy_2_object()(p, q, true) != CGAL::EQUAL);
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(p, -1, c);
-        _check_pt_arcno_and_coprimality(p, -1, c);
+        _check_pt_arcno_and_coprimality(q, -1, c);
         _fix_curve_ends_order();
     }
 
@@ -952,17 +949,17 @@ public:
      *
      * \pre the arc's relevant end is on bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_at_limit(
+    CGAL::Comparison_result compare_x_on_boundary(
             CGAL::Arr_curve_end ce,
             const Point_2& p
     ) const {
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
-                                            compare_x_at_limit_2)
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_on_boundary_2,
+                                            compare_x_on_boundary_2)
         // compare with NULL, in order to avoid a performance warning with VC++
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
-        return compare_x_at_limit_2(
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
+        return compare_x_on_boundary_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
     }
@@ -982,15 +979,15 @@ public:
      *
      * \pre the curve ends lie on the bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_at_limit(
+    CGAL::Comparison_result compare_x_on_boundary(
             CGAL::Arr_curve_end ce1,
             const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const {
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
-                                            compare_x_at_limit_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
-        return compare_x_at_limit_2(
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_on_boundary_2,
+                                            compare_x_on_boundary_2)
+        return compare_x_on_boundary_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
         );
     }
@@ -1008,16 +1005,16 @@ public:
      *
      * \pre the arc's relevant end is on bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_near_limit(
+    CGAL::Comparison_result compare_x_near_boundary(
             CGAL::Arr_curve_end ce,
             const Point_2& p
     ) const {
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
-                                            compare_x_near_limit_2)
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
+                                            compare_x_near_boundary_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
-        return compare_x_near_limit_2(
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
+        return compare_x_near_boundary_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
     }
@@ -1036,14 +1033,14 @@ public:
      *
      * \pre the curve ends lie on the bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_near_limit(const Kernel_arc_2& cv2,
+    CGAL::Comparison_result compare_x_near_boundary(const Kernel_arc_2& cv2,
                                                  CGAL::Arr_curve_end ce) const {
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
-                                            compare_x_near_limit_2)
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
+                                            compare_x_near_boundary_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
-        return compare_x_near_limit_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
+        return compare_x_near_boundary_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
     }
 
     /*!\brief
@@ -1067,7 +1064,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_near_boundary_2,
                                             compare_y_near_boundary_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return compare_y_near_boundary_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, ce
         );
@@ -1089,12 +1086,12 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_2,
                                             compare_y_at_x_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return compare_y_at_x_2(p, *dynamic_cast< const Kernel_arc_2* >(this));
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the left of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1115,14 +1112,14 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_left_2,
                                             compare_y_at_x_left_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return compare_y_at_x_left_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, p
         );
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the right of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1143,7 +1140,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_right_2,
                                             compare_y_at_x_right_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return compare_y_at_x_right_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, p
         );
@@ -1160,18 +1157,18 @@ public:
      * \return \c true, if p.x() is in x-range of arc, \c false otherwise
      */
     bool is_in_x_range(const Coordinate_1& x,
-                       bool *eq_min = NULL, bool *eq_max = NULL) const {
+                       bool *eq_min = nullptr, bool *eq_max = nullptr) const {
 
-        if (eq_min != NULL && eq_max != NULL) {
+        if (eq_min != nullptr && eq_max != nullptr) {
             *eq_min = *eq_max = false;
         }
 
         if (is_vertical()) {
             if (x == this->x()) {
-                if (eq_min != NULL) {
+                if (eq_min != nullptr) {
                     *eq_min = true;
                 }
-                if (eq_max != NULL) {
+                if (eq_max != nullptr) {
                     *eq_max = true;
                 }
                 return true;
@@ -1190,7 +1187,7 @@ public:
         if (min_has_x) {
             resmin = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_1_object()(x, _minpoint().x());
-            if (eq_min != NULL) { // TODO asymptotic end in x-range?
+            if (eq_min != nullptr) { // TODO asymptotic end in x-range?
                 *eq_min = (resmin == CGAL::EQUAL);
             }
         }
@@ -1205,14 +1202,14 @@ public:
         if (max_has_x) {
             resmax = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_1_object()(x, _maxpoint().x());
-            if (eq_max != NULL) { // TODO asymptotic end in x-range?
+            if (eq_max != nullptr) { // TODO asymptotic end in x-range?
                 *eq_max = (resmax == CGAL::EQUAL);
             }
         }
 
         bool res =
-	    (resmin != CGAL::SMALLER && resmax != CGAL::LARGER);
-	return res;
+            (resmin != CGAL::SMALLER && resmax != CGAL::LARGER);
+        return res;
     }
 
     /*!\brief
@@ -1245,7 +1242,7 @@ public:
                                             equal_2)
 
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return equal_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2);
     }
 
@@ -1261,7 +1258,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Do_overlap_2,
                                             do_overlap_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return do_overlap_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2);
     }
 
@@ -1344,7 +1341,7 @@ public:
                                             intersect_2)
 
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return intersect_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, oi
         );
@@ -1442,13 +1439,13 @@ public:
      * \pre p != q
      * \pre both points must be interior and must lie on \c cv
      */
-    // do we need this method separetely ??
+    // do we need this method separately ??
     Kernel_arc_2 trim(const Point_2& p, const Point_2& q) const {
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2)
 
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return trim_2(*dynamic_cast< const Kernel_arc_2* >(this), p, q);
     }
 
@@ -1466,7 +1463,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Split_2,
                                             split_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         split_2(*dynamic_cast< const Kernel_arc_2* >(this), p, s1, s2);
     }
 
@@ -1482,7 +1479,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Are_mergeable_2,
                                             are_mergeable_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         return are_mergeable_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2
         );
@@ -1502,7 +1499,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Merge_2, merge_2)
         Kernel_arc_2 tmp;
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
         merge_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, tmp);
         return tmp;
     }
@@ -1587,6 +1584,8 @@ public:
         return false;
     }
 
+    //!@}
+
 protected:
     //!\name Trimming
     //!@{
@@ -1652,7 +1651,7 @@ public:
                      Kernel_arc_2& trimmed2) const {
 
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
-                          dynamic_cast< const Kernel_arc_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
 
         const Kernel_arc_2& cv1 = static_cast< const Kernel_arc_2& >(*this);
 
@@ -1824,8 +1823,7 @@ protected:
      */
     void _check_arc_interior() const {
 
-#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-        || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS))
 
         if(is_vertical()) {
             Coordinate_1 x0 = _minpoint().x();
@@ -1942,7 +1940,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      *
      * \pre !is_on_bottom_top(where)
@@ -1955,7 +1953,7 @@ protected:
 
         CGAL_precondition(!is_on_bottom_top(where));
         CGAL_assertion(Kernel_arc_2_equals_Arc_2 ||
-                       dynamic_cast< const Kernel_arc_2*>(this) != NULL);
+                       dynamic_cast< const Kernel_arc_2*>(this) != nullptr);
         Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), cv2);
         if(curve().is_identical(cv2.curve()))
             return CGAL::sign(arcno() - cv2.arcno());
@@ -1969,7 +1967,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      */
      CGAL::Comparison_result _compare_coprime(
@@ -2017,7 +2015,7 @@ protected:
      * boundary implies equality
      *
      * \param p first endpoint
-     * \param q second endpint
+     * \param q second endpoint
      * \param equal_x \c true indicates to skip the comparison by x
      * \param only_x \c true indicates to report only the comparison by x
      * \returns the result of the queried comparison
@@ -2166,37 +2164,37 @@ protected:
 
         typename Curve_kernel_2::Approximate_relative_1 approx_x;
 
-	typename Curve_kernel_2::Bound_between_1 bound_between_x;
+        typename Curve_kernel_2::Bound_between_1 bound_between_x;
 
-	CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
-	bool min_has_x =
-	  (is_finite(CGAL::ARR_MIN_END) ||
-	   min_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
-	   min_loc == CGAL::ARR_TOP_BOUNDARY);
+        CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
+        bool min_has_x =
+          (is_finite(CGAL::ARR_MIN_END) ||
+           min_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+           min_loc == CGAL::ARR_TOP_BOUNDARY);
 
-	CGAL::Arr_parameter_space max_loc = location(CGAL::ARR_MAX_END);
-	bool max_has_x =
-	  (is_finite(CGAL::ARR_MAX_END) ||
-	   max_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
-	   max_loc == CGAL::ARR_TOP_BOUNDARY);
+        CGAL::Arr_parameter_space max_loc = location(CGAL::ARR_MAX_END);
+        bool max_has_x =
+          (is_finite(CGAL::ARR_MAX_END) ||
+           max_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+           max_loc == CGAL::ARR_TOP_BOUNDARY);
 
-	if (min_has_x) {
-	  Coordinate_1 min_x = _minpoint().x();
-	  if (max_has_x) {
-	    Coordinate_1 max_x = _maxpoint().x();
-	    res = bound_between_x(min_x, max_x);
-	  } else {
-	    std::pair<Bound,Bound> min_pair=approx_x(min_x,4);
-	    res = min_pair.second + Bound(1);
-	  }
-	} else {
-	  if (max_has_x) {
-	    Coordinate_1 max_x = _maxpoint().x();
-	    std::pair<Bound,Bound> max_pair=approx_x(max_x,4);
-	    res = max_pair.first - Bound(1);
-	  } else {
-	    // res stays 0
-	  }
+        if (min_has_x) {
+          Coordinate_1 min_x = _minpoint().x();
+          if (max_has_x) {
+            Coordinate_1 max_x = _maxpoint().x();
+            res = bound_between_x(min_x, max_x);
+          } else {
+            std::pair<Bound,Bound> min_pair=approx_x(min_x,4);
+            res = min_pair.second + Bound(1);
+          }
+        } else {
+          if (max_has_x) {
+            Coordinate_1 max_x = _maxpoint().x();
+            std::pair<Bound,Bound> max_pair=approx_x(max_x,4);
+            res = max_pair.first - Bound(1);
+          } else {
+            // res stays 0
+          }
         }
         CGAL_postcondition(is_in_x_range_interior(Coordinate_1(res)));
         return res;
@@ -2243,10 +2241,10 @@ protected:
         /* no need to recompute location since they are set during
            construction of respective curve ends */
         rep._m_is_vertical = this->ptr()->_m_is_vertical;
-	rep._m_left_to_right = this->ptr()->_m_left_to_right;
+        rep._m_left_to_right = this->ptr()->_m_left_to_right;
 
-	rep._m_interval_id = boost::none;
-	rep._m_boundary_in_interval = boost::none;
+        rep._m_interval_id = std::nullopt;
+        rep._m_boundary_in_interval = std::nullopt;
 
         return std::make_pair(Kernel_arc_2(rep), cmp);
     }
@@ -2377,8 +2375,8 @@ protected:
             this->ptr()->_m_arcno_max = arcno();
 
         // invalidate curve-specific data
-        this->ptr()->_m_interval_id = boost::none;
-        this->ptr()->_m_boundary_in_interval = boost::none;
+        this->ptr()->_m_interval_id = std::nullopt;
+        this->ptr()->_m_boundary_in_interval = std::nullopt;
     }
     //!@}
 
@@ -2600,7 +2598,7 @@ protected:
     /*!\brief
      * computes intersection of two arcs meeting only at their curve ends.
      *
-     * Intersection points are returned in the output interator \c oi as object
+     * Intersection points are returned in the output iterator \c oi as object
      * of type std::pair<Point_2, int> (intersection + multiplicity)
      *
      * \param cv1 the first arc
@@ -2701,9 +2699,9 @@ protected:
      * if arcs' x-ranges overlap; otherwise returns \c false
      *
      * \param cv2 The second arc
-     * \param pt_low Output: Point indicating the lower bound of the the joint
+     * \param pt_low Output: Point indicating the lower bound of the joint
      *        x-range
-     * \param pt_high Output: Point indicating the upper bound of the the joint
+     * \param pt_high Output: Point indicating the upper bound of the joint
      *        x-range
      * \return \c true, if arcs overlap, \c false otherwise
      *
@@ -2818,40 +2816,40 @@ protected:
         int low_idx = 0,
             high_idx = cpa_2.number_of_status_lines_with_event()-1;
 
-	bool index_at_event_min=false;
-	bool index_at_event_max=false;
+        bool index_at_event_min=false;
+        bool index_at_event_max=false;
 
         typename Curve_pair_analysis_2::Status_line_1 line;
         if(!inf_low) {
             line = cpa_2.status_line_for_x(low_x.x());
             low_idx = line.index();
-	    index_at_event_min=line.is_event();
+            index_at_event_min=line.is_event();
             if(index_at_event_min) {
                 if((cv1._minpoint().is_on_bottom_top() &&
                     low_x.x() == cv1._minpoint().x()) ||
                    (cv2._minpoint().is_on_bottom_top() &&
                     low_x.x() == cv2._minpoint().x())) {
                  // hack: no intersection with asymptotic end
-		  low_idx++;
-		  index_at_event_min=false;
-		}
+                  low_idx++;
+                  index_at_event_min=false;
+                }
             }
         }
 
         if(!inf_high) {
             line = cpa_2.status_line_for_x(high_x.x());
             high_idx = line.index();
-	    index_at_event_max=line.is_event();
+            index_at_event_max=line.is_event();
             if(!index_at_event_max) {
-	      high_idx--;
-	    } else if((cv1._maxpoint().is_on_bottom_top() &&
+              high_idx--;
+            } else if((cv1._maxpoint().is_on_bottom_top() &&
                 high_x.x() == cv1._maxpoint().x()) ||
                 (cv2._maxpoint().is_on_bottom_top() &&
-		 high_x.x() == cv2._maxpoint().x())) {
-	      // hack: no intersection with asymptotic end
-	      high_idx--;
-	      index_at_event_max=false;
-	    }
+                 high_x.x() == cv2._maxpoint().x())) {
+              // hack: no intersection with asymptotic end
+              high_idx--;
+              index_at_event_max=false;
+            }
         }
 
         // run over all event points within the joint x-range of two arcs
@@ -2871,7 +2869,7 @@ protected:
 
             Coordinate_1 x0 = tmp.x();
             if((i == low_idx && index_at_event_min) ||
-	       (i == high_idx && index_at_event_max)) {
+               (i == high_idx && index_at_event_max)) {
                 arcno1 = cv1.arcno(x0);
                 arcno2 = cv2.arcno(x0);
                 mult = 0; // intersection at end-point
@@ -2974,7 +2972,11 @@ private:
         kernel().approximate_absolute_y_2_object()(
             arc.curve_end(end).xy(), prec
         );
+      break;
 
+    }
+    default: {
+       CGAL_error();
     }
     } // switch
 
@@ -3030,8 +3032,8 @@ public:
         y_dapprox = y_interval_for_curve_end(*this, CGAL::ARR_MIN_END, prec);
 
         // adapt y-interval
-        ymin = CGAL::min(ymin, y_dapprox.first);
-        ymax = CGAL::max(ymax, y_dapprox.second);
+        ymin = (CGAL::min)(ymin, y_dapprox.first);
+        ymax = (CGAL::max)(ymax, y_dapprox.second);
 
         // right end
 
@@ -3059,8 +3061,8 @@ public:
         y_dapprox = y_interval_for_curve_end(*this, CGAL::ARR_MAX_END, prec);
 
         // adapt y-interval
-        ymin = CGAL::min(ymin, y_dapprox.first);
-        ymax = CGAL::max(ymax, y_dapprox.second);
+        ymin = (CGAL::min)(ymin, y_dapprox.first);
+        ymax = (CGAL::max)(ymax, y_dapprox.second);
 
         // search local extrema on a non-vertical arc
 
@@ -3111,9 +3113,9 @@ public:
                   (curr_xy, prec);
 
                 // adapt y-interval
-                ymin = CGAL::min(ymin,
+                ymin = (CGAL::min)(ymin,
                                  CGAL::to_double(xy_approx.first));
-                ymax = CGAL::max(ymax,
+                ymax = (CGAL::max)(ymax,
                                  CGAL::to_double(xy_approx.second));
               }
             }
@@ -3136,9 +3138,9 @@ public:
                   (curr_xy, prec);
 
                 // adapt y-interval
-                ymin = CGAL::min(ymin,
+                ymin = (CGAL::min)(ymin,
                                  CGAL::to_double(xy_approx.first));
-                ymax = CGAL::max(ymax,
+                ymax = (CGAL::max)(ymax,
                                  CGAL::to_double(xy_approx.second));
               }
             }
@@ -3151,7 +3153,7 @@ public:
       return *(this->ptr()->_m_bbox);
     }
 
-    //!}
+    //!@}
 
 
 public:
@@ -3165,7 +3167,7 @@ public:
      */
     void write(std::ostream& os) const {
 
-        switch (::CGAL::get_mode(os)) {
+        switch (::CGAL::IO::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "arc@" << this->id() << "[(sup@" << this->curve().id();
             if (this->is_vertical()) {
@@ -3215,7 +3217,7 @@ public:
      */
     void read(std::istream& is) {
 
-      CGAL_precondition(CGAL::is_ascii(is));
+      CGAL_precondition(CGAL::IO::is_ascii(is));
 
       Rep rep;
 
@@ -3311,8 +3313,8 @@ public:
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2);
 
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2);
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_at_limit_2);
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_limit_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_on_boundary_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_boundary_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
@@ -3366,13 +3368,13 @@ std::ostream& operator<<(
 }
 
 
-//! \brief Reads the objects from stream.
+//! \brief reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
     std::istream& is,
     Arc_2< CurvedKernelViaAnalysis_2, Rep_ >& arc) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
   //typedef Rep_ Rep;

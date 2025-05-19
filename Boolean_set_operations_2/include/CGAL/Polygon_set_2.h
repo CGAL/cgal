@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -42,7 +33,7 @@ template <class Kernel,
             Gps_default_dcel<Gps_segment_traits_2<Kernel, Containter> > >
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
-{  
+{
 private:
   typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
                                                           Base;
@@ -50,7 +41,7 @@ private:
   typedef Polygon_set_2<Kernel, Containter, Dcel_>        Self;
 
 public:
-  typedef  typename Base::Traits_2                        Traits_2;    
+  typedef  typename Base::Traits_2                        Traits_2;
   typedef  typename Base::Polygon_2                       Polygon_2;
   typedef  typename Base::Polygon_with_holes_2            Polygon_with_holes_2;
   typedef  typename Base::Arrangement_2                   Arrangement_2;
@@ -67,7 +58,7 @@ public:
   {}
 
   /*! Constructor with traits object. */
-  Polygon_set_2 (Traits_2& tr) :
+  Polygon_set_2 (const Traits_2& tr) :
     Base(tr)
   {}
 
@@ -81,7 +72,7 @@ public:
     Base (pwh)
   {}
 
-  
+
   inline void intersection(const Polygon_2& pgn)
   {
     Base::intersection(pgn);

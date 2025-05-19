@@ -1,37 +1,23 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Circular_kernel_3_Tests)
 
-project( Circular_kernel_3_Tests )
+find_package(CGAL REQUIRED COMPONENTS Core)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+include_directories(BEFORE include)
 
-find_package(CGAL QUIET COMPONENTS Core )
+# The following `include_directories` is used in the git layout
+include_directories(BEFORE ../../../Kernel_23/test/Kernel_23/include)
 
-if ( CGAL_FOUND )
+# The following `include_directories` is used in the layout of the
+# internal releases tarballs
+include_directories(BEFORE ../Kernel_23/include)
 
-include(${CGAL_USE_FILE})
-
-include_directories (BEFORE include)
-include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
-include_directories (BEFORE ../Kernel_23/include)
-include_directories (BEFORE ../Cartesian_kernel/include)
-include_directories (BEFORE ../Homogeneous_kernel/include)
-include_directories (BEFORE ../../../Intersections_3/include)
-include_directories (BEFORE ../../../Algebraic_kernel_for_spheres/include)
-include_directories (BEFORE ../../../Kernel_23/include)
-include_directories (BEFORE ../../../Cartesian_kernel/include)
-
-create_single_source_cgal_program( "test_Spherical_kernel.cpp" )
-create_single_source_cgal_program( "test_Spherical_kernel_basics.cpp" )
-create_single_source_cgal_program( "test_Exact_spherical_kernel.cpp" )
-create_single_source_cgal_program( "test_Lazy_Spherical_kernel.cpp" )
-create_single_source_cgal_program( "test_Lazy_spherical_kernel_basics.cpp" )
-create_single_source_cgal_program( "test_Spherical_kernel_with_core.cpp" )
-
-else()
-  
-    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
-endif()
-
+create_single_source_cgal_program("test_Spherical_kernel.cpp")
+create_single_source_cgal_program("test_Spherical_kernel_basics.cpp")
+create_single_source_cgal_program("test_Exact_spherical_kernel.cpp")
+create_single_source_cgal_program("test_Lazy_Spherical_kernel.cpp")
+create_single_source_cgal_program("test_Lazy_spherical_kernel_basics.cpp")
+create_single_source_cgal_program("test_Spherical_kernel_with_core.cpp")

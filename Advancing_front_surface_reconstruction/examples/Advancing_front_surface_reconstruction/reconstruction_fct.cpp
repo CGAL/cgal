@@ -9,7 +9,7 @@
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3  Point_3;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 namespace std {
   std::ostream&
@@ -58,8 +58,10 @@ struct Perimeter {
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
   double per = (argc>2)?boost::lexical_cast<double>(argv[2]):0;
+  double radius_ratio_bound = (argc>3)?boost::lexical_cast<double>(argv[3]):5.0;
+
   std::vector<Point_3> points;
   std::vector<Facet> facets;
 
@@ -71,7 +73,8 @@ int main(int argc, char* argv[])
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                std::back_inserter(facets),
-                                               perimeter);
+                                               perimeter,
+                                               radius_ratio_bound);
 
   std::cout << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
   std::copy(points.begin(),

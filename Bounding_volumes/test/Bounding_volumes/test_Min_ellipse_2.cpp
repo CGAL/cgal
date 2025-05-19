@@ -13,7 +13,7 @@
 //
 // file          : test/Min_ellipse_2/test_Min_ellipse_2.C
 // package       : $CGAL_Package: Min_ellipse_2 $
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // source        : web/Min_ellipse_2.aw
 // revision      : $Id$
@@ -44,8 +44,8 @@ typedef  CGAL::Quotient< Rt >                 Ft;
 
 
 
-#ifdef CGAL_USE_CORE
-   #include <CGAL/CORE_Expr.h>
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+#include <CGAL/Exact_algebraic.h>
 #endif
 
 typedef  CGAL::Cartesian< Ft >                 KerC;
@@ -65,17 +65,17 @@ typedef  CGAL::Homogeneous<double>::Conic_2          ConicHdouble;
 //epsilon equality
 template < class Point>
 bool
-eps_equal (const Point& p, const Point& q) 
+eps_equal (const Point& p, const Point& q)
 {
   double eps = 0.001;
-  return ( (CGAL::abs(p.x()-q.x()) < eps) && 
+  return ( (CGAL::abs(p.x()-q.x()) < eps) &&
            (CGAL::abs(p.y()-q.y()) < eps) );
-} 
+}
 
-#ifdef CGAL_USE_CORE
 
-typedef  CGAL::Cartesian<CORE::Expr>                 KerCCore;
-typedef  CGAL::Homogeneous<CORE::Expr>               KerHCore;
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+typedef  CGAL::Cartesian<CGAL::Exact_algebraic>      KerCCore;
+typedef  CGAL::Homogeneous<CGAL::Exact_algebraic>    KerHCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerCCore >    TraitsCCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerHCore >    TraitsHCore;
 
@@ -84,19 +84,19 @@ template < class Traits>
 void
 core_test_Min_ellipse_2( bool verbose, const Traits&)
 {
-    using namespace std;    
+    using namespace std;
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
     CGAL_USE_TYPE(typename Min_ellipse::Ellipse);
-    
+
     CGAL::Verbose_ostream verr( verbose);
-    
-    verr << endl << "CORE tests..." << endl 
+
+    verr << endl << "Algebraic tests..." << endl
          << "   3-point case, equilateral triangle...";
     {
       std::vector<Point> P;
-      CORE::Expr sqrt_3(sqrt(CORE::Expr(3)));
+      CGAL::Exact_algebraic sqrt_3(sqrt(CGAL::Exact_algebraic(3)));
       P.push_back(Point(0,0));
       P.push_back(Point(2,0));
       P.push_back(Point(1,sqrt_3));
@@ -137,7 +137,7 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
       P.push_back(Point(3,-4));
       P.push_back(Point(-3,4));
       P.push_back(Point(-3,-4));
-      Min_ellipse me(P.begin(), P.end(), true); 
+      Min_ellipse me(P.begin(), P.end(), true);
       assert(me.number_of_support_points()==5);
       assert(me.ellipse().is_circle());
     }
@@ -149,67 +149,67 @@ template < class Traits, class Conic >
 void
 double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 {
-    using namespace std;    
+    using namespace std;
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
 
     CGAL::Verbose_ostream verr( verbose);
-    
-    verr << endl << "double tests..." << endl 
+
+    verr << endl << "double tests..." << endl
          << "   4-point case, unit square...";
     {
-	std::vector<Point> P;
-	P.push_back(Point(1,0));
-	P.push_back(Point(0,1));
-	P.push_back(Point(1,1));
+        std::vector<Point> P;
+        P.push_back(Point(1,0));
+        P.push_back(Point(0,1));
+        P.push_back(Point(1,1));
         P.push_back(Point(0,0));
-	Min_ellipse me(P.begin(), P.end(), true);
-	assert(me.number_of_support_points()==4);
-	assert(me.ellipse().is_circle());
-	Conic dc;
-	me.ellipse().double_conic(dc);
-	assert(eps_equal(dc.center(), Point(0.5, 0.5)));
-	// check whether double_coefficients does the same
-	double r,s,t,u,v,w;
-	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	assert(dc == Conic(r,s,t,u,v,w));
+        Min_ellipse me(P.begin(), P.end(), true);
+        assert(me.number_of_support_points()==4);
+        assert(me.ellipse().is_circle());
+        Conic dc;
+        me.ellipse().double_conic(dc);
+        assert(eps_equal(dc.center(), Point(0.5, 0.5)));
+        // check whether double_coefficients does the same
+        double r,s,t,u,v,w;
+        me.ellipse().double_coefficients(r,s,t,u,v,w);
+        assert(dc == Conic(r,s,t,u,v,w));
     }
     verr << endl << "   4-point case, parallelogram...";
     {
-	std::vector<Point> P;
-	P.push_back(Point(-1,-1));
-	P.push_back(Point(3,3));
-	P.push_back(Point(0,2));
+        std::vector<Point> P;
+        P.push_back(Point(-1,-1));
+        P.push_back(Point(3,3));
+        P.push_back(Point(0,2));
         P.push_back(Point(2,0));
-	Min_ellipse me(P.begin(), P.end(), true);
-	assert(me.number_of_support_points()==4);	
+        Min_ellipse me(P.begin(), P.end(), true);
+        assert(me.number_of_support_points()==4);
         assert(!me.ellipse().is_circle());
-	Conic dc;
-	me.ellipse().double_conic(dc);
-	assert(eps_equal(dc.center(), Point(1.0, 1.0)));
+        Conic dc;
+        me.ellipse().double_conic(dc);
+        assert(eps_equal(dc.center(), Point(1.0, 1.0)));
         // check whether double_coefficients does the same
-	double r,s,t,u,v,w;
-	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	assert(dc == Conic(r,s,t,u,v,w));
+        double r,s,t,u,v,w;
+        me.ellipse().double_coefficients(r,s,t,u,v,w);
+        assert(dc == Conic(r,s,t,u,v,w));
     }
     verr << endl << "   4-point case, paper example...";
     {
-	std::vector<Point> P;
-	P.push_back(Point(0,0));
-	P.push_back(Point(1,0));
-	P.push_back(Point(0.5,1));
+        std::vector<Point> P;
+        P.push_back(Point(0,0));
+        P.push_back(Point(1,0));
+        P.push_back(Point(0.5,1));
         P.push_back(Point(0,1));
-	Min_ellipse me(P.begin(), P.end(), true);
-	assert(me.number_of_support_points()==4);	
+        Min_ellipse me(P.begin(), P.end(), true);
+        assert(me.number_of_support_points()==4);
         assert(!me.ellipse().is_circle());
-	Conic dc;
-	me.ellipse().double_conic(dc);
-	assert(eps_equal(dc.center(), Point(0.406, 0.377)));
+        Conic dc;
+        me.ellipse().double_conic(dc);
+        assert(eps_equal(dc.center(), Point(0.406, 0.377)));
         // check whether double_coefficients does the same
-	double r,s,t,u,v,w;
-	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	assert(dc == Conic(r,s,t,u,v,w));
+        double r,s,t,u,v,w;
+        me.ellipse().double_coefficients(r,s,t,u,v,w);
+        assert(dc == Conic(r,s,t,u,v,w));
     }
 }
 
@@ -412,26 +412,26 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     {
         verr << endl << "  writing `test_Min_ellipse_2.ascii'...";
         ofstream os( "test_Min_ellipse_2.ascii");
-        CGAL::set_ascii_mode( os);
+        CGAL::IO::set_ascii_mode( os);
         os << me;
     }
     {
         verr << endl << "  writing `test_Min_ellipse_2.pretty'...";
         ofstream os( "test_Min_ellipse_2.pretty");
-        CGAL::set_pretty_mode( os);
+        CGAL::IO::set_pretty_mode( os);
         os << me;
     }
     {
         verr << endl << "  writing `test_Min_ellipse_2.binary'...";
         ofstream os( "test_Min_ellipse_2.binary");
-        CGAL::set_binary_mode( os);
+        CGAL::IO::set_binary_mode( os);
         os << me;
     }
     {
         verr << endl << "  reading `test_Min_ellipse_2.ascii'...";
         Min_ellipse me_in;
         ifstream is( "test_Min_ellipse_2.ascii");
-        CGAL::set_ascii_mode( is);
+        CGAL::IO::set_ascii_mode( is);
         is >> me_in;
         bool    is_valid = me_in.is_valid( verbose);
         assert( is_valid);
@@ -439,7 +439,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         assert( me_in.ellipse() == me.ellipse());
     }
     verr << endl;
-    
+
 }
 
 // point classes for adapters test
@@ -615,7 +615,7 @@ main( int argc, char* argv[])
         --argc;
         ++argv; }
 
-#ifdef CGAL_USE_CORE
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
     // core test
     core_test_Min_ellipse_2( verbose, TraitsCCore());
     core_test_Min_ellipse_2( verbose, TraitsHCore());
@@ -641,15 +641,15 @@ main( int argc, char* argv[])
     // external test sets
     // -------------------
     while ( argc > 1) {
-    
+
         typedef  CGAL::Min_ellipse_2< TraitsH >  Min_ellipse;
         typedef  Min_ellipse::Point              Point;
-    
+
         CGAL::Verbose_ostream verr( verbose);
-    
+
         // read points from file
         verr << std::endl << "input file: `" << argv[ 1] << "'" << std::flush;
-    
+
         std::list<Point>  points;
         int               n, x, y;
         std::ifstream     in( argv[ 1]);
@@ -659,12 +659,12 @@ main( int argc, char* argv[])
             in >> x >> y;
             assert( in);
             points.push_back( Point( x, y)); }
-    
+
         // compute and check min_ellipse
         Min_ellipse  me2( points.begin(), points.end(), false);
         bool  is_valid = me2.is_valid( verbose);
         assert( is_valid);
-    
+
         // next file
         --argc;
         ++argv; }

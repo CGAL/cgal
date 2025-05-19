@@ -7,10 +7,6 @@
 /// \defgroup PkgSurfaceMesher3Classes Mesh and Domain Classes
 /// \ingroup PkgSurfaceMesher3Ref
 
-/// \defgroup PkgSurfaceMesher3TagClasses Tag Classes
-/// \ingroup PkgSurfaceMesher3Ref
-
-
 /// \defgroup PkgSurfaceMesher3Functions Functions
 /// \ingroup PkgSurfaceMesher3Ref
 
@@ -25,7 +21,6 @@
 
 /*!
 \addtogroup PkgSurfaceMesher3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Surface Mesh Generation,PkgSurfaceMesher3}
 \cgalPkgPicture{segmented_head-small.png}
 \cgalPkgSummaryBegin
@@ -38,9 +33,11 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:ry-smg}
 \cgalPkgLicense{\ref licensesGPL}
-\cgalPkgDemo{Surface Mesh Generator,surface_mesher.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\deprecated This package is deprecated since the version 6.0 of \cgal. The package \ref PkgMesh3 should be used instead.
+
 
 The surface mesh generation package offers a function template
 which builds a triangular mesh approximating a surface.
@@ -52,33 +49,33 @@ and can compute the compute the
 intersections point if any. The oracle is represented by a traits class
 which can be passed to the meshing function
 or automatically generated for certain types of surfaces.
-The current implementation provides 
-traits classes 
-to mesh implicit surfaces as well as  surfaces described 
+The current implementation provides
+traits classes
+to mesh implicit surfaces as well as  surfaces described
 as a gray level in a three
 dimensional image.
 
-The output mesh conforms to some size and shape criteria 
+The output mesh conforms to some size and shape criteria
 which are customizable. The criteria are passed to the mesher
-through a parameter 
+through a parameter
 whose type is a model of the
 concept `SurfaceMeshFacetsCriteria_3`.
 
 The meshing algorithm is a Delaunay refinement process
-which is mainly guided by the criteria. 
+which is mainly guided by the criteria.
 The output mesh may offer some guarantees, as being manifold,
 homeomorphic to the surface or within a given
-Hausdorff distance.  However, these guarantees depend 
+Hausdorff distance.  However, these guarantees depend
 on the quality of the input surface (smoothness, with or without
 boundary, manifold or  not),
-the type and values of the given criteria. 
+the type and values of the given criteria.
 The behavior of the refinement process can also be influenced through
 a tag, which allows for instance to enforce the manifold property
 of  the output mesh  while avoiding an over-refinement of the mesh.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `SurfaceMeshComplex_2InTriangulation_3`
 - `SurfaceMeshTraits_3`
 - `SurfaceMeshFacetsCriteria_3`
@@ -88,7 +85,7 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 - `ImplicitFunction`
 - `ImplicitSurfaceTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr, Edge_info = void>`
 - `CGAL::Surface_mesh_vertex_base_3<Gt,Vb>`
 - `CGAL::Surface_mesh_cell_base_3<Gt,Cb>`
@@ -98,12 +95,12 @@ of  the output mesh  while avoiding an over-refinement of the mesh.
 - `CGAL::Implicit_surface_3<Traits, Function>`
 - `CGAL::Gray_level_image_3<FT, Point>`
 
-## Tag Classes ##
+\cgalCRPSection{Tag Classes}
 - `CGAL::Manifold_tag`
 - `CGAL::Manifold_with_boundary_tag`
 - `CGAL::Non_manifold_tag`
 
-## Function Templates ##
+\cgalCRPSection{Function Templates}
 - `CGAL::make_surface_mesh()`
 - `CGAL::output_surface_facets_to_polyhedron()`
 - `CGAL::facets_in_complex_2_to_triangle_mesh()`

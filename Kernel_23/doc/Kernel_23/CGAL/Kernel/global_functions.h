@@ -38,7 +38,7 @@ const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `u` and `v`.
 */
 template <typename Kernel>
@@ -57,7 +57,7 @@ const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `pq`, `rs`. The returned value is
 the same as `angle(q - p, s - r)`.
 */
@@ -68,7 +68,7 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
             const CGAL::Point_3<Kernel>&s);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the normal of the triangle `pqr` and the vector `v`.
 */
 
@@ -78,8 +78,39 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
             const CGAL::Point_3<Kernel>&r,
             const CGAL::Vector_3<Kernel>&v);
 
+/// @}
 
 
+
+/// \defgroup approximate_angle_grp CGAL::approximate_angle()
+/// \ingroup kernel_global_function
+/// @{
+
+/*!
+returns an approximation of the angle between `p-q` and `r-q`.
+The angle is given in degrees.
+\pre `p != q` and `r != q`.
+*/
+template <typename Kernel>
+Kernel::FT approximate_angle(const CGAL::Point_3<Kernel>& p,
+                             const CGAL::Point_3<Kernel>& q,
+                             const CGAL::Point_3<Kernel>& r);
+
+/*!
+returns an approximation of the angle between `u` and `v`.
+The angle is given in degrees.
+\pre `u` and `v` are not equal to the null vector.
+*/
+template <typename Kernel>
+Kernel::FT approximate_angle(const CGAL::Vector_3<Kernel>& u,
+                             const CGAL::Vector_3<Kernel>& v);
+ /// @}
+
+
+
+/// \defgroup approximate_dihedral_angle_grp CGAL::approximate_dihedral_angle()
+/// \ingroup kernel_global_function
+/// @{
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
 The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
@@ -310,7 +341,7 @@ const CGAL::Point_3<Kernel>& p4, const Kernel::FT&w4);
 /*!
 constructs the bisector line of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Point_2<Kernel> &p,
@@ -324,8 +355,10 @@ through the intersection of `l1` and `l2`.
 If `l1` and `l2` are parallel, then the bisector is defined as the line
 which has the same direction as `l1`, and which is at the same distance
 from `l1` and `l2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Line_2<Kernel> &l1,
@@ -334,7 +367,7 @@ const CGAL::Line_2<Kernel> &l2);
 /*!
 constructs the bisector plane of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p` and `q` are not equal.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,
@@ -348,8 +381,10 @@ passes through the intersection of `h1` and `h2`.
 If `h1` and `h2` are parallel, then the bisector is defined as the
 plane which has the same oriented normal vector as `l1`, and which is at
 the same distance from `h1` and `h2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Plane_3<Kernel> &h1,
@@ -584,7 +619,19 @@ const CGAL::Point_3<Kernel>&r);
 
 /// @}
 
-
+/// \ingroup kernel_global_function
+/*!
+compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+\f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+\f$ (a, b, c)\f$ at the vertex `b`, and \f$ \theta_2\f$ is
+the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+\pre `a!=b && c!=b`.
+*/
+template <typename Kernel>
+Comparison_result compare_angle(const CGAL::Point_3<Kernel>& a,
+                                const CGAL::Point_3<Kernel>& b,
+                                const CGAL::Point_3<Kernel>& c,
+                                const Kernel::FT& cosine);
 
 /// \defgroup compare_dihedral_angle_grp CGAL::compare_dihedral_angle()
 /// \ingroup kernel_global_function
@@ -706,7 +753,7 @@ const CGAL::Point_3<Kernel>& r);
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared. This is the same function as `compare_xy` and exists for compatibility with `Point_d<Kernel>`.
@@ -716,7 +763,7 @@ Comparison_result
 compare_lexicographically(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
@@ -817,7 +864,7 @@ const CGAL::Point_3<Kernel>& t);
 
 
 
-/// \defgroup compare_slopes_grp CGAL::compare_slopes()
+/// \defgroup compare_slopes_grp CGAL::compare_slope()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -835,9 +882,20 @@ from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
 Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
-const CGAL::Segment_2<Kernel> &s2);
+                                const CGAL::Segment_2<Kernel> &s2);
 
 /*!
+compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
+*/
+template <typename Kernel>
+Comparison_result compare_slope(const CGAL::Point_2<Kernel> &s1s,
+                                const CGAL::Point_2<Kernel> &s1t,
+                                const CGAL::Point_2<Kernel> &s2s,
+                                const CGAL::Point_2<Kernel> &s2t);
+
+  /*!
 compares the slopes of the segments `(p,q)` and `(r,s)`,
 where the slope is the variation of the `z`-coordinate from the first
 to the second point  of the segment divided by the length of the segment.
@@ -1086,7 +1144,7 @@ global function are available.
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared.
@@ -1096,7 +1154,7 @@ Comparison_result
 compare_xy(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and `q`
+Compares the %Cartesian coordinates of points `p` and `q`
 lexicographically in \f$ xy\f$ order: first \f$ x\f$-coordinates are
 compared, if they are equal, \f$ y\f$-coordinates are compared.
 
@@ -1119,7 +1177,7 @@ compare_xy(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 /// @{
 
 /*!
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
@@ -1128,7 +1186,7 @@ Comparison_result
             const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
 /*!
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
@@ -1151,7 +1209,7 @@ compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 
 /*!
 
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
@@ -1160,7 +1218,7 @@ Comparison_result
             const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
 
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
@@ -1384,13 +1442,13 @@ global function are available.
 */
 /// @{
 /*!
-  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
+  compares %Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const CGAL::Point_2<Kernel> &p,
                             const CGAL::Point_2<Kernel> &q);
 /*!
-  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
+  compares %Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const CGAL::Point_3<Kernel> &p,
@@ -1506,7 +1564,7 @@ global function are available.
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
@@ -1529,7 +1587,7 @@ compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 */
 /// @{
 
-/*! Compares the Cartesian coordinates of points `p` and `q` lexicographically.
+/*! Compares the %Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
 Comparison_result
@@ -1537,7 +1595,7 @@ compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
 const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and `q` lexicographically.
+Compares the %Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
 Comparison_result
@@ -1624,7 +1682,7 @@ compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Poin
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ yx\f$ order: first
 \f$ y\f$-coordinates are compared, if they are equal, \f$ x\f$-coordinates
 are compared.
@@ -1754,7 +1812,7 @@ const CGAL::Vector_3<Kernel>& w);
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.
 
-/// \defgroup do_intersect_grp CGAL::do_intersect()
+/// \defgroup do_intersect_grp Intersection Testing Functions - CGAL::do_intersect()
 /// \ingroup kernel_global_function
 /// \defgroup do_intersect_linear_grp CGAL::do_intersect() (2D/3D Linear Kernel)
 /// \ingroup do_intersect_grp
@@ -2010,7 +2068,7 @@ const CGAL::Point_3<Kernel>& t);
 
 // Same reason as in defgroup do_intersect.
 
-/// \defgroup intersection_grp CGAL::intersection()
+/// \defgroup intersection_grp Intersection Computation Functions - CGAL::intersection()
 /// \ingroup kernel_global_function
 /// \defgroup intersection_linear_grp CGAL::intersection() (2D/3D Linear Kernel)
 /// \ingroup intersection_grp
@@ -2184,12 +2242,14 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> max_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> max_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
@@ -2207,11 +2267,24 @@ template <typename Kernel>
 CGAL::Point_2<Kernel> midpoint( const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q );
 
+
+  /*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_2<Kernel> midpoint( const CGAL::Segment_2<Kernel>& s);
+
 /*!
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q );
+
+/*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /// @}
 
@@ -2221,12 +2294,14 @@ CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Poin
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> min_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> min_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
@@ -2615,6 +2690,42 @@ const CGAL::Point_3<Kernel>& r);
 
 /// \defgroup squared_distance_grp CGAL::squared_distance()
 /// \ingroup kernel_global_function
+
+/// \defgroup squared_length_grp CGAL::squared_length()
+/// \ingroup kernel_global_function
+
+/// @{
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_2<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_2<Kernel>& s);
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_3<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_3<Kernel>& s);
+
+/// @}
+
 
 /// \defgroup squared_radius_grp CGAL::squared_radius()
 /// \ingroup kernel_global_function

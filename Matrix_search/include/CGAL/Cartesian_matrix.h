@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -26,7 +17,8 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -35,7 +27,8 @@ template < class Operation,
            class RandomAccessIC_column >
 class Cartesian_matrix {
 public:
-  typedef typename Operation::result_type           Value;
+
+  typedef typename std::invoke_result<Operation, typename std::iterator_traits<RandomAccessIC_row>::value_type, typename std::iterator_traits<RandomAccessIC_column>::value_type>::type Value;
 
   Cartesian_matrix(RandomAccessIC_row r_f,
                    RandomAccessIC_row r_l,
@@ -70,8 +63,8 @@ public:
   Value
   operator()(int r, int c) const
   {
-    CGAL_optimisation_precondition(r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition(c >= 0 && c < number_of_columns());
+    CGAL_precondition(r >= 0 && r < number_of_rows());
+    CGAL_precondition(c >= 0 && c < number_of_columns());
     return op(row_vec[r], column_vec[c]);
   }
 

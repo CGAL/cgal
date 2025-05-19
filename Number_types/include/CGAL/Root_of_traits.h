@@ -1,20 +1,11 @@
 // Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Michael Hemmer
@@ -33,11 +24,12 @@ namespace CGAL {
 template < typename NT >
 struct Root_of_traits;
 
-template < class NT >
+template < class NT1, class NT2, class NT3 >
 inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, const NT &b, const NT &c)
+auto
+make_root_of_2(const NT1 &a, const NT2 &b, const NT3 &c)
 {
+    using NT = std::common_type_t<NT1, NT2, NT3>;
     typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
     return make_root_of_2(a,b,c);
 }
@@ -52,7 +44,7 @@ make_root_of_2(const NT &a, const NT &b, const NT &c,const bool smaller)
 }
 
 template < class NT >
-inline 
+inline
 typename Root_of_traits< NT >::Root_of_2
 make_sqrt(const NT &a)
 {
@@ -61,37 +53,39 @@ make_sqrt(const NT &a)
 }
 
 template < class NT , class OutputIterator>
-inline 
+inline
 OutputIterator
 compute_roots_of_2(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
 {
   typedef typename Root_of_traits<NT>::Root_of_1 Root_of_1;
   typedef typename Root_of_traits<NT>::Root_of_2 Root_of_2;
-  typename CGAL::Coercion_traits<Root_of_1,NT>::Cast cast; 
+  typename CGAL::Coercion_traits<Root_of_1,NT>::Cast cast;
   Root_of_1 a(cast(a_)), b(cast(b_)), c(cast(c_));
-    
+
   if ( a != 0 ) {
     Root_of_1 a0_  (-b/(2*a));
     Root_of_1 root_(CGAL_NTS square(a0_) - c/a);
     switch(CGAL::sign(root_)){
-    case CGAL::NEGATIVE: return oit; 
+    case CGAL::NEGATIVE: return oit;
     case CGAL::ZERO: *oit++ = Root_of_2(a0_);  return oit;
     default:
-      // two roots 
+      // two roots
       *oit++ = make_root_of_2(a0_,Root_of_1(-1),root_);
       *oit++ = make_root_of_2(a0_,Root_of_1( 1),root_);
-      return oit; 
+      return oit;
     }
   }
-  else { 
-    *oit++ = -c/b; return oit;   
+  else {
+    Root_of_1 cb = -c / b;
+    *oit++ = Root_of_2(cb);
+    return oit;
   }
 }
 
 
 namespace internal {
 
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Arithmetic_kernel,Arithmetic_kernel,false)  
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Arithmetic_kernel,Arithmetic_kernel,false)
 
 template <class NT,bool has_AK=Has_typedef_Arithmetic_kernel<Get_arithmetic_kernel<NT> >::value>
 struct Get_rational_type{
@@ -103,9 +97,9 @@ struct Get_rational_type<NT,true>{
   typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel::Rational type;
 };
 
-  
+
 //Default or not a field.
-//If no specialization of Get_arithmetic_kernel is available, a field type compatible with NT 
+//If no specialization of Get_arithmetic_kernel is available, a field type compatible with NT
 //is made using CGAL::Quotient
 template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
@@ -133,13 +127,13 @@ struct Root_of_traits_helper{
             return Root_of_2(a,b,c,s);
         }
     };
-  
+
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
 public:
-  typedef typename AST::Square  Square; 
+  typedef typename AST::Square  Square;
   typedef typename AST::Inverse Inverse;
-  
+
   struct Make_sqrt {
     typedef Root_of_2 result_type;
     Root_of_2 operator()(const NT& x) const {
@@ -155,10 +149,10 @@ struct Root_of_traits_helper < FT, Field_tag >
 private:
     typedef Fraction_traits<FT> FrT;
     // Field must be a Type (Decomposable)
-    // We have the typedef as VC10 fails with 
+    // We have the typedef as VC10 fails with
     // static_assert(FrT::Is_fraction::value)
     typedef typename FrT::Is_fraction ISF;
-    CGAL_static_assertion((ISF::value));
+    static_assert(ISF::value);
 
 
     typedef typename FrT::Numerator_type      RT;
@@ -187,15 +181,15 @@ public:
             RT c_ = c_num * a_den * b_den;
 
             return make_root_of_2<RT>(a_,b_,c_,smaller);
-        } 
+        }
     };
 
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
 public:
-  typedef typename AST::Square  Square; 
+  typedef typename AST::Square  Square;
   typedef typename AST::Inverse Inverse;
-  
+
   struct Make_sqrt{
     typedef Root_of_2 result_type;
     Root_of_2 operator()(const FT& x) const {
@@ -232,9 +226,9 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
 public:
-  typedef typename AST::Square  Square; 
+  typedef typename AST::Square  Square;
   typedef typename AST::Inverse Inverse;
-  
+
   struct Make_sqrt{
     typedef Root_of_2 result_type;
     Root_of_2 operator()(const NT& x) const {
@@ -292,14 +286,14 @@ struct Root_of_traits<Interval_nt<B> >{
         return a + b * CGAL_NTS sqrt(c) ;
     }
   };
-  
+
 private:
   typedef CGAL::Algebraic_structure_traits<Interval_nt<B> > AST;
 public:
-  typedef typename AST::Square  Square; 
+  typedef typename AST::Square  Square;
   typedef typename AST::Inverse Inverse;
   typedef typename AST::Sqrt    Make_sqrt;
-  
+
 };
 
 

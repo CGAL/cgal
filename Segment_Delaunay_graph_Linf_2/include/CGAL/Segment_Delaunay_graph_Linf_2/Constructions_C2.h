@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -350,7 +341,7 @@ public:
                   && lseg.has_on_negative_side(pnt)) ) {
                 //pcfirst is center of square,
                 //pfirst = phor, upward direction
-                //pclast is center of sqaure, plast = pver, left direction
+                //pclast is center of square, plast = pver, left direction
                 pcfirst = Point_2(pmid_pfirst_pnt.x(),
                                   pmid_pfirst_pnt.y()+seglenhalffirst);
                 pclast = Point_2(pmid_plast_pnt.x()-seglenhalflast,
@@ -372,7 +363,7 @@ public:
                   && lseg.has_on_negative_side(pnt)) ) {
                 //pcfirst is center of square,
                 //pfirst = pver, right direction
-                //pclast is center of sqaure, plast = phor, upward direction
+                //pclast is center of square, plast = phor, upward direction
                 pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
                                   pmid_pfirst_pnt.y());
                 pclast = Point_2(pmid_plast_pnt.x(),
@@ -646,7 +637,7 @@ public:
               || (compare_x_2(seg.source(),seg.target()) == LARGER
                   && lseg.has_on_negative_side(pnt)) ) {
             //pcfirst is center of square , pfirst = phor, upward direction
-            //pclast is center of sqaure, plast = pver, left direction
+            //pclast is center of square, plast = pver, left direction
             pcfirst = Point_2(pmid_pfirst_pnt.x(),
                               pmid_pfirst_pnt.y()+seglenhalffirst);
             pclast = Point_2(pmid_plast_pnt.x()-seglenhalflast,
@@ -667,7 +658,7 @@ public:
               || (compare_x_2(seg.source(),seg.target()) == LARGER
                   && lseg.has_on_negative_side(pnt)) ) {
             //pcfirst is center of square , pfirst = pver, right direction
-            //pclast is center of sqaure, plast = phor, upward direction
+            //pclast is center of square, plast = phor, upward direction
             pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
                               pmid_pfirst_pnt.y());
             pclast = Point_2(pmid_plast_pnt.x(),
@@ -956,7 +947,7 @@ public:
         Point_2 pnt = (p.is_point()) ? p.point() : q.point();
         Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
         Site_2 siteseg = (p.is_point()) ? q : p;
-        // lseg is the suporting line of the segment site
+        // lseg is the supporting line of the segment site
         Line_2 lseg = siteseg.supporting_site().segment().supporting_line();
         // segment site is horizontal
         if (lseg.is_horizontal()) {
@@ -1113,7 +1104,7 @@ public:
                 || (compare_x_2(seg.source(),seg.target()) == LARGER
                   && lseg.has_on_negative_side(pnt)) ) {
               //pcfirst is center of square, pfirst = phor, upward direction
-              //pclast is center of sqaure, plast = pver, left direction
+              //pclast is center of square, plast = pver, left direction
               pcfirst = Point_2(pmid_pfirst_pnt.x(),
                                 pmid_pfirst_pnt.y()+seglenhalffirst);
               pclast = Point_2(pmid_plast_pnt.x()-seglenhalflast,
@@ -1134,7 +1125,7 @@ public:
                 || (compare_x_2(seg.source(),seg.target()) == LARGER
                   && lseg.has_on_negative_side(pnt)) ) {
               //pcfirst is center of square , pfirst = pver, right direction
-              //pclast is center of sqaure, plast = phor, upward direction
+              //pclast is center of square, plast = phor, upward direction
               pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
                                 pmid_pfirst_pnt.y());
               pclast = Point_2(pmid_plast_pnt.x(),

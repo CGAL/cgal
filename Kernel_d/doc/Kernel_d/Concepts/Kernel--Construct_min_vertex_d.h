@@ -3,7 +3,7 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with one argument) 
+\cgalRefines{AdaptableUnaryFunction}
 
 */
 class Kernel_d::Construct_min_vertex_d {
@@ -14,9 +14,9 @@ public:
 /// @{
 
 /*!
-returns the lexicographically smallest vertex of `ic`. 
-*/ 
-Kernel_d::Point_d operator()(const Kernel_d::Iso_box_d& ib); 
+returns the lexicographically smallest vertex of `ic`.
+*/
+Kernel_d::Point_d operator()(const Kernel_d::Iso_box_d& ib);
 
 
 /// @}

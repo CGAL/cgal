@@ -14,7 +14,7 @@ void test()
 {
   typedef typename K::Plane_3                                            Plane;
   typedef typename K::Point_3                                            Point;
- 
+
   // generates supporting planes of the facets of a cube
   std::vector<Plane> planes;
 
@@ -32,7 +32,7 @@ void test()
   CGAL::halfspace_intersection_3(planes.begin(),
                                  planes.end(),
                                  P1,
-                                 boost::make_optional(Point(0, 0, 0)) );
+                                 std::make_optional(Point(0, 0, 0)) );
 
   // test halfspace_intersection_3 with non point inside
   CGAL::halfspace_intersection_3(planes.begin(),
@@ -43,7 +43,7 @@ void test()
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
                                                      planes.end(),
                                                      P3,
-                                                     boost::make_optional(Point(0, 0, 0)) );
+                                                     std::make_optional(Point(0, 0, 0)) );
 
   // test halfspace_intersection_with_constructions_3 with non point inside
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
@@ -54,7 +54,7 @@ void test()
   CGAL::halfspace_intersection_with_constructions_3( planes.begin(),
                                                      planes.end(),
                                                      P5,
-                                                     boost::optional<Point>(),
+                                                     std::optional<Point>(),
                                                      K());
 
   assert(num_vertices(P1)==8 && num_faces(P1)==6);
@@ -73,7 +73,7 @@ void test()
 
 
 int main()
-{ 
+{
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 

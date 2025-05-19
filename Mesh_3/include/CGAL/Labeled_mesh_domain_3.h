@@ -2,27 +2,13 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
-//
-//******************************************************************************
-// File Description :
-// class Labeled_mesh_domain_3. See class description.
-//******************************************************************************
+
 
 #ifndef CGAL_LABELED_MESH_DOMAIN_3_H
 #define CGAL_LABELED_MESH_DOMAIN_3_H
@@ -35,31 +21,33 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/boost/parameter.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
-#include <CGAL/result_of.h>
-#include <CGAL/function.h>
+#include <functional>
+#include <type_traits>
 
-#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/SMDS_3/internal/Handle_IO_for_pair_of_int.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
 
 // support for implicit functions
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
-#include <CGAL/boost/parameter.h>
-#include <boost/parameter/preprocessor.hpp>
-#include <boost/parameter/name.hpp>
+#include <CGAL/Named_function_parameters.h>
 #ifdef CGAL_MESH_3_VERBOSE
 #  include <boost/format.hpp>
 #endif
-#include <boost/optional.hpp>
+#include <optional>
+
+#include <CGAL/Mesh_3/Null_subdomain_index.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
+
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -85,13 +73,13 @@ namespace internal {
     template <typename T> void operator()(T*) const { }
   };
 
-  /// Returns a box enclosing image \c im
+  // Returns a box enclosing image `im`
   inline Bbox_3 compute_bounding_box(const Image_3& im)
   {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
+    return Bbox_3(-1+im.tx(),-1+im.ty(),-1+im.tz(),
+                  double(im.xdim())*im.vx()+im.tx()+1,
+                  double(im.ydim())*im.vy()+im.ty()+1,
+                  double(im.zdim())*im.vz()+im.tz()+1);
   }
 
   template <typename Image_values_to_subdom_indices>
@@ -130,14 +118,75 @@ namespace internal {
     }
   };
 
+  // Detect_features_in_domain
+  template<typename Point, typename DetectFunctor>
+  struct Detect_features_in_domain {
+
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, CGAL::Image_3& weights, DetectFunctor functor) const {
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1910) //before msvc2017
+      if(weights.is_valid())
+        return functor.operator()<Point>(image, weights);
+      else
+        return functor.operator()<Point>(image);
+#else
+      if(weights.is_valid())
+        return functor.template operator()<Point>(image, weights);
+      else
+        return functor.template operator()<Point>(image);
+#endif
+    }
+  };
+  // specialization for `Null_functor`: create the default functor
+  template<typename Point>
+  struct Detect_features_in_domain<Point, Null_functor> {
+    std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3&, CGAL::Image_3&, Null_functor) const {
+      return std::vector<std::vector<Point>>();
+    }
+  };
+
+  template<typename Point, typename DetectFunctor>
+  std::vector<std::vector<Point>>
+    detect_features(const CGAL::Image_3& image, CGAL::Image_3& weights, DetectFunctor functor)
+  {
+    Detect_features_in_domain<Point, DetectFunctor> detector;
+    return detector(image, weights, functor);
+  }
+
+  template<bool WithFeatures>
+  struct Add_features_in_domain {
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
+    void operator()(const CGAL::Image_3&, CGAL::Image_3&, MeshDomain&, const InputFeatureRange&, DetectFunctor)
+    {}
+  };
+
+  template<>
+  struct Add_features_in_domain<true>
+  {
+    template<typename MeshDomain, typename InputFeatureRange, typename DetectFunctor>
+    void operator()(const CGAL::Image_3& image,
+                    CGAL::Image_3& weights,
+                    MeshDomain& domain,
+                    const InputFeatureRange& input_features,
+                    DetectFunctor functor)
+    {
+      using P = typename MeshDomain::Point_3;
+      auto detected_feature_range
+        = CGAL::Mesh_3::internal::detect_features<P>(image, weights, functor);
+
+      CGAL::merge_and_snap_polylines(image, detected_feature_range, input_features);
+
+      if (!input_features.empty())
+        domain.add_features(input_features.begin(), input_features.end());
+      domain.add_features(detected_feature_range.begin(), detected_feature_range.end());
+    }
+  };
+
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
 
-struct Null_subdomain_index {
-  template <typename T>
-  bool operator()(const T& x) const { return 0 == x; }
-};
-
+#ifndef DOXYGEN_RUNNING
 template <typename Subdomain_index>
 struct Construct_pair_from_subdomain_indices {
   typedef std::pair<Subdomain_index, Subdomain_index> result_type;
@@ -146,11 +195,15 @@ struct Construct_pair_from_subdomain_indices {
     return result_type(a, b);
   }
 }; // end class template Construct_pair_from_subdomain_indices
+#endif
+
+namespace details
+{
 
 template <typename Geom_traits,
           typename Subdomain_index,
           typename Surface_patch_index_>
-class Labeled_mesh_domain_3_impl_details
+class Labeled_mesh_domain_3_impl
 {
 protected:
   typedef Surface_patch_index_ Surface_patch_index;
@@ -158,8 +211,8 @@ protected:
   typedef typename Geom_traits::Sphere_3 Sphere_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
-  typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
-  /// Returns squared error bound from \c bbox and \c error
+  typedef std::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
+  // Returns squared error bound from `bbox` and `error`
   FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
   {
     typename Geom_traits::Compute_squared_distance_3 squared_distance =
@@ -190,28 +243,11 @@ protected:
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
-  template <class ArgumentPack>
-  Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
-    : function_(args[parameters::function])
-    , bbox_(iso_cuboid(args[parameters::bounding_object]))
-    , cstr_s_p_index(args[parameters::construct_surface_patch_index |
-                          construct_pair_functor()])
-    , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
-    , p_rng_(args[parameters::p_rng|0] == 0 ?
-             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
-             CGAL_Random_share_ptr_t(args[parameters::p_rng|(CGAL::Random*)(0)],
-                                     Mesh_3::internal::Do_not_delete()))
-    , squared_error_bound_
-      ( squared_error_bound(bbox_,
-                            args[parameters::relative_error_bound|FT(1e-3)]))
-  {
-  }
-
   template <typename Function,
             typename Bounding_object,
             typename Null,
             typename Construct_surface_patch_index>
-  Labeled_mesh_domain_3_impl_details(const Function& f,
+  Labeled_mesh_domain_3_impl(const Function& f,
                                      const Bounding_object& bounding,
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
@@ -227,68 +263,137 @@ protected:
     , squared_error_bound_(squared_error_bound(bbox_,error_bound))
   {}
 
-  /// The function which answers subdomain queries
-  typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
+  // The function which answers subdomain queries
+  typedef std::function<Subdomain_index(const Point_3&)> Function;
   Function function_;
-  /// The bounding box
+  // The bounding box
   const Iso_cuboid_3 bbox_;
 
-  typedef CGAL::cpp11::function<
+  typedef std::function<
     Surface_patch_index(Subdomain_index,
                         Subdomain_index)> Construct_surface_patch_index;
   Construct_surface_patch_index cstr_s_p_index;
-  /// The functor that decides which sub-domain indices correspond to the
-  /// outside of the domain.
-  typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
+  // The functor that decides which sub-domain indices correspond to the
+  // outside of the domain.
+  typedef std::function<bool(Subdomain_index)> Null;
   Null null;
-  /// The random number generator used by Construct_initial_points
+  // The random number generator used by Construct_initial_points
   CGAL_Random_share_ptr_t p_rng_;
-  /// Error bound relative to sphere radius
+  // Error bound relative to sphere radius
   FT squared_error_bound_;
-}; // Labeled_mesh_domain_3_impl_details
+}; // Labeled_mesh_domain_3_impl
 
-/**
- * \class Labeled_mesh_domain_3
- *
- * Function f must take his values into N.
- * Let p be a Point.
- *  - f(p)=0 means that p is outside domain.
- *  - f(p)=a, a!=0 means that p is inside subdomain a.
- *
- *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
- *  tags of it's incident subdomain.
- *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
- */
+} // namespace details
+
+/*!
+\ingroup PkgMesh3Domains
+
+\brief The class `Labeled_mesh_domain_3` implements indexed domains.
+
+This class is a model of concept `MeshDomain_3`.
+
+Any boundary facet is labeled <a,b>, with a<b, where a and b are the
+tags of its incident subdomains.
+Thus, a boundary facet of the domain is labeled <0,b>, where b!=0.
+
+This class includes a <em>labeling function</em> that provides the index of the subdomain in which any
+query point lies. An intersection between a segment and bounding
+surfaces is detected when both segment endpoints are associated with different
+values of subdomain indices. The intersection is then constructed by bisection.
+The bisection stops when the query segment is shorter than an error bound
+`e` given by the product of the
+length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
+a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
+
+This class has a constructor taking a labeling function. It has also three
+static template member functions that act as named constructors:
+<ul>
+<li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
+<li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
+<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function.
+</ul>
+
+\tparam BGT is a geometric traits class that provides
+the basic operations to implement
+intersection tests and intersection computations
+through a bisection method. This parameter must be instantiated
+with a model of the concept `BisectionGeometricTraits_3`.
+
+\cgalHeading{Labeling function}
+
+A labeling function `f` must return `0` if the point isn't located in any subdomain. The return type of labeling functions is an integer.
+
+Let `p` be a Point.
+<ul>
+<li>`f(p)=0` means that `p` is outside domain.</li>
+<li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
+</ul>
+`CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
+if there are several components to mesh.
+
+The function type can be any model of the concept `Callable` compatible with the signature
+`Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
+that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
+
+\cgalModels{MeshDomain_3}
+
+\sa `CGAL::Implicit_multi_domain_to_labeling_function_wrapper`
+\sa `CGAL::make_mesh_3()`
+
+*/
 template<class BGT,
          class Subdomain_index_ = int,
          class Surface_patch_index_ = std::pair<Subdomain_index_,
                                                 Subdomain_index_> >
-class Labeled_mesh_domain_3 :
-    protected Labeled_mesh_domain_3_impl_details<BGT,
-                                                 Subdomain_index_,
-                                                 Surface_patch_index_>
+class Labeled_mesh_domain_3
+#ifndef DOXYGEN_RUNNING
+  : protected details::Labeled_mesh_domain_3_impl<BGT,
+                                                  Subdomain_index_,
+                                                  Surface_patch_index_>
+#endif
 {
 public:
   //-------------------------------------------------------
   // Index Types
   //-------------------------------------------------------
-  /// Type of indexes for cells of the input complex
+  // Type of indexes for cells of the input complex
+/// \name Types
+///@{
+  /// The subdomain index of this model of `MeshDomain_3`
   typedef Subdomain_index_                  Subdomain_index;
-  typedef boost::optional<Subdomain_index>  Subdomain;
+  //
+#ifdef DOXYGEN_RUNNING
+  /// The type of object that stores the function using type-erasure.
+  typedef std::function< Subdomain_index(const Point_3 &)> Labeling_function;
+///@}
 
-  /// Type of indexes for cells of the input complex
+/// \name Types imported from the geometric traits class
+///@{
+  /// The point type of the geometric traits class
+  typedef typename Geom_traits::Point_3      Point_3;
+  /// The sphere type of the geometric traits class
+  typedef typename Geom_traits::Sphere_3     Sphere_3;
+  /// The iso-cuboid type of the geometric traits class
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  /// The number type (a field type) of the geometric traits class
+  typedef typename Geom_traits::FT           FT;
+///@}
+#else // DOXYGEN_RUNNING
+  typedef std::optional<Subdomain_index>  Subdomain;
+
+  // Type of indexes for cells of the input complex
   typedef Surface_patch_index_                  Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>  Surface_patch;
+  typedef std::optional<Surface_patch_index>  Surface_patch;
 
-  /// Type of indexes to characterize the lowest dimensional face of the input
-  /// complex on which a vertex lie
+  // Type of indexes to characterize the lowest dimensional face of the input
+  // complex on which a vertex lie
   typedef typename CGAL::Mesh_3::internal::
     Index_generator<Subdomain_index, Surface_patch_index>::Index Index;
 
 private:
-  typedef Labeled_mesh_domain_3_impl_details<BGT,
-                                             Subdomain_index,
-                                             Surface_patch_index
+  typedef details::Labeled_mesh_domain_3_impl<BGT,
+                                              Subdomain_index,
+                                              Surface_patch_index
                                              > Impl_details;
   typedef typename Impl_details::Null     Null;
   typedef typename Impl_details::Construct_surface_patch_index
@@ -296,7 +401,7 @@ private:
   typedef typename Impl_details::Function Function;
 
 public:
-  /// Geometric object types
+  // Geometric object types
   typedef typename BGT::Point_3    Point_3;
   typedef typename BGT::Segment_3  Segment_3;
   typedef typename BGT::Ray_3      Ray_3;
@@ -314,184 +419,590 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename BGT::FT FT;
   typedef BGT Geom_traits;
-
-
-  BOOST_PARAMETER_CONSTRUCTOR(Labeled_mesh_domain_3,
-                              (Impl_details),
-                              parameters::tag,
-                              (required
-                               (function_,(Function))
-                               (bounding_object_,*)
-                               )
-                              (optional
-                               (relative_error_bound_, (const FT&))
-                               (p_rng_, (CGAL::Random*))
-                               (null_subdomain_index_,(Null))
-                               (construct_surface_patch_index_,
-                                    (Construct_surface_patch_index))
-                               )
-                              )
   using Impl_details::construct_pair_functor;
-  /**
-   * Backward-compatibility constructors, with `null_subdomain_index` as
-   * fourth parameter.
-   * @{
+#endif // DOXYGEN_RUNNING
+
+/// \name Creation
+/// @{
+  /*!  \brief Construction from a function, a bounding object and a relative error bound.
+   *
+   * \tparam Function a type compatible with `Labeling_function`
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
+   *                         or a bounding `Iso_cuboid_3`
+   *
+   * \param function the labeling function
+   * \param bounding_object the bounding object bounding the meshable space.
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{relative_error_bound}
+   *      \cgalParamDescription{the relative error bound used to compute intersection points between the implicit surface and query segments.
+   *                            The bisection is stopped when the length of the intersected segment is less than the product
+   *                            of `relative_error_bound` by the diameter of the bounding object.}
+   *      \cgalParamDefault{FT(1e-3)}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   * \cgalHeading{Example}
+   * From the example (\ref Mesh_3/mesh_implicit_domains_2.cpp):
+   * \snippet Mesh_3/mesh_implicit_domains_2.cpp Domain creation
    */
-  Labeled_mesh_domain_3(const Function& f,
-                        const Sphere_3& bounding_sphere,
-                        const FT& error_bound = FT(1e-3),
-                        Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
-    : Impl_details(f, bounding_sphere,
-                   error_bound,
-                   construct_pair_functor(),
-                   null, p_rng) {}
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Bbox_3& bbox,
-                        const FT& error_bound = FT(1e-3),
-                        Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
-    : Impl_details(f, bbox,
-                   error_bound,
-                   construct_pair_functor(),
-                   null, p_rng) {}
-
-  Labeled_mesh_domain_3(const Function& f,
-                        const Iso_cuboid_3& bbox,
-                        const FT& error_bound = FT(1e-3),
-                        Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
-    : Impl_details(f, bbox, error_bound,
-                   construct_pair_functor(),
-                   null, p_rng)
+  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Labeled_mesh_domain_3(const Function& function,
+                        const Bounding_object& bounding_object,
+                        const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                        , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
+#endif // DOXYGEN_RUNNING
+                        )
+  :Impl_details(function,
+                bounding_object,
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {}
-  /**
-   * @}
+///@}
+
+#ifndef DOXYGEN_RUNNING
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+  Labeled_mesh_domain_3(const CGAL_NP_CLASS& np)
+  :Impl_details(parameters::get_parameter(np, internal_np::function_param),
+                parameters::get_parameter(np, internal_np::bounding_object_param),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
+  {}
+
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  Labeled_mesh_domain_3(const CGAL_NP_CLASS_1&  np1,
+                        const CGAL_NP_CLASS_2&  np2,
+                        const NP& ... nps)
+    : Labeled_mesh_domain_3(internal_np::combine_named_parameters(np1, np2, nps...))
+  {}
+
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  template<typename Function, typename Bounding_object>
+#if !defined(BOOST_MSVC)
+  CGAL_DEPRECATED
+#endif // BOOST_MSVC
+  Labeled_mesh_domain_3(const Function& function,
+                        const Bounding_object& bounding_object,
+                        double error_bound,
+                        typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr)
+  : Labeled_mesh_domain_3(function,
+                          bounding_object,
+                          parameters::relative_error_bound(error_bound))
+  {}
+#endif // CGAL_NO_DEPRECATED_CODE
+#endif // DOXYGEN_RUNNING
+
+/// \name Creation of domains from 3D images
+/// @{
+  /*!
+   * \brief Construction from a 3D gray image
+   *
+   * This static method is a <em>named constructor</em>. It constructs a domain
+   * described by a 3D gray image. A 3D gray image is a grid of voxels,
+   * where each voxel is associated with a gray level value.  Unless otherwise specified by the parameter `image_values_to_subdom_indices`, the domain to
+   * be discretized is the union of voxels that lie inside a surface
+   * described by an isolevel value, called \a isovalue. The voxels lying
+   * inside the domain have gray level values that are larger than the
+   * isovalue.
+   *
+   * The value of voxels is interpolated to a gray level value at any query point.
+   *
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * \param image_ the input 3D image.
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{iso_value}
+   *     \cgalParamDescription{the isovalue, inside
+   *                           `image`, of the surface describing the boundary of the object to be
+   *                            meshed.}
+   *     \cgalParamDefault{0}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{image_values_to_subdomain_indices}
+   *     \cgalParamDescription{a function or a function object, compatible with the signature
+   *                           `Subdomain_index(double)`. This function returns the subdomain index
+   *                           corresponding to a pixel value. If this parameter is used, then the
+   *                           parameter `iso_value` is ignored.}
+   *     \cgalParamDefault{Null_functor()}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{value_outside}
+   *      \cgalParamDescription{the value attached to voxels
+   *                            outside of the domain to be meshed. It should be lower than
+   *                           `iso_value`.}
+   *      \cgalParamDefault{0}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{relative_error_bound}
+   *      \cgalParamDescription{ is the relative error
+   *                             bound, relative to the diameter of the box of the image.}
+   *      \cgalParamDefault{FT(1e-3)}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   * \cgalHeading{Examples}
+   *
+   * From the example (\ref Mesh_3/mesh_3D_gray_image.cpp):
+   *
+   * \snippet Mesh_3/mesh_3D_gray_image.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_gray_vtk_image.cpp):
+   *
+   * \snippet Mesh_3/mesh_3D_gray_vtk_image.cpp Domain creation
+   *
    */
-
-  /// Named constructors
-  /// @{
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable: 4003)
-#endif  
-  BOOST_PARAMETER_MEMBER_FUNCTION(
-                                  (Labeled_mesh_domain_3),
-                                  static create_gray_image_mesh_domain,
-                                  parameters::tag,
-                                  (required
-                                   (image_, (const CGAL::Image_3&))
-                                   )
-                                  (optional
-                                   (iso_value_, *, 0)
-                                   (value_outside_, *, 0)
-                                   (relative_error_bound_, (const FT&),
-                                    FT(1e-3))
-                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
-                                   (image_values_to_subdomain_indices_, *,
-                                    Null_functor())
-                                   (null_subdomain_index_,*,Null_functor())
-                                   (construct_surface_patch_index_, *,
-                                    Null_functor())
-                                   )
-                                  )
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
   {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
+    auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
+    FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
+    auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
+    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
+    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-      (create_gray_image_wrapper
-       (image_,
-        iso_value_,
-        image_values_to_subdomain_indices_,
-        value_outside_),
-       Mesh_3::internal::compute_bounding_box(image_),
+              (p::function = create_gray_image_wrapper
+                       (image_,
+                        iso_value_,
+                        image_values_to_subdomain_indices_,
+                        value_outside_),
+               p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
+               p::relative_error_bound = relative_error_bound_,
+               p::p_rng = p_rng_,
+               p::null_subdomain_index =
+                       create_null_subdomain_index(null_subdomain_index_),
+               p::construct_surface_patch_index =
+                       create_construct_surface_patch_index(construct_surface_patch_index_));
+
+  }
+
+  /*!
+   * \brief Construction from a 3D labeled image
+   *
+   * This static method is a <em>named constructor</em>. It constructs a
+   * domain described by a 3D labeled image. A 3D labeled image is a grid
+   * of voxels, where each voxel is associated with an index (a subdomain
+   * index) characterizing the subdomain in which the voxel lies. The
+   * domain to be discretized is the union of voxels that have non-zero
+   * values.
+   *
+   * \returns either a `Labeled_mesh_domain_3`,
+   *   or a `Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>`
+   *   depending on whether one or more of the named parameters
+   *   `features_detector` and `input_features` are provided.
+   *
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   * \param image_ the input 3D image.
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{weights}
+   *     \cgalParamDescription{a reference to an input 3D image that provides
+   *                           weights associated to each voxel (the word type is `unsigned char`,
+   *                           and the voxels values are integers between 0 and 255).
+   *                           The weights image can be generated with `CGAL::Mesh_3::generate_label_weights()`.
+   *                           Its dimensions must be the same as the dimensions of `parameters::image`.}
+   *     \cgalParamDefault{CGAL::Image_3()}
+   *     \cgalParamType{CGAL::Image_3&}
+   *     \cgalParamExtra{if `features_detector` is provided, `weights` should be modified accordingly.
+   *                     The available functors described in See \ref PkgMesh3FeatureDetection
+   *                     implement the necessary modifications.}
+   *     \cgalParamExtra{if `input_features` is provided, `weights` should be modified accordingly
+   *                     to keep consistency of the output `MeshDomainWithFeatures_3`}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{value_outside}
+   *     \cgalParamDescription{the value attached to voxels
+   *                           outside of the domain to be meshed. It should be lower than
+   *                           `iso_value`.}
+   *     \cgalParamDefault{0}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{relative_error_bound}
+   *     \cgalParamDescription{ is the relative error
+   *                            bound, relative to the diameter of the box of the image.}
+   *     \cgalParamDefault{FT(1e-3)}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{features_detector}
+   *    \cgalParamDescription{ a functor that implements
+   *      `std::vector<std::vector<Point>> operator()(const Image_3& img) const`,
+   *      and `std::vector<std::vector<Point>> operator()(const Image_3& img, Image_3& weights) const`,
+   *      where `%Point` matches the mesh domain point type,
+   *      that both return a range of detected polyline features for feature protection.
+   *      Only one implementation is used, depending on whether the named parameter `weights`
+   *      is provided or not.
+   *      Polyline features are added to the domain for further feature protection.
+   *      See \ref PkgMesh3FeatureDetection for available functors.}
+   *    \cgalParamDefault{CGAL::Null_functor()}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+   *                    or `input_features` are provided or not.}
+   *    \cgalParamExtra{If `weights` is provided, it must either be adapted to the detected features,
+   *                    or post-processed during feature detection to keep consistency
+   *                    of the output `MeshDomainWithFeatures_3`.
+   *                    Available functors implement the necessary modifications.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{input_features}
+   *    \cgalParamDescription{ a `Range` of polyline features, represented as `Range`s of `Point_3`.
+   *         Polyline features are added to the domain for further feature protection.
+   *         Input polyline features must be different from the detected features
+   *         and can intersect only at vertices, if they do. Otherwise,
+   *         the meshing process may not terminate.}
+   *    \cgalParamDefault{`std::vector<std::vector<Point_3>>()`}
+   *    \cgalParamExtra{The return type of the function depends on whether this parameter
+                        or `input_features` are provided or not.}
+   *    \cgalParamExtra{It is recommended to pass a const-reference for this parameter,
+   *                    possibly using `std::cref(polylines_range)` to avoid useless copies.}
+   *    \cgalParamExtra{If `weights` is provided, it must be adapted to the input features,
+   *                    to keep consistency of the output `MeshDomainWithFeatures_3`}
+   *   \cgalParamNEnd
+   *
+   * \cgalNamedParamsEnd
+   *
+   * \cgalHeading{Example}
+   *
+   * From the example (\ref Mesh_3/mesh_3D_image.cpp):
+   *
+   * \snippet Mesh_3/mesh_3D_image.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_weighted_image.cpp),
+   * where the labeled image is used with a precomputed 3D image of weights :
+   *
+   * \snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_detection_of_features.cpp)
+   * where the features are detected in `image`:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_3D_image_with_input_features.cpp)
+   * where the features are provided by the user:
+   *
+   * \snippet Mesh_3/mesh_3D_image_with_input_features.cpp Domain creation
+   *
+   */
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  static auto
+  create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    using parameters::get_parameter;
+    using parameters::get_parameter_reference;
+    using parameters::choose_parameter;
+
+    auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
+    auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
+    FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
+    auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
+    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
+    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+
+    using Image_ref_type = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
+                                                                        CGAL_NP_CLASS,
+                                                                        CGAL::Image_3>::reference;
+    CGAL::Image_3 no_weights_;
+    Image_ref_type weights_ = choose_parameter(get_parameter_reference(np, internal_np::weights_param), no_weights_);
+    auto features_detector_ = choose_parameter(get_parameter(np, internal_np::features_detector_param), Null_functor());
+
+    using Default_input_features = std::vector<std::vector<typename Labeled_mesh_domain_3::Point_3>>;
+    using Input_features_ref_type = typename internal_np::Lookup_named_param_def<internal_np::input_features_param_t,
+                                                                                 CGAL_NP_CLASS,
+                                                                                 Default_input_features>::reference;
+    Default_input_features empty_vec;
+    Input_features_ref_type input_features_
+          = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
+
+    CGAL_USE(iso_value_);
+    namespace p = CGAL::parameters;
+
+    const bool use_weights = weights_.is_valid();
+    auto image_wrapper = use_weights
+      ? create_weighted_labeled_image_wrapper(image_,
+                                              weights_,
+                                              image_values_to_subdomain_indices_,
+                                              value_outside_)
+      : create_labeled_image_wrapper(image_,
+                                     image_values_to_subdomain_indices_,
+                                     value_outside_);
+
+    // warning : keep Return_type consistent with actual return type
+    const bool no_features
+      =  CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::features_detector_param_t>::value
+      && CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::input_features_param_t>::value;
+    using Return_type = std::conditional_t <
+      no_features,
+      Labeled_mesh_domain_3,
+      Mesh_domain_with_polyline_features_3<Labeled_mesh_domain_3>
+    >;
+
+    Return_type domain
+      (p::function = image_wrapper,
+       p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
        p::relative_error_bound = relative_error_bound_,
        p::p_rng = p_rng_,
        p::null_subdomain_index =
-         create_null_subdomain_index(null_subdomain_index_),
+               create_null_subdomain_index(null_subdomain_index_),
        p::construct_surface_patch_index =
-         create_construct_surface_patch_index(construct_surface_patch_index_));
-  }
+               create_construct_surface_patch_index(construct_surface_patch_index_));
 
-  BOOST_PARAMETER_MEMBER_FUNCTION(
-                                  (Labeled_mesh_domain_3),
-                                  static create_labeled_image_mesh_domain,
-                                  parameters::tag,
-                                  (required
-                                   (image_, (const CGAL::Image_3&))
-                                   )
-                                  (optional
-                                   (relative_error_bound_, (const FT&),
-                                    FT(1e-3))
-                                   (value_outside_, *, 0)
-                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
-                                   (image_values_to_subdomain_indices_, *,
-                                    Null_functor())
-                                   (null_subdomain_index_,*,Null_functor())
-                                   (construct_surface_patch_index_, *,
-                                    Null_functor())
-                                   )
-                                  )
+    // features
+    Mesh_3::internal::Add_features_in_domain<!no_features>()
+      (image_, weights_, domain, input_features_, features_detector_);
+
+    return domain;
+  }
+/// @}
+
+#ifndef DOXYGEN_RUNNING
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS& np)
   {
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
+    using parameters::get_parameter;
+    using parameters::get_parameter_reference;
+    using parameters::choose_parameter;
+    const CGAL::Image_3& image_ = get_parameter_reference(np,internal_np::image_3_param);
+    auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
+    auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
+    FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
+    auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
+    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
+    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
-      (create_labeled_image_wrapper
-       (image_,
-        image_values_to_subdomain_indices_,
-        value_outside_),
-       Mesh_3::internal::compute_bounding_box(image_),
-       p::relative_error_bound = relative_error_bound_,
-       p::p_rng = p_rng_,
-       p::null_subdomain_index =
-         create_null_subdomain_index(null_subdomain_index_),
-       p::construct_surface_patch_index =
-         create_construct_surface_patch_index(construct_surface_patch_index_));
+            (p::function = create_gray_image_wrapper
+                     (image_,
+                      iso_value_,
+                      image_values_to_subdomain_indices_,
+                      value_outside_),
+             p::bounding_object = Mesh_3::internal::compute_bounding_box(image_),
+             p::relative_error_bound = relative_error_bound_,
+             p::p_rng = p_rng_,
+             p::null_subdomain_index =
+                     create_null_subdomain_index(null_subdomain_index_),
+             p::construct_surface_patch_index =
+                     create_construct_surface_patch_index(construct_surface_patch_index_));
+
   }
 
-  BOOST_PARAMETER_MEMBER_FUNCTION(
-                                  (Labeled_mesh_domain_3),
-                                  static create_implicit_mesh_domain,
-                                  parameters::tag,
-                                  (required
-                                   (function_, *)
-                                   (bounding_object_,*)
-                                   )
-                                  (optional
-                                   (relative_error_bound_, (const FT&),
-                                    FT(1e-3))
-                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
-                                   (null_subdomain_index_,*,Null_functor())
-                                   (construct_surface_patch_index_, *,
-                                    Null_functor())
-                                   )
-                                  )
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL::Image_3& image_,
+                                                             const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
   {
-    namespace p = CGAL::parameters;
-    return Labeled_mesh_domain_3
-      (make_implicit_to_labeling_function_wrapper<BGT>(function_),
-       bounding_object_,
-       p::relative_error_bound = relative_error_bound_,
-       p::p_rng = p_rng_,
-       p::null_subdomain_index =
-         create_null_subdomain_index(null_subdomain_index_),
-       p::construct_surface_patch_index =
-         create_construct_surface_patch_index(construct_surface_patch_index_));
+    return create_gray_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
+  }
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_gray_image_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+                                                             const CGAL_NP_CLASS_2&  np2,
+                                                             const NP& ... nps)
+  {
+    return create_gray_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
   }
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS& np)
+  {
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::image_3_param_t>::value, "Value for required parameter not found");
+    using parameters::get_parameter_reference;
+    const CGAL::Image_3& image_ = get_parameter_reference(np,internal_np::image_3_param);
+    return create_labeled_image_mesh_domain(image_, np);
+  }
+
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static auto create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
+                                               const CGAL_NP_CLASS_1&  np1,
+                                               const CGAL_NP_CLASS_2&  np2,
+                                               const NP& ... nps)
+  {
+    return create_labeled_image_mesh_domain(image_, internal_np::combine_named_parameters(np1, np2, nps...));
+  }
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static auto create_labeled_image_mesh_domain(const CGAL_NP_CLASS_1& np1,
+                                               const CGAL_NP_CLASS_2& np2,
+                                               const NP& ... nps)
+  {
+    return create_labeled_image_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
+  }
 #endif
-  /// @}
 
-  /**
-   * Constructs  a set of \ccc{n} points on the surface, and output them to
-   *  the output iterator \ccc{pts} whose value type is required to be
-   *  \ccc{std::pair<Points_3, Index>}.
+/// \name Creation of domains from implicit functions
+/// @{
+
+  /*!
+   * \brief Construction from an implicit function
+   *
+   * This static method is a <em>named constructor</em>. It constructs a domain
+   * whose bounding surface is described implicitly as the zero level set of a
+   * function.  The domain to be discretized is assumed to be the domain where
+   * the function has negative values.
+   *
+   * \tparam Function a type compatible with the signature `FT(Point_3)`: it takes a point as argument,
+   *                  and returns a scalar value. That object must be model of `CopyConstructible`
+   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
+   *                         or a bounding `Iso_cuboid_3` which is required to circumscribe
+   *                         the surface and to have its center inside the domain.
+   *
+   * \param function the implicit function
+   * \param bounding_object object bounding the meshable domain and its center is inside the domain.
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{relative_error_bound}
+   *     \cgalParamDescription{ is the relative error
+   *                            bound, relative to the diameter of the box of the image.}
+   *     \cgalParamDefault{FT(1e-3)}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   * \cgalHeading{Examples}
+   *
+   * From the example (\ref Mesh_3/mesh_implicit_sphere.cpp):
+   *
+   * \snippet Mesh_3/mesh_implicit_sphere.cpp Domain creation
+   *
+   * From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
+   *
+   * \snippet Mesh_3/mesh_implicit_sphere_variable_size.cpp Domain creation
+   *
+   */
+  template<typename Function, typename Bounding_object, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const Function& function,
+                                                           const Bounding_object& bounding_object,
+                                                           const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                                                           , typename std::enable_if<!is_named_function_parameter<Function>>::type* = nullptr
+#endif
+)
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
+    CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
+    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
+    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+            (p::function = make_implicit_to_labeling_function_wrapper<BGT>(function),
+             p::bounding_object = bounding_object,
+             p::relative_error_bound = relative_error_bound_,
+             p::p_rng = p_rng_,
+             p::null_subdomain_index =
+                     create_null_subdomain_index(null_subdomain_index_),
+             p::construct_surface_patch_index =
+                     create_construct_surface_patch_index(construct_surface_patch_index_));
+  }
+/// @}
+#ifndef DOXYGEN_RUNNING
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS &np)
+  {
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
+    static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
+
+    return create_implicit_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
+                                       parameters::get_parameter(np, internal_np::bounding_object_param),
+                                       np);
+  }
+
+  // Overload handling parameters passed with operator=
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
+           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
+           typename ... NP>
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS_1&  np1,
+                                                           const CGAL_NP_CLASS_2&  np2,
+                                                           const NP& ... nps)
+  {
+    return create_implicit_mesh_domain(internal_np::combine_named_parameters(np1, np2, nps...));
+  }
+
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  template<typename SubdomainIndex = Null_functor,
+           typename NullSubdomainIndex = Null_functor,
+           typename ConstructSurfacePatchIndex = Null_functor>
+  CGAL_DEPRECATED
+  static Labeled_mesh_domain_3
+  create_gray_image_mesh_domain(const CGAL::Image_3& image_,
+                                double iso_value,
+                                double value_outside=0,
+                                double relative_error_bound = 1e-3,
+                                CGAL::Random* rng = nullptr,
+                                SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
+                                ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
+  {
+    return create_gray_image_mesh_domain(image_, parameters::iso_value(iso_value)
+                                                            .image_values_to_subdomain_indices(image_values_to_subdom_indices)
+                                                            .value_outside(value_outside)
+                                                            .relative_error_bound(relative_error_bound)
+                                                            .p_rng(rng).null_subdomain_index(null_subdomain_index_)
+                                                            .construct_surface_patch_index(construct_surface_patch_index_));
+  }
+
+  template<typename SubdomainIndex = Null_functor,
+           typename NullSubdomainIndex = Null_functor,
+           typename ConstructSurfacePatchIndex = Null_functor>
+  CGAL_DEPRECATED
+  static Labeled_mesh_domain_3
+  create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
+                                   double relative_error_bound,
+                                   const CGAL::Image_3& weights_ = CGAL::Image_3(),
+                                   int value_outside=0,
+                                   CGAL::Random* rng = nullptr,
+                                   SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
+                                   NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
+                                   ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
+  {
+    return create_labeled_image_mesh_domain(image_, parameters::weights(weights_)
+                                                               .image_values_to_subdomain_indices(image_values_to_subdom_indices)
+                                                               .value_outside(value_outside)
+                                                               .relative_error_bound(relative_error_bound)
+                                                               .p_rng(rng)
+                                                               .null_subdomain_index(null_subdomain_index_)
+                                                               .construct_surface_patch_index(construct_surface_patch_index_));
+  }
+#endif
+
+
+  /*
+   * Constructs  a set of `n` points on the surface, and output them to
+   *  the output iterator `pts` whose value type is required to be
+   *  `std::pair<Points_3, Index>`.
    */
   struct Construct_initial_points
   {
@@ -505,21 +1016,21 @@ public:
     const Labeled_mesh_domain_3& r_domain_;
   };
 
-  /// Returns Construct_initial_points object
+  // Returns Construct_initial_points object
   Construct_initial_points construct_initial_points_object() const
   {
     return Construct_initial_points(*this);
   }
 
-  /**
+  /*
    * Returns a bounding box of the domain
    */
   Bbox_3 bbox() const {
     return this->bbox_.bbox();
   }
 
-  /**
-   * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
+  /*
+   * Returns true if point `p` is in the domain. If `p` is in the
    *  domain, the parameter index is set to the index of the subdomain
    *  including $p$. It is set to the default value otherwise.
    */
@@ -532,24 +1043,24 @@ public:
       // null(f(p)) means p is outside the domain
       Subdomain_index index = (r_domain_.function_)(p);
       if ( r_domain_.null(index) )
-        return Subdomain();
+        return Subdomain{};
       else
-        return Subdomain(index);
+        return Subdomain{ index };
     }
   private:
     const Labeled_mesh_domain_3& r_domain_;
   };
 
-  /// Returns Is_in_domain object
+  // Returns Is_in_domain object
   Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
 
-  /**
-   * Returns true is the element \ccc{type} intersect properly any of the
+  /*
+   * Returns `true` if the element `type` intersect properly any of the
    * surface patches describing the either the domain boundary or some
    * subdomain boundary.
-   * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
-   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
+   * if `true` is returned and to the default `Surface_patch_index`
    * value otherwise.
    */
   struct Do_intersect_surface
@@ -573,12 +1084,12 @@ public:
     }
 
   private:
-    /// Returns true if points \c a & \c b do not belong to the same subdomain
-    /// \c index is set to the surface index of subdomains f(a), f(b)
+    // Returns true if points `a` and `b` do not belong to the same subdomain
+    // `index` is set to the surface index of subdomains f(a), f(b)
     Surface_patch operator()(const Point_3& a, const Point_3& b) const
     {
       // If f(a) != f(b), then [a,b] intersects some surface. Here we consider
-      // [a,b] intersects surface_patch labelled <f(a),f(b)> (or <f(b),f(a)>).
+      // [a,b] intersects surface_patch labeled <f(a),f(b)> (or <f(b),f(a)>).
       // It may be false, further rafinement will improve precision
       const Subdomain_index value_a = r_domain_.function_(a);
       const Subdomain_index value_b = r_domain_.function_(b);
@@ -593,23 +1104,16 @@ public:
         return Surface_patch();
     }
 
-    /**
-     * Clips \c query to a segment \c s, and call operator()(s)
+    /*
+     * Clips  `query` to a segment `s`, and call `operator()(s)`
      */
     template<typename Query>
     Surface_patch clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-#if CGAL_INTERSECTION_VERSION > 1
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
-#else
-        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
-          return this->operator()(*s);
-#endif
 
       return Surface_patch();
     }
@@ -618,20 +1122,16 @@ public:
     const Labeled_mesh_domain_3& r_domain_;
   };
 
-  /// Returns Do_intersect_surface object
+  // Returns Do_intersect_surface object
   Do_intersect_surface do_intersect_surface_object() const
   {
     return Do_intersect_surface(*this);
   }
 
-  /**
-   * Returns a point in the intersection of the primitive \ccc{type}
+  /*
+   * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * \ccc{Type1} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
-   * The integer \ccc{dimension} is set to the dimension of the lowest
-   * dimensional face in the input complex containing the returned point, and
-   * \ccc{index} is set to the index to be stored at a mesh vertex lying
-   * on this face.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    */
   struct Construct_intersection
   {
@@ -641,7 +1141,7 @@ public:
     Intersection operator()(const Segment_3& s) const
     {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      CGAL_precondition(r_domain_.do_intersect_surface_object()(s));
+      CGAL_precondition(r_domain_.do_intersect_surface_object()(s) != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       return this->operator()(s.source(),s.target());
     }
@@ -657,11 +1157,11 @@ public:
     }
 
   private:
-    /**
-     * Returns a point in the intersection of [a,b] with the surface
-     * \c a must be the source point, and \c b the out point. It's important
+    /*
+     * Returns a point in the intersection of `[a,b]` with the surface
+     *  `a` must be the source point, and `b` the out point. It is important
      * because it drives bisection cuts.
-     * Indeed, the returned point is the first intersection from \c [a,b]
+     * Indeed, the returned point is the first intersection of `[a,b]`
      * with a subdomain surface.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
@@ -684,7 +1184,7 @@ public:
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // This should not happen...
+      // Should only be able to happen during initial point generation.
       if( value_at_p1 == value_at_p2 )
       {
         return Intersection();
@@ -730,21 +1230,14 @@ public:
       }
     }
 
-    /// Clips \c query to a segment \c s, and call operator()(s)
+    // Clips  `query` to a segment `s`, and call `operator()(s)`
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
-#if CGAL_INTERSECTION_VERSION > 1
-        if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
+        if(const Segment_3* s = std::get_if<Segment_3>(&*clipped))
           return this->operator()(*s);
-#else
-        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
-          return this->operator()(*s);
-#endif
 
       return Intersection();
     }
@@ -753,39 +1246,39 @@ public:
     const Labeled_mesh_domain_3& r_domain_;
   };
 
-  /// Returns Construct_intersection object
+  // Returns Construct_intersection object
   Construct_intersection construct_intersection_object() const
   {
     return Construct_intersection(*this);
   }
 
-  /**
+  /*
    * Returns the index to be stored in a vertex lying on the surface identified
-   * by \c index.
+   * by `index`.
    */
   Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
-  /**
+  /*
    * Returns the index to be stored in a vertex lying in the subdomain
-   * identified by \c index.
+   * identified by `index`.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
   { return Index(index); }
 
-  /**
-   * Returns the \c Surface_patch_index of the surface patch
-   * where lies a vertex with dimension 2 and index \c index.
+  /*
+   * Returns the `Surface_patch_index` of the surface patch
+   * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return Mesh_3::internal::get_index<Surface_patch_index>(index); }
 
-  /**
+  /*
    * Returns the index of the subdomain containing a vertex
-   *  with dimension 3 and index \c index.
+   *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return Mesh_3::internal::get_index<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility
@@ -804,7 +1297,7 @@ public:
   // -----------------------------------
 
 protected:
-  /// Returns Surface_patch_index from \c i and \c j
+  // Returns Surface_patch_index from `i` and `j`
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                          const Subdomain_index j) const
   {
@@ -814,7 +1307,7 @@ protected:
       return this->cstr_s_p_index(j, i);
   }
 
-  /// Returns the bounding sphere of an Iso_cuboid_3
+  // Returns the bounding sphere of an Iso_cuboid_3
   Sphere_3 bounding_sphere(const Iso_cuboid_3& bbox) const
   {
     typename BGT::Construct_sphere_3 sphere = BGT().construct_sphere_3_object();
@@ -843,7 +1336,7 @@ protected:
                                                       false>           Wrapper;
     return Wrapper(image,
                    transform_fct,
-                   transform_fct(value_outside));
+                   value_outside) ;
   }
 
   template <typename FT, typename FT2, typename Functor>
@@ -890,6 +1383,33 @@ protected:
                    transform_fct(value_outside));
   }
 
+  template <typename Image_word_type,
+            typename FT, typename Functor>
+  static
+  Function
+  create_weighted_labeled_image_wrapper_with_know_word_type
+  (const CGAL::Image_3& image,
+   const CGAL::Image_3& weights,
+   const Functor& image_values_to_subdomain_indices,
+   const FT& value_outside)
+  {
+    using Mesh_3::internal::Create_labeled_image_values_to_subdomain_indices;
+    typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    Image_values_to_subdomain_indices transform_fct =
+      C_i_v_t_s_i()(image_values_to_subdomain_indices);
+
+    typedef Mesh_3::Image_plus_weights_to_labeled_function_wrapper<
+      Image_word_type,
+      int, //interpolation type
+      unsigned char, // Weights_type,
+      Subdomain_index> Wrapper;
+    return Wrapper(image,
+                   weights,
+                   transform_fct,
+                   transform_fct(value_outside));
+  }
+
   template <typename FT, typename Functor>
   static
   Function
@@ -906,6 +1426,27 @@ protected:
     CGAL_error_msg("This place should never be reached, because it would mean "
                    "the image word type is a type that is not handled by "
                    "CGAL_ImageIO.");
+    return Function();
+  }
+
+  template <typename FT, typename Functor>
+  static
+  Function
+  create_weighted_labeled_image_wrapper(const CGAL::Image_3& image,
+                                        const CGAL::Image_3& weights,
+                                        const Functor& image_values_to_subdomain_indices,
+                                        const FT& value_outside)
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+      return create_weighted_labeled_image_wrapper_with_know_word_type<Word>
+                        (image,
+                         weights,
+                         image_values_to_subdomain_indices,
+                         value_outside);
+                        );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+      "the image word type is a type that is not handled by "
+      "CGAL_ImageIO.");
     return Function();
   }
 
@@ -932,11 +1473,13 @@ protected:
   }
 
 public:
-  /// Returns bounding box
+  // Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
+#endif //DOXYGEN_RUNNING
 
 };  // end class Labeled_mesh_domain_3
 
+#ifndef DOXYGEN_RUNNING
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
@@ -989,7 +1532,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     Surface_patch surface = r_domain_.do_intersect_surface_object()(random_seg);
     if ( surface )
     {
-      const Point_3 intersect_pt = CGAL::cpp11::get<0>(
+      const Point_3 intersect_pt = std::get<0>(
           r_domain_.construct_intersection_object()(random_seg));
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));
@@ -1018,7 +1561,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 #endif
   return pts;
 }
-
+#endif
 
 }  // end namespace CGAL
 

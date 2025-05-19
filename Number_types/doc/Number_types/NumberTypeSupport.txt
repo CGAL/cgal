@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Number_Types
 \anchor Numbertype
 
@@ -23,31 +23,31 @@ structure concepts see Section \ref PkgAlgebraicFoundationsRef.
 The built-in number types `float`, `double` and `long double` have
 the required arithmetic and comparison operators. They lack some required
 routines though which are automatically included by \cgal.
-\cgalFootnote{The functions can be found in the header files <TT>CGAL/int.h</TT>, <TT>CGAL/float.h</TT>, <TT>CGAL/double.h</TT> and <TT>CGAL/long_long.h</TT>.}
+\cgalFootnote{The functions can be found in the header files \cgalFootnoteCode{CGAL/int.h}, \cgalFootnoteCode{CGAL/float.h}, \cgalFootnoteCode{CGAL/double.h} and \cgalFootnoteCode{CGAL/long_long.h}.}
 
 All built-in number types of \cpp can represent a discrete (bounded)
 subset of the rational numbers only. We assume that the
-floating-point arithmetic of your machine follows <span class="textsc">Ieee</span>
+floating-point arithmetic of your machine follows \ieee
 floating-point standard. Since the floating-point culture has much
 more infrastructural support (hardware, language definition and
 compiler) than exact computation, it is very efficient.
 Like with all number types with finite precision representation
-which are used as approximations to the infinite ranges of 
+which are used as approximations to the infinite ranges of
 integers or real numbers, the built-in number types are inherently
 potentially inexact.
-Be aware of this if you decide to use the efficient built-in 
-number types: you have to cope with numerical problems. 
-For example, you can compute the intersection point of two lines and 
-then check whether this point lies on the two lines. 
+Be aware of this if you decide to use the efficient built-in
+number types: you have to cope with numerical problems.
+For example, you can compute the intersection point of two lines and
+then check whether this point lies on the two lines.
 With floating point arithmetic,
-roundoff errors may cause the answer of the check to be `false`. 
+roundoff errors may cause the answer of the check to be `false`.
 With the built-in integer types overflow might occur.
 
 \section Number_typesCGAL Number Types Provided by CGAL
 
 \anchor cgalnt
 
-\cgal provides several number types that can be used for 
+\cgal provides several number types that can be used for
 exact computation. These include the `Quotient` class that can
 be used to create, for example, a number type that behaves like a rational
 number when parameterized with a number type which can represent integers.
@@ -57,7 +57,7 @@ point values, a generalization of integers scaled by a (potentially negative)
 power of 2. It allows to deal with ring operations over floating-point values
 with requiring rational numbers. By plugging it in `Quotient`, one obtains
 rational numbers. Note that `MP_Float` may not be as efficient as the
-integer types provided by <span class="textsc">Gmp</span> or \leda, but it has the advantage
+integer types provided by \gmp or \leda, but it has the advantage
 to make more parts of \cgal independent on these external libraries for
 handling robustness issues.
 
@@ -81,7 +81,7 @@ types.
 
 \anchor gmpnt
 
-\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
+\cgal provides wrapper classes for number types defined in the \gnu Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
 <TT>CGAL/Gmpz.h</TT> provides the class `Gmpz`, a wrapper class for
 the arbitrary-precision integer type `mpz_t`, which is compliant
 with the \cgal number type requirements. The file <TT>CGAL/Gmpq.h</TT>
@@ -108,19 +108,19 @@ library after each operation. For more details, the reader should refer
 to \cgalCite{cgal:mt-mpfr} and the `Gmpfr` reference manual.
 
 In addition, it is possible to directly use the C++ number types provided by
-<span class="textsc">Gmp</span> : `mpz_class`, `mpq_class` (note that support for
+\gmp : `mpz_class`, `mpq_class` (note that support for
 `mpf_class` is incomplete). The file <TT>CGAL/gmpxx.h</TT> provides the
 necessary functions to make these classes compliant to the \cgal number type
 requirements.
 
-To use these classes, <span class="textsc">Gmp</span> and <span class="textsc">Mpfr</span> must be installed.
+To use these classes, \gmp and \mpfr must be installed.
 
 \section Number_typesLEDA Number Types Provided by LEDA
 
 \anchor ledant
 
-\leda provides number types that can be used for exact computation 
-with both Cartesian and homogeneous representations. If you are using
+\leda provides number types that can be used for exact computation
+with both %Cartesian and homogeneous representations. If you are using
 homogeneous representation with the built-in integer types
 `short`, `int`, and `long` as ring type, exactness of
 computations can be guaranteed only if your input data come from a
@@ -130,7 +130,7 @@ integers of arbitrary length. (Of course the length is
 somehow bounded by the resources of your computer.) It can be used as
 ring type in homogeneous kernels and leads to exact
 computation as long as all intermediate results are rational. For the
-same kind of problems, Cartesian representation with number type
+same kind of problems, %Cartesian representation with number type
 `leda_rational` leads to exact computation as well.
 The number type `leda_bigfloat` in \leda is a variable precision
 floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
@@ -139,11 +139,11 @@ floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
 The most sophisticated number type in \leda is the number type called
 `leda_real`. Like in Pascal, where the name `real` is used for
 floating-point numbers, the name `leda_real` does not describe the
-number type precisely, but intentionally. 
+number type precisely, but intentionally.
 `leda_real` is a subset of real algebraic
 numbers. Any integer is `leda_real` and `leda_real` is closed under
 the operations \f$ +,-,*,/\f$ and \f$ k\f$-th root computation. For \leda version 5.0 and
-or later `leda_real` is also able to represent real roots of polynomials. 
+or later `leda_real` is also able to represent real roots of polynomials.
 `leda_real`s guarantee that
 all comparisons between expressions involving `leda_real` produce the
 exact result.
@@ -157,13 +157,13 @@ requirements.
 
 \anchor corent
 
-In principle <span class="textsc">Core</span> \cgalCite{klpy-clp-99} provides the same set of number types as \leda. 
-The type `CORE::BigInt` represent integers and `CORE::BigRat` 
-represent rationals of arbitrary length. The number type `CORE::BigFloat` is 
+In principle \core \cgalCite{klpy-clp-99} provides the same set of number types as \leda.
+The type `CORE::BigInt` represent integers and `CORE::BigRat`
+represent rationals of arbitrary length. The number type `CORE::BigFloat` is
 a variable precision floating-point type. It is also possible to interpret it as an
 interval type, since it also carries the error of a computed value.
-As for \leda, the most sophisticated number type in <span class="textsc">Core</span> is `CORE::Expr`, 
-which is in its functionality equivalent to `leda_real`. 
+As for \leda, the most sophisticated number type in \core is `CORE::Expr`,
+which is in its functionality equivalent to `leda_real`.
 
 
 
@@ -192,16 +192,16 @@ is implemented on top of `Gmpfr`, the global flags
 are inherited from the `Gmpfr` interface. See
 \cgalCite{cgal:r-mpfi} and the `Gmpfi` reference manual for details.
 
-To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
+To use the `Gmpfi` class, \mpfi must be installed.
 
 \section Number_typesUser User-supplied Number Types
 
 In order to use your own number type it must be a model of the according
-algebraic structure concept, in particular you must provide a 
+algebraic structure concept, in particular you must provide a
 specialization of `Algebraic_structure_traits` and also of
-`Real_embeddable_traits` in case it is a sub ring of the real numbers. 
-If you even want to provide a related ensemble of number types you should also 
-provide specializations for `Coercion_traits` in order to 
+`Real_embeddable_traits` in case it is a sub ring of the real numbers.
+If you even want to provide a related ensemble of number types you should also
+provide specializations for `Coercion_traits` in order to
 reflect their interoperability.
 
 \section Number_typesDesign Design and Implementation History
@@ -210,15 +210,16 @@ This package was naturally one of the first packages implemented in \cgal.
 It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,
 together with the interfaces to the number types provided by \leda, which were
 implemented by Stefan Schirra and Andreas Fabri.
+\leda's class `rational` has been the basis for `Quotient`.
 
 Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
-the `mpz_class` and `mpq_class` types from <span class="textsc">Gmp</span>.
+the `mpz_class` and `mpq_class` types from \gmp.
 
 Number type concepts were then refined, notably by Lutz Kettner and
 Susan Hert, who also contributed utility algorithms.
 
-The work on concepts was further extended within the <span class="textsc">Exacus</span> project, and was finally
+The work on concepts was further extended within the \exacus project, and was finally
 contributed to \cgal by Michael Hemmer in 2006, as what is now the separate
 package \ref Chapter_Algebraic_Foundations "Algebraic Foundations", together with
 a rewritten interface to operations on number types.
@@ -229,6 +230,5 @@ In 2008-2010, Bernd G&auml;rtner added the `Gmpzf` class, while
 Luis Pe&ntilde;aranda and Sylvain Lazard contributed the `Gmpfi` and
 `Gmpfr` classes.
 
-*/ 
+*/
 } /* namespace CGAL */
-

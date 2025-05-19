@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -27,15 +17,15 @@
  *
  * Copyright©INRIA 1998
  *
- * DESCRIPTION: 
+ * DESCRIPTION:
  *
  * Recursive filtering of a line (a 1D array)
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
- * http://www.inria.fr/epidaure/personnel/malandain/
- * 
- * CREATION DATE: 
+ * https://www-sop.inria.fr/members/Gregoire.Malandain/
+ *
+ * CREATION DATE:
  * June, 9 1998
  *
  * Copyright Gregoire Malandain, INRIA
@@ -57,7 +47,7 @@
  *
  * DESCRIPTION:
  *
- * - ALPHA_DERICHE is the first recurvise filter designed
+ * - ALPHA_DERICHE is the first recursive filter designed
  *   by R. Deriche. See REFERENCES.
  *
  * - with ALPHA_DERICHE's filters, one can either compute
@@ -74,9 +64,9 @@
  *   derivatives from order 0 (smoothing) to 2, or extract edges.
  *
  * - Extracting edges with ALPHA_DERICHE's filters is faster but
- *   the modulus of the gradient (the estimated height of the step 
+ *   the modulus of the gradient (the estimated height of the step
  *   edge) depens on the gradient orientation because the filter
- *   is not isotropic. Heights are better estimated with 
+ *   is not isotropic. Heights are better estimated with
  *   GAUSSIAN_DERICHE's filters but they seem not be perfectly
  *   symmetrical.
  *
@@ -112,8 +102,8 @@ typedef enum {
  *   signal i=x will be 1.
  *
  * - DERIVATIVE_1_CONTOURS first derivative but adapted
- *   to edge detections. The normalization of the filter 
- *   is made so that the response to a step edge is 
+ *   to edge detections. The normalization of the filter
+ *   is made so that the response to a step edge is
  *   the step edge height.
  *
  * - DERIVATIVE_2 second derivative. The normalization
@@ -132,11 +122,11 @@ typedef enum {
   DERIVATIVE_2  = 2 /* derivative of order 2 */,
   DERIVATIVE_3  = 3 /* derivative of order 3 */,
   DERIVATIVE_1_CONTOURS = 11 /* derivative of order 1, normalization adapted to
-				contours. The response to a step-edge is the 
-				height of the step. */,
+                                contours. The response to a step-edge is the
+                                height of the step. */,
   DERIVATIVE_1_EDGES = 11 /* derivative of order 1, normalization adapted to
-				contours. The response to a step-edge is the 
-				height of the step. */
+                                contours. The response to a step-edge is the
+                                height of the step. */
 } derivativeOrder;
 
 
@@ -184,8 +174,8 @@ typedef struct {
  * - derivativeOrder
  */
 extern RFcoefficientType * InitRecursiveCoefficients( double x, /* coefficient's value */
-				       recursiveFilterType filterType, /* filter's type */
-				       derivativeOrder derivative /* derivative's order */ );
+                                       recursiveFilterType filterType, /* filter's type */
+                                       derivativeOrder derivative /* derivative's order */ );
 
 
 
@@ -207,12 +197,12 @@ extern RFcoefficientType * InitRecursiveCoefficients( double x, /* coefficient's
  * - 1 if successful
  */
 extern int RecursiveFilter1D( RFcoefficientType *RFC,
-			      double *in, /* input line */ 
-			      double *out, /* output line */
-			      double *work1, /* first work array */
-			      double *work2, /* second work array, 
-						could be out if out is different from in */
-			      int dim /* lines' length */ );
+                              double *in, /* input line */
+                              double *out, /* output line */
+                              double *work1, /* first work array */
+                              double *work2, /* second work array,
+                                                could be out if out is different from in */
+                              int dim /* lines' length */ );
 
 
 /* Turn on verbose mode.

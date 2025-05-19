@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Tali Zvi <talizvi@post.tau.ac.il>,
 //             Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -28,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Default_subcurve class, which is an extended curve
+ * Definition of the Default_subcurve class, which is an extended curve
  * type, referred to as Subcurve, used by the surface-sweep framework.
  *
  * The surface-sweep framework is implemented as a template that is
@@ -48,6 +39,7 @@
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
+#include <CGAL/Small_unordered_set.h>
 #include <set>
 
 namespace CGAL {
@@ -67,7 +59,7 @@ namespace Surface_sweep_2 {
  *
  * The information contained in this class is:
  * - two pointers to subcurves that are the originating subcurves in case of
- *   an overlap, otherwise thay are both NULL.
+ *   an overlap, otherwise they are both nullptr.
  */
 template <typename GeometryTraits_2, typename Event_, typename Allocator_,
           typename Subcurve_>
@@ -78,10 +70,14 @@ public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
+  typedef Tag_true                                      Handle_overlaps;
 
 private:
   typedef Geometry_traits_2                             Gt2;
   typedef No_overlap_subcurve<Gt2, Event, Subcurve>     Base;
+  typedef Default_subcurve_base<GeometryTraits_2, Event_, Allocator_, Subcurve_>
+                                                        Self;
+  typedef Small_unordered_set<Self*, 8>                 Intersected_set;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -89,23 +85,36 @@ public:
   /*! Construct default.
    */
   Default_subcurve_base() :
-    m_orig_subcurve1(NULL),
-    m_orig_subcurve2(NULL)
+    m_orig_subcurve1(nullptr),
+    m_orig_subcurve2(nullptr)
   {}
 
   /*! Construct from a curve.
    */
   Default_subcurve_base(const X_monotone_curve_2& curve) :
     Base(curve),
-    m_orig_subcurve1(NULL),
-    m_orig_subcurve2(NULL)
+    m_orig_subcurve1(nullptr),
+    m_orig_subcurve2(nullptr)
   {}
 
 protected:
   Subcurve* m_orig_subcurve1;           // The overlapping hierarchy
   Subcurve* m_orig_subcurve2;           // (relevant only in case of overlaps).
+  Intersected_set m_intersected;
+
 
 public:
+
+  void reset_left_event()
+  {
+    this->set_left_event(static_cast<Event*>(nullptr));
+    if (m_orig_subcurve1)
+    {
+      m_orig_subcurve1->reset_left_event();
+      m_orig_subcurve2->reset_left_event();
+    }
+  }
+
   /*! Get the subcurves that originate an overlap. */
   Subcurve* originating_subcurve1() { return m_orig_subcurve1; }
 
@@ -114,6 +123,8 @@ public:
   const Subcurve* originating_subcurve1() const { return m_orig_subcurve1; }
 
   const Subcurve* originating_subcurve2() const { return m_orig_subcurve2; }
+
+  bool intersection_exists (Self* other) { return !m_intersected.insert(other); }
 
   /*! Set the subcurves that originate an overlap. */
   void set_originating_subcurve1(Subcurve* orig_subcurve1)
@@ -126,7 +137,7 @@ public:
   template <typename OutputIterator>
   OutputIterator all_leaves(OutputIterator oi)
   {
-    if (m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == nullptr) {
       *oi++ = reinterpret_cast<Subcurve*>(this);
       return oi;
     }
@@ -141,7 +152,7 @@ public:
   bool is_inner_node(Subcurve* s)
   {
     if (this == s) return true;
-    if (m_orig_subcurve1 == NULL) return false;
+    if (m_orig_subcurve1 == nullptr) return false;
     return (m_orig_subcurve1->is_inner_node(s) ||
             m_orig_subcurve2->is_inner_node(s));
   }
@@ -150,7 +161,7 @@ public:
    */
   bool is_leaf(Subcurve* s)
   {
-    if (m_orig_subcurve1 == NULL) return (this == s);
+    if (m_orig_subcurve1 == nullptr) return (this == s);
     return (m_orig_subcurve1->is_leaf(s) ||
             m_orig_subcurve2->is_leaf(s));
   }
@@ -249,7 +260,7 @@ public:
   template <typename OutputIterator>
   OutputIterator distinct_nodes(Subcurve* s, OutputIterator oi)
   {
-    if (m_orig_subcurve1 == NULL) {
+    if (m_orig_subcurve1 == nullptr) {
       Subcurve* subcurve = reinterpret_cast<Subcurve*>(this);
       if (s->is_leaf(subcurve)) *oi++ = subcurve;
       return oi;
@@ -267,7 +278,7 @@ public:
   /*! Get the depth of the overlap hierarchy. */
   unsigned int overlap_depth()
   {
-    if (m_orig_subcurve1 == NULL) return (1);
+    if (m_orig_subcurve1 == nullptr) return (1);
 
     unsigned int depth1 = m_orig_subcurve1->overlap_depth();
     unsigned int depth2 = m_orig_subcurve2->overlap_depth();
@@ -278,7 +289,7 @@ public:
   /*! Get the number of input curves contributing to the subcurve */
   unsigned int number_of_original_curves() const
   {
-    if (m_orig_subcurve1 == NULL) return 1;
+    if (m_orig_subcurve1 == nullptr) return 1;
     unsigned int d1 = m_orig_subcurve1->number_of_original_curves();
     unsigned int d2 = m_orig_subcurve2->number_of_original_curves();
     return d1+d2;
@@ -299,7 +310,7 @@ public:
  *                    structure, and to construct/destroy the elements in that
  *                    memory. The type must meet the requirements of Allocator.
  * \tparam Subcurve_ the type of the subcurve or Default. If the default is not
- *         overriden it implies that the type is
+ *         overridden it implies that the type is
  *         No_overlap_subcurve
  */
 template <typename GeometryTraits_2, typename Event_,

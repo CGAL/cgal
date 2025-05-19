@@ -19,7 +19,7 @@ int main(int,char** argv)
 
   CGAL::Random rng(0);
   CGAL::Random_points_in_sphere_3<Point_3,Creator> g( 1,rng);
-  CGAL::cpp11::copy_n( g, n, std::back_inserter(points));
+  std::copy_n( g, n, std::back_inserter(points));
 
   Timer timer;
   timer.start();
@@ -27,7 +27,7 @@ int main(int,char** argv)
   dt.insert(points.begin(), points.end());
   timer.stop();
   std::size_t N = dt.number_of_vertices();
-  
+
   std::cerr << N << std::endl;
   std::cout << timer.time() << " seconds (last"
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3

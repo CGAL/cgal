@@ -32,18 +32,20 @@ typedef boost::adjacency_list<boost::listS,
 
 int main(int argc, char ** argv)
 {
+  const std::string fname = argc!=3 ? "data/n20.cin" : argv[2];
+  unsigned int k = argc!=3 ? 6 : atoi(argv[1]);
 
   if (argc != 3) {
     std::cout << "Usage: " << argv[0] << " <no. of cones> <input filename>" << std::endl;
-    return 1;
+    std::cout << "Using default values " << k << " " << fname << "\n";
   }
-  unsigned int k = atoi(argv[1]);
+
   if (k<2) {
     std::cout << "The number of cones should be larger than 1!" << std::endl;
     return 1;
   }
   // open the file containing the vertex list
-  std::ifstream inf(argv[2]);
+  std::ifstream inf(fname);
   if (!inf) {
     std::cout << "Cannot open file " << argv[1] << "!" << std::endl;
     return 1;
@@ -70,7 +72,7 @@ int main(int argc, char ** argv)
 
   // calculating edge length in Euclidean distance and store them in the edge property
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     boost::graph_traits<Graph>::edge_descriptor e = *ei;
     boost::graph_traits<Graph>::vertex_descriptor  u = source(e, g);
     boost::graph_traits<Graph>::vertex_descriptor  v = target(e, g);

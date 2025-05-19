@@ -1,24 +1,15 @@
-// Copyright (c) 2002-2004,2007  
+// Copyright (c) 2002-2004,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
@@ -30,7 +21,6 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
-#include <CGAL/CORE/Expr.h>
 #include <utility>
 
 
@@ -125,6 +115,14 @@ template <> class Algebraic_structure_traits< CORE::Expr >
         };  */
     };
 
+    class Is_zero
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x ) const {
+          return x.isZero();
+        }
+    };
+
 };
 
 template <> class Real_embeddable_traits< CORE::Expr >
@@ -183,11 +181,14 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 };
 
-} //namespace CGAL
+inline const CORE::Expr& approx(const CORE::Expr& d) { return d; }
+inline const CORE::Expr& exact(const CORE::Expr& d) { return d; }
+inline int depth(const CORE::Expr&){ return -1; }
+
+} // namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
-#include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigInt.h> 
+#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>

@@ -16,7 +16,7 @@ as follows:
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`.
 
-\cgalModels `FuzzyQueryItem`
+\cgalModels{FuzzyQueryItem}
 */
 template< typename Traits >
 class Fuzzy_iso_box {
@@ -72,6 +72,13 @@ Fuzzy_iso_box(Traits::Base::Point_d p, Traits::Base::Point_d q, FT epsilon=FT(0)
 Test whether the fuzzy iso box contains `p`.
 */
 bool contains(Point_d p) const;
+
+/*!
+Test whether the fuzzy iso box contains the point whose Cartesian
+coordinates are contained in the range [`begin`, `end`).
+*/
+template <typename Coord_iterator>
+bool contains_point_given_as_coordinates(Coord_iterator begin, Coord_iterator end) const;
 
 /*!
 Test whether the inner box intersects the rectangle

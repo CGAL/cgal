@@ -80,7 +80,7 @@
      <x>0</x>
      <y>0</y>
      <width>500</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -90,6 +90,7 @@
     <addaction name="separator"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
+    <addaction name="actionOpen"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -197,6 +198,11 @@
   <action name="actionGenerateSegmentFans">
    <property name="text">
     <string>Generate Segment Fans</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
    </property>
   </action>
  </widget>

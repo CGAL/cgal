@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
@@ -26,8 +17,11 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian.h>
+
+#include <iostream>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -52,18 +46,27 @@ public:
   int& z() { return _offz; }
   int z() const { return _offz; }
 
-  int &operator[](int i) {
+  // Use sfinae on the operator[] to accept only integral types as argument
+  template <typename T,
+            typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+  int& operator[](T i)
+  {
     if (i==0) return _offx;
     if (i==1) return _offy;
-    CGAL_triangulation_assertion(i==2);
+    CGAL_assertion(i==2);
     return _offz;
   }
-  int operator[](int i) const {
+
+  template <typename T,
+            typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+  int operator[](T i) const
+  {
     if (i==0) return _offx;
     if (i==1) return _offy;
-    CGAL_triangulation_assertion(i==2);
+    CGAL_assertion(i==2);
     return _offz;
   }
+
   void operator+=(const Periodic_3_offset_3 &other) {
     _offx += other._offx;
     _offy += other._offy;
@@ -117,7 +120,7 @@ inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_3_offset_3 &off)
 
 inline std::ostream
 &operator<<(std::ostream &os, const Periodic_3_offset_3 &off) {
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << off.x() << " " << off.y() << " " << off.z();
   else {
     write(os,off.x());
@@ -130,7 +133,7 @@ inline std::ostream
 inline std::istream
 &operator>>(std::istream &is, Periodic_3_offset_3 &off) {
   int x=0,y=0,z=0;
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
     is >> x >> y >> z;
   else {
     read(is,x);

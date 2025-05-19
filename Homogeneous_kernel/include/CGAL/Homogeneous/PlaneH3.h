@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -45,7 +36,7 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef cpp11::array<RT, 4>               Rep;
+   typedef std::array<RT, 4>               Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    Base base;
@@ -57,6 +48,7 @@ public:
     PlaneH3() {}
 
     PlaneH3(const Point_3&, const Point_3&, const Point_3& );
+    PlaneH3(Origin, const Point_3&, const Point_3& );
     PlaneH3(const RT& a, const RT& b,
             const RT& c, const RT& d );
     PlaneH3(const Point_3&, const Ray_3& );
@@ -67,6 +59,7 @@ public:
     PlaneH3(const Ray_3&, const Point_3& );
     PlaneH3(const Point_3&, const Direction_3& );
     PlaneH3(const Point_3&, const Vector_3& );
+    PlaneH3(Origin, const Vector_3& );
     PlaneH3(const Point_3&, const Direction_3&, const Direction_3& );
 
     const RT & a() const;
@@ -74,8 +67,8 @@ public:
     const RT & c() const;
     const RT & d() const;
 
-    bool       operator==( const PlaneH3<R>& ) const;
-    bool       operator!=( const PlaneH3<R>& ) const;
+    typename R::Boolean operator==( const PlaneH3<R>& ) const;
+    typename R::Boolean operator!=( const PlaneH3<R>& ) const;
 
     Line_3  perpendicular_line(const Point_3& ) const;
     Plane_3 opposite() const;  // plane with opposite orientation
@@ -85,13 +78,13 @@ public:
     Direction_3    orthogonal_direction() const;
     Vector_3       orthogonal_vector() const;
 
-    Oriented_side  oriented_side(const Point_3 &p) const;
-    bool           has_on(const Point_3 &p) const;
-    bool           has_on(const Line_3 &p) const;
-    bool           has_on_positive_side(const Point_3&l) const;
-    bool           has_on_negative_side(const Point_3&l) const;
+    typename R::Oriented_side oriented_side(const Point_3& p) const;
+    typename R::Boolean has_on(const Point_3& p) const;
+    typename R::Boolean has_on(const Line_3& p) const;
+    typename R::Boolean has_on_positive_side(const Point_3& l) const;
+    typename R::Boolean has_on_negative_side(const Point_3& l) const;
 
-    bool           is_degenerate() const;
+    typename R::Boolean is_degenerate() const;
 
     Aff_transformation_3 transform_to_2d() const;
     Point_2   to_2d(const Point_3& )  const;
@@ -120,7 +113,7 @@ protected:
 //      |  q.hx()   q.hy()  q.hz()  q.hw()  |
 //      |  r.hx()   r.hy()  r.hz()  r.hw()  |
 //
-//  cpp11::array<RT, 4> ( a(), b(), c(), d() )
+//  std::array<RT, 4> ( a(), b(), c(), d() )
 
 template < class R >
 inline
@@ -170,7 +163,7 @@ PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PlaneH3<R>::operator!=(const PlaneH3<R>& l) const
 {
  return !(*this == l);
@@ -182,6 +175,16 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                     const typename PlaneH3<R>::Point_3& q,
                     const typename PlaneH3<R>::Point_3& r)
 { new_rep(p,q,r); }
+
+template < class R >
+CGAL_KERNEL_INLINE
+PlaneH3<R>::PlaneH3(Origin,
+                    const typename PlaneH3<R>::Point_3& q,
+                    const typename PlaneH3<R>::Point_3& r)
+{
+  typename PlaneH3<R>::Point_3 p(0,0,0);
+  new_rep(p,q,r);
+}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -198,37 +201,37 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p ,
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
-                        const typename PlaneH3<R>::Segment_3& s)
+                    const typename PlaneH3<R>::Segment_3& s)
 { new_rep(p, s.source(), s.target() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p ,
-                        const typename PlaneH3<R>::Ray_3&  r)
+                    const typename PlaneH3<R>::Ray_3&  r)
 { new_rep(p, r.start(), r.start() + r.direction().to_vector() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Line_3& l ,
-                        const typename PlaneH3<R>::Point_3& p)
+                    const typename PlaneH3<R>::Point_3& p)
 { new_rep(l.point(0), p, l.point(1) ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Segment_3& s,
-                        const typename PlaneH3<R>::Point_3& p)
+                    const typename PlaneH3<R>::Point_3& p)
 { new_rep(s.source(), p, s.target() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Ray_3&  r,
-                        const typename PlaneH3<R>::Point_3& p)
+                    const typename PlaneH3<R>::Point_3& p)
 { new_rep(r.start(), p, r.start() + r.direction().to_vector() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
-                        const typename PlaneH3<R>::Direction_3& d)
+                    const typename PlaneH3<R>::Direction_3& d)
 {
   Vector_3 ov = d.to_vector();
   new_rep( ov.hx()*p.hw(),
@@ -240,7 +243,7 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
-                        const typename PlaneH3<R>::Vector_3& ov)
+                    const typename PlaneH3<R>::Vector_3& ov)
 {
   new_rep( ov.hx()*p.hw(),
            ov.hy()*p.hw(),
@@ -250,9 +253,20 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
 
 template < class R >
 CGAL_KERNEL_INLINE
+PlaneH3<R>::PlaneH3(Origin,
+                    const typename PlaneH3<R>::Vector_3& ov)
+{
+  new_rep( ov.hx(),
+           ov.hy(),
+           ov.hz(),
+           RT(0) );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
-                        const typename PlaneH3<R>::Direction_3& d1,
-                        const typename PlaneH3<R>::Direction_3& d2)
+                    const typename PlaneH3<R>::Direction_3& d1,
+                    const typename PlaneH3<R>::Direction_3& d2)
 { new_rep( p, p + d1.to_vector(), p + d2.to_vector() ); }
 
 template < class R >
@@ -383,7 +397,7 @@ PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::is_degenerate() const
 {
  const RT RT0(0);
@@ -391,14 +405,14 @@ PlaneH3<R>::is_degenerate() const
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on_positive_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() > RT(0) );
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on_negative_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() < RT(0) );
@@ -406,14 +420,14 @@ PlaneH3<R>::has_on_negative_side( const typename PlaneH3<R>::Point_3& p) const
 
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() == RT(0) );
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on( const typename PlaneH3<R>::Line_3& l) const
 {
  Point_3   p   = l.point();
@@ -425,7 +439,7 @@ PlaneH3<R>::has_on( const typename PlaneH3<R>::Line_3& l) const
 }
 
 template < class R >
-Oriented_side
+typename R::Oriented_side
 PlaneH3<R>::oriented_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return CGAL_NTS sign( a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() );
@@ -433,7 +447,7 @@ PlaneH3<R>::oriented_side( const typename PlaneH3<R>::Point_3& p) const
 
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::operator==(const PlaneH3<R>& l) const
 {
  if (  (a() * l.d() != l.a() * d() )

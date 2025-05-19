@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -38,7 +29,7 @@ class Iso_rectangleH2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
 
-  typedef cpp11::array<Point_2, 2>          Rep;
+  typedef std::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -51,7 +42,7 @@ public:
   Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Homogeneous_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -61,7 +52,7 @@ public:
   const Point_2 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
   const Point_2 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
-  Bounded_side bounded_side(const Point_2& p) const;
+  typename R_::Bounded_side bounded_side(const Point_2& p) const;
 };
 
 
@@ -80,7 +71,7 @@ Iso_rectangleH2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Bounded_side
+typename R::Bounded_side
 Iso_rectangleH2<R>::
 bounded_side(const typename Iso_rectangleH2<R>::Point_2& p) const
 {

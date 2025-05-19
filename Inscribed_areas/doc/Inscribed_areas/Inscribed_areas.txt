@@ -1,11 +1,11 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Inscribed_Areas
 \anchor chapInscribedAreas
 
-\authors Michael Hoffmann and Eli Packer 
+\authors Michael Hoffmann and Eli Packer
 
 This chapter describes algorithms which for a given point set compute
 the "best" inscribed object from a specific class.
@@ -36,7 +36,7 @@ return to the departure airfield. To score simply based on the total
 distance flown is not a good measure, since circling in thermals
 allows to increase it easily.
 
-\section Inscribed_areasLargest Largest Empty Rectange
+\section Inscribed_areasLargest Largest Empty Rectangle
 
 We further provide an algorithm for computing the maximal area
 inscribed axis parallel rectangle for a point set.
@@ -48,6 +48,6 @@ that do not contain any point of the point set.
 
 \image html largestEmptyRect.png
 \image latex largestEmptyRect.png
-*/ 
+*/
 } /* namespace CGAL */
 

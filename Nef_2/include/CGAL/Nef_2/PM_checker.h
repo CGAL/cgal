@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -42,7 +33,7 @@ our geometry kernel concept.}*/
 
 /*{\Mgeneralization PM_const_decorator}*/
 
-template <typename PMCDEC, typename GEOM> 
+template <typename PMCDEC, typename GEOM>
 class PM_checker : public PMCDEC
 { typedef PMCDEC Base;
   const GEOM& K;
@@ -81,16 +72,16 @@ typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_fac
   using Base::number_of_connected_components;
   using Base::check_integrity_and_topological_planarity;
 
-/*{\Mtext Iterators, handles, and circulators are inherited from 
+/*{\Mtext Iterators, handles, and circulators are inherited from
 |PM_const_decorator|.}*/
 
 /*{\Mcreation 3}*/
-PM_checker(Plane_map& P, const Geometry& k = Geometry()) : 
+PM_checker(Plane_map& P, const Geometry& k = Geometry()) :
   Base(P), K(k) {}
 /*{\Mcreate constructs a plane map checker working on |P| with
 geometric predicates used from |k|.}*/
 
-PM_checker(const Base& D, const Geometry& k = Geometry()) : 
+PM_checker(const Base& D, const Geometry& k = Geometry()) :
   Base(D), K(k) {}
 
 
@@ -104,11 +95,11 @@ bool is_forward(Halfedge_const_handle e) const
 
 void check_order_preserving_embedding(Vertex_const_handle v) const;
 /*{\Mop checks if the embedding of the targets of the edges in
-the adjacency list |A(v)| is counter-clockwise order-preserving with 
+the adjacency list |A(v)| is counter-clockwise order-preserving with
 respect to the order of the edges in |A(v)|.}*/
 
 void check_order_preserving_embedding() const;
-/*{\Mop checks if the embedding of all vertices of |P| is 
+/*{\Mop checks if the embedding of all vertices of |P| is
 counter-clockwise order-preserving with respect to the adjacency
 list ordering of all vertices.}*/
 
@@ -117,7 +108,7 @@ void check_forward_prefix_condition(Vertex_const_handle v) const;
 
 Halfedge_const_iterator
 check_boundary_is_clockwise_weakly_polygon() const;
-/*{\Mop checks if the outer face cycle of |P| is a clockwise weakly polygon 
+/*{\Mop checks if the outer face cycle of |P| is a clockwise weakly polygon
 and returns a halfedge on the boundary. \precond |P| is a connected graph.
 }*/
 
@@ -133,7 +124,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
 {
   if ( is_isolated(v) ) return;
   std::ostringstream error_status;
-  CGAL::set_pretty_mode ( error_status );
+  CGAL::IO::set_pretty_mode ( error_status );
   Halfedge_const_handle ef = first_out_edge(v) ,e=ef,en,enn;
   error_status << "check_order_preserving_embedding\n";
   error_status << "vertex " << PV(v) << std::endl;
@@ -143,12 +134,12 @@ check_order_preserving_embedding(Vertex_const_handle v) const
     enn = cyclic_adj_succ(en);
     if (en == ef) break;
     error_status << "  -> " << point(target(e))
-                 << " " << point(target(en))  
+                 << " " << point(target(en))
                  << " " << point(target(enn)) << std::endl;
     bool ccw1 = K.strictly_ordered_ccw(direction(e),direction(en),
-				       direction(enn));
+                                       direction(enn));
     bool ccw2 = K.strictly_ordered_ccw(direction(e),direction(en),
-				       direction(ef));
+                                       direction(ef));
     if ( !(ccw1 && ccw2) ) {
       error_status << "ccw order violate!" << std::endl << '\0';
       CGAL_error_msg(error_status.str().c_str());
@@ -209,19 +200,19 @@ PM_checker<PMCDEC,GEOM>::
 check_boundary_is_clockwise_weakly_polygon() const
 {
   Vertex_const_iterator vit, v_min;
-  for (vit = v_min = this->vertices_begin() ; vit != this->vertices_end(); ++vit) 
+  for (vit = v_min = this->vertices_begin() ; vit != this->vertices_end(); ++vit)
     if ( K.compare_xy(point(vit), point(v_min))<0 ) v_min = vit;
   CGAL_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
-  Point p_min = point(v_min);
-  // determine boundary edge incident to v_min: 
+  const Point& p_min = point(v_min);
+  // determine boundary edge incident to v_min:
   Halfedge_const_handle e_boundary_at_v_min = first_out_edge(v_min);
   // all out edges are forward oriented due to minimality
-  Halfedge_around_vertex_const_circulator 
+  Halfedge_around_vertex_const_circulator
     hvit(e_boundary_at_v_min), hend(hvit);
   do {
     --hvit;
-    Point p1 = point(target(e_boundary_at_v_min));
-    Point p2 = point(target(hvit));
+    const Point& p1 = point(target(e_boundary_at_v_min));
+    const Point& p2 = point(target(hvit));
     if ( K.orientation(p_min,p1,p2) > 0 ) { // left_turn
       e_boundary_at_v_min = hvit;
       break;
@@ -229,7 +220,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   } while (hvit != hend);
   // now e_boundary_at_v_min is highest starting edge in bundle!!
 
-  int winding_around_globally=0;
+  CGAL_assertion_code(int winding_around_globally=0);
   Halfedge_around_face_const_circulator
     hfit(e_boundary_at_v_min),hstart(hfit);
   Halfedge_const_handle e_prev = next(e_boundary_at_v_min);
@@ -238,7 +229,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   Direction d_prev = direction(e_prev);
   CGAL_For_all_backwards(hstart,hfit) {
     Direction d_curr = direction(hfit);
-    if ( d_curr < d_prev ) ++winding_around_globally;
+    CGAL_assertion_code(if ( d_curr < d_prev ) ++winding_around_globally);
     d_prev = d_curr;
   }
   CGAL_assertion(winding_around_globally == 1);
@@ -260,7 +251,7 @@ check_is_triangulation() const
   CGAL::Unique_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
   Halfedge_around_face_const_circulator hit(eb), hend(hit);
   std::ostringstream error_status;
-  CGAL::set_pretty_mode ( error_status );
+  CGAL::IO::set_pretty_mode ( error_status );
   error_status << "check_is_triangulation\n";
   error_status << "on boundary:\n";
   CGAL_For_all(hit,hend) {
@@ -270,11 +261,11 @@ check_is_triangulation() const
   Halfedge_const_iterator eit;
   for( eit = this->halfedges_begin(); eit != this->halfedges_end(); ++eit) {
     if (on_boundary[eit]) continue;
-    hit = hend = eit; 
-    int edges_in_face_cycle=0;
+    hit = hend = eit;
+    CGAL_assertion_code(int edges_in_face_cycle=0);
     CGAL_For_all(hit,hend) {
       error_status << PE(hit);
-      ++edges_in_face_cycle;
+      CGAL_assertion_code(++edges_in_face_cycle);
     }
     CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str().c_str());
     CGAL_assertion_msg(

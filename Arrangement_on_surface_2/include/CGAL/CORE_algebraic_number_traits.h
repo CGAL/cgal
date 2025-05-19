@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
@@ -115,7 +106,7 @@ public:
       ix1 = scaled_x1.BigIntValue();
       ix2 = scaled_x2.BigIntValue();
 
-      if (CORE::abs (ix2 - ix1) > one)
+      if (CGAL::abs (ix2 - ix1) > one)
         break;
 
       // Scale the values by a factor of 2.
@@ -142,13 +133,13 @@ public:
     x.doubleInterval (x_lo, x_hi);
     return (std::make_pair (x_lo, x_hi));
   }
-  
+
   /*!
    * Convert a sequence of rational coefficients to an equivalent sequence
    * of integer coefficients. If the input coefficients are q(1), ..., q(k),
    * where q(i) = n(i)/d(i) then the output coefficients will be of the
    * form:
-   *               n(i) * lcm {d(1), ... , d(k)} 
+   *               n(i) * lcm {d(1), ... , d(k)}
    *       a(i) = -------------------------------
    *               d(i) * gcd {n(1), ... , n(k)}
    *
@@ -188,9 +179,9 @@ public:
         temp_gcd = numer_gcd;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
 
-        numer_gcd = CORE::gcd (temp_gcd, numer);
+        numer_gcd = CGAL::gcd (temp_gcd, numer);
       }
 
       ++q_iter;
@@ -211,7 +202,7 @@ public:
   /*!
    * Compute the square root of an algebraic number.
    * \param x The number.
-   * \return The sqaure root of x.
+   * \return The square root of x.
    * \pre x is non-negative.
    */
   Algebraic sqrt (const Algebraic& x) const
@@ -255,8 +246,8 @@ public:
 
     if (sign_disc == ZERO)
     {
-      // We have one real root with mutliplicity 2.
-      *oi = -Algebraic (b) / Algebraic (2*a);
+      // We have one real root with multiplicity 2.
+      *oi = -Algebraic (b) / Algebraic (NT(2*a));
       ++oi;
     }
     else if (sign_disc == POSITIVE)
@@ -264,7 +255,7 @@ public:
       // We have two distinct real roots. We return them in ascending order.
       const Algebraic      sqrt_disc = CGAL::sqrt (Algebraic (disc));
       const Algebraic      alg_b = b;
-      const Algebraic      alg_2a = 2*a;
+      const Algebraic      alg_2a = NT(2*a);
 
       if (sign_a == POSITIVE)
       {
@@ -292,7 +283,7 @@ public:
    * \return The polynomial.
    */
   Polynomial construct_polynomial (const Integer *coeffs,
-				   unsigned int degree) const
+                                   unsigned int degree) const
   {
     Polynomial   poly = Polynomial (degree, const_cast<Integer*> (coeffs));
     poly.contract();
@@ -307,12 +298,12 @@ public:
    * \param degree The degree of the input polynomial.
    * \param poly Output: The resulting polynomial with integer coefficients.
    * \param poly_denom Output: The denominator for the polynomial.
-   * \return Whether this polynomial is non-zero (false if the polynomial is 
+   * \return Whether this polynomial is non-zero (false if the polynomial is
    *         zero).
    */
   bool construct_polynomial (const Rational *coeffs,
-			     unsigned int degree,
-			     Polynomial& poly, Integer& poly_denom) const
+                             unsigned int degree,
+                             Polynomial& poly, Integer& poly_denom) const
   {
     // Compute the true degree for the polynomial.
     while (CGAL::sign (coeffs[degree]) == ZERO)
@@ -320,7 +311,7 @@ public:
       if (degree == 0)
       {
         poly_denom = 1;
-	return (false);
+        return (false);
       }
       degree--;
     }
@@ -343,7 +334,7 @@ public:
         temp_lcm = denom_lcm;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
       }
 
       index--;
@@ -394,7 +385,7 @@ public:
                                          const_cast<Rational*> (p_coeffs));
     Rat_polynomial   Q = Rat_polynomial (q_degree,
                                          const_cast<Rational*> (q_coeffs));
-    
+
     P.contract();
     Q.contract();
 
@@ -412,13 +403,13 @@ public:
 
       coeff = 1;
       q_poly =  construct_polynomial (&coeff, 0);
-      
+
       return (true);
     }
 
     // Compute the GCD of the two polynomials and normalize them.
     Rat_polynomial   g = CORE::gcd (P, Q);
-    
+
     if (g.getTrueDegree() > 0)
     {
       P = P.pseudoRemainder (g);
@@ -431,15 +422,15 @@ public:
     Integer        p_scale, q_scale;
 
     construct_polynomial (*(P.getCoeffs()), p_deg,
-			  p_poly, q_scale);
+                          p_poly, q_scale);
 
     construct_polynomial (*(Q.getCoeffs()), q_deg,
-			  q_poly, p_scale);
+                          q_poly, p_scale);
 
     // Scale the result polynomials.
     p_poly.mulScalar (p_scale);
     q_poly.mulScalar (q_scale);
-   
+
     return (true);
   }
 
@@ -471,7 +462,7 @@ public:
    */
   template <class NT>
   NT evaluate_at (const Polynomial& poly,
-		  NT& x) const
+                  NT& x) const
   {
     return (poly.eval (x));
   }
@@ -498,7 +489,7 @@ public:
     Polynomial   temp = poly;
     return (temp.mulScalar (a));
   }
-                     
+
   /*!
    * Perform "long division" of two polynomials: Given A(x) and B(x) compute
    * two polynomials Q(x) and R(x) such that: A(x) = Q(x)*B(x) + R(x) and
@@ -526,7 +517,7 @@ public:
    */
   template <class OutputIterator>
   OutputIterator compute_polynomial_roots (const Polynomial& poly,
-					   OutputIterator oi) const
+                                           OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
     int            degree = poly.getTrueDegree();
@@ -537,20 +528,20 @@ public:
     // Check if we really have a simple quadratic equation.
     if (degree <= 2)
     {
-      return (solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0), 
-					poly.getCoeff(1),
-					poly.getCoeff(0),
-					oi));
+      return (solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0),
+                                        poly.getCoeff(1),
+                                        poly.getCoeff(0),
+                                        oi));
     }
 
     // Compute the real-valued roots of the polynomial.
     CORE::Sturm<Integer>       sturm (poly);
     const unsigned int         n_roots = sturm.numberOfRoots();
     unsigned int               i;
-    
+
     for (i = 1; i <= n_roots; i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, i);
       ++oi;
     }
@@ -571,7 +562,7 @@ public:
   template <class OutputIterator>
   OutputIterator compute_polynomial_roots (const Polynomial& poly,
                                            double x_min, double x_max,
-					   OutputIterator oi) const
+                                           OutputIterator oi) const
   {
     // Get the real degree of the polynomial.
     int            degree = poly.getTrueDegree();
@@ -586,7 +577,7 @@ public:
       Algebraic     alg_min (x_min), alg_max (x_max);
       Algebraic     buffer[2];
       Algebraic    *end_buffer =
-        solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0), 
+        solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0),
                                   poly.getCoeff(1),
                                   poly.getCoeff(0),
                                   buffer);
@@ -612,7 +603,7 @@ public:
 
     for (i = 0; i < root_intervals.size(); i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, root_intervals[i]);
       ++oi;
     }

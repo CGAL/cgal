@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Authors: Weisheng Si, Quincy Tse, Frédérik Paradis
@@ -54,7 +45,7 @@ namespace CGAL {
                   or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
  \tparam Graph_   The graph type to store the constructed cone based spanner.
-                  It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A>
+                  It must be <A HREF="https://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A>
                   with `Traits_::Point_2` as `VertexProperties`.
  */
 template <typename Traits_, typename Graph_>
@@ -97,7 +88,7 @@ public:
 
      \param k     Number of cones to divide space into
      \param initial_direction  A direction denoting one of the rays dividing the
-                   cones. This allows arbitary rotations of the rays that divide
+                   cones. This allows arbitrary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
      \param cones_selected  Indicates whether even, odd or all cones are
                    selected to construct graph.
@@ -194,7 +185,7 @@ protected:
 
         // Rotational transformation of cw 90 degree
         CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(Transformation, cw90, 0, 1, -1,  0);
-        
+
         // Ordering
         // here D1 is the reverse of D1 in the book, we find this is easier to implement
         const Less_by_direction  orderD1 (g, ccwBound);
@@ -202,13 +193,13 @@ protected:
         const Less_by_direction  orderMid(g, cw90(bisector_direction));
 
         typename Graph_::vertex_iterator vit, ve;
-        boost::tie(vit, ve) = boost::vertices(g);
+        std::tie(vit, ve) = boost::vertices(g);
 
         // Step 1: Sort S according to order induced by D1
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
         std::sort(S.begin (), S.end (), orderD1);
 
-        // Step 2: Initialise an empty set to store vertices sorted by orderD2
+        // Step 2: initialize an empty set to store vertices sorted by orderD2
         typedef CGAL::ThetaDetail::Plane_scan_tree<typename Graph_::vertex_descriptor,
                 typename Graph_::vertex_descriptor,
                 Less_by_direction,
@@ -223,11 +214,11 @@ protected:
                 it = S.begin(); it != S.end(); ++it) {
             pst.add(*it, *it);
             const typename Graph_::vertex_descriptor *const ri = pst.minAbove(*it);
-            if ( ri != NULL ) {
+            if ( ri != nullptr ) {
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists
-                boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
+                std::tie(existing_e, existing)=boost::edge(*it, *ri, g);
                 if (!existing)
                     boost::add_edge(*it, *ri, g);
             }

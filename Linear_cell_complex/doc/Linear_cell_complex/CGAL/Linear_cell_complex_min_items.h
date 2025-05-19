@@ -6,9 +6,7 @@ namespace CGAL {
 
 The class `Linear_cell_complex_min_items` defines `void` as the information associated with darts, and the attributes used. In this class, 0-attributes are enabled and associated with `Cell_attribute_with_point`.
 
-\cgalModels `LinearCellComplexItems`
-
-\deprecated Before CGAL 4.9, this class was templated by the dimension of the darts, and users must define the type of darts used (see also deprecated class `Combinatorial_map_min_items`). `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior (only possible with `Combinatorial_map` and not for `Generalized_map`).
+\cgalModels{LinearCellComplexItems}
 
 \cgalHeading{Example}
 
@@ -22,7 +20,7 @@ struct Linear_cell_complex_min_items
   struct Dart_wrapper
   {
     typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
-    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    typedef std::tuple<Vertex_attrib> Attributes;
   };
 };
 
@@ -33,8 +31,6 @@ struct Linear_cell_complex_min_items
 
 */
 struct Linear_cell_complex_min_items {
-
-/// @}
 
 }; /* end Linear_cell_complex_min_items */
 

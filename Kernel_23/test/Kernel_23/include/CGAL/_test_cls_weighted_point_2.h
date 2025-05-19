@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -60,7 +54,7 @@ bool _test_cls_weighted_point_2(const R& )
   CGAL::Weighted_point_2<R> wp7(p0, int_w);
   use(wp0); use(wp4); use(wp5);
 
-  // assignement
+  // assignment
   wp1 = wp6;
 
   std::cout << ".";
@@ -71,13 +65,13 @@ bool _test_cls_weighted_point_2(const R& )
 
   p1 = wp2.point();
   assert(p1 == p0);
-  
+
   p1 =  wp3.point();
 
   FT w = wp3.weight();
   assert(w == iw);
   w = wp7.weight();
-  
+
   // no need to test the other operations as they use Point_2 operations (which
   // are tested in _test_cls_point_2.h)
 

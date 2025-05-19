@@ -1,19 +1,10 @@
 // Copyright (c) 2013  GeometryFactory (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Xiang Gao
 //
@@ -23,13 +14,13 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <map> 
+#include <map>
 #include <vector>
 #include <utility>
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
+#include <CGAL/Iterator_range.h>
 
 namespace CGAL {
 
@@ -140,7 +131,7 @@ public:
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
-// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
+// splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 // The vertices are duplicated, and new incident edges created.
 // `OrigGraph` must be undirected
 template <typename Graph,
@@ -156,16 +147,16 @@ void duplicate_terminal_vertices(Graph& graph,
   typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
 
   vertex_iterator b,e;
-  boost::tie(b,e) = vertices(graph);
+  std::tie(b,e) = vertices(graph);
   std::vector<vertex_descriptor> V(b,e);
-  BOOST_FOREACH(vertex_descriptor v, V)
+  for(vertex_descriptor v : V)
   {
     typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
     typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
-    if ((deg != 0 && is_terminal(orig_v, orig)) || deg > 2)
+    if (deg != 2 || is_terminal(orig_v, orig))
       {
         out_edge_iterator b, e;
-        boost::tie(b, e) = out_edges(v, graph);
+        std::tie(b, e) = out_edges(v, graph);
         std::vector<edge_descriptor> out_edges_of_v(b, e);
         for (unsigned int i = 1; i < out_edges_of_v.size(); ++i)
           {
@@ -179,31 +170,41 @@ void duplicate_terminal_vertices(Graph& graph,
             const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
             graph[pair.first] = orig_e;
           }
-        CGAL_assertion(degree(v, graph) == 1);
       }
   }
 
   // check all vertices are of degree 1 or 2 and that the source
   // and target of each edge are different vertices with different ids
   CGAL_assertion_code(
-                      BOOST_FOREACH(vertex_descriptor v, vertices(graph)){
+                      for(vertex_descriptor v : make_range(vertices(graph))){
                         typename boost::graph_traits<Graph>::degree_size_type
                           n = degree(v, graph);
                         CGAL_assertion( n == 0 || n == 1 || n == 2);
                       }
-                      BOOST_FOREACH(edge_descriptor e, edges(graph)){
+                      for(edge_descriptor e : make_range(edges(graph))){
                         vertex_descriptor v = target(e, graph);
                         vertex_descriptor w = source(e, graph);
                         CGAL_assertion(v != w);
                       }
                       ) // end of CGAL_assertion_code
 } // end of duplicate_terminal_vertices
-    
+
 } // namespace internal
 
-  
+#ifndef DOXYGEN_RUNNING
+template <typename Graph,
+          typename Visitor,
+          typename IsTerminal,
+          typename LessForVertexDescriptors>
+void
+split_graph_into_polylines(const Graph& graph,
+                           Visitor& polyline_visitor,
+                           IsTerminal is_terminal,
+                           LessForVertexDescriptors less);
+#endif
+
 /*!
-\ingroup PkgBGLRef
+\ingroup PkgBGLPartition
 splits into polylines the graph `g` at vertices of degree greater than 2
 and at vertices for which `is_terminal(v,graph)==true`.
 The polylines are reported using a visitor.
@@ -212,7 +213,9 @@ The polylines are reported using a visitor.
         - <code>void start_new_polyline()</code>
           called when starting the description of a polyline.
         - <code>void add_node(typename boost::graph_traits<Graph>::%vertex_descriptor v)</code>
-          called for each vertex `v` of the polyline currently described.
+          called for each vertex `v` of the polyline currently described. If the polyline is closed
+          this function will be called twice for the first vertex of the cycle picked (once after
+          calling `start_new_polyline()` and once before the call to `end_polyline()`.
         - <code>void end_polyline()</code>
           called when the description of a polyline is finished.
 \tparam IsTerminal A functor providing `bool operator()(boost::graph_traits<Graph>::%vertex_descriptor v, const Graph& g) const`
@@ -249,9 +252,9 @@ split_graph_into_polylines(const Graph& graph,
   using boost::graph_traits;
   typedef typename graph_traits<Graph>::vertex_descriptor Graph_vertex_descriptor;
   typedef typename graph_traits<Graph>::edge_descriptor Graph_edge_descriptor;
-  
+
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
-                                 boost::vecS, 
+                                 boost::vecS,
                                  boost::undirectedS,
                                  Graph_vertex_descriptor,
                                  Graph_edge_descriptor> G_copy;
@@ -259,21 +262,21 @@ split_graph_into_polylines(const Graph& graph,
   typedef typename graph_traits<G_copy>::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits<G_copy>::edge_descriptor edge_descriptor;
   typedef typename graph_traits<G_copy>::out_edge_iterator out_edge_iterator;
-  
+
   // we make a copy of the input graph
   G_copy g_copy;
   {
     typedef std::map<typename graph_traits<Graph>::vertex_descriptor,
                      typename graph_traits<G_copy>::vertex_descriptor> V2vmap;
     V2vmap v2vmap;
-    
-    BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
+
+    for(Graph_vertex_descriptor v : make_range(vertices(graph))){
       vertex_descriptor vc = add_vertex(g_copy);
       g_copy[vc] = v;
-      v2vmap[v] = vc; 
+      v2vmap[v] = vc;
     }
 
-    BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
+    for(Graph_edge_descriptor e : make_range(edges(graph))){
       Graph_vertex_descriptor vs = source(e,graph);
       Graph_vertex_descriptor vt = target(e,graph);
       CGAL_warning_msg(vs != vt, "ignore self loops");
@@ -294,7 +297,7 @@ split_graph_into_polylines(const Graph& graph,
   G_copy_less g_copy_less(g_copy, less);
   std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
-  BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
+  for(vertex_descriptor v : make_range(vertices(g_copy))){
     typename graph_traits<G_copy>::degree_size_type n = degree(v, g_copy);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){

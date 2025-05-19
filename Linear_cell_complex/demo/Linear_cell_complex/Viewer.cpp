@@ -1,54 +1,81 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 //
 
 #include "Viewer.h"
 #include <CGAL/Qt/vec.h>
 
-Viewer::Viewer(QWidget* parent) :
-    Base(parent, NULL, ""),
+Viewer::Viewer(QWidget *parent)
+  : Base(parent, m_graphic_buffer, ""),
     m_previous_scene_empty(true)
-{}
+{
+  m_gs_options.face_color=[](const LCC & alcc,
+                             Dart_const_descriptor dh)->CGAL::IO::Color
+  {
+    if(alcc.template is_free<3>(dh))
+    { return alcc.template info<3>(dh).color(); }
 
-void Viewer::setScene(Scene* scene_, bool doredraw)
+    if(!alcc.template info<3>(dh).is_visible() ||
+       !alcc.template info<3>(dh).is_filled())
+    { return alcc.template info<3>(alcc.template beta<3>(dh)).color(); }
+
+    if(!alcc.template info<3>(alcc.template beta<3>(dh)).is_visible() ||
+       !alcc.template info<3>(alcc.template beta<3>(dh)).is_filled())
+    { return alcc.template info<3>(dh).color(); }
+
+    const CGAL::IO::Color& c1=alcc.template info<3>(dh).color();
+    const CGAL::IO::Color& c2=alcc.template info<3>(alcc.template beta<3>(dh)).color();
+    return CGAL::IO::Color((c1[0]+c2[0])/2, (c1[1]+c2[1])/2, (c1[2]+c2[2])/2);
+  };
+
+  m_gs_options.colored_face=[](const LCC &, Dart_const_descriptor)->bool
+  { return true; };
+
+  m_gs_options.draw_volume=[](const LCC & alcc, Dart_const_descriptor dh)->bool
+  { return alcc.template info<3>(dh).is_visible(); };
+
+  m_gs_options.volume_wireframe=[](const LCC& alcc, Dart_const_descriptor dh)->bool
+  { return !(alcc.template info<3>(dh).is_filled()); };
+}
+
+void Viewer::setScene(Scene *scene_, bool doredraw)
 {
   scene = scene_;
-  set_lcc(scene->lcc, doredraw);
+
+  if (scene->lcc!=nullptr)
+  { CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options); }
+
+  if (doredraw)
+  { Base::redraw(); }
 }
 
 void Viewer::sceneChanged()
 {
-  Base::compute_elements();
-  this->camera()->
-      setSceneBoundingBox(CGAL::qglviewer::Vec(m_bounding_box.xmin(),
-                                               m_bounding_box.ymin(),
-                                               m_bounding_box.zmin()),
-                          CGAL::qglviewer::Vec(m_bounding_box.xmax(),
-                                               m_bounding_box.ymax(),
-                                               m_bounding_box.zmax()));
+  m_graphic_buffer.clear();
+  CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
+
+  this->camera()->setSceneBoundingBox(
+      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmin(),
+                           m_graphic_buffer.bounding_box().ymin(),
+                           m_graphic_buffer.bounding_box().zmin()),
+      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmax(),
+                           m_graphic_buffer.bounding_box().ymax(),
+                           m_graphic_buffer.bounding_box().zmax()));
   Base::redraw();
   if (m_previous_scene_empty)
   { this->showEntireScene(); }
 
-  m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
+  m_previous_scene_empty=scene->lcc->is_empty(); // for the next call to sceneChanged
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -59,4 +86,3 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 
 QString Viewer::helpString() const
 { return Base::helpString("LCC Demo"); }
-

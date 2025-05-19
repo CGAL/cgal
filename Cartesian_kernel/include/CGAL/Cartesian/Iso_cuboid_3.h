@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -35,13 +26,15 @@ namespace CGAL {
 template < class R_ >
 class Iso_cuboidC3
 {
+  typedef typename R_::Boolean              Boolean;
+  typedef typename R_::Bounded_side         Bounded_side;
   typedef typename R_::FT                   FT;
   typedef typename R_::Iso_cuboid_3         Iso_cuboid_3;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
   typedef typename R_::Construct_point_3    Construct_point_3;
 
-  typedef cpp11::array<Point_3, 2>          Rep;
+  typedef std::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -52,7 +45,7 @@ public:
   Iso_cuboidC3() {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Cartesian_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -71,14 +64,14 @@ public:
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
     base = Rep(CGAL::make_array(construct_point_3(minx, miny, minz),
-	                         construct_point_3(maxx, maxy, maxz)));
+                                 construct_point_3(maxx, maxy, maxz)));
   }
 
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close)
-    : base(CGAL::make_array(Construct_point_3()(left.x(),  bottom.y(), far_.z()),
-                             Construct_point_3()(right.x(), top.y(),    close.z())))
+    : base{Construct_point_3()(left.x(),  bottom.y(), far_.z()),
+           Construct_point_3()(right.x(), top.y(),    close.z())}
   {
     CGAL_kernel_precondition(!less_x(right, left));
     CGAL_kernel_precondition(!less_y(top, bottom));
@@ -88,7 +81,7 @@ public:
   Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,
                const FT& max_x, const FT& max_y, const FT& max_z)
     : base(CGAL::make_array(Construct_point_3()(min_x, min_y, min_z),
-	                     Construct_point_3()(max_x, max_y, max_z)))
+                             Construct_point_3()(max_x, max_y, max_z)))
   {
     CGAL_kernel_precondition(min_x <= max_x);
     CGAL_kernel_precondition(min_y <= max_y);
@@ -96,19 +89,19 @@ public:
   }
 
   Iso_cuboidC3(const FT& min_hx, const FT& min_hy, const FT& min_hz,
-               const FT& max_hx, const FT& max_hy, const FT& max_hz, 
+               const FT& max_hx, const FT& max_hy, const FT& max_hz,
                const FT& hw)
   {
     if (hw == FT(1))
        base = Rep(CGAL::make_array(Construct_point_3()(min_hx, min_hy, min_hz),
-		                    Construct_point_3()(max_hx, max_hy, max_hz)));
+                                    Construct_point_3()(max_hx, max_hy, max_hz)));
     else
        base = Rep(CGAL::make_array(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
                                     Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
 
-  typename R::Boolean   operator==(const Iso_cuboidC3& s) const;
-  typename R::Boolean   operator!=(const Iso_cuboidC3& s) const;
+  Boolean operator==(const Iso_cuboidC3& s) const;
+  Boolean operator!=(const Iso_cuboidC3& s) const;
 
   const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
@@ -127,11 +120,11 @@ public:
   }
 
   Bounded_side bounded_side(const Point_3& p) const;
-  typename R::Boolean           has_on(const Point_3& p) const;
-  typename R::Boolean           has_on_boundary(const Point_3& p) const;
-  typename R::Boolean           has_on_bounded_side(const Point_3& p) const;
-  typename R::Boolean           has_on_unbounded_side(const Point_3& p) const;
-  typename R::Boolean           is_degenerate() const;
+  Boolean has_on(const Point_3& p) const;
+  Boolean has_on_boundary(const Point_3& p) const;
+  Boolean has_on_bounded_side(const Point_3& p) const;
+  Boolean has_on_unbounded_side(const Point_3& p) const;
+  Boolean is_degenerate() const;
   const FT &   xmin() const;
   const FT &   ymin() const;
   const FT &   zmin() const;
@@ -220,7 +213,7 @@ Iso_cuboidC3<R>::min_coord(int i) const
      return xmin();
   else if (i == 1)
      return ymin();
-  else 
+  else
      return zmin();
 }
 
@@ -234,7 +227,7 @@ Iso_cuboidC3<R>::max_coord(int i) const
      return xmax();
   else if (i == 1)
      return ymax();
-  else 
+  else
      return zmax();
 }
 
@@ -276,7 +269,7 @@ Iso_cuboidC3<R>::volume() const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename R::Bounded_side
 Iso_cuboidC3<R>::
 bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {

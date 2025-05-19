@@ -1,45 +1,32 @@
 // Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is a part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-/*!
-  \file Mean_value_2.h
-*/
-
-#ifndef CGAL_MEAN_VALUE_2_H
-#define CGAL_MEAN_VALUE_2_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
 #include <CGAL/disable_warnings.h>
 
-// STL headers. 
+// STL headers.
 #include <vector>
 
 // CGAL headers.
-#include <CGAL/utils.h> 
+#include <CGAL/utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 // Barycentric coordinates headers.
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
@@ -50,18 +37,20 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
 
 // Finds a square root of the provided value of the type `Kernel::FT` by first converting it to the double type and then taking the square root using the `CGAL::sqrt()` function.
-template<class Traits> 
+template<class Traits>
     class Default_sqrt
 {
     typedef typename Traits::FT FT;
 
 public:
     FT operator()(const FT &value) const
-    { 
+    {
         return FT(CGAL::sqrt(CGAL::to_double(value)));
     }
 };
@@ -75,9 +64,9 @@ template<class Traits, bool do_not_use_default = Has_nested_type_Sqrt<Traits>::v
 public:
     typedef Default_sqrt<Traits> Sqrt;
 
-    static Sqrt sqrt_object(const Traits&) 
-    { 
-        return Sqrt(); 
+    static Sqrt sqrt_object(const Traits&)
+    {
+        return Sqrt();
     }
 };
 
@@ -89,8 +78,8 @@ public:
     typedef typename Traits::Sqrt Sqrt;
 
     static Sqrt sqrt_object(const Traits &traits)
-    { 
-        return traits.sqrt_object(); 
+    {
+        return traits.sqrt_object();
     }
 };
 
@@ -101,20 +90,25 @@ public:
 // [2] Reference: "M. S. Floater, Wachspress and mean value coordinates, to appear in the Proceedings of the 14th International Conference on Approximation Theory, G. Fasshauer and L. L. Schumaker (eds.)."
 
 /*!
- * \ingroup PkgBarycentricCoordinates2Ref
+ * \ingroup PkgBarycentricCoordinates2RefDeprecated
  * The class `Mean_value_2` implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06, \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
- * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necesserily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
+ * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necessarily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
+
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2`
+\cgalModels{BarycentricCoordinates_2}
 
 */
- 
-template<class Traits> 
-    class Mean_value_2
+template<class Traits>
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Mean_value_2
 {
 
 public:
@@ -132,8 +126,8 @@ public:
 
     // \name Creation
 
-    // Creates the class `Mean_value_2` that implements the behaviour of mean value coordinates for any query point that does not belong to the polygon's boundary.
-    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    // Creates the class `Mean_value_2` that implements the behavior of mean value coordinates for any query point that does not belong to the polygon's boundary.
+    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Mean_value_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
         barycentric_traits(b_traits),
@@ -160,7 +154,7 @@ public:
 
     // This function computes mean value weights (unnormalized coordinates) for a chosen query point.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
+        inline std::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
     {
         return weights_2(query_point, output);
     }
@@ -169,8 +163,8 @@ public:
 
     // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+        inline std::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -185,14 +179,14 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+        inline std::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -207,8 +201,8 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // Information Functions
@@ -249,7 +243,7 @@ private:
 
     // Compute mean value weights without normalization.
     template<class OutputIterator>
-        boost::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -274,7 +268,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -296,9 +290,10 @@ private:
 
         CGAL_precondition( r[n-1] != FT(0) );
         *output = (t[n-2] + t[n-1]) / r[n-1];
+        ++output;
 
         // Return weights.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON BOUNDED SIDE.
@@ -306,7 +301,7 @@ private:
     // Compute mean value coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -336,8 +331,8 @@ private:
         // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
         // Vector s_i from [1] corresponds to that one with the name d_i in [2].
         for(int j = 0; j < n-1; ++j)
-            P[j] = (CGAL::max)(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), FT(0));
-        P[n-1] = (CGAL::max)(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), FT(0));
+            P[j] = CGAL::max<FT>(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), 0);
+        P[n-1] = CGAL::max<FT>(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), 0);
 
         // Compute mean value weights using the formula (16) from [2].
         // Since the formula (16) always gives positive values, we have to add a proper sign to all the weight functions.
@@ -370,15 +365,16 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_mv_denominator;
+        ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // Compute mean value coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -403,7 +399,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -438,9 +434,10 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_mv_denominator;
+        ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON UNBOUNDED SIDE.
@@ -448,7 +445,7 @@ private:
     // Compute mean value coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_precise_2(query_point, output);
@@ -457,7 +454,7 @@ private:
     // Compute mean value coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_fast_2(query_point, output);
@@ -495,7 +492,7 @@ private:
         output_stream << "5. Smoothness;" << std::endl;
         output_stream << "6. Similarity invariance;" << std::endl;
         output_stream << "7. Linear independence;" << std::endl;
-        output_stream << "8. Refinability;" << std::endl;
+        output_stream << "8. Refinability." << std::endl;
 
         output_stream << std::endl;
         output_stream << "Mean value coordinates satisfy the non-negativity and boundedness between 0 and 1 properties inside the kernel of an arbitrary star-shaped polygon, too." << std::endl;
@@ -506,10 +503,12 @@ private:
     }
 };
 
+#endif // CGAL_NO_DEPRECATED_CODE
+
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_MEAN_VALUE_2_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_H

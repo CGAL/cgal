@@ -1,28 +1,19 @@
-// Copyright (c) 1999,2016  
+// Copyright (c) 1999,2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra, Olivier Devillers, Mariette Yvinec
- 
+
 
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
@@ -34,8 +25,9 @@ namespace CGAL {
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-bool lexicographically_xy_smaller(const PointH3<R> &p,
-                                  const PointH3<R> &q)
+typename R::Boolean
+lexicographically_xy_smaller(const PointH3<R> &p,
+                             const PointH3<R> &q)
 {
   typedef typename R::RT RT;
   RT pV = p.hx()*q.hw();
@@ -60,7 +52,7 @@ bool lexicographically_xy_smaller(const PointH3<R> &p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_xy(const PointH3<R>& p, const PointH3<R>& q)
 {
   typedef typename R::RT RT;
@@ -91,7 +83,7 @@ compare_xy(const PointH3<R>& p, const PointH3<R>& q)
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 equal_xy(const PointH3<R> &p, const PointH3<R> &q)
 {
   return   (p.hx() * q.hw() == q.hx() * p.hw() )
@@ -100,7 +92,7 @@ equal_xy(const PointH3<R> &p, const PointH3<R> &q)
 
 template < class R >  // ???  ->   ==
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 equal_xyz(const PointH3<R> &p, const PointH3<R> &q)
 {
   return   (p.hx() * q.hw() == q.hx() * p.hw() )
@@ -110,27 +102,27 @@ equal_xyz(const PointH3<R> &p, const PointH3<R> &q)
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_x(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hx() * q.hw() < q.hx() * p.hw() ); }
 
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_y(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hy() * q.hw() < q.hy() * p.hw() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 less_z(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hz() * q.hw() < q.hz() * p.hw() ); }
 
 
 
 template <class RT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, RT>::type
 power_side_of_oriented_power_sphereH3(
              const RT &phx, const RT &phy, const RT &phz, const RT &phw, const Quotient<RT> &pwt,
              const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const Quotient<RT> &qwt,
@@ -190,10 +182,10 @@ power_side_of_oriented_power_sphereH3(
     dthw *= dtwt;
 
     return - sign_of_determinant(dphx, dphy, dphz, dpz, dphw,
-	                         dqhx, dqhy, dqhz, dqz, dqhw,
-	                         drhx, drhy, drhz, drz, drhw,
-	                         dshx, dshy, dshz, dsz, dshw,
-	                         dthx, dthy, dthz, dtz, dthw);
+                                 dqhx, dqhy, dqhz, dqz, dqhw,
+                                 drhx, drhy, drhz, drz, drhw,
+                                 dshx, dshy, dshz, dsz, dshw,
+                                 dthx, dthy, dthz, dtz, dthw);
 }
 
 // The 2 degenerate are not speed critical, and they are quite boring and error

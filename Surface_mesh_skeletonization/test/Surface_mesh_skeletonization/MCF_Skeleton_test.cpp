@@ -35,7 +35,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
   }
 
   std::size_t i = 0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(pMesh))
+  for(Polyhedron::Face_handle fh : faces(pMesh))
     fh->id()=i++;
 
   // the algorithm is only applicable on a mesh
@@ -69,7 +69,7 @@ bool check_value_equal(T a, T b)
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr << "Cannot open data/elephant.off" << std::endl;

@@ -12,9 +12,10 @@ typedef Traits::vertex_descriptor vertex_descriptor;
 typedef Traits::face_descriptor face_descriptor;
 typedef Kernel::Point_3 Point_3;
 
-template<typename Graph> 
+template<typename Graph>
 void concept_check_polyhedron() {
   boost::function_requires< boost::GraphConcept<Polyhedron> >();
+  boost::function_requires< boost::AdjacencyGraphConcept<Polyhedron> >();
   boost::function_requires< boost::VertexListGraphConcept<Polyhedron> >();
   boost::function_requires< boost::EdgeListGraphConcept<Polyhedron> >();
   boost::function_requires< boost::IncidenceGraphConcept<Polyhedron> >();

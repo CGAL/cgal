@@ -1,25 +1,16 @@
-// Copyright (c) 2003,2004  
+// Copyright (c) 2003,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -358,19 +349,16 @@ class Creator_uniform_d {
 
 template < class Op1, class Op2 >
 class Unary_compose_1
-  : public CGAL::cpp98::unary_function< typename Op2::argument_type,
-                                        typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
 public:
-  typedef typename Op2::argument_type   argument_type;
-  typedef typename Op1::result_type     result_type;
 
   Unary_compose_1(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
-  result_type
+  template <typename argument_type>
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x)); }
 };
@@ -382,21 +370,18 @@ compose1_1(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_1
-  : public CGAL::cpp98::unary_function< typename Op2::argument_type,
-                                        typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
   Op3 op3;
 public:
-  typedef typename Op2::argument_type  argument_type;
-  typedef typename Op1::result_type    result_type;
 
   Binary_compose_1(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
 
-  result_type
+  template <typename argument_type>
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x), op3(x)); }
 };
@@ -408,21 +393,16 @@ compose2_1(const Op1& op1, const Op2& op2, const Op3& op3)
 
 template < class Op1, class Op2 >
 class Unary_compose_2
-  : public CGAL::cpp98::binary_function< typename Op2::first_argument_type,
-                                         typename Op2::second_argument_type,
-                                         typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
 public:
-  typedef typename Op2::first_argument_type   first_argument_type;
-  typedef typename Op2::second_argument_type  second_argument_type;
-  typedef typename Op1::result_type           result_type;
 
   Unary_compose_2(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
-  result_type
+  template <typename first_argument_type, typename second_argument_type>
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x, y)); }
@@ -435,23 +415,32 @@ compose1_2(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_2
-  : public CGAL::cpp98::binary_function< typename Op2::argument_type,
-                                         typename Op3::argument_type,
-                                         typename Op1::result_type >
+
 {
 protected:
   Op1 op1;
   Op2 op2;
   Op3 op3;
 public:
-  typedef typename Op2::argument_type  first_argument_type;
-  typedef typename Op3::argument_type  second_argument_type;
-  typedef typename Op1::result_type    result_type;
 
   Binary_compose_2(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
 
-  result_type
+  // Added as workaround for VC2017 with /arch:AVX to fix
+  // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/Polytope_distance_d/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
+  Binary_compose_2(const Binary_compose_2& other)
+    : op1(other.op1), op2(other.op2), op3(other.op3) {}
+
+  Binary_compose_2& operator=(const Binary_compose_2& other)
+  {
+    op1 = other.op1;
+    op2 = other.op2;
+    op3 = other.op3;
+    return *this;
+  }
+
+  template <typename first_argument_type, typename second_argument_type>
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x), op3(y)); }

@@ -6,9 +6,9 @@ namespace CGAL {
 
 The class `Generalized_map` represents a <I>d</I>D generalized map.
 
-Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator.
+Two versions exist: one where darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where darts and non void attributes are stored in an internal `std::vector` like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
 
-\cgalModels `GeneralizedMap`
+\cgalModels{GeneralizedMap}
 
 \tparam d the dimension of the map.
 
@@ -64,7 +64,7 @@ Information associated with darts. Equal to `void` if `Dart_info` is not defined
 typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /*!
-The tuple of cell attributes. Equal to `CGAL::cpp11::tuple<>` if `Attributes` is not defined in the items class.
+The tuple of cell attributes. Equal to `std::tuple<>` if `Attributes` is not defined in the items class.
 */
 typedef Items::Dart_wrapper<Self>::Attributes Attributes;
 

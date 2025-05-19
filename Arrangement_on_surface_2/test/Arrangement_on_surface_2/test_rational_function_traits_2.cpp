@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #if !defined(CGAL_USE_CORE)
 int main()
@@ -19,7 +19,6 @@ int main()
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
 #include <CGAL/Surface_sweep_2_algorithms.h>
-#include <boost/foreach.hpp>
 
 typedef CGAL::CORE_arithmetic_kernel::Integer      Number_type;
 typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
@@ -29,9 +28,15 @@ typedef Traits_2::Point_2                          Point_2;
 
 template <typename Cmp_object>
 struct Cmp {
-  Cmp<Cmp_object>& operator=(const  Cmp<Cmp_object>&);
   const Cmp_object& m_cmp_object;
+
+  Cmp(const Cmp&) = default;
+  Cmp(Cmp&&) = default;
+  Cmp<Cmp_object>& operator=(const Cmp&) = default;
+  Cmp<Cmp_object>& operator=(Cmp&&) = default;
+
   Cmp(const Cmp_object& cmp_object) : m_cmp_object(cmp_object) {}
+
   bool operator()(const Point_2& p1, const Point_2& p2) const
   { return (m_cmp_object(p1, p2) == CGAL::LARGER); }
 };
@@ -66,8 +71,8 @@ int main()
   typedef Traits_2::Equal_2 Equal_2;
   typedef Traits_2::Parameter_space_in_x_2 Parameter_space_in_x_2;
   typedef Traits_2::Parameter_space_in_y_2 Parameter_space_in_y_2;
-  typedef Traits_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-  typedef Traits_2::Compare_x_near_limit_2 Compare_x_near_limit_2;
+  typedef Traits_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+  typedef Traits_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
   typedef Traits_2::Compare_y_near_boundary_2 Compare_y_near_boundary_2;
   typedef Traits_2::Intersect_2 Intersect_2;
   typedef Traits_2::Split_2 Split_2;
@@ -90,8 +95,8 @@ int main()
   CGAL_USE_TYPE(Equal_2);
   CGAL_USE_TYPE(Parameter_space_in_x_2);
   CGAL_USE_TYPE(Parameter_space_in_y_2);
-  CGAL_USE_TYPE(Compare_x_at_limit_2);
-  CGAL_USE_TYPE(Compare_x_near_limit_2);
+  CGAL_USE_TYPE(Compare_x_on_boundary_2);
+  CGAL_USE_TYPE(Compare_x_near_boundary_2);
   CGAL_USE_TYPE(Compare_y_near_boundary_2);
   CGAL_USE_TYPE(Intersect_2);
   CGAL_USE_TYPE(Split_2);
@@ -303,19 +308,19 @@ int main()
       curves.push_back(construct_curve_2(x*x*x));
       curves.push_back(construct_curve_2(x*x*x, x*x-2));
 
-      BOOST_FOREACH(const Curve_2& curve, curves){
+      for(const Curve_2& curve : curves){
         assert(CGAL::degree(curve.numerator()) >= 0);
       }
       CGAL::compute_subcurves(curves.begin(),curves.end(),
                               std::back_inserter(xcurves),false,traits);
-      BOOST_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
+      for(const X_monotone_curve_2& xcurve : xcurves) {
         assert(CGAL::degree(xcurve.numerator()) >= 0);
       }
 
       CGAL::compute_intersection_points(curves.begin(),curves.end(),
                                         std::back_inserter(points), false,
                                         traits);
-      BOOST_FOREACH(const Point_2& point, points) {
+      for(const Point_2& point : points) {
         assert(CGAL::degree(point.numerator()) >= 0);
       }
     }
@@ -333,18 +338,18 @@ int main()
       curves.push_back(construct_curve_2(x*x*x, x*x-2));
 
       traits.cleanup_cache();
-      BOOST_FOREACH(const Curve_2& curve, curves){
+      for(const Curve_2& curve : curves){
         assert(CGAL::degree(curve.numerator()) >= 0);
       }
       CGAL::compute_subcurves(curves.begin(), curves.end(),
                               std::back_inserter(xcurves), false, traits);
-      BOOST_FOREACH(const X_monotone_curve_2& xcurve, xcurves) {
+      for(const X_monotone_curve_2& xcurve : xcurves) {
         assert(CGAL::degree(xcurve.numerator()) >= 0);
       }
       CGAL::compute_intersection_points(curves.begin(), curves.end(),
                                         std::back_inserter(points), false,
                                         traits);
-      BOOST_FOREACH(const Point_2& point, points) {
+      for(const Point_2& point : points) {
         assert(CGAL::degree(point.numerator()) >= 0);
       }
 

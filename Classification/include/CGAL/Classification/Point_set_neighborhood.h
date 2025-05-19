@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -65,59 +56,60 @@ namespace Classification {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
-  
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
-  
+  using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
+
   class My_point_property_map{
     const PointRange* input;
     PointMap point_map;
-    
+
   public:
-    typedef Point value_type;
-    typedef const value_type& reference;
-    typedef boost::uint32_t key_type;
-    typedef boost::lvalue_property_map_tag category;
+    using value_type = typename boost::property_traits<PointMap>::value_type;
+    using reference = typename boost::property_traits<PointMap>::reference;
+    using key_type = std::uint32_t;
+    using category = boost::readable_property_map_tag;
+
     My_point_property_map () { }
     My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
-    reference operator[] (key_type k) const { return get(point_map, *(input->begin()+std::size_t(k))); }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i)
-    { return ppmap[i]; }
+
+    // we did not put `reference` here on purpose as the recommended default
+    // is `Identity_property_map<Point_3>` and not `Identity_property_map<const Point_3>`
+    friend decltype(auto) get (const My_point_property_map& ppmap, key_type i)
+    { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }
   };
 
-  typedef Search_traits_3<GeomTraits> SearchTraits_3;
-  typedef Search_traits_adapter <boost::uint32_t, My_point_property_map, SearchTraits_3> Search_traits;
-  typedef Sliding_midpoint<Search_traits> Splitter;
-  typedef Distance_adapter<boost::uint32_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
-  typedef Kd_tree<Search_traits, Splitter, Tag_true> Tree;
-  typedef Fuzzy_sphere<Search_traits> Sphere;
-  typedef Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree> Knn;
+  using Search_traits_base = Search_traits_3<GeomTraits>;
+  using Search_traits =  Search_traits_adapter<std::uint32_t, My_point_property_map, Search_traits_base>;
+  using Splitter = Sliding_midpoint<Search_traits>;
+  using Distance = Distance_adapter<std::uint32_t, My_point_property_map, Euclidean_distance<Search_traits_base> >;
+  using Tree = Kd_tree<Search_traits, Splitter, Tag_true, Tag_true>;
+  using Sphere = Fuzzy_sphere<Search_traits>;
+  using Knn = Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree>;
 
-
-  Tree* m_tree;
+  std::shared_ptr<Tree> m_tree;
   Distance m_distance;
-  
+
 public:
 
   /*!
     Functor that computes the neighborhood of an input point with a
     fixed number of neighbors.
 
-    \cgalModels CGAL::Classification::NeighborQuery
+    \cgalModels{CGAL::Classification::NeighborQuery}
 
     \sa Point_set_neighborhood
   */
   class K_neighbor_query
   {
   public:
-    typedef typename Point_set_neighborhood::Point value_type; ///<
+    using value_type = typename Point_set_neighborhood::Point; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     unsigned int k;
   public:
     /*!
-      \brief Constructs a K neighbor query object.
+      \brief constructs a K neighbor query object.
       \param neighborhood point set neighborhood object.
       \param k number of neighbors per query.
     */
@@ -139,20 +131,20 @@ public:
     as the points lying in a sphere of fixed radius centered at the
     input point.
 
-    \cgalModels CGAL::Classification::NeighborQuery
+    \cgalModels{CGAL::Classification::NeighborQuery}
 
     \sa Point_set_neighborhood
   */
   class Sphere_neighbor_query
   {
   public:
-    typedef typename Point_set_neighborhood::Point value_type; ///<
+    using value_type = typename Point_set_neighborhood::Point; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     float radius;
   public:
     /*!
-      \brief Constructs a range neighbor query object.
+      \brief constructs a range neighbor query object.
       \param neighborhood point set neighborhood object.
       \param radius radius of the neighbor query sphere.
     */
@@ -173,75 +165,111 @@ public:
   friend class K_neighbor_query;
   friend class Sphere_neighbor_query;
 
-  Point_set_neighborhood () : m_tree (NULL) { }
+  Point_set_neighborhood () { }
   /// \endcond
 
   /// \name Constructors
   /// @{
 
   /*!
-    \brief Constructs a neighborhood object based on the input range.
+    \brief constructs a neighborhood object based on the input range.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Sequential_tag`, `Parallel_tag`,
+    and `Parallel_if_available_tag`. If no tag is provided,
+    `Parallel_if_available_tag` is used.
 
     \param input point range.
     \param point_map property map to access the input points.
   */
+  template <typename ConcurrencyTag>
   Point_set_neighborhood (const PointRange& input,
-                          PointMap point_map)
-    : m_tree (NULL)
+                          PointMap point_map,
+                          const ConcurrencyTag&)
+    : m_tree (nullptr)
   {
-    My_point_property_map pmap (&input, point_map);
-    m_tree = new Tree (boost::counting_iterator<boost::uint32_t> (0),
-                       boost::counting_iterator<boost::uint32_t> (boost::uint32_t(input.size())),
-                       Splitter(),
-                       Search_traits (pmap));
-    m_distance = Distance (pmap);
-    m_tree->build();
+    init<ConcurrencyTag> (input, point_map);
   }
 
+  /// \cond SKIP_IN_MANUAL
+  Point_set_neighborhood (const PointRange& input, PointMap point_map)
+    : m_tree (nullptr)
+  {
+    init<Parallel_if_available_tag> (input, point_map);
+  }
+
+  template <typename ConcurrencyTag>
+  void init (const PointRange& input, PointMap point_map)
+  {
+    My_point_property_map pmap (&input, point_map);
+    m_tree = std::make_shared<Tree>
+      (boost::counting_iterator<std::uint32_t> (0),
+       boost::counting_iterator<std::uint32_t> (std::uint32_t(input.size())),
+       Splitter(),
+       Search_traits (pmap));
+    m_distance = Distance (pmap);
+    m_tree->template build<ConcurrencyTag>();
+  }
+  /// \endcond
+
   /*!
-    \brief Constructs a simplified neighborhood object based on the input range.
+    \brief constructs a simplified neighborhood object based on the input range.
 
     This method first computes a simplified version of the input point
     set by voxelization: a 3D grid is defined and for each subset
     present in one cell, only the point closest to the centroid of
     this subset is used.
 
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Sequential_tag`, `Parallel_tag`,
+    and `Parallel_if_available_tag`. If no tag is provided,
+    `Parallel_if_available_tag` is used.
+
     \param input input range.
     \param point_map property map to access the input points.
     \param voxel_size size of the cells of the 3D grid used for simplification.
   */
+  template <typename ConcurrencyTag>
+  Point_set_neighborhood (const PointRange& input,
+                          PointMap point_map,
+                          float voxel_size,
+                          const ConcurrencyTag&)
+    : m_tree (nullptr)
+  {
+    init<ConcurrencyTag> (input, point_map, voxel_size);
+  }
+
+  /// \cond SKIP_IN_MANUAL
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
                           float voxel_size)
-    : m_tree (NULL)
   {
-    // First, simplify
-    std::vector<boost::uint32_t> indices;
-    My_point_property_map pmap (&input, point_map);
-    voxelize_point_set(input.size(), indices, pmap, voxel_size);
-    
-    m_tree = new Tree (indices.begin(), indices.end(),
-                       Splitter(),
-                       Search_traits (pmap));
-    m_distance = Distance (pmap);
-    m_tree->build();
+    init<Parallel_if_available_tag> (input, point_map, voxel_size);
   }
 
-  /// @}
-  
-  /// \cond SKIP_IN_MANUAL
-  ~Point_set_neighborhood ()
+  template <typename ConcurrencyTag>
+  void init (const PointRange& input, PointMap point_map, float voxel_size)
   {
-    if (m_tree != NULL)
-      delete m_tree;
+    // First, simplify
+    std::vector<std::uint32_t> indices;
+    My_point_property_map pmap (&input, point_map);
+    voxelize_point_set(input.size(), indices, pmap, voxel_size);
+
+    m_tree = std::make_shared<Tree> (indices.begin(), indices.end(),
+                                     Splitter(),
+                                     Search_traits (pmap));
+    m_distance = Distance (pmap);
+    m_tree->template build<ConcurrencyTag>();
   }
   /// \endcond
+
+  /// @}
 
   /// \name Queries
   /// @{
 
   /*!
-    \brief Returns a neighbor query object with fixed number of neighbors `k`.
+    \brief returns a neighbor query object with fixed number of neighbors `k`.
   */
   K_neighbor_query k_neighbor_query (const unsigned int k) const
   {
@@ -249,7 +277,7 @@ public:
   }
 
   /*!
-    \brief Returns a neighbor query object with fixed radius `radius`.
+    \brief returns a neighbor query object with fixed radius `radius`.
   */
   Sphere_neighbor_query sphere_neighbor_query (const float radius) const
   {
@@ -263,7 +291,7 @@ private:
   template <typename OutputIterator>
   void sphere_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
   {
-    CGAL_assertion (m_tree != NULL);
+    CGAL_assertion (m_tree != nullptr);
     Sphere fs (query, radius_neighbors, 0, m_tree->traits());
     m_tree->search (output, fs);
   }
@@ -271,41 +299,38 @@ private:
   template <typename OutputIterator>
   void k_neighbors (const Point& query, const unsigned int k, OutputIterator output) const
   {
-    CGAL_assertion (m_tree != NULL);
+    CGAL_assertion (m_tree != nullptr);
     Knn search (*m_tree, query, k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;
   }
 
   template <typename Map>
-  void voxelize_point_set (std::size_t nb_pts, std::vector<boost::uint32_t>& indices, Map point_map,
+  void voxelize_point_set (std::size_t nb_pts, std::vector<std::uint32_t>& indices, Map point_map,
                            float voxel_size)
   {
-    std::map<Point, std::vector<boost::uint32_t> > grid;
+    std::map<Point, std::vector<std::uint32_t> > grid;
 
-    for (boost::uint32_t i = 0; i < nb_pts; ++ i)
+    for (std::uint32_t i = 0; i < nb_pts; ++ i)
     {
       const Point& p = get(point_map, i);
       Point ref (std::floor(p.x() / voxel_size),
                  std::floor(p.y() / voxel_size),
                  std::floor(p.z() / voxel_size));
-      typename std::map<Point, std::vector<boost::uint32_t> >::iterator it;
-      boost::tie (it, boost::tuples::ignore)
-        = grid.insert (std::make_pair (ref, std::vector<boost::uint32_t>()));
+      typename std::map<Point, std::vector<std::uint32_t> >::iterator it
+        = grid.insert (std::make_pair (ref, std::vector<std::uint32_t>())).first;
       it->second.push_back (i);
     }
 
-    for (typename std::map<Point, std::vector<boost::uint32_t> >::iterator
+    for (typename std::map<Point, std::vector<std::uint32_t> >::iterator
            it = grid.begin(); it != grid.end(); ++ it)
     {
-      const std::vector<boost::uint32_t>& pts = it->second;
-      Point centroid = CGAL::centroid (boost::make_transform_iterator
-                                       (pts.begin(),
-                                        CGAL::Property_map_to_unary_function<Map>(point_map)),
-                                       boost::make_transform_iterator
-                                       (pts.end(),
-                                        CGAL::Property_map_to_unary_function<Map>(point_map)));
-      boost::uint32_t chosen = 0;
+      const std::vector<std::uint32_t>& pts = it->second;
+      Point centroid = CGAL::centroid (CGAL::make_transform_iterator_from_property_map
+                                       (pts.begin(), point_map),
+                                       CGAL::make_transform_iterator_from_property_map
+                                       (pts.end(), point_map));
+      std::uint32_t chosen = 0;
       float min_dist = (std::numeric_limits<float>::max)();
       for (std::size_t i = 0; i < pts.size(); ++ i)
       {
@@ -320,10 +345,10 @@ private:
     }
   }
 };
-  
+
 
 }
-  
+
 }
 
 

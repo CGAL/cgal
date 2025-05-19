@@ -10,19 +10,18 @@ namespace CGAL
 The class `Periodic_2_triangulation_2` represents a 2-dimensional
 triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
-\cgalHeading{Parameters}
-
-The class `Periodic_2_triangulation_2` has two template
-parameters. The first one \tparam Traits is the geometric traits, it
-is to be instantiated by a model of the concept
+\tparam Traits is the geometric traits, it
+has to be instantiated by a model of the concept
 `Periodic_2TriangulationTraits_2`.
 
-The second parameter \tparam TDS is the triangulation data structure,
-it has to be instantiated by a model of the concept
-`TriangulationDataStructure_2` with some additional
-functionality in faces.
-By default, the triangulation data structure is instantiated by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Periodic_2_triangulation_vertex_base_2<Gt>,
+  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >
+\endcode
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -56,7 +55,7 @@ optional parameter is given).
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location,
-insertion takes a time \f$ O(1)\f$.
+insertion takes a time \cgalBigO{1}.
 
 Removal of a vertex is more difficult than in the Euclidean space,
 since the star of a vertex may not be disjoint from the star of a
@@ -70,14 +69,9 @@ their counterparts visiting all (non-virtual and virtual) features
 which are themselves derived from the corresponding iterators of the
 triangulation data structure.
 
-\sa `Triangulation_2`
-\sa `Periodic_2TriangulationTraits_2`
-\sa `TriangulationDataStructure_2`
-\sa `TriangulationDataStructure_2::Face`
-\sa `TriangulationDataStructure_2::Vertex`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Periodic_2_triangulation_face_base_2<Traits>`
-
+\sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`
+\sa `CGAL::Periodic_2_triangulation_hierarchy_2<Tr>`
+\sa `CGAL::Triangulation_2<Traits, Tds>`
 */
 template< typename Traits, typename Tds >
 class Periodic_2_triangulation_2 : public Triangulation_cw_ccw_2
@@ -106,7 +100,7 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
+/// The enum `Locate_type` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
 /// `EMPTY` is returned.
@@ -209,12 +203,14 @@ public:
   */
   typedef Tds::difference_type difference_type;
 
+/// @}
 
   /*!
   \name Handles, Iterators and Circulators
 
   The vertices and faces of the triangulations are accessed through
-  `handles`, `iterators` and `circulators`. The handles are \cgalModels of
+  `handles`, `iterators` and `circulators`. The handles are %CGAL
+  models of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are
@@ -438,6 +434,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Returns a reference to the triangulation data structure.
   \cgalAdvancedEnd
@@ -473,6 +470,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   The current triangulation remains a triangulation in the 1-sheeted
   covering space even after adding points if this method returns
@@ -486,6 +484,7 @@ public:
   bool is_extensible_triangulation_in_1_sheet_h1() const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   The same as `is_extensible_triangulation_in_1_sheet_h1()` but with
   a more precise heuristic, i.e. it might answer `true` in cases in which
@@ -498,6 +497,7 @@ public:
   bool is_extensible_triangulation_in_1_sheet_h2() const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Returns `true` if the current triangulation would still be a
   triangulation in the 1-sheeted covering space, returns `false` otherwise.
@@ -506,15 +506,18 @@ public:
   bool is_triangulation_in_1_sheet() const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
   \pre `is_triangulation_in_1_sheet()`
+
   \cgalAdvancedEnd
   */
   void convert_to_1_sheeted_covering();
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 9-sheeted covering space.
@@ -576,7 +579,7 @@ public:
 
   /*!
   Converts the `Periodic_point` `pp` (point-offset pair) to the
-  corresponding `Point` in \f$ \mathbb R^3\f$.
+  corresponding `Point` in \f$ \mathbb R^2\f$.
   */
   Point point(const Periodic_point & pp ) const;
 
@@ -589,6 +592,18 @@ public:
   Converts the `Periodic_triangle` `this` to a `Triangle`.
   */
   Triangle triangle(const Periodic_triangle & t) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(fh,i));`
+  */
+  Point point(Face_handle fh, int i) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(v));`
+  */
+  Point point(Vertex_handle v) const;
 
   /*!
   Equivalent to
@@ -883,13 +898,13 @@ public:
   /*!
   returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is
   opposite to `f`.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$ 0 \leq i \leq 2\f$.
   */
   Vertex_handle mirror_vertex(Face_handle f, int i) const;
 
   /*!
   returns the index of `f` in its \f$ i^{th}\f$ neighbor.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$0 \leq i \leq 2\f$.
   */
   int mirror_index(Face_handle f, int i) const;
 
@@ -953,11 +968,6 @@ public:
 /// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
 /// \image html insert2.png "Insertion in a face."
-/// @{
-
-
-
-/// @}
 
 /// \name
 /// \cgalAdvancedBegin
@@ -971,6 +981,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Inserts the first vertex.
   \cgalAdvancedEnd
@@ -978,24 +989,30 @@ public:
   Vertex_handle insert_first(const Point& p);
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Inserts vertex `v` in face
   `f`. Face `f` is modified,
   two new faces are created. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
   \pre The point in vertex `v` lies inside face `f`.
+
   \cgalAdvancedEnd
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
-  destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
+  destroyed, the third one is modified.
+  \pre Vertex `v` is a vertex with degree three.
+
   \cgalAdvancedEnd
   */
   void remove_degree_3(Vertex_handle v);
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes the unique vertex in the
   triangulation.
@@ -1006,12 +1023,13 @@ public:
 
 
   /*!
-      \cgalAdvancedBegin
-    creates a new vertex `v` and use it to star the hole
-    whose boundary is described by the sequence of edges
-    `[edge_begin, edge_end]`. Returns a handle to the new vertex.
-
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  creates a new vertex `v` and use it to star the hole
+  whose boundary is described by the sequence of edges
+  `[edge_begin, edge_end]`. Returns a handle to the new vertex.
   \pre The triangulation is a triangulation of 1 sheet
+
     \cgalAdvancedEnd
   */
   template<class EdgeIt>
@@ -1020,12 +1038,13 @@ public:
                            EdgeIt edge_end);
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   same as above, except that the algorithm
   first recycles faces in the sequence `[face_begin, face_end]`
   and create new ones only when the sequence is exhausted.
-
   \pre The triangulation is a triangulation of 1 sheet
+
   \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>
@@ -1036,6 +1055,7 @@ public:
                            FaceIt face_end);
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Changes the domain. Note that this function calls `clear()`,
   i.e., it erases the existing triangulation.
@@ -1049,12 +1069,12 @@ public:
 /// @{
 
   /*!
-  Returns \f$ i+1\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+1\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int ccw(int i) const;
 
   /*!
-  Returns \f$ i+2\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+2\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int cw(int i) const;
 
@@ -1084,6 +1104,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and
   also the validity of its geometric embedding.

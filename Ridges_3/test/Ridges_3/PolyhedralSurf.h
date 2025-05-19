@@ -10,7 +10,6 @@
 #include <vector>
 #include <list>
 
-#include <boost/foreach.hpp>
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with
@@ -44,12 +43,13 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   template < class Refs, class Traits > struct Face_wrapper {
     //typedef typename Traits::Vector_3 Vector_3;
     //all types needed by the facet...
-    typedef struct {
-    public:
-       typedef typename Traits::Vector_3 Vector_3;
-     } FGeomTraits;
+    struct FGeomTraits {
+      public:
+         typedef typename Traits::Vector_3 Vector_3;
+    };
+    typedef FGeomTraits FGT;
     //custom type instantiated...
-    typedef My_facet < Refs, CGAL::Tag_true, FGeomTraits > Face;
+    typedef My_facet < Refs, CGAL::Tag_true, FGT > Face;
   };
 };
 
@@ -66,7 +66,7 @@ class PolyhedralSurf;
 namespace boost {
   template <>
   struct graph_traits<PolyhedralSurf> : public boost::graph_traits<Polyhedron>
-  {};  
+  {};
 
   template <>
   struct graph_traits<PolyhedralSurf const> : public boost::graph_traits<Polyhedron>

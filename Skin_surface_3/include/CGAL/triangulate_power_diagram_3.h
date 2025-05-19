@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
@@ -218,12 +209,6 @@ private:
   struct Index_c4 { Tmc_Vertex_handle V[4]; };
   struct Index_c6 { Tmc_Vertex_handle V[6]; };
   struct Index_c44 { Tmc_Vertex_handle V[4][4]; };
-  struct Index_v {
-    Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > V;
-  };
-
-  // index to vertex
-  Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
 
   Union_find_anchor                            anchor_vor_uf;
   Simplex_UF_map                               anchor_vor_map;

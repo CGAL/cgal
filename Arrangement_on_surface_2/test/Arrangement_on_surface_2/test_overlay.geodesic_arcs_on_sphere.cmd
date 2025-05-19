@@ -8,3 +8,4 @@ data/test_overlay/geodesic_arcs_on_sphere/test07.txt
 data/test_overlay/geodesic_arcs_on_sphere/test08.txt
 data/test_overlay/geodesic_arcs_on_sphere/test09.txt
 data/test_overlay/geodesic_arcs_on_sphere/test10.txt
+data/test_overlay/geodesic_arcs_on_sphere/test11.txt

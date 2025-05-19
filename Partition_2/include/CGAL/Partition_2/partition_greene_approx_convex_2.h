@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -32,16 +23,16 @@
 #include<CGAL/Partition_2/partition_y_monotone_2.h>
 #include<CGAL/Partition_2/Turn_reverser.h>
 #include<CGAL/IO/Tee_for_output_iterator.h>
-#include<CGAL/Partition_2/partition_assertions.h>
+#include<CGAL/assertions.h>
 #include<CGAL/partition_is_valid_2.h>
 #include<CGAL/Partition_traits_2.h>
 #include<CGAL/is_y_monotone_2.h>
 #include<CGAL/Partition_2/is_degenerate_polygon_2.h>
 
-// These things should be constant: 
-//   front is where you add things to a chain 
+// These things should be constant:
+//   front is where you add things to a chain
 //   top chain shares its back with front (top) of stack
-//   bottom chain shares its back with the back (bottom) of the stack 
+//   bottom chain shares its back with the back (bottom) of the stack
 //   bottom of the stack has lower y value than top.
 // ==> chain direction is cw, make ccw polygon from front to back
 // and chain direction is ccw, make ccw polygon from back to front
@@ -49,27 +40,27 @@
 namespace CGAL {
 
 template <class BidirectionalCirculator>
-bool is_adjacent_to(BidirectionalCirculator new_point_ref, 
+bool is_adjacent_to(BidirectionalCirculator new_point_ref,
                     BidirectionalCirculator old_point_ref)
 {
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to: new_point " << *new_point_ref 
+   std::cout << "is_adjacent_to: new_point " << *new_point_ref
              <<             " old_point " << *old_point_ref << std::endl;
 #endif
-   // find the old point in original list of points 
+   // find the old point in original list of points
    if (*new_point_ref == *(++old_point_ref)) return true;  // check ccw
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to:  next point is " << *old_point_ref 
+   std::cout << "is_adjacent_to:  next point is " << *old_point_ref
              << std::endl;
 #endif
    old_point_ref--;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to:  old_point is " << *old_point_ref 
+   std::cout << "is_adjacent_to:  old_point is " << *old_point_ref
              << std::endl;
 #endif
    if (*new_point_ref == *(--old_point_ref)) return true;  // check cw
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to:  previous points is " << *old_point_ref 
+   std::cout << "is_adjacent_to:  previous points is " << *old_point_ref
              << std::endl;
 #endif
    return false;
@@ -78,9 +69,9 @@ bool is_adjacent_to(BidirectionalCirculator new_point_ref,
 
 // erases vertices in the range [first, last) (counterclockwise)
 template<class BidirectionalCirculator, class Polygon>
-void erase_vertices(BidirectionalCirculator first, 
+void erase_vertices(BidirectionalCirculator first,
                     BidirectionalCirculator last,
-                    Polygon& polygon, 
+                    Polygon& polygon,
                     bool& update_required)
 {
    typedef typename Polygon::iterator  Vertex_iterator;
@@ -99,11 +90,11 @@ void erase_vertices(BidirectionalCirculator first,
 #endif
    it = first.current_iterator();
 
-   CGAL_partition_assertion (it != polygon.end());
+   CGAL_assertion (it != polygon.end());
 
-   while ( (it != polygon.end()) && (*it != *last) ) 
+   while ( (it != polygon.end()) && (*it != *last) )
    {
-      while ( (it != polygon.end()) && (*it != *last) ) 
+      while ( (it != polygon.end()) && (*it != *last) )
       {
 #ifdef CGAL_GREENE_APPROX_DEBUG
          std::cout << "erase_vertices: erasing " << *it << std::endl;
@@ -119,7 +110,7 @@ void erase_vertices(BidirectionalCirculator first,
             std::cout << "erase_vertices: next vertex is " << *it << std::endl;
 #endif
          polygon.erase(temp_it);
-      } 
+      }
       if (it == polygon.end())
          it = polygon.begin();
    }
@@ -128,20 +119,20 @@ void erase_vertices(BidirectionalCirculator first,
 }
 
 
-template <class Polygon, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator,
           class OutputIterator, class Traits>
 void visible(Polygon& polygon,
-             const BidirectionalCirculator& new_point_ref, 
-             Circ_pair< BidirectionalCirculator >& stack, 
-             Circ_pair< BidirectionalCirculator >& bottom_chain, 
-             Circ_pair< BidirectionalCirculator >& top_chain, 
-             OutputIterator&  result, 
+             const BidirectionalCirculator& new_point_ref,
+             Circ_pair< BidirectionalCirculator >& stack,
+             Circ_pair< BidirectionalCirculator >& bottom_chain,
+             Circ_pair< BidirectionalCirculator >& top_chain,
+             OutputIterator&  result,
              const Traits& traits)
 {
 
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "visible: stack.back " << *stack.back() 
-             << " stack.before_back " << *stack.before_back() << 
+   std::cout << "visible: stack.back " << *stack.back()
+             << " stack.before_back " << *stack.before_back() <<
                 " new_point_ref " << *new_point_ref << std::endl;
 #endif
 
@@ -150,7 +141,7 @@ void visible(Polygon& polygon,
     Left_turn_2    left_turn = traits.left_turn_2_object();
     Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
 
-    if (((bottom_chain.direction() == CLOCKWISE) && 
+    if (((bottom_chain.direction() == CLOCKWISE) &&
         right_turn(*stack.back(), *stack.before_back(), *new_point_ref)) ||
         ((bottom_chain.direction() == COUNTERCLOCKWISE) &&
         left_turn(*stack.back(), *stack.before_back(), *new_point_ref)))
@@ -164,24 +155,24 @@ void visible(Polygon& polygon,
        bool update_required;
 
 #ifdef CGAL_GREENE_APPROX_DEBUG
-       std::cout << "visible: bottom_chain.front " << *bottom_chain.front() 
+       std::cout << "visible: bottom_chain.front " << *bottom_chain.front()
                  << std::endl;
 #endif
-       do 
+       do
        {
           new_Polygon_2 new_polygon;
           stack.pop_back();
 #ifdef CGAL_GREENE_APPROX_DEBUG
           std::cout << "visible: stack.back " << *stack.back() << std::endl;
 #endif
-          if (bottom_chain.direction() == CLOCKWISE) 
+          if (bottom_chain.direction() == CLOCKWISE)
           {
              std::copy(bottom_chain.front(), stack.before_back(),
                        std::back_inserter(new_polygon));
              erase_vertices(bottom_chain.before_front(), stack.back(), polygon,
                             update_required);
           }
-          else 
+          else
           {
              std::copy(stack.back(), bottom_chain.after_front(),
                        std::back_inserter(new_polygon));
@@ -191,64 +182,64 @@ void visible(Polygon& polygon,
           if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
                                        new_polygon.vertices_end(), traits))
           {
-             *result = new_polygon; 
+             *result = new_polygon;
              result++;
           }
           bottom_chain.push_back(stack.back());
           if (stack.back() == stack.front())   // form new stack with previous
-          {                                    // point and old stack top 
+          {                                    // point and old stack top
                                                // (still on stack)
-               done = true;                
+               done = true;
                typename Traits::Less_yx_2  less_yx = traits.less_yx_2_object();
-               if (less_yx(*(stack.front()),*bottom_chain.front())) 
+               if (less_yx(*(stack.front()),*bottom_chain.front()))
                {
 #ifdef CGAL_GREENE_APPROX_DEBUG
                   std::cout << "visible:  reversing stack and swapping chains "
                             << std::endl;
 #endif
-                  stack.push_front(bottom_chain.front()); 
+                  stack.push_front(bottom_chain.front());
                                                // reverse stack direction
                   stack.change_dir();
                   bottom_chain = top_chain;         // swap chains
                   top_chain.initialize(stack.front());
                   top_chain.change_dir();
 #ifdef CGAL_GREENE_APPROX_DEBUG
-                  std::cout << "visible:  stack is now " << *stack.back() 
-                            << " " << *stack.front() 
-                            << " dir " << int(stack.direction()) 
+                  std::cout << "visible:  stack is now " << *stack.back()
+                            << " " << *stack.front()
+                            << " dir " << int(stack.direction())
                             << std::endl;
-                  std::cout << "visible:  bottom_chain is now " 
+                  std::cout << "visible:  bottom_chain is now "
                             << *bottom_chain.back() << " "
-                            << *bottom_chain.front() 
-                            << " dir " << int(bottom_chain.direction()) 
+                            << *bottom_chain.front()
+                            << " dir " << int(bottom_chain.direction())
                             << std::endl;
-                  std::cout << "visible:  top_chain is now " 
-                            << *top_chain.back() << " " << *top_chain.front() 
-                            << " dir " << int(top_chain.direction()) 
+                  std::cout << "visible:  top_chain is now "
+                            << *top_chain.back() << " " << *top_chain.front()
+                            << " dir " << int(top_chain.direction())
                             << std::endl;
 #endif
                }
                else
                {
                   stack.push_back(bottom_chain.front());
-                  bottom_chain.push_back(bottom_chain.front()); 
+                  bottom_chain.push_back(bottom_chain.front());
                }
             }
             else // stack size must be >= 2 here
-            {  
+            {
 #ifdef CGAL_GREENE_APPROX_DEBUG
-               std::cout << "visible: stack.before_back " 
+               std::cout << "visible: stack.before_back "
                          << *stack.before_back() << std::endl;
 #endif
                // angle at stack > 180
                if (bottom_chain.direction() == CLOCKWISE)
-                  big_angle_at_stack = right_turn(*bottom_chain.front(), 
+                  big_angle_at_stack = right_turn(*bottom_chain.front(),
                                                  *stack.back(),
-                                                 *stack.before_back()); 
+                                                 *stack.before_back());
                else
-                  big_angle_at_stack = left_turn(*bottom_chain.front(), 
+                  big_angle_at_stack = left_turn(*bottom_chain.front(),
                                                         *stack.back(),
-                                                        *stack.before_back()); 
+                                                        *stack.before_back());
                if (bottom_chain.direction() == CLOCKWISE)
                   is_visible = !right_turn(*stack.back(), *stack.before_back(),
                                           *new_point_ref);
@@ -260,25 +251,25 @@ void visible(Polygon& polygon,
         } while (!done && !big_angle_at_stack && !is_visible);
         if (big_angle_at_stack)  // previous point is placed on bottom of stack
         {
-           stack.push_back(bottom_chain.front()); 
+           stack.push_back(bottom_chain.front());
            bottom_chain.push_back(bottom_chain.front());
         }
     }
 }
 
 
-template <class Polygon, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator,
           class OutputIterator, class Traits>
 void stack_extend(Polygon& polygon,
-                  BidirectionalCirculator& point_ref, 
-                  Circ_pair< BidirectionalCirculator >& stack, 
+                  BidirectionalCirculator& point_ref,
+                  Circ_pair< BidirectionalCirculator >& stack,
                   Circ_pair< BidirectionalCirculator >& top_chain,
                   OutputIterator& result, const Traits& traits)
 {
 #ifdef CGAL_GREENE_APPROX_DEBUG
    std::cout << "stack_extend" << std::endl;
    std::cout << "stack_extend:  stack.before_front() " << *stack.before_front()
-    << " stack.front " << *stack.front() << " point_ref " << *point_ref 
+    << " stack.front " << *stack.front() << " point_ref " << *point_ref
     << std::endl;
 #endif
 
@@ -286,16 +277,16 @@ void stack_extend(Polygon& polygon,
    typedef typename Traits::Left_turn_2   Left_turn_2;
    Left_turn_2    left_turn = traits.left_turn_2_object();
    Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
-   if (((stack.direction() == COUNTERCLOCKWISE) && 
+   if (((stack.direction() == COUNTERCLOCKWISE) &&
         right_turn(*stack.before_front(), *stack.front(), *point_ref)) ||
-       ((stack.direction() == CLOCKWISE) && 
+       ((stack.direction() == CLOCKWISE) &&
         left_turn(*stack.before_front(), *stack.front(), *point_ref)))
    {
       // new stack top becomes new first (and only) element of top chain
       stack.push_front(point_ref);
       top_chain.initialize(point_ref);
 #ifdef CGAL_GREENE_APPROX_DEBUG
-      std::cout << "stack_extend: top_chain.front " 
+      std::cout << "stack_extend: top_chain.front "
                 << *top_chain.front() << std::endl;
 #endif
    }
@@ -303,12 +294,12 @@ void stack_extend(Polygon& polygon,
       change_top_chain(polygon, point_ref, stack, top_chain, result, traits);
 }
 
-template <class Polygon, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator,
           class OutputIterator, class Traits>
-void change_top_chain(Polygon& polygon, 
+void change_top_chain(Polygon& polygon,
                       BidirectionalCirculator new_point_ref,
                       Circ_pair< BidirectionalCirculator >& stack,
-                      Circ_pair< BidirectionalCirculator >& top_chain, 
+                      Circ_pair< BidirectionalCirculator >& top_chain,
                       OutputIterator& result, const Traits& traits)
 {
    BidirectionalCirculator next_point_ref = new_point_ref;
@@ -318,8 +309,8 @@ void change_top_chain(Polygon& polygon,
       next_point_ref--;
 
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "change_top_chain: top_chain.front " << *top_chain.front() 
-             << " new_point_ref " << *new_point_ref 
+   std::cout << "change_top_chain: top_chain.front " << *top_chain.front()
+             << " new_point_ref " << *new_point_ref
              << " next_point_ref " << *next_point_ref << std::endl;
 #endif
    typedef typename Traits::Point_2      Point_2;
@@ -333,7 +324,7 @@ void change_top_chain(Polygon& polygon,
    {
       top_chain.push_front(new_point_ref);
    }
-   else 
+   else
    {
       typedef typename Traits::Polygon_2 new_Polygon_2;
 
@@ -347,23 +338,23 @@ void change_top_chain(Polygon& polygon,
       old_top_ref = stack.front();
       stack.pop_front();
 
-      do 
+      do
       {
          new_Polygon_2 new_polygon;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-         std::cout << "change_top_chain: stack.front " 
+         std::cout << "change_top_chain: stack.front "
                    << *stack.front() << std::endl;
 #endif
-         if (top_chain.direction() == COUNTERCLOCKWISE) 
+         if (top_chain.direction() == COUNTERCLOCKWISE)
          {
-            std::copy(stack.front(), next_point_ref, 
+            std::copy(stack.front(), next_point_ref,
                       std::back_inserter(new_polygon));
             erase_vertices(old_top_ref, new_point_ref, polygon,
                            update_required);
          }
-         else 
+         else
          {
-            std::copy(new_point_ref, stack.before_front(), 
+            std::copy(new_point_ref, stack.before_front(),
                       std::back_inserter(new_polygon));
             erase_vertices(top_chain.front(), stack.front(), polygon,
                            update_required);
@@ -372,7 +363,7 @@ void change_top_chain(Polygon& polygon,
          if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
                                       new_polygon.vertices_end(), traits))
          {
-            *result = new_polygon; 
+            *result = new_polygon;
             result++;
          }
          if (stack.front() == stack.back())          // the "stack empty" case
@@ -383,32 +374,32 @@ void change_top_chain(Polygon& polygon,
             std::cout << "change_top_chain: stack is empty. New stack top is "
                       << *stack.front() << std::endl;
             std::cout << "stack.back is " << *stack.back() << std::endl;
-            std::cout << "stack.before_back is " << *stack.before_back() 
+            std::cout << "stack.before_back is " << *stack.before_back()
                       << std::endl;
 #endif
-            top_chain.initialize(new_point_ref); 
+            top_chain.initialize(new_point_ref);
             // top chain should share top of stack
          }
          else    // stack size must be >= 2 here
          {
 #ifdef CGAL_GREENE_APPROX_DEBUG
-            std::cout << "change_top_chain: stack.front " 
+            std::cout << "change_top_chain: stack.front "
                       << *stack.front() << std::endl;
 #endif
             if (top_chain.direction() == COUNTERCLOCKWISE)
-               big_angle_at_stack = !left_turn(*stack.before_front(), 
+               big_angle_at_stack = !left_turn(*stack.before_front(),
                                               *stack.front(), *new_point_ref);
             else
-               big_angle_at_stack = !right_turn(*stack.before_front(), 
+               big_angle_at_stack = !right_turn(*stack.before_front(),
                                              *stack.front(), *new_point_ref);
             if (top_chain.direction() == COUNTERCLOCKWISE)
                small_angle_at_point = left_turn(*stack.front(), *new_point_ref,
                                                *next_point_ref);
             else
-               small_angle_at_point = right_turn(*stack.front(), 
+               small_angle_at_point = right_turn(*stack.front(),
                                                  *new_point_ref,
                                                  *next_point_ref);
-            if (!big_angle_at_stack && !small_angle_at_point) 
+            if (!big_angle_at_stack && !small_angle_at_point)
             {
                old_top_ref = stack.front();
                stack.pop_front();
@@ -418,10 +409,10 @@ void change_top_chain(Polygon& polygon,
       if (big_angle_at_stack)  // promote point to stack
       {
          stack.push_front(new_point_ref);
-         top_chain.initialize(new_point_ref); 
+         top_chain.initialize(new_point_ref);
          // top chain shares top of stack
       }
-      else if (small_angle_at_point) 
+      else if (small_angle_at_point)
       {
          top_chain.push_back(stack.front());
          top_chain.push_front(new_point_ref);
@@ -431,11 +422,11 @@ void change_top_chain(Polygon& polygon,
 
 template <class Polygon, class BidirectionalCirculator, class OutputIterator,
           class Traits>
-void change_bottom_chain(Polygon& polygon, 
-                         BidirectionalCirculator new_point_ref, 
+void change_bottom_chain(Polygon& polygon,
+                         BidirectionalCirculator new_point_ref,
                          Circ_pair< BidirectionalCirculator >& stack,
-                         Circ_pair< BidirectionalCirculator >& bottom_chain, 
-                         Circ_pair< BidirectionalCirculator >& top_chain, 
+                         Circ_pair< BidirectionalCirculator >& bottom_chain,
+                         Circ_pair< BidirectionalCirculator >& top_chain,
                          OutputIterator& result, const Traits& traits)
 {
    BidirectionalCirculator next_point_ref = new_point_ref;
@@ -444,8 +435,8 @@ void change_bottom_chain(Polygon& polygon,
    else
       next_point_ref--;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "change_bottom_chain: bottom_chain.front " 
-             << *bottom_chain.front() << " new_point_ref " << *new_point_ref 
+   std::cout << "change_bottom_chain: bottom_chain.front "
+             << *bottom_chain.front() << " new_point_ref " << *new_point_ref
              << " next_point_ref " << *next_point_ref << std::endl;
 #endif
    typedef typename Traits::Point_2      Point_2;
@@ -453,14 +444,14 @@ void change_bottom_chain(Polygon& polygon,
    Left_turn_2    left_turn = traits.left_turn_2_object();
    Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
    if (((bottom_chain.direction() == CLOCKWISE) &&
-        !left_turn(*bottom_chain.front(), *new_point_ref, 
+        !left_turn(*bottom_chain.front(), *new_point_ref,
                           *next_point_ref)) ||
        ((bottom_chain.direction() == COUNTERCLOCKWISE) &&
         !right_turn(*bottom_chain.front(), *new_point_ref, *next_point_ref)))
    {
       bottom_chain.push_front(new_point_ref);
    }
-   else 
+   else
    {
       typedef typename Traits::Polygon_2 new_Polygon_2;
 
@@ -468,7 +459,7 @@ void change_bottom_chain(Polygon& polygon,
       bool small_angle_at_point = false;
       bool update_required;
 
-      do 
+      do
       {
          new_Polygon_2 new_polygon;
          stack.pop_back();  // remove old bottom of stack
@@ -476,16 +467,16 @@ void change_bottom_chain(Polygon& polygon,
          std::cout << "change_bottom_chain: stack.front " << *stack.front()
                    << " stack.back " << *stack.back() << std::endl;
 #endif
-         if (bottom_chain.direction() == CLOCKWISE) 
+         if (bottom_chain.direction() == CLOCKWISE)
          {
-            std::copy(new_point_ref, stack.before_back(), 
+            std::copy(new_point_ref, stack.before_back(),
                       std::back_inserter(new_polygon));
             erase_vertices(bottom_chain.front(), stack.back(), polygon,
                            update_required);
          }
-         else 
+         else
          {
-            std::copy(stack.back(), next_point_ref, 
+            std::copy(stack.back(), next_point_ref,
                       std::back_inserter(new_polygon));
             erase_vertices(bottom_chain.back(), new_point_ref, polygon,
                            update_required);
@@ -493,15 +484,15 @@ void change_bottom_chain(Polygon& polygon,
          if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
                                       new_polygon.vertices_end(), traits))
          {
-            *result = new_polygon;  
+            *result = new_polygon;
             result++;
          }
          bottom_chain.initialize(stack.back());
          if (stack.back() == stack.front())   // form new stack with new point
          {                                // and old stack top (still on stack)
-            done = true;                  
+            done = true;
             typename Traits::Less_yx_2  less_yx = traits.less_yx_2_object();
-            if (less_yx(*(stack.front()),*new_point_ref)) 
+            if (less_yx(*(stack.front()),*new_point_ref))
             {
 #ifdef CGAL_GREENE_APPROX_DEBUG
                std::cout << "change_bottom_chain: reversing stack and "
@@ -513,19 +504,19 @@ void change_bottom_chain(Polygon& polygon,
                top_chain.initialize(stack.front());
                top_chain.change_dir();
 #ifdef CGAL_GREENE_APPROX_DEBUG
-               std::cout << "change_bottom_chain:  stack is now " 
-                    << *stack.back() << " " << *stack.front() 
+               std::cout << "change_bottom_chain:  stack is now "
+                    << *stack.back() << " " << *stack.front()
                     << " dir " << int(stack.direction()) << std::endl;
-               std::cout << "change_bottom_chain:  bottom_chain is now " 
-                    << *bottom_chain.back() << " " << *bottom_chain.front() 
+               std::cout << "change_bottom_chain:  bottom_chain is now "
+                    << *bottom_chain.back() << " " << *bottom_chain.front()
                     << " dir " << int(bottom_chain.direction()) << std::endl;
-               std::cout << "change_bottom_chain:  top_chain is now " 
-                    << *top_chain.back() << " " << *top_chain.front() 
+               std::cout << "change_bottom_chain:  top_chain is now "
+                    << *top_chain.back() << " " << *top_chain.front()
                     << " dir " << int(top_chain.direction()) << std::endl;
 #endif
             }
             else
-               stack.push_back(new_point_ref); 
+               stack.push_back(new_point_ref);
          }
          else    // stack size must be >= 2 here
          {
@@ -547,20 +538,20 @@ void change_bottom_chain(Polygon& polygon,
    }
 }
 
-template <class Polygon, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator,
           class OutputIterator, class Traits>
 void make_polygons_from_stack(Polygon& polygon,
-                            const BidirectionalCirculator& high_point_ref, 
+                            const BidirectionalCirculator& high_point_ref,
                             Circ_pair< BidirectionalCirculator >& stack,
                             Circ_pair< BidirectionalCirculator >& bottom_chain,
                             OutputIterator& result, const Traits& traits)
 {
    bool update_required;
    // make polygons by connecting the high point to every point on the stack
-   // except the first and the last. 
+   // except the first and the last.
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "make_polygons_from_stack: high_point_ref " << *high_point_ref 
-        << " stack.back " << *stack.back() 
+   std::cout << "make_polygons_from_stack: high_point_ref " << *high_point_ref
+        << " stack.back " << *stack.back()
         << " stack.before_back " << *stack.before_back() << std::endl;
 #endif
    typedef typename Traits::Polygon_2 new_Polygon_2;
@@ -569,25 +560,25 @@ void make_polygons_from_stack(Polygon& polygon,
    if (bottom_chain.direction() == COUNTERCLOCKWISE)
       next_point_ref++;
 
-   stack.pop_back();  
-   while (stack.front() != stack.back()) 
+   stack.pop_back();
+   while (stack.front() != stack.back())
    {
        new_Polygon_2 new_polygon;
 #ifdef CGAL_GREENE_APPROX_DEBUG
        std::cout << "make_polygons_from_stack: stack.back " << *stack.back()
                  << std::endl;
 #endif
-       if (bottom_chain.direction() == CLOCKWISE) 
+       if (bottom_chain.direction() == CLOCKWISE)
        {
-         std::copy(high_point_ref, stack.before_back(), 
+         std::copy(high_point_ref, stack.before_back(),
                    std::back_inserter(new_polygon));
          erase_vertices(bottom_chain.front(), stack.back(), polygon,
                         update_required);
          bottom_chain.initialize(stack.back());
        }
-       else 
+       else
        {
-         std::copy(stack.back(), next_point_ref, 
+         std::copy(stack.back(), next_point_ref,
                    std::back_inserter(new_polygon));
          erase_vertices(bottom_chain.back(), high_point_ref, polygon,
                         update_required);
@@ -596,10 +587,10 @@ void make_polygons_from_stack(Polygon& polygon,
        if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
                                     new_polygon.vertices_end(), traits))
        {
-          *result = new_polygon; 
+          *result = new_polygon;
           result++;
        }
-       stack.pop_back();  
+       stack.pop_back();
    }
    // add remaining points from the top chain if there is more than one
    std::copy(polygon.begin(), polygon.end(), std::back_inserter(new_polygon));
@@ -618,21 +609,21 @@ void find_smallest_yx(BidirectionalCirculator& first, const Traits& traits)
    current++;
    // find out which direction to go
    typename Traits::Less_yx_2     less_yx = traits.less_yx_2_object();
-   if (less_yx(*current, *first))   // go foward
+   if (less_yx(*current, *first))   // go forward
    {
-      do 
+      do
       {
          first++;
          current++;
       } while (less_yx(*current, *first));
    }
-   else 
+   else
    {
       current = first;
       current--;
       if (less_yx(*current, *first))    // go backward
       {
-        do 
+        do
         {
           first--;
           current--;
@@ -653,8 +644,8 @@ bool second_point_is_next(BidirectionalCirculator first, const Traits& traits)
 }
 
 template <class BidirectionalCirculator, class Traits>
-BidirectionalCirculator next_vertex(BidirectionalCirculator& ccw_current, 
-                                    BidirectionalCirculator& cw_current, 
+BidirectionalCirculator next_vertex(BidirectionalCirculator& ccw_current,
+                                    BidirectionalCirculator& cw_current,
                                     const Traits& traits)
 {
   BidirectionalCirculator ccw_next = ccw_current;
@@ -665,14 +656,14 @@ BidirectionalCirculator next_vertex(BidirectionalCirculator& ccw_current,
   std::cout << "next_vertex: ccw_next " << *ccw_next << " cw_next " << *cw_next
             << std::endl;
 #endif
-  
-  if (ccw_next == cw_next) 
+
+  if (ccw_next == cw_next)
   {
      cw_current = cw_next;
      ccw_current = ccw_next;
-     return cw_next; 
+     return cw_next;
   }
-  else 
+  else
   {
      typename Traits::Less_yx_2     less_yx = traits.less_yx_2_object();
      if (less_yx(*ccw_next,*cw_next))
@@ -701,9 +692,9 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
 
    Vertex_list  polygon(first, beyond);
 
-   CGAL_partition_precondition(
+   CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
-   CGAL_partition_precondition(
+   CGAL_precondition(
     is_y_monotone_2(polygon.begin(), polygon.end(), traits));
 
    Vertex_circulator point_ref(&polygon);
@@ -711,7 +702,7 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
 
 #ifdef CGAL_GREENE_APPROX_DEBUG
    std::cout << "before find_smallest_yx " << std::endl;
-   do 
+   do
    {
       std::cout << *circ << std::endl;
    } while (++circ != point_ref);
@@ -722,7 +713,7 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
    circ = point_ref;
 #ifdef CGAL_GREENE_APPROX_DEBUG
    std::cout << "after find_smallest_yx " << std::endl;
-   do 
+   do
    {
       std::cout << *circ << std::endl;
    } while (++circ != point_ref);
@@ -736,7 +727,7 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
    Circ_pair< Vertex_circulator > top_chain(point_ref, COUNTERCLOCKWISE);
 
    // discover which is the direction to the next point
-   if (second_point_is_next(point_ref, traits)) 
+   if (second_point_is_next(point_ref, traits))
    {
      ccw_chain_ref++;
      stack.push_front(ccw_chain_ref);
@@ -745,7 +736,7 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
      top_chain.set_direction(COUNTERCLOCKWISE);
      bottom_chain.set_direction(CLOCKWISE);
    }
-   else 
+   else
    {
      cw_chain_ref--;
      stack.push_front(cw_chain_ref);
@@ -755,37 +746,37 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
      bottom_chain.set_direction(COUNTERCLOCKWISE);
    }
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "after inserting first two points: ccw_chain_ref " 
-             << *ccw_chain_ref << " cw_chain_ref " << *cw_chain_ref 
+   std::cout << "after inserting first two points: ccw_chain_ref "
+             << *ccw_chain_ref << " cw_chain_ref " << *cw_chain_ref
              << std::endl;
 #endif
-   
+
    while (ccw_chain_ref != cw_chain_ref)
    {
       point_ref = next_vertex(ccw_chain_ref, cw_chain_ref, traits);
 
 #ifdef CGAL_GREENE_APPROX_DEBUG
-      std::cout << "after next_vertex: ccw_chain_ref " << *ccw_chain_ref 
+      std::cout << "after next_vertex: ccw_chain_ref " << *ccw_chain_ref
                 << " cw_chain_ref " << *cw_chain_ref << std::endl;
       std::cout << "current point: " << *point_ref << std::endl;
 #endif
       if (is_adjacent_to(point_ref, bottom_chain.front()))
-         visible(polygon, point_ref, stack, bottom_chain, top_chain, 
+         visible(polygon, point_ref, stack, bottom_chain, top_chain,
                  result, traits);
       if (ccw_chain_ref == cw_chain_ref)
       {
-         make_polygons_from_stack(polygon, point_ref, stack, 
+         make_polygons_from_stack(polygon, point_ref, stack,
                                   bottom_chain, result, traits);
          return;
       }
       if (is_adjacent_to(point_ref, stack.front()))
-         stack_extend(polygon, point_ref, stack, top_chain, 
+         stack_extend(polygon, point_ref, stack, top_chain,
                       result, traits);
       else if (is_adjacent_to(point_ref, top_chain.front()))
-         change_top_chain(polygon, point_ref, stack, top_chain, 
+         change_top_chain(polygon, point_ref, stack, top_chain,
                           result, traits);
       else
-         change_bottom_chain(polygon, point_ref, stack, bottom_chain, 
+         change_bottom_chain(polygon, point_ref, stack, bottom_chain,
                              top_chain, result, traits);
    }
 }
@@ -797,9 +788,9 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
 //   have to be able to go over the vertices again in order to check the
 //   result, so they have to be stored somewhere else.
 template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator partition_greene_approx_convex_2(InputIterator first, 
+OutputIterator partition_greene_approx_convex_2(InputIterator first,
                                                 InputIterator beyond,
-                                                OutputIterator result, 
+                                                OutputIterator result,
                                                 const Traits& traits)
 {
    if (first == beyond) return result;
@@ -807,7 +798,7 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
    typedef typename Traits::Polygon_2                        Polygon_2;
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
 
@@ -815,30 +806,30 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
 #endif // no postconditions
 
    Polygon_2  polygon(first, beyond);
-   CGAL_partition_precondition(
+   CGAL_precondition(
       orientation_2(polygon.vertices_begin(), polygon.vertices_end(),
                                                traits) == COUNTERCLOCKWISE);
 
    std::list<Polygon_2> MP_list;
    typename std::list<Polygon_2>::iterator MP_it;
 
-   y_monotone_partition_2(polygon.vertices_begin(), polygon.vertices_end(), 
+   y_monotone_partition_2(polygon.vertices_begin(), polygon.vertices_end(),
                           std::back_inserter(MP_list), traits);
 
    for(MP_it = MP_list.begin(); MP_it != MP_list.end(); MP_it++)
    {
-      ga_convex_decomposition((*MP_it).vertices_begin(), 
+      ga_convex_decomposition((*MP_it).vertices_begin(),
                               (*MP_it).vertices_end(), res, traits);
    }
 
-   CGAL_partition_postcondition(
-       convex_partition_is_valid_2(polygon.vertices_begin(), 
-                                   polygon.vertices_end(), 
+   CGAL_postcondition(
+       convex_partition_is_valid_2(polygon.vertices_begin(),
+                                   polygon.vertices_end(),
                                    res.output_so_far_begin(),
                                    res.output_so_far_end(), traits));
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();
@@ -847,13 +838,13 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator partition_greene_approx_convex_2(InputIterator first, 
+OutputIterator partition_greene_approx_convex_2(InputIterator first,
                                                 InputIterator beyond,
                                                 OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel   K;
-   return partition_greene_approx_convex_2(first, beyond, result,  
+   return partition_greene_approx_convex_2(first, beyond, result,
                                            Partition_traits_2<K>());
 }
 

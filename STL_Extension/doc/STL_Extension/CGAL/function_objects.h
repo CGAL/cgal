@@ -8,12 +8,12 @@ namespace CGAL {
 
 
 
-The class `Cast_function_object` applies a C-style type cast to 
-its argument. 
+The class `Cast_function_object` applies a C-style type cast to
+its argument.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -23,53 +23,53 @@ struct Cast_function_object {
 
 
 /*!
-*/ 
-typedef Arg argument_type; 
+*/
+typedef Arg argument_type;
 
 
 
 
 /*!
-*/ 
-typedef Result result_type; 
+*/
+typedef Result result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Cast_function_object(); 
+default constructor.
+*/
+Cast_function_object();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`(Result)x`. 
-*/ 
-result_type& operator()(argument_type& x) const; 
+returns
+`(Result)x`.
+*/
+result_type& operator()(argument_type& x) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `(Result)x`. 
-*/ 
-const result_type& operator()(const argument_type& 
-x) const; 
+returns `(Result)x`.
+*/
+const result_type& operator()(const argument_type&
+x) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -83,16 +83,16 @@ namespace CGAL {
 
 
 
-The class `Compare_to_less` is used to convert a functor which 
-returns a `Comparison_result` to a predicate (returning bool) : it 
-will return true iff the return value of `F` is `SMALLER`. 
-The class is used in conjunction with the `compare_to_less` 
-function; see there for an explanation on how exactly the functors 
-are combined. 
+The class `Compare_to_less` is used to convert a functor which
+returns a `Comparison_result` to a predicate (returning bool) : it
+will return true iff the return value of `F` is `SMALLER`.
+The class is used in conjunction with the `compare_to_less`
+function; see there for an explanation on how exactly the functors
+are combined.
 
 
 
-\sa `CGAL::compare_to_less()` 
+\sa `CGAL::compare_to_less()`
 
 
 */
@@ -101,13 +101,13 @@ class Compare_to_less {
 public:
 
 
-/// \name Types 
-/// @{ 
+/// \name Types
+/// @{
 /*!
-type of the composed functor. 
-*/ 
-typedef unspecified_type Type; 
-/// @} 
+type of the composed functor.
+*/
+typedef unspecified_type Type;
+/// @}
 
 
 }; /* end Compare_to_less */
@@ -118,14 +118,14 @@ namespace CGAL {
 \ingroup projectionobjects
 
 
-Changes a functor 
-returning a `Comparison_result` to one which returns a bool. 
-The returned functor will return `true` iff the original one 
-returns `SMALLER`. 
+Changes a functor
+returning a `Comparison_result` to one which returns a bool.
+The returned functor will return `true` iff the original one
+returns `SMALLER`.
 
 
 
-\sa `CGAL::Compare_to_less<F>` 
+\sa `CGAL::Compare_to_less<F>`
 
 returns a functor equivalent to
 `f`, but which returns a bool instead of a
@@ -146,10 +146,10 @@ namespace CGAL {
 \ingroup STLCreators
 
 
-The class `Creator_1` defines types and operations 
-for creating objects from one argument. 
+The class `Creator_1` defines types and operations
+for creating objects from one argument.
 
-\tparam Arg must be convertible to `Result`. 
+\tparam Arg must be convertible to `Result`.
 
 */
 template< typename Arg, typename Result >
@@ -157,34 +157,34 @@ class Creator_1 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of argument. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of argument.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns 
-`result_type(a)`. 
-*/ 
-result_type operator()(argument_type a) const; 
+returns
+`result_type(a)`.
+*/
+result_type operator()(argument_type a) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -198,11 +198,11 @@ namespace CGAL {
 
 
 
-The class `Creator_2` defines types and operations 
-for creating objects from two arguments. 
+The class `Creator_2` defines types and operations
+for creating objects from two arguments.
 
 
-\tparam Result must define a corresponding constructor. 
+\tparam Result must define a corresponding constructor.
 
 */
 template< typename Arg1, typename Arg2, typename Result >
@@ -210,43 +210,43 @@ class Creator_2 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of first argument. 
-*/ 
-typedef Arg1 argument1_type; 
-/// @} 
+type of first argument.
+*/
+typedef Arg1 argument1_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of second argument. 
-*/ 
-typedef Arg2 argument2_type; 
-/// @} 
+type of second argument.
+*/
+typedef Arg2 argument2_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2)`. 
-*/ 
-result_type operator()(argument_type1 a1, argument_type2 
-a2) const; 
+returns `result_type(a1, a2)`.
+*/
+result_type operator()(argument_type1 a1, argument_type2
+a2) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -260,12 +260,12 @@ namespace CGAL {
 
 
 
-The class `Creator_3` defines types and operations 
-for creating objects from three arguments. 
+The class `Creator_3` defines types and operations
+for creating objects from three arguments.
 
 
 
-\tparam Result must define a corresponding constructor. 
+\tparam Result must define a corresponding constructor.
 
 
 */
@@ -274,53 +274,53 @@ class Creator_3 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of first argument. 
-*/ 
-typedef Arg1 argument1_type; 
-/// @} 
+type of first argument.
+*/
+typedef Arg1 argument1_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of second argument. 
-*/ 
-typedef Arg2 argument2_type; 
-/// @} 
+type of second argument.
+*/
+typedef Arg2 argument2_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of third argument. 
-*/ 
-typedef Arg3 argument3_type; 
-/// @} 
+type of third argument.
+*/
+typedef Arg3 argument3_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, 
-a3)`. 
-*/ 
-result_type operator()(argument_type1 a1, argument_type2 
-a2, argument_type3 a3) const; 
+returns `result_type(a1, a2,
+a3)`.
+*/
+result_type operator()(argument_type1 a1, argument_type2
+a2, argument_type3 a3) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -334,12 +334,12 @@ namespace CGAL {
 
 
 
-The class `Creator_4` defines types and operations 
-for creating objects from four arguments. 
+The class `Creator_4` defines types and operations
+for creating objects from four arguments.
 
 
 
-\tparam Result must define a corresponding constructor. 
+\tparam Result must define a corresponding constructor.
 
 
 */
@@ -348,62 +348,62 @@ class Creator_4 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of first argument. 
-*/ 
-typedef Arg1 argument1_type; 
-/// @} 
+type of first argument.
+*/
+typedef Arg1 argument1_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of second argument. 
-*/ 
-typedef Arg2 argument2_type; 
-/// @} 
+type of second argument.
+*/
+typedef Arg2 argument2_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of third argument. 
-*/ 
-typedef Arg3 argument3_type; 
-/// @} 
+type of third argument.
+*/
+typedef Arg3 argument3_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of 4th argument. 
-*/ 
-typedef Arg4 argument4_type; 
-/// @} 
+type of 4th argument.
+*/
+typedef Arg4 argument4_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns 
-`result_type(a1, a2, a3, a4)`. 
-*/ 
-result_type operator()(argument_type1 a1, argument_type2 
-a2, argument_type3 a3, argument_type4 a4) const; 
+returns
+`result_type(a1, a2, a3, a4)`.
+*/
+result_type operator()(argument_type1 a1, argument_type2
+a2, argument_type3 a3, argument_type4 a4) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -417,12 +417,12 @@ namespace CGAL {
 
 
 
-The class `Creator_5` defines types and operations 
-for creating objects from five arguments. 
+The class `Creator_5` defines types and operations
+for creating objects from five arguments.
 
 
 
-\tparam Result must define a corresponding constructor. 
+\tparam Result must define a corresponding constructor.
 
 
 */
@@ -431,71 +431,71 @@ class Creator_5 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of first argument. 
-*/ 
-typedef Arg1 argument1_type; 
-/// @} 
+type of first argument.
+*/
+typedef Arg1 argument1_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of second argument. 
-*/ 
-typedef Arg2 argument2_type; 
-/// @} 
+type of second argument.
+*/
+typedef Arg2 argument2_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of third argument. 
-*/ 
-typedef Arg3 argument3_type; 
-/// @} 
+type of third argument.
+*/
+typedef Arg3 argument3_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of 4th argument. 
-*/ 
-typedef Arg4 argument4_type; 
-/// @} 
+type of 4th argument.
+*/
+typedef Arg4 argument4_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of 5th argument. 
-*/ 
-typedef Arg5 argument5_type; 
-/// @} 
+type of 5th argument.
+*/
+typedef Arg5 argument5_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3, a4, a5)`. 
-*/ 
-result_type operator()(argument_type1 a1, argument_type2 
-a2, argument_type3 a3, argument_type4 a4, argument_type5 a5) 
-const; 
+returns `result_type(a1, a2, a3, a4, a5)`.
+*/
+result_type operator()(argument_type1 a1, argument_type2
+a2, argument_type3 a3, argument_type4 a4, argument_type5 a5)
+const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -509,12 +509,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_2` defines types and operations 
-for creating objects from two arguments of the same type. 
+The class `Creator_uniform_2` defines types and operations
+for creating objects from two arguments of the same type.
 
 
 
-\tparam Result must define a constructor from two `Arg` arguments. 
+\tparam Result must define a constructor from two `Arg` arguments.
 
 
 */
@@ -523,34 +523,34 @@ class Creator_uniform_2 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
 type of arguments.
-*/ 
-typedef Arge argument_type; 
-/// @} 
+*/
+typedef Arge argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2) 
-const; 
+returns `result_type(a1, a2)`.
+*/
+result_type operator()(argument_type a1, argument_type a2)
+const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -564,12 +564,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_3` defines types and operations 
-for creating objects from three arguments of the same type. 
+The class `Creator_uniform_3` defines types and operations
+for creating objects from three arguments of the same type.
 
 
 
-\tparam Result must define a constructor from three `Arg` arguments. 
+\tparam Result must define a constructor from three `Arg` arguments.
 
 
 */
@@ -578,34 +578,34 @@ class Creator_uniform_3 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3) const; 
+returns `result_type(a1, a2, a3)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -619,12 +619,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_4` defines types and operations 
-for creating objects from four arguments of the same type. 
+The class `Creator_uniform_4` defines types and operations
+for creating objects from four arguments of the same type.
 
 
 
-\tparam Result must define a constructor from four `Arg` arguments. 
+\tparam Result must define a constructor from four `Arg` arguments.
 
 
 */
@@ -633,35 +633,35 @@ class Creator_uniform_4 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns 
-`result_type(a1, a2, a3, a4)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4) const; 
+returns
+`result_type(a1, a2, a3, a4)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -675,12 +675,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_5` defines types and operations 
-for creating objects from five arguments of the same type. 
+The class `Creator_uniform_5` defines types and operations
+for creating objects from five arguments of the same type.
 
 
 
-\tparam Result must define a constructor from five `Arg` arguments. 
+\tparam Result must define a constructor from five `Arg` arguments.
 
 
 */
@@ -689,35 +689,35 @@ class Creator_uniform_5 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3, a4, a5)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4, argument_type a5) 
-const; 
+returns `result_type(a1, a2, a3, a4, a5)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4, argument_type a5)
+const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -731,12 +731,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_6` defines types and operations 
-for creating objects from six arguments of the same type. 
+The class `Creator_uniform_6` defines types and operations
+for creating objects from six arguments of the same type.
 
 
 
-\tparam Result must define a constructor from six `Arg` arguments. 
+\tparam Result must define a constructor from six `Arg` arguments.
 
 
 */
@@ -745,36 +745,36 @@ class Creator_uniform_6 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3, a4, 
-a5, a6)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4, argument_type a5, 
-argument_type a6) const; 
+returns `result_type(a1, a2, a3, a4,
+a5, a6)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4, argument_type a5,
+argument_type a6) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -788,12 +788,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_7` defines types and operations 
-for creating objects from seven arguments of the same type. 
+The class `Creator_uniform_7` defines types and operations
+for creating objects from seven arguments of the same type.
 
 
 
-\tparam Result must define a constructor from seven `Arg` arguments. 
+\tparam Result must define a constructor from seven `Arg` arguments.
 
 
 */
@@ -802,36 +802,36 @@ class Creator_uniform_7 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns 
-`result_type(a1, a2, a3, a4, a5, a6, a7)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4, argument_type a5, 
-argument_type a6, argument_type a7) const; 
+returns
+`result_type(a1, a2, a3, a4, a5, a6, a7)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4, argument_type a5,
+argument_type a6, argument_type a7) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -845,12 +845,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_8` defines types and operations 
-for creating objects from eight arguments of the same type. 
+The class `Creator_uniform_8` defines types and operations
+for creating objects from eight arguments of the same type.
 
 
 
-\tparam Result must define a constructor from eight `Arg` arguments. 
+\tparam Result must define a constructor from eight `Arg` arguments.
 
 
 */
@@ -859,37 +859,37 @@ class Creator_uniform_8 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3, a4, a5, a6, a7, 
-a8)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4, argument_type a5, 
-argument_type a6, argument_type a7, argument_type a8) 
-const; 
+returns `result_type(a1, a2, a3, a4, a5, a6, a7,
+a8)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4, argument_type a5,
+argument_type a6, argument_type a7, argument_type a8)
+const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -903,12 +903,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_9` defines types and operations 
-for creating objects from nine arguments of the same type. 
+The class `Creator_uniform_9` defines types and operations
+for creating objects from nine arguments of the same type.
 
 
 
-\tparam Result must define a constructor from nine `Arg` arguments. 
+\tparam Result must define a constructor from nine `Arg` arguments.
 
 
 */
@@ -917,37 +917,37 @@ class Creator_uniform_9 {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(a1, a2, a3, a4, 
-a5, a6, a7, a8, a9)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2, 
-argument_type a3, argument_type a4, argument_type a5, 
-argument_type a6, argument_type a7, argument_type a8, 
-argument_type a9) const; 
+returns `result_type(a1, a2, a3, a4,
+a5, a6, a7, a8, a9)`.
+*/
+result_type operator()(argument_type a1, argument_type a2,
+argument_type a3, argument_type a4, argument_type a5,
+argument_type a6, argument_type a7, argument_type a8,
+argument_type a9) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -961,12 +961,12 @@ namespace CGAL {
 
 
 
-The class `Creator_uniform_d` defines types and operations 
-for creating objects from two arguments of the same type. 
+The class `Creator_uniform_d` defines types and operations
+for creating objects from two arguments of the same type.
 
 
 
-\tparam Result must define a constructor from three arguments: one `d` dimension and two `Arg` arguments. 
+\tparam Result must define a constructor from three arguments: one `d` dimension and two `Arg` arguments.
 
 
 */
@@ -975,34 +975,34 @@ class Creator_uniform_d {
 public:
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of arguments. 
-*/ 
-typedef Arg argument_type; 
-/// @} 
+type of arguments.
+*/
+typedef Arg argument_type;
+/// @}
 
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-type of object to create. 
-*/ 
-typedef Result result_type; 
-/// @} 
+type of object to create.
+*/
+typedef Result result_type;
+/// @}
 
-/// \name Requirements 
-/// @{ 
+/// \name Requirements
+/// @{
 /*!
-returns `result_type(d, a1, a2)`. 
-*/ 
-result_type operator()(argument_type a1, argument_type a2) 
-const; 
+returns `result_type(d, a1, a2)`.
+*/
+result_type operator()(argument_type a1, argument_type a2)
+const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1016,12 +1016,12 @@ namespace CGAL {
 
 
 
-The class `Dereference` dereferences a pointer 
-(`operator*`). 
+The class `Dereference` dereferences a pointer
+(`operator*`).
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Value >
@@ -1029,50 +1029,50 @@ struct Dereference {
 
 
 /*!
-*/ 
-typedef Value*  argument_type; 
+*/
+typedef Value*  argument_type;
 
 
 /*!
-*/ 
-typedef Value result_type; 
+*/
+typedef Value result_type;
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Dereference(); 
+default constructor.
+*/
+Dereference();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`*x`. 
-*/ 
-result_type& operator()(argument_type& x) const; 
+returns
+`*x`.
+*/
+result_type& operator()(argument_type& x) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `*x`. 
-*/ 
-const result_type& operator()(const argument_type& 
-x) const; 
+returns `*x`.
+*/
+const result_type& operator()(const argument_type&
+x) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1086,12 +1086,12 @@ namespace CGAL {
 
 
 
-The class `Get_address` gets the address of an lvalue 
-(`operator&`). 
+The class `Get_address` gets the address of an lvalue
+(`operator&`).
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -1100,49 +1100,49 @@ struct Get_address {
 
 
 /*!
-*/ 
-typedef Value argument_type; 
+*/
+typedef Value argument_type;
 
 /*!
-*/ 
-typedef  Value* result_type; 
+*/
+typedef  Value* result_type;
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Get_address(); 
+default constructor.
+*/
+Get_address();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`&x`. 
-*/ 
-result_type& operator()(argument_type& x) const; 
+returns
+`&x`.
+*/
+result_type& operator()(argument_type& x) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `&x`. 
-*/ 
-const result_type& operator()(const argument_type& 
-x) const; 
+returns `&x`.
+*/
+const result_type& operator()(const argument_type&
+x) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1156,12 +1156,12 @@ namespace CGAL {
 
 
 
-The class `Identity` represents the identity function 
-on `Value`. 
+The class `Identity` represents the identity function
+on `Value`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Value >
@@ -1169,50 +1169,49 @@ struct Identity {
 
 
 /*!
-*/ 
-typedef Value argument_type; 
+*/
+typedef Value argument_type;
 
 /*!
-*/ 
-typedef Value result_type; 
-/// @} 
+*/
+typedef Value result_type;
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Identity(); 
+default constructor.
+*/
+Identity();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`x`. 
-*/ 
-result_type& operator()(argument_type& x) const; 
+returns
+`x`.
+*/
+result_type& operator()(argument_type& x) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `x`. 
-*/ 
-const result_type& operator()(const argument_type& 
-x) const; 
+returns `x`.
+*/
+const result_type& operator()(const argument_type&
+x) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1226,12 +1225,12 @@ namespace CGAL {
 
 
 
-The class `Project_facet` calls the member function 
-`facet()` on an instance of type `Node`. 
+The class `Project_facet` calls the member function
+`facet()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Node >
@@ -1239,49 +1238,49 @@ struct Project_facet {
 
 
 /*!
-*/ 
-typedef Node argument_type; 
+*/
+typedef Node argument_type;
 
 /*!
-*/ 
-typedef Node::Facet result_type; 
+*/
+typedef Node::Facet result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_facet(); 
+default constructor.
+*/
+Project_facet();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.facet()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns `n.facet()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.facet()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n.facet()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1295,12 +1294,12 @@ namespace CGAL {
 
 
 
-The class `Project_next` calls the member function 
-`next()` on an instance of type `Node`. 
+The class `Project_next` calls the member function
+`next()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -1309,48 +1308,48 @@ struct Project_next {
 
 
 /*!
-*/ 
-typedef Node* argument_type; 
+*/
+typedef Node* argument_type;
 
 /*!
-*/ 
-typedef Node* result_type; 
+*/
+typedef Node* result_type;
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_next(); 
+default constructor.
+*/
+Project_next();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns  `n->next()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns  `n->next()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n->next()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n->next()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1364,12 +1363,12 @@ namespace CGAL {
 
 
 
-The class `Project_next_opposite` calls the member functions 
-`next()->opposite()` on an instance of type `Node`. 
+The class `Project_next_opposite` calls the member functions
+`next()->opposite()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Node >
@@ -1377,50 +1376,50 @@ struct Project_next_opposite {
 
 
 /*!
-*/ 
-typedef Node* argument_type; 
+*/
+typedef Node* argument_type;
 
 /*!
-*/ 
-typedef Node* result_type; 
+*/
+typedef Node* result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_next_opposite(); 
+default constructor.
+*/
+Project_next_opposite();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n->next()->opposite()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n->next()->opposite()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n->next()->opposite()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n->next()->opposite()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1434,12 +1433,12 @@ namespace CGAL {
 
 
 
-The class `Project_normal` calls the member function 
-`normal()` on an instance of type `Node`. 
+The class `Project_normal` calls the member function
+`normal()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -1448,50 +1447,50 @@ struct Project_normal {
 
 
 /*!
-*/ 
-typedef Node argument_type; 
+*/
+typedef Node argument_type;
 
 
 /*!
-*/ 
-  typedef Node::Normal result_type; 
+*/
+  typedef Node::Normal result_type;
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_normal(); 
+default constructor.
+*/
+Project_normal();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n.normal()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n.normal()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.normal()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n.normal()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1505,12 +1504,12 @@ namespace CGAL {
 
 
 
-The class `Project_opposite_prev` calls the member functions 
-`opposite()->prev()` on an instance of type `Node`. 
+The class `Project_opposite_prev` calls the member functions
+`opposite()->prev()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -1519,50 +1518,50 @@ struct Project_opposite_prev {
 
 
 /*!
-*/ 
-typedef Node* argument_type; 
+*/
+typedef Node* argument_type;
 
 /*!
-*/ 
-typedef Node* result_type; 
+*/
+typedef Node* result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_opposite_prev(); 
+default constructor.
+*/
+Project_opposite_prev();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n->opposite()->prev()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n->opposite()->prev()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n->opposite()->prev()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n->opposite()->prev()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1576,12 +1575,12 @@ namespace CGAL {
 
 
 
-The class `Project_plane` calls the member function 
-`plane()` on an instance of type `Node`. 
+The class `Project_plane` calls the member function
+`plane()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 
 */
@@ -1590,50 +1589,50 @@ struct Project_plane {
 
 
 /*!
-*/ 
-typedef Node argument_type; 
+*/
+typedef Node argument_type;
 
 /*!
-*/ 
-typedef Node::Plane result_type; 
+*/
+typedef Node::Plane result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_plane(); 
+default constructor.
+*/
+Project_plane();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n.plane()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n.plane()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.plane()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n.plane()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1647,12 +1646,12 @@ namespace CGAL {
 
 
 
-The class `Project_point` calls the member function 
-`point()` on an instance of type `Node`. 
+The class `Project_point` calls the member function
+`point()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Node >
@@ -1660,50 +1659,50 @@ struct Project_point {
 
 
 /*!
-*/ 
-typedef Node argument_type; 
+*/
+typedef Node argument_type;
 
 /*!
-*/ 
-typedef Node::Point result_type; 
+*/
+typedef Node::Point result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_point(); 
+default constructor.
+*/
+Project_point();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n.point()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n.point()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.point()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n.point()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1717,12 +1716,12 @@ namespace CGAL {
 
 
 
-The class `Project_prev` calls the member function 
-`prev()` on an instance of type `Node`. 
+The class `Project_prev` calls the member function
+`prev()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Node >
@@ -1730,50 +1729,50 @@ struct Project_prev {
 
 
 /*!
-*/ 
-typedef Node* argument_type; 
+*/
+typedef Node* argument_type;
 
 /*!
 
-*/ 
-typedef Node* result_type; 
+*/
+typedef Node* result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_prev(); 
+default constructor.
+*/
+Project_prev();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns  `n->prev()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns  `n->prev()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n->prev()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n->prev()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 
@@ -1787,12 +1786,12 @@ namespace CGAL {
 
 
 
-The class `Project_vertex` calls the member function 
-`vertex()` on an instance of type `Node`. 
+The class `Project_vertex` calls the member function
+`vertex()` on an instance of type `Node`.
 
 
 
-\cgalModels `ProjectionObject`
+\cgalModels{ProjectionObject}
 
 */
 template< typename Node >
@@ -1800,50 +1799,50 @@ struct Project_vertex {
 
 
 /*!
-*/ 
-typedef Node argument_type; 
+*/
+typedef Node argument_type;
 
 /*!
-*/ 
-typedef Node::Vertex result_type; 
+*/
+typedef Node::Vertex result_type;
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-default constructor. 
-*/ 
-Project_vertex(); 
+default constructor.
+*/
+Project_vertex();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns 
-`n.vertex()`. 
-*/ 
-result_type& operator()(argument_type& n) const; 
+returns
+`n.vertex()`.
+*/
+result_type& operator()(argument_type& n) const;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Operations 
-/// @{ 
+/// \name Operations
+/// @{
 /*!
-returns `n.vertex()`. 
-*/ 
-const result_type& operator()(const argument_type& 
-n) const; 
+returns `n.vertex()`.
+*/
+const result_type& operator()(const argument_type&
+n) const;
 
 
 
-/// @} 
+/// @}
 
 
 

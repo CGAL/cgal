@@ -1,20 +1,12 @@
+#define CGAL_MESH_3_VERBOSE 1
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -51,13 +43,13 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    image.read("data/liver.inr.gz");
+    image.read(CGAL::data_file_path("images/liver.inr.gz"));
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
     Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain
       (image,
-       1e-9,
+       CGAL::parameters::relative_error_bound = 1e-6,
        CGAL::parameters::p_rng = &CGAL::get_default_random());
 
     // Set mesh criteria
@@ -70,12 +62,14 @@ public:
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
 
+    c3t3.remove_isolated_vertices();
+
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
     this->verify(c3t3,domain,criteria, Bissection_tag());
 
     typedef typename Mesh_domain::Surface_patch_index Patch_id;
-    CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
+    static_assert(CGAL::Output_rep<Patch_id>::is_specialized);
     CGAL_USE_TYPE(Patch_id);
   }
 
@@ -85,6 +79,7 @@ public:
 
 int main()
 {
+  std::cerr.precision(17);
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();

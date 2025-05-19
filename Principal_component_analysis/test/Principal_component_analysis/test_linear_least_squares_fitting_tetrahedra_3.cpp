@@ -1,9 +1,9 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function
 // on a set of tetrahedra in 3D
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
 
@@ -11,24 +11,24 @@
 #include <CGAL/Diagonalize_traits.h>
 #endif
 
-typedef double                FT;
-typedef CGAL::Cartesian<FT>   Kernel;
-typedef Kernel::Line_3        Line;
-typedef Kernel::Plane_3       Plane;
-typedef Kernel::Point_3       Point;
-typedef Kernel::Tetrahedron_3 Tetrahedron;
+typedef double                       FT;
+typedef CGAL::Simple_cartesian<FT>   Kernel;
+typedef Kernel::Line_3               Line;
+typedef Kernel::Plane_3              Plane;
+typedef Kernel::Point_3              Point;
+typedef Kernel::Tetrahedron_3        Tetrahedron;
 
 int main()
 {
   std::cout << "Test 3D linear least squares fitting of tetrahedra"  << std::endl;
 
-	// generate two tetrahedra
-	std::list<Tetrahedron> tetrahedra;
-	Point a(0.0,0.0,0.0);
-	Point b(1.0,0.0,0.0);
-	Point c(0.0,1.0,0.0);
-	Point d(0.0,0.0,1.0);
-	Point e(0.0,1.0,1.0);
+        // generate two tetrahedra
+        std::list<Tetrahedron> tetrahedra;
+        Point a(0.0,0.0,0.0);
+        Point b(1.0,0.0,0.0);
+        Point c(0.0,1.0,0.0);
+        Point d(0.0,0.0,1.0);
+        Point e(0.0,1.0,1.0);
   tetrahedra.push_back(Tetrahedron(a,b,c,d));
   tetrahedra.push_back(Tetrahedron(a,b,c,e));
 
@@ -36,25 +36,25 @@ int main()
   Plane plane;
   Point centroid;
 
-	// fit line, no centroid
+        // fit line, no centroid
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::Dimension_tag<0>());
 
-	// fit line, centroid
+        // fit line, centroid
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::Dimension_tag<0>());
 
-	// fit plane, no centroid
+        // fit plane, no centroid
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<0>());
 
-	// fit plane, centroid
+        // fit plane, centroid
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::Dimension_tag<1>());

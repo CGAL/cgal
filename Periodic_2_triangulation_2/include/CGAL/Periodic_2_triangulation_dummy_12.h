@@ -2,21 +2,14 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
 
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 
@@ -32,12 +25,12 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   // 6 faces per row, 4 rows
   Face_handle faces[24];
 
-  // Initialise vertices:
+  // initialize vertices:
   for (int i = 0; i < 4; i++)
     {
       for (int j = 0; j < 3; j++)
         {
-          // Initialise virtual vertices out of the domain for debugging
+          // initialize virtual vertices out of the domain for debugging
           vertices[3 * i + j] = _tds.create_vertex();
           Point p(j * (1.0 / 3.0) + i * (1.0 / 6.0), i * (1.0 / 4.0) );
           p = Point((p.x() > FT(0.9375) ? (std::max)( p.x() - 1, FT(0) ) : p.x()),

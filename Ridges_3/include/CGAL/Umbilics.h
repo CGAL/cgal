@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_UMBILIC_H_
@@ -22,15 +13,17 @@
 
 #include <CGAL/license/Ridges_3.h>
 
+#include <CGAL/basic.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/PolyhedralSurf_neighbors.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
+#include <memory>
 
 #include <list>
 #include <vector>
 #include <math.h>
-#include <CGAL/basic.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/PolyhedralSurf_neighbors.h>
-#include <CGAL/Kernel/global_functions_3.h>
-#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -38,7 +31,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILI
 
 //-------------------------------------------------------------------
 //Umbilic : stores umbilic data, its location given by a vertex, its
-//type and a circle of edges bording a disk containing the vertex
+//type and a circle of edges bordering a disk containing the vertex
 //------------------------------------------------------------------
 template < class TriangleMesh >
 class Umbilic
@@ -46,11 +39,11 @@ class Umbilic
  public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  
+
   //constructor
   Umbilic(const TriangleMesh& P,
           const vertex_descriptor v_init,
-	  const std::list<halfedge_descriptor> contour_init); 
+          const std::list<halfedge_descriptor> contour_init);
 
   //access fct
   vertex_descriptor vertex() const { return v;}
@@ -72,24 +65,24 @@ template <class TriangleMesh>
 Umbilic<TriangleMesh>::
 Umbilic(const TriangleMesh& P,
         const vertex_descriptor v_init,
-	const std::list<halfedge_descriptor> contour_init) 
+        const std::list<halfedge_descriptor> contour_init)
   : P(P), v(v_init), contour(contour_init)
-{} 
+{}
 
 
 template <class TriangleMesh>
-std::ostream& 
+std::ostream&
 operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
 {
   typedef typename boost::property_map<TriangleMesh,vertex_point_t>::const_type VPM;
-  VPM vpm = get(vertex_point, umbilic.mesh()); 
+  VPM vpm = get(vertex_point, umbilic.mesh());
   out_stream << "Umbilic at location (" << get(vpm, umbilic.vertex()) <<  ") of type ";
   switch (umbilic.umbilic_type())
     {
     case CGAL::NON_GENERIC_UMBILIC: out_stream << "non generic" << std::endl; break;
     case CGAL::ELLIPTIC_UMBILIC: out_stream << "elliptic" << std::endl; break;
     case CGAL::HYPERBOLIC_UMBILIC: out_stream << "hyperbolic" << std::endl; break;
-    default : out_stream << "Something wrong occured for sure..." << std::endl; break;
+    default : out_stream << "Something wrong occurred for sure..." << std::endl; break;
     }
   return out_stream;
 }
@@ -104,7 +97,7 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangleMesh>& umbilic)
 template < class TriangleMesh, class VertexFTMap, class VertexVectorMap >
 class Umbilic_approximation
 {
-  
+
   typedef typename boost::property_map<TriangleMesh,vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
@@ -117,19 +110,19 @@ class Umbilic_approximation
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator  Vertex_const_iterator;
 
   //requirements for the templates TriangleMesh and VertexFTMap or VertexVectorMap
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value));
-  CGAL_static_assertion((boost::is_same<FT, typename VertexFTMap::value_type>::value));
-  CGAL_static_assertion((boost::is_same<Vector_3, typename VertexVectorMap::value_type>::value));
+  static_assert(std::is_same<vertex_descriptor, typename VertexFTMap::key_type>::value);
+  static_assert(std::is_same<vertex_descriptor, typename VertexVectorMap::key_type>::value);
+  static_assert(std::is_same<FT, typename VertexFTMap::value_type>::value);
+  static_assert(std::is_same<Vector_3, typename VertexVectorMap::value_type>::value);
 
   typedef CGAL::Umbilic<TriangleMesh> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
-  Umbilic_approximation(const TriangleMesh& P, 
-			const VertexFTMap& vertex2k1_pm, 
-			const VertexFTMap& vertex2k2_pm,
-			const VertexVectorMap& vertex2d1_pm, 
-			const VertexVectorMap& vertex2d2_pm);
+  Umbilic_approximation(const TriangleMesh& P,
+                        const VertexFTMap& vertex2k1_pm,
+                        const VertexFTMap& vertex2k2_pm,
+                        const VertexVectorMap& vertex2d1_pm,
+                        const VertexVectorMap& vertex2d2_pm);
   //identify umbilics as vertices minimizing the function k1-k2 on
   //their patch and for which the index is not 0. We avoid
   //potential umbilics whose contours touch the border.
@@ -138,9 +131,9 @@ class Umbilic_approximation
 
  protected:
   const TriangleMesh& P;
-  
+
   typedef T_PolyhedralSurf_neighbors<TriangleMesh> Poly_neighbors;
-  boost::shared_ptr<Poly_neighbors> poly_neighbors;
+  std::shared_ptr<Poly_neighbors> poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
   CGAL::To_double<FT> To_double;
@@ -162,17 +155,17 @@ class Umbilic_approximation
 
 template < class TriangleMesh,  class VertexFTMap, class VertexVectorMap >
 Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap >::
-Umbilic_approximation(const TriangleMesh& p, 
-		      const VertexFTMap& vertex2k1_pm, 
-		      const VertexFTMap& vertex2k2_pm,
-		      const VertexVectorMap& vertex2d1_pm, 
-		      const VertexVectorMap& vertex2d2_pm)
-  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), 
+Umbilic_approximation(const TriangleMesh& p,
+                      const VertexFTMap& vertex2k1_pm,
+                      const VertexFTMap& vertex2k2_pm,
+                      const VertexVectorMap& vertex2d1_pm,
+                      const VertexVectorMap& vertex2d2_pm)
+  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm),
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
   CGAL_precondition(is_triangle_mesh(P));
 
-  poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
+  poly_neighbors = std::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
 
 
@@ -182,16 +175,16 @@ OutputIterator Umbilic_approximation< TriangleMesh, VertexFTMap, VertexVectorMap
 compute(OutputIterator umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
-  
+
   std::vector<vertex_descriptor> vces;
   std::list<halfedge_descriptor> contour;
   FT umbilicEstimatorVertex, umbilicEstimatorNeigh;
-  
+
   bool is_umbilic = true;
 
   //MAIN loop on P vertices
   Vertex_const_iterator itb, ite;
-  boost::tie(itb,ite) = vertices(P);
+  std::tie(itb,ite) = vertices(P);
   for (;itb != ite; itb++) {
     vertex_descriptor vh = *itb;
     umbilicEstimatorVertex = cgal_abs(get(k1,vh)-get(k2,vh));
@@ -199,10 +192,10 @@ compute(OutputIterator umbilics_it, FT size)
     vces.clear();
     contour.clear();
     is_umbilic = true;
-    //the size of neighbourhood is (size * OneRingSize)
+    //the size of neighborhood is (size * OneRingSize)
     poly_neighbors->compute_neighbors(vh, vces, contour, size);
-    
-    
+
+
     // avoid umbilics whose contours touch the border (Note may not be
     // desirable?)
     typename std::list<halfedge_descriptor>::const_iterator itb_cont = contour.begin(),
@@ -210,20 +203,20 @@ compute(OutputIterator umbilics_it, FT size)
     for (; itb_cont != ite_cont; itb_cont++)
       if ( is_border(*itb_cont, P) ) {is_umbilic = false; continue;}
     if (is_umbilic == false) continue;
-    
+
     //is v an umbilic?
-    //a priori is_umbilic = true, and it switches to false as soon as a 
+    //a priori is_umbilic = true, and it switches to false as soon as a
     //  neigh vertex has a lower umbilicEstimator value
     typename std::vector<vertex_descriptor>::const_iterator itbv = vces.begin(),
       itev = vces.end();
     itbv++;
     for (; itbv != itev; itbv++)
-      {	umbilicEstimatorNeigh = cgal_abs( get(k1,*itbv) - get(k2,*itbv) );
-	if ( umbilicEstimatorNeigh < umbilicEstimatorVertex ) 
-	  {is_umbilic = false; break;}
+      {        umbilicEstimatorNeigh = cgal_abs( get(k1,*itbv) - get(k2,*itbv) );
+        if ( umbilicEstimatorNeigh < umbilicEstimatorVertex )
+          {is_umbilic = false; break;}
       }
     if (is_umbilic == false) continue;
-    
+
     //v is an umbilic (wrt the min of k1-k2), compute the index. If
     //the index is not 0 then we have actually an umbilic which is output
     Umbilic*  cur_umbilic = new Umbilic(P, vh, contour);
@@ -239,7 +232,6 @@ compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;
-  const double  pi=3.141592653589793;
   vertex_descriptor v;
   typename std::list<halfedge_descriptor>::const_iterator itb = umb.contour_list().begin(),
     itlast = --umb.contour_list().end();
@@ -264,7 +256,7 @@ compute_type(Umbilic& umb)
     normal = CGAL::cross_product(get(d1,v), get(d2,v));
   }
   while (itb != (itlast));
-  
+
   //angle (v_last, v_0)
   v = target(*umb.contour_list().begin(), P);
    dirnext = get(d1,v);
@@ -275,9 +267,9 @@ compute_type(Umbilic& umb)
   else angle = -acos(cosinus);
   angleSum += angle;
 
-  if ((angleSum > (pi/2)) && (angleSum < (3*pi/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
-  else if ((angleSum < (-pi/2)) && (angleSum > (-3*pi/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
-  else if ((angleSum <= (pi/2)) && (angleSum >= (-pi/2))) return 0;//is not considered as an umbilic
+  if ((angleSum > (CGAL_PI/2)) && (angleSum < (3*CGAL_PI/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
+  else if ((angleSum < (-CGAL_PI/2)) && (angleSum > (-3*CGAL_PI/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
+  else if ((angleSum <= (CGAL_PI/2)) && (angleSum >= (-CGAL_PI/2))) return 0;//is not considered as an umbilic
   else umb.umbilic_type() = NON_GENERIC_UMBILIC;
   return 1;
 }
@@ -285,25 +277,25 @@ compute_type(Umbilic& umb)
 
 //Global function
 
-template < class TriangleMesh,  
+template < class TriangleMesh,
            class VertexFTMap,
            class VertexVectorMap,
            class OutputIterator>
 OutputIterator compute_umbilics(const TriangleMesh &P,
-                                const VertexFTMap& vertex2k1_pm, 
+                                const VertexFTMap& vertex2k1_pm,
                                 const VertexFTMap& vertex2k2_pm,
-                                const VertexVectorMap& vertex2d1_pm, 
+                                const VertexVectorMap& vertex2d1_pm,
                                 const VertexVectorMap& vertex2d2_pm,
-                                OutputIterator it, 
+                                OutputIterator it,
                                 double size)
 {
-  typedef Umbilic_approximation < TriangleMesh, 
+  typedef Umbilic_approximation < TriangleMesh,
     VertexFTMap, VertexVectorMap > Umbilic_approximation;
-  
-  Umbilic_approximation umbilic_approximation(P, 
-					      vertex2k1_pm, vertex2k2_pm,
-					      vertex2d1_pm, vertex2d2_pm);
-  return umbilic_approximation.compute(it, size);  
+
+  Umbilic_approximation umbilic_approximation(P,
+                                              vertex2k1_pm, vertex2k2_pm,
+                                              vertex2d1_pm, vertex2d2_pm);
+  return umbilic_approximation.compute(it, size);
 }
 
 

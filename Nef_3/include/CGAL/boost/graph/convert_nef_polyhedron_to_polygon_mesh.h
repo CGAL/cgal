@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -29,28 +20,31 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Cartesian_converter.h>
-#include <boost/unordered_map.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Nef_S2/Generic_handle_map.h>
 
+#include <unordered_map>
 
 namespace CGAL{
 
 namespace nef_to_pm{
 
 // Visitor used to collect and index vertices of a shell
-template<class Nef_polyhedron, class Point_3, class Converter>
+template<class Nef_polyhedron, class PointRange, class Converter>
 struct Shell_vertex_index_visitor
 {
-  typedef boost::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
-  std::vector<Point_3>& points;
+  typedef std::unordered_map<
+    typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
+  typedef typename PointRange::value_type Point_3;
+  PointRange& points;
   Vertex_index_map vertex_indices;
   const Converter& converter;
 
-  Shell_vertex_index_visitor(std::vector<Point_3>& points, const Converter& converter)
+  Shell_vertex_index_visitor(PointRange& points, const Converter& converter)
     :points(points), converter(converter)
   {}
 
@@ -80,20 +74,23 @@ struct FaceInfo2
 };
 
 //Visitor used to collect polygons
-template <class Nef_polyhedron>
+template <class Nef_polyhedron, typename PolygonRange>
 struct Shell_polygons_visitor
 {
-  typedef boost::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
+  typedef std::unordered_map<typename Nef_polyhedron::Vertex_const_handle, std::size_t> Vertex_index_map;
+  typedef typename PolygonRange::value_type Polygon;
   Vertex_index_map& vertex_indices;
-  std::vector< std::vector<std::size_t> >& polygons;
+  PolygonRange& polygons;
   bool triangulate_all_faces;
+  CGAL::Generic_handle_map<bool> Done;
 
   Shell_polygons_visitor(Vertex_index_map& vertex_indices,
-                         std::vector< std::vector<std::size_t> >& polygons,
+                         PolygonRange& polygons,
                          bool triangulate_all_faces)
     : vertex_indices( vertex_indices )
     , polygons(polygons)
     , triangulate_all_faces(triangulate_all_faces)
+    , Done(false)
   {}
 
   std::size_t get_cycle_length( typename Nef_polyhedron::Halffacet_cycle_const_iterator hfc) const
@@ -109,6 +106,14 @@ struct Shell_polygons_visitor
 
   void visit(typename Nef_polyhedron::Halffacet_const_handle opposite_facet)
   {
+    typename Nef_polyhedron::Halffacet_const_handle twin_facet = opposite_facet->twin();
+
+    // skip when we have to do with the unbounded volume and a surface with boundaries
+    if ((twin_facet->incident_volume() == opposite_facet->incident_volume()) && Done[twin_facet])
+        return;
+
+    Done[opposite_facet] = true;
+
     bool is_marked=opposite_facet->incident_volume()->mark();
 
     CGAL_assertion(Nef_polyhedron::Infi_box::is_standard(opposite_facet->plane()));
@@ -118,7 +123,7 @@ struct Shell_polygons_visitor
 
     typename Nef_polyhedron::Halffacet_const_handle f = opposite_facet->twin();
 
-    if (cpp11::next(f->facet_cycles_begin())==f->facet_cycles_end())
+    if (std::next(f->facet_cycles_begin())==f->facet_cycles_end())
     {
       std::size_t cycle_length = 3;
       if (triangulate_all_faces)
@@ -146,24 +151,24 @@ struct Shell_polygons_visitor
           {
             if (is_marked)
             {
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[2]]);
-              polygons.push_back( std::vector<std::size_t>() );
-              polygons.back().push_back(vertex_indices[v[2]]);
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[0]]);
+              polygons.back().push_back(vertex_indices[v[2]]);
               polygons.back().push_back(vertex_indices[v[3]]);
             }
             else
             {
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[2]]);
-              polygons.push_back( std::vector<std::size_t>() );
-              polygons.back().push_back(vertex_indices[v[0]]);
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[2]]);
+              polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[3]]);
             }
           }
@@ -171,22 +176,22 @@ struct Shell_polygons_visitor
           {
             if (is_marked)
             {
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[3]]);
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[3]]);
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[2]]);
             }
             else
             {
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[0]]);
               polygons.back().push_back(vertex_indices[v[3]]);
               polygons.back().push_back(vertex_indices[v[1]]);
-              polygons.push_back( std::vector<std::size_t>() );
+              polygons.push_back( Polygon() );
               polygons.back().push_back(vertex_indices[v[1]]);
               polygons.back().push_back(vertex_indices[v[3]]);
               polygons.back().push_back(vertex_indices[v[2]]);
@@ -197,7 +202,7 @@ struct Shell_polygons_visitor
         case 3:
         {
           // create a new polygon
-          polygons.push_back( std::vector<std::size_t>() );
+          polygons.push_back( Polygon() );
           fc = f->facet_cycles_begin();
           se = typename Nef_polyhedron::SHalfedge_const_handle(fc);
           CGAL_assertion(se!=0);
@@ -216,8 +221,8 @@ struct Shell_polygons_visitor
     }
 
     // cases where a cdt is needed
-    typedef typename Nef_polyhedron::Kernel Kernel;
-    typedef Triangulation_2_projection_traits_3<Kernel>            P_traits;
+    typedef typename Nef_polyhedron::Kernel                              Kernel;
+    typedef Projection_traits_3<Kernel>                                  P_traits;
     typedef Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
     typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
     typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
@@ -288,7 +293,7 @@ struct Shell_polygons_visitor
       queue.pop_back();
       if (e.first->info().visited) continue;
       e.first->info().visited=true;
-      polygons.resize(polygons.size()+1);
+      polygons.push_back(Polygon());
       if (is_marked)
         for (int i=2; i>=0; --i)
           polygons.back().push_back(e.first->vertex(i)->info());
@@ -320,21 +325,21 @@ struct Shell_polygons_visitor
   {}
 };
 
-template <class Point_3, class Nef_polyhedron, class Converter>
+template <typename PointRange, class Nef_polyhedron, class Converter, typename PolygonRange>
 void collect_polygon_mesh_info(
-  std::vector<Point_3>& points,
-  std::vector< std::vector<std::size_t> >& polygons,
+  PointRange& points,
+  PolygonRange& polygons,
   Nef_polyhedron& nef,
   typename Nef_polyhedron::Shell_entry_const_iterator shell,
   const Converter& converter,
   bool triangulate_all_faces)
 {
   // collect points and set vertex indices
-  Shell_vertex_index_visitor<Nef_polyhedron, Point_3, Converter> vertex_index_visitor(points, converter);
+  Shell_vertex_index_visitor<Nef_polyhedron, PointRange, Converter> vertex_index_visitor(points, converter);
   nef.visit_shell_objects(typename Nef_polyhedron::SFace_const_handle(shell), vertex_index_visitor);
 
   // collect polygons
-  Shell_polygons_visitor<Nef_polyhedron> polygon_visitor(
+  Shell_polygons_visitor<Nef_polyhedron, PolygonRange> polygon_visitor(
     vertex_index_visitor.vertex_indices,
     polygons,
     triangulate_all_faces);
@@ -343,41 +348,74 @@ void collect_polygon_mesh_info(
 
 } //end of namespace nef_to_pm
 
-template <class Output_kernel, class Nef_polyhedron>
+template < class Nef_polyhedron, typename PolygonRange, typename PointRange>
 void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
-                                                  std::vector<typename Output_kernel::Point_3>& points,
-                                                  std::vector< std::vector<std::size_t> >& polygons,
+                                                  PointRange& points,
+                                                  PolygonRange& polygons,
                                                   bool triangulate_all_faces = false)
 {
   typedef typename Nef_polyhedron::Point_3 Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Nef_Kernel;
+  typedef typename PointRange::value_type Out_Point;
+  typedef typename Kernel_traits<Out_Point>::Kernel Output_kernel;
+
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
-  typedef typename Output_kernel::Point_3 Out_point;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
-  if ( Nef_polyhedron::Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
-  CGAL_assertion ( vol_it != vol_end );
-  ++vol_it; // skip unbounded volume
+
+  if (Nef_polyhedron::Infi_box::extended_kernel()) ++vol_it; // skip Infi_box
+
+  if ( vol_it == vol_end ) return;
 
   Converter to_output;
+  bool handling_unbounded_volume = true;
+
+  auto shell_is_closed = [](typename Nef_polyhedron::Shell_entry_const_iterator sfh)
+  {
+    typename Nef_polyhedron::SFace_const_handle sf = sfh;
+
+    typename Nef_polyhedron::SFace_cycle_const_iterator fc;
+    for(fc = sf->sface_cycles_begin(); fc != sf->sface_cycles_end(); ++fc)
+    {
+      if (fc.is_shalfedge() ) {
+        typename Nef_polyhedron::SHalfedge_const_handle e(fc);
+        typename Nef_polyhedron::SHalfedge_around_sface_const_circulator ec(e),ee(e);
+        CGAL_For_all(ec,ee)
+        {
+          typename Nef_polyhedron::Halffacet_const_handle f = ec->twin()->facet();
+          if (f->incident_volume()==f->twin()->incident_volume())
+            return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
   for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info<Out_point>(points,
-                                                    polygons,
-                                                    nef,
-                                                    vol_it->shells_begin(),
-                                                    to_output,
-                                                    triangulate_all_faces);
+  {
+    for(auto sit = vol_it->shells_begin(); sit != vol_it->shells_end(); ++sit)
+    {
+      if ( (handling_unbounded_volume || sit!=vol_it->shells_begin()) && shell_is_closed(sit)) continue;
+      nef_to_pm::collect_polygon_mesh_info(points,
+                                           polygons,
+                                           nef,
+                                           sit,
+                                           to_output,
+                                           triangulate_all_faces);
+    }
+    handling_unbounded_volume = false;
+  }
 }
 
 template <class Nef_polyhedron, class Polygon_mesh>
 void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
   typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
-  typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
 
   std::vector<PM_Point> points;
-  std::vector< std::vector<std::size_t> > polygons;
-  convert_nef_polyhedron_to_polygon_soup<PM_Kernel>(nef, points, polygons, triangulate_all_faces);
+  std::vector<std::vector<std::size_t> > polygons;
+  convert_nef_polyhedron_to_polygon_soup(nef, points, polygons, triangulate_all_faces);
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }
 

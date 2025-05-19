@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : include/CGAL/_test_cls_delaunay_hierarchy_2.h
 // revision      : $Id$
@@ -36,11 +36,11 @@ _test_cls_delaunay_hierarchy_2( const Dh & )
   // makes i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804 crash
   _test_cls_delaunay_triangulation_2( Delaunay_hierarchy() );
 
-  
+
   std::cout << "    insertion removal of 1000 points" << std::endl;
   Delaunay_hierarchy dh;
   CGAL::Random_points_in_square_2<Point,Creator> g(1.);
-  CGAL::cpp11::copy_n( g, 1000, std::back_inserter(dh));
+  std::copy_n( g, 1000, std::back_inserter(dh));
 
   dh.locate(Point(0.,0.));
 

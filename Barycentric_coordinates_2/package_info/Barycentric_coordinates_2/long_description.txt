@@ -1,1 +1,4 @@
-The package 2D Generalized Barycentric Coordinates offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons. If coordinates with respect to multivariate scattered points instead of a polygon are required, please refer to natural neighbour coordinates from the package 2D and Surface Function Interpolation.
+This package offers an efficient and robust implementation of various
+Generalized Barycentric Coordinates defined for planar simple polygons.
+If coordinates with respect to multivariate scattered 2D points are required,
+please refer to Natural Neighbor Coordinates from the package 2D and Surface Function Interpolation.

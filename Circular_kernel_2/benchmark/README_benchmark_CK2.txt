@@ -3,13 +3,9 @@ The usage is:
 
 where alpha:
 1: means to bench the BBox(CK) with Vartraits
-2: means to bench the Lazy(CK) with Vartraits
 3: means to bench the CK with Vartraits
-4: means to bench the Bbox(Lazy(CK)) with Vartraits
-5: means to bench the BBox(CK) with Circulartraits 
-6: means to bench the Lazy(CK) with Circulartraits
+5: means to bench the BBox(CK) with Circulartraits
 7: means to bench the CK(CK) with Circulartraits
-8: means to bench the Bbox(Lazy(CK)) Circulartraits
 (le 0 est interne)
 
 beta:
@@ -29,7 +25,7 @@ c: Compute the arrangement of ${Scenario4}
 d: Compute the arrangement of ${Scenario5}
 
 ${Scenario1}:
-- Circles with center in [0,10]x[0,10], 
+- Circles with center in [0,10]x[0,10],
 - 0.5 of distance between each circle
 - unitary radius
 
@@ -49,18 +45,18 @@ ${Scenario4}
 ${Scenario5}
 Lattice, like:
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 with no intersection.
 
 The output:
 
 In std::cout :
 The number of elements to compute the arrangement
-The number of circles and polygons (wich the side may be circular arcs)
+The number of circles and polygons (which the side may be circular arcs)
 The time needed to compute it,
 The number of Vertices, Edges and Faces of the arrangement
 
@@ -68,11 +64,9 @@ In std::cerr :
 Only the time needed to compute it. (it is useful to benchmark a lot of cases and redirect it on a .txt)
 
 ATTENTION:
-1) dont use ./example a b
+1) don't use ./example a b
 with 5 <= a <= 8  and 0 <= b <= 8, we cannot use the Circulartraits to handle the files
 2) The files have to be put on a folder name DXF where the program is located
 
 Compile with -DCGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES if you want to benchmark with
 the same kernel, but with an additional map for supporting circles.
-
-

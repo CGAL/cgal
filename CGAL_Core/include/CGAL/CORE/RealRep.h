@@ -4,41 +4,30 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: RealRep.h
- * Synopsis: 
- * 		Internal Representation for Real
+ * Synopsis:
+ *                 Internal Representation for Real
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
- * 
- * WWW URL: http://cs.nyu.edu/exact/
+ *       Sylvain Pion <pion@cs.nyu.edu>
+ *
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 #ifndef _CORE_REALREP_H_
 #define _CORE_REALREP_H_
 #include "BigFloat.h"
 
-namespace CORE { 
+namespace CORE {
 
 class Real;
 
@@ -67,7 +56,7 @@ public:
   virtual BigFloat sqrt(const extLong&, const BigFloat&) const = 0;
 
   virtual void ULV_E(extLong &, extLong&, extLong&,
-		  extLong&, extLong&, extLong&) const = 0;
+                  extLong&, extLong&, extLong&) const = 0;
   virtual extLong flrLgErr() const = 0;
   virtual extLong clLgErr() const = 0;
   virtual unsigned long degree() const = 0;
@@ -103,10 +92,10 @@ public:
   int ID() const;
 
   long longValue() const {
-    return ker.longValue();
+    return CORE::longValue(ker);
   }
   double doubleValue() const {
-    return ker.doubleValue();
+    return CORE::doubleValue(ker);
   }
   BigInt BigIntValue() const {
     return BigInt(ker);
@@ -165,7 +154,7 @@ void * Realbase_for<T>::operator new( size_t size)
 
 template <class T>
 void Realbase_for<T>::operator delete( void *p, size_t )
-{ MemoryPool<Realbase_for<T> >::global_allocator().free(p); }
+{ (MemoryPool<Realbase_for<T> >::global_allocator().free)(p); }
 
 typedef Realbase_for<long> RealLong;
 typedef Realbase_for<double> RealDouble;
@@ -242,7 +231,7 @@ inline BigInt   RealBigInt::BigIntValue() const {
 }
 template<>
 inline BigInt   RealBigRat::BigIntValue() const {
-  return ker.BigIntValue();
+  return CORE::BigIntValue(ker);
 }
 template<>
 inline BigInt RealBigFloat::BigIntValue() const {
@@ -427,12 +416,12 @@ inline extLong RealBigFloat::clLgErr() const {
 template<>
 inline unsigned long RealLong::length() const {
   return clLg(1+ core_abs(ker));
-}	// length is (log_2(1+ker^2)) /2.
+}        // length is (log_2(1+ker^2)) /2.
 
 template<>
 inline unsigned long RealLong::height() const {
   return clLg(core_max(1L, core_abs(ker)));
-}	// height is max{1, |ker|}
+}        // height is max{1, |ker|}
 
 template<>
 inline unsigned long RealDouble::length() const {
@@ -470,7 +459,7 @@ inline unsigned long RealBigFloat::length() const {
   // The BigRat(BigFloat) actually is a
   // conversion operator (defined in BigFloat.h), _NOT_
   // an ordinary class constructor! The C++ language
-  // specify that an intialization is not an assignment
+  // specify that an initialization is not an assignment
   // but a constructor operation!
   // Considering that BigRat(BigFloat) is a conversion
   // operator not really a constructor. The programmer's
@@ -511,11 +500,11 @@ inline unsigned long RealBigRat::height() const {
 // toString()
 template<>
 inline std::string RealBigInt::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigRat::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigFloat::toString(long prec, bool sci) const {

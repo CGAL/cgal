@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -84,7 +75,7 @@ protected:
   Face_handle_blue m_blue_ubf;          // Blue unbounded face.
 
 public:
-  /*! Constructor, given the input red and blue arrangements. */
+  /*! constructs, given the input red and blue arrangements. */
   Arr_bounded_planar_overlay_helper(const Ar2* red_arr, const Ab2* blue_arr) :
     m_red_top_traits (red_arr->topology_traits()),
     m_blue_top_traits (blue_arr->topology_traits())
@@ -107,10 +98,10 @@ public:
   void before_handle_event(Event* /* e */) {}
   //@}
 
-  /*! Obtain the current red top face. */
+  /*! obtains the current red top face. */
   Face_handle_red red_top_face() const { return m_red_ubf; }
 
-  /*! Obtain the current blue top face. */
+  /*! obtains the current blue top face. */
   Face_handle_blue blue_top_face() const { return m_blue_ubf; }
 };
 

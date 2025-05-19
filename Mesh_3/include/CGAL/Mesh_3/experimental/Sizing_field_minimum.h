@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -31,9 +22,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_same.hpp>
-
 namespace CGAL
 {
   template <typename SizingField1, typename SizingField2>
@@ -45,15 +33,15 @@ namespace CGAL
     typedef typename SizingField1::Index    Index;
 
     BOOST_STATIC_ASSERT_MSG((
-      boost::is_same<typename SizingField1::FT,
+      std::is_same<typename SizingField1::FT,
                      typename SizingField2::FT>::value),
       "FT type should be the same for both sizing fields");
     BOOST_STATIC_ASSERT_MSG((
-      boost::is_same<typename SizingField1::Point_3,
+      std::is_same<typename SizingField1::Point_3,
                      typename SizingField2::Point_3>::value),
       "Point_3 type should be the same for both sizing fields");
     BOOST_STATIC_ASSERT_MSG((
-      boost::is_same<typename SizingField1::Index,
+      std::is_same<typename SizingField1::Index,
                      typename SizingField2::Index>::value),
       "Index type should be the same for both sizing fields");
 

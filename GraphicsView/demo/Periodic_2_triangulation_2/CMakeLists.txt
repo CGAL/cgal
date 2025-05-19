@@ -1,61 +1,51 @@
-project (Periodic_2_triangulation_2_Demo)
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Periodic_2_triangulation_2_Demo)
 
-cmake_minimum_required(VERSION 3.1)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
+find_package(Qt6 QUIET COMPONENTS Widgets)
+include_directories(BEFORE ./include)
 
-find_package(CGAL COMPONENTS Qt5)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
+  add_compile_definitions(QT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-include_directories (BEFORE ./include)
+  # UI files (Qt Designer files)
+  qt6_wrap_ui(DT_UI_FILES Periodic_2_triangulation_2.ui)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
+  # qrc files (resources files, that contain icons, at least)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Periodic_2_triangulation_2.qrc)
 
-add_definitions(-DQT_NO_KEYWORDS)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  # find header files for projects that can show them
+  file(GLOB headers "*.h")
+  file(GLOB QT_headers "include/CGAL/Qt/*.h")
+  file(GLOB P2T2_headers "../../../include/CGAL/*.h")
+  source_group("P2T2" FILES ${P2T2_headers})
+  source_group("QT" FILES ${QT_headers})
 
-#--------------------------------
-# The "2D Periodic triangulation" demo: Periodic_2_triangulation_2
-#--------------------------------
-# UI files (Qt Designer files)
-qt5_wrap_ui( DT_UI_FILES Periodic_2_triangulation_2.ui )
+  # The executable itself.
+  qt_add_executable(
+    Periodic_2_Delaunay_triangulation_2
+    Periodic_2_Delaunay_triangulation_2.cpp
+    ${DT_UI_FILES}
+    ${CGAL_Qt6_RESOURCE_FILES}
+    ${CGAL_Qt6_MOC_FILES}
+    ${headers}
+    ${QT_headers}
+    ${P2T2_headers})
 
-# qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Periodic_2_triangulation_2.qrc )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS
+                     Periodic_2_Delaunay_triangulation_2)
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( Periodic_2_Delaunay_triangulation_2.cpp Periodic_2_triangulation_2.moc )
+  target_link_libraries(Periodic_2_Delaunay_triangulation_2
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
 
-# find header files for projects that can show them
-file(GLOB headers "*.h")
-file(GLOB QT_headers "include/CGAL/Qt/*.h")
-file(GLOB P2T2_headers "../../../include/CGAL/*.h")
-SOURCE_GROUP("P2T2" FILES ${P2T2_headers})
-SOURCE_GROUP("QT" FILES ${QT_headers})
-
-# The executable itself.
-add_executable  ( Periodic_2_Delaunay_triangulation_2 
-  Periodic_2_Delaunay_triangulation_2.cpp
-  Periodic_2_triangulation_2.moc 
-  ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
-  ${headers} ${QT_headers} ${P2T2_headers})
-
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_triangulation_2 )
-
-target_link_libraries( Periodic_2_Delaunay_triangulation_2 PRIVATE
-  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
-
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Periodic_2_Delaunay_triangulation_2)
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Periodic_2_Delaunay_triangulation_2)
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 
 endif()

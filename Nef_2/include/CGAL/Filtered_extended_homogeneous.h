@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -99,12 +90,12 @@ public:
 
 
   // only for visualization:
-  
+
   static RT& R()
   {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(RT,R_,0);
   }
-  
+
   static void set_R(const RT& r) { R() = r; }
   RT eval_at(const RT& r) const { return _m*r+_n; }
   RT eval_at_R() const { return _m*R()+_n; }
@@ -153,7 +144,7 @@ inline double to_double(const SPolynomial<RT>& p)
 template <class RT>
 std::ostream& operator<<(std::ostream& os, const SPolynomial<RT>& p)
 {
-  switch( get_mode(os) ) {
+  switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << p.m() << " " << p.n(); break;
     case CGAL::IO::BINARY :
@@ -167,13 +158,13 @@ std::ostream& operator<<(std::ostream& os, const SPolynomial<RT>& p)
 template <class RT>
 std::istream& operator>>(std::istream& is, SPolynomial<RT>& p)
 { RT m,n;
-  switch( get_mode(is) ){
+  switch( IO::get_mode(is) ){
     case CGAL::IO::ASCII :
       is >> m >> n; p = SPolynomial<RT>(m,n); break;
     case CGAL::IO::BINARY :
       CGAL::read(is,m);CGAL::read(is,n);break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
       break;
   }
   return is;
@@ -318,7 +309,7 @@ CheckPoint checkrep() const
 
 template <class RT>
 std::ostream& operator<<(std::ostream& os, const Extended_point<RT>& p)
-{ switch( get_mode(os) ) {
+{ switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << p.hx() << " " << p.hy() << " " << p.hw(); break;
     case CGAL::IO::BINARY :
@@ -336,13 +327,13 @@ std::ostream& operator<<(std::ostream& os, const Extended_point<RT>& p)
 template <class RT>
 std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
 { SPolynomial<RT> x,y; RT w;
-  switch( get_mode(is) ){
+  switch( IO::get_mode(is) ){
     case CGAL::IO::ASCII :
       is >> x >> y >> w; break;
     case CGAL::IO::BINARY :
       CGAL::read(is,x);CGAL::read(is,y);CGAL::read(is,w); break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
       break;
   }
   p = Extended_point<RT>(x,y,w);
@@ -399,40 +390,64 @@ int orientation(const Extended_point<RT>& p1,
                 const Extended_point<RT>& p3)
 { CGAL_NEF_TRACEN("orientation "<<p1<<p2<<p3);
   int res;
-  try { INCTOTAL(or2); Protect_FPU_rounding<true> Protection;
-    res = orientation_coeff2(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                             p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                             p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+  bool run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(or2);
+      res = orientation_coeff2(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                               p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                               p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(or2);
+      run_exact=true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or2);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = orientation_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
-  }
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(or1); Protect_FPU_rounding<true> Protection;
-    res = orientation_coeff1(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                             p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                             p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(or1);
+      res = orientation_coeff1(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                               p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                               p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(or1);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or1);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = orientation_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
-  }
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(or0); Protect_FPU_rounding<true> Protection;
-    res = orientation_coeff0(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                             p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                             p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(or0);
+      res = orientation_coeff0(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                               p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                               p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(or0);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(or0);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = orientation_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                              p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw());
-  }
   return res;
 }
 
@@ -450,20 +465,38 @@ int compare_x(const Extended_point<RT>& p1,
               const Extended_point<RT>& p2)
 {
   int res;
-  try { INCTOTAL(cmpx1); Protect_FPU_rounding<true> Protection;
-    res = compare_expr(p1.mxD(),p1.hwD(),p2.mxD(),p2.hwD());
+  bool run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmpx1);
+      res = compare_expr(p1.mxD(),p1.hwD(),p2.mxD(),p2.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmpx1);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpx1);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = compare_expr(p1.mx(),p1.hw(),p2.mx(),p2.hw());
-  }
+
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(cmpx0); Protect_FPU_rounding<true> Protection;
-    res = compare_expr(p1.nxD(),p1.hwD(),p2.nxD(),p2.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try {
+      INCTOTAL(cmpx0);
+      res = compare_expr(p1.nxD(),p1.hwD(),p2.nxD(),p2.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmpx0);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpx0);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = compare_expr(p1.nx(),p1.hw(),p2.nx(),p2.hw());
-  }
   return res;
 }
 
@@ -475,20 +508,36 @@ int compare_y(const Extended_point<RT>& p1,
               const Extended_point<RT>& p2)
 {
   int res;
-  try { INCTOTAL(cmpy1); Protect_FPU_rounding<true> Protection;
-    res = compare_expr(p1.myD(),p1.hwD(),p2.myD(),p2.hwD());
+  bool run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmpy1);
+      res = compare_expr(p1.myD(),p1.hwD(),p2.myD(),p2.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmpy1);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpy1);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = compare_expr(p1.my(),p1.hw(),p2.my(),p2.hw());
-  }
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(cmpy0); Protect_FPU_rounding<true> Protection;
-    res = compare_expr(p1.nyD(),p1.hwD(),p2.nyD(),p2.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmpy0);
+      res = compare_expr(p1.nyD(),p1.hwD(),p2.nyD(),p2.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmpy0);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmpy0);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = compare_expr(p1.ny(),p1.hw(),p2.ny(),p2.hw());
-  }
   return res;
 }
 
@@ -617,46 +666,71 @@ int compare_pair_dist(
   const Extended_point<RT>& p3, const Extended_point<RT>& p4)
 {
   int res;
-  try { INCTOTAL(cmppd2); Protect_FPU_rounding<true> Protection;
-    res = cmppd_coeff2(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+  bool run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmppd2);
+      res = cmppd_coeff2(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                         p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                         p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                         p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmppd2);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd2);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = cmppd_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                        p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
+
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(cmppd1); Protect_FPU_rounding<true> Protection;
-    res = cmppd_coeff1(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmppd1);
+      res = cmppd_coeff1(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                         p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                         p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                         p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmppd1);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd1);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = cmppd_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                        p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(cmppd0); Protect_FPU_rounding<true> Protection;
-    res = cmppd_coeff0(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(cmppd0);
+      res = cmppd_coeff0(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                         p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                         p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                         p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    }
+    catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(cmppd0);
+      run_exact = true;
+    }
   }
-  catch (Uncertain_conversion_exception&) { INCEXCEPTION(cmppd0);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = cmppd_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                        p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                        p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
   return res;
 }
 
@@ -882,42 +956,68 @@ int orientation(const Extended_direction<RT>& d1,
   Extended_point<RT> p1(d1.p1()), p2(d1.p2()),
                      p3(d2.p1()), p4(d2.p2());
   int res;
-  try { INCTOTAL(ord2); Protect_FPU_rounding<true> Protection;
-    res = coeff2_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                     p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                     p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                     p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord2);
+  bool run_exact = true;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(ord2);
+      res = coeff2_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    } catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(ord2);
+      run_exact=true;
+    }
+  }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = coeff2_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                      p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
   if ( res != 0 ) return res;
 
-  try { INCTOTAL(ord1); Protect_FPU_rounding<true> Protection;
-    res = coeff1_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                     p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                     p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                     p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord1);
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(ord1);
+      res = coeff1_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    } catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(ord1);
+      run_exact=true;
+    }
+  }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if (run_exact)
     res = coeff1_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                      p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
+
   if ( res != 0 ) return res;
-  try { INCTOTAL(ord0); Protect_FPU_rounding<true> Protection;
-    res = coeff0_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
-                     p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
-                     p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
-                     p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
-  } catch (Uncertain_conversion_exception&) { INCEXCEPTION(ord0);
+
+  run_exact = false;
+  {
+    Protect_FPU_rounding<true> Protection;
+    try { INCTOTAL(ord0); Protect_FPU_rounding<true> Protection;
+      res = coeff0_dor(p1.mxD(),p1.nxD(),p1.myD(),p1.nyD(),p1.hwD(),
+                       p2.mxD(),p2.nxD(),p2.myD(),p2.nyD(),p2.hwD(),
+                       p3.mxD(),p3.nxD(),p3.myD(),p3.nyD(),p3.hwD(),
+                       p4.mxD(),p4.nxD(),p4.myD(),p4.nyD(),p4.hwD());
+    } catch (Uncertain_conversion_exception&) {
+      INCEXCEPTION(ord0);
+      run_exact = true;
+    }
+  }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+  if(run_exact)
     res = coeff0_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
                      p3.mx(),p3.nx(),p3.my(),p3.ny(),p3.hw(),
                      p4.mx(),p4.nx(),p4.my(),p4.ny(),p4.hw());
-  }
   return res;
 }
 
@@ -1262,7 +1362,7 @@ void determine_frame_radius(Forward_iterator start, Forward_iterator end,
     Point_2 p = *start;
     if ( is_standard(p) ) {
       R = (CGAL::max)(CGAL_NTS abs(p.mx())/p.hw(),
-		      CGAL_NTS abs(p.my())/p.hw());
+                      CGAL_NTS abs(p.my())/p.hw());
     } else {
       RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
       if ( rx[1] > ry[1] )      R = CGAL_NTS abs(ry[0]-rx[0])/(rx[1]-ry[1]);

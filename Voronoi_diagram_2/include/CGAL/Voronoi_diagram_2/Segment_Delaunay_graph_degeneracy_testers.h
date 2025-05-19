@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -64,7 +55,7 @@ class Segment_Delaunay_graph_edge_tester_2
 
  private:
   bool is_degenerate_infinite_edge(const Delaunay_graph& dual,
-				   const Face_handle& f, int i) const
+                                   const Face_handle& f, int i) const
   {
     CGAL_precondition( dual.is_infinite(f, i) );
 
@@ -90,13 +81,13 @@ class Segment_Delaunay_graph_edge_tester_2
 
       Equal_2 are_equal = dual.geom_traits().equal_2_object();
       if ( !are_equal(v->site(),vv[i]->site().source_site()) &&
-	   !are_equal(v->site(),vv[i]->site().target_site()) ) {
-	return false;
+           !are_equal(v->site(),vv[i]->site().target_site()) ) {
+        return false;
       }
       if ( are_equal(v->site(),vv[i]->site().source_site()) ) {
-	s_end[i] = vv[i]->site().target_site();
+        s_end[i] = vv[i]->site().target_site();
       } else {
-	s_end[i] = vv[i]->site().source_site();
+        s_end[i] = vv[i]->site().source_site();
       }
     }
 
@@ -107,7 +98,7 @@ class Segment_Delaunay_graph_edge_tester_2
 
  public:
   bool operator()(const Delaunay_graph& dual,
-		  const Face_handle& f, int i) const
+                  const Face_handle& f, int i) const
   {
     if ( dual.dimension() == 1 ) { return false; }
 
@@ -137,17 +128,17 @@ class Segment_Delaunay_graph_edge_tester_2
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const All_edges_iterator& eit) const {
+                  const All_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Finite_edges_iterator& eit) const {
+                  const Finite_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Edge_circulator& ec) const {
+                  const Edge_circulator& ec) const {
     return operator()(dual, *ec);
   }
 };
@@ -200,19 +191,19 @@ class Segment_Delaunay_graph_face_tester_2
     size_type n_inf = 0;     // number of infinite edges
     // number of non-degenerate/non-infinite edges
     size_type n_non_degen = 0;
-      
+
     Edge e[2];
     Edge_tester e_tester;
     do {
       if ( e_tester(dual, ec) ) { ++n_degen; }
       else if ( dual.is_infinite(ec) ) { ++n_inf; }
-      else { 
-	if ( !dual.is_infinite(ec) ) {
-	  if ( n_non_degen < 2 ) {
-	    e[n_non_degen] = *ec;
-	  }
-	  n_non_degen++;
-	}
+      else {
+        if ( !dual.is_infinite(ec) ) {
+          if ( n_non_degen < 2 ) {
+            e[n_non_degen] = *ec;
+          }
+          n_non_degen++;
+        }
       }
       deg++;
       ++ec;
@@ -237,13 +228,13 @@ class Segment_Delaunay_graph_face_tester_2
 
       Equal_2 are_equal = dual.geom_traits().equal_2_object();
       if ( !are_equal(v->site(),vv[i]->site().source_site()) &&
-	   !are_equal(v->site(),vv[i]->site().target_site()) ) {
-	return false;
+           !are_equal(v->site(),vv[i]->site().target_site()) ) {
+        return false;
       }
       if ( are_equal(v->site(),vv[i]->site().source_site()) ) {
-	s_end[i] = vv[i]->site().target_site();
+        s_end[i] = vv[i]->site().target_site();
       } else {
-	s_end[i] = vv[i]->site().source_site();
+        s_end[i] = vv[i]->site().source_site();
       }
     }
 

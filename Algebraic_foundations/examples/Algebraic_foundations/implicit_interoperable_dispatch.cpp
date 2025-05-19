@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Sqrt_extension.h>
@@ -32,7 +31,7 @@ binary_func(const A& a , const B& b){
 }
 
 int main(){
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
 
     // Function call for ImplicitInteroperable types
     std::cout<< binary_func(double(3), int(5)) << std::endl;

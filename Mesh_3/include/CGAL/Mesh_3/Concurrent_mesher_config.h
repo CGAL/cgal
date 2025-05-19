@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Clement Jamin
@@ -44,7 +35,8 @@ class Concurrent_mesher_config
 {
   // Private constructor (singleton)
   Concurrent_mesher_config()
-  : locking_grid_num_cells_per_axis(50),
+  : num_threads(-1),
+    locking_grid_num_cells_per_axis(50),
     first_grid_lock_radius(0),
     work_stats_grid_num_cells_per_axis(5),
     num_work_items_per_batch(50),
@@ -57,14 +49,14 @@ class Concurrent_mesher_config
   {}
 
 public:
-  static Concurrent_mesher_config &get()
+  static Concurrent_mesher_config& get()
   {
     static Concurrent_mesher_config singleton;
     return singleton;
   }
 
   static bool load_config_file(const char *filename,
-    bool reload_if_already_loaded = false)
+                               bool reload_if_already_loaded = false)
   {
     return get().load_file(filename, reload_if_already_loaded);
   }
@@ -73,6 +65,7 @@ public:
   //=============== PUBLIC PARAMETERS ==============
 
   // From config file (or default)
+  int     num_threads;
   int     locking_grid_num_cells_per_axis;
   int     first_grid_lock_radius;
   int     work_stats_grid_num_cells_per_axis;
@@ -90,9 +83,8 @@ public:
 
 protected:
 
-  bool load_file(
-    const char *filename,
-    bool reload_if_already_loaded = false)
+  bool load_file(const char *filename,
+                 bool reload_if_already_loaded = false)
   {
     CGAL_USE(reload_if_already_loaded);
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
@@ -113,6 +105,7 @@ protected:
       // Declare the supported options.
       po::options_description desc("Allowed options");
       desc.add_options()
+        ("num_threads", po::value<int>(), "")
         ("locking_grid_num_cells_per_axis", po::value<int>(), "")
         ("first_grid_lock_radius", po::value<int>(), "")
         ("work_stats_grid_num_cells_per_axis", po::value<int>(), "")
@@ -129,11 +122,13 @@ protected:
     }
     catch (std::exception &e)
     {
-      std::cerr << "Concurrency configuration file error: " 
+      std::cerr << "Concurrency configuration file error: "
         << e.what() << std::endl;
       return false;
     }
 
+    num_threads =
+      get_config_file_option_value<int>("num_threads");
     locking_grid_num_cells_per_axis =
       get_config_file_option_value<int>("locking_grid_num_cells_per_axis");
     first_grid_lock_radius =
@@ -173,7 +168,7 @@ protected:
       return OptionType();
   }
 #endif
-  
+
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   po::variables_map m_variables_map;
 #endif

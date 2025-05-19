@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU, Laurent Saboret
 
@@ -25,12 +16,12 @@
 
 
 // CGAL
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
-#include <CGAL/Surface_mesh_traits_generator_3.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_mesh_traits_generator_3.h>
 
 namespace CGAL {
 
@@ -95,7 +86,7 @@ protected:
   }
 
 public:
-  /* Overriden functions of this level: */
+  /* Overridden functions of this level: */
   /* we override all methods that call test_if_cell_is_bad() */
 
   void scan_triangulation_impl()
@@ -139,7 +130,7 @@ public:
 
 
 private:
-  /* --- private datas --- */
+  /* --- private data --- */
   unsigned int max_vertices; ///< number of vertices bound (ignored if zero)
 
 }; // end Poisson_mesher_level_impl_base
@@ -151,7 +142,7 @@ private:
 template <typename Tr,
           typename Criteria,
           typename Surface,
-          typename Oracle = typename CGAL::Surface_mesh_traits_generator_3<Surface>::type,
+          typename Oracle = typename CGAL::Poisson_mesh_traits_generator_3<Surface>::type,
           typename PreviousLevel = Null_mesher_level
  >
 class Poisson_mesher_level :
@@ -189,17 +180,17 @@ public:
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// @commentheading Preconditions:
+/// \pre
 /// - Tr must use a geometric traits with robust circumcenter computation.
 /// - convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///
-/// @commentheading Template Parameters:
-/// @param Tr 3D Delaunay triangulation.
-/// @param Surface Sphere_3 or Iso_cuboid_3.
-/// @param Sizing_field A sizing field functor type
-/// @param Second_sizing_field A sizing field functor type
+/// *Template Parameters*
+/// @tparam Tr 3D Delaunay triangulation.
+/// @tparam Surface Sphere_3 or Iso_cuboid_3.
+/// @tparam Sizing_field A sizing field functor type
+/// @tparam Second_sizing_field A sizing field functor type
 ///
-/// @commentheading Sizing fields 
+/// *Sizing fields*
 /// - The first sizing field is the real sizing field that is targeted by
 /// the refinement process. It may be costly to use.
 /// - The second sizing field is supposed to be a sizing field that is less
@@ -221,7 +212,7 @@ unsigned int poisson_refine_triangulation(
 {
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
-  CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
+  CGAL_precondition(radius_edge_ratio_bound >= 1.0);
 
   // Mesher_level types
   typedef Poisson_mesh_cell_criteria_3<
@@ -229,14 +220,14 @@ unsigned int poisson_refine_triangulation(
     , Sizing_field
     , Second_sizing_field
     > Tets_criteria;
-  typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
+  typedef typename CGAL::Poisson_mesh_traits_generator_3<Surface>::type Oracle;
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
 
   std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, 
+  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound,
                               sizing_field,
                               second_sizing_field);
   Oracle oracle;

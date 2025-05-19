@@ -2,23 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
 //                 Bernd Gaertner
+
+#ifndef CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H
+#define CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
 
 #include <iterator>
 
@@ -34,7 +30,7 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
 {
     typedef typename Min_sphere_d<Traits>::Point  Point;
 
-    switch ( get_mode( os)) {
+    switch ( IO::get_mode( os)) {
 
       case IO::PRETTY:
         os << std::endl;
@@ -71,8 +67,8 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg
-            ( false, "get_mode( os) invalid!");
+        CGAL_assertion_msg
+            ( false, "IO::get_mode( os) invalid!");
         break; }
 
     return( os);
@@ -82,11 +78,11 @@ template < class Traits >
 std::istream&
 operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 {
-    switch ( get_mode( is)) {
+    switch ( IO::get_mode( is)) {
 
       case IO::PRETTY:
         std::cerr << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case IO::ASCII:
@@ -102,7 +98,7 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
       } break;
 
       default:
-        CGAL_optimisation_assertion_msg( false, "IO::mode invalid!");
+        CGAL_assertion_msg( false, "IO::mode invalid!");
         break;
  }
 
@@ -114,3 +110,5 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_MIN_SPHERE_D_MIN_SPHERE_D_IMPL_H

@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -10,17 +9,11 @@
 #include <fstream>
 #include <cassert>
 
+#include <CGAL/Exact_rational.h>
+
 // choose number type
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq                     exact_ring_t;
-typedef CGAL::Gmpq                     exact_field_t;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                 exact_ring_t;
-typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
-#endif
+typedef CGAL::Exact_rational exact_ring_t;
+typedef CGAL::Exact_rational exact_field_t;
 
 #include <CGAL/Simple_cartesian.h>
 
@@ -36,14 +29,14 @@ typedef CGAL::Field_tag       EK_MTag;
 typedef CGAL::Integral_domain_without_division_tag        EK_MTag_wi;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CK_MTag,
-						       EK_field,EK_MTag>
+                                                       EK_field,EK_MTag>
 Gt;
 
 typedef
 CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,
-								     CK_MTag,
-								     EK_ring,
-								     EK_MTag_wi>
+                                                                     CK_MTag,
+                                                                     EK_ring,
+                                                                     EK_MTag_wi>
 Gt_wi;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt>      SDG2;

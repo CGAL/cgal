@@ -1,41 +1,19 @@
-# Created by the script cgal_create_CMakeLists
-# This is the CMake script for compiling a set of CGAL applications.
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
-project( AABB_traits_benchmark)
+cmake_minimum_required(VERSION 3.12...3.31)
+project(AABB_traits_benchmark)
 
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
-cmake_minimum_required(VERSION 3.1)
-  cmake_policy(VERSION 3.1)
+create_single_source_cgal_program("test.cpp")
+create_single_source_cgal_program("tree_construction.cpp")
 
-
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
+# google benchmark
+find_package(benchmark QUIET)
+if(benchmark_FOUND)
+  create_single_source_cgal_program("tree_creation.cpp")
+  target_link_libraries(tree_creation PRIVATE benchmark::benchmark)
+else()
+  message(STATUS "NOTICE: The benchmark 'tree_creation.cpp' requires the Google benchmark library, and will not be compiled.")
 endif()
-
-# CGAL and its components
-find_package( CGAL QUIET)
-if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
-else ()
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
-
-endif()
-
-
-# Boost and its components
-find_package( Boost REQUIRED )
-# include for local directory
-if ( NOT Boost_FOUND )
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
-endif()
-
-# include for local package
-include_directories( BEFORE ../../include )
-
-add_executable (test_ test.cpp)
-
-

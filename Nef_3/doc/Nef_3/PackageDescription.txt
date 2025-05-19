@@ -3,10 +3,14 @@
 /// \defgroup PkgNef3IOFunctions I/O Functions
 /// \ingroup PkgNef3Ref
 
+/*! Draw.
+\cgalInclude{CGAL/draw_nef_3.h}
+*/
+/// \defgroup PkgDrawNef3 Draw a Nef Polyhedron
+/// \ingroup PkgNef3Ref
 
 /*!
 \addtogroup PkgNef3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3}
 \cgalPkgPicture{Nef_3-teaser.png}
 \cgalPkgSummaryBegin
@@ -19,7 +23,7 @@
 \cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -40,13 +44,13 @@ description, and a data structure that connects these neighborhoods up
 to a global data structure with edges, facets, and volumes. We offer a
 rich interface to investigate these data structures, their different
 elements and their connectivity. We provide affine (rigid)
-tranformations and a point location query operation. We have a custom
+transformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
 a simple OpenGL visualization for debugging and illustrations.
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Nef_polyhedron_3<Traits>`
 - \link CGAL::Nef_polyhedron_3::Vertex `CGAL::Nef_polyhedron_3<Traits>::Vertex` \endlink
 - \link CGAL::Nef_polyhedron_3::Halfedge `CGAL::Nef_polyhedron_3<Traits>::Halfedge` \endlink
@@ -57,11 +61,15 @@ a simple OpenGL visualization for debugging and illustrations.
 - \link CGAL::Nef_polyhedron_3::SFace `CGAL::Nef_polyhedron_3<Traits>::SFace` \endlink
 - \link CGAL::Nef_polyhedron_3::SFace_cycle_iterator `CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator` \endlink
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::OFF_to_nef_3()`
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
+- `CGAL::convert_nef_polyhedron_to_polygon_soup()`
 - \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink
 - \link PkgNef3IOFunctions `CGAL::operator>>()` \endlink
+
+\cgalCRPSection{Draw a Nef Polyhedron}
+- \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
 
 */
 

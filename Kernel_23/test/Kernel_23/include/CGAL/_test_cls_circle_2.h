@@ -1,21 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     : Stefan Schirra
@@ -82,6 +76,8 @@ _test_cls_circle_2(const R& )
 
  typename R::Circle_2  ic;
  CGAL::Circle_2<R> c0;
+
+ const bool nonexact = std::is_floating_point<FT>::value;
 
  RT n0 =  0;
  RT n1 = 16;
@@ -194,9 +190,9 @@ _test_cls_circle_2(const R& )
          == CGAL::ON_POSITIVE_SIDE );
  assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx*n2 ) \
          == CGAL::ON_NEGATIVE_SIDE );
- assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
- assert( c10.has_on_boundary(p9) );
- assert( c10.has_on_boundary(p4 + v1) );
+ assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY || nonexact);
+ assert( c10.has_on_boundary(p9) || nonexact);
+ assert( c10.has_on_boundary(p4 + v1) || nonexact );
  CGAL::Point_2<R> p11( n4, n4, n3) ; // (2.5, 2.5)
  CGAL::Point_2<R> p12( n5, n5, n3) ; // ( 5 ,  5 )
  assert( c10.has_on_bounded_side( p11 ) );
@@ -206,8 +202,8 @@ _test_cls_circle_2(const R& )
  assert( c10.has_on_negative_side( p12 ) );
  assert( c10.opposite().has_on_negative_side( p11 ) );
  assert( c10.opposite().has_on_positive_side( p12 ) );
- assert( c10.has_on_boundary( p6 ) );
- assert( c10.has_on_boundary( p8 ) );
+ assert( c10.has_on_boundary( p6 ) || nonexact);
+ assert( c10.has_on_boundary( p8 ) || nonexact);
 
  std::cout << '.';
 

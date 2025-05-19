@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //---------------------------------------------------------------------
@@ -35,7 +26,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Regular_complex_d.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Iterator_project.h>
@@ -58,13 +49,13 @@ template <class R> class Regular_complex_d;
 template <class R> class Convex_hull_d;
 
 #define forall_rc_vertices(x,RC)\
-for(x = (RC).vertices_begin(); x != (RC).vertices_end(); ++x) 
+for(x = (RC).vertices_begin(); x != (RC).vertices_end(); ++x)
 #define forall_rc_simplices(x,RC)\
-for(x = (RC).simplices_begin(); x != (RC).simplices_end(); ++x) 
+for(x = (RC).simplices_begin(); x != (RC).simplices_end(); ++x)
 
 
 template <class Refs>
-class RC_vertex_d 
+class RC_vertex_d
 
 { typedef RC_vertex_d<Refs> Self;
   typedef typename Refs::Point_d Point_d;
@@ -85,8 +76,8 @@ class RC_vertex_d
 public:
   RC_vertex_d(Simplex_handle s, int i, const Point_d& p) :
     s_(s), index_(i), point_(p) {}
-  RC_vertex_d(const Point_d& p) : point_(p), pp(NULL) {}
-  RC_vertex_d() :  s_(), index_(-42), pp(NULL) {}
+  RC_vertex_d(const Point_d& p) : point_(p), pp(nullptr) {}
+  RC_vertex_d() :  s_(), pp(nullptr) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
 
@@ -96,7 +87,7 @@ public:
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
 #ifdef CGAL_USE_LEDA
   LEDA_MEMORY(RC_vertex_d)
@@ -105,7 +96,7 @@ public:
 
 
 template <class Refs>
-class RC_simplex_d 
+class RC_simplex_d
 { typedef RC_simplex_d<Refs>  Self;
   typedef typename Refs::Point_d Point_d;
   typedef typename Refs::Vertex_handle Vertex_handle;
@@ -116,7 +107,7 @@ class RC_simplex_d
 protected:
   std::vector<Vertex_handle>   vertices;    // array of vertices
   std::vector<Simplex_handle>  neighbors;   // opposite simplices
-  std::vector<int>             opposite_vertices; 
+  std::vector<int>             opposite_vertices;
                                // indices of opposite vertices
 
   //------ only for convex hulls ------------------
@@ -131,7 +122,7 @@ protected:
 
   void set_vertex(int i, Vertex_handle v) { vertices[i] = v; }
   void set_neighbor(int i, Simplex_handle s) { neighbors[i]=s; }
-  void set_opposite_vertex_index(int i, int index) 
+  void set_opposite_vertex_index(int i, int index)
   { opposite_vertices[i]=index; }
 
   //------ only for convex hulls ------------------
@@ -141,28 +132,28 @@ protected:
   //------ only for convex hulls ------------------
 
 public:
-  typedef typename std::vector<Vertex_handle>::const_iterator 
+  typedef typename std::vector<Vertex_handle>::const_iterator
           VIV_iterator;
   struct Point_from_VIV_iterator {
     typedef Vertex_handle argument_type;
     typedef Point_d      result_type;
-    result_type& operator()(argument_type& x) const 
+    result_type& operator()(argument_type& x) const
     { return x->point(); }
-    const result_type& operator()(const argument_type& x) const 
+    const result_type& operator()(const argument_type& x) const
     { return x->point(); }
   };
 
   typedef CGAL::Iterator_project<VIV_iterator,Point_from_VIV_iterator,
     const Point_d&, const Point_d*> Point_const_iterator;
 
-  Point_const_iterator points_begin() const 
+  Point_const_iterator points_begin() const
   { return Point_const_iterator(vertices.begin()); }
-  Point_const_iterator points_end() const 
+  Point_const_iterator points_end() const
   { return Point_const_iterator(vertices.end()); }
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
   #if 0
   struct Point_const_iterator {
@@ -173,12 +164,12 @@ public:
     typedef const Point_d*                  pointer;
     typedef const Point_d&                  reference;
 
-    typedef typename std::vector<Vertex_handle>::const_iterator 
+    typedef typename std::vector<Vertex_handle>::const_iterator
       ra_vertex_iterator;
 
     Point_const_iterator() : _it() {}
     Point_const_iterator(ra_vertex_iterator it) : _it(it) {}
-      
+
     value_type operator*() const { return (*_it)->point(); }
     pointer operator->() const { return &(operator*()); }
 
@@ -189,9 +180,9 @@ public:
 
     self& operator+=(difference_type i) { _it+=i; return *this; }
     self& operator-=(difference_type i) { _it-=i; return *this; }
-    self operator+(difference_type i) const 
+    self operator+(difference_type i) const
     { self tmp=*this; tmp+=i; return tmp; }
-    self operator-(difference_type i) const 
+    self operator-(difference_type i) const
     { self tmp=*this; tmp-=i; return tmp; }
 
     difference_type operator-(self x) const { return _it-x._it; }
@@ -202,28 +193,28 @@ public:
     bool operator<(self x) const { (x - *this) > 0; }
 
     private:
-      ra_vertex_iterator _it;  
+      ra_vertex_iterator _it;
   }; // Point_const_iterator
 
-  Point_const_iterator points_begin() const 
+  Point_const_iterator points_begin() const
   { return Point_const_iterator(vertices.begin()); }
-  Point_const_iterator points_end() const 
+  Point_const_iterator points_end() const
   { return Point_const_iterator(vertices.end()); }
 
   #endif
-          
 
-  RC_simplex_d() : pp(NULL) {}
-  RC_simplex_d(int dmax) : 
-    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1), pp(NULL)
-  { for (int i = 0; i <= dmax; i++) { 
-      neighbors[i] = Simplex_handle(); 
-      vertices[i] = Vertex_handle(); 
+
+  RC_simplex_d() : pp(nullptr) {}
+  RC_simplex_d(int dmax) :
+    vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1), pp(nullptr)
+  { for (int i = 0; i <= dmax; i++) {
+      neighbors[i] = Simplex_handle();
+      vertices[i] = Vertex_handle();
       opposite_vertices[i] = -1;
     }
     visited_ = false;
   }
-  ~RC_simplex_d() {} 
+  ~RC_simplex_d() {}
 
   void print(std::ostream& O=std::cout) const
   {
@@ -237,10 +228,10 @@ public:
   }
 
 #ifdef CGAL_USE_LEDA
-  LEDA_MEMORY(RC_simplex_d) 
+  LEDA_MEMORY(RC_simplex_d)
 #endif
 
-}; 
+};
 
 template <typename R>
 std::ostream& operator<<(std::ostream& O, const RC_simplex_d<R>& s)
@@ -248,7 +239,7 @@ std::ostream& operator<<(std::ostream& O, const RC_simplex_d<R>& s)
 
 
 /*{\Manpage {Regular_complex_d}{R}{Regular Simplicial Complex}{C}}*/
-/*{\Mdefinition 
+/*{\Mdefinition
 
 An instance |\Mvar| of type |\Mname| is a regular abstract or concrete
 simplicial complex. An abstract simplicial complex is a family |\Mvar|
@@ -264,7 +255,7 @@ neighbors if they share $k-1$ vertices. A complex is connected if its
 set of maximal simplices forms a connected set under the neighboring
 relation.  A simplicial complex is called \emph{regular} if all
 maximal simplices in the complex have the same dimension and if the
-complex is connected.  
+complex is connected.
 
 A concrete simplicial complex is an abstract simplicial complex in
 which a point in some ambient space is associated with each vertex.
@@ -275,7 +266,7 @@ vertices. A $0$-simplex is a point, a $1$-simplex is a line segment, a
 $2$-simplex is a triangle, a $3$-simplex is a tetrahedron,
 etc.. \emph{The simplices is a concrete simplicial complex must
 satisfy the additional conditions that the points associated with the
-vertices of any simplex are affinely independet and that the
+vertices of any simplex are affinely independent and that the
 intersection of any two simplices is a face of both.} We will write
 simplicial complex instead of concrete simplicial complex in the
 sequel.
@@ -284,7 +275,7 @@ All maximal simplices in a regular simplicial complex have the same
 dimension, which we denote |dcur|.  For each maximal
 simplex\cgalFootnote{we drop the adjective maximal in the sequel} in
 |\Mvar| there is an item of type |RC_simplex_d| and for each vertex
-there is an item of type |rc_vertex|.  Each maximal simplex has |1+dcur| 
+there is an item of type |rc_vertex|.  Each maximal simplex has |1+dcur|
 vertices indexed from $0$ to |dcur|. For any simplex $s$ and any
 index $i$, |C.vertex_of(s,i)| returns the $i$-th vertex of $s$. There
 may or may not be a simplex $t$ opposite to (the vertex with index)
@@ -295,7 +286,7 @@ set.  The function |C.opposite(s,i)| returns $t$ if it exists and
 returns |nil| otherwise. If $t$ exists then $s$ and $t$ share |dcur|
 vertices, namely all but vertex $i$ of $s$ and vertex
 |C.opposite_vertex(s,i)| of $t$. Assume that $t = |C.opposite(s,i)|$
-exists and let |j = C.opposite_vertex(s,i)|. Then |s = C.opposite(t,j)| 
+exists and let |j = C.opposite_vertex(s,i)|. Then |s = C.opposite(t,j)|
 and |i = C.opposite_vertex(t,j)| and
 \begin{eqnarray*}
 \lefteqn{\{|C.vertex_of(s,0)|,|C.vertex_of(s,1)|,\ldots,
@@ -307,7 +298,7 @@ the functions |C.simplex(v)| and |C.index(v)| return a pair $(s,i)$
 such that |v = C.vertex_of(s,i)|.
 
 The class |regl_complex| has a static member |nil_point| of type
-|Point_d|. This point is different (= not indentical) from any user
+|Point_d|. This point is different (= not identical) from any user
 defined point and is the point associated with every vertex of an
 abstract simplicial complex. It simulates the use of |nil| to denote
 an undefined object.
@@ -327,7 +318,7 @@ sharing a face.
 
 template <class R_>
 class Regular_complex_d
-{ 
+{
 typedef Regular_complex_d<R_> Self;
 public:
 /*{\Mtypes 4}*/
@@ -373,11 +364,11 @@ protected:
 
 private:
 
-  Regular_complex_d(const Regular_complex_d<R>& ); 
-  Regular_complex_d& operator=(const Regular_complex_d<R>& ); 
+  Regular_complex_d(const Regular_complex_d<R>& );
+  Regular_complex_d& operator=(const Regular_complex_d<R>& );
 
   void clean_dynamic_memory()
-  { 
+  {
     vertices_.clear();
     simplices_.clear();
 }
@@ -386,7 +377,7 @@ public:
 
 /*{\Mcreation}*/
 
-Regular_complex_d(int d = 2, const R& Kernel = R()) 
+Regular_complex_d(int d = 2, const R& Kernel = R())
 /*{\Mcreate creates an instance |\Mvar| of type |\Mtype|. The
 dimension of the underlying space is $d$ and |\Mvar| is initialized to
 the empty regular complex.  Thus |dcur| equals $-1$. The traits class
@@ -408,7 +399,7 @@ the traits class is to be found at the end of this manual page.}*/
 /* In the destructor for |Regular_complex_d|, we have to release the
    storage which was allocated for the simplices and the vertices. */
 
-/*{\Mtext The data type |\Mtype| offers neither copy constructor nor 
+/*{\Mtext The data type |\Mtype| offers neither copy constructor nor
           assignment operator.}*/
 
 /*{\Moperations 3 3}*/
@@ -421,39 +412,39 @@ int current_dimension() const { return dcur; }
 /*{\Mop returns the current dimension of the simplices in the
 complex.}*/
 
-Vertex_handle vertex(Simplex_handle s, int i) const 
+Vertex_handle vertex(Simplex_handle s, int i) const
 /*{\Mop returns the $i$-th vertex of $s$.\\
 \precond $0 \leq i \leq |current_dimension|$. }*/
 { CGAL_assertion(0<=i&&i<=dcur);
   return s->vertex(i); }
 
-Vertex_const_handle vertex(Simplex_const_handle s, int i) const 
+Vertex_const_handle vertex(Simplex_const_handle s, int i) const
 { CGAL_assertion(0<=i&&i<=dcur);
   return s->vertex(i); }
 
-Point_d associated_point(Vertex_handle v) const 
+Point_d associated_point(Vertex_handle v) const
 /*{\Mop returns the point associated with vertex |v|.}*/
 { return v->point(); }
 
-Point_d associated_point(Vertex_const_handle v) const 
+Point_d associated_point(Vertex_const_handle v) const
 { return v->point(); }
 
 
-int index(Vertex_handle v) const 
+int index(Vertex_handle v) const
 /*{\Mop returns the index of $v$ in |C.simplex(v)|.}*/
 { return v->index(); }
 
-int index(Vertex_const_handle v) const 
+int index(Vertex_const_handle v) const
 { return v->index(); }
 
 
-Simplex_handle simplex(Vertex_handle v) const 
+Simplex_handle simplex(Vertex_handle v) const
 /*{\Mop returns a simplex of which $v$ is a vertex. Note that this
 simplex is not unique. }*/
-{ return v->simplex(); } 
+{ return v->simplex(); }
 
-Simplex_const_handle simplex(Vertex_const_handle v) const 
-{ return v->simplex(); } 
+Simplex_const_handle simplex(Vertex_const_handle v) const
+{ return v->simplex(); }
 
 Point_d associated_point(Simplex_handle s, int i) const
 /*{\Mop same as |C.associated_point(C.vertex(s,i))|.}*/
@@ -462,13 +453,13 @@ Point_d associated_point(Simplex_handle s, int i) const
 Point_d associated_point(Simplex_const_handle s, int i) const
 { return associated_point(vertex(s,i)); }
 
-Simplex_handle opposite_simplex(Simplex_handle s,int i) const 
+Simplex_handle opposite_simplex(Simplex_handle s,int i) const
 /*{\Mop returns the simplex opposite to the $i$-th vertex of $s$
 (|Simplex_handle()| is there is no such simplex).\\ \precond $0 \leq i \leq |dcur|$. }*/
 { CGAL_assertion(0<=i&&i<=dcur);
   return s->neighbor(i); }
 
-Simplex_const_handle opposite_simplex(Simplex_const_handle s,int i) const 
+Simplex_const_handle opposite_simplex(Simplex_const_handle s,int i) const
 { CGAL_assertion(0<=i&&i<=dcur);
   return s->neighbor(i); }
 
@@ -493,47 +484,43 @@ to be used with care as they may invalidate the data structure.}*/
 void clear(int d = 0)
 /*{\Mop reinitializes |\Mvar| to the empty complex in dimension |dim|.}*/
 { clean_dynamic_memory();
-  dmax = d; dcur = -1; 
+  dmax = d; dcur = -1;
 }
 
 void set_current_dimension(int d) { dcur = d; }
 /*{\Mop sets |dcur| to |d|. }*/
 
-Simplex_handle new_simplex() 
+Simplex_handle new_simplex()
 /*{\Mop adds a new simplex to |\Mvar| and returns it. The new simplex
 has no vertices yet.}*/
-{ 
+{
   Simplex s(dmax);
   Simplex_handle  h = simplices_.insert(s);
   return h;
 }
 
-Vertex_handle  new_vertex() 
+Vertex_handle  new_vertex()
 /*{\Mop adds a new vertex to |\Mvar| and returns it. The new vertex
         has no associated simplex nor index yet. The associated point
         is the point |Regular_complex_d::nil_point| which is a static
         member of class |Regular_complex_d.|}*/
-{ 
-  Vertex v(nil_point);
-  Vertex_handle h = vertices_.insert(v);
-  return h; 
+{
+  return vertices_.emplace(nil_point);
 }
 
-Vertex_handle  new_vertex(const Point_d& p) 
+Vertex_handle  new_vertex(const Point_d& p)
 /*{\Mop adds a new vertex to |\Mvar| and returns it. The new vertex
         has |p| as the associated point, but is has no associated
         simplex nor index yet.}*/
-{ 
-  Vertex v(p);
-  Vertex_handle h = vertices_.insert(v);
-  return h;
+{
+  return vertices_.emplace(p);
 }
 
 void associate_vertex_with_simplex(Simplex_handle s, int i, Vertex_handle v)
 /*{\Mop sets the $i$-th vertex of |s| to |v| and records this fact in
 $v$. The latter occurs only if $v$ is non-nil.}*/
 { s -> set_vertex(i,v);
-  if ( v != Vertex_handle() ) { 
+  if ( v != Vertex_handle() ) {
     v -> set_simplex(s); v -> set_index(i);
   }
 }
@@ -543,7 +530,7 @@ void associate_point_with_vertex(Vertex_handle v, const Point_d& p)
 { v -> set_point(p); }
 
 void set_neighbor(Simplex_handle s, int i, Simplex_handle s1, int j)
-/*{\Mop sets the neihbor opposite to vertex $i$ of |s| to |s1| and
+/*{\Mop sets the neighbor opposite to vertex $i$ of |s| to |s1| and
         records vertex $j$ of |s1| as the vertex opposite to $i$.}*/
 { s  -> set_neighbor(i,s1);
   s1 -> set_neighbor(j,s);
@@ -576,7 +563,7 @@ Size_type number_of_vertices() const  { return this->vertices_.size();}
 Size_type number_of_simplices() const  { return this->simplices_.size();}
 
 void print_statistics(std::ostream& os = std::cout) const
-{ 
+{
   os << "Regular_complex_d - statistic" << std::endl;
   os << "number of vertices = " << number_of_vertices() << std::endl;
   os << "number of simplices = " << number_of_simplices() << std::endl;
@@ -608,7 +595,7 @@ std::list<Simplex_handle> all_simplices()
   forall_rc_simplices(it,*this) res.push_back(it);
   return res; }
 
-std::list<Simplex_const_handle> all_simplices() const 
+std::list<Simplex_const_handle> all_simplices() const
 { std::list<Simplex_const_handle> res; Simplex_const_iterator it;
   forall_rc_simplices(it,*this) res.push_back(it);
   return res; }
@@ -619,7 +606,7 @@ std::list<Vertex_handle> all_vertices()
   forall_rc_vertices(it,*this) res.push_back(it);
   return res; }
 
-std::list<Vertex_const_handle> all_vertices() const 
+std::list<Vertex_const_handle> all_vertices() const
 { std::list<Vertex_const_handle> res; Vertex_const_iterator it;
   forall_rc_vertices(it,*this) res.push_back(it);
   return res; }
@@ -632,18 +619,18 @@ static const Point_d nil_point;
 }; // Regular_complex_d<R>
 
 // init static member:
-template <class R> 
+template <class R>
 const typename Regular_complex_d<R>::Point_d Regular_complex_d<R>::nil_point;
 
 
 template <class R>
 void Regular_complex_d<R>::check_topology() const
-{ 
-  Simplex_const_handle s,t; 
+{
+  Simplex_const_handle s,t;
   Vertex_const_handle v;
-  int i,j,k; 
+  int i,j,k;
   if (dcur == -1) {
-    if (!vertices_.empty() || !simplices_.empty() ) 
+    if (!vertices_.empty() || !simplices_.empty() )
       CGAL_error_msg(      "check_topology: dcur is -1 but there are vertices or simplices");
   }
 
@@ -656,26 +643,26 @@ void Regular_complex_d<R>::check_topology() const
     for(i = 0; i <= dcur; i++) {
       for (j = i + 1; j <= dcur; j++) {
         if (vertex(s,i) == vertex(s,j))
-          CGAL_error_msg(          "check_topology: a simplex with two equal vertices"); 
+          CGAL_error_msg(          "check_topology: a simplex with two equal vertices");
       }
     }
   }
 
   forall_rc_simplices(s,*this) {
     for(i = 0; i <= dcur; i++) {
-      if ((t = opposite_simplex(s,i)) != Simplex_const_handle()) { 
-        int l = index_of_opposite_vertex(s,i); 
-        if (s != opposite_simplex(t,l) || 
+      if ((t = opposite_simplex(s,i)) != Simplex_const_handle()) {
+        int l = index_of_opposite_vertex(s,i);
+        if (s != opposite_simplex(t,l) ||
             i != index_of_opposite_vertex(t,l))
-          CGAL_error_msg(          "check_topology: neighbor relation is not symmetric"); 
+          CGAL_error_msg(          "check_topology: neighbor relation is not symmetric");
 
         for (j = 0; j <= dcur; j++) {
           if (j != i) {
             // j must also occur as a vertex of t
-            for (k = 0; k <= dcur && 
+            for (k = 0; k <= dcur &&
                    ( vertex(s,j) != vertex(t,k) || k == l); k++) {}
-            if (k > dcur) 
-              CGAL_error_msg(              "check_topology: too few shared vertices."); 
+            if (k > dcur)
+              CGAL_error_msg(              "check_topology: too few shared vertices.");
           }
         }
       }
@@ -685,11 +672,11 @@ void Regular_complex_d<R>::check_topology() const
 
 template <class R>
 void Regular_complex_d<R>::check_topology_and_geometry() const
-{ 
+{
   check_topology();
   Vertex_const_handle v;
   forall_rc_vertices(v,*this) {
-    if ( v == Vertex_const_handle() || 
+    if ( v == Vertex_const_handle() ||
          associated_point(v).identical(Regular_complex_d<R>::nil_point) )
       CGAL_error_msg("check_topology_and_geometry: \
       vertex with nil_point or no associated point.");
@@ -700,7 +687,7 @@ void Regular_complex_d<R>::check_topology_and_geometry() const
   Simplex_const_handle s;
   forall_rc_simplices(s,*this) {
     std::vector<Point_d> A(dcur + 1);
-    for (int i = 0; i <= dcur; i++) 
+    for (int i = 0; i <= dcur; i++)
       A[i] = associated_point(s,i);
     if ( !affinely_independent(A.begin(),A.end()) )
       CGAL_error_msg("check_topology_and_geometry: \
@@ -709,13 +696,13 @@ void Regular_complex_d<R>::check_topology_and_geometry() const
 }
 
 
-/*{\Mtext 
+/*{\Mtext
 \headerline{Iteration Statements}
 
-{\bf forall\_rc\_simplices}($s,C$)       
+{\bf forall\_rc\_simplices}($s,C$)
 $\{$ ``the simplices of $C$ are successively assigned to $s$'' $\}$
 
-{\bf forall\_rc\_vertices}($v,C$)       
+{\bf forall\_rc\_vertices}($v,C$)
 $\{$ ``the vertices of $C$ are successively assigned to $v$'' $\}$
 
 }*/

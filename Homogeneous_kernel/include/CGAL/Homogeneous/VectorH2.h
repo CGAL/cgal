@@ -1,28 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL_HOMOGENEOUS_VECTOR_2_h
 #define CGAL_HOMOGENEOUS_VECTOR_2_h
@@ -31,8 +22,6 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <CGAL/Handle_for.h>
-
-#include <boost/next_prior.hpp>
 
 namespace CGAL {
 
@@ -49,7 +38,7 @@ class VectorH2
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
 
-  typedef cpp11::array<RT, 3>               Rep;
+  typedef std::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;
@@ -68,8 +57,8 @@ public:
 
    template < typename Tx, typename Ty >
    VectorH2(const Tx & x, const Ty & y,
-            typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
-                                                        boost::is_convertible<Ty, RT> > >::type* = 0)
+            std::enable_if_t<std::is_convertible_v<Tx, RT> &&
+                             std::is_convertible_v<Ty, RT>>* = 0)
       : base(CGAL::make_array<RT>(x, y, RT(1))) {}
 
    VectorH2(const FT& x, const FT& y)
@@ -90,11 +79,11 @@ public:
   {
     return static_cast<const Self& >(*this);
   }
-  
-   bool    operator==( const VectorH2<R>& v) const;
-   bool    operator!=( const VectorH2<R>& v) const;
-   bool    operator==( const Null_vector&) const;
-   bool    operator!=( const Null_vector& v) const;
+
+   typename R::Boolean operator==( const VectorH2<R>& v) const;
+   typename R::Boolean operator!=( const VectorH2<R>& v) const;
+   typename R::Boolean operator==( const Null_vector&) const;
+   typename R::Boolean operator!=( const Null_vector& v) const;
 
    const RT & hx() const { return CGAL::get_pointee_or_identity(base)[0]; };
    const RT & hy() const { return CGAL::get_pointee_or_identity(base)[1]; };
@@ -110,12 +99,12 @@ public:
    Cartesian_const_iterator cartesian_begin() const
    {
      return make_cartesian_const_iterator_begin(CGAL::get_pointee_or_identity(base).begin(),
-                                                boost::prior(CGAL::get_pointee_or_identity(base).end()));
+                                                std::prev(CGAL::get_pointee_or_identity(base).end()));
    }
 
    Cartesian_const_iterator cartesian_end() const
    {
-     return make_cartesian_const_iterator_end(boost::prior(CGAL::get_pointee_or_identity(base).end()));
+     return make_cartesian_const_iterator_end(std::prev(CGAL::get_pointee_or_identity(base).end()));
    }
 
    int     dimension() const;
@@ -140,19 +129,19 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator==( const Null_vector&) const
 { return (hx() == RT(0)) && (hy() == RT(0)); }
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator!=( const Null_vector& v) const
 { return !(*this == v); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 VectorH2<R>::operator==( const VectorH2<R>& v) const
 {
   return (  (hx() * v.hw() == v.hx() * hw() )
@@ -161,7 +150,7 @@ VectorH2<R>::operator==( const VectorH2<R>& v) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 VectorH2<R>::operator!=( const VectorH2<R>& v) const
 { return !(*this == v); }  /* XXX */
 
@@ -232,8 +221,8 @@ typename VectorH2<R>::FT
 VectorH2<R>::squared_length() const
 {
   typedef typename R::FT FT;
-  return 
-    FT( CGAL_NTS square(hx()) + CGAL_NTS square(hy()) ) / 
+  return
+    FT( CGAL_NTS square(hx()) + CGAL_NTS square(hy()) ) /
     FT( CGAL_NTS square(hw()) );
 }
 

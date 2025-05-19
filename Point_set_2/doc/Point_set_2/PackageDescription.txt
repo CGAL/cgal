@@ -10,7 +10,6 @@
 
 /*!
 \addtogroup PkgPointSet2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2}
 \cgalPkgPicture{Point_set_2/fig/point_set.png}
 \cgalPkgSummaryBegin
@@ -40,13 +39,13 @@ point set class.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `PointSetTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Point_set_2`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::nearest_neighbor()`
 - `CGAL::nearest_neighbors()`
 - `CGAL::range_search()`

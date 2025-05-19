@@ -6,7 +6,6 @@
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>
 
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <iostream>
@@ -53,10 +52,10 @@ public:
     Point_ref S = get(vpm,vd);
 
     std::size_t n = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd, pmesh)){
+    for(halfedge_descriptor hd : halfedges_around_target(vd, pmesh)){
       ++n;
       Point_ref p = get(vpm, target(opposite(hd,pmesh),pmesh));
-      R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
+      R[0] += p[0];         R[1] += p[1];         R[2] += p[2];
     }
 
     if (n == 6) {
@@ -98,7 +97,7 @@ int main(int argc, char **argv) {
   }
 
   int d = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1;
-  const char* in_file = (argc > 2) ? argv[2] : "data/quint_tris.off";
+  const std::string in_file = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/quint_tris.off");
   const char* out_file = (argc > 3) ? argv[3] : "result.off";
 
   PolygonMesh pmesh;

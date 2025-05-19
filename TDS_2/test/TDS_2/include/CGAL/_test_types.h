@@ -1,9 +1,6 @@
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H
 
-#include <CGAL/_test_short_names_2.h>
-
-#include <CGAL/basic.h>
 #include <iostream>
 #include <cassert>
 
@@ -43,7 +40,7 @@ typedef CGAL::Homogeneous<Rtype>              Test_rep_homogeneous;
 #include <CGAL/Filtered_kernel.h>
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       K;
-struct TestK : public K {}; 
+struct TestK : public K {};
 
 typedef CGAL::Quotient<Ftype>                       Exact_type;
 typedef CGAL::Simple_cartesian<Exact_type>          Exact_kernel;

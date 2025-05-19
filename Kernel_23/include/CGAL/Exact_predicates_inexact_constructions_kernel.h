@@ -1,25 +1,16 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas, Sylvain Pion
 
@@ -28,28 +19,67 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Converting_construction.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
+#include <CGAL/double.h>
+#include <CGAL/float.h>
 
 namespace CGAL {
 
+constexpr bool epick_use_static_filter =
+#ifdef CGAL_NO_STATIC_FILTERS
+    false;
+#else
+    true;
+#endif
+
+// Here Epick is a class, and Double_precision_epick an alias to it.
+class Epick;
+class Single_precision_epick;
+using Double_precision_epick = Epick;
+
+namespace internal {
+
+  // Basic objects, constructions, and predicates, using the same base class as
+  // Simple_cartesian<NT>: Cartesian_base without reference counting.
+  template <typename NT, typename Kernel>
+  using Epick_base =
+      typename Simple_cartesian<NT>::template Base<Kernel>::Type;
+
+  // Add the type equality property, by changing the objects types
+  template <typename NT, typename Kernel>
+  using Epick_base_with_type_equality =
+      Type_equality_wrapper<Epick_base<NT, Kernel>, Kernel>;
+
+  // Change the predicates to filtered predicates (with static filters or not)
+  template <typename NT, typename Kernel>
+  using Epick_with_filtered_predicates =
+      Filtered_kernel_adaptor<Epick_base_with_type_equality<NT, Kernel>, epick_use_static_filter>;
+};
+
 // The following is equivalent to Filtered_kernel< Simple_cartesian<double> >,
 // but it's shorter in terms of template name length (for error messages, mangling...).
-
-class Epick
-  : public Filtered_kernel_adaptor<
-               Type_equality_wrapper< Simple_cartesian<double>::Base<Epick>::Type, Epick >,
-#ifdef CGAL_NO_STATIC_FILTERS
-               false >
-#else
-               true >
-#endif
+class Epick : public internal::Epick_with_filtered_predicates<double, Epick>
 {};
 
-typedef Epick Exact_predicates_inexact_constructions_kernel;
+template <>
+struct Triangulation_structural_filtering_traits<Double_precision_epick> {
+  using Use_structural_filtering_tag = Tag_true;
+};
+
+using Exact_predicates_inexact_constructions_kernel = Epick;
+
+
+// This kernel is Epick with the difference that its `FT` is `float`.
+class Single_precision_epick
+    : public Converting_constructions_kernel_adaptor<
+          internal::Epick_with_filtered_predicates<float, Single_precision_epick>,
+          Double_precision_epick>
+{};
 
 template <>
-struct Triangulation_structural_filtering_traits<Epick> {
-  typedef Tag_true Use_structural_filtering_tag;
+struct Triangulation_structural_filtering_traits<Single_precision_epick> {
+  using Use_structural_filtering_tag = Tag_true;
 };
 
 } //namespace CGAL

@@ -1,10 +1,12 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <fstream>
-
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/IO/polygon_mesh_io.h>
+
 #include <algorithm>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double>              Kernel;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
@@ -19,10 +21,10 @@ typedef CGAL::Halfedge_around_target_iterator<LCC> halfedge_around_target_iterat
 
 template <typename G>
 struct Source {
-  const G* g; 
+  const G* g;
 
   Source()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Source(const G& g)
@@ -41,17 +43,17 @@ struct Source {
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"), lcc);
   GraphTraits::vertex_descriptor vd = *(vertices(lcc).first);
 
-  typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator; 
+  typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator;
 
   halfedge_around_target_iterator hb,he;
-  boost::tie(hb,he) = halfedges_around_target(halfedge(vd,lcc),lcc);
+  std::tie(hb,he) = halfedges_around_target(halfedge(vd,lcc),lcc);
   adjacent_vertex_iterator avib, avie;
   avib = boost::make_transform_iterator(hb, Source<LCC>(lcc));
   avie = boost::make_transform_iterator(he, Source<LCC>(lcc));
-  
+
   std::list<vertex_descriptor> V;
   std::copy(avib,avie, std::back_inserter(V));
   return 0;

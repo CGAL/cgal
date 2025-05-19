@@ -1,27 +1,28 @@
-#include <fstream>
+#include <CGAL/Simple_cartesian.h>
 
-#include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/basic.h>
-#include <CGAL/Kernel/global_functions.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <boost/graph/graph_traits.hpp>
 
-typedef CGAL::Cartesian<double> Kernel;
-typedef Kernel::Point_3         Point;
-typedef Kernel::Vector_3        Vector;
+#include <iostream>
+#include <fstream>
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef Kernel::Point_3                Point;
+typedef Kernel::Vector_3               Vector;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
           <2, 3, LCC_traits>::type LCC;
 
-template<typename HalfedgeGraph, 
-         typename PointMap, 
+template<typename HalfedgeGraph,
+         typename PointMap,
          typename NormalMap>
-void calculate_face_normals(const HalfedgeGraph& g, 
-                            PointMap pm, 
-                            NormalMap nm) 
+void calculate_face_normals(const HalfedgeGraph& g,
+                            PointMap pm,
+                            NormalMap nm)
 {
   typedef boost::graph_traits<HalfedgeGraph> GraphTraits;
   typedef typename GraphTraits::face_iterator face_iterator;
@@ -30,7 +31,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
   typedef typename boost::property_traits<NormalMap>::value_type normal;
 
   face_iterator fb, fe;
-  for(boost::tie(fb, fe) = faces(g); fb != fe; ++fb)
+  for(std::tie(fb, fe) = faces(g); fb != fe; ++fb)
   {
     halfedge_descriptor edg = halfedge(*fb, g);
     halfedge_descriptor edgb = edg;
@@ -41,7 +42,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
     edg = next(edg, g);
     point p2 = pm[target(edg, g)];
     edg = next(edg, g);
-      
+
     if(edg == edgb) {
       // triangle
       nm[*fb] = CGAL::unit_normal(p1, p2, p0);
@@ -53,11 +54,11 @@ void calculate_face_normals(const HalfedgeGraph& g,
         n = n + CGAL::normal(p1, p2, p0);
         p0 = p1;
         p1 = p2;
-        
+
         edg = next(edg, g);
         p2 = pm[target(edg, g)];
       } while(edg != edgb);
-      
+
       nm[*fb] = n / CGAL::sqrt(n.squared_length());
     }
   }
@@ -69,14 +70,14 @@ int main(int argc, char** argv)
                  Face_index_map;
 
   LCC lcc;
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
-  
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"), lcc);
+
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
-  // http://www.boost.org/libs/property_map/doc/vector_property_map.html
+  // https://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
-  boost::vector_property_map<Vector, Face_index_map> 
-    normals(get(CGAL::face_index, lcc));
+  boost::vector_property_map<Vector, Face_index_map>
+    normals(static_cast<unsigned>(num_faces(lcc)), get(CGAL::face_index, lcc));
 
   calculate_face_normals(
     lcc // Graph
@@ -87,7 +88,7 @@ int main(int argc, char** argv)
   std::cout << "Normals" << std::endl;
   for(LCC::Attribute_range<2>::type::iterator it=lcc.attributes<2>().begin();
       it!=lcc.attributes<2>().end(); ++it)
-  { 
+  {
     // Facet_iterator is a face_descriptor, so we can use it as the
     // key here
     std::cout << normals[it] << std::endl;

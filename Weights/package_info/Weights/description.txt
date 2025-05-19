@@ -1,0 +1,1 @@
+This CGAL package enables to compute various weights.

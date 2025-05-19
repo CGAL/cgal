@@ -4,19 +4,19 @@ namespace CGAL {
 \ingroup rational_rotation_approximation_grp
 
 computes integers `sin_num`, `cos_num` and `denom`, such
-that `sin_num`/`denom` approximates the sine of direction 
+that `sin_num`/`denom` approximates the sine of direction
 \f$ (\f$`dirx`,`diry`\f$ )\f$. The difference between the sine and
 the approximating rational is bounded by `eps_num`/`eps_den`.
-\pre `eps_num` \f$ \neq0\f$.
+\pre `eps_num != 0`.
 
 \cgalHeading{Implementation}
 
-The approximation is based on Farey sequences as described in 
-the rational rotation method presented by Canny and Ressler at the 
-8th SoCG 1992. We use a slower version which needs no division operation 
-in the approximation. 
+The approximation is based on Farey sequences as described in
+the rational rotation method presented by Canny and Ressler at the
+8th SoCG 1992. We use a slower version which needs no division operation
+in the approximation.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
 */
 template <RingNumberType>
 void

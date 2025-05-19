@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -35,14 +26,15 @@
 */
 enum RenderingMode
 {
-  Points = 0, //! Renders only points without lighting.
-  PointsPlusNormals, //!Renders points and normals.
-  Wireframe, //!Renders only edges.
-  Flat, //!Renders only faces, with a lighting per face.
-  FlatPlusEdges, //!Renders flat faces and edges.
-  Gouraud, //!Renders only faces, with a lighting per vertex.
-  ShadedPoints, //!Renders only points with lighting.
-  NumberOfRenderingMode //!Number of values in this enum.
+  Points = 0,           //!< Renders only points without lighting.
+  PointsPlusNormals,    //!< Renders points and normals.
+  Wireframe,            //!< Renders only edges.
+  Flat,                 //!< Renders only faces, with a lighting per face.
+  FlatPlusEdges,        //!< Renders flat faces and edges.
+  Gouraud,              //!< Renders only faces, with a lighting per vertex.
+  GouraudPlusEdges,     //!< Renders faces with a lighting per vertex, and edges.
+  ShadedPoints,         //!< Renders only points with lighting.
+  NumberOfRenderingMode //!< Number of values in this enum.
 };
 
 
@@ -66,7 +58,6 @@ namespace Three{
  * */
 class Scene_interface {
 public:
-
   //!A bounding box is a box with each face corresponding to an extremum of its contents.
 
   typedef CGAL::Bbox_3 Bbox;
@@ -78,7 +69,9 @@ public:
   //!Adds an item to the Geometric Objects list.
   //!@returns the index of the new item.
   virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
-  //! \brief Replaces an item by a new one in the scene.
+  //!Adds a CGAL::Three::Scene_item* to the list of children.
+  virtual void addChild(Scene_item* item)=0;
+  //! \brief replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
   //! The first one is deleted and gives its index to the second one.
   //! If emit_item_about_to_be_destroyed is true, emits
@@ -94,13 +87,13 @@ public:
    * @returns -1 if the list is empty.*/
   virtual Item_id erase(Item_id) = 0;
   /*! Deletes the items with the target indices.
-   * @returns the index of the polyhedron just before the
+   * @returns the index of the item just before the
    * one that is erased, or just after. Returns -1 if
    * the list is empty.
    */
   virtual int erase(QList<int>) = 0;
 
-  /*! Creates a copy of the item whith the id `id`.
+  /*! Creates a copy of the item with the id `id`.
    * @returns the index of the new item (-1 on error).
    */
     virtual Item_id duplicate(Item_id id) = 0;
@@ -109,7 +102,7 @@ public:
   //! \brief The number of items
   //!@returns the number of items in the scene.
   virtual int numberOfEntries() const = 0;
-  //!\brief The `id`th item.
+  //!\brief The `id`-th item.
   //! @returns the item with the specified index.
   virtual CGAL::Three::Scene_item* item(Item_id id) const = 0;
   //!\brief The id of `item`
@@ -122,10 +115,10 @@ public:
   //!The id of the currently selected item.
   //!@returns the list of currently selected items indices.
   virtual QList<Item_id> selectionIndices() const = 0;
-  //!Item_A is designated with the column A/B in the Geometric Objetcts widget.
+  //!Item_A is designated with the column A/B in the Geometric Objects widget.
   //!@returns the index of the Item_A
   virtual Item_id selectionAindex() const = 0;
-  //!Item_B is designated with the column A/B in the Geometric Objetcts widget.
+  //!Item_B is designated with the column A/B in the Geometric Objects widget.
   //!@returns the index of the Item_B
   virtual Item_id selectionBindex() const = 0;
 
@@ -138,7 +131,7 @@ public:
   virtual double len_diagonal() const = 0;
 
 public:
-  //! Updates the information about the `i`th item in the
+  //! Updates the information about the `i`-th item in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(Item_id i) = 0;
   //! Updates the information about `item` in the
@@ -150,13 +143,13 @@ public:
   //! Used to update the selection in the Geometric Objects view.
   virtual void setSelectedItem(Item_id) = 0;
   //! \brief ignore data updating.
-  //! 
-  //! This will ignore all the individual calls to `itemChanged()` until 
-  //! `setUpdatesEnabled()` is called whith `b` being `true`.
+  //!
+  //! This will ignore all the individual calls to `itemChanged()` until
+  //! `setUpdatesEnabled()` is called with `b` being `true`.
   //!
   virtual void setUpdatesEnabled(bool b) =0;
   //!
-  //! \brief Updates all the items in the SceneView.
+  //! \brief updates all the items in the SceneView.
   //!
   virtual void allItemsChanged() = 0;
 }; // end interface Scene_interface

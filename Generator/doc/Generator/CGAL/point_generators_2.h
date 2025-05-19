@@ -30,8 +30,7 @@ are needed from `rnd` for each point.
 \sa `CGAL::points_on_segment_2()`
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
-\sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
   template <class ForwardIterator, class Creator>
@@ -90,7 +89,7 @@ the \f$ n\f$ points.
 \sa `CGAL::points_on_cube_grid_3()`
 \sa `CGAL::random_collinear_points_2()`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
 template <class OutputIterator, class Creator>
@@ -126,7 +125,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
 \sa `CGAL::points_on_segment_2()`
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
+\sa `std::random_shuffle()`
 
 */
   template <class RandomAccessIterator, class OutputIterator, class Creator>
@@ -143,11 +142,8 @@ The class `Random_points_in_disc_2` is an input iterator creating points uniform
 distributed in an open disc. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
@@ -155,8 +151,6 @@ distributed in an open disc. The default `Creator` is
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_in_disc_2 {
@@ -198,7 +192,7 @@ i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from
 `rnd` for each point.
 
 */
-Random_points_in_disc_2( double r, Random& rnd =
+Random_points_in_disc_2( double r = 1.0, Random& rnd =
 get_default_random());
 
 /// @}
@@ -211,19 +205,14 @@ The class `Random_points_in_square_2` is an input iterator creating points unifo
 distributed in a half-open square. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_in_square_2 {
@@ -280,11 +269,8 @@ The class `Random_points_in_triangle_2` is an input iterator creating points uni
 distributed inside a triangle. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
@@ -292,13 +278,11 @@ distributed inside a triangle. The default `Creator` is
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
 \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_in_triangle_2 {
 public:
-	
+
 /// \name Types
 /// @{
 
@@ -357,11 +341,8 @@ typedef const Point_2& reference;
  The triangulation must be valid and unchanged while the iterator is used.
 
 
- \cgalModels `InputIterator`
- \cgalModels `PointGenerator`
+ \cgalModels{InputIterator,PointGenerator}
 
- \sa `CGAL::cpp11::copy_n()`
- \sa `CGAL::Counting_iterator`
  \sa `CGAL::Points_on_segment_2<Point_2>`
  \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
  \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
@@ -374,8 +355,6 @@ typedef const Point_2& reference;
  \sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
  \sa `CGAL::Random_points_in_triangles_3<Point_3>`
  \sa `CGAL::Random_points_in_triangles_2<Point_2>`
- \sa `std::random_shuffle`
-
  */
  template< typename Point_2,
            typename Triangulation,
@@ -429,11 +408,8 @@ get_default_random() );
  The triangle range must be valid and unchanged while the iterator is used.
 
 
- \cgalModels `InputIterator`
- \cgalModels `PointGenerator`
+ \cgalModels{InputIterator,PointGenerator}
 
- \sa `CGAL::cpp11::copy_n()`
- \sa `CGAL::Counting_iterator`
  \sa `CGAL::Points_on_segment_2<Point_2>`
  \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
  \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
@@ -445,8 +421,6 @@ get_default_random() );
  \sa `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
  \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
  \sa `CGAL::Random_points_in_triangles_3<Point_3>`
- \sa `std::random_shuffle`
-
  */
  template< typename Point_2,
            typename Triangle_2 = typename Kernel_traits<Point_2>::Kernel::Triangle_2,
@@ -503,11 +477,8 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the circle/sphere only up to
 rounding errors.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
@@ -515,8 +486,6 @@ rounding errors.
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_circle_2 {
@@ -558,7 +527,7 @@ i.e.\ \f$ |*g| == r\f$. A single random number is needed from
 `rnd` for each point.
 
 */
-Random_points_on_circle_2( double r, Random& rnd =
+Random_points_on_circle_2( double r=1.0, Random& rnd =
 get_default_random());
 
 /// @}
@@ -574,19 +543,14 @@ The class `Random_points_on_segment_2` is an input iterator creating points unif
 distributed on a segment. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_segment_2 {
@@ -644,19 +608,14 @@ The class `Random_points_on_square_2` is an input iterator creating points unifo
 distributed on the boundary of a square. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_square_2 {
@@ -715,11 +674,9 @@ namespace CGAL {
 The class `Points_on_segment_2` is a generator for points on a segment whose
 endpoints are specified upon construction. The points are equally spaced.
 
-\cgalModels `PointGenerator`
+\cgalModels{PointGenerator}
 
-\sa `CGAL::cpp11::copy_n()`
-\sa `CGAL::Counting_iterator`
-\sa `CGAL::points_on_segment<Point_2>`
+\sa `CGAL::points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
@@ -727,8 +684,6 @@ endpoints are specified upon construction. The points are equally spaced.
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
 \sa `CGAL::random_selection()`
-\sa `std::random_shuffle`
-
 */
 template< typename Point_2 >
 class Points_on_segment_2 {

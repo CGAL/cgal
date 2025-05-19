@@ -1,20 +1,11 @@
-// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -22,9 +13,12 @@
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_GENERIC_POINT_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_GENERIC_POINT_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Generic_point_2.h
  * \brief defines class \c Generic_point_2
- *  
+ *
  * adds support for points at infinity to native CKvA_2 object
  */
 
@@ -45,22 +39,22 @@ std::ostream& operator<< (std::ostream&,
 
 template <class SweepCurvesAdaptor_2>
 class Generic_point_2_rep
-{ 
+{
 public:
 
     // this instance's template parameter
     typedef SweepCurvesAdaptor_2 Sweep_curves_adaptor_2;
-    
+
     // myself
     typedef Generic_point_2_rep<Sweep_curves_adaptor_2> Self;
-    
+
     // type of a native point object provided by CKvA_2
     typedef typename Sweep_curves_adaptor_2::Native_point_2 Point_2;
 
     // type of a native arc object provided by CKvA_2
     typedef typename Sweep_curves_adaptor_2::Native_arc_2 Arc_2;
-    
-public:    
+
+public:
     // default constructor
     Generic_point_2_rep() :
         _m_point(Point_2()) {
@@ -70,18 +64,18 @@ public:
     Generic_point_2_rep(const Arc_2& c, CGAL::Arr_curve_end end) :
         _m_arc(c), _m_end(end) {
     }
-        
+
     // standard constructor : normal point
     Generic_point_2_rep(const Point_2& p) :
         _m_point(p) {
     }
 
-    mutable boost::optional<Arc_2> _m_arc; // supporting arc for points at inf
+    mutable std::optional<Arc_2> _m_arc; // supporting arc for points at inf
 
     // stores respective curve end if this is a point at infinity
-    CGAL::Arr_curve_end _m_end; 
-    
-    mutable boost::optional<Point_2> _m_point; // stores a finite point
+    CGAL::Arr_curve_end _m_end;
+
+    mutable std::optional<Point_2> _m_point; // stores a finite point
 
     // befriending the handle
     friend class Generic_point_2<Sweep_curves_adaptor_2, Self>;
@@ -90,14 +84,14 @@ public:
 // Boundary_type defined in Arr_enums.h
 
 //! \brief class defines a point on a generic curve
-template <class SweepCurvesAdaptor_2, 
+template <class SweepCurvesAdaptor_2,
           class Rep_ = internal::Generic_point_2_rep<SweepCurvesAdaptor_2> >
 class Generic_point_2
       : public CGAL::Handle_with_policy< Rep_ > {
 public:
     //!\name publuic typedefs
     //!@{
-    
+
     //! this instance's first template parameter
     typedef SweepCurvesAdaptor_2 Sweep_curves_adaptor_2;
 
@@ -106,16 +100,16 @@ public:
 
     //! this instance itself
     typedef Generic_point_2<Sweep_curves_adaptor_2, Rep> Self;
-    
+
     //! type of a native point object provided by CKvA_2
     typedef typename Sweep_curves_adaptor_2::Native_point_2 Point_2;
 
     //! type of a native arc object provided by CKvA_2
     typedef typename Sweep_curves_adaptor_2::Native_arc_2 Arc_2;
-    
+
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-        
+
     //!@}
 public:
     //!\name basic constructors
@@ -124,28 +118,29 @@ public:
     /*!\brief
      * Default constructor
      */
-    Generic_point_2() : 
-        Base(Rep()) {   
+    Generic_point_2() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING
     Generic_point_2(const Self& p) :
-            Base(static_cast<const Base&>(p)) {  
+            Base(static_cast<const Base&>(p)) {
     }
-    
+#endif
     /*!\brief
-     * constructs an arc from a given represenation
+     * constructs an arc from a given representation
      */
     Generic_point_2(Rep rep) :
-        Base(rep) { 
+        Base(rep) {
     }
-    
+
     //!@}
     //!\name standard constructors
     //!@{
-    
+
     /*!\brief
      * constructs a finite point
      */
@@ -153,12 +148,12 @@ public:
         Base(Rep(pt)) {
     }
 
-    //! \brief 
+    //! \brief
     //! constructs a 'point at infinity'
     explicit Generic_point_2(const Arc_2& c, CGAL::Arr_curve_end end) :
             Base(Rep(c, end)) {
     }
-    
+
     //!@}
 public:
     //!\name access functions
@@ -195,8 +190,8 @@ public:
 
     //! befriending output operator
     // friend std::ostream& operator << <>(std::ostream&, const Self&);
-    
-    //!@}    
+
+    //!@}
 }; // class Generic_point_2
 
 template <class SweepCurvesAdaptor_2, class Rep_>

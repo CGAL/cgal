@@ -1,6 +1,7 @@
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/N_step_adaptor.h>
+#include <cassert>
 
 struct Traits { typedef int Point_2; };
 typedef CGAL::HalfedgeDS_default<Traits>            HDS;
@@ -13,10 +14,10 @@ int main() {
     Decorator decorator(hds);
     decorator.create_loop();
     decorator.create_segment();
-    CGAL_assertion( decorator.is_valid());
+    assert( decorator.is_valid());
     int n = 0;
     for ( Iterator e = hds.halfedges_begin(); e != hds.halfedges_end(); ++e)
         ++n;
-    CGAL_assertion( n == 2);  // == 2 edges
+    assert( n == 2);  // == 2 edges
     return 0;
 }

@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,13 +12,12 @@
 // LiS_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-inf.mpg.de>
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 #include <cassert>
 #include <iostream>
@@ -46,9 +36,9 @@ void test_io(const NT& x){
         assert( x == tmp );
     }{
         std::ostringstream os;
-        os << ::CGAL::oformat(x);
+        os << ::CGAL::IO::oformat(x);
         std::istringstream is(os.str());
-        is >> ::CGAL::iformat(tmp);
+        is >> ::CGAL::IO::iformat(tmp);
         assert( x == tmp );
     }{
         std::ostringstream os;
@@ -60,8 +50,8 @@ void test_io(const NT& x){
 }
 
 int main() {
-    CGAL_static_assertion(CGAL::Output_rep<int>::is_specialized == false);
-    CGAL_static_assertion(CGAL::Input_rep<int>::is_specialized == false);
+    static_assert(CGAL::Output_rep<int>::is_specialized == false);
+    static_assert(CGAL::Input_rep<int>::is_specialized == false);
 
     std::cout << "test_io: short "<< std::endl;
     test_io<short>(12);

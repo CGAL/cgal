@@ -1,28 +1,24 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_LINE_3_H
 #define CGAL__TEST_CLS_LINE_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -31,10 +27,13 @@ _test_cls_line_3(const R& )
  std::cout << "Testing class Line_3" ;
 
  typedef typename  R::RT    RT;
+ typedef typename  R::FT    FT;
+
+ const bool nonexact = std::is_floating_point<RT>::value;
 
  typename R::Line_3 il;
- CGAL::Line_3<R> l0( il );
- CGAL::Line_3<R> l1;
+ CGAL::Line_3<R> l0( il ); CGAL_USE(l0);
+ CGAL::Line_3<R> l1; CGAL_USE(l1);
 
  RT n1 =  3;
  RT n2 = 53;
@@ -98,21 +97,23 @@ _test_cls_line_3(const R& )
  std::cout << '.';
 
  assert( l4.point(2) - l4.point(1) == l4.point(1) - l4.point(0) );
+ assert( (l4.point(FT(1)/FT(3)) - l4.point(0) == l4.point(1+FT(1)/FT(3)) - l4.point(1)) || nonexact );
+
  CGAL::Point_3<R> p1l4proj = l4.projection(p1);
- assert( l4.has_on( p1l4proj ) );
- assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) );
- assert( l4.perpendicular_plane( p1l4proj ).has_on( p1 ) );
+ assert( l4.has_on( p1l4proj ) || nonexact );
+ assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) || nonexact );
+ assert( l4.perpendicular_plane( p1l4proj ).has_on( p1 ) || nonexact );
  CGAL::Point_3<R> p4 = l4.projection(p2);
  CGAL::Point_3<R> p5 = l4.projection(p3);
  assert(  ( l4.direction() == ( p5 - p4 ).direction() )\
-        ||( l4.direction() == ( p4 - p5 ).direction() )  );
+        ||( l4.direction() == ( p4 - p5 ).direction() )  || nonexact );
  assert( l5.direction() == - l6.direction() );
 
  std::cout <<'.';
 
  assert( l2.has_on(p1) );
  assert( l2.has_on(p2) );
- assert( l4.has_on(p4) );
+ assert( l4.has_on(p4) || nonexact );
  assert( l4.has_on(p5) );
  assert( CGAL::Line_3<R>(p1,p1).is_degenerate() );
 

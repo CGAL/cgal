@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
@@ -32,9 +23,9 @@
 //#define CGAL_TRG_DEBUG
 
 #ifdef CGAL_TRG_DEBUG
-	#define CGAL_TRG_PRINT_DEBUG(expr)   std::cout << expr << std::endl
+        #define CGAL_TRG_PRINT_DEBUG(expr)   std::cout << expr << std::endl
 #else
-	#define CGAL_TRG_PRINT_DEBUG(expr)
+        #define CGAL_TRG_PRINT_DEBUG(expr)
 #endif
 
 namespace CGAL {
@@ -94,20 +85,20 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
    case CDT::EDGE:
     {
       CGAL_TRG_PRINT_DEBUG("locate type = edge"<<li );
-      //li is the index of the vertex OPOSITE to the edge 
+      //li is the index of the vertex OPPOSITE to the edge
       if ( cdt.is_constrained(CDT_Edge(fh,li)) )
       {  //the edge found is an edge in the plannar map
         CGAL_TRG_PRINT_DEBUG("the edge is a constrained");
-        //get the 2 vertices incident to the edge in the plannar map 
+        //get the 2 vertices incident to the edge in the plannar map
         int v1_index = (li+1)%3, v2_index = (li+2)%3;
         CGAL_TRG_PRINT_DEBUG("v1 = "<<v1_index<<", v2 = "<<v2_index );
-        Vertex_const_handle v1_of_edge = fh->vertex(v1_index)->info();       
+        Vertex_const_handle v1_of_edge = fh->vertex(v1_index)->info();
         Vertex_const_handle v2_of_edge = fh->vertex(v2_index)->info();
         //go over all halfedges incident to v1, and check if v2 is their source
-        Halfedge_around_vertex_const_circulator circ1 = 
-            v1_of_edge->incident_halfedges(); 
+        Halfedge_around_vertex_const_circulator circ1 =
+            v1_of_edge->incident_halfedges();
         Halfedge_around_vertex_const_circulator circ1_done (circ1);
-        
+
         Halfedge_const_handle edeg_found;
 
         do {
@@ -118,9 +109,9 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
           }
         } while (++circ1 != circ1_done);
 
-        return make_result(edeg_found); 
+        return make_result(edeg_found);
       }
-      //if the edge is not a constrained - its not an edge of the 
+      //if the edge is not a constrained - its not an edge of the
       //plannar map, which means we're inside of a pm face -
       //lets look at the face as if it was a face case.
       // no break - continue to the face caes
@@ -134,14 +125,14 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
   CGAL_TRG_PRINT_DEBUG("FACE ");
 
   //get 3 pm vertices of face
-  Vertex_const_handle v0 = fh->vertex(0)->info();       
+  Vertex_const_handle v0 = fh->vertex(0)->info();
   Vertex_const_handle v1 = fh->vertex(1)->info();
   Vertex_const_handle v2 = fh->vertex(2)->info();
 
   //the vertices should not be isolated, since we do not insert the
-  //isolated vertices as points in the triangulation, only edges 
-  // (and thus vertices inceident to this edge). 
-  //in the future it is possible to add isolated vertices to the 
+  //isolated vertices as points in the triangulation, only edges
+  // (and thus vertices inceident to this edge).
+  //in the future it is possible to add isolated vertices to the
   // triangulation, and then, when found, take its incident_face
   CGAL_assertion(!v0->is_isolated());
   CGAL_assertion(!v1->is_isolated());
@@ -151,13 +142,13 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
   if (v2->is_isolated()) return make_result(v2->face());
 
   //find the face in the pm correspond to the 3 vertices
-  Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges();
   Halfedge_around_vertex_const_circulator havc0_done (havc0);
 
-  Halfedge_around_vertex_const_circulator havc1 = v1->incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc1 = v1->incident_halfedges();
   Halfedge_around_vertex_const_circulator havc1_done (havc1);
 
-  Halfedge_around_vertex_const_circulator havc2 = v2->incident_halfedges(); 
+  Halfedge_around_vertex_const_circulator havc2 = v2->incident_halfedges();
   Halfedge_around_vertex_const_circulator havc2_done (havc2);
 
   //loop to find face
@@ -165,9 +156,9 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
   bool found_unbounded = false;
   do {
     //get face from halfedge
-    Face_const_handle f0 = (*havc0).face(); 
+    Face_const_handle f0 = (*havc0).face();
     do {
-      Face_const_handle f1 = (*havc1).face(); 
+      Face_const_handle f1 = (*havc1).face();
       if (f0 == f1) {
         CGAL_TRG_PRINT_DEBUG("f0 == f1");
         do {
@@ -191,7 +182,7 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
       std::cerr<< "NOT GOOD - face not found" << std::endl;
       //debug - print some more info
       std::cout << "p = "<< p <<std::endl;
-      std::cout << "v0 = "<< v0->point() 
+      std::cout << "v0 = "<< v0->point()
         <<", v1 = "<< v1->point()
         <<", v2 = "<<v2->point() <<std::endl;
     }
@@ -209,34 +200,34 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
       Vertex_const_handle  vh = iso_verts_it;
       return make_result(vh);
     }
-  }		
+  }
 
   return make_result(face_found);
 }
 
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
-go over all halfedges, and insert each halfedge as a constraint to the cdt. 
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
+go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <class Arrangement_2>
-void Arr_triangulation_point_location<Arrangement_2>::clear_triangulation () 
-{ 
+void Arr_triangulation_point_location<Arrangement_2>::clear_triangulation ()
+{
   cdt.clear();
 }
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
-go over all halfedges, and insert each halfedge as a constraint to the cdt. 
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
+go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <class Arrangement_2>
 void Arr_triangulation_point_location<Arrangement_2>::build_triangulation()
-{ 
+{
   CGAL_TRG_PRINT_DEBUG("build_triangulation");
 
   //Go over the arrangement, and create a triangulation of it
   Edge_const_iterator eit = this->arrangement()->edges_begin();
-  for (eit = this->arrangement()->edges_begin(); 
+  for (eit = this->arrangement()->edges_begin();
        eit != this->arrangement()->edges_end(); eit++)
   {
     //get vertices from edge

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -49,7 +40,7 @@ namespace CGAL {
                 covariance_matrix_tetrahedron (FT ax, FT ay, FT az,
                                                FT bx, FT by, FT bz,
                                                FT cx, FT cy, FT cz,
-                                               cpp11::array<FT,6> &R)
+                                               std::array<FT,6> &R)
                 {
                     const FT det = (ax*cz*by - ax*bz*cy - ay*bx*cz +
                                     ay*cx*bz + az*bx*cy - az*cx*by) / 60.0;
@@ -77,7 +68,7 @@ namespace CGAL {
                 class Covariance_accumulator_3
                 {
                     public:
-                        typedef cpp11::array<FT, 6> Result_type;
+                        typedef std::array<FT, 6> Result_type;
 
                     private:
                         Result_type _result;
@@ -93,10 +84,11 @@ namespace CGAL {
                                                      const Point &b,
                                                      const Point &c)
                             {
-                                internal::covariance_matrix_tetrahedron (a[0], a[1], a[2],
-                                                                         b[0], b[1], b[2],
-                                                                         c[0], c[1], c[2],
-                                                                         _result);
+                                internal::covariance_matrix_tetrahedron(
+                                  FT(a[0]), FT(a[1]), FT(a[2]),
+                                  FT(b[0]), FT(b[1]), FT(b[2]),
+                                  FT(c[0]), FT(c[1]), FT(c[2]),
+                                  _result);
                             }
 
                         const Result_type &result() const
@@ -175,13 +167,13 @@ namespace CGAL {
                       (planes.begin(),
                        planes.end(),
                        P,
-                       boost::make_optional(Point(CGAL::ORIGIN)));
+                       std::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
-                    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(P))
+                    for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))
                     {
                       Halfedge_around_face_circulator<Polyhedron>
-                        h0(halfedge(fd,P),P), hf = h0--, hs = cpp11::next(hf);
+                        h0(halfedge(fd,P),P), hf = h0--, hs = std::next(hf);
 
                         while(hs != h0)
                         {
@@ -201,31 +193,29 @@ namespace CGAL {
                                   const Sphere &sphere,
                                   FT covariance[6])
             {
-                typename internal::Covariance_accumulator_3<FT> ca;
+                typename internal::Covariance_accumulator_3<double> ca;
                 internal::tessellate_and_intersect(dt, v, sphere, ca);
                 std::copy (ca.result().begin(), ca.result().end(), covariance);
             }
 
         template <class DT, class Sphere>
-            array<typename DT::Geom_traits::FT, 6>
+            std::array<double, 6>
             voronoi_covariance_3 (const DT &dt,
                                   typename DT::Vertex_handle v,
                                   const Sphere &sphere)
             {
-                typedef typename DT::Geom_traits::FT FT;
-                typename internal::Covariance_accumulator_3<FT> ca;
+                typename internal::Covariance_accumulator_3<double> ca;
 
                 return internal::tessellate_and_intersect(dt, v, sphere, ca).result();
             }
 
         template <class DT, class Sphere>
-            typename DT::Geom_traits::FT
+            double
             voronoi_volume_3 (const DT &dt,
                               typename DT::Vertex_handle v,
                               const Sphere &sphere)
             {
-                typedef typename DT::Geom_traits::FT FT;
-                typename internal::Volume_accumulator_3<FT> va;
+                typename internal::Volume_accumulator_3<double> va;
 
                 return internal::tessellate_and_intersect(dt, v, sphere, va).result();
             }

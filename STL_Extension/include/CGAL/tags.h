@@ -1,56 +1,34 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL_TAGS_H
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
-#include <boost/mpl/integral_c.hpp>
 
 namespace CGAL {
 
 struct Void {};
 
-// Boolean_tag<bool> is a model of the Boost Integral Constant concept.
-//   http://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
 template <bool b>
-struct Boolean_tag {
-  typedef boost::mpl::integral_c_tag tag;
-  typedef bool value_type;
-  static const bool value = b;
-  typedef Boolean_tag<b> type;
-  operator bool() const { return this->value; }
-};
-/* In C++11, try:
-template <bool b>
-using Boolean_tag = std::integral_constant<bool, b>;
-*/
+using Boolean_tag = std::bool_constant<b>;
 
 typedef Boolean_tag<true>   Tag_true;
-typedef Boolean_tag<false>  Tag_false; 
+typedef Boolean_tag<false>  Tag_false;
 
 // the function check_tag is deprecated since CGAL 3.3
 inline bool check_tag( Tag_true)  {return true;}
@@ -60,12 +38,23 @@ struct Null_tag {};
 
 struct Null_functor {
   typedef Null_tag result_type;
-  typedef Null_tag second_argument_type; 
+  typedef Null_tag second_argument_type;
 };
 
 // For concurrency
 struct Sequential_tag {};
 struct Parallel_tag : public Sequential_tag {};
+
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Parallel_if_available_tag;
+#else
+typedef CGAL::Sequential_tag Parallel_if_available_tag;
+#endif
+
+// For Surface_mesher and Mesh_3
+struct Non_manifold_tag {};
+struct Manifold_tag {};
+struct Manifold_with_boundary_tag {};
 
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.
@@ -84,6 +73,27 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   x.match_compile_time_tag(b);
 }
 
-} //namespace CGAL
+// To distinguish between kernel predicates for which a division-less FT is sufficient
+template <typename T>
+struct Needs_FT
+{
+  T value;
+  Needs_FT(T v) : value(v) {}
+  operator T() const { return value; }
+};
+
+template <typename T>
+struct Remove_needs_FT
+{
+  using Type = T;
+};
+
+template <typename T>
+struct Remove_needs_FT<Needs_FT<T> >
+{
+  using Type = T;
+};
+
+} // namespace CGAL
 
 #endif // CGAL_TAGS_H

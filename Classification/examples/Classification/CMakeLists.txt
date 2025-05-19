@@ -1,126 +1,78 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Classification_Examples )
-
-
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Classification_Examples)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package(CGAL REQUIRED)
 
-if ( NOT CGAL_FOUND )
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+set(Classification_dependencies_met TRUE)
+
+find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
+include(CGAL_Boost_serialization_support)
+include(CGAL_Boost_iostreams_support)
+
+if(NOT TARGET CGAL::Boost_serialization_support)
+  message("NOTICE: This project requires Boost Serialization, and will not be compiled.")
+  set(Classification_dependencies_met FALSE)
 endif()
 
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+if(NOT TARGET CGAL::Boost_iostreams_support)
+  message("NOTICE: This project requires Boost IO Streams, and will not be compiled.")
+  set(Classification_dependencies_met FALSE)
 endif()
 
-find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
+  set(Classification_dependencies_met FALSE)
+endif()
 
-if( WIN32 )
-# to avoid a warning with old cmake 
-  set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
-  set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
-  find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
+if(NOT Classification_dependencies_met)
+  return()
 endif()
 
 find_package(TBB QUIET)
+include(CGAL_TBB_support)
+
+create_single_source_cgal_program( "example_classification.cpp" )
+create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
+create_single_source_cgal_program( "example_feature.cpp" )
+create_single_source_cgal_program( "example_generation_and_training.cpp" )
+create_single_source_cgal_program( "example_mesh_classification.cpp" )
+create_single_source_cgal_program( "example_cluster_classification.cpp" )
+create_single_source_cgal_program( "gis_tutorial_example.cpp" )
+create_single_source_cgal_program( "example_deprecated_conversion.cpp" )
 
 find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
+include(CGAL_OpenCV_support)
+if(TARGET CGAL::OpenCV_support)
+  message(STATUS "Found OpenCV")
 
-# Use Eigen
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
-  message(STATUS "This project requires the Eigen library, and will not be compiled.")
-  return()
+  create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
+  target_link_libraries(example_opencv_random_forest PRIVATE CGAL::OpenCV_support)
 else()
-  include( ${EIGEN3_USE_FILE} )
+  message("NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
 
-
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
-# Classification examples
-set(targets
-  example_classification
-  example_ethz_random_forest
-  example_feature
-  example_generation_and_training
-  example_mesh_classification
-  example_cluster_classification)
-
-# Classification requires some C++11 features
-set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-
-# Libraries and flags
-set(classification_linked_libraries)
-set(classification_compile_definitions)
-
-
-if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
-  set(classification_linked_libraries ${classification_linked_libraries}
-    ${Boost_SERIALIZATION_LIBRARY}
-    ${Boost_IOSTREAMS_LIBRARY})
-else()
-  if (NOT Boost_SERIALIZATION_FOUND)
-    message(STATUS "NOTICE: This project requires Boost Serialization, and will not be compiled.")
-  endif()
-  if (NOT Boost_IOSTREAMS_FOUND)
-    message(STATUS "NOTICE: This project requires Boost IO Streams, and will not be compiled.")
-  endif()
-  return()
-endif()
-
-if( WIN32 )
-  if (Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
-    set(classification_linked_libraries ${classification_linked_libraries}
-      ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
-  else()
-    message(STATUS "NOTICE: This project requires Boost ZLIB and Boost BZIP2, and will not be compiled.")
-    return()
-  endif()
-endif()
-
-find_package(OpenCV QUIET)
-if (OpenCV_FOUND)
-  message(STATUS "Found OpenCV ${OpenCV_VERSION}")
-  include_directories(${OpenCV_INCLUDE_DIRS})
-  set(classification_linked_libraries ${classification_linked_libraries}
-    ${OpenCV_LIBS})
-  set(classification_compile_definitions ${classification_compile_definitions}
-    "-DCGAL_LINKED_WITH_OPENCV")
-
-  set(targets ${targets} example_opencv_random_forest)
-else()
-  message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
-endif()
-
-# Creating targets with correct libraries and flags
-foreach(target ${targets})
-  create_single_source_cgal_program( "${target}.cpp" CXX_FEATURES ${needed_cxx_features} )
+foreach(target
+    example_classification
+    example_ethz_random_forest
+    example_feature
+    example_generation_and_training
+    example_mesh_classification
+    example_cluster_classification
+    example_opencv_random_forest
+    gis_tutorial_example
+    example_deprecated_conversion)
   if(TARGET ${target})
-    target_link_libraries(${target} PUBLIC ${classification_linked_libraries})
-    target_compile_definitions(${target} PUBLIC ${classification_compile_definitions})
-    if(TBB_FOUND)
-      CGAL_target_use_TBB(${target})
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support
+                                            CGAL::Boost_iostreams_support
+                                            CGAL::Boost_serialization_support)
+    if(TARGET CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()
   endif()
 endforeach()
-
-
-
-
-

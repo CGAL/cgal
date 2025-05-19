@@ -1,4 +1,4 @@
-Here follows 3 reviews which have been recieved following the submission
+Here follows 3 reviews which have been received following the submission
 of the Interpolation package to the editorial board.
 They have not been completely implemented or replied, so we keep them
 here in order for the next one who will work on the package to know
@@ -96,7 +96,7 @@ method to use under which circumstance.
 The examples need explanation.
 The indentation needs work.
 At the end of the second example, there is a branch that warns if the
-interpolation was not succesful due to missing function gradients. Can
+interpolation was not successful due to missing function gradients. Can
 this really occur, given the rest of the program? If not, I would
 remove it. If it can occur, I would draw more attention to this fact.
 
@@ -110,7 +110,7 @@ background presented to get into the subject without problems.
 Thus, I like the overall structure, and most of my remarks are
 minor comments, typos and suggestions.
 
-- p. 1, maybe add that a sample point is a natural neigbor iff its
+- p. 1, maybe add that a sample point is a natural neighbor iff its
     lambda is nonzero.
 - p. 2, end of paragraph "The interpolation package": I cannot find
     natural_neighbo_coordinates_3 in the manual/reference
@@ -181,6 +181,6 @@ long and hold to much information at once for a manual. For example:
 predicate you have to read at least twice before getting the meaning. 
 More, but simpler sentences would do a lot, especially as people look up 
 the manual on the web. Partly it just simply reads more like a
-scientific paper then like a manual.
+scientific paper than like a manual.
 
 ===================

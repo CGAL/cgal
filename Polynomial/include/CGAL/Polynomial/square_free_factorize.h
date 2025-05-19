@@ -1,20 +1,11 @@
 // Copyright (c) 1997  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Michael Hemmer
@@ -32,7 +23,7 @@ namespace CGAL {
 namespace internal {
 
 // square-free factorization
-// 
+//
 // the implementation uses two dispatches:
 //   a) first look at the coefficient's algebra type
 //   b) if the algebra type is of the concept field, try to decompose
@@ -89,13 +80,13 @@ inline int square_free_factorize
     typedef typename PT::Construct_polynomial Construct_polynomial;
     typedef typename PT::Univariate_content_up_to_constant_factor Ucont_utcf;
     typedef typename PT::Integral_division_up_to_constant_factor  Idiv_utcf;
-    
+
     if (typename PT::Total_degree()(poly) == 0){return 0;}
-   
-    Coeff ucont_utcf = Ucont_utcf()(poly); 
+
+    Coeff ucont_utcf = Ucont_utcf()(poly);
     POLY  regular_poly = Idiv_utcf()(poly,Construct_polynomial()(ucont_utcf));
 
-    int result = square_free_factorize_for_regular_polynomial( 
+    int result = square_free_factorize_for_regular_polynomial(
             regular_poly, factors, multiplicities);
 
     if (CGAL::total_degree(ucont_utcf) > 0){
@@ -106,8 +97,8 @@ inline int square_free_factorize
         result += square_free_factorize( ucont_utcf,
                 std::back_inserter(factors_uc),
                 std::back_inserter(multiplicities_uc) );
-        
-        for( typename Factors_uc::iterator it = factors_uc.begin(); 
+
+        for( typename Factors_uc::iterator it = factors_uc.begin();
              it != factors_uc.end(); ++it ){
           *factors++ = Construct_polynomial()(*it);
         }
@@ -116,7 +107,7 @@ inline int square_free_factorize
             *multiplicities++ = (*it);
         }
     }
-    return result;                                
+    return result;
 }
 
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
@@ -130,26 +121,26 @@ inline int square_free_factorize_for_regular_polynomial
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
 inline int square_free_factorize_for_regular_polynomial_
 (const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, CGAL::Tag_true){
-    
+
     typedef Polynomial<Coeff> POLY;
     typedef Polynomial_traits_d< POLY > PT;
-    typedef Fraction_traits<POLY> FT; 
-    
-    typename FT::Numerator_type num; 
-    typename FT::Denominator_type denom; 
+    typedef Fraction_traits<POLY> FT;
+
+    typename FT::Numerator_type num;
+    typename FT::Denominator_type denom;
     typename FT::Decompose()(p,num,denom);
-    
+
     std::vector<typename FT::Numerator_type> ifacs;
     int result =  square_free_factorize_for_regular_polynomial(num,std::back_inserter(ifacs),multiplicities);
-    
+
     typedef typename std::vector<typename FT::Numerator_type>::iterator Iterator;
     denom = typename FT::Denominator_type(1);
     for ( Iterator it = ifacs.begin(); it != ifacs.end(); ++it) {
         POLY q = typename FT::Compose()(*it, denom);
         *factors++ = typename PT::Canonicalize()(q);
     }
-    
-    return result; 
+
+    return result;
 }
 
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
@@ -174,11 +165,11 @@ inline int square_free_factorize_for_regular_polynomial_
     typename PT::Construct_innermost_coefficient_const_iterator_range range;
     typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
-    typename Scalar_factor_traits<POLY>::Scalar_factor sfac;  
+    typename Scalar_factor_traits<POLY>::Scalar_factor sfac;
     typename Scalar_factor_traits<POLY>::Scalar_div sdiv;
     typedef typename Scalar_factor_traits<POLY>::Scalar Scalar;
 
-    
+
     if (typename PT::Total_degree()(p) == 0) return 0;
 
     POLY a = CGAL::canonicalize(p);
@@ -193,8 +184,8 @@ inline int square_free_factorize_for_regular_polynomial_
 
     int i = 1, n = 0;
 
-    // extending both polynomials a and b by the denominator for algebraic 
-    // integers, which comes out from c=gcd(a,b), such that a and b are 
+    // extending both polynomials a and b by the denominator for algebraic
+    // integers, which comes out from c=gcd(a,b), such that a and b are
     // divisible by c
     IC lcoeff = ilcoeff(c);
     IC denom = dfai(range(c).first, range(c).second);
@@ -205,7 +196,7 @@ inline int square_free_factorize_for_regular_polynomial_
     // extracting a common scalar factor out of w=a/c and y=b/c simultaneously,
     // such that the parts in z=y-w' are canceled out as they should
     Scalar sfactor = sfac(y,sfac(w));
-    sdiv(w, sfactor); 
+    sdiv(w, sfactor);
     sdiv(y, sfactor);
 
     POLY  z = y - CGAL::differentiate(w);
@@ -220,14 +211,14 @@ inline int square_free_factorize_for_regular_polynomial_
         }
         i++;
         lcoeff = ilcoeff(g); // same as above
-        denom =dfai(range(c).first, range(c).second); 
+        denom =dfai(range(c).first, range(c).second);
         lcoeff *= denom * nfac(denom);
         w = (w * POLY(lcoeff)) / g;
         y = (z * POLY(lcoeff)) / g;
         Scalar sfactor = sfac(y,sfac(w));
-        sdiv(w, sfactor); 
+        sdiv(w, sfactor);
         sdiv(y, sfactor);
-       
+
         z = y - CGAL::differentiate(w);
     }
 
@@ -243,30 +234,30 @@ inline int square_free_factorize_for_regular_polynomial_
 (const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, Unique_factorization_domain_tag){
     // Yun's Square-Free Factorization
     // see [Geddes et al, 1992], Algorithm 8.2
-    /* 
+    /*
        @inproceedings{y-osfda-76,
        author = {David Y.Y. Yun},
        title = {On square-free decomposition algorithms},
-       booktitle = {SYMSAC '76: Proceedings of the third ACM symposium on Symbolic 
+       booktitle = {SYMSAC '76: Proceedings of the third ACM symposium on Symbolic
                     and algebraic computation},
        year = {1976},
        pages = {26--35},
        location = {Yorktown Heights, New York, United States},
-       doi = {http://doi.acm.org/10.1145/800205.806320},
+       doi = {https://dl.acm.org/citation.cfm?doid=800205.806320},
        publisher = {ACM Press},
        address = {New York, NY, USA},
        }
     */
-    
+
     typedef Polynomial<Coeff> POLY;
     typedef Polynomial_traits_d<POLY> PT;
 
     if (typename PT::Total_degree()(p) == 0) return 0;
     POLY a = CGAL::canonicalize(p);
 
-    POLY b = CGAL::differentiate(a);  
+    POLY b = CGAL::differentiate(a);
     POLY c = CGAL::gcd(a, b);
-   
+
     if (c == Coeff(1)) {
         *factors = a;
         *multiplicities = 1;
@@ -297,7 +288,7 @@ inline int square_free_factorize_for_regular_polynomial_
 
 
 
-// square-free factorization utcf 
+// square-free factorization utcf
 
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
 inline int square_free_factorize_utcf
@@ -318,14 +309,14 @@ inline int square_free_factorize_utcf_for_regular_polynomial
 
 // filtered square-free factorization
 
-// ### filtered versions #### 
+// ### filtered versions ####
 
-/*! \brief As NiX::square_free_factorize, but filtered by  
- *  NiX::may_have_multiple_root 
- *  
- *  Use this function if the polynomial might be square free. 
- */  
-template <class Coeff, class OutputIterator1, class OutputIterator2> 
+/*! \brief As NiX::square_free_factorize, but filtered by
+ *  NiX::may_have_multiple_root
+ *
+ *  Use this function if the polynomial might be square free.
+ */
+template <class Coeff, class OutputIterator1, class OutputIterator2>
 inline
 int filtered_square_free_factorize(
                                        Polynomial<Coeff> p,
@@ -341,14 +332,14 @@ int filtered_square_free_factorize(
   }
 }
 
-/*! \brief As NiX::square_free_factorize_utcf, but filtered by  
- *  NiX::may_have_multiple_root 
- *  
- *  Use this function if the polynomial might be square free. 
- */  
-template <class Coeff,  class OutputIterator1, class OutputIterator2> 
+/*! \brief As NiX::square_free_factorize_utcf, but filtered by
+ *  NiX::may_have_multiple_root
+ *
+ *  Use this function if the polynomial might be square free.
+ */
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
 inline
-int filtered_square_free_factorize_utcf( const Polynomial<Coeff>& p, 
+int filtered_square_free_factorize_utcf( const Polynomial<Coeff>& p,
                                          OutputIterator1 factors,
                                          OutputIterator2 multiplicities)
 {

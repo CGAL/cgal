@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 
@@ -33,32 +24,36 @@
 
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 
-#include <CGAL/Circular_kernel_2/function_objects_on_line_2.h> 
+#include <CGAL/Circular_kernel_2/function_objects_on_line_2.h>
 // to be removed when CGAL::Kernel has a Get_equation
 
 namespace CGAL {
 namespace CircularFunctors {
 
   template < class CK >
-  class Construct_circle_2 : public CK::Linear_kernel::Construct_circle_2
+  class Construct_circle_2
+    // : public CK::Linear_kernel::Construct_circle_2
   {
-    typedef typename CK::Linear_kernel::Construct_circle_2 Base_functor;
-
     typedef typename CK::FT                         FT;
-    typedef typename CK::Linear_kernel::Point_2     Point_2;
+    typedef typename CK::Circle_2                   Circle_2;
+    typedef typename CK::Circular_arc_2             Circular_arc_2;
+
+    typedef typename CK::Linear_kernel::Construct_circle_2 Linear_Construct_circle_2;
+
   public:
-    typedef typename Base_functor::result_type result_type;
+    // using Linear_Construct_circle_2::operator();
 
-    using Base_functor::operator();
+    template <class... Args>
+    decltype(auto)
+    operator()(const Args&... args) const
+    { return Linear_Construct_circle_2()(args...); }
 
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
-
-    result_type
+    Circle_2
     operator() ( const typename CK::Polynomial_for_circles_2_2 &eq ) {
       return construct_circle_2<CK>(eq);
     }
 
-    result_type
+    decltype(auto)
     operator() (const Circular_arc_2 & a) const {
       return (a.rep().supporting_circle());
     }

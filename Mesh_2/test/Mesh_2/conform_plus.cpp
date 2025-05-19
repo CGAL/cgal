@@ -15,36 +15,21 @@ int main()
   cdt.insert_constraint(Point(2, 5), Point(8, 5));
   cdt.insert(Point(5, 6));
   cdt.insert(Point(5, 4));
-  
+
  std::pair<Vertex_handle,Vertex_handle> p;
 
-  for(CDT::Subconstraint_iterator sit = cdt.subconstraints_begin();
-      sit != cdt.subconstraints_end();
-      ++sit){
-    
-    p = (*sit).first;
-    
-    Vertex_handle vh1 = p.first;
-    Vertex_handle vh2 = p.second;
-    
+  for(const auto& [vh1, vh2] : cdt.subconstraints()) {
     std::cerr << "subconstraint: " << vh1->point() << " -- " << vh2->point() << std::endl;
   }
 
   std::cerr << "\nMake Gabriel" << std::endl;
 
   CGAL::make_conforming_Gabriel_2(cdt);
-  
+
   int counter = 0;
 
-  for(CDT::Subconstraint_iterator sit = cdt.subconstraints_begin();
-      sit != cdt.subconstraints_end();
-      ++sit){
+  for(const auto& [vh1, vh2] : cdt.subconstraints()) {
     ++counter;
-    p = (*sit).first;
-    
-    Vertex_handle vh1 = p.first;
-    Vertex_handle vh2 = p.second;
-    
     std::cerr << "subconstraint: " << vh1->point() << " -- " << vh2->point() << std::endl;
   }
 

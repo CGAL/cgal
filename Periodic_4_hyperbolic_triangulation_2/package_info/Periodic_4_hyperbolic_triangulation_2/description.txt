@@ -1,0 +1,3 @@
+Package 2D periodic hyperbolic triangulation: provides Delaunay triangulations
+of the Bolza surface, represented as periodic triangulations in the Poincaré disk
+model of the hyperbolic plane, with demos, examples, and tests.

@@ -4,33 +4,22 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  *  File: Sturm.h
- * 
- *  Description: 
+ *
+ *  Description:
  *  The templated class Sturm implements Sturm sequences.
  *  Basic capabilities include:
- *     counting number of roots in an interval, 
+ *     counting number of roots in an interval,
  *     isolating all roots in an interval
  *     isolating the i-th largest (or smallest) root in interval
  *  It is based on the Polynomial class.
- * 
+ *
  *   BigFloat intervals are used for this (new) version.
  *   It is very important that the BigFloats used in these intervals
  *   have no error at the beginning, and this is maintained
  *   by refinement.  Note that if x, y are error-free BigFloats,
- *   then (x+y)/2 may not be error-free (in current implementaion.
+ *   then (x+y)/2 may not be error-free (in current implementation.
  *   We have to call a special "exact divide by 2" method,
  *   (x+y).div2() for this purpose.
  *
@@ -40,20 +29,20 @@
  *       (2) if x=y,  it represents a unique point x.
  *       (3) if x<y,  it represents the open interval (x,y).
  *           In this case, we always may sure that x, y are not zeros.
- * 
+ *
  *   TODO LIST and Potential Bugs:
  *   (1) Split an isolating interval to give definite sign (done)
  *   (2) Should have a test for square-free polynomials (done)
- * 
+ *
  *  Author:  Chee Yap and Sylvain Pion, Vikram Sharma
  *  Date:    July 20, 2002
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 
@@ -65,7 +54,7 @@
 #include "CGAL/CORE/Expr.h"
 #include "CGAL/CORE/poly/Poly.h"
 
-namespace CORE { 
+namespace CORE {
 
 // ==================================================
 // Sturm Class
@@ -75,15 +64,15 @@ template < class NT >
 class Sturm {
 public:
   int len;      // len is 1 less than the number of non-zero entries in array seq.
-  		//     I.e., len + 1 = length of the Sturm Sequence
+                  //     I.e., len + 1 = length of the Sturm Sequence
                 // N.B. When len = -1 or len = 0 are special,
                 //     the array seq is not used!
                 //     Hence, one must test these special cases
   Polynomial<NT> * seq;      // array of polynomials of length "len+1"
-  Polynomial<NT> g;//GCD of input polynomial P and it's derivative P'
+  Polynomial<NT> g;//GCD of input polynomial P and its derivative P'
   NT cont;//Content of the square-free part of input polynomial P
   //Thus P = g * cont * seq[0]
-  static const int N_STOP_ITER = 10000;    // Stop IterE after this many iterations. 
+  static const int N_STOP_ITER = 10000;    // Stop IterE after this many iterations.
   bool NEWTON_DIV_BY_ZERO;   // This is set to true when there is divide by
   // zero in Newton iteration (at critical value)
   // User is responsible to check this and to reset.
@@ -110,7 +99,7 @@ public:
       seq[i] = seq[i-2];
       seq[i].negPseudoRemainder(seq[i-1]);
       if (zeroP(seq[i])){
-	len = i-1;//Since len is one less than the number of non-zero entries.
+        len = i-1;//Since len is one less than the number of non-zero entries.
         break;
       }
       seq[i].primPart(); // Primitive part is important to speed
@@ -121,11 +110,11 @@ public:
   }
 
   // Chee: 7/31/04
-  // 	We need BigFloat version of Sturm(Polynomial<NT>pp) because
-  // 	of curve verticalIntersection() ... .  We also introduce
-  // 	various support methods in BigFloat.h (exact_div, gcd, etc).
-  // Constructor from a BigFloat polynomial 
-  //	Need the fake argument to avoid compiler overloading errors
+  //         We need BigFloat version of Sturm(Polynomial<NT>pp) because
+  //         of curve verticalIntersection() ... .  We also introduce
+  //         various support methods in BigFloat.h (exact_div, gcd, etc).
+  // Constructor from a BigFloat polynomial
+  //        Need the fake argument to avoid compiler overloading errors
   Sturm(Polynomial<BigFloat> pp, bool /* fake */) : NEWTON_DIV_BY_ZERO(false) {
     len = pp.getTrueDegree();
     if (len <= 0) return; // hence, seq is not defined in these cases
@@ -140,8 +129,8 @@ public:
       seq[i] = seq[i-2];
       seq[i].negPseudoRemainder(seq[i-1]);
       if (zeroP(seq[i])){
-	len = i-1;//Since len is one less than the number of non-zero entries.
-	//len = i;
+        len = i-1;//Since len is one less than the number of non-zero entries.
+        //len = i;
         break;
       }
       seq[i].primPart(); // Primitive part is important to speed
@@ -225,11 +214,11 @@ public:
   //   --the first polynomial eval is not yet done
   //   --special return value of -1, indicating x is root!
   int signVariations(const BigFloat & x) const {
-    if (len <= 0) return len; 
+    if (len <= 0) return len;
     int signx = sign(seq[0].evalExactSign(x));
     if (signx == 0)
       return (-1);    // THIS indicates that x is a root...
-    		      // REMARK: in our usage, this case does not arise
+                          // REMARK: in our usage, this case does not arise
     return signVariations(x, signx);
   }//signVariations(x)
 
@@ -363,7 +352,7 @@ public:
       if ((x > 0) || (y < 0)) // usual case: 0 is not in interval
         v.push_back(std::make_pair(x, y));
       else { // if 0 is inside our interval (this extra
-	     // service is not strictly necessary!)
+             // service is not strictly necessary!)
         if (seq[0].coeff[0] == 0)
           v.push_back(std::make_pair(BigFloat(0), BigFloat(0)));
         else if (numberOfRoots(0,y) == 0)
@@ -374,15 +363,15 @@ public:
     } else { // n > 1
       BigFloat mid = (x+y).div2(); // So mid is exact.
       if (sign(seq[0].evalExactSign(mid)) != 0)  { // usual case: mid is non-root
-      	isolateRoots(x, mid, v);
-      	isolateRoots(mid, y, v); 
+              isolateRoots(x, mid, v);
+              isolateRoots(mid, y, v);
       } else { // special case: mid is a root
-	BigFloat tmpEps = (seq[0].sepBound()).div2();  // this is exact!
-	if(mid-tmpEps > x )//Since otherwise there are no roots in (x,mid)
-	  isolateRoots(x, (mid-tmpEps).makeCeilExact(), v);
-	v.push_back(std::make_pair(mid, mid));
-	if(mid+tmpEps < y)//Since otherwise there are no roots in (mid,y)
-	  isolateRoots((mid+tmpEps).makeFloorExact(), y, v);
+        BigFloat tmpEps = (seq[0].sepBound()).div2();  // this is exact!
+        if(mid-tmpEps > x )//Since otherwise there are no roots in (x,mid)
+          isolateRoots(x, (mid-tmpEps).makeCeilExact(), v);
+        v.push_back(std::make_pair(mid, mid));
+        if(mid+tmpEps < y)//Since otherwise there are no roots in (mid,y)
+          isolateRoots((mid+tmpEps).makeFloorExact(), y, v);
       }
     }
   }//isolateRoots(x,y,v)
@@ -401,11 +390,11 @@ public:
   }
 
   // isolateRoot(i)
-  ///   Isolates the i-th smallest root 
+  ///   Isolates the i-th smallest root
   ///         If i<0, isolate the (-i)-th largest root
   ///   Defaults to i=0 (i.e., the smallest positive root a.k.a. main root)
   BFInterval isolateRoot(int i = 0) const {
-    if (len <= 0) 
+    if (len <= 0)
        return BFInterval(1,0);   // ERROR CONDITION
     if (i == 0)
       return mainRoot();
@@ -437,7 +426,7 @@ public:
     BigFloat m = (x+y).div2();
     n = numberOfRoots(x, m);
     if (n >= i)
-	    return isolateRoot(i, x, m);
+            return isolateRoot(i, x, m);
     // Now (n < i) but we have to be careful if m is a root
     if (sign(seq[0].evalExactSign(m)) != 0)   // usual case
       return isolateRoot(i-n, m, y);
@@ -553,7 +542,7 @@ public:
   }//End of refineAllRoots
 
   // This is the new version of "refineAllRoots"
-  //    	based on Newton iteration
+  //            based on Newton iteration
   // It should be used instead of refineAllRoots!
   void newtonRefineAllRoots( BFVecInterval &v, int aprec) {
 
@@ -577,17 +566,17 @@ public:
   }//End of newtonRefineAllRoots
 
   /** val = newtonIterN(n, bf, del, err, fuMSB, ffuMSB)
-   * 
+   *
    *    val is the root after n iterations of Newton
    *       starting from initial value of bf and is exact.
    *    fuMSB and ffuMSB are precision parameters for the approximating
-   *		the coefficients of the underlyinbg polynomial, f(x).
-   *    	THEY are used ONLY if the coefficients of the polynomial
-   *		comes from a field (in particular, Expr or BigRat).
-   *		We initially approximate the coefficients of f(x) to fuMSB 
-   *		relative bits, and f'(x) to ffuMSB relative bits.
-   *		The returned values of fuMSB and ffuMSB are the final
-   *		precision used by the polynomial evaluation algorithm.
+   *                the coefficients of the underlyinbg polynomial, f(x).
+   *            THEY are used ONLY if the coefficients of the polynomial
+   *                comes from a field (in particular, Expr or BigRat).
+   *                We initially approximate the coefficients of f(x) to fuMSB
+   *                relative bits, and f'(x) to ffuMSB relative bits.
+   *                The returned values of fuMSB and ffuMSB are the final
+   *                precision used by the polynomial evaluation algorithm.
    *    Return by reference, "del" (difference between returned val and value
    *       in the previous Newton iteration)
    *
@@ -596,13 +585,13 @@ public:
    *    IMPORTANT: we assume that when x is an exact BigFloat,
    *    then Polynomial<NT>::eval(x) will be exact!
    *    But current implementation of eval() requires NT <= BigFloat.
-   * ****************************************************/    
+   * ****************************************************/
 
   BigFloat newtonIterN(long n, const BigFloat& bf, BigFloat& del,
-	unsigned long & err, extLong& fuMSB, extLong& ffuMSB) {
+        unsigned long & err, extLong& fuMSB, extLong& ffuMSB) {
     if (len <= 0) return bf;   // Nothing to do!  User must
                                // check this possibility!
-    BigFloat val = bf;  
+    BigFloat val = bf;
     // val.makeExact();    // val is exact
 
     // newton iteration
@@ -618,8 +607,7 @@ public:
       if (ff == 0) {
         NEWTON_DIV_BY_ZERO = true;
         del = 0;
-        core_error("Zero divisor in Newton Iteration",
-                __FILE__, __LINE__, false);
+        CGAL_CORE_warning_msg(false, "Zero divisor in Newton Iteration");
         return 0;
       }
 
@@ -633,11 +621,11 @@ public:
       if (f == 0) {
         NEWTON_DIV_BY_ZERO = false;
         del = 0;    // Indicates that we have reached the exact root
-		    //    This is because eval(val) is exact!!!
+                    //    This is because eval(val) is exact!!!
         return val; // val is the exact root, before the last iteration
       }
       del = f/ff; // But the accuracy of "f/ff" must be controllable
-		    // by the caller...
+                    // by the caller...
       err = del.err();
       del.makeExact(); // makeExact() is necessary
       val -= del;
@@ -646,7 +634,7 @@ public:
     return val;
   }//newtonIterN
 
-  //Another version of newtonIterN which does not return the error 
+  //Another version of newtonIterN which does not return the error
   //and passing the uMSB as arguments; it is easier for the user to call
   //this.
   BigFloat newtonIterN(long n, const BigFloat& bf, BigFloat& del){
@@ -662,9 +650,9 @@ public:
   //    Returned value is an exact BigFloat.
   //    We guarantee at least one Newton step (so del is defined).
   //
-  //	   The parameters fuMSB and ffuMSB are precision parameters for
-  //	   evaluating coefficients of f(x) and f'(x), used similarly
-  //	   as described above for newtonIterN(....)
+  //           The parameters fuMSB and ffuMSB are precision parameters for
+  //           evaluating coefficients of f(x) and f'(x), used similarly
+  //           as described above for newtonIterN(....)
   //
   //    Return by reference "del" (difference between returned val and value
   //       in the previous Newton iteration).  This "del" is an upper bound
@@ -677,8 +665,8 @@ public:
   //       in the Newton zone.  So we use the global N_STOP_ITER to
   //       prevent infinite loop.
 
-  BigFloat newtonIterE(int prec, const BigFloat& bf, BigFloat& del, 
-	extLong& fuMSB, extLong& ffuMSB) {
+  BigFloat newtonIterE(int prec, const BigFloat& bf, BigFloat& del,
+        extLong& fuMSB, extLong& ffuMSB) {
     // usually, prec is positive
     int count = N_STOP_ITER; // upper bound on number of iterations
     int stepsize = 1;
@@ -691,8 +679,7 @@ public:
       stepsize++; // heuristic
     } while ((del != 0) && ((del.uMSB() >= -prec) && (count >0))) ;
 
-    if (count == 0) core_error("newtonIterE: reached count=0",
-		    	__FILE__, __LINE__, true);
+    CGAL_assertion_msg(count != 0, "newtonIterE: reached count=0");
     del = BigFloat(core_abs(del.m()), err, del.exp() );
     del.makeCeilExact();
     return val;
@@ -703,8 +690,8 @@ public:
     extLong fuMSB=0, ffuMSB=0;
     return newtonIterE(prec, bf, del, fuMSB, ffuMSB);
   }
-  // A Smale bound which is an \'a posteriori condition. Applying 
-  // Newton iteration to any point z satisfying this condition we are 
+  // A Smale bound which is an \'a posteriori condition. Applying
+  // Newton iteration to any point z satisfying this condition we are
   // sure to converge to the nearest root in a certain interval of z.
   // The condition is for all k >= 2,
   //    | \frac{p^(k)(z)}{k!p'(z)} |^{1\(k-1)} < 1/8 * |\frac{p'(z)}{p(z)}|
@@ -717,12 +704,12 @@ public:
     temp = core_abs(temp2/p[0].eval(z))/8;
     BigInt fact_k = 2;
     for(int k = 2; k <= deg; k++){
-      temp1 = core_abs(p[k].eval(z)/(fact_k*temp2)); 
+      temp1 = core_abs(p[k].eval(z)/(fact_k*temp2));
       if(k-1 == 2)
-	temp1 = sqrt(temp1);
+        temp1 = sqrt(temp1);
       else
-	temp1 = root(temp1, k-1);
-      if(temp1 >= temp) return false; 
+        temp1 = root(temp1, k-1);
+      if(temp1 >= temp) return false;
     }
     return true;
     }
@@ -731,7 +718,7 @@ public:
   //An easily computable Smale's point estimate for Newton as compared to the
   //one above. The criterion is
   //
-  // ||f||_{\infty} * \frac{|f(z)|}{|f'(z)|^2} 
+  // ||f||_{\infty} * \frac{|f(z)|}{|f'(z)|^2}
   //                * \frac{\phi'(|z|)^2}{\phi(|z|)}  < 0.03
   // where
   //           \phi(r) = \sum_{i=0}{m}r^i,
@@ -749,7 +736,7 @@ public:
   //    \phi(r)        (r-1) (r^{m+1} - 1)
   //
   // Alternatively, we have
-  // 
+  //
   //    \phi'(r)^2     (mr^{m+1} + 1)^2
   //     ---------  <  -------------------          (2)
   //    \phi(r)        (r-1)^3 (r^{m+1} - 1)
@@ -762,10 +749,10 @@ public:
   //    \phi'(r)^2     m^2 (m + 1)
   //     ---------  =  -----------                  (3)
   //    \phi(r)            4
-  // 
+  //
   // REMARK: smaleBoundTest(z) actually computes an upper bound
-  // 	on alpha(f,z), and compares it to 0.02 (then our theory
-  // 	says that z is a robust approximate zero).
+  //         on alpha(f,z), and compares it to 0.02 (then our theory
+  //         says that z is a robust approximate zero).
   //
   bool smaleBoundTest(const BigFloat& z){
     CGAL_assertion(z.isExact());   // the bound only makes sense for exact z
@@ -786,10 +773,10 @@ public:
     temp = temp*seq[0].height();  // remains exact
     //Thus, temp >=  ||f||_{\infty} |\frac{f(z)}{f'(z)^2}|
 
-    int m = seq[0].getTrueDegree();    
+    int m = seq[0].getTrueDegree();
     BigFloat x = core_abs(z);
     if (x==1)   // special case, using (3)
-	    return (temp * BigFloat(m*m*(m+1)).div2().div2() < 0.02);
+            return (temp * BigFloat(m*m*(m+1)).div2().div2() < 0.02);
 
     BigFloat temp1;
     if (x>1) { // use formula (1)
@@ -812,12 +799,12 @@ public:
 
 
   // yapsBound(p)
-  // 	returns a bound on size of isolating interval of polynomial p
-  // 	which is guaranteed to be in the Newton Zone.
+  //         returns a bound on size of isolating interval of polynomial p
+  //         which is guaranteed to be in the Newton Zone.
   //    N.B. p MUST be square-free
   //
   //   Reference: Theorem 6.37, p.184 of Yap's book
-  //   	   [Fundamental Problems of Algorithmic Algebra]
+  //              [Fundamental Problems of Algorithmic Algebra]
 
   BigFloat yapsBound(const Polynomial<NT> & p) const {
     int deg = p.getTrueDegree();
@@ -825,7 +812,7 @@ public:
                *pow(BigFloat(2+p.height()),6*deg));
   }
 
-  //newtonRefine(J, a) 
+  //newtonRefine(J, a)
   //
   //    ASSERT(J is an isolating interval for some root x^*)
   //
@@ -835,23 +822,23 @@ public:
   //    We will return a refined interval with exact endpoints,
   //    still called J, containing x^* and
   //
-  // 			|J| < 2^{-a}.
+  //                         |J| < 2^{-a}.
   //
-  // 	TO DO: write a version of newtonRefine(J, a, sign) where
-  // 	sign=J.first.sign(), since you may already know the sign
-  // 	of J.first.  This will skip the preliminary stuff in the
-  // 	current version.
+  //         TO DO: write a version of newtonRefine(J, a, sign) where
+  //         sign=J.first.sign(), since you may already know the sign
+  //         of J.first.  This will skip the preliminary stuff in the
+  //         current version.
   //
   BFInterval newtonRefine(BFInterval &J, int aprec) {
 
 #ifdef CORE_DEBUG_NEWTON
 std::cout << "In newtonRefine, input J=" << J.first
-	<< ", " << J.second << " precision = " << aprec << std::endl;
+        << ", " << J.second << " precision = " << aprec << std::endl;
 #endif
 
     if (len <= 0) return J;   // Nothing to do!  User must
                                // check this possibility!
-      
+
 
     if((J.second - J.first).uMSB() < -aprec){
       return (J);
@@ -878,7 +865,7 @@ std::cout << "In newtonRefine, input J=" << J.first
     // REMARK: NO_STEPS=1 is incorrect, as it may lead to
     //      linear convergence (it is somewhat similar to Dekker-Brent's
     //      idea of guaranteeing that bisection does not
-    //	    destroy the superlinear convergence of Newton.
+    //            destroy the superlinear convergence of Newton.
     int N = NO_STEPS;
 
     BigFloat x, del, olddel, temp;
@@ -893,9 +880,9 @@ std::cout << "In newtonRefine, input J=" << J.first
 
     //MAIN WHILE LOOP. We ensure that J always contains the root
 
-    while ( !smaleBoundTest(x) && 
-	    (J.second - J.first) > yap &&
-	   (J.second - J.first).uMSB() >= -aprec) {
+    while ( !smaleBoundTest(x) &&
+            (J.second - J.first) > yap &&
+           (J.second - J.first).uMSB() >= -aprec) {
       x = newtonIterN(N, x, del, err, fuMSB, ffuMSB);
       if ((del == 0)&&(NEWTON_DIV_BY_ZERO == false)) {  // reached exact root!
         J.first = J.second = x;
@@ -904,28 +891,28 @@ std::cout << "In newtonRefine, input J=" << J.first
 
       BigFloat left(x), right(x);
       if (del>0) {
-      	left -= del; right += del;
+              left -= del; right += del;
       } else {
-      	left += del; right -= del;
+              left += del; right -= del;
       }
 
       // update interval
       if ((left > J.first)&&(left <J.second)) {
-	  int lSign = sign(seq[0].evalExactSign(left));
+          int lSign = sign(seq[0].evalExactSign(left));
           if (lSign == leftSign)  // leftSign=sign of J.first
             J.first = left;
-	  else if (lSign == 0) {
+          else if (lSign == 0) {
             J.first = J.second = left;
             return J;
           } else {
-	    J.second = left;
-          }	
+            J.second = left;
+          }
       }
       if ((right < J.second)&&(right >J.first)) {
-	  int rSign = sign(seq[0].evalExactSign(right));
+          int rSign = sign(seq[0].evalExactSign(right));
           if (rSign == rightSign)
             J.second = right;
-	  else if (rSign == 0) {
+          else if (rSign == 0) {
             J.first = J.second = right;
             return J;
           } else {
@@ -938,61 +925,61 @@ std::cout << "In newtonRefine, input J=" << J.first
       if (width*2 <= old_width && !NEWTON_DIV_BY_ZERO) {
                                   // we can get a better root:
 
-	// No, it is not necessary to update x to
-	// the midpoint of the new interval J.
-	// REASON: basically, it is hard to be smarter than Newton's method!
-	// Newton might bring x very close to one endpoint, but it can be
-	// because the root is near there!  In any case,
-	// by setting x to the center of J, you only gain at most
-	// one bit of accuracy, but you stand to loose an
-	// arbitrary amount of bits of accuracy if you are unlucky!
-	// So I will comment out the next line.  --Chee (Aug 9, 2004).
-	// 
-	// x = (J.second + J.first).div2();
-	if (J.first > x || J.second < x)
-	  x = (J.second + J.first).div2();
+        // No, it is not necessary to update x to
+        // the midpoint of the new interval J.
+        // REASON: basically, it is hard to be smarter than Newton's method!
+        // Newton might bring x very close to one endpoint, but it can be
+        // because the root is near there!  In any case,
+        // by setting x to the center of J, you only gain at most
+  // one bit of accuracy, but you stand to lose an
+        // arbitrary amount of bits of accuracy if you are unlucky!
+        // So I will comment out the next line.  --Chee (Aug 9, 2004).
+        //
+        // x = (J.second + J.first).div2();
+        if (J.first > x || J.second < x)
+          x = (J.second + J.first).div2();
 
-	old_width = width; // update width
+        old_width = width; // update width
 
         N ++;      // be more confident or aggressive
-	           //  (perhaps we should double N)
-		   //
+                   //  (perhaps we should double N)
+                   //
       } else {// Either NEWTON_DIV_BY_ZERO=true
-	      // Or width has not decreased sufficiently
-	x = (J.second + J.first).div2();//Reset x to midpoint since it was the
-	                                //value from a failed Newton step
-	xSign = sign(seq[0].evalExactSign(x));
-	if (xSign == rightSign) {
-	  J.second = x;
-	} else if (xSign == leftSign) {
-	  J.first = x;
-	} else { // xSign must be 0
-	  J.first = J.second = x; return J;
-	}
-	x = (J.second + J.first).div2();
+              // Or width has not decreased sufficiently
+        x = (J.second + J.first).div2();//Reset x to midpoint since it was the
+                                        //value from a failed Newton step
+        xSign = sign(seq[0].evalExactSign(x));
+        if (xSign == rightSign) {
+          J.second = x;
+        } else if (xSign == leftSign) {
+          J.first = x;
+        } else { // xSign must be 0
+          J.first = J.second = x; return J;
+        }
+        x = (J.second + J.first).div2();
 
-	old_width = old_width.div2(); // update width
-	
-	// reduce value of N:
-	N = core_max(N-1, NO_STEPS);   // N must be at least NO_STEPS
+        old_width = old_width.div2(); // update width
+
+        // reduce value of N:
+        N = core_max(N-1, NO_STEPS);   // N must be at least NO_STEPS
       }
     }//MAIN WHILE LOOP
 
     if((J.second - J.first).uMSB() >= -aprec){ // The interval J
                     //still hasn't reached the required precision.
                     //But we know the current value of x (call it x_0)
-		    //is in the strong Newton basin of the
-		    //root x^* (because it passes Smale's bound)
+                    //is in the strong Newton basin of the
+                    //root x^* (because it passes Smale's bound)
       //////////////////////////////////////////////////////////////////
       //Both x_0 and the root x^* are in the interval J.
       //Let NB(x^*) be the strong Newton basin of x^*.  By definition,
       //x_0 is in NB(x^*) means that:
       //
       //    x_0 is in NB(x^*) iff |x_n-x^*| \le 2^{-2^{n}+1} |x_0-x^*|
-      //    
-      // where x_n is the n-th iterate of Newton.  
-      //    
-      //  LEMMA 1: if x_0  \in NB(x^*) then 
+      //
+      // where x_n is the n-th iterate of Newton.
+      //
+      //  LEMMA 1: if x_0  \in NB(x^*) then
       //               |x_0 - x^*| <= 2|del|      (*)
       //  and
       //               |x_1 - x^*| <= |del|       (**)
@@ -1007,32 +994,32 @@ std::cout << "In newtonRefine, input J=" << J.first
       //         |x_0-x^*| - |del| <= |x_0-x^*|/2,
       //which follows from
       //         |x_0-x^* + del| <= |x_0-x^*|/2,
-      //which is equivalent to (***).  
+      //which is equivalent to (***).
       //The bound (**) follows from (*) and (***).
       //QED
       //
       //  COMMENT: the above derivation refers to the exact values,
       //  but what we compute is X_1 where X_1 is an approximation to
       //  x_1.  However, let us write X_1 = x_0 - DEL, where DEL is
-      //  an approximation to del.  
+      //  an approximation to del.
       //
       //  LEMMA 2:  If |DEL| >= |del|,
       //  then (**) holds with X_1 and DEL in place of x_1 and del.
-      //  
-      //  NOTE: We implemented this DEL in newtonIterE.   
+      //
+      //  NOTE: We implemented this DEL in newtonIterE.
 
 #ifdef CORE_DEBUG
       std::cout << "Inside Newton Refine: Refining Part " << std::endl;
 
       if((J.second - J.first) > yap)
-	std::cout << "Smales Bound satisfied " << std::endl;
+        std::cout << "Smales Bound satisfied " << std::endl;
       else
-	std::cout << "Chees Bound satisfied " << std::endl;
+        std::cout << "Chees Bound satisfied " << std::endl;
 #endif
       xSign = sign(seq[0].evalExactSign(x));
       if(xSign == 0){
-	J.first = J.second = x; 
-	return J; // missing before!
+        J.first = J.second = x;
+        return J; // missing before!
       }
 
       //int k = clLg((-(J.second - J.first).lMSB() + aprec).asLong());
@@ -1040,13 +1027,13 @@ std::cout << "In newtonRefine, input J=" << J.first
       xSign = sign(seq[0].evalExactSign(x));
 
       if(xSign == leftSign){//Root is greater than x
-	J.first = x;
-	J.second = x + del;  // justified by Lemma 2 above
+        J.first = x;
+        J.second = x + del;  // justified by Lemma 2 above
       }else if(xSign == rightSign){//Root is less than x
-	J.first = x - del;   // justified by Lemma 2 above
-	J.second = x ;
+        J.first = x - del;   // justified by Lemma 2 above
+        J.second = x ;
       }else{//x is the root
-	J.first = J.second = x;
+        J.first = J.second = x;
       }
     }
 
@@ -1054,11 +1041,11 @@ std::cout << "In newtonRefine, input J=" << J.first
 
 #ifdef CORE_DEBUG
     std::cout << " Returning from Newton Refine: J.first = " << J.first
-	      << " J.second = " << J.second << " aprec = " << aprec
-	      << " Sign at the interval endpoints = " 
-	      << sign(seq[0].evalExactSign(J.first))
-	      << " : " << sign(seq[0].evalExactSign(J.second)) << " Err at starting = " 
-	      << J.first.err() << " Err at end = " << J.second.err() << std::endl;
+              << " J.second = " << J.second << " aprec = " << aprec
+              << " Sign at the interval endpoints = "
+              << sign(seq[0].evalExactSign(J.first))
+              << " : " << sign(seq[0].evalExactSign(J.second)) << " Err at starting = "
+              << J.first.err() << " Err at end = " << J.second.err() << std::endl;
 #endif
 
     CGAL_assertion( (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) <= 0) );
@@ -1077,13 +1064,13 @@ std::cout << "In newtonRefine, input J=" << J.first
 
 
 // ==================================================
-// Helper Functions 
+// Helper Functions
 // ==================================================
 
 // isZeroIn(I):
 //          returns true iff 0 is in the closed interval I
 CORE_INLINE bool isZeroIn(BFInterval I) {
-	return ((I.first <= 0.0) && (I.second >= 0.0));
+        return ((I.first <= 0.0) && (I.second >= 0.0));
 }
 
 /////////////////////////////////////////////////////////////////

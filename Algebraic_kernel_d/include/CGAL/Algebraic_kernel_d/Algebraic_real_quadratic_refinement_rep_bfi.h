@@ -1,21 +1,12 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //                  Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -48,27 +39,27 @@ namespace CGAL {
 namespace internal {
 
 // definition of the Algebraic_real_rep x:
-    
+
 //For details about the method, see
 /*
  * @Unpublished{abbott-quadratic,
- *    author = 	 {John Abbott},
- *    title = 	 {Quadratic Interval Refinement for Real Roots},
- *    url =      {http://www.dima.unige.it/~abbott/},
+ *    author =          {John Abbott},
+ *    title =          {Quadratic Interval Refinement for Real Roots},
+ *    url =      {https://www.dima.unige.it/~abbott/},
  *  note =       {Poster presented at the 2006 Internat. Sympos. on Symbolic
  and Algebraic Computation (ISSAC 2006)}
  * }
  */
 
-template< class Coefficient_, class Field_> 
+template< class Coefficient_, class Field_>
 class Algebraic_real_quadratic_refinement_rep_bfi
     : public Algebraic_real_rep<Coefficient_, Field_> {
 
     typedef Coefficient_                            Coefficient;
     typedef Field_                                  Field;
 
-    typedef typename 
-    CGAL::Get_arithmetic_kernel<Field>::Arithmetic_kernel:: 
+    typedef typename
+    CGAL::Get_arithmetic_kernel<Field>::Arithmetic_kernel::
         Bigfloat_interval BFI;
 
     typedef typename CGAL::Bigfloat_interval_traits<BFI>::Bound BF;
@@ -76,54 +67,54 @@ class Algebraic_real_quadratic_refinement_rep_bfi
     // This is a implicit restriction - Field must be some type
     // modelling rational numbers to get an integer type
     typedef typename CGAL::Fraction_traits<Field>::Numerator_type Integer;
-    
+
     typedef typename
         CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly;
 
     typedef Algebraic_real_rep <Coefficient,Field>     Base;
-    typedef Algebraic_real_quadratic_refinement_rep_bfi<Coefficient,Field> 
+    typedef Algebraic_real_quadratic_refinement_rep_bfi<Coefficient,Field>
     Self;
 
-    typedef typename CGAL::Coercion_traits<Coefficient,Field>::Type 
+    typedef typename CGAL::Coercion_traits<Coefficient,Field>::Type
     Eval_result_type;
 
 private:
 
     mutable long prec_;
 
-    typedef typename 
+    typedef typename
         CGAL::Polynomial_traits_d<Poly>::template Rebind<BFI,1>
     ::Other::Type BFI_polynomial;
 
-    mutable boost::optional
+    mutable std::optional
         < BFI_polynomial > f_bfi_;
-    
-    mutable boost::optional<BFI> low_bfi_, f_low_bfi_, 
-        high_bfi_, f_high_bfi_; 
+
+    mutable std::optional<BFI> low_bfi_, f_low_bfi_,
+        high_bfi_, f_high_bfi_;
 
     mutable long N;
 
-  // TODO: replace by call of Coercion_traits<Poly,BFI>::Cast() 
+  // TODO: replace by call of Coercion_traits<Poly,BFI>::Cast()
     BFI_polynomial _convert_polynomial_to_bfi(const Poly& f) const {
         std::vector<BFI> coeffs;
         for(int i = 0; i <= CGAL::degree(f); i++) {
             coeffs.push_back(CGAL::convert_to_bfi(f[i]));
         }
-        return BFI_polynomial(coeffs.begin(), coeffs.end());   
+        return BFI_polynomial(coeffs.begin(), coeffs.end());
     }
 
     void _set_prec(long new_prec) const {
-        
+
         prec_ = new_prec;
         CGAL::set_precision(BFI(), prec_);
 
         f_bfi_ = _convert_polynomial_to_bfi(this->polynomial());
 
         low_bfi_ = CGAL::convert_to_bfi(this->low());
-        
+
         high_bfi_ = CGAL::convert_to_bfi(this->high());
-        f_low_bfi_ = f_bfi_.get().evaluate(low_bfi_.get());
-        f_high_bfi_ = f_bfi_.get().evaluate(high_bfi_.get());
+        f_low_bfi_ = f_bfi_.value().evaluate(low_bfi_.value());
+        f_high_bfi_ = f_bfi_.value().evaluate(high_bfi_.value());
 
     }
 
@@ -134,16 +125,16 @@ private:
         }
 
         m_bfi = CGAL::convert_to_bfi(m);
-        f_m_bfi = f_bfi_.get().evaluate(m_bfi);
-        
+        f_m_bfi = f_bfi_.value().evaluate(m_bfi);
+
         if(CGAL::zero_in(f_m_bfi)) {
-            
+
             // Okay, compute exactly
             return CGAL::sign(this->polynomial().evaluate(m));
         }
-        
+
         // If we are here, then the interval is away from zero
-        
+
         return CGAL::sign(CGAL::upper(f_m_bfi));
 
     }
@@ -157,26 +148,26 @@ public:
     //! creates the algebraic real from int \a i.
     explicit Algebraic_real_quadratic_refinement_rep_bfi(int i = 0)
         : Base(i),N(2){
-    } 
+    }
     //! creates the algebraic real from Field \a m.
     explicit Algebraic_real_quadratic_refinement_rep_bfi(const Field& m)
         : Base(m),N(2) {
-    } 
+    }
     /*! \brief creates the algebraic real as the unique root of \a P
       in the open interval <var>]low,high[</var>.
-      \pre the polynomial \a P is square free 
+      \pre the polynomial \a P is square free
       \pre P(low)!=0
       \pre P(high)<0
       \pre x is the one and only root in the open interval of \a P.
     */
-    Algebraic_real_quadratic_refinement_rep_bfi(const Poly& P, 
-                                                Field LOW, 
-                                                Field HIGH) 
-        : Base(P,LOW,HIGH), 
+    Algebraic_real_quadratic_refinement_rep_bfi(const Poly& P,
+                                                Field LOW,
+                                                Field HIGH)
+        : Base(P,LOW,HIGH),
           N(2)
-    { 
+    {
         _set_prec(16);
-        
+
     }
 
     //! copy constructor
@@ -187,15 +178,15 @@ public:
     {
     }
 
-    // assignment 
+    // assignment
     Algebraic_real_quadratic_refinement_rep_bfi& operator=(const Self& y) {
         Base::operator=(y);
-	f_low_bfi_=y.f_low_bfi_;
-	f_high_bfi_=y.f_high_bfi_;
+        f_low_bfi_=y.f_low_bfi_;
+        f_high_bfi_=y.f_high_bfi_;
         low_bfi_=y.low_bfi_;
-	high_bfi_=y.high_bfi_;
+        high_bfi_=y.high_bfi_;
         f_bfi_=y.f_bfi_;
-	N=y.N;
+        N=y.N;
         return *this;
     }
 
@@ -204,7 +195,7 @@ public:
     virtual void bisect() const{
 
         if(this->is_rational()) return;
-        
+
         Field m = (this->low_+this->high_)/Field(2);
 
         CGAL::simplify(m);
@@ -213,7 +204,7 @@ public:
 
         if (s  == ::CGAL::ZERO ) {
             this->learn_from(m);
-	}
+        }
         else {
             if ( s == this->sign_at_low() ) {
                 this->low_  = m;
@@ -221,7 +212,7 @@ public:
                 f_low_bfi_ = f_m_bfi;
                 last_bisect_lower=false;
             } else {
-                this->high_ = m; 
+                this->high_ = m;
                 high_bfi_ = m_bfi;
                 f_high_bfi_ = f_m_bfi;
                 last_bisect_lower=true;
@@ -231,33 +222,33 @@ public:
     }
 
 protected:
-    virtual void set_implicit_rep(const Poly & P, 
-				  const Field& LOW, 
-				  const Field& HIGH,
+    virtual void set_implicit_rep(const Poly & P,
+                                  const Field& LOW,
+                                  const Field& HIGH,
                                   bool dummy_bool=false) const {
 
         bool poly_changed = (P!=this->polynomial());
         if(poly_changed) {
-            f_bfi_ = boost::none;
+            f_bfi_ = std::nullopt;
         }
         if(poly_changed || LOW != this->low()) {
-            f_low_bfi_ = low_bfi_ = boost::none;
+            f_low_bfi_ = low_bfi_ = std::nullopt;
         }
         if(poly_changed || HIGH != this->high()) {
-            f_high_bfi_ = high_bfi_ = boost::none;
+            f_high_bfi_ = high_bfi_ = std::nullopt;
         }
         Base::set_implicit_rep(P,LOW,HIGH,dummy_bool);
     }
 
     virtual void set_explicit_rep(const Field& m) const {
-        f_bfi_ = boost::none;
-        f_low_bfi_ = low_bfi_ = boost::none;
-        f_high_bfi_ = high_bfi_ = boost::none;
+        f_bfi_ = std::nullopt;
+        f_low_bfi_ = low_bfi_ = std::nullopt;
+        f_high_bfi_ = high_bfi_ = std::nullopt;
         Base::set_explicit_rep(m);
     }
 
-     
-public: 
+
+public:
     virtual void refine_at(const Field& m) const{
         Field old_low_=this->low_, old_high_=this->high_;
         Poly old_pol = this->polynomial();
@@ -265,16 +256,16 @@ public:
         if(this->is_rational()) return;
 
         if(old_low_!=this->low_) {
-            f_low_bfi_ = low_bfi_ = boost::none;
+            f_low_bfi_ = low_bfi_ = std::nullopt;
         }
         if(old_high_!=this->high_) {
-            f_high_bfi_ = high_bfi_ = boost::none;
+            f_high_bfi_ = high_bfi_ = std::nullopt;
         }
         if(old_pol != this->polynomial()) {
-            f_bfi_ = boost::none;
+            f_bfi_ = std::nullopt;
         }
     }
-    
+
     // Abbott's refinement method
     virtual void refine() const {
 
@@ -291,13 +282,13 @@ public:
         CGAL_assertion(CGAL::sign(this->polynomial().evaluate(this->low()))
                        ==this->sign_at_low_);
 
-        CGAL_assertion( this->sign_at_low_ != 
+        CGAL_assertion( this->sign_at_low_ !=
                         CGAL::sign(this->polynomial().evaluate(this->high())) );
-      
+
         CGAL_assertion(this->low() != this->high());
-      
+
         Integer i = find_interval();
-      
+
         while(N!=1 && !refine_by_factor(i)) {
             N/=2;
             i = find_interval();
@@ -338,25 +329,25 @@ private:
             low_bfi_ = CGAL::convert_to_bfi(this->low());
         }
         if(! f_low_bfi_) {
-            f_low_bfi_ = f_bfi_.get().evaluate(low_bfi_.get());
+            f_low_bfi_ = f_bfi_.value().evaluate(low_bfi_.value());
         }
         if(! high_bfi_) {
             high_bfi_ = CGAL::convert_to_bfi(this->high());
         }
         if(! f_high_bfi_) {
-            f_high_bfi_ = f_bfi_.get().evaluate(high_bfi_.get());
+            f_high_bfi_ = f_bfi_.value().evaluate(high_bfi_.value());
         }
         Integer i;
         while(true) {
 
-            if(CGAL::zero_in(f_low_bfi_.get() - f_high_bfi_.get())) {
+            if(CGAL::zero_in(f_low_bfi_.value() - f_high_bfi_.value())) {
                 _set_prec(2*prec_);
                 continue;
             }
 
-            BFI denom = f_low_bfi_.get()-f_high_bfi_.get();
+            BFI denom = f_low_bfi_.value()-f_high_bfi_.value();
 
-            BFI z = f_low_bfi_.get() / denom;
+            BFI z = f_low_bfi_.value() / denom;
 
             std::pair<Integer, Integer> int_pair = _to_integer_interval(z,N);
             Integer i_low = int_pair.first;
@@ -367,12 +358,12 @@ private:
                 break;
             }
             _set_prec(2*prec_);
-                        
+
         }
 
-        CGAL_postcondition(i>=0 && 
+        CGAL_postcondition(i>=0 &&
                            i <= CGAL::ipower(Integer(2),N));
-        
+
         return i;
     }
 
@@ -419,7 +410,7 @@ private:
             new_left_bfi = m_bfi;
             f_new_left_bfi = f_m_bfi;
             s_new_left = s_m;
-        
+
             new_right = m+step;
             CGAL::simplify(new_right);
             s_new_right = _sign_at(new_right,new_right_bfi,f_new_right_bfi);
@@ -467,20 +458,20 @@ protected:
             f_bfi_ = _convert_polynomial_to_bfi(this->polynomial());
         }
 
-        BFI eval = f_bfi_.get().evaluate(convert_to_bfi(m));
-        
+        BFI eval = f_bfi_.value().evaluate(convert_to_bfi(m));
+
         CGAL::Sign s = CGAL::sign(CGAL::lower(eval));
-              
+
         // correct sign if needed
         if( s*CGAL::sign(CGAL::upper(eval) ) != CGAL::POSITIVE ){
-            
+
             //std::cout << "APPROX FAILED-------------------------------"<<std::endl;
             s = this->polynomial().sign_at(m);
             if ( s != CGAL::ZERO ) {
                 _set_prec(2*prec_);
             }
         }
-        
+
 
         CGAL_postcondition(s == this->polynomial_.sign_at(m));
 
@@ -488,22 +479,22 @@ protected:
             this->learn_from(m);
         }else{
             if ( s == this->sign_at_low() ) this->low_  = m;
-            else                            this->high_ = m; 
+            else                            this->high_ = m;
         }
 
         return s;
-    }        
+    }
 
-public: 
+public:
     virtual void simplify() const {
         Poly f_old = this->polynomial();
         Base::simplify();
         if(f_old != this->polynomial()) {
-            f_bfi_ = boost::none;
-        }      
+            f_bfi_ = std::nullopt;
+        }
     }
 };
-} // namepace internal
+} // namespace internal
 
 } //namespace CGAL
 

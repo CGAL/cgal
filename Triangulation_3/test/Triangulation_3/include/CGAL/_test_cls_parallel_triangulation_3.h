@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Clement Jamin
 
@@ -25,7 +16,6 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/mpl/if.hpp>
 
 template <typename Parallel_triangulation,
           typename WeightedTag = typename Parallel_triangulation::Weighted_tag>
@@ -81,7 +71,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   // Construct the locking data-structure, using the bounding-box of the points
   typename Cls::Lock_data_structure locking_ds(CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
 
-  // Contruct the triangulation in parallel
+  // Construct the triangulation in parallel
   std::cout << "Construction and parallel insertion" << std::endl;
   Cls tr(points.begin(), points.end(), &locking_ds);
   std::cout << "Triangulation has " << tr.number_of_vertices() << " vertices" << std::endl;

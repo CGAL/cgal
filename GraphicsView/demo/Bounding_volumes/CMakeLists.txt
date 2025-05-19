@@ -1,58 +1,43 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Bounding_volumes_Demo)
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Bounding_volumes_Demo)
 
-cmake_minimum_required(VERSION 3.1)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
+
+find_package(Qt6 QUIET COMPONENTS Widgets)
+
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
+
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: This demo requires CGAL and Eigen, and will not be compiled.")
+  return()
 endif()
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-find_package(CGAL COMPONENTS Qt5)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  add_compile_definitions(QT_NO_KEYWORDS)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-include_directories (BEFORE ./include)
-include_directories (BEFORE ../../../Matrix_search/include)
+  qt_add_executable(
+    Bounding_volumes Bounding_volumes.cpp Bounding_volumes.ui Bounding_volumes.qrc)
 
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Bounding_volumes)
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
+  target_link_libraries(Bounding_volumes PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
+                                                 Qt6::Widgets
+                                                 CGAL::Eigen3_support)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_definitions(-DQT_NO_KEYWORDS)
-
-#----------------------------------------------
-# The "Bounding volumes" demo: Bounding_volumes
-#----------------------------------------------
-# UI files (Qt Designer files)
-qt5_wrap_ui( DT_UI_FILES Bounding_volumes.ui )
-
-# qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Bounding_volumes.qrc )
-
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( "Bounding_volumes.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Bounding_volumes.moc" )
-
-# The executable itself.
-add_executable  ( Bounding_volumes Bounding_volumes.cpp Bounding_volumes.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
-
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Bounding_volumes )
-
-target_link_libraries( Bounding_volumes PRIVATE
-  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
-
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Bounding_volumes)
-
-include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
-cgal_add_compilation_test(Bounding_volumes)
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Bounding_volumes)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt6, and will not be compiled.")
 
 endif()

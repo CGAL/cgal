@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifndef QGLVIEWER_MANIPULATED_FRAME_H
 #define QGLVIEWER_MANIPULATED_FRAME_H
@@ -29,6 +21,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QTimer>
+#include <QElapsedTimer>
 
 namespace CGAL{
 namespace qglviewer {
@@ -277,13 +270,11 @@ private Q_SLOTS:
   /*! @name Mouse event handlers */
   //@{
 protected:
-  virtual void mousePressEvent(QMouseEvent *const event, Camera *const camera);
-  virtual void mouseMoveEvent(QMouseEvent *const event, Camera *const camera);
-  virtual void mouseReleaseEvent(QMouseEvent *const event,
-                                 Camera *const camera);
-  virtual void mouseDoubleClickEvent(QMouseEvent *const event,
-                                     Camera *const camera);
-  virtual void wheelEvent(QWheelEvent *const event, Camera *const camera);
+  void mousePressEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseMoveEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseReleaseEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseDoubleClickEvent(QMouseEvent *const event, Camera *const camera) override;
+  void wheelEvent(QWheelEvent *const event, Camera *const camera) override;
   //@}
 
 public:
@@ -306,17 +297,8 @@ public:
   /*! @name MouseGrabber implementation */
   //@{
 public:
-  virtual void checkIfGrabsMouse(int x, int y, const Camera *const camera);
+  void checkIfGrabsMouse(int x, int y, const Camera *const camera)  override;
   //@}
-
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-//@}
 
 #ifndef DOXYGEN
 protected:
@@ -324,7 +306,7 @@ protected:
                                     const Camera *const camera);
 
   MouseAction action_;
-  Constraint *previousConstraint_; // When manipulation is without Contraint.
+  Constraint *previousConstraint_; // When manipulation is without Constraint.
 
   virtual void startAction(
       int ma,
@@ -356,7 +338,7 @@ private:
   qreal zoomSensitivity_;
 
   // Mouse speed and spinning
-  QTime last_move_time;
+  QElapsedTimer last_move_time;
   qreal mouseSpeed_;
   int delay_;
   bool isSpinning_;

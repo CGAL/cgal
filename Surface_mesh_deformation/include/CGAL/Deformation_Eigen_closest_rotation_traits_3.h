@@ -1,26 +1,19 @@
 // Copyright (c) 2013  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 // Copyright (c) 2013 GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Gael Guennebaud and Ilker O. Yaz
 
 
 #ifndef CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
 #define CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
+
+#include <CGAL/license/Surface_mesh_deformation.h>
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
@@ -30,7 +23,7 @@ namespace CGAL {
 /// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using the \link thirdpartyEigen `Eigen` library \endlink.
 /// The internal computation relies on `Eigen::JacobiSVD<>` solver.
 ///
-/// \cgalModels `DeformationClosestRotationTraits_3`
+/// \cgalModels{DeformationClosestRotationTraits_3}
 class Deformation_Eigen_closest_rotation_traits_3{
 public:
 
@@ -89,8 +82,13 @@ public:
   /// Computes the closest rotation to `m` and places it into `R`
   void compute_close_rotation(const Matrix& m, Matrix& R)
   {
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> solver;
+    solver.compute(m);
+#else
     Eigen::JacobiSVD<Eigen::Matrix3d> solver;
-    solver.compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    solver.compute(m, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
 
     const Matrix& u = solver.matrixU(); const Matrix& v = solver.matrixV();
     R = v * u.transpose();

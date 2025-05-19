@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Ron Wein   <wein_r@yahoo.com>
 //             Efi Fogel  <efifogel@gmail.com>
@@ -57,14 +48,36 @@ protected:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;      // inidicates whether the kernel should be freed up.
+  bool m_own_traits;      // indicates whether the kernel should be freed up.
 
 public:
+  // The pointer to the traits and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Polygon_decomposition_strategy_adapter() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  /*! Copy constructor. */
+  Polygon_decomposition_strategy_adapter
+  (const Polygon_decomposition_strategy_adapter& other) :
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  /*! Copy assignment. */
+  Polygon_decomposition_strategy_adapter&
+  operator=(const Polygon_decomposition_strategy_adapter& other) {
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   /*! Constructor. */
   Polygon_decomposition_strategy_adapter(const Traits_2& traits) :
@@ -76,9 +89,9 @@ public:
   ~Polygon_decomposition_strategy_adapter()
   {
     if (m_own_traits) {
-      if (m_traits != NULL) {
+      if (m_traits != nullptr) {
         delete m_traits;
-        m_traits = NULL;
+        m_traits = nullptr;
       }
       m_own_traits = false;
     }
@@ -88,7 +101,7 @@ public:
   void init()
   {
     // Allocate the traits if not provided.
-    if (m_traits == NULL) {
+    if (m_traits == nullptr) {
       m_traits = new Traits_2;
       m_own_traits = true;
     }

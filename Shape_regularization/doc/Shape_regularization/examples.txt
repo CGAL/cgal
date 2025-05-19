@@ -1,0 +1,12 @@
+/*!
+\example Shape_regularization/regularize_simple.cpp
+\example Shape_regularization/regularize_15_segments.cpp
+\example Shape_regularization/regularize_100_segments_angles.cpp
+\example Shape_regularization/regularize_100_segments_offsets.cpp
+\example Shape_regularization/regularize_real_data_2.cpp
+\example Shape_regularization/regularize_framework.cpp
+\example Shape_regularization/regularize_contour.cpp
+\example Shape_regularization/regularize_closed_contour.cpp
+\example Shape_regularization/regularize_open_contour.cpp
+\example Shape_regularization/regularize_planes.cpp
+*/

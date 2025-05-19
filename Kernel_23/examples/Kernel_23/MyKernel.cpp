@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/squared_distance_2.h>
@@ -56,8 +55,7 @@ int main()
 
   K::Intersect_2 intersection;
 
-  CGAL::cpp11::result_of<K::Intersect_2(Segment, Segment)>::type 
-    intersect = intersection(s1, s2);
+  /* const auto intersect =  */intersection(s1, s2);
 
   K::Construct_cartesian_const_iterator_2 construct_it;
   K::Cartesian_const_iterator_2  cit = construct_it(a);

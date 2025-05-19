@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
@@ -95,7 +86,7 @@ Arr_triangulation_point_location<Arrangement_2_>::locate(const Point_2& p)
 
    case CDT::EDGE:
     CGAL_TRG_PRINT_DEBUG("locate type = edge" << li);
-    //li is the index of the vertex OPOSITE to the edge
+    //li is the index of the vertex OPPOSITE to the edge
     if (m_cdt.is_constrained(CDT_Edge(fh,li))) {
       //the edge found is an edge in the plannar map
       CGAL_TRG_PRINT_DEBUG("the edge is a constrained");
@@ -198,7 +189,7 @@ Arr_triangulation_point_location<Arrangement_2_>::locate(const Point_2& p)
 
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
 go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <typename Arrangement_2_>
@@ -206,7 +197,7 @@ void Arr_triangulation_point_location<Arrangement_2_>::clear_triangulation()
 { m_cdt.clear(); }
 
 //----------------------------------------------------
-/*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
+/*! triangulate the arrangement into a cdt (Constraint Delauney Triangulation):
 go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <typename Arrangement_2_>

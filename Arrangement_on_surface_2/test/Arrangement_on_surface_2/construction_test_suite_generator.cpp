@@ -21,7 +21,7 @@ typedef Base_traits_2::Curve_2                        Base_curve_2;
 typedef Base_traits_2::X_monotone_curve_2             Base_x_monotone_curve_2;
 typedef CGAL::Arr_curve_data_traits_2<Base_traits_2,
                                       unsigned int,
-                                      std::plus<unsigned int> >  
+                                      std::plus<unsigned int> >
                                                       Traits_2;
 typedef Traits_2::Curve_2                             Curve_2;
 typedef Traits_2::Point_2                             Point_2;
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 
   std::cout << argv[2]
             << " was generated successfully"
-            << ", dont forget to add it to test_construction.cmd"
+            << ", don't forget to add it to test_construction.cmd"
             << std::endl;
   return 0;
 }

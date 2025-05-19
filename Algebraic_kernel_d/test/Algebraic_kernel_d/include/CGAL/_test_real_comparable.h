@@ -1,22 +1,13 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de> 
+// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
 
@@ -31,12 +22,8 @@
 #ifndef CGAL_TEST_REAL_COMPARABLE_H
 #define CGAL_TEST_REAL_COMPARABLE_H
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/tags.h>
-/*#include <NiX/basic.h>
-#include <NiX/NT_traits.h>
-#include <NiX/number_type_utils.h>*/
 #include <cstddef>
 #include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
@@ -52,8 +39,8 @@ namespace internal {
         void operator() (ToDouble to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            CGAL_static_assertion((::boost::is_same<NT, Argument_type>::value));
-            CGAL_static_assertion((::boost::is_same<double, Result_type>::value));
+            static_assert(::std::is_same<NT, Argument_type>::value);
+            static_assert(::std::is_same<double, Result_type>::value);
             assert(42.0 == to_double(NT(42)));
         }
     };
@@ -65,36 +52,36 @@ namespace internal {
             CGAL_error_msg("To_double functor not implemented");
         }
     };
-    
+
     template<class NT, class ToInterval>
     class Test_to_Interval {
     public:
         void operator() (ToInterval to_Interval) {
             typedef typename ToInterval::argument_type Argument_type;
             typedef typename ToInterval::result_type   Result_type;
-            CGAL_static_assertion((::boost::is_same<NT, Argument_type>::value));
-            CGAL_static_assertion((::boost::is_same< typename Argument_type::Interval, Result_type>::value));
+            static_assert(::std::is_same<NT, Argument_type>::value);
+            static_assert(::std::is_same< typename Argument_type::Interval, Result_type>::value);
 
             // TODO: NiX::in not available!?
             //assert(NiX::in(42.0,to_Interval(NT(42))));
             assert(to_Interval(NT(42)).lower() > 41.99);
             assert(to_Interval(NT(42)).upper() < 42.01);
 
-	    /*
-	    NT notdouble = ipower(2,60);
+            /*
+            NT notdouble = ipower(2,60);
             notdouble = notdouble + NT(1);
             Interval test = to_Interval(notdouble);
             double lower = ipower(2.0,60);
             double upper = ipower(2.0,53);
             upper++;
             upper *= ipower(2.0,7);
-	    std::cout << lower << "," << upper << std::endl;
-	    std::cout << test.lower() << "," << test.upper() << std::endl;
+            std::cout << lower << "," << upper << std::endl;
+            std::cout << test.lower() << "," << test.upper() << std::endl;
             assert( (in(lower,test) == true) && (in(upper,test) == true) );
             */
         }
     };
-    
+
     template<class NT>
     class Test_to_Interval<NT, ::CGAL::Null_functor> {
     public:
@@ -108,14 +95,14 @@ namespace internal {
 //! tests if \c NT is a model for the \c RealComparable concept
 //! and terminates the program with an error message if not.
 template <class NT>
-void test_real_comparable() {    
+void test_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_true;
-    CGAL_static_assertion((::boost::is_same< Is_real_comparable, Tag_true>::value));
+    static_assert(::std::is_same< Is_real_comparable, Tag_true>::value);
     typename Traits::Compare compare;
     typename Traits::Sign    sign;
-    typename Traits::Abs     abs; 
+    typename Traits::Abs     abs;
 
     NT a(-2);
     NT b(1);
@@ -141,7 +128,7 @@ void test_real_comparable() {
     assert( sign(c) <  sign(b));
     assert( sign(b) >  sign(c));
     assert( sign(c) <= sign(b));
-    assert( sign(b) >= sign(c)); 
+    assert( sign(b) >= sign(c));
     assert( sign(c) <= sign(c));
     assert( sign(c) >= sign(c));
     assert( sign(a) <  sign(c));
@@ -150,21 +137,21 @@ void test_real_comparable() {
     assert( sign(c) >= sign(a));
     assert( abs(a) == NT(2));
     assert( abs(b) == NT(1));
-    assert( abs(c) == NT(0));   
-    
+    assert( abs(c) == NT(0));
+
     // To_double --------------------------------------------------------------
     typename Traits::To_double  to_double;
     (void)to_double;
     typename internal::Test_to_double<NT, typename Traits::To_double> ttd;
     ttd(to_double);
-    
+
     // To_Interval ------------------------------------------------------------
     typename Traits::To_Interval  to_Interval;
     (void)to_Interval;
     typename internal::Test_to_Interval<NT, typename Traits::To_Interval> tti;
     tti(to_Interval);
-    
-    // additional functions     
+
+    // additional functions
     assert(CGAL::sign(NT(-5))==CGAL::NEGATIVE);
     assert(CGAL::abs(NT(-5))==NT(5));
     // TODO: NiX::in not available!?
@@ -173,28 +160,28 @@ void test_real_comparable() {
 
 }
 
-//! tests if \c NT says it is not a model for the \c RealComparable 
-//! concept and terminates the program with an error message if it 
+//! tests if \c NT says it is not a model for the \c RealComparable
+//! concept and terminates the program with an error message if it
 //! actually is.
 template <class NT>
 void test_not_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_false;
-    CGAL_static_assertion((::boost::is_same< Is_real_comparable, Tag_false>::value));
+    static_assert(::std::is_same< Is_real_comparable, Tag_false>::value);
 }
 
 
 template <class NT, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, ::CGAL::Null_functor, CeilLog2Abs) {
     typedef ::CGAL::Null_functor Nulltype;
-    CGAL_static_assertion((::boost::is_same< CeilLog2Abs, Nulltype>::value));
+    static_assert(::std::is_same< CeilLog2Abs, Nulltype>::value);
 }
 
 template <class NT, class FloorLog2Abs, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
     typedef ::CGAL::Null_functor Null_functor;
-    CGAL_static_assertion((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
+    static_assert(!::std::is_same< CeilLog2Abs, Null_functor>::value);
 
     assert( fl_log(NT( 7)) == 2 );
     assert( cl_log(NT( 7)) == 3 );

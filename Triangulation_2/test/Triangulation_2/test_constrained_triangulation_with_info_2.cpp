@@ -1,7 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -23,11 +25,11 @@ int main()
     points.push_back( std::make_pair(Point(2,2),4)  );
     points.push_back( std::make_pair(Point(-4,0),5) );
 
-    
+
     CDT T;
     T.insert( points.begin(),points.end() );
 
-    CGAL_assertion( T.number_of_vertices() == 6 );
+    assert( T.number_of_vertices() == 6 );
 
     // check that the info was correctly set.
     CDT::Finite_vertices_iterator vit;
@@ -47,8 +49,8 @@ int main()
     indices.push_back(2);
     indices.push_back(3);
     indices.push_back(4);
-    indices.push_back(5);  
-    
+    indices.push_back(5);
+
     std::vector<Point> points;
     points.push_back(Point(0,0));
     points.push_back(Point(1,0));
@@ -57,15 +59,15 @@ int main()
     points.push_back(Point(2,2));
     points.push_back(Point(-1,0));
 
-    
-    
+
+
     CDT T;
     T.insert( boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
               boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  );
 
-    CGAL_assertion( T.number_of_vertices() == 6 );
-    
-    
+    assert( T.number_of_vertices() == 6 );
+
+
     // check that the info was correctly set.
     CDT::Finite_vertices_iterator vit;
     for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -81,8 +72,8 @@ public:
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition( c >= 0 && c < number_of_columns());
+    CGAL_precondition( r >= 0 && r < number_of_rows());
+    CGAL_precondition( c >= 0 && c < number_of_columns());
     return Base::operator()( r, number_of_columns() - 1 - c);
   }
 };
@@ -154,7 +145,7 @@ rectangular_p_center_2_binary_search(
 // --------------
 //
 {
-  CGAL_optimisation_precondition( f != l);
+  CGAL_precondition( f != l);
 
   // typedefs:
   typedef typename Traits::FT    FT;
@@ -180,16 +171,16 @@ rectangular_p_center_2_binary_search(
       c_diffs.push_back( CGAL_NTS abs( i->x() - j->x()));
       c_diffs.push_back( CGAL_NTS abs( i->y() - j->y()));
     }
-  CGAL_optimisation_assertion(
+  CGAL_assertion(
     c_diffs.size() == pierce_it.number_of_points() *
     (pierce_it.number_of_points() - 1));
-  
+
   // sort it:
   sort( c_diffs.begin(), c_diffs.end());
   // search it:
   int b( 0);
   int e( c_diffs.size());
-  
+
   // invariant of the following loop:
   // forall 0 <= a < b: c_diffs[a] is infeasible  AND
   // forall e <= a < c_diffs.size(): c_diffs[a] is feasible
@@ -204,12 +195,12 @@ rectangular_p_center_2_binary_search(
       b = c + 1;
     }
   } // while ( e > b)
-  CGAL_optimisation_assertion( e == b);
-  
+  CGAL_assertion( e == b);
+
   // return the result:
   r = c_diffs[e];
   OutputIterator o_return( pierce_it( r, o, ok));
-  CGAL_optimisation_assertion( ok);
+  CGAL_assertion( ok);
   return o_return;
 
 } // rectangular_p_center_2_binary_search( ... )
@@ -230,7 +221,7 @@ rectangular_p_center_2_matrix_search(
   const MatrixOperator& mop)
 {
   std::size_t number_of_points( iterator_distance( f, l));
-  CGAL_optimisation_precondition( number_of_points > 0);
+  CGAL_precondition( number_of_points > 0);
 
   using std::minus;
   using std::sort;
@@ -274,14 +265,14 @@ rectangular_p_center_2_matrix_search(
     x_coords.push_back(p->x());
     y_coords.push_back(p->y());
   }
-  
+
   // sort coordinates:
   sort( x_coords.begin(), x_coords.end());
   sort( y_coords.begin(), y_coords.end());
-  
+
   // create matrices:
   MatrixContainer matrices;
-  
+
   // create matrix of x-differences:
   matrices.push_back(
     Matrix( x_coords.begin(),
@@ -289,7 +280,7 @@ rectangular_p_center_2_matrix_search(
             x_coords.begin(),
             x_coords.end(),
             mop));
-  
+
   // create matrix of y-differences:
   matrices.push_back(
     Matrix( y_coords.begin(),
@@ -305,7 +296,7 @@ rectangular_p_center_2_matrix_search(
 
   // return result:
   OutputIterator o_return(pierce_it(r, o, ok));
-  CGAL_optimisation_assertion(ok);
+  CGAL_assertion(ok);
   return o_return;
 
 } // P_center_matrix_search
@@ -325,7 +316,6 @@ rectangular_p_center_2_matrix_search(
   const Traits& t)
 {
   typedef typename Traits::FT FT;
-  using std::minus;
 
   return rectangular_p_center_2_matrix_search(
     f,
@@ -334,7 +324,9 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-    boost::bind(Max<FT>(), 0, boost::bind(minus<FT>(), _1, _2)));
+    std::function<FT(const FT&, const FT&)>(
+      [](const FT& a, const FT& b) { return Max<FT>()(0, std::minus<FT>()(a,b)); }
+    ));
 
 } // Pcenter_matrix_search( ... )
 
@@ -349,7 +341,7 @@ rectangular_p_center_matrix_search_2(
   FT& r,
   int p)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   typename std::iterator_traits<ForwardIterator>::value_type::R t;
   if (p == 2)
     return rectangular_p_center_2_matrix_search(
@@ -384,7 +376,7 @@ bool is_distance_greater_than_p
     ++it;
     --p;
   }
-  if (it!=end) return true; 
+  if (it!=end) return true;
   return false;
 }
 
@@ -393,7 +385,7 @@ bool is_distance_greater_than_p
   (Iterator begin,Iterator end,
    typename std::iterator_traits<Iterator>::difference_type p)
 {
-  return 
+  return
     is_distance_greater_than_p(begin,end,p,
       typename std::iterator_traits<Iterator>::iterator_category());
 }
@@ -409,10 +401,10 @@ rectangular_p_center_2(ForwardIterator f,
                        int p,
                        Traits& t)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   r=0;
   if ( !internal::is_distance_greater_than_p(f,l,p) ) return std::copy(f,l,o);
-  
+
   if (p == 2)
     return rectangular_2_center_2(f, l, o, r, t);
   else if (p == 3)
@@ -430,7 +422,7 @@ rectangular_p_center_2(ForwardIterator f,
                        FT& r,
                        int p)
 {
-  CGAL_optimisation_precondition(p >= 2 && p < 5);
+  CGAL_precondition(p >= 2 && p < 5);
   typedef typename
     std::iterator_traits< ForwardIterator >::value_type::R R;
   Rectangular_p_center_default_traits_2< R > t;

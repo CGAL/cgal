@@ -1,1 +1,1 @@
-./data/test_observer/test01.txt
+data/test_observer/test01.txt

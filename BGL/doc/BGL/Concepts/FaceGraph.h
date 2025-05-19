@@ -13,19 +13,21 @@ for each internal property map available.
 \cgalAssociatedTypesBegin
 
 \cgalAssociatedTypeBegin{boost::graph_traits<FaceGraph>::%face_descriptor} A face descriptor corresponds to a unique face in an abstract graph instance.
-A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`. 
+A face descriptor must be `DefaultConstructible`, `Assignable`, `EqualityComparable`, and `Hashable`.
 \cgalAssociatedTypeEnd
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `HalfedgeGraph`
+\cgalRefines{HalfedgeGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class FaceGraph {
-  /// Returns a special `boost::graph_traits<HalfedgeGraph>::face_descriptor` object which
+  /// Returns a special `boost::graph_traits<HalfedgeGraph>::%face_descriptor` object which
   /// does not refer to any face of graph object which type is `FaceGraph`.
   static boost::graph_traits<HalfedgeGraph>::halfedge_descriptor null_face();
 };

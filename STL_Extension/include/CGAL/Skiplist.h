@@ -1,20 +1,11 @@
 // Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Philipp Moeller
 
@@ -44,7 +35,7 @@ public:
   typedef const T& const_reference;
   typedef T*       pointer;
   typedef const T* const_pointer;
-  
+
 private:
   struct Node {
     explicit Node(const T& t) : t_(t) {}
@@ -79,44 +70,44 @@ public:
   typedef typename all_list::size_type size_type;
   typedef typename all_list::difference_type difference_type;
 
-  struct all_iterator : 
+  struct all_iterator :
     public boost::iterator_adaptor<
       all_iterator
     , typename all_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     all_iterator() {}
-    all_iterator(typename all_list::iterator it) 
+    all_iterator(typename all_list::iterator it)
       : all_iterator::iterator_adaptor_(it) {}
   private:
     friend class boost::iterator_core_access;
     T& dereference() const { return this->base()->get(); }
   };
 
-  struct skip_iterator : 
+  struct skip_iterator :
     public boost::iterator_adaptor<
       skip_iterator
     , typename skip_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     skip_iterator() {}
-    skip_iterator(typename skip_list::iterator it) 
+    skip_iterator(typename skip_list::iterator it)
       : skip_iterator::iterator_adaptor_(it) {}
     operator all_iterator() const { return all_list::s_iterator_to(*this->base()); }
   private:
     friend class boost::iterator_core_access;
     T& dereference() const { return this->base()->get(); }
   };
-  
+
   typedef boost::iterator_range<all_iterator>  all_range;
   typedef boost::iterator_range<skip_iterator> skip_range;
 
   Skiplist() {}
-  ~Skiplist() 
+  ~Skiplist()
   {
     clear();
   }
@@ -133,7 +124,7 @@ public:
 
   /// The semantics of front and back try to be consistent with
   /// push_back and push_front. Questionable.
-  
+
   /// Returns front of the skiplist
   const_reference
   front() const { return skip_.front().get(); }
@@ -149,13 +140,13 @@ public:
   /// Returns back of the skiplist
   reference
   back() { return skip_.back().get(); }
-  
-  all_iterator all_begin() 
-  { 
+
+  all_iterator all_begin()
+  {
     return all_.begin();
   }
-  all_iterator all_end() 
-  { 
+  all_iterator all_end()
+  {
     return all_.end();
   }
 
@@ -243,8 +234,8 @@ public:
 
   void pop_back()
   {
-    all_.pop_back();
     skip_.pop_back();
+    all_.pop_back_and_dispose(Node_disposer());
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
@@ -288,15 +279,15 @@ public:
     return all_.erase_and_dispose(it.base(), Node_disposer());
   }
 
-  void splice(skip_iterator pos, Skiplist& other, 
+  void splice(skip_iterator pos, Skiplist& other,
               skip_iterator first, skip_iterator last)
   {
-    all_iterator alllast = last == other.skip_end() ? 
+    all_iterator alllast = last == other.skip_end() ?
       other.all_.end() : other.all_.iterator_to(*last.base());
     all_iterator allpos = pos == skip_end() ?
       all_end() : all_.iterator_to(*pos.base());
-    
-    all_.splice(allpos.base(), other.all_, 
+
+    all_.splice(allpos.base(), other.all_,
                 other.all_.iterator_to(*first.base()), alllast.base());
     skip_.splice(pos.base(), other.skip_, first.base(), last.base());
   }
@@ -309,7 +300,7 @@ public:
 
   bool empty() const { return all_.empty(); }
 
-  void swap(Skiplist& other) 
+  void swap(Skiplist& other)
   {
     using std::swap;
     this->all_.swap(other.all_);
@@ -330,7 +321,7 @@ private:
 };
 
 template<typename T>
-void swap(Skiplist<T>& a, Skiplist<T>& b) 
+void swap(Skiplist<T>& a, Skiplist<T>& b)
 {
   a.swap(b);
 }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -26,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Static_or_dynamic_array.h>
+#include <CGAL/Triangulation/internal/Static_or_dynamic_array.h>
 
 namespace CGAL {
 
@@ -46,14 +37,14 @@ protected:
 
 public:
     explicit Triangulation_face(Full_cell_handle s) /* Concept */
-    : full_cell_(s), indices_(s->maximal_dimension()+2) 
+    : full_cell_(s), indices_(s->maximal_dimension()+2)
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
     explicit Triangulation_face(const int maximal_dim) /* Concept */
-    : full_cell_(), indices_(maximal_dim+2) 
+    : full_cell_(), indices_(maximal_dim+2)
     {
         clear();
     }
@@ -88,10 +79,10 @@ public:
         return full_cell()->vertex(j);
     }
 
-// - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS	
+// - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS
 
     void clear() /* Concept */
-    {    
+    {
         const std::size_t d = indices_.size();
         for(std::size_t i = 0; i < d; ++i )
             indices_[i] = -1;

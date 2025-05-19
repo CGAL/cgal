@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -43,21 +34,20 @@ class Compare_y_2
 public:
   typedef typename K::Site_2                Site_2;
   typedef typename K::Point_2               Point_2;
-  typedef typename K::Comparison_result     result_type;
+  typedef typename K::Comparison_result     Comparison_result;
 
 private:
   typedef typename K::Compare_y_2           Kernel_compare_y_2;
 
 public:
-
   inline
-  result_type operator()(const Point_2& p, const Point_2& q) const
+  Comparison_result operator()(const Point_2& p, const Point_2& q) const
   {
     return Kernel_compare_y_2()( p, q );
   }
 
   inline
-  result_type operator()(const Site_2& p, const Site_2& q) const
+  Comparison_result operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
     return Kernel_compare_y_2()( p.point(), q.point() );

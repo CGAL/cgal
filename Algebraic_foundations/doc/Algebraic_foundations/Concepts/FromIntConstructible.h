@@ -1,29 +1,30 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-A model of the concept `FromIntConstructible` is required 
-to be constructible from int. 
+A model of the concept `FromIntConstructible` is required
+to be constructible from int.
 
-\cgalHasModel int 
-\cgalHasModel long 
-\cgalHasModel double 
+\cgalHasModelsBegin
+\cgalHasModels{int}
+\cgalHasModels{long}
+\cgalHasModels{double}
+\cgalHasModelsEnd
 
 */
 
 class FromIntConstructible {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
 
-*/ 
-FromIntConstructible(int& i); 
+*/
+FromIntConstructible(int& i);
 
 /// @}
 
 }; /* end FromIntConstructible */
-

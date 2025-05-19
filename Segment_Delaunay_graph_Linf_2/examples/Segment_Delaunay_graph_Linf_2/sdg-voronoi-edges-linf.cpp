@@ -5,11 +5,9 @@
 #include <string>
 
 // define the kernel
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-typedef CGAL::Simple_cartesian<double>    CK;
-typedef CGAL::Filtered_kernel<CK>         Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 
 // typedefs for the traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
@@ -34,8 +32,6 @@ int main( int argc, char *argv[] ) {
   // read the sites from the stream and insert them in the diagram
   while ( ifs >> site ) {
     sdg.insert( site );
-    CGAL_SDG_DEBUG( sdg.file_output_verbose(std::cout); );
-    CGAL_assertion( sdg.is_valid(false, 1) );
   }
 
   ifs.close();

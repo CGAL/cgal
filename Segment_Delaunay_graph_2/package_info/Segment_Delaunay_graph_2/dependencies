@@ -1,6 +1,7 @@
 Algebraic_foundations
 Apollonius_graph_2
 Arithmetic_kernel
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -16,7 +17,6 @@ Kernel_23
 Kernel_d
 Modular_arithmetic
 Number_types
-Polygon
 Profiling_tools
 Property_map
 STL_Extension

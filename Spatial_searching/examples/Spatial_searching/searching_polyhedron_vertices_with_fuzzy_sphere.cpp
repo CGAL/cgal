@@ -26,24 +26,20 @@ typedef Tree::Splitter                             Splitter;
 int main(int argc, char* argv[])
 {
   Mesh mesh;
-  std::ifstream in((argc>1)?argv[1]:"data/tripod.off");
-  in  >> mesh;
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/tripod.off"));
+  in >> mesh;
 
   Vertex_point_pmap vppmap = get(CGAL::vertex_point,mesh);
+  Traits traits(vppmap);
+  Tree tree(vertices(mesh).begin(), vertices(mesh).end(), Splitter(), traits);
 
-  // Insert number_of_data_points in the tree
-  Tree tree(vertices(mesh).begin(),
-            vertices(mesh).end(),
-            Splitter(),
-            Traits(vppmap)
-  );
   Point_3 query(0.0, 0.0, 0.0);
   double radius = 0.5;
   double epsilon = 0.01;
 
   // search vertices
-  CGAL::Fuzzy_sphere<Traits> fz(query, radius, epsilon);
-  
+  CGAL::Fuzzy_sphere<Traits> fz(query, radius, epsilon, traits);
+
   //collect vertices that are inside the sphere
   std::list<vertex_descriptor> result;
   tree.search(std::back_inserter(result), fz);

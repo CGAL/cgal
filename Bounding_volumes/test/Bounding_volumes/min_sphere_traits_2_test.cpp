@@ -12,7 +12,7 @@
 // release       : $CGAL_Revision: CGAL-wip $
 // release_date  : $CGAL_Date$
 //
-// chapter       : $CGAL_Chapter: Optimisation $
+// chapter       : $CGAL_Chapter: Geometric Optimization $
 // package       : $CGAL_Package: MinSphere $
 // file          : min_sphere_traits_2_test.C
 // source        : web/Optimisation/Min_sphere_d.aw
@@ -28,9 +28,6 @@
 
 // hack to overcome external linkage conflict warning in MIPS
 #define __SGI_STL_INTERNAL_RELOPS
-
-#include <CGAL/basic.h>
-
 
 #include <cassert>
 #include<CGAL/Random.h>

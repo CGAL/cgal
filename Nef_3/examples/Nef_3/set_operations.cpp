@@ -1,6 +1,7 @@
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <cassert>
 
 typedef CGAL::Exact_integer  NT;
 typedef CGAL::Extended_homogeneous<NT>  Kernel;
@@ -22,6 +23,6 @@ int main() {
   Nef_polyhedron Cube1(I2 *!I1);
   Cube1 *= !I3;
   Nef_polyhedron Cube2 = N1 * N2 * N3 * N4 * N5 * N6;
-  CGAL_assertion (Cube1 == Cube2);
+  assert(Cube1 == Cube2);
   return 0;
 }

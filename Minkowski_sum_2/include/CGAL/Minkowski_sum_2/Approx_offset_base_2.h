@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein       <wein_r@yahoo.com>
 //                 Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
@@ -177,12 +168,10 @@ protected:
     typename Kernel::Orientation_2    f_orient = ker.orientation_2_object();
 
     Traits_2                        traits;
-    std::list<Object>               xobjs;
-    std::list<Object>::iterator     xobj_it;
+    std::list<std::variant<Tr_point_2, X_monotone_curve_2>>               xobjs;
     typename Traits_2::Make_x_monotone_2
                        f_make_x_monotone = traits.make_x_monotone_2_object();
     Curve_2                         arc;
-    X_monotone_curve_2              xarc;
 
     do
     {
@@ -252,8 +241,8 @@ protected:
       }
       else
       {
-        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : -delta_x;
-        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : -delta_y;
+        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : NT(-delta_x);
+        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : NT(-delta_y);
 
         // In this general case, the length d of the current edge is usually
         // an irrational number.
@@ -313,7 +302,7 @@ protected:
               }
               else
               {
-		// In case of overflow of denom
+    // In case of overflow of denom
                 numer = 1;
                 denom = max_int;
               }
@@ -526,12 +515,11 @@ protected:
           // convolution cycle.
           xobjs.clear();
           f_make_x_monotone (arc, std::back_inserter(xobjs));
-          for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
-            assign_success = CGAL::assign (xarc, *xobj_it);
-            CGAL_assertion (assign_success);
-            CGAL_USE(assign_success);
-            *oi++ = Labeled_curve_2 (xarc,
-                                     X_curve_label (xarc.is_directed_right(),
+          for (auto xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
+            const X_monotone_curve_2* xarc = std::get_if<X_monotone_curve_2>(&(*xobj_it));
+            CGAL_assertion(xarc!=nullptr);
+            *oi++ = Labeled_curve_2 (*xarc,
+                                     X_curve_label (xarc->is_directed_right(),
                                                     cycle_id, curve_index++));
           }
         }
@@ -580,18 +568,17 @@ protected:
     xobjs.clear();
     f_make_x_monotone (arc, std::back_inserter(xobjs));
 
-    xobj_it = xobjs.begin();
+    auto xobj_it = xobjs.begin();
     while (xobj_it != xobjs.end())
     {
-      assign_success = CGAL::assign (xarc, *xobj_it);
-      CGAL_assertion (assign_success);
-      CGAL_USE(assign_success);
+      const X_monotone_curve_2* xarc = std::get_if<X_monotone_curve_2>(&(*xobj_it));
+      CGAL_assertion (xarc != nullptr);
 
       ++xobj_it;
       bool is_last = (xobj_it == xobjs.end());
 
-      *oi++ = Labeled_curve_2 (xarc,
-                               X_curve_label (xarc.is_directed_right(),
+      *oi++ = Labeled_curve_2 (*xarc,
+                               X_curve_label (xarc->is_directed_right(),
                                               cycle_id, curve_index++, is_last));
     }
 

@@ -1,36 +1,71 @@
-Subject: CGAL 4.13 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.13
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the recent releases
+of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
+
+## CGAL version 6.0
+
+CGAL version 6.0 was released on September 27, 2024. Following the
+discovery of early issues, version 6.0.1 was subsequently released on
+October 22, 2024.
+
+This version is a major release, with many new features and
+improvements.
+
+General changes
+
+-   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
+-   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
+    Boost.Multiprecision can be used.
+-   Qt6 Demos: All demos are now based on Qt6.
+-   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
+    moved to its own directory in demo/Lab/.
+
+New Packages
+
+-   Kinetic Space Partition: Partition of the space from planar input
+    shapes.
+-   Kinetic Surface Reconstruction: Reconstructs surfaces from point
+    clouds.
+-   Basic Viewer: Interactive visualization for various CGAL packages.
+-   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
+
+Breaking Changes
+
+-   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
+-   Kernel: Replaced boost::variant with std::variant and
+    boost::optional with std::optional in the intersection functions.
+
+Enhancements
+
+-   AABB Tree: Now supports 2D and 3D primitives.
+
+See the announcement of CGAL version 6.0.1 for more details:
+
+  https://www.cgal.org/2024/10/22/cgal601/
 
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.12:
 
+## Bug-fix releases
 
-### 3D Periodic Mesh Generation (new package)
+-   CGAL version 5.5.5 has been published. This is the last bug-fix
+    release for CGAL-5.5.
+-   CGAL version 5.6.2 has been published. This is the second bug-fix
+    release for CGAL-5.6.
 
--   This package generates 3-dimensional periodic meshes. It computes
-    isotropic simplicial meshes for domains described through implicit
-    functional boundaries over the flat torus (which can also seen in
-    the Euclidean space as a periodic cube). The output is a periodic
-    3D mesh of the domain volume and conformal surface meshes for all
-    the boundary and subdividing surfaces.  The package is closely
-    related to the 3D Mesh Generation package, with similar concepts,
-    classes, and API.
+These releases include various bug fixes and enhancements. For more details,
+please visit:
 
-
-### Classification 
-
--   This package can now handle classification of surface meshes and
-    clusters, and can compute features in parallel.
+  https://www.cgal.org/2024/10/22/cgal555/
+  https://www.cgal.org/2024/10/22/cgal562/
 
 
 
-See https://www.cgal.org/2018/10/01/cgal413 / for a complete list of
-changes.
+The development of CGAL will now focus on the upcoming CGAL-6.1 release,
+planned for late 2025. Bug fixes will continue to be backported to the
+CGAL-5.6.x and CGAL-6.0.x branches.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -65,7 +100,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

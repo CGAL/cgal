@@ -1,0 +1,39 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\begin{tikzpicture}[scale=1.0,smooth]
+  \begin{axis}[ticks=none,axis line style={draw=none},unit vector ratio*=1 1 1,
+      enlarge x limits={abs value=0.08,auto},
+      enlarge y limits={abs value=0.08,auto},
+      % The following miraculously solves the wierd shift in the intersection
+      % computation
+      anchor=left of west
+    ]
+    % x^3+x^2-4x-8y=-1
+    % -x^3+x^2+4x-8y=-1
+    \addplot [draw=none,name path=f11,domain=-2:0]{(1-x^3+x^2+4*x)*0.125};
+    \addplot [draw=none,name path=f12,domain=0:-2]{(1+x^3+x^2-4*x)*0.125};
+    \addplot [draw=none,name path=f21,domain=0:2]{(1-x^3+x^2+4*x)/8.0};
+    \addplot [draw=none,name path=f22,domain=2:0]{(1+x^3+x^2-4*x)/8.0};
+    %
+    \addplot [name path global=A,color=blue,thick,domain=-2.5:3]
+             {(1-x^3+x^2+4*x)*0.125} coordinate[point,pos=0] coordinate[point];
+    \addplot [name path global=B,color=blue,thick,domain=-3:2.5]
+             {(1+x^3+x^2-4*x)*0.125} coordinate[point,pos=0] coordinate[point];
+    \coordinate [name intersections={of=A and B,name=x}];
+    %
+    \node[point=white] at (x-1) {};
+    \node[point=white] at (x-2) {};
+    \node[point=white] at (x-3) {};
+    %
+    \addplot[pattern={north east lines},pattern color=orange] fill between[of=f11 and f12];
+    \addplot[pattern={north west lines},pattern color=orange] fill between[of=f21 and f22];
+    %
+    \node at (-2.5,1){\textcolor{blue}{$c_1$}};
+    \node at (-2.9,0.15){\textcolor{blue}{$c_2$}};
+    \node at (-1,0.3){$\bm{f_1}$};
+    \node at (1,0.3){$\bm{f_2}$};
+  \end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,16 +1,16 @@
 if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
   set( CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
 
-  message( STATUS "Targetting ${CMAKE_GENERATOR}")
+  message( STATUS "Targeting ${CMAKE_GENERATOR}")
 
   if ( MSVC )
-    message( STATUS "Target build enviroment supports auto-linking" )
+    message( STATUS "Target build environment supports auto-linking" )
     set(CGAL_AUTO_LINK_ENABLED TRUE)
   endif()
 
-  if     ( MSVC15 )
-    set(CGAL_TOOLSET "vc150")
-    message( STATUS "Using VC15 compiler." )
+  if ( MSVC_TOOLSET_VERSION )
+    set(CGAL_TOOLSET "vc${MSVC_TOOLSET_VERSION}")
+    message( STATUS "Using VC toolset ${MSVC_TOOLSET_VERSION}." )
   elseif ( MSVC14 )
     set(CGAL_TOOLSET "vc140")
     message( STATUS "Using VC14 compiler." )
@@ -39,13 +39,11 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
 
   # From james Bigler, in the cmake users list.
   IF (APPLE)
-    exec_program(uname ARGS -v  OUTPUT_VARIABLE DARWIN_VERSION)
+    execute_process(COMMAND uname -v
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    OUTPUT_VARIABLE DARWIN_VERSION)
     string(REGEX MATCH "[0-9]+" DARWIN_VERSION ${DARWIN_VERSION})
-    message(STATUS "DARWIN_VERSION=${DARWIN_VERSION}")
-    if (DARWIN_VERSION GREATER 8)
-       message(STATUS "Mac Leopard detected")
-      set(CGAL_APPLE_LEOPARD 1)
-    endif()
+    message(STATUS "Running in macOS DARWIN_VERSION=${DARWIN_VERSION}")
   endif()
 
   if ( NOT "${CMAKE_CFG_INTDIR}" STREQUAL "." )

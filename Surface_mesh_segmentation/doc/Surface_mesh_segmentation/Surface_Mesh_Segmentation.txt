@@ -105,19 +105,19 @@ The energy function minimized using alpha-expansion graph cut algorithm \cgalCit
 
   <table border="0">
   <tr>
-	 <td>
-		\f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
+         <td>
+                \f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
 
-		\f$ e_1(f, x_f) = -log(max(P(f|x_f), \epsilon)) \f$
+                \f$ e_1(f, x_f) = -\log(\max(P(f|x_f), \epsilon_1)) \f$
 
-		\f$ e_2(x_f, x_g) =
-		\left \{
-		\begin{array}{rl}
-			-log(\theta(f,g)/\pi) &\mbox{ $x_f \ne x_g$} \\
-			0 &\mbox{ $x_f = x_g$}
-		\end{array}
-		\right \} \f$
-	 </td>
+                \f$ e_2(x_f, x_g) =
+                \left \{
+                \begin{array}{rl}
+                        -\log(w\max(1 - |\theta(f,g)|/\pi, \epsilon_2)) &\mbox{ $x_f \ne x_g$} \\
+                        0 &\mbox{ $x_f = x_g$}
+                \end{array}
+                \right \} \f$
+         </td>
      <td>
 where:
   - \f$F\f$ denotes the set of facets,
@@ -125,16 +125,17 @@ where:
   - \f$x_f\f$ denotes the cluster assigned to facet \f$f\f$,
   - \f$P(f|x_p)\f$ denotes the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
   - \f$\theta(f,g)\f$ denotes the dihedral angle between neighboring facets \f$f\f$ and \f$g\f$:
-	 concave angles and convex angles are weighted by 1 and 0.1 respectively,
-  - \f$\epsilon\f$ denotes the minimal probability threshold,
+         convex angles, \f$[-\pi, 0]\f$, and concave angles, \f$]0, \pi]\f$, are weighted by \f$w=0.08\f$ and \f$w=1\f$, respectively,
+  - \f$\epsilon_1, \epsilon_2\f$ denote minimal probability and angle thresholds, respectively,
   - \f$\lambda \in [0,1]\f$ denotes a smoothness parameter.
-	 </td>
+         </td>
   </tr>
   </table>
 
+Note both terms of the energy function, \f$ e_1 \f$ and \f$ e_2 \f$, are always non-negative.
 The first term of the energy function provides the contribution of the soft clustering probabilities.
-The second term of the energy function is a geometric criterion that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
-The smoothness parameter makes this geometric criteria more or less prevalent.
+The second term of the energy function is a geometric criterion that is larger the closer to \f$\pm\pi\f$ the dihedral angle between two adjacent facets not in the same cluster is.
+The smoothness parameter makes this geometric criterion more or less prevalent.
 
 Assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
@@ -217,20 +218,20 @@ Some results of the approximate convex segmentation algorithm:
 Segmented a sword into 5 segments, a cactus into 4 segments, an elephant into 16 segments, and a dino into 10 segments using normal projection method to compute concavity values. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
 \cgalFigureEnd
 
-\section Surface_mesh_segmentationAPI Summary of the API
+\subsection Surface_mesh_segmentationAPI Summary
 6 functions are provided:
-	- `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
+        - `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps").
-	- `sdf_values_postprocessing()` : post-processes raw SDF values. The post-processing is decoupled from
+        - `sdf_values_postprocessing()` : post-processes raw SDF values. The post-processing is decoupled from
              the function `sdf_values()` to allow the use of alternative methods to compute SDF values or additional post-processing step.
-	- `segmentation_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
+        - `segmentation_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
             The input SDF values can be any set of scalar values associated to each facet as long as they have been normalized between 0 and 1.
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
-	- `segmentation_via_sdf_values()` : combines the three functions above.
-    - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
-    - `approximate_convex_segmentation()` : computes approximate convex segmentation of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
+	      - `segmentation_via_sdf_values()` : combines the three functions above.
+        - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
+        - `approximate_convex_segmentation()` : computes approximate convex segmentation of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
@@ -303,8 +304,8 @@ Extends the base example with the computation of convex hull per segment.
 \section Performances Performances
 <!-- \subsection SMSRuntime Run-time of the functions sdf_values() and segmentation_from_sdf_values() -->
 
-The following tables provide the run-time of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
-The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+The following tables provide the runtime of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
+The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 GHz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 

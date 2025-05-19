@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -29,12 +20,10 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -53,7 +42,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
 
   typedef Vector_2                    Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Vector_2>::value));
+  static_assert(std::is_same<Self, typename R_::Vector_2>::value);
 
 public:
 
@@ -63,12 +52,12 @@ public:
   typedef RVector_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
-  const Rep& rep() const
+  const Rep& rep() const noexcept
   {
     return *this;
   }
 
-  Rep& rep()
+  Rep& rep() noexcept
   {
     return *this;
   }
@@ -79,6 +68,9 @@ public:
 
   Vector_2(const RVector_2& v)
       : RVector_2(v) {}
+
+  Vector_2(RVector_2&& v)
+      : RVector_2(std::move(v)) {}
 
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
@@ -96,33 +88,45 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2 >
-  Vector_2(const T1 &x, const T2 &y)
-      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y)) {}
+  Vector_2(T1&& x, T2&& y)
+    : RVector_2(typename R::Construct_vector_2()(Return_base_tag(),
+                                                 std::forward<T1>(x),
+                                                 std::forward<T2>(y)))
+  {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
+  friend void swap(Self& a, Self& b)
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+
+  decltype(auto)
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -138,26 +142,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_hy_2(Vector_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2(Vector_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
@@ -250,48 +254,13 @@ public:
   {
     return t.transform(*this);
   }
-
 };
-
-
-template < class R >
-inline
-bool
-operator==(const Vector_2<R> &v, const Null_vector &n)
-{
-  return R().equal_2_object()(v, n);
-}
-
-template < class R >
-inline
-bool
-operator==(const Null_vector &n, const Vector_2<R> &v)
-{
-  return v == n;
-}
-
-template < class R >
-inline
-bool
-operator!=(const Vector_2<R> &v, const Null_vector &n)
-{
-  return !(v == n);
-}
-
-template < class R >
-inline
-bool
-operator!=(const Null_vector &n, const Vector_2<R> &v)
-{
-  return !(v == n);
-}
-
 
 template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_2<R>& v, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();
     case IO::BINARY :
@@ -307,7 +276,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_2<R>& v, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << v.hx() << ' ' << v.hy() << ' ' << v.hw();
@@ -337,9 +306,9 @@ std::istream&
 extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y);
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
@@ -348,7 +317,7 @@ extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -362,7 +331,7 @@ std::istream&
 extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hw;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hw;
@@ -375,7 +344,7 @@ extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   v = Vector_2<R>(hx, hy, hw);

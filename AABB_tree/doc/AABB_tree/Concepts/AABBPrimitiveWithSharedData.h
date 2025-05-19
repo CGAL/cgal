@@ -21,9 +21,11 @@ The `Datum` would be a `Triangle_3` and the `Id` a `std::size_t`. The shared dat
 `std::vector<Triangle_3>`.
 The method `datum(const Shared_data&)` then returns a triangle from the vector.
 
-\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_true,CacheDatum>`
-\cgalHasModel `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_true,CacheDatum>`
-\cgalHasModel `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_true,CacheDatum>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_true,CacheDatum>}
+\cgalHasModels{CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_true,CacheDatum>}
+\cgalHasModels{CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_true,CacheDatum>}
+\cgalHasModelsEnd
 */
 
 class AABBPrimitiveWithSharedData {
@@ -32,7 +34,7 @@ public:
 /// \name Types
 /// @{
 /*!
-3D point type.
+Point type.
 */
 typedef unspecified_type Point;
 
@@ -66,22 +68,22 @@ typedef unspecified_type Shared_data;
 /// \name Operations
 /// @{
 /*!
-Returns the datum (geometric object) represented by the primitive.
+returns the datum (geometric object) represented by the primitive.
 */
 Datum_reference datum(const Shared_data& data);
 
 /*!
-Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the `AABB_tree` methods.
+returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the `AABB_tree` methods.
 */
 Id id();
 
 /*!
-Returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
+returns a point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
 */
 Point_reference reference_point(const Shared_data& data);
 
 /*!
-A static function responsible for the creation of the shared data of a primitive.
+constructs the shared data of a primitive.
 The parameter pack is such that there exists a constructor `template <class T1, class ... T> AABBPrimitiveWithSharedData (T1,T...)`.
 */
 template <class ... T>

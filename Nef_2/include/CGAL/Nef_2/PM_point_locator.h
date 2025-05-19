@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -26,6 +17,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/use.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Circulator_project.h>
@@ -36,7 +28,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 #ifdef CGAL_USE_LEDA_LIBRARY
@@ -167,13 +159,12 @@ public:
     const Direction& d, bool& collinear) const
   /*{\Xop returns a halfedge |e| bounding a wedge in between two
   neighbored edges in the adjacency list of |v| which contains |d|.
-  If |d| extends along a edge then |e| is this edge. If |d| extends
+  If |d| extends along an edge then |e| is this edge. If |d| extends
   into the interior of such a wedge then |e| is the first edge hit
   when |d| is rotated clockwise. \precond |v| is not isolated.}*/
   { CGAL_NEF_TRACEN("out_wedge "<<PV(v));
     CGAL_assertion(!is_isolated(v));
     collinear=false;
-    Point p = point(v);
     Halfedge_const_handle e_res = first_out_edge(v);
     Direction d_res = direction(e_res);
     Halfedge_around_vertex_const_circulator el(e_res),ee(el);
@@ -227,7 +218,7 @@ public:
   { CGAL_NEF_TRACEN("locate naivly "<<s);
     if (this->number_of_vertices() == 0)
       CGAL_error_msg("PM_naive_point_locator: plane map is empty.");
-    Point p = K.source(s);
+    const Point& p = K.source(s);
     Vertex_const_iterator vit;
     for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
       if ( p == point(vit) ) return make_object(vit);
@@ -244,7 +235,7 @@ public:
     Direction dso = K.construct_direction(K.target(s),p), d_res;
     CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited(false);
     for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
-      Point p_res, vp = point(vit);
+      const Point& vp = point(vit);
       if ( K.contains(ss,vp) ) {
         CGAL_NEF_TRACEN(" location via vertex at "<<vp);
         ss = K.construct_segment(p,vp); // we shrink the segment
@@ -268,8 +259,8 @@ public:
 
     for (eit = this->halfedges_begin(); eit != this->halfedges_end(); ++eit) {
       if ( visited[eit] ) continue;
-      Point se = point(source(eit)),
-            te = point(target(eit));
+      const Point& se = point(source(eit));
+      const Point& te = point(target(eit));
       int o1 = K.orientation(ss,se);
       int o2 = K.orientation(ss,te);
       if ( o1 == -o2 && // internal intersection
@@ -302,11 +293,11 @@ public:
   |bool operator() (const Vertex_/Halfedge_/Face_const_handle&)|.\\
   The object returned is intersected by the segment |s| and has
   minimal distance to |s.source()| and |M(h)| holds on the converted
-  object. The operation returns the null handle |NULL| if the ray shoot
+  object. The operation returns the null handle |nullptr| if the ray shoot
   along |s| does not hit any object |h| of |P| with |M(h)|.}*/
   { CGAL_NEF_TRACEN("naive ray_shoot "<<s);
     CGAL_assertion( !K.is_degenerate(s) );
-    Point p = K.source(s);
+    const Point& p = K.source(s);
     Segment ss(s);
     Direction d = K.construct_direction(K.source(s),K.target(s));
     Object_handle h = locate(s);
@@ -319,7 +310,7 @@ public:
     h = Object_handle();
     CGAL_NEF_TRACEN("not contained");
     for (v = this->vertices_begin(); v != this->vertices_end(); ++v) {
-      Point pv = point(v);
+      const Point& pv = point(v);
       if ( !K.contains(ss,pv) ) continue;
       CGAL_NEF_TRACEN("candidate "<<pv);
       if ( M(v) ) {
@@ -453,13 +444,13 @@ public:
   using Base::faces_begin;
   using Base::info;
   using Base::flip_diagonal;
-  using Base::twin; 
-  using Base::next; 
-  using Base::previous; 
-  using Base::source; 
-  using Base::target; 
-  using Base::point; 
-  using Base::segment; 
+  using Base::twin;
+  using Base::next;
+  using Base::previous;
+  using Base::source;
+  using Base::target;
+  using Base::point;
+  using Base::segment;
   using Base::face;
 
   /*{\Mtypes 2}*/
@@ -481,18 +472,18 @@ public:
       geninfo<VF_pair>::create(info(vn));
       geninfo<VF_pair>::access(info(vn)) = VF_pair(vo,f);
       #else
-      info(vn) = VF_pair(vo,f);      
+      info(vn) = VF_pair(vo,f);
       #endif
       CGAL_NEF_TRACEN("linking to org "<<PV(vn));
     }
 
     void operator()(Halfedge_handle hn, Halfedge_const_handle ho) const
-    { 
+    {
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<EF_pair>::create(info(hn));
       geninfo<EF_pair>::access(info(hn)) = EF_pair(ho,Po.face(ho));
       #else
-      info(hn) = EF_pair(ho,Po.face(ho));      
+      info(hn) = EF_pair(ho,Po.face(ho));
       #endif
       CGAL_NEF_TRACEN("linking to org "<<PE(hn));
     }
@@ -502,30 +493,30 @@ protected:
   Vertex_const_handle input_vertex(Vertex_const_handle v) const
   {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-    return geninfo<VF_pair>::const_access(CT.info(v)).first; 
+    return geninfo<VF_pair>::const_access(CT.info(v)).first;
     #else
-    return 
-      boost::any_cast<VF_pair>(CT.info(v)).first; 
+    return
+      std::any_cast<VF_pair>(CT.info(v)).first;
     #endif
   }
 
   Halfedge_const_handle input_halfedge(Halfedge_const_handle e) const
   {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-    return geninfo<EF_pair>::const_access(CT.info(e)).first; 
+    return geninfo<EF_pair>::const_access(CT.info(e)).first;
     #else
-    return 
-      boost::any_cast<EF_pair>(CT.info(e)).first; 
+    return
+      std::any_cast<EF_pair>(CT.info(e)).first;
     #endif
   }
 
   Face_const_handle input_face(Halfedge_const_handle e) const
-  { 
+  {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     return geninfo<EF_pair>::const_access(CT.info(e)).second;
     #else
-    return 
-      boost::any_cast<EF_pair>(CT.info(e)).second;
+    return
+      std::any_cast<EF_pair>(CT.info(e)).second;
     #endif
   }
 
@@ -545,7 +536,7 @@ protected:
   The efficiency of this point location module is mostly based on
   heuristics. Therefore worst case bounds are not very expressive. The
   query operations take up to linear time for subsequent query
-  operations though they are better in practise. They trigger a one-time
+  operations though they are better in practice. They trigger a one-time
   initialization which needs worst case $O(n^2)$ time though runtime
   tests often show subquadratic results. The necessary space for the
   query structure is subsumed in the storage space $O(n)$ of the input
@@ -589,13 +580,13 @@ protected:
         #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         f = geninfo<VF_pair>::access(info(source(e))).second;
       else
-        f = geninfo<EF_pair>::access(info(e_from)).second;      
+        f = geninfo<EF_pair>::access(info(e_from)).second;
         #else
-        f = 
-          boost::any_cast<VF_pair>(info(source(e))).second;
+        f =
+          std::any_cast<VF_pair>(info(source(e))).second;
       else
-        f = 
-          boost::any_cast<EF_pair>(info(e_from)).second;              
+        f =
+          std::any_cast<EF_pair>(info(e_from)).second;
         #endif
       mark(e) = _DP.mark(f);
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -651,10 +642,10 @@ protected:
       Halfedge_handle e3 = next(e);
       // e1,e3: edges of quadrilateral with diagonal e
 
-      Point a = point(source(e1));
-      Point b = point(target(e1));
-      Point c = point(source(e3));
-      Point d = point(target(e3));
+      const Point& a = point(source(e1));
+      const Point& b = point(target(e1));
+      const Point& c = point(source(e3));
+      const Point& d = point(target(e3));
 
       if (! (this->K.orientation(b,d,a) > 0 && // left_turn
              this->K.orientation(b,d,c) < 0) ) // right_turn
@@ -674,6 +665,7 @@ protected:
 
 
     }
+    CGAL_USE(flip_count);
     CGAL_NEF_TRACEN("  flipped "<<flip_count);
   }
 
@@ -727,18 +719,18 @@ public:
   }
 
   bool ray_shoot_from_outer_facet(Segment& , object_kind& ,
-				  Vertex_const_handle &,
-				  Halfedge_const_handle& ,
-				  const Tag_true& ) const {
+                                  Vertex_const_handle &,
+                                  Halfedge_const_handle& ,
+                                  const Tag_true& ) const {
     return false;
   }
 
   bool ray_shoot_from_outer_facet(Segment& s, object_kind& current,
-				  Vertex_const_handle &v,
-				  Halfedge_const_handle& e,
-				  const Tag_false& ) const {
+                                  Vertex_const_handle &v,
+                                  Halfedge_const_handle& e,
+                                  const Tag_false& ) const {
     CGAL_NEF_TRACEN("target on outer facet");
-    Point p = this->K.source(s);
+    const Point& p = this->K.source(s);
     Vertex_const_handle v1 = CT.vertices_begin();
     Halfedge_const_handle e1 = CT.twin(CT.first_out_edge(v1));
     Halfedge_around_face_const_circulator circ(e1), end(circ);
@@ -746,30 +738,30 @@ public:
     Segment seg;
     bool found = false;
     CGAL_For_all(circ, end) {
-      //	std::cerr << s << std::endl;
-      //	std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
+      //        std::cerr << s << std::endl;
+      //        std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
       Object o = intersection(s, Segment(point(source(circ)),
-					 point(target(circ))));
+                                         point(target(circ))));
 
       if(assign(i,o)) {
-	CGAL_NEF_TRACEN("intersection in point " << i);
-	found = true;
-	s = Segment(p,i);
-	if(i == point(source(circ))) {
-	  current = VERTEX;
-	  v = source(circ);
-	} else if(i == point(target(circ))) {
-	  current = VERTEX;
-	  v = target(circ);
-	} else {
-	  current = EDGE_CROSSING;
-	  e = circ;
-	}
+        CGAL_NEF_TRACEN("intersection in point " << i);
+        found = true;
+        s = Segment(p,i);
+        if(i == point(source(circ))) {
+          current = VERTEX;
+          v = source(circ);
+        } else if(i == point(target(circ))) {
+          current = VERTEX;
+          v = target(circ);
+        } else {
+          current = EDGE_CROSSING;
+          e = circ;
+        }
       } else if(assign(seg,o)) {
-	found = true;
-	CGAL_NEF_TRACEN("overlap of segments");
-	current = EDGE_COLLINEAR;
-	e = circ;
+        found = true;
+        CGAL_NEF_TRACEN("overlap of segments");
+        current = EDGE_COLLINEAR;
+        e = circ;
       }
     }
     return found;
@@ -784,12 +776,12 @@ public:
   |bool operator() (const Vertex_/ Halfedge_/Face_const_handle&) const|.\\
   The object returned is intersected by the segment |s| and has minimal
   distance to |s.source()| and |M(h)| holds on the converted object. The
-  operation returns the null handle |NULL| if the ray shoot along |s|
+  operation returns the null handle |nullptr| if the ray shoot along |s|
   does not hit any object |h| of |P| with |M(h)|.}*/
   { Segment s(ss);
     CGAL_NEF_TRACEN("ray_shoot "<<s);
     CGAL_assertion( !this->K.is_degenerate(s) );
-    Point p = this->K.source(s);
+    const Point& p = this->K.source(s);
     Direction d = this->K.construct_direction(p,s.target());
     Vertex_const_handle v;
     Halfedge_const_handle e;
@@ -820,9 +812,9 @@ public:
         if ( M(input_face(e)) ) // face mark
           return make_object(input_face(e));
 
-        Point p1 = CT.point(CT.source(e)),
-              p2 = CT.point(CT.target(e)),
-              p3 = CT.point(CT.target(next(e)));
+        const Point& p1 = CT.point(CT.source(e));
+        const Point& p2 = CT.point(CT.target(e));
+        const Point& p3 = CT.point(CT.target(next(e)));
         int or1 = this->K.orientation(p,s.target(),p1);
         int or2 = this->K.orientation(p,s.target(),p2);
         int or3 = this->K.orientation(p,s.target(),p3);
@@ -844,10 +836,10 @@ public:
     } else {
 
       if(check_tag(typename Is_extended_kernel<Geometry>::value_type())) {
-	CGAL_error_msg( "code is only for Bounded_kernel");
+        CGAL_error_msg( "code is only for Bounded_kernel");
       }
       if(!ray_shoot_from_outer_facet(s,current,v,e,typename Is_extended_kernel<Geometry>::value_type()))
-	return Object_handle();
+        return Object_handle();
     }
 
     CGAL_NEF_TRACEN("current = " << current);
@@ -918,12 +910,12 @@ public:
   }
 
   bool within_outer_cycle(Vertex_const_handle ,
-			  const Point& , const Tag_true& ) const {
+                          const Point& , const Tag_true& ) const {
     return true;
   }
 
   bool within_outer_cycle(Vertex_const_handle v,
-			  const Point& q, const Tag_false& ) const {
+                          const Point& q, const Tag_false& ) const {
     typedef Project_halfedge_point<typename Decorator::Halfedge, Point> Project;
     typedef Circulator_project<Halfedge_around_face_const_circulator,
       Project, const Point&, const Point*> Circulator;
@@ -975,7 +967,7 @@ PM_point_locator<PMD,GEO>::
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<VF_pair>::clear(CT.info(vit));
     #else
-    CT.info(vit)=boost::any();
+    CT.info(vit)=std::any();
     #endif
   }
   Halfedge_iterator eit, eend = CT.halfedges_end();
@@ -983,7 +975,7 @@ PM_point_locator<PMD,GEO>::
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<EF_pair>::clear(CT.info(eit));
     #else
-    CT.info(eit)=boost::any();
+    CT.info(eit)=std::any();
     #endif
   }
   CT.clear();
@@ -1006,7 +998,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
       return Object_handle();
 
   Halfedge_const_handle e;
-  Point p = CT.point(v);
+  const Point& p = CT.point(v);
   if ( p == q ) return make_object(v);
   //  Segment s = this->K.construct_segment(p,q);
   Direction dir = this->K.construct_direction(p,q);

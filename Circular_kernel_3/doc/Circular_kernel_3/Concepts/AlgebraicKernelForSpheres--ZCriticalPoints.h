@@ -16,21 +16,21 @@ public:
 /// @{
 
 /*!
-Copies in the output iterator the `z`-critical points of polynomial 
-`p`, as objects of type `AlgebraicKernelForSpheres::Root_for_spheres_2_3`. 
-*/ 
-template < class OutputIterator > 
-OutputIterator 
-operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p, 
-OutputIterator res); 
+Copies in the output iterator the `z`-critical points of polynomial
+`p`, as objects of type `AlgebraicKernelForSpheres::Root_for_spheres_2_3`.
+*/
+template < class OutputIterator >
+OutputIterator
+operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+OutputIterator res);
 
 /*!
-Computes the `i`th `z`-critical point of polynomial `p`. 
-*/ 
-template < class OutputIterator > 
-AlgebraicKernelForSpheres::Root_for_spheres_2_3 
-operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p, 
-bool i); 
+Computes the `i`-th `z`-critical point of polynomial `p`.
+*/
+template < class OutputIterator >
+AlgebraicKernelForSpheres::Root_for_spheres_2_3
+operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+bool i);
 
 /// @}
 

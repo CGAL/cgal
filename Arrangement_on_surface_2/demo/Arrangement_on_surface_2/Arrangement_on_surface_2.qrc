@@ -1,0 +1,37 @@
+<RCC>
+  <qresource prefix="/cgal/icons">
+    <file alias="fill.xpm">resources/icons/fill.xpm</file>
+    <file alias="conic_line.xpm">resources/icons/conic_line.xpm</file>
+    <file alias="zoomin.xpm">resources/icons/zoomin.xpm</file>
+    <file alias="zoomout.xpm">resources/icons/zoomout.xpm</file>
+    <file alias="zoomreset.xpm">resources/icons/zoomreset.xpm</file>
+    <file alias="yellow_icon.xpm">resources/icons/yellow_icon.xpm</file>
+    <file alias="red_icon.xpm">resources/icons/red_icon.xpm</file>
+    <file alias="green_icon.xpm">resources/icons/green_icon.xpm</file>
+    <file alias="blue_icon.xpm">resources/icons/blue_icon.xpm</file>
+    <file alias="pink_icon.xpm">resources/icons/pink_icon.xpm</file>
+    <file alias="conic_circle.xpm">resources/icons/conic_circle.xpm</file>
+    <file alias="conic_ellipse.xpm">resources/icons/conic_ellipse.xpm</file>
+    <file alias="conic_5points.xpm">resources/icons/conic_5points.xpm</file>
+    <file alias="conic_segment.xpm">resources/icons/conic_segment.xpm</file>
+    <file alias="conic_3points.xpm">resources/icons/conic_3points.xpm</file>
+    <file alias="snapvertex.xpm">resources/icons/snapvertex.xpm</file>
+    <file alias="conic_ray.xpm">resources/icons/conic_ray.xpm</file>
+    <file alias="lower_env_xpm.xpm">resources/icons/lower_env_xpm.xpm</file>
+    <file alias="upper_env_xpm.xpm">resources/icons/upper_env_xpm.xpm</file>
+    <file alias="grid.xpm">resources/icons/grid.xpm</file>
+    <file alias="snapgrid.xpm">resources/icons/snapgrid.xpm</file>
+    <file alias="split.xpm">resources/icons/split.xpm</file>
+    <file alias="merge.xpm">resources/icons/merge.xpm</file>
+    <file alias="rayshoot_down.xpm">resources/icons/rayshoot_down.xpm</file>
+    <file alias="rayshoot_up.xpm">resources/icons/rayshoot_up.xpm</file>
+    <file alias="insert.xpm">resources/icons/insert.xpm</file>
+    <file alias="hand.xpm">resources/icons/hand.xpm</file>
+    <file alias="delete.xpm">resources/icons/delete.xpm</file>
+    <file alias="pointlocation.xpm">resources/icons/pointlocation.xpm</file>
+    <file alias="equation.xpm">resources/icons/equation.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/Arrangement_on_surface_2">
+    <file alias="about.html">resources/about.html</file>
+  </qresource>
+</RCC>

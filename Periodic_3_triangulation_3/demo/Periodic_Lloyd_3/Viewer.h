@@ -27,6 +27,7 @@ public:
   {}
   ~Viewer()
   {
+    makeCurrent();
    for(int i=0; i<4; i++)
    {
     buffers[i].destroy();
@@ -49,7 +50,7 @@ public:
 public slots :
   void changed();
   void sceneChanged();
-  
+
 signals:
   void valueChanged(int i);
 

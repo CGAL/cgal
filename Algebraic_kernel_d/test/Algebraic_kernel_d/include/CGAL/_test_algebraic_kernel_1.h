@@ -1,27 +1,17 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastian Limbach <slimbach@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@mpi-inf.mpg.de>    
+//                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/use.h>
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -119,8 +109,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef typename Name::result_type   RT_;                     \
     CGAL_USE_TYPE(AT_);                                           \
     CGAL_USE_TYPE(RT_);                                           \
-    {CGAL_static_assertion(( ::boost::is_same<AT,AT_>::value));}  \
-    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}  \
+    {static_assert(::std::is_same<AT,AT_>::value);}  \
+    {static_assert(::std::is_same<RT,RT_>::value);}  \
   }
 #define CGAL_CHECK_BFUNCTION(Name,AT1,AT2,RT)                           \
   {                                                                     \
@@ -130,9 +120,9 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     CGAL_USE_TYPE(AT1_);                                                \
     CGAL_USE_TYPE(AT2_);                                                \
     CGAL_USE_TYPE(RT_);                                                 \
-    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}      \
-    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}      \
-    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}        \
+    {static_assert(::std::is_same<AT1,AT1_>::value);}      \
+    {static_assert(::std::is_same<AT2,AT2_>::value);}      \
+    {static_assert(::std::is_same<RT,RT_>::value);}        \
   }
 
   // TODO: missing check for Construct_algebraic_real_1
@@ -224,7 +214,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     Polynomial_1 p2 = compute_polynomial_1(ar);
     assert(!is_coprime_1(p1,p2));
     assert(is_zero_at_1(p2,ar));
-    
+
   }
   {
     // solve_1 for OI::value_type == std::pair<Algebraic_real_1>
@@ -301,7 +291,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     assert(compare_1(bound,Algebraic_real_1(2)) == SMALLER );
   }
 
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   // Approximations
   bool all_right = true;
@@ -335,17 +325,17 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   //precs.push_back(64);
   //precs.push_back(106);
   //precs.push_back(424);
-  for (typename std::vector< int >::const_iterator c0i = coeffs.begin(); 
+  for (typename std::vector< int >::const_iterator c0i = coeffs.begin();
        c0i != coeffs.end(); c0i++) {
-    for (typename std::vector< int >::const_iterator c2i = coeffs.begin(); 
+    for (typename std::vector< int >::const_iterator c2i = coeffs.begin();
          c2i != coeffs.end(); c2i++) {
-      // we basically test a quadratic polynomial (with choosen small and large 
+      // we basically test a quadratic polynomial (with chosen small and large
       // quadratic and constant coefficient, which is disturbed by a root close to zero).
       //Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
       Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
       std::list<Algebraic_real_1> roots;
       solve_1(poly,true,std::back_inserter(roots));
-      for (typename std::vector< int >::const_iterator pi = precs.begin(); 
+      for (typename std::vector< int >::const_iterator pi = precs.begin();
            pi != precs.end(); pi++) {
         // all three roots are approximated with various precisions
         long p = *pi;
@@ -356,10 +346,10 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
             assert(compare_1(bi.first ,*rit) != LARGER );
             assert(compare_1(bi.second,*rit) != SMALLER);
             assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-            if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1)) 
+            if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1))
                   <= (p == 0 ? Bound(2) : Bound(1)) )) {
               all_right = false;
-              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << p 
+              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << p
                         << " of this root: " << *rit << std::endl;
             }
           }
@@ -373,7 +363,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
             assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
             if (!((bi.second - bi.first) <= ipower(Bound(2),1-(-p)) )) {
               all_right = false;
-              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << -p 
+              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << -p
                         << " of this root: " << *rit << std::endl;
             }
           }
@@ -388,7 +378,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
             if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1))
                   <= (p == 0 ? Bound(2) : Bound(1)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
               all_right = false;
-              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << p 
+              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << p
                         << " of this root: " << *rit << std::endl;
 
             }
@@ -401,48 +391,48 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
             assert(compare_1(bi.first ,*rit) != LARGER );
             assert(compare_1(bi.second,*rit) != SMALLER);
             assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-            if (!((bi.second - bi.first) <= 
+            if (!((bi.second - bi.first) <=
                   ipower(Bound(2),1-(-p)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
               all_right = false;
-              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << -p 
+              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << -p
                         << " of this root: " << *rit << std::endl;
             }
           }
         }
       }
-    } 
+    }
   }
   assert(all_right); // some approximation was not good enough
   std::cout << " ok" << std::endl;
-  { 
-    
+  {
+
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
     alg1=_f;                                    \
-    ss<<CGAL::oformat(alg1);			\
-    CGAL_assertion(ss.good());                  \
-    ss>>CGAL::iformat(alg2);			\
-    CGAL_assertion(!ss.fail());                  \
+    ss<<CGAL::IO::oformat(alg1);                \
+    assert(ss.good());                          \
+    ss>>CGAL::IO::iformat(alg2);                \
+    assert(!ss.fail());                         \
     ss.clear();                                 \
     assert(alg1==alg2)
-    // Note: after the reading ss>>CGAL::iformat(alg2) the state of ss can
+    // Note: after the reading ss>>CGAL::IO::iformat(alg2) the state of ss can
     // have the eofbit. The C++ norm says if one tries to write to a stream
     // with eofbit, then the failbit will be set. That is why one must
     // clear the iostate with ss.clear().
 
-    
+
     Algebraic_real_1 alg1,alg2;
     std::stringstream ss;
-    CGAL::set_ascii_mode(ss);         
-    
+    CGAL::IO::set_ascii_mode(ss);
+
     // test construction from int, Coefficient and Bound
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(int(2)));
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Coefficient(2)));
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Bound(2)));
-    
+
   // construction by index
     Polynomial_1 x = CGAL::shift(Polynomial_1(1),1); // the monom x
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,1));
-    
+
     // construction by isolating interval
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,Bound(0),Bound(2)));
 #undef CGAL_TEST_ALGEBRAIC_REAL_IO

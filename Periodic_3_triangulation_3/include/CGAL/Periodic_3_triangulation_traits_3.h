@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -25,13 +16,12 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/internal/Periodic_3_construct_point_3.h>
-#include <CGAL/internal/Functor_with_offset_points_adaptor_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_construct_point_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Functor_with_offset_points_adaptor_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Has_boolean_tags.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 namespace CGAL {
 
@@ -88,6 +78,12 @@ public:
       Construct_point_3;
 
   // Triangulation predicates
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_x_3>
+      Compare_x_3;
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_y_3>
+      Compare_y_3;
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_z_3>
+      Compare_z_3;
   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_xyz_3>
       Compare_xyz_3;
   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Orientation_3>
@@ -106,6 +102,15 @@ public:
     return Construct_point_3(&_domain, this->Kernel::construct_point_3_object());
   }
 
+  Compare_x_3 compare_x_3_object() const {
+    return Compare_x_3(this->Kernel::compare_x_3_object(), construct_point_3_object());
+  }
+  Compare_y_3 compare_y_3_object() const {
+    return Compare_y_3(this->Kernel::compare_y_3_object(), construct_point_3_object());
+  }
+  Compare_z_3 compare_z_3_object() const {
+    return Compare_z_3(this->Kernel::compare_z_3_object(), construct_point_3_object());
+  }
   Compare_xyz_3 compare_xyz_3_object() const {
     return Compare_xyz_3(this->Kernel::compare_xyz_3_object(), construct_point_3_object());
   }
@@ -133,7 +138,7 @@ class Periodic_3_triangulation_traits_3;
 
 } //namespace CGAL
 
-#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 

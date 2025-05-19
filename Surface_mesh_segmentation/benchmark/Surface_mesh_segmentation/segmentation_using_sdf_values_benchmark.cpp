@@ -32,7 +32,7 @@ private:
 };
 
 template<class Polyhedron>
-double compute_and_time_sdf(const Polyhedron& mesh, Facet_with_id_pmap<double, Polyhedron> sdf_values) 
+double compute_and_time_sdf(const Polyhedron& mesh, Facet_with_id_pmap<double, Polyhedron> sdf_values)
 {
   CGAL::Timer timer;
   timer.start();
@@ -63,7 +63,7 @@ std::vector<double>
 read_and_run(const std::string& file_name) {
   std::cout << " File name " << file_name;
   std::vector<double> timings;
-  
+
   Polyhedron mesh;
   std::ifstream input(file_name.c_str());
   if ( !input || !(input >> mesh) || mesh.empty() ) {
@@ -105,9 +105,9 @@ int main()
   typedef CGAL::Polyhedron_3<Simple_K, CGAL::Polyhedron_items_with_id_3> Simple_K_Polyhedron;
 
   std::vector<std::string> files;
-  files.push_back("data/dino.off");
-  files.push_back("data/bear.off");
-  files.push_back("data/refined_elephant.off");
+  files.push_back(CGAL::data_file_path("meshes/dino.off"));
+  files.push_back(CGAL::data_file_path("meshes/bear_bis.off"));
+  files.push_back(CGAL::data_file_path("meshes/refined_elephant.off"));
 
   std::vector<std::vector<double> > timings_simple;
   std::vector<std::vector<double> > timings_epick;
@@ -127,8 +127,8 @@ int main()
   for(std::size_t i = 0; i < timings_simple.size(); ++i) {
     std::cout << "| "
               << std::setw(9) << timings_simple[i][0] << "|"
-              << std::setw(18) << timings_simple[i][1] << "|" 
-              << std::setw(7)  << timings_epick[i][1]  << "|" << std::endl; 
+              << std::setw(18) << timings_simple[i][1] << "|"
+              << std::setw(7)  << timings_epick[i][1]  << "|" << std::endl;
   }
   std::cout << "+----------+------------------+-------+" << std::endl;
 
@@ -138,7 +138,7 @@ int main()
   std::cout << "| # Facets | #Cluster=2 | #Cluster=5 | #Cluster=10 | #Cluster=15 |" << std::endl;
   std::cout << "+----------+------------+------------+-------------+-------------+" << std::endl;
   for(std::size_t i = 0; i < timings_simple.size(); ++i) {
-    std::cout << "| " 
+    std::cout << "| "
               << std::setw(9) << timings_simple[i][0] << "|"
               << std::setw(12) << timings_simple[i][2] << "|"
               << std::setw(12) << timings_simple[i][3] << "|"

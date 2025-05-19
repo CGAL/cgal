@@ -1,9 +1,0 @@
-#!/bin/bash
-
-export OPTIMIZATION_FLAGS="-O2 -DNDEBUG -I/home/hachenb/CGAL/Nef_3/include -I/home/hachenb/CGAL/Nef_S2/include"
-export KERNEL_FLAGS="-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS"
-
-labrun -v --nocvs --log=Rotated_cylinders -n union_of_rotated_cylineders labmex -v --clean before ./union_of_rotated_cylinders off/ngon100.off input/10e0-7.sinus
-labrun -v --nocvs --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon1000.off input/10e0-7.sinus
-labrun -v --nocvs --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon2000.off input/10e0-7.sinus
-labrun -v --nocvs --log=Rotated_cylinders -n union_of_rotated_cylineders ./union_of_rotated_cylinders off/ngon10000.off input/10e-7.sinus

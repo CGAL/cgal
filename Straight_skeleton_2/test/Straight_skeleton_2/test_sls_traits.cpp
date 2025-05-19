@@ -1,19 +1,10 @@
 // Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -21,8 +12,8 @@
 
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 void Straight_skeleton_traits_external_trace( std::string s )
 {
   std::cout << s << std::endl ;
@@ -35,19 +26,20 @@ std::string sPrefix ;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
-typedef K::FT        FT;
-typedef K::Point_2   Point ;
-typedef K::Segment_2 Segment ;
-
 typedef CGAL::Straight_skeleton_builder_traits_2<K> Traits ;
+
+typedef Traits::FT        FT;
+typedef Traits::Point_2   Point ;
+typedef Traits::Segment_2 Segment ;
 
 typedef Traits::Trisegment_2 Trisegment ;
 typedef Trisegment::Self_ptr Trisegment_ptr ;
 
 Traits sTraits ;
 
-
 const int S = 5 ;
+
+static int sid = 0;
 
 struct Grid
 {
@@ -65,11 +57,10 @@ struct Grid
 
   Point const& at( char c ) const { return mP[idx(c)] ; }
 
-  private :
-
-  void Set ( int x, int y ) { mP[(y*S)+x] = Point(mOX+mSX*FT(x),mOY+mSY*FT(y)) ; }
-
   static int idx( char c ) { return c - 'a' ; }
+
+private :
+  void Set ( int x, int y ) { mP[(y*S)+x] = Point(mOX+mSX*FT(x),mOY+mSY*FT(y)) ; }
 
   FT mOX ;
   FT mOY ;
@@ -103,10 +94,17 @@ struct triple
 
   Trisegment_ptr trisegment() const
   {
-    return CGAL::Construct_ss_trisegment_2(sTraits)( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
-                                                   , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
-                                                   , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y()))
-                                                   );
+    int sid0 = sid++;
+    int sid1 = sid++;
+    int sid2 = sid++;
+
+    return sTraits.construct_ss_trisegment_2_object()(
+             Segment(Point(mP[0].x(),mP[0].y()), Point(mP[1].x(),mP[1].y()), sid0),
+             FT(1),
+             Segment(Point(mP[2].x(),mP[2].y()), Point(mP[3].x(),mP[3].y()), sid1),
+             FT(1),
+             Segment(Point(mP[4].x(),mP[4].y()), Point(mP[5].x(),mP[5].y()), sid2),
+             FT(1));
   }
 
   friend std::ostream& operator<<( std::ostream& os, Point const& aP )
@@ -233,5 +231,5 @@ int main()
     std::cout << sSucceeded << " cases succeeded." << std::endl << sFailed << " cases failed." << std::endl ;
   }
 
-  return sFailed == 0 ? 0 : 1 ;
+  return (sFailed == 0) ? EXIT_SUCCESS : EXIT_FAILURE ;
 }

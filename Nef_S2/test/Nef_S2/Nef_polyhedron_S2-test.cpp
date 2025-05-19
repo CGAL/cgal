@@ -1,14 +1,9 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/test_macros.h>
+#include <CGAL/Exact_integer.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer NT;
-#else
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz NT;
-#endif
+typedef CGAL::Exact_integer NT;
 
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron;
@@ -23,7 +18,7 @@ typedef Nef_polyhedron::Object_handle Object_handle;
 
 int main(int, char**)
 {
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(911);
   std::cerr << CGAL::sweepversion << std::endl;
 
@@ -36,10 +31,10 @@ int main(int, char**)
   // SM_constrained_triang_traits 139
   // SM_point_locator 143
 
-  CGAL_TEST_START;    
+  CGAL_TEST_START;
   Sphere_point p1(0,1,0), p2(1,1,0), p3(1,1,1);
   Sphere_point p4(0,-1,0);
-  Sphere_circle c1(1,0,0), c2(0,1,0), c3(0,0,1); 
+  Sphere_circle c1(1,0,0), c2(0,1,0), c3(0,0,1);
   Sphere_segment s1(p4,p1,c3), s2(p1,p4,c1);
   Sphere_segment S[2] = { s1, s2 };
   Sphere_circle C[3] = { c1, c2, c3 };
@@ -57,7 +52,7 @@ int main(int, char**)
   CGAL_TEST((N1+!N1) == SPHERE){}
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))){} // xor reformulation
 
-  CGAL_NEF_TRACEV((N1*N2)); CGAL_NEF_TRACEV(!(N1*N2)); CGAL_NEF_TRACEV((!N1+!N2)); 
+  CGAL_NEF_TRACEV((N1*N2)); CGAL_NEF_TRACEV(!(N1*N2)); CGAL_NEF_TRACEV((!N1+!N2));
   CGAL_NEF_TRACEV(!(N1*N2) ^ (!N1+!N2));
   CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ){} // deMorgan
 #if 1
@@ -87,7 +82,7 @@ int main(int, char**)
   CGAL_TEST( CGAL::assign(f,h) ){}
   CGAL_TEST( f->mark() ){}
 #endif
-  CGAL_TEST_END;     
+  CGAL_TEST_END;
   return 0;
 }
 

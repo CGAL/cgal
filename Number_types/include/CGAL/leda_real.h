@@ -1,24 +1,15 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
@@ -206,12 +197,16 @@ public:
     Output_rep( const ::leda::real& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        if (t<0) out << "(" << ::CGAL::oformat(t)<<")";
-        else out << ::CGAL::oformat(t);
+        if (t<0) out << "(" << ::CGAL::IO::oformat(t)<<")";
+        else out << ::CGAL::IO::oformat(t);
         return out;
     }
 };
 
+
+inline const leda_real& approx(const leda_real& d) { return d; }
+inline const leda_real& exact(const leda_real& d) { return d; }
+inline int depth(const leda_real&){ return -1; }
 
 
 } //namespace CGAL

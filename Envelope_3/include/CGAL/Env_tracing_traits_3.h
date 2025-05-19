@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s): Ophir Setter          <ophir.setter@post.tau.ac.il>
 //
@@ -24,7 +15,7 @@
   \file   Env_tracing_traits_3.h
   \brief  The file is used to trace envelope_3 trace classes
   \todo   Revise this file.
-  
+
 */
 
 
@@ -35,7 +26,7 @@
 
 
 /*! \file
- * This is the file containing a traits class used to trace other voronoi 
+ * This is the file containing a traits class used to trace other voronoi
  * diagram traits.
  */
 
@@ -44,7 +35,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/functions_on_enums.h>
-#include <CGAL/number_utils.h> 
+#include <CGAL/number_utils.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 
 namespace CGAL {
@@ -57,23 +48,23 @@ class Env_tracing_traits_3 : public Traits_
 {
 public:
   typedef Traits_                                         Base;
-  
+
   typedef typename Base::Multiplicity                     Multiplicity;
   typedef typename Base::Point_2                          Point_2;
   typedef typename Base::Curve_2                          Curve_2;
   typedef typename Base::X_monotone_curve_2               X_monotone_curve_2;
 
   typedef typename Base::Boundary_category                Boundary_category;
-    
+
   typedef typename Base::Xy_monotone_surface_3            Xy_monotone_surface_3;
   typedef typename Base::Surface_3                              Surface_3;
-  
+
   typedef std::pair<X_monotone_curve_2, Multiplicity>     Intersection_curve;
-    
+
   class Make_xy_monotone_3
   {
   public:
-        
+
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool is_lower,
@@ -83,16 +74,16 @@ public:
       return base.make_xy_monotone_3_object() (s, is_lower, o);
     }
   };
-    
+
   Make_xy_monotone_3 make_xy_monotone_3_object() const
   {
     return Make_xy_monotone_3();
   }
-    
+
   class Compare_z_at_xy_3
   {
   public:
-        
+
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
@@ -120,8 +111,8 @@ public:
       std::cerr << "Result: " << res << std::endl;
       return res;
     }
-        
-        
+
+
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const
 
@@ -134,9 +125,9 @@ public:
       std::cerr << "Result: " << res << std::endl;
       return res;
     }
-    
+
   };
-  
+
   Compare_z_at_xy_3 compare_z_at_xy_3_object() const
   {
     return Compare_z_at_xy_3();
@@ -203,24 +194,25 @@ public:
       Base base;
       std::cerr << "Construct_projected_boundary_2: JUST FIRST" << std::endl;
       std::cerr << "Surface: " << s << std::endl;
-      std::list<CGAL::Object> l;
+      // TODO UPDATE CONCEPT + CHANGES.md
+      std::list< std::variant<std::pair<X_monotone_curve_2, Oriented_side>, Point_2 > > l;
       base.construct_projected_boundary_2_object() (s, std::back_inserter(l));
 
       if (l.size() > 0)
       {
-        std::pair<X_monotone_curve_2, CGAL::Oriented_side> i;
-        if (CGAL::assign(i, l.front()))
-          std::cerr << "First: " << i.first << std::endl;
+        if (const std::pair<X_monotone_curve_2, CGAL::Oriented_side>* i =
+            std::get_if<std::pair<X_monotone_curve_2, CGAL::Oriented_side>>(&l.front()))
+          std::cerr << "First: " << i->first << std::endl;
         else
           std::cerr << "First intersection is a point" << std::endl;
       }
-          
+
       std::copy(l.begin(), l.end(), o);
       return o;
     }
   };
 
-  Construct_projected_boundary_2 
+  Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2();
@@ -241,19 +233,18 @@ public:
                 << std::endl;
       std::cerr << "Surface1: " << s1 << std::endl;
       std::cerr << "Surface2: " << s2 << std::endl;
-      std::list<CGAL::Object> l;
+      std::list< std::variant<Intersection_curve, Point_2 > > l;
       base.construct_projected_intersections_2_object() (s1, s2,
                                                          std::back_inserter(l));
-          
+
       if (l.size() > 0)
       {
-        Intersection_curve i;
-        if (CGAL::assign(i, l.front()))
-          std::cerr << "First: " << i.first << std::endl;
+        if (const Intersection_curve* i = std::get_if<Intersection_curve>(&l.front()))
+          std::cerr << "First: " << i->first << std::endl;
         else
           std::cerr << "First intersection is not a point" << std::endl;
       }
-          
+
       std::copy(l.begin(), l.end(), o);
       return o;
     }

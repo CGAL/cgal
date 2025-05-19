@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -34,13 +25,14 @@ namespace CGAL {
 template <class R_>
 class TriangleC3
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Triangle_3           Triangle_3;
 
-  typedef cpp11::array<Point_3, 3>          Rep;
+  typedef std::array<Point_3, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -51,15 +43,15 @@ public:
   TriangleC3() {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : base(CGAL::make_array(p, q, r)) {}
+    : base{p, q, r} {}
 
-  bool       operator==(const TriangleC3 &t) const;
-  bool       operator!=(const TriangleC3 &t) const;
+  Boolean operator==(const TriangleC3 &t) const;
+  Boolean operator!=(const TriangleC3 &t) const;
 
   Plane_3    supporting_plane() const;
 
-  bool       has_on(const Point_3 &p) const;
-  bool       is_degenerate() const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean is_degenerate() const;
 
   const Point_3 & vertex(int i) const;
   const Point_3 & operator[](int i) const;
@@ -68,7 +60,7 @@ public:
 };
 
 template < class R >
-bool
+typename R::Boolean
 TriangleC3<R>::operator==(const TriangleC3<R> &t) const
 {
   if (CGAL::identical(base, t.base))
@@ -84,7 +76,7 @@ TriangleC3<R>::operator==(const TriangleC3<R> &t) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 TriangleC3<R>::operator!=(const TriangleC3<R> &t) const
 {
   return !(*this == t);
@@ -127,7 +119,7 @@ TriangleC3<R>::supporting_plane() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 TriangleC3<R>::
 has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
@@ -136,7 +128,7 @@ has_on(const typename TriangleC3<R>::Point_3 &p) const
 }
 
 template < class R >
-bool
+typename R::Boolean
 TriangleC3<R>::is_degenerate() const
 {
   return collinear(vertex(0),vertex(1),vertex(2));

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import codecs
 import re
@@ -28,10 +28,10 @@ def main(argv):
             for l in pkgdesc:
                 do_print = do_print or re.match(".*cgalPkgDescriptionBegin.*", l)
                 if(do_print):
-                    sys.stdout.write(l.encode('utf-8'))
+                  sys.stdout.buffer.write(l.encode('utf-8'))
                 do_print = do_print and (not re.match(".*cgalPkgDescriptionEnd.*", l))
         else:
-            sys.stdout.write(line.encode('utf-8'))
+          sys.stdout.buffer.write(line.encode('utf-8'))
 
 if __name__ == "__main__":
     main(sys.argv)

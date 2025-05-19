@@ -7,16 +7,18 @@ the requirement for traversal of all faces in a graph.
 
 \cgalAssociatedTypesBegin
 
-\cgalAssociatedTypeBegin{boost::graph_traits<FaceListGraph>::%face_iterator} A face iterator (obtained via `faces(g)`) provides access to all of the faces in a graph. 
-A face iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the 
+\cgalAssociatedTypeBegin{boost::graph_traits<FaceListGraph>::%face_iterator} A face iterator (obtained via `faces(g)`) provides access to all of the faces in a graph.
+A face iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the
 face iterator must be the same as the face descriptor of the graph.
 \cgalAssociatedTypeEnd
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `FaceGraph`
+\cgalRefines{FaceGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */
@@ -38,6 +40,6 @@ faces(const FaceListGraph& g);
   This is the case for implementations only marking faces deleted in the face container.
  */
 template <typename FaceListGraph>
-boost::graph_traits<FaceListGraph>::face_size_type
+boost::graph_traits<FaceListGraph>::faces_size_type
 num_faces(const FaceListGraph& g);
 

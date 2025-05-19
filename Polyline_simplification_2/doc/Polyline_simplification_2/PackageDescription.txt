@@ -32,13 +32,13 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `PolylineSimplificationCostFunction`
 - `PolylineSimplificationStopPredicate`
 - `PolylineSimplificationVertexBase_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Polyline_simplification_2::Squared_distance_cost`
 - `CGAL::Polyline_simplification_2::Scaled_squared_distance_cost`
 - `CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost`
@@ -47,7 +47,7 @@
 - `CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold`
 - `CGAL::Polyline_simplification_2::Vertex_base_2`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 - `CGAL::Polyline_simplification_2::simplify()`
 
 */

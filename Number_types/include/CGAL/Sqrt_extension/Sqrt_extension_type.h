@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -25,7 +16,7 @@
 
 
 /*! \file CGAL/Sqrt_extension.h
-    \brief Defines class CGAL::Sqrt_extension.
+    \brief defines class CGAL::Sqrt_extension.
 
     Provides the Number type Sqrt_extension that extends a given number type
     \c NT by a square root. One can add several square roots recursively.
@@ -39,11 +30,12 @@
 
 #include <CGAL/number_type_basic.h>
 #include <boost/operators.hpp>
-#include <CGAL/Interval_arithmetic.h> 
+#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
-#include <boost/optional.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <optional>
 #include <CGAL/NT_converter.h>
+
+#include <type_traits>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -94,15 +86,15 @@ protected:
   std::pair<double,double> cached_value() const {return std::pair<double,double>();}
   void update_cached_value(const std::pair<double,double>&) const {}
 };
-  
- 
+
+
 template <>
 class Interval_optional_caching< ::CGAL::Tag_true >
 {
 protected:
-  typedef boost::optional< std::pair<double,double> > Cached_interval;
+  typedef std::optional< std::pair<double,double> > Cached_interval;
   mutable Cached_interval interval_;
-  void invalidate_interval() {interval_=Cached_interval();}  
+  void invalidate_interval() {interval_=Cached_interval();}
   bool is_cached() const {return (interval_?true:false);}
   std::pair<double,double> cached_value() const {return *interval_;}
   void update_cached_value(const std::pair<double,double>& i) const {interval_=i;}
@@ -119,7 +111,7 @@ class Sqrt_extension : public internal::Interval_optional_caching<FP_TAG>,
 public:
     typedef NT_ NT;
     typedef ROOT_ ROOT;
-    typedef ACDE_TAG_ ACDE_TAG; 
+    typedef ACDE_TAG_ ACDE_TAG;
     typedef Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> Self;
 private:
     NT a0_;
@@ -129,9 +121,9 @@ private:
 
     typedef CGAL::Algebraic_structure_traits<NT> Algebraic_structure_traits_nt;
     typedef CGAL::Real_embeddable_traits<NT> Real_embeddable_traits_nt;
-    
+
     typedef typename CGAL::Coercion_traits< ROOT, NT >::Cast Root_nt_cast;
-    
+
 public:
     //! Default constructor of \c Sqrt_extension
     Sqrt_extension()
@@ -146,22 +138,16 @@ public:
     //non-documented: used for Make_sqrt
     Sqrt_extension(const ROOT& root,bool)
           :a0_(NT(0)), a1_(NT(1)), root_(root), is_extended_(true) {}
-          
+
     /*!\brief Explicit constructor of Sqrt_extension, from any type NTX.
      * \pre NT must constructible from NTX */
     template <class NTX>
     explicit Sqrt_extension(const NTX& i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
 
-    /*! \brief copy constructor  */
-    Sqrt_extension(const Self& x)
-        : a0_(x.a0()),
-          a1_(x.a1()),
-          root_(x.root()),
-          is_extended_(x.is_extended()){}
 
 
-    /*! \brief Expicite constructor of Sqrt_extension, from
+    /*! \brief Explicit constructor of Sqrt_extension, from
      *  \c Sqrt_extension<NTX,ROOTX>.
      *  \pre NT must constructible from NTX
      *  \pre ROOT must constructible from ROOTX */
@@ -189,13 +175,13 @@ public:
      *  \c polynomial. The bool
      *  \pre NT must constructible from (NTX,NTX)
      *  \pre ROOT must constructible from (NTX,NTX)
-     */    
+     */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    typename boost::enable_if< boost::mpl::and_<
-      boost::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      boost::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    > >::type* = 0  )
+    std::enable_if_t<
+      std::is_same_v< typename Fraction_traits<NT>::Numerator_type,NTX > &&
+      std::is_same_v< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+    >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;
@@ -203,10 +189,10 @@ public:
       a0_ = compose_nt(-b,2*a);
       root_ = CGAL_NTS square(a0_) - compose_root(c,a);
       if(CGAL_NTS is_zero(root_)) {
-	is_extended_ = false;
+        is_extended_ = false;
       } else {
-	a1_ = (is_smaller ? -1 : 1);
-	is_extended_ = true;
+        a1_ = (is_smaller ? -1 : 1);
+        is_extended_ = true;
       }
     }
     else {
@@ -218,7 +204,7 @@ public:
     }
   }
 
-  
+
   Self conjugate() const
   {
     if(!is_extended_) return *this;
@@ -238,21 +224,21 @@ public:
     NT&        a1()       { return a1_; }
     NT&        beta()       { return a1_; }  //for backward compatibility
     //! Access operator for root_, \c const
-    inline const ROOT& root() const { return root_; }  
+    inline const ROOT& root() const { return root_; }
     inline const ROOT& gamma() const { return root_; }  //for backward compatibility
     //! Access operator for is_extended_, \c const
     inline const bool& is_extended() const { return is_extended_; }
     inline bool is_rational() const {
-      CGAL_precondition( (boost::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
+      CGAL_precondition( (std::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
       return !is_extended_;} //for backward compatibility
-    
+
     //!check if the number is an extension (test the values) and update the internal flag
     inline bool check_if_is_extended() {
-      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root_)) 
+      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root_))
         is_extended_ = false;
       return is_extended_;
     }
-    
+
     //! Access operator for root_
     //ROOT& root() { return root_; }
 
@@ -272,31 +258,31 @@ public:
     {
       if (! is_extended_)
           return CGAL_NTS to_interval(a0_);
-      
+
       const CGAL::Interval_nt<false>&  a0_int = CGAL_NTS to_interval(a0_);
       const CGAL::Interval_nt<false>&  a1_int = CGAL_NTS to_interval(a1_);
       const CGAL::Interval_nt<false>&  root_int = CGAL_NTS to_interval(root_);
 
       CGAL::Interval_nt<false>::Protector p;
-      const CGAL::Interval_nt<false>&  x_int = 
+      const CGAL::Interval_nt<false>&  x_int =
           a0_int + (a1_int * CGAL::sqrt(root_int));
 
       std::pair<double, double> res(x_int.inf(), x_int.sup());
       this->update_cached_value(res);
       return res;
     }
-    
+
     std::pair<double,double> to_interval() const
     {
       std::pair<double,double> ret=this->is_cached()?this->cached_value():compute_to_interval();
       return ret;
-    }    
+    }
 
     //! propagates the simplify command to the members of xx
     void simplify(){
       if(is_extended_){
         if(CGAL_NTS is_zero(a1_)){
-          is_extended_ = false; 
+          is_extended_ = false;
         }else{
           CGAL_NTS simplify(a1_);
           CGAL_NTS simplify(root_);
@@ -332,7 +318,7 @@ public:
             return CGAL_NTS sign(a0());
 
         if (FP_TAG::value){
-          const std::pair<double, double>&  x_in = this->to_interval(); 
+          const std::pair<double, double>&  x_in = this->to_interval();
 
           if (x_in.first > 0)
             return (CGAL::POSITIVE);
@@ -414,8 +400,8 @@ public:
                 return *this = Self (a0_-p.a0_);
         }
     }
-      
-    Self& operator *= (const Self& p){   
+
+    Self& operator *= (const Self& p){
       this->invalidate_interval();
         if(is_extended_){
             if (p.is_extended_){
@@ -423,7 +409,7 @@ public:
                 Self::check_roots(*this, p);
                 #endif
                 return *this = Self (
-                        a0_*p.a0_+a1_*p.a1_*Root_nt_cast()(root_),  
+                        a0_*p.a0_+a1_*p.a1_*Root_nt_cast()(root_),
                         a0_*p.a1_+a1_*p.a0_,
                         root_);
             }else{
@@ -434,20 +420,20 @@ public:
                 return *this = Self (a0_*p.a0_, a0_*p.a1_, p.root_);
             else
                 return *this = Self (a0_*p.a0_);
-        }   
+        }
     }
     Self& operator /= (const Self& p) {
       this->invalidate_interval();
 
         CGAL_assertion( ! CGAL_NTS is_zero(p) );
         typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
-        
+
         if(p.is_extended_){
             NT denom = p.a0_*p.a0_ - p.a1_*p.a1_ * Root_nt_cast()(p.root_);
-            if ( CGAL_NTS is_zero(denom) ) {                         
+            if ( CGAL_NTS is_zero(denom) ) {
                 // this is for the rare case in which root is a square
-                // and the (pseudo) algebraic conjugate of p becomes zero 
-                *this = Self(idiv(a0_, NT(2)*p.a0_) + idiv( a1_, NT(2)*p.a1_));                
+                // and the (pseudo) algebraic conjugate of p becomes zero
+                *this = Self(idiv(a0_, NT(2)*p.a0_) + idiv( a1_, NT(2)*p.a1_));
             }else{
                 *this *= Self(p.a0_,-p.a1_,p.root_);
                 *this =  Self( idiv(a0_,denom), idiv(a1_,denom), root_);
@@ -459,7 +445,7 @@ public:
                 *this = Self(idiv(a0_,p.a0_));
             }
         }
-        return *this; 
+        return *this;
     }
 
 //------------------------------------------------------------------
@@ -514,7 +500,7 @@ public:
     }
 
 
-    CGAL::Comparison_result 
+    CGAL::Comparison_result
         compare (const CGAL_int(NT)& num) const {
         return this->compare(NT(num));
     }
@@ -527,9 +513,9 @@ compare (const NT& num) const {
         return (CGAL::compare (a0_, num));
 
     if (FP_TAG::value){
-      const std::pair<double, double>&  x_in = this->to_interval(); 
-      const std::pair<double, double>&  y_in = CGAL::to_interval (num); 
-      
+      const std::pair<double, double>&  x_in = this->to_interval();
+      const std::pair<double, double>&  y_in = CGAL::to_interval (num);
+
       if (x_in.second < y_in.first)
         return (SMALLER);
       else if (x_in.first > y_in.second)
@@ -540,8 +526,8 @@ compare (const NT& num) const {
 }
 
 // compare of two values that may be in different extension
-// However, the default is, that the the numbers are defined over the same
-// extension. 
+// However, the default is, that the numbers are defined over the same
+// extension.
 CGAL::Comparison_result
   compare(const Self& y, bool in_same_extension = !ACDE_TAG::value ) const
 {
@@ -555,9 +541,9 @@ CGAL::Comparison_result
 
     if (FP_TAG::value)
     {
-      const std::pair<double, double>&  x_in = this->to_interval(); 
-      const std::pair<double, double>&  y_in = y.to_interval(); 
-      
+      const std::pair<double, double>&  x_in = this->to_interval();
+      const std::pair<double, double>&  y_in = y.to_interval();
+
       if (x_in.second < y_in.first)
         return (SMALLER);
       else if (x_in.first > y_in.second)
@@ -609,7 +595,7 @@ CGAL::Comparison_result
       sign_right = ZERO;
   }
 
-  // Check whether on of the terms is zero. In this case, the comparsion
+  // Check whether on of the terms is zero. In this case, the comparison
   // result is simpler:
   if (sign_left == ZERO)
   {
@@ -642,7 +628,7 @@ CGAL::Comparison_result
   // We now square both terms and look at the sign of the one-root number:
   //   ((a1 - a2)^2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
   //
-  // If both signs are negative, we should swap the comparsion result
+  // If both signs are negative, we should swap the comparison result
   // we eventually compute.
   const NT          A = diff_a0*diff_a0 - (x_sqr + y_sqr);
   const NT          B = 2 * a1_ * y.a1_;
@@ -657,8 +643,48 @@ CGAL::Comparison_result
 
   return (EQUAL);
 }
+
+  private:
+  template <class A,class B,class C> static bool
+  is_equal (const Sqrt_extension<A,B,Tag_false,C>& p1, const Sqrt_extension<A,B,Tag_false,C>& p2)
+  { return (p1-p2).is_zero(); }
+  template <class A,class B,class C> static bool
+  is_equal (const Sqrt_extension<A,B,Tag_true,C>& p1, const Sqrt_extension<A,B,Tag_true,C>& p2)
+  { return ( p1.compare(p2) == CGAL::ZERO ); }
+
+  public:
+  // BINARY operators
+  friend bool operator == (const Sqrt_extension& p1, const Sqrt_extension& p2)
+    { return Sqrt_extension::is_equal(p1, p2); } // if constexpr (ACDE_TAG::value) ...
+  friend bool operator <  (const Sqrt_extension& p1, const Sqrt_extension& p2)
+    { return ( p1.compare(p2) == CGAL::SMALLER ); }
+
+  // NT
+  friend bool operator == (const Sqrt_extension& p, const NT& num)
+    { return (p-num).is_zero();}
+
+  //CGAL_int(NT)
+  friend bool operator == (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return (p-num).is_zero();}
+  friend bool operator <  (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return ( p.compare(num) == CGAL::SMALLER ); }
+  friend bool operator >  (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return ( p.compare(num) == CGAL::LARGER ); }
 };
 
+// The two operators are moved out of the class scope (where they were friends)
+// in order to work around a VC2017 compilation problem
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator <  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::SMALLER);
+}
+
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator >  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::LARGER);
+}
 /*!
  * Compute the square of a one-root number.
  */
@@ -719,7 +745,7 @@ struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>, Sqrt_extension<
     }
 };
 
-// UNARY 
+// UNARY
 template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>
   operator + (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p) { return p; }
 
@@ -732,79 +758,24 @@ operator - (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p){
 }
 
 
-// BINARY 
-template <class NT,class ROOT,class FP_TAG> bool
-operator == (const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p2)
-{ return (p1-p2).is_zero(); }
-template <class NT,class ROOT,class FP_TAG> bool
-operator == (const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p2)
-{ return ( p1.compare(p2) == CGAL::ZERO ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
-operator < (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
-{ return ( p1.compare(p2) == CGAL::SMALLER ); }
+// BINARY
 
-
-// NT
-// righthand side
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>   bool operator ==
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return (p-num).is_zero();}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator <
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator >
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-
-// lefthand side
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool operator ==
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return  ( p == num );}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator <
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator >
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-
-
-//CGAL_int(NT)
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator ==
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return (p-num).is_zero();}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator <
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator >
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool operator ==
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return  ( p == num );}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator <
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator >
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-
-template<class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline 
+template<class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline
 Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> & x,
 const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> & y){
   return (std::min)(x,y);
 }
-template<class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline 
+template<class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline
 Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> & x,
 const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> & y){
   return (std::max)(x,y);
 }
 
-template <class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline 
+template <class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline
 CGAL::Comparison_result compare (
-    const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x, 
+    const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x,
     const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& y,
     bool in_same_extension = !ACDE_TAG::value ){
   return x.compare(y,in_same_extension);

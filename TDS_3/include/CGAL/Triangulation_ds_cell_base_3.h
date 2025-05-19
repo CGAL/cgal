@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -28,8 +19,8 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/assertions.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 
 namespace CGAL {
 
@@ -47,7 +38,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() 
+  Triangulation_ds_cell_base_3()
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     mark = -1;
@@ -57,7 +48,6 @@ public:
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : V{v0, v1, v2, v3}
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
@@ -65,38 +55,18 @@ public:
     mark2 = -1;
 #endif
   }
-#else
-  {
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3,
                                Cell_handle   n0, Cell_handle   n1,
                                Cell_handle   n2, Cell_handle   n3)
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N{n0, n1, n2, n3}, V{v0, v1, v2, v3} {}
-#else
-  {
-    set_neighbors(n0, n1, n2, n3);
-    set_vertices(v0, v1, v2, v3);
-#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
-    mark = -1;
-    mark2 = -1;
-#endif
-  }
-#endif
 
   // ACCESS FUNCTIONS
 
   Vertex_handle vertex(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3 );
+    CGAL_precondition( i >= 0 && i <= 3 );
     CGAL_assume( i >= 0 && i <= 3 );
     return V[i];
   }
@@ -120,13 +90,13 @@ public:
     if (v == V[0]) { return 0; }
     if (v == V[1]) { return 1; }
     if (v == V[2]) { return 2; }
-    CGAL_triangulation_assertion( v == V[3] );
+    CGAL_assertion( v == V[3] );
     return 3;
   }
 
   Cell_handle neighbor(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     return N[i];
   }
 
@@ -149,7 +119,7 @@ public:
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
     if (n == N[2]) return 2;
-    CGAL_triangulation_assertion( n == N[3] );
+    CGAL_assertion( n == N[3] );
     return 3;
   }
 
@@ -157,14 +127,14 @@ public:
 
   void set_vertex(int i, Vertex_handle v)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( i >= 0 && i <= 3);
     V[i] = v;
   }
 
   void set_neighbor(int i, Cell_handle n)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != n.operator->() );
+    CGAL_precondition( i >= 0 && i <= 3);
+    CGAL_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -190,10 +160,10 @@ public:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != &*n0 );
-    CGAL_triangulation_precondition( this != &*n1 );
-    CGAL_triangulation_precondition( this != &*n2 );
-    CGAL_triangulation_precondition( this != &*n3 );
+    CGAL_precondition( this != n0.operator->() );
+    CGAL_precondition( this != n1.operator->() );
+    CGAL_precondition( this != n2.operator->() );
+    CGAL_precondition( this != n3.operator->() );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -210,12 +180,12 @@ public:
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container(); }
+  void for_compact_container(void* p) { N[0].for_compact_container(p); }
 
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-  
+
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
   int mark;
   int mark2;

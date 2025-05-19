@@ -1,5 +1,4 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/algorithm.h>
 #include <cstdio>
 #include <cstring>
@@ -15,8 +14,7 @@
 
 typedef double coord_type;
 
-typedef CGAL::Simple_cartesian<coord_type>  SC;
-typedef CGAL::Filtered_kernel<SC> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
@@ -62,18 +60,18 @@ typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 template <class Alpha_shape,class InputIterator, class OutputIterator>
 void
 alpha_edges(InputIterator begin, InputIterator end,
-	    const typename Alpha_shape::FT &Alpha,
-	    bool mode,
-	    OutputIterator out)
-{ 
+            const typename Alpha_shape::FT &Alpha,
+            bool mode,
+            OutputIterator out)
+{
   typedef typename Alpha_shape::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
   typename Alpha_shape::Triangulation dt;
   dt.insert(begin,end);
   Alpha_shape A(dt);
-  
-  if (mode) 
-    { A.set_mode(Alpha_shape::GENERAL); } 
-  else 
+
+  if (mode)
+    { A.set_mode(Alpha_shape::GENERAL); }
+  else
     { A.set_mode(Alpha_shape::REGULARIZED); };
   A.set_alpha(Alpha);
 
@@ -89,7 +87,7 @@ template <class OutputIterator>
 bool
 file_input(OutputIterator out)
 {
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("data/fin", std::ios::in);
 
   if(is.fail()){
     std::cerr << "unable to open file for input" << std::endl;
@@ -99,11 +97,11 @@ file_input(OutputIterator out)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points from file" << std::endl;
-  CGAL::cpp11::copy_n(std::istream_iterator<Point>(is), n, out);
+  std::copy_n(std::istream_iterator<Point>(is), n, out);
 
   return true;
 }
-    
+
 //------------------ main -------------------------------------------
 
 int main()
@@ -112,12 +110,12 @@ int main()
   if(! file_input(std::back_inserter(points))){
     return -1;
   }
-  
+
   //ExactAlphaComparisonTag is False
   {
     std::vector<Segment> segments;
     alpha_edges<Alpha_shape_2>(points.begin(), points.end(),
-          10000.,Alpha_shape_2::GENERAL, 
+          10000.,Alpha_shape_2::GENERAL,
           std::back_inserter(segments));
 
     std::cout << segments.size() << " alpha shape edges" << std::endl;
@@ -128,13 +126,13 @@ int main()
   {
     std::vector<Segment> segments;
     alpha_edges<Alpha_shape_2_TT>(points.begin(), points.end(),
-          10000.,Alpha_shape_2_TT::GENERAL, 
+          10000.,Alpha_shape_2_TT::GENERAL,
           std::back_inserter(segments));
 
     std::cout << segments.size() << " alpha shape edges" << std::endl;
     std::cout << "Alpha Shape computed" << std::endl;
   }
-  
-  
+
+
   return 0;
 }

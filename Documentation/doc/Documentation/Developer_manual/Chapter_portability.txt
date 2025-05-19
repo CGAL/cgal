@@ -9,14 +9,14 @@
 This chapter gives an overview of issues related to the
 configuration of \cgal that allow you to answer such questions as:
 <UL>
-<LI>Is \em LEDA / <span class="textsc">Gmp</span> there? (Section  \ref secleda_gmp_support)
+<LI>Is \em LEDA / \gmp there? (Section  \ref secleda_gmp_support)
 <LI>Which compiler is this? (Section  \ref secwhich_compiler )
 <LI>Does the compiler support feature X? (Section  \ref secworkaround_flags )
 </UL>
 
-Also addressed here are issues related to writing code for 
-non-standard-compliant compilers.  Compilers have made a lot of progress toward 
-the \cpp-standard recently.  But still they do not fully implement it. There 
+Also addressed here are issues related to writing code for
+non-standard-compliant compilers.  Compilers have made a lot of progress toward
+the \cpp-standard recently.  But still they do not fully implement it. There
 are a few features you may assume; others you may not
 assume. Especially you may assume that the compiler
 <UL>
@@ -24,24 +24,24 @@ assume. Especially you may assume that the compiler
 <LI>supports member templates
 <LI>support for <TT>std::iterator_traits</TT>.
 </UL>
-Still, there are many bugs (sometimes known as "features") left in the 
-compilers.  Have a look at the list of (non-obsolete) workarounds in 
+Still, there are many bugs (sometimes known as "features") left in the
+compilers.  Have a look at the list of (non-obsolete) workarounds in
 Section  \ref secworkaround_flags  to get an idea of which "features" are
 still present.
 
-\section secleda_gmp_support Checking for LEDA or GMP support 
+\section secleda_gmp_support Checking for LEDA or GMP support
 
 In the makefiles included for the compilation of every \cgal program
 (<I>i.e.</I>, those to which the environment variable <TT>CGAL_MAKEFILE</TT> refers),
 
-we define command line switches that set the flags 
+we define command line switches that set the flags
 \code{.cpp}
 CGAL_USE_LEDA, CGAL_USE_GMP
 \endcode
 
 iff \cgal is configured with \leda or GMP support, respectively.
 
-\section secboost_support Using Boost 
+\section secboost_support Using Boost
 
 \cgal code can rely on Boost libraries to some extent.
 
@@ -57,15 +57,15 @@ is used only internally.  Requirements are lower for code that
 is not released such as the test-suite. Boost libraries already accepted
 in the C++ Standard Library Technical Report will be the first easy
 candidates (these are marked <TT>[TR1]</TT> in the list below). However,
-wrapping the use within \cgal is generally adviced (like what is done
+wrapping the use within \cgal is generally advised (like what is done
 in the `cpp11` namespace).
 Finally, the policy is that if a better alternative exists in Boost and is
 allowed, then \cgal code must use it instead of a \cgal version (which
 probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
-A list of reasonnable Boost libraries to use in the \cgal API is
-Graph, Optional, Parameter (for packages already using it),
+A list of reasonable Boost libraries to use in the \cgal API is
+Graph, Parameter (for packages already using it),
 Property Map, Smart Pointers (for packages already using it),
 Variant.
 
@@ -74,7 +74,7 @@ used, and if not indicate it while submitting your changes (feature, small-featu
 or pull request), or even by sending an email to cgal-develop during the development.
 
 
-\section secusing_version_macros Using the version-number and configuration macros and flags 
+\section secusing_version_macros Using the version-number and configuration macros and flags
 
 Here is a short example on how these macros can be used. Assume you have some
 piece of code that depends on whether you have \leda-4.0 or later.
@@ -87,84 +87,84 @@ piece of code that depends on whether you have \leda-4.0 or later.
 ... put your code for LEDA 4.0 or later ...
 #else
 ... put your code for the other case ...
-#endif 
+#endif
 \endcode
 
-\section secwhich_compiler Identifying compilers and architectures 
+\section secwhich_compiler Identifying compilers and architectures
 
-Every compiler defines some macros that allow you to identify it; see 
+Every compiler defines some macros that allow you to identify it; see
 the following table.
 
 <TABLE BORDER=2><TR><TD>
   <TABLE CELLSPACING=5 >
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-GNU 3.2.1       
+GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC__</TT>             
+`__GNUC__`
     <TD ALIGN=LEFT NOWRAP>
 3
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-GNU 3.2.1       
+GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC_MINOR__</TT>      
+`__GNUC_MINOR__`
     <TD ALIGN=LEFT NOWRAP>
 2
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-GNU 3.2.1       
+GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC_PATCHLEVEL__</TT> 
+`__GNUC_PATCHLEVEL__`
     <TD ALIGN=LEFT NOWRAP>
 1
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Microsoft VC7.1 
+Microsoft VC7.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>_MSC_VER</TT>               
+`_MSC_VER`
     <TD ALIGN=LEFT NOWRAP>
 1310
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Microsoft VC8.0 
+Microsoft VC8.0
     <TD ALIGN=LEFT NOWRAP>
-<TT>_MSC_VER</TT>               
+`_MSC_VER`
     <TD ALIGN=LEFT NOWRAP>
 1400
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Intel 11.1      
+Intel 11.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__INTEL_COMPILER</TT>      
+`__INTEL_COMPILER`
     <TD ALIGN=LEFT NOWRAP>
 1110
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Clang 2.9       
+Clang 2.9
     <TD ALIGN=LEFT NOWRAP>
-<TT>__clang_major__</TT>     
+`__clang_major__`
     <TD ALIGN=LEFT NOWRAP>
 2
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Clang 2.9       
+Clang 2.9
     <TD ALIGN=LEFT NOWRAP>
-<TT>__clang_minor__</TT>     
+`__clang_minor__`
     <TD ALIGN=LEFT NOWRAP>
 9
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-SUN 5.3         
+SUN 5.3
     <TD ALIGN=LEFT NOWRAP>
-<TT>__SUNPRO_CC</TT>           
+`__SUNPRO_CC`
     <TD ALIGN=LEFT NOWRAP>
 0x530
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-SUN 5.10        
+SUN 5.10
     <TD ALIGN=LEFT NOWRAP>
-<TT>__SUNPRO_CC</TT>           
+`__SUNPRO_CC`
     <TD ALIGN=LEFT NOWRAP>
 0x5100
 </TABLE>
@@ -176,23 +176,23 @@ There are also flags to identify the architecture.
   <TABLE CELLSPACING=5 >
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-SGI   
+SGI
     <TD ALIGN=LEFT NOWRAP>
-<TT>__sgi</TT>
+`__sgi`
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-SUN   
+SUN
     <TD ALIGN=LEFT NOWRAP>
-<TT>__sun</TT>
+`__sun`
   <TR>
     <TD ALIGN=LEFT NOWRAP>
-Linux 
+Linux
     <TD ALIGN=LEFT NOWRAP>
-<TT>__linux</TT>
+`__linux`
 </TABLE>
 </TABLE>
 
-\section secproblems_and_workarounds Known problems and workarounds 
+\section secproblems_and_workarounds Known problems and workarounds
 
 For (good) reasons that will not be discussed here, it was decided to
 use \cpp for the development of \cgal. An international standard for
@@ -200,15 +200,15 @@ use \cpp for the development of \cgal. An international standard for
 level of compliance varies widely between different
 compilers, let alone bugs.
 
-\subsection secworkaround_flags Workaround flags 
+\subsection secworkaround_flags Workaround flags
 
 In order to provide a uniform development environment for \cgal that
 looks more standard compliant than what the compilers provide, a number
 of workaround flags and macros have been created.  Some of the
 workaround macros are set in `<CGAL/config.h>`.
 
-using the macros 
-listed in Section  \ref secwhich_compiler  to identify the compiler. 
+using the macros
+listed in Section  \ref secwhich_compiler  to identify the compiler.
 But most of them are set in the platform-specific configuration files
 
 <CENTER>
@@ -219,25 +219,25 @@ where <I>os-compiler</I> refers to a string describing your
 operating system and compiler that is defined as follows.
 
 <CENTER>
-  <I>\f$ <\f$arch\f$ >\f$</I><TT><I>_</I></TT><I>\f$ <\f$os\f$ >\f$</I><TT><I>-</I></TT><I>\f$ <\f$os-version\f$ >\f$</I><TT><I>_</I></TT><I>\f$ <\f$comp\f$ >\f$</I><TT><I>-</I></TT><I>\f$ <\f$comp-version\f$ >\f$</I>
+  <I>`<arch>_<os>-<os-version>_<comp>-<comp-version>`</I>
 
 </CENTER>
 
 <DL>
-<DT><B>\f$ <\f$arch\f$ >\f$</B><DD> is the system architecture as defined by <TT>uname -p</TT> or <TT>uname -m</TT>,
-<DT><B>\f$ <\f$os\f$ >\f$</B><DD> is the operating system as defined by <TT>uname
+<DT><B>`<arch>`</B><DD> is the system architecture as defined by <TT>uname -p</TT> or <TT>uname -m</TT>,
+<DT><B>`<os>`</B><DD> is the operating system as defined by <TT>uname
     -s</TT>,
-<DT><B>\f$ <\f$os-version\f$ >\f$</B><DD> is the operating system version as defined by
-  "<TT>uname -r</TT>",
-<DT><B>\f$ <\f$comp\f$ >\f$</B><DD> is the basename of the compiler executable (if it
+<DT><B>`<os-version>`</B><DD> is the operating system version as defined by
+  <TT>uname -r</TT>,
+<DT><B>`<comp>`</B><DD> is the basename of the compiler executable (if it
   contains spaces, these are replaced by "-"), and
-<DT><B>\f$ <\f$comp-version\f$ >\f$</B><DD> is the compiler's version number (which
+<DT><B>`<comp-version>`</B><DD> is the compiler's version number (which
   unfortunately can not be derived in a uniform manner, since it is
   quite compiler specific).
 </DL>
 
-Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>. For more information, see the \cgal 
-\link installation installation guide \endlink.
+Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>.
+For more information, see the \cgal \link usage usage guide \endlink.
 
 This platform-specific configuration file is created during
 
@@ -249,22 +249,22 @@ These test programs reside in the directory
 
 </CENTER>
 where <TT>$(CGAL_ROOT)</TT> represents the installation directory for the library.
-The names of all testfiles, which correspond to the names of the flags, 
+The names of all testfiles, which correspond to the names of the flags,
 
-start with "<TT>CGAL_CFG_</TT>" followed by
+start with <TT>CGAL_CFG_</TT> followed by
 <UL>
 <LI><I>either</I> a description of a bug ending with
-  "<TT>_BUG</TT>"
+  <TT>_BUG</TT>
 <LI><I>or</I> a description of a feature starting with
-  "<TT>NO_</TT>".
+  <TT>NO_</TT>.
 </UL>
-For any of these files a corresponding flag is set in the 
+For any of these files a corresponding flag is set in the
 platform-specific configuration file, iff either compilation or execution
 fails. The reasoning behind this sort of negative scheme is that on
 standard-compliant platforms there should be no flags at all.
 
 Currently (CGAL-3.4-I-181), we have the following configuration
-test files (and flags). The short descriptions that are given in the files are 
+test files (and flags). The short descriptions that are given in the files are
 included here. In some cases, it is probably necessary to have a look at the
 actual files to understand what the flag is for. This list is just to
 give an overview.
@@ -272,53 +272,53 @@ Be sure to have a look at <TT>Installation/config/testfiles/</TT> to have an
 up-to-date version of this list.
 
 <DL>
-<DT><B><TT>CGAL_CFG_LONGNAME_BUG</TT></B><DD> 
+<DT><B><TT>CGAL_CFG_LONGNAME_BUG</TT></B><DD>
 
-   This flag is set if a compiler (or assembler or linker) has problems 
+   This flag is set if a compiler (or assembler or linker) has problems
  with long symbol names.
 
-<DT><B><TT>CGAL_CFG_NET2003_MATCHING_BUG</TT></B><DD> 
+<DT><B><TT>CGAL_CFG_NET2003_MATCHING_BUG</TT></B><DD>
 
    This flag is set, if the compiler does not match a member definition
  to an existing declaration. This bug shows up on VC 7.1 Beta
  (`cl1310`).
 
-<DT><B><TT>CGAL_CFG_NO_LIMITS</TT></B><DD> 
+<DT><B><TT>CGAL_CFG_NO_LIMITS</TT></B><DD>
 
    This flag is set if a compiler does not know the limits.
 
-<DT><B><TT>CGAL_CFG_NO_LONG_LONG</TT></B><DD> 
+<DT><B><TT>CGAL_CFG_NO_LONG_LONG</TT></B><DD>
 
    The `long long` built-in integral type is not part of the
-  <span class="textsc">Iso</span> C++ standard, but many compilers support it
-  nevertheless, since it is part of the <span class="textsc">Iso</span> C standard. This
+  \iso C++ standard, but many compilers support it
+  nevertheless, since it is part of the \iso C standard. This
   flag is set if it is supported.
 
-<DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD> 
+<DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD>
 
-    Nested templates in template parameter, such as `template <
-    template <class T> class A>` are not supported by any compiler.
-    This flag is set if they are not supported.
+  Nested templates in template parameter, such as `template <
+  template <class T> class A>` are not supported by any compiler.
+  This flag is set if they are not supported.
 </DL>
 
-\subsection secworkaround_macros Macros connected to workarounds/compilers 
+\subsection secworkaround_macros Macros connected to workarounds/compilers
 
 Some macros are defined according to certain workaround flags. This is
-done to avoid some \#`ifdef`s in our actual code.
+done to avoid some `ifdef`s in our actual code.
 
 <DL>
 <DT><B><TT>CGAL_LITTLE_ENDIAN</TT></B><DD> set, iff
- 
-  
+
+
   <TT>CGAL_CFG_NO_BIG_ENDIAN</TT> is set.
 <DT><B><TT>CGAL_BIG_ENDIAN</TT></B><DD> set, iff
- 
-  
+
+
   <TT>CGAL_CFG_NO_BIG_ENDIAN</TT> is not set.
 
 <DT><B><TT>CGAL_DEPRECATED</TT></B><DD>
- 
-  
+
+
   used to declare a function as deprecated  -  just add it before the
   function declaration.  You may also surround deprecated code with
   <TT>CGAL_NO_DEPRECATED_CODE</TT>, such that it is easy to test
@@ -333,7 +333,7 @@ CGAL_DEPRECATED void foo(int i)
 \endcode
 </DL>
 
-\subsection secvarious_problems Various other problems and solutions 
+\subsection secvarious_problems Various other problems and solutions
 
 <DL>
 <DT><B><B>min and max</B></B><DD>
@@ -350,7 +350,7 @@ must be defined in the body of the class.
 
 <DT><B><B>Function parameter matching</B></B><DD>
 
-The function parameter matching capacities of Visual \cpp are rather limited. 
+The function parameter matching capacities of Visual \cpp are rather limited.
 Failures occur when your function `bar` is like
 \code{.cpp}
   bar(std::some_iterator<std::some_container<T>>....) ...
@@ -364,14 +364,14 @@ are defined, not the places where they are called.
 This may not be true anymore for recent VC++ versions.
 
 <DT><B><B>typedefs of derived classes</B></B><DD>
-Microsoft VC++ does not like the following sorts of typedefs that are 
+Microsoft VC++ does not like the following sorts of typedefs that are
 standard
 \code{.cpp}
 class A : public B::C {
         typedef B::C C;
 };
 \endcode
-It says that the typedef is "redefinition".  So such typedefs should be 
+It says that the typedef is "redefinition".  So such typedefs should be
 enclosed by
 \code{.cpp}
 #ifndef _MSC_VER
@@ -381,7 +381,7 @@ enclosed by
 This may not be true anymore for recent VC++ versions.
 </DL>
 
-\section secportability_req_and_rec Requirements and recommendations 
+\section secportability_req_and_rec Requirements and recommendations
 
 Recommendations:
 <UL>

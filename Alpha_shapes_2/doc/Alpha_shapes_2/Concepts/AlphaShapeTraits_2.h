@@ -6,15 +6,13 @@
 The concept `AlphaShapeTraits_2` describes the requirements for the geometric traits
 class of the underlying Delaunay triangulation of a basic alpha shape.
 
-\cgalRefines `DelaunayTriangulationTraits_2`
+\cgalRefines{DelaunayTriangulationTraits_2 if the underlying triangulation of the alpha shape is a Delaunay triangulation,
+  Periodic_2DelaunayTriangulationTraits_2 if the underlying triangulation of the alpha shape is a periodic Delaunay triangulation}
 
-In addition to the requirements described in the concept
-::DelaunayTriangulationTraits_2, the geometric traits class of a
-Delaunay triangulation plugged in a basic alpha shapes provides the
-following.
-
-\cgalHasModel All models of `Kernel`.
-\cgalHasModel Projection traits such as `CGAL::Projection_traits_xy_3<K>`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModelsBare{Projection traits such as `CGAL::Projection_traits_xy_3<K>`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */
@@ -22,54 +20,54 @@ following.
 class AlphaShapeTraits_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 A coordinate type.
-The type must provide a copy constructor, assignment, comparison 
-operators, negation, multiplication, division and allow the 
-declaration and initialization with a small integer constant 
-(cf. requirements for number types). 
- An obvious choice would be coordinate type of the point class. 
-*/ 
-typedef unspecified_type FT; 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types).
+ An obvious choice would be coordinate type of the point class.
+*/
+typedef unspecified_type FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// Only a default constructor is required. Note that further constructors can be provided.
 /// @{
 
 /*!
-A default constructor. 
-*/ 
-  AlphaShapeTraits_2(); 
+A default constructor.
+*/
+  AlphaShapeTraits_2();
 
-/// @} 
+/// @}
 
-/// \name Constructions by function objects 
+/// \name Constructions by function objects
 /// @{
 
 /*!
-Returns an object, which has to be able to compute the squared radius of the 
-circle of the points `p0, p1, p2` or the squared radius of smallest circle 
-of the points `p0, p1`, as `FT` associated with <I>the metric used 
-by `Dt`</I>. 
-*/ 
-Compute_squared_radius_2 compute_squared_radius_2_object(); 
+Returns an object, which has to be able to compute the squared radius of the
+circle of the points `p0, p1, p2` or the squared radius of smallest circle
+of the points `p0, p1`, as `FT` associated with <I>the metric used
+by `Dt`</I>.
+*/
+Compute_squared_radius_2 compute_squared_radius_2_object();
 
-/// @} 
+/// @}
 
-/// \name Predicate by function object 
+/// \name Predicate by function object
 /// @{
 
 /*!
-Returns an object, which has to be able to compute the relative position of 
-point `test` to the smallest circle of the points `p0, p1`, using 
-<I>the same metric as `Dt`</I>. 
-*/ 
-Side_of_bounded_circle_2 side_of_bounded_circle_2_object(); 
+Returns an object, which has to be able to compute the relative position of
+point `test` to the smallest circle of the points `p0, p1`, using
+<I>the same metric as `Dt`</I>.
+*/
+Side_of_bounded_circle_2 side_of_bounded_circle_2_object();
 
 /// @}
 

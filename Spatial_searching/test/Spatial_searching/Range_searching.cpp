@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <cassert>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -7,6 +6,7 @@
 #include <CGAL/Fuzzy_iso_box.h>
 #include "Point_with_info.h"
 
+#include <cassert>
 #include <vector>
 #include <iostream>
 
@@ -71,7 +71,7 @@ void run(std::list<Point> all_points)
   tree.search(std::back_inserter( result ), approximate_range);
   // test the results of the approximate query
   for (typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    // a point we found may be slighlty outside the isocuboid
+    // a point we found may be slightly outside the isocuboid
     assert(! outer_ic.has_on_unbounded_side(get_point(*pt)));
     all_points.remove(get_point(*pt));
   }

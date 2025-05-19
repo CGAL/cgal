@@ -6,7 +6,6 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/algorithm.h>
-#include <CGAL/assertions.h>
 
 #include <fstream>
 #include <iostream>
@@ -39,7 +38,7 @@ void alpha_edges( const Alpha_shape_2& A, OutputIterator out)
 template <class OutputIterator>
 bool file_input(OutputIterator out)
 {
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("data/fin", std::ios::in);
 
   if(is.fail())
   {
@@ -50,7 +49,7 @@ bool file_input(OutputIterator out)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points from file" << std::endl;
-  CGAL::cpp11::copy_n(std::istream_iterator<Point>(is), n, out);
+  std::copy_n(std::istream_iterator<Point>(is), n, out);
 
   return true;
 }

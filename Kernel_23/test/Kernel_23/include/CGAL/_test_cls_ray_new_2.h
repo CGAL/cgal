@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_RAY_NEW_2_H
 #define CGAL__TEST_CLS_RAY_NEW_2_H
@@ -31,13 +25,14 @@ _test_cls_ray_new_2(const R& )
  std::cout << "Testing class Ray_2";
 
  typedef typename  R::RT    RT;
+ typedef typename  R::FT    FT;
 
  typedef typename  R::Point_2 Point_2;
  typedef typename  R::Vector_2 Vector_2;
  typedef typename  R::Direction_2 Direction_2;
 
  typedef typename  R::Line_2 Line_2;
- typedef typename  R::Ray_2 Ray_2; 
+ typedef typename  R::Ray_2 Ray_2;
 
  typename R::Construct_point_2 construct_point;
  typename R::Construct_vector_2 construct_vector;
@@ -121,6 +116,7 @@ _test_cls_ray_new_2(const R& )
  assert( ! r0.has_on( construct_point( n8, n5, n8 )) );
  assert( r4.has_on( r4.point(7)) );
  assert( r3.collinear_has_on( r3.point(7)) );
+ assert( r3.collinear_has_on( r3.point(FT(42)/FT(13))) );
  assert( r1.collinear_has_on( p3) );
  assert( ! r3.collinear_has_on( p1 ) );
 

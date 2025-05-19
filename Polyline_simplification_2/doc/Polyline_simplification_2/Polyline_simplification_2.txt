@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Polyline_simplification
 
 \cgalAutoToc
@@ -66,7 +66,7 @@ The specific way in which the removal cost is calculated is called the *cost*
 function. The user can choose different strategies by choosing
 a cost function object.
 
-This package provides the three cost functions formulated in 
+This package provides the three cost functions formulated in
 \cite cgal:dds-scs-09.  As the cost function is a template argument of the
 simplification function, users can write and use their own.  The
 provided cost functions are all based on measuring the Euclidean
@@ -106,7 +106,7 @@ regions of the same polyline.
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
 `q`, different from `p` and `r` and let \f$ v_2 = \min \{ \mathrm{squared\_distance}((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
-\f$v_1/v_2\f$, and it is +infinity when the set of points \f${t_1..t_m}\f$ 
+\f$v_1/v_2\f$, and it is +infinity when the set of points \f${t_1..t_m}\f$
 is empty (possible if the point `q` is on the convex hull).
 See also \cgalFigureRef{figure_scaledAndHybrid}.
 
@@ -158,7 +158,7 @@ the number of vertices.
 \subsection Subsection_PolylineSimplification_Simplifying_Several Simplifying Several Polylines
 
 In the second example we insert several polygons in a
-`Constrained_triangulation_plus_2`.    As a vertex 
+`Constrained_triangulation_plus_2`.    As a vertex
 type we have to use `CGAL::Polyline_simplification_2::Vertex_base_2`
 as vertices may be marked as non-removable. The simplification
 algorithm marks the first and last vertex of polyline constraints
@@ -166,6 +166,16 @@ as well as intersections.  Finally, we iterate
 over all vertices of all polyline constraints.
 
 \cgalExample{Polyline_simplification_2/simplify.cpp}
+
+Note that when polylines share subsequences of polyline vertices they can get simplified simultaneously.
+
+\cgalFigureBegin{figure_overlapping_polylines, overlapping_polylines.png}
+Simplification of overlapping subsequence of polyline vertices
+\cgalFigureEnd
+
+\cgalExample{Polyline_simplification_2/simplify_overlapping_polylines.cpp}
+
+
 
 
 \subsection Subsection_PolylineSimplification_Keeping Keeping Points While Removing Vertices
@@ -196,6 +206,12 @@ At the end we remove the points that were kept from the constraints.
 
 \cgalExample{Polyline_simplification_2/points_and_vertices.cpp}
 
+\subsection Subsection_PolylineSimplification_Terrain Simplification of a Terrain
+
+It is possible to use the class `Projection_traits_xy_3` in order to simplify polylines in space.
+Note that the segment length is computed in the xy-plane, and the polyline must not have any vertical segment.
+
+\cgalExample{Polyline_simplification_2/simplify_terrain.cpp}
 
 \section Section_PolylineSimplification_History Design and Implementation History
 
@@ -209,6 +225,6 @@ GeometryFactory.
 
 
 
- 
+
 */
 }

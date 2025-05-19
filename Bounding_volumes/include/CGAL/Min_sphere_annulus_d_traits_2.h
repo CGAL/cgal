@@ -1,30 +1,24 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_2_H
 #define CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_2_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 // includes
 #  include <CGAL/Optimisation/Access_dimension_2.h>
@@ -67,9 +61,6 @@ class Min_sphere_annulus_d_traits_2 {
     // typedef  typename K::Construct_point_2    Construct_point_d;
     typedef  _Construct_point_2<K>       Construct_point_d;
 
-    // creation
-    Min_sphere_annulus_d_traits_2( ) { }
-    Min_sphere_annulus_d_traits_2( const Min_sphere_annulus_d_traits_2<K_,ET_,NT_>&) {}
 
     // operations
     Access_dimension_d

@@ -5,9 +5,9 @@ namespace RealEmbeddableTraits_ {
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` computes the sign of a real embeddable number. 
+This `AdaptableUnaryFunction` computes the sign of a real embeddable number.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `RealEmbeddableTraits`
 
@@ -16,28 +16,28 @@ This `AdaptableUnaryFunction` computes the sign of a real embeddable number.
 class Sgn {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Type convertible to `CGAL::Sign`. 
-*/ 
-typedef unspecified_type result_type; 
+Type convertible to `CGAL::Sign`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `RealEmbeddableTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `RealEmbeddableTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Computes the sign of \f$ x\f$. 
-*/ 
-result_type operator()(argument_type x); 
+Computes the sign of \f$ x\f$.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

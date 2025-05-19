@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -27,24 +18,24 @@
 #define CGAL_ISO_RECTANGLE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 
 template <class R_>
 class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 {
+  typedef typename R_::Boolean               Boolean;
+  typedef typename R_::Bounded_side          Bounded_side;
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Iso_rectangle_2                    Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Iso_rectangle_2>::value));
+  static_assert(std::is_same<Self, typename R_::Iso_rectangle_2>::value);
 
 public:
 
@@ -89,70 +80,59 @@ public:
     : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw)) {}
 
   Iso_rectangle_2(const Bbox_2& bbox)
-    : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.xmax(), bbox.ymax())) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(),
+                                                  typename R::Construct_point_2()(FT(bbox.xmin()), FT(bbox.ymin())),
+                                                  typename R::Construct_point_2()(FT(bbox.xmax()), FT(bbox.ymax())))) {}
 
-  typename cpp11::result_of<typename R::Construct_min_vertex_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_min_vertex_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_max_vertex_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_max_vertex_2_object()(*this);
   }
 
-  bool
-  operator==(const Iso_rectangle_2 &i) const
-  {
-    return R().equal_2_object()(*this, i);
-  }
-
-  bool
-  operator!=(const Iso_rectangle_2 &i) const
-  {
-    return ! (*this == i);
-  }
-
-
-  typename cpp11::result_of<typename R::Construct_vertex_2( Iso_rectangle_2, int )>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Iso_rectangle_2, int )>::type
+  decltype(auto)
   operator[](int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmin_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   xmin() const
   {
     return R().compute_xmin_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmax_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   xmax() const
   {
     return R().compute_xmax_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_ymin_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   ymin() const
   {
     return R().compute_ymin_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_ymax_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   ymax() const
   {
     return R().compute_ymax_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmin_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   min_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 );
@@ -162,7 +142,7 @@ public:
       return ymin();
   }
 
-  typename cpp11::result_of<typename R::Compute_xmin_2( Iso_rectangle_2 )>::type
+  decltype(auto)
   max_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 );
@@ -178,22 +158,19 @@ public:
     return R().compute_area_2_object()(*this);
   }
 
-
-  bool
+  Boolean
   has_on_boundary(const Point_2 &p) const
   {
     return R().has_on_boundary_2_object()(*this,p);
   }
 
-
-  bool
+  Boolean
   has_on_bounded_side(const Point_2 &p) const
   {
     return R().has_on_bounded_side_2_object()(*this,p);
   }
 
-
-  bool
+  Boolean
   has_on_unbounded_side(const Point_2 &p) const
   {
     return R().has_on_unbounded_side_2_object()(*this,p);
@@ -205,8 +182,7 @@ public:
     return R().bounded_side_2_object()(*this,p);
   }
 
-
-  bool
+  Boolean
   is_degenerate() const
   {
     return R().is_degenerate_2_object()(*this);
@@ -222,8 +198,8 @@ public:
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()), 
-			   t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
+    return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()),
+                           t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
   }
 };
 
@@ -232,7 +208,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
 {
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
   case IO::ASCII :
     return os << (r.min)() << ' ' << (r.max)();
   case IO::BINARY :

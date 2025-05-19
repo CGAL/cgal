@@ -1,0 +1,25 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.5}%
+  \pspicture[](-1.1,-1.6)(2,1.6)
+  \arrMainVertex(0,0){v}
+  \uput{9pt}[170]{0}(0,0){$v$}
+  \arrMinorVertex(-1,-1){a}
+  \arrMinorVertex(-1,1){b}
+  \arrMinorVertex(1,1.5){c}
+  \arrMinorVertex(1,-1.5){d}
+  \pnode(2,-0.5){x}
+  \ncline[linewidth=0.5pt,linecolor=blue]{v}{a}
+  \ncline[linewidth=0.5pt,offset=3pt]{->}{a}{v}
+  \ncline[linewidth=0.5pt,linecolor=blue]{v}{b}
+  \ncline[linewidth=0.5pt,offset=3pt]{->}{b}{v}
+  \ncline[linewidth=0.5pt,linecolor=blue]{v}{c}
+  \ncline[linewidth=0.5pt,offset=3pt]{->}{c}{v}\Aput[1pt]{$e_{\mathrm{pred}}$}
+  \ncline[linewidth=0.5pt,linecolor=blue]{v}{d}
+  \ncline[linewidth=0.5pt,offset=3pt]{->}{d}{v}
+  \ncline[linewidth=1pt,linecolor=red]{v}{x}%
+  \endpspicture
+}
+\end{document}

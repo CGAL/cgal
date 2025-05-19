@@ -11,7 +11,10 @@ HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CGAL_Convex_hull_2_EXAMPLE_DIR} \
-                      ${CGAL_Kernel_23_EXAMPLE_DIR}
+                      ${CGAL_Kernel_23_EXAMPLE_DIR} \
+                      ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR} \
+                      ${CGAL_Surface_mesh_EXAMPLE_DIR} \
+                      ${CGAL_Classification_EXAMPLE_DIR}
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/hacks.js \
@@ -31,4 +34,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber =${CGAL_DOC_VERSION}"
+ALIASES                 += "cgalReleaseNumber=${CGAL_DOC_VERSION}"

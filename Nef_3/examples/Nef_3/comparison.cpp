@@ -1,6 +1,7 @@
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <cassert>
 
 typedef CGAL::Exact_integer  NT;
 typedef CGAL::Extended_homogeneous<NT>  Kernel;
@@ -12,16 +13,16 @@ int main() {
   Nef_polyhedron N1(Plane_3(2,5,7,11), Nef_polyhedron::INCLUDED);
   Nef_polyhedron N2(Plane_3(2,5,7,11), Nef_polyhedron::EXCLUDED);
 
-  CGAL_assertion(N1 >= N2);
-  CGAL_assertion(N2 <= N1);
-  CGAL_assertion(N1 != N2);
-  CGAL_assertion(N1 > N2);
-  CGAL_assertion(N2 < N1);
+  assert(N1 >= N2);
+  assert(N2 <= N1);
+  assert(N1 != N2);
+  assert(N1 > N2);
+  assert(N2 < N1);
 
   N2 = N2.closure();
-  CGAL_assertion(N1==N2);
-  CGAL_assertion(N1>=N2);
-  CGAL_assertion(N1<=N2);
+  assert(N1==N2);
+  assert(N1>=N2);
+  assert(N1<=N2);
 
   return 0;
 }

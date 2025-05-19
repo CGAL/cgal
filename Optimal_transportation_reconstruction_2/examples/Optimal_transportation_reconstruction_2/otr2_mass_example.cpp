@@ -58,12 +58,12 @@ int main ()
 
   std::cout << "Isolated vertices:" << std::endl;
   std::vector<Point>::iterator vit;
-  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++) 
+  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++)
     std::cout << *vit << std::endl;
 
   std::cerr << "Edges:" << std::endl;
   std::vector<Segment>::iterator eit;
-  for (eit = edges.begin(); eit != edges.end(); eit++) 
+  for (eit = edges.begin(); eit != edges.end(); eit++)
     std::cout << *eit << std::endl;
 
   return 0;

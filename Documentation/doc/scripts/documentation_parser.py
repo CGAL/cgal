@@ -1,7 +1,10 @@
+#/usr/bin/env python3
+
 from pyquery import PyQuery as pq
 from collections import defaultdict
 from sys import argv 
 import os.path as op
+import codecs
 
 # if _in is part of args, return true.
 def check_type(_in, args):
@@ -12,17 +15,17 @@ def check_type(_in, args):
 
 root_path=argv[1]
 d = pq(filename=op.join(op.sep, root_path,'index.xml'), parser="xml")
-compounds=[p.text() for p in d('compound').items()]
-types=[p.attr('kind') for p in d('compound').items()]
+compounds=[p.text() for p in list(d('compound').items())]
+types=[p.attr('kind') for p in list(d('compound').items())]
 type_map = defaultdict(list) #map <type, name>
 dict_map = defaultdict(dict)#map <name, map<member type, member name>>
 #FOREACH compounds : fill maps
-for i in xrange(0,len(compounds)):
+for i in range(0,len(compounds)):
   if check_type(types[i], "typedef"):
     types[i]="type"
   name=d('compound').children("name").eq(i).text()
-  members=[p.text() for p in d('compound').eq(i).children("member").items()]
-  m_types=[p.attr('kind') for p in d('compound').eq(i).children("member").items()]
+  members=[p.text() for p in list(d('compound').eq(i).children("member").items())]
+  m_types=[p.attr('kind') for p in list(d('compound').eq(i).children("member").items())]
   if (not check_type(types[i], ['example', 'file', 'dir', 'page', 'group']) and
       not (types[i] == "namespace" and len(members) == 0) and
       not (types[i] == "enum" and len(members) == 0) ):
@@ -31,8 +34,9 @@ for i in xrange(0,len(compounds)):
       filepath='class'+compound+'.xml'
       total_path=op.join(op.sep, root_path,filepath)
       if(op.isfile(total_path)):
-        e = pq(filename=total_path, parser="xml")
-        compoundnames=[p.text() for p in e('includes').items()]
+        file_content = codecs.open(total_path, 'rb')
+        e = pq(file_content.read(), parser="xml")
+        compoundnames=[p.text() for p in list(e('includes').items())]
         
         if(len(compoundnames) > 1 and compoundnames[0].find("Concept") != -1):
           types[i] = 'Concept '+types[i].lower()
@@ -41,7 +45,7 @@ for i in xrange(0,len(compounds)):
     mtype_map = defaultdict(list)# map<member type, member name>
 
     #FOREACH member :
-    for j in xrange(0,len(members)):
+    for j in range(0,len(members)):
       if(check_type(types[i], ['class', 'Concept class'])
          and m_types[j] == "function"):
         m_types[j]="method"
@@ -62,7 +66,7 @@ for btype in type_map:
   out=btype
   if btype.endswith('s'):
     out+='e'
-  print out.title()+'s'
+  print(out.title()+'s')
   indent+="  "
   #FOREACH name
   for name in type_map[btype]:
@@ -74,7 +78,7 @@ for btype in type_map:
     templates=[]
     if op.isfile(op.join(op.sep, root_path,filepath)):
       f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
-      templateparams=f("compounddef").children("templateparamlist").eq(0).children("param").items()
+      templateparams=list(f("compounddef").children("templateparamlist").eq(0).children("param").items())
       for param in templateparams:
         template_type=""
         template_name=""
@@ -91,7 +95,7 @@ for btype in type_map:
           complete_template+=' = '+template_defval
         templates.append(complete_template)        
         if templates==[]:#if no child was found, just take param.text()
-         templates=[t.text() for t in param.items()]
+         templates=[t.text() for t in list(param.items())]
     suffix="<"
     #as template got type, defname and declname, name is twice in template. keep only one of them.
     to_remove=[""]
@@ -101,7 +105,7 @@ for btype in type_map:
       suffix=""
     if suffix.endswith(', '):
       suffix = suffix[:-2]+'>'
-    print indent+name+suffix
+    print(indent+name+suffix)
 
     indent+="  "
     #FOREACH mtype
@@ -109,7 +113,7 @@ for btype in type_map:
       out=mtype
       if mtype.endswith('s'):
         out+='e'
-      print indent+out.title()+'s'
+      print(indent+out.title()+'s')
       indent+="  "
       #FOREACH member
       overload_map = defaultdict(int) #contains the number of times a member has appeared (to manage the overloads)
@@ -123,16 +127,16 @@ for btype in type_map:
         if op.isfile(op.join(op.sep, root_path,filepath)):
           f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
           index=0
-          memberdefs=[m.text() for m in f("memberdef").items()]
-          for i in xrange(0,len(memberdefs)):
-            member_names=[member_name.text() for member_name in f('memberdef').eq(i).children("name").items()]
+          memberdefs=[m.text() for m in list(f("memberdef").items())]
+          for i in range(0,len(memberdefs)):
+            member_names=[member_name.text() for member_name in list(f('memberdef').eq(i).children("name").items())]
             if f('memberdef').eq(i).children("name").text() == member:
               if (index < overload_map[member]):
                 index+=1
               elif (index == overload_map[member]):
                 if check_type(mtype, ['function', 'method']):
                   args=[f('memberdef').eq(i).children("argsstring").text()]
-                  templateparams=f('memberdef').eq(i).children("templateparamlist").children("param").items()
+                  templateparams=list(f('memberdef').eq(i).children("templateparamlist").children("param").items())
                 if check_type(mtype, ['function', 'method', 'type', 'variable']):
                   return_type=[f('memberdef').eq(i).children("type").text()]
                 break;
@@ -158,7 +162,7 @@ for btype in type_map:
             complete_template+=' = '+template_defval
           templates.append(complete_template)        
           if templates==[]:#if no child was found, just take param.text()
-           templates=[t.text() for t in param.items()]
+           templates=[t.text() for t in list(param.items())]
 
         prefix="template <"
         for template in templates:
@@ -171,7 +175,7 @@ for btype in type_map:
           prefix+=definition
         if(prefix != ""):
           prefix+=" "
-        print indent+prefix+member+arguments
+        print(indent+prefix+member+arguments)
         overload_map[member]+=1
       #END foreach member
       indent=indent[:-2]

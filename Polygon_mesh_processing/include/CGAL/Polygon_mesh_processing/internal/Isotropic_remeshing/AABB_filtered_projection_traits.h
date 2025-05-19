@@ -3,24 +3,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb, Laurent Rineau
 //
-// File adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// File adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 //
 
 #ifndef CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
@@ -32,8 +23,8 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -59,7 +50,7 @@ class Filtered_projection_traits
 
   typedef typename boost::property_traits<IndexPropertyMap>::value_type Index_type;
 
-  typedef std::set<typename boost::remove_const<Index_type>::type> Set_of_indices;
+  typedef std::set<std::remove_const_t<Index_type>> Set_of_indices;
 
 public:
   template <typename IndexToIgnoreIterator>
@@ -85,7 +76,7 @@ public:
     set_of_indices.insert(index);
   }
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const Point_3& query, const Primitive& primitive)
   {

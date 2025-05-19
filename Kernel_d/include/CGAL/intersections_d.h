@@ -1,25 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel
 
@@ -30,17 +21,18 @@
 #include <CGAL/Intersection_traits.h>
 
 namespace CGAL {
+namespace Intersections {
 namespace internal {
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Line_d, typename R::Line_d)>::type
+decltype(auto)
 intersection(const typename R::Line_d& l1, const typename R::Line_d& l2, const R&)
-{ 
+{
   typedef typename R::Line_d_Line_d_pair ll_pair;
   ll_pair LL(l1, l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Line_d, typename R::Line_d>();
     case ll_pair::POINT: {
       typename R::Point_d pt;
@@ -54,14 +46,14 @@ intersection(const typename R::Line_d& l1, const typename R::Line_d& l2, const R
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Ray_d, typename R::Ray_d)>::type
+decltype(auto)
 intersection(const typename R::Ray_d& l1, const typename R::Ray_d& l2, const R&)
-{ 
+{
   typedef typename R::Ray_d_Ray_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Ray_d, typename R::Ray_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
@@ -83,14 +75,14 @@ intersection(const typename R::Ray_d& l1, const typename R::Ray_d& l2, const R&)
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Segment_d, typename R::Segment_d)>::type
+decltype(auto)
 intersection(const typename R::Segment_d& l1, const typename R::Segment_d& l2, const R&)
 {
   typedef typename R::Segment_d_Segment_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Segment_d, typename R::Segment_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
@@ -107,7 +99,7 @@ intersection(const typename R::Segment_d& l1, const typename R::Segment_d& l2, c
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Line_d, typename R::Ray_d)>::type
+decltype(auto)
 intersection(const typename R::Line_d& l, const typename R::Ray_d& r, const R&)
 {
   typedef typename R::Line_d_Ray_d_pair lr_pair;
@@ -129,12 +121,12 @@ intersection(const typename R::Line_d& l, const typename R::Ray_d& r, const R&)
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Ray_d, typename R::Line_d)>::type
+decltype(auto)
 intersection(const typename R::Ray_d& r, const typename R::Line_d& l, const R& k)
 { return intersection(l,r,k); }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Ray_d, typename R::Segment_d)>::type
+decltype(auto)
 intersection(const typename R::Ray_d& r, const typename R::Segment_d& s, const R&)
 {
   typedef typename R::Ray_d_Segment_d_pair rs_pair;
@@ -158,12 +150,12 @@ intersection(const typename R::Ray_d& r, const typename R::Segment_d& s, const R
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Segment_d, typename R::Ray_d)>::type
+decltype(auto)
 intersection(const typename R::Segment_d& s, const typename R::Ray_d& r, const R& k)
 { return intersection(r,s, k); }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Line_d, typename R::Segment_d)>::type
+decltype(auto)
 intersection(const typename R::Line_d& l, const typename R::Segment_d& s, const R&)
 {
   typedef typename R::Line_d_Segment_d_pair rs_pair;
@@ -187,12 +179,12 @@ intersection(const typename R::Line_d& l, const typename R::Segment_d& s, const 
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Segment_d, typename R::Line_d)>::type
+decltype(auto)
 intersection(const typename R::Segment_d& s, const typename R::Line_d& l, const R& r)
 { return intersection(l,s,r); }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Line_d, typename R::Hyperplane_d)>::type
+decltype(auto)
 intersection(const typename R::Line_d& l, const typename R::Hyperplane_d& h, const R&)
 {
   typedef typename R::Line_d_Hyperplane_d_pair lh_pair;
@@ -213,12 +205,12 @@ intersection(const typename R::Line_d& l, const typename R::Hyperplane_d& h, con
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Hyperplane_d, typename R::Line_d)>::type
+decltype(auto)
 intersection(const typename R::Hyperplane_d& h, const typename R::Line_d& l, const R& r)
 { return intersection(l,h,r); }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Ray_d, typename R::Hyperplane_d)>::type
+decltype(auto)
 intersection(const typename R::Ray_d& r, const typename R::Hyperplane_d& h, const R&)
 {
   typedef typename R::Ray_d_Hyperplane_d_pair rh_pair;
@@ -239,12 +231,12 @@ intersection(const typename R::Ray_d& r, const typename R::Hyperplane_d& h, cons
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Hyperplane_d, typename R::Ray_d)>::type
+decltype(auto)
 intersection(const typename R::Hyperplane_d& h, const typename R::Ray_d& r, const R& k)
 { return intersection(r,h,k); }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Segment_d, typename R::Hyperplane_d)>::type
+decltype(auto)
 intersection(const typename R::Segment_d& s, const typename R::Hyperplane_d& h, const R&)
 {
   typedef typename R::Segment_d_Hyperplane_d_pair sh_pair;
@@ -261,12 +253,12 @@ intersection(const typename R::Segment_d& s, const typename R::Hyperplane_d& h, 
     case sh_pair::SEGMENT:
         return intersection_return<typename R::Intersect_d, typename R::Segment_d, typename R::Hyperplane_d>(s);
   }
-  return intersection_return<typename R::Intersect_d, typename R::Segment_d, 
+  return intersection_return<typename R::Intersect_d, typename R::Segment_d,
                              typename R::Hyperplane_d>(); // never reached
 }
 
 template <class R>
-typename cpp11::result_of<typename R::Intersect_d(typename R::Hyperplane_d, typename R::Segment_d)>::type
+decltype(auto)
 intersection(const typename R::Hyperplane_d& h, const typename R::Segment_d& s, const R& r)
 { return intersection(s,h,r); }
 
@@ -358,6 +350,7 @@ inline bool do_intersect(const typename R::Hyperplane_d& h, const typename R::Se
 { return do_intersect(s,h,r); }
 
 } //namespace internal
+} // namespace Intersections
 
 template<typename T>
 class Hyperplane_d;

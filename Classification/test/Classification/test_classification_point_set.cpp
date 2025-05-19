@@ -37,25 +37,25 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Point_map
 
 typedef Point_set::Vector_map Vector_map;
 typedef Point_set::Property_map<std::size_t> Size_t_map;
-typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
+typedef Point_set::Property_map<CGAL::IO::Color> Color_map;
 
 
 
 int main (int, char**)
 {
   Point_set pts;
-  
+
   bool map_added = false;
   Vector_map normal_map;
   Size_t_map echo_map;
   Color_map color_map;
 
-  map_added = pts.add_normal_map();
+  map_added = pts.add_normal_map().second;
   assert (map_added);
   normal_map = pts.normal_map();
-  boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
+  std::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
   assert (map_added);
-  boost::tie (color_map, map_added) = pts.add_property_map<Classification::RGB_Color> ("color");
+  std::tie (color_map, map_added) = pts.add_property_map<CGAL::IO::Color> ("color");
   assert (map_added);
 
   for (std::size_t i = 0; i < 1000; ++ i)
@@ -68,13 +68,13 @@ int main (int, char**)
                             CGAL::get_default_random().get_double(),
                             CGAL::get_default_random().get_double()));
     echo_map[*it] = std::size_t(CGAL::get_default_random().get_int(0, 4));
-    color_map[*it] = CGAL::make_array ((unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                                       (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                                       (unsigned char)(CGAL::get_default_random().get_int(0, 255)));
+    color_map[*it] = CGAL::IO::Color ((unsigned char)(CGAL::get_default_random().get_int(0, 255)),
+                                  (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
+                                  (unsigned char)(CGAL::get_default_random().get_int(0, 255)));
   }
 
   Feature_set features;
-  
+
   Feature_generator generator (pts, pts.point_map(), 5);  // using 5 scales
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -89,9 +89,9 @@ int main (int, char**)
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
 #endif
-  
+
   assert (generator.number_of_scales() == 5);
-  assert (features.size() == 44);
+  assert (features.size() == 59);
 
   Label_set labels;
 
@@ -106,16 +106,16 @@ int main (int, char**)
       training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = int(i);
   }
   assert (labels.size() == 20);
-  
+
   Classifier classifier (labels, features);
-  
+
   classifier.train<CGAL::Sequential_tag> (training_set, 800);
 #ifdef CGAL_LINKED_WITH_TBB
   classifier.train<CGAL::Parallel_tag> (training_set, 800);
 #endif
 
   std::vector<int> label_indices(pts.size(), -1);
-  
+
   Classification::classify<CGAL::Sequential_tag>
     (pts, labels, classifier, label_indices);
 
@@ -145,6 +145,6 @@ int main (int, char**)
 #endif
 
   Classification::Evaluation evaluation (labels, training_set, label_indices);
-  
+
   return EXIT_SUCCESS;
 }

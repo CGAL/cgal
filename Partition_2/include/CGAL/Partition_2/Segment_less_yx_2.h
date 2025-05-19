@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -31,8 +22,8 @@
 namespace CGAL {
 
 //
-// Compares two pairs of points representing two segments. The first is 
-// "less than" the second if the second can see some point of the first 
+// Compares two pairs of points representing two segments. The first is
+// "less than" the second if the second can see some point of the first
 // by looking straight down (i.e., in direction -pi/2). If the first can see
 // the second in this way, it is greater than the second.  If neither sees
 // the other when looking in the direction -pi/2, the one that is farther
@@ -50,18 +41,18 @@ class Segment_less_yx_2
    typedef Turn_reverser<Point_2, Left_turn_2>   Right_turn_2;
 
    public:
-     Segment_less_yx_2() : 
-       _less_xy_2(Traits().less_xy_2_object()),
-       _compare_x_2(Traits().compare_x_2_object()),
-       _compare_y_2(Traits().compare_y_2_object()),
-       _left_turn_2(Traits().left_turn_2_object()),
+     Segment_less_yx_2(const Traits& traits) :
+       _less_xy_2(traits.less_xy_2_object()),
+       _compare_x_2(traits.compare_x_2_object()),
+       _compare_y_2(traits.compare_y_2_object()),
+       _left_turn_2(traits.left_turn_2_object()),
        _right_turn_2(Right_turn_2(_left_turn_2))
      { }
-     
 
-     bool 
+
+     bool
      operator()(const Point_pair& p, const Point_pair& q) const
-     { 
+     {
         Point_2 p_smaller_xy, p_larger_xy;
         Point_2 q_smaller_xy, q_larger_xy;
         // order the point pairs by x value
@@ -91,7 +82,7 @@ class Segment_less_yx_2
         if (_compare_x_2(p_larger_xy, q_smaller_xy) == SMALLER)
            return true;
         else if (_compare_x_2(p_larger_xy, q_smaller_xy) == EQUAL)
-        { 
+        {
            // x range of p ends where x range of q starts
            Comparison_result y_comp = _compare_y_2(p_larger_xy, q_smaller_xy);
            if (y_comp == SMALLER)
@@ -105,7 +96,7 @@ class Segment_less_yx_2
         else if (_compare_x_2(q_larger_xy, p_smaller_xy) == SMALLER)
            return false;
         else if (_compare_x_2(q_larger_xy, p_smaller_xy) == EQUAL)
-        { 
+        {
            // x range of p starts where x range of q ends
            Comparison_result y_comp = _compare_y_2(p_smaller_xy, q_larger_xy);
            if (y_comp == SMALLER)
@@ -116,7 +107,7 @@ class Segment_less_yx_2
               return false;
         }
         // see if one of q's endpoints is contained in p's x range
-        else if (_compare_x_2(p_smaller_xy,q_smaller_xy) == SMALLER && 
+        else if (_compare_x_2(p_smaller_xy,q_smaller_xy) == SMALLER &&
                  _compare_x_2(q_smaller_xy,p_larger_xy) == SMALLER)
            return _left_turn_2(p_smaller_xy,p_larger_xy,q_smaller_xy);
         else if (_compare_x_2(p_smaller_xy,q_larger_xy) == SMALLER &&
@@ -124,9 +115,9 @@ class Segment_less_yx_2
            return _left_turn_2(p_smaller_xy,p_larger_xy,q_larger_xy);
         //
         // neither of q's endpoints is in p's x-range so see if one of
-        // p's endpoints is in q's x-range 
+        // p's endpoints is in q's x-range
         //
-        else if (_compare_x_2(q_smaller_xy,p_smaller_xy) == SMALLER && 
+        else if (_compare_x_2(q_smaller_xy,p_smaller_xy) == SMALLER &&
                  _compare_x_2(p_smaller_xy,q_larger_xy) == SMALLER)
            return _right_turn_2(q_smaller_xy,q_larger_xy,p_smaller_xy);
         else if (_compare_x_2(q_smaller_xy,p_larger_xy) == SMALLER &&
@@ -135,14 +126,14 @@ class Segment_less_yx_2
         else // the x ranges are exactly the same
         {
            Comparison_result y_comp = _compare_y_2(p_smaller_xy, q_smaller_xy);
-           if (y_comp == SMALLER) 
+           if (y_comp == SMALLER)
               return true;
            else if (y_comp == LARGER)
               return false;
            else // look at the other endpoint
            {
               y_comp = _compare_y_2(p_larger_xy, q_larger_xy);
-              if (y_comp == SMALLER) 
+              if (y_comp == SMALLER)
                  return true;
               else if (y_comp == LARGER)
                  return false;

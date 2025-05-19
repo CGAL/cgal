@@ -3,8 +3,9 @@
 \example BGL_arrangement_2/arr_rational_nt.h
 \example BGL_arrangement_2/arrangement_dual.cpp
 \example BGL_arrangement_2/primal.cpp
+\example BGL_graphcut/alpha_expansion_example.cpp
+\example BGL_graphcut/face_selection_borders_regularization_example.cpp
 \example BGL_polyhedron_3/copy_polyhedron.cpp
-\example BGL_polyhedron_3/cube.off
 \example BGL_polyhedron_3/distance.cpp
 \example BGL_polyhedron_3/incident_vertices.cpp
 \example BGL_polyhedron_3/kruskal.cpp
@@ -21,6 +22,7 @@
 \example BGL_surface_mesh/prim.cpp
 \example BGL_surface_mesh/gwdwg.cpp
 \example BGL_surface_mesh/seam_mesh.cpp
+\example BGL_surface_mesh/shortest_path.cpp
 \example BGL_surface_mesh/write_inp.cpp
 \example BGL_surface_mesh/surface_mesh_dual.cpp
 \example BGL_surface_mesh/connected_components.cpp
@@ -29,4 +31,6 @@
 \example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
 \example Polygon_mesh_processing/face_filtered_graph_example.cpp
 \example Property_map/dynamic_properties.cpp
+\example Surface_mesh/sm_derivation.cpp
+\example Polyhedron/poly_derivation.cpp
 */

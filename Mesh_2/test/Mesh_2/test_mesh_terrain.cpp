@@ -1,3 +1,13 @@
+// Test also CGAL::Random_allocator
+#if __has_include(<version>)
+#  include <version>
+#  if __cpp_lib_format >= 201907L
+#    define CGAL_DEBUG_RANDOM_ALLOCATOR 1
+#  endif
+#endif
+#include <CGAL/Random_allocator.h>
+#define CGAL_ALLOCATOR(T) CGAL::Random_allocator<T>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -13,7 +23,7 @@ typedef CGAL::Projection_traits_xy_3<K>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<Gt> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, 
+typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS,
                                                    CGAL::Exact_predicates_tag> Delaunay;
 typedef CGAL::Delaunay_mesh_size_criteria_2<Delaunay> Criteria;
 
@@ -21,6 +31,9 @@ typedef K::Point_3   Point;
 
 int main()
 {
+#if CGAL_DEBUG_RANDOM_ALLOCATOR
+  std::clog << "CGAL::Random_allocator debug mode is enabled..." << std::endl;
+#endif
   Delaunay dt;
   typedef Delaunay::Vertex_handle Vertex_handle;
   Vertex_handle va = dt.insert(Point(-4,0, 0));
@@ -34,7 +47,8 @@ int main()
   dt.insert_constraint(vc, vd);
   dt.insert_constraint(vd, va);
 
-  CGAL::refine_Delaunay_mesh_2(dt, Criteria(0.125, 0.5));
+  Criteria criteria(0.125, 0.5);
+  CGAL::refine_Delaunay_mesh_2(dt, CGAL::parameters::criteria(criteria));
   // dt.insert(begin, end);
   std::cout << dt.number_of_vertices() << std::endl;
   return 0;

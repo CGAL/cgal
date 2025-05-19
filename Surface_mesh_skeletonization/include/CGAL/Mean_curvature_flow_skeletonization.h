@@ -1,19 +1,10 @@
 // Copyright (c) 2013  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
@@ -24,28 +15,30 @@
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_default.h>
+#include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_face_max_base_with_id.h>
+
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
+#include <CGAL/boost/graph/properties_HalfedgeDS_default.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
 
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 // Compute the vertex normal
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -54,7 +47,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 
 // Curve skeleton data structure
-#include <CGAL/internal/Surface_mesh_skeletonization/Curve_skeleton.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Curve_skeleton.h>
 
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -63,13 +56,13 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
-#include <CGAL/internal/Surface_mesh_skeletonization/Debug.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Debug.h>
 
 // Some helper functions
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 // For detect_degenarcy
-#include <CGAL/internal/Surface_mesh_skeletonization/Detect_degeneracy.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Detect_degeneracy.h>
 
 // Inside mesh test
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -78,6 +71,7 @@
 #include <CGAL/Bbox_3.h>
 
 #include <queue>
+#include <unordered_map>
 
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -101,11 +95,19 @@ struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Po
 };
 
 template <class vertex_descriptor>
-struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
+struct Skel_polyhedron_items_3 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
         typedef typename Traits::Point_3 Point;
       typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef HalfedgeDS_halfedge_max_base_with_id<Refs, std::size_t> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef HalfedgeDS_face_max_base_with_id< Refs, Tag_false, std::size_t>  Face;
     };
 };
 
@@ -202,7 +204,7 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
-  typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
+  typedef CGAL::HalfedgeDS_default<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
   typedef typename boost::property_map<mTriangleMesh, CGAL::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
@@ -232,12 +234,12 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
-  // Cotangent weight calculator
-  typedef internal::Cotangent_weight<mTriangleMesh,
-    typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-    internal::Cotangent_value_minimum_zero<mTriangleMesh,
-      typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-      internal::Cotangent_value_Meyer_secure<mTriangleMesh> > >                Weight_calculator;
+  struct Less_id {
+    bool operator()(const edge_descriptor& x, const edge_descriptor& y) const { return x.id() < y.id(); }
+  };
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh, mVertexPointMap, Traits> Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -271,9 +273,9 @@ private:
   /** Traits class. */
   Traits m_traits;
 
-  /** Controling the velocity of movement and approximation quality. */
+  /** Controlling the velocity of movement and approximation quality. */
   double m_omega_H;
-  /** Controling the smoothness of the medial approximation. */
+  /** Controlling the smoothness of the medial approximation. */
   double m_omega_P;
   /** Edges with length less than `min_edge_length` will be collapsed. */
   double m_min_edge_length;
@@ -342,7 +344,7 @@ double diagonal_length(const Bbox_3& bbox)
 double init_min_edge_length()
 {
   vertex_iterator vb, ve;
-  boost::tie(vb, ve) = vertices(m_tmesh);
+  std::tie(vb, ve) = vertices(m_tmesh);
   Vertex_to_point v_to_p(m_tmesh_point_pmap);
   Bbox_3 bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
                              boost::make_transform_iterator(ve, v_to_p));
@@ -385,17 +387,19 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
+    :
+      m_tmesh(),
+      m_tmesh_point_pmap(get(CGAL::vertex_point, m_tmesh)),
+      m_traits(traits),
+      m_weight_calculator(m_tmesh, m_tmesh_point_pmap, m_traits, true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
-  {
-    init(tmesh);
-  }
+    : Mean_curvature_flow_skeletonization(tmesh, get(vertex_point, tmesh), traits)
+  { }
   #endif
   /// @} Constructor
 
@@ -404,14 +408,14 @@ public:
 
   /// During the local remeshing step, a triangle will be split
   /// if it has an angle larger than `max_triangle_angle()`.
-  double max_triangle_angle()
+  double max_triangle_angle() const
   {
     return m_alpha_TH;
   }
 
   /// During the local remeshing step, an edge will be collapse
   /// if it is length is less than `min_edge_length()`.
-  double min_edge_length()
+  double min_edge_length() const
   {
     return m_min_edge_length;
   }
@@ -433,7 +437,7 @@ public:
   /// @{
 
   /// Maximum number of iterations performed by `contract_until_convergence()`.
-  std::size_t max_iterations()
+  std::size_t max_iterations() const
   {
     return m_max_iterations;
   }
@@ -442,7 +446,7 @@ public:
   /// the meso-skeleton after one iteration is smaller than
   /// `area_variation_factor()*original_area` where `original_area` is the area of the input
   /// triangle mesh.
-  double area_variation_factor()
+  double area_variation_factor() const
   {
     return m_delta_area;
   }
@@ -463,13 +467,14 @@ public:
   /// \name Vertex Motion Parameters
   /// @{
 
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
   /// decreasing this value makes the mean curvature flow based contraction converge
   /// faster, but results in a skeleton of lower quality.
   /// This parameter corresponds to \f$ w_H \f$ in the original publication.
   /// \cgalAdvancedEnd
-  double quality_speed_tradeoff()
+  double quality_speed_tradeoff() const
   {
     return m_omega_H;
   }
@@ -478,11 +483,12 @@ public:
   /// of the medial axis of the mesh during the contraction steps, so will be the result skeleton.
   // (an additional energy is used during the contraction using the Voronoi poles of the input triangulated mesh
   // as attractors).
-  bool is_medially_centered()
+  bool is_medially_centered() const
   {
     return m_is_medially_centered;
   }
 
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
   /// increasing this value results in a (less smooth) skeleton closer
@@ -490,7 +496,7 @@ public:
   /// It is only used if `is_medially_centered()==true`.
   /// This parameter corresponds to \f$ w_M \f$ in the original publication.
   /// \cgalAdvancedEnd
-  double medially_centered_speed_tradeoff()
+  double medially_centered_speed_tradeoff() const
   {
     return m_omega_P;
   }
@@ -511,6 +517,30 @@ public:
   void set_medially_centered_speed_tradeoff(double value)
   {
     m_omega_P = value;
+  }
+
+  /// \cgalAdvancedFunction
+  /// \cgalAdvancedBegin
+  /// sets the vertices in the range `[begin, end)` as fixed.  Fixed vertices will not be moved
+  /// during contraction and this will therefore prevent convergence
+  /// towards the skeleton if `contract_until_convergence()` is used.
+  /// It is useful only if the end goal is to retrieve the meso-skeleton
+  /// after a number of `contract_geometry()`, keeping the specified
+  /// vertices fixed in place.
+  /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
+  ///
+  /// \cgalAdvancedEnd
+  template<class InputIterator>
+  void set_fixed_vertices(InputIterator begin, InputIterator end)
+  {
+    std::unordered_set<Input_vertex_descriptor> set(begin, end);
+
+    for(vertex_descriptor vd : vertices(m_tmesh))
+    {
+      if (set.find(vd->vertices[0]) != set.end()) {
+        vd->is_fixed = true;
+      }
+    }
   }
 
   /// \cond SKIP_FROM_MANUAL
@@ -534,10 +564,10 @@ public:
    * @param fixed_points
    *        return the positions of fixed points
    */
-  void fixed_points(std::vector<Point>& fixed_points)
+  void fixed_points(std::vector<Point>& fixed_points) const
   {
     fixed_points.clear();
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       if (vd->is_fixed)
         fixed_points.push_back(get(m_tmesh_point_pmap, vd));
@@ -550,10 +580,10 @@ public:
    * @param non_fixed_points
    *        return the positions of non-fixed points
    */
-  void non_fixed_points(std::vector<Point>& non_fixed_points)
+  void non_fixed_points(std::vector<Point>& non_fixed_points) const
   {
     non_fixed_points.clear();
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       if (!vd->is_fixed)
         non_fixed_points.push_back(get(m_tmesh_point_pmap, vd));
@@ -566,11 +596,11 @@ public:
    * @param max_poles
    *        for each surface mesh vertex, record its correspondent Voronoi pole position
    */
-  void poles(std::vector<Point>& max_poles)
+  void poles(std::vector<Point>& max_poles) const
   {
     max_poles.resize(num_vertices(m_tmesh));
     int cnt = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       max_poles[cnt++] = v->pole;
     }
@@ -655,7 +685,7 @@ public:
     MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 
     // copy to surface mesh
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -740,7 +770,7 @@ public:
     MCFSKEL_DEBUG(print_edges();)
 
     MCFSKEL_INFO(double area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap));)
+      CGAL::parameters::vertex_point_map(m_tmesh_point_pmap));)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
@@ -764,7 +794,7 @@ public:
       detect_degeneracies();
 
       double area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-        CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap)
+        CGAL::parameters::vertex_point_map(m_tmesh_point_pmap)
         .geom_traits(m_traits));
       double area_ratio = fabs(last_area - area) / m_original_area;
 
@@ -809,14 +839,14 @@ public:
 
   /// When using the low level API it is possible to access the intermediate
   /// results of the skeletonization process, called meso-skeleton.
-  /// It is a triangulated surface mesh which is model of `FaceListGraph`.
+  /// It is a triangulated surface mesh which is model of `FaceListGraph` and `HalfedgeListGraph`.
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Meso_skeleton;
 #else
   typedef mTriangleMesh Meso_skeleton;
 #endif
   /// Reference to the collapsed triangulated surface mesh.
-  Meso_skeleton& meso_skeleton()
+  const Meso_skeleton& meso_skeleton() const
   {
     return m_tmesh;
   }
@@ -843,25 +873,26 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh, VertexPointMap vpm)
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, 
-                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
+    copy_face_graph(tmesh, m_tmesh,
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v))
+                                     .vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
-    BOOST_FOREACH(const Vertex_pair& vp, v2v)
+    for(const Vertex_pair& vp : v2v)
       vp.second->vertices.push_back(vp.first);
 
     //init indices
     typedef typename boost::graph_traits<mTriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<mTriangleMesh>::halfedge_descriptor halfedge_descriptor;
     std::size_t i=0;
-    BOOST_FOREACH( vertex_descriptor vd, vertices(m_tmesh) )
+    for(vertex_descriptor vd : vertices(m_tmesh) )
       vd->id()=i++;
     i=0;
-    BOOST_FOREACH( halfedge_descriptor hd, halfedges(m_tmesh) )
+    for(halfedge_descriptor hd : halfedges(m_tmesh) )
       hd->id()=i++;
     m_hedge_id_pmap = get(boost::halfedge_index, m_tmesh);
     m_vertex_id_pmap = get(boost::vertex_index, m_tmesh);
@@ -869,14 +900,11 @@ private:
     m_are_poles_computed = false;
 
     m_original_area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap)
+      CGAL::parameters::vertex_point_map(m_tmesh_point_pmap)
       .geom_traits(m_traits));
 
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
-
-    if (m_is_medially_centered)
-      compute_voronoi_pole();
 
     init_args();
   }
@@ -898,11 +926,9 @@ private:
   void compute_edge_weight()
   {
     m_edge_weight.clear();
-    m_edge_weight.reserve(2 * num_edges(m_tmesh));
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
-    {
+    m_edge_weight.reserve(num_halfedges(m_tmesh));
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
       m_edge_weight.push_back(m_weight_calculator(hd));
-    }
   }
 
   /// Assemble the left hand side.
@@ -914,7 +940,7 @@ private:
 
     Side_of_triangle_mesh<mTriangleMesh, Traits> test_inside(m_tmesh);
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
 
@@ -940,7 +966,7 @@ private:
       }
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -951,7 +977,7 @@ private:
         L = 0;
       }
       double diagonal = 0;
-      BOOST_FOREACH(edge_descriptor ed, in_edges(vd, m_tmesh))
+      for(edge_descriptor ed : in_edges(vd, m_tmesh))
       {
         vertex_descriptor vj = source(ed, m_tmesh);
         double wij = m_edge_weight[get(m_hedge_id_pmap, halfedge(ed, m_tmesh))] * 2.0;
@@ -984,7 +1010,7 @@ private:
       Bz[i] = 0;
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       int i = m_new_id[id];
@@ -1031,7 +1057,7 @@ private:
     m_new_id.clear();
     int cnt = 0;
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
+    for(vertex_descriptor vd : vertices(m_tmesh))
     {
       int id = static_cast<int>(get(m_vertex_id_pmap, vd));
       m_new_id[id] = cnt++;
@@ -1086,12 +1112,12 @@ private:
     m_halfedge_angle.resize(ne, 0);
 
     int idx = 0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       put(m_hedge_id_pmap, hd, idx++);
     }
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       int e_id = static_cast<int>(get(m_hedge_id_pmap, hd));
 
@@ -1176,7 +1202,7 @@ private:
     // both opposite angle are larger than the
     // threshold
     std::vector<edge_descriptor> edges_to_split;
-    BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
+    for(edge_descriptor ed : edges(m_tmesh))
     {
       halfedge_descriptor ei = halfedge(ed, m_tmesh);
       halfedge_descriptor ej = opposite(ei, m_tmesh);
@@ -1191,7 +1217,7 @@ private:
 
     // now split the edge
     std::size_t cnt = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges_to_split)
+    for(edge_descriptor ed : edges_to_split)
     {
       halfedge_descriptor ei = halfedge(ed, m_tmesh);
       halfedge_descriptor ej = opposite(ei, m_tmesh);
@@ -1208,7 +1234,7 @@ private:
       vertex_descriptor vk = target(ek, m_tmesh);
 
       // split the edge
-      halfedge_descriptor en = m_tmesh.split_edge(ei);
+      halfedge_descriptor en = Euler::split_edge(ei, m_tmesh);
       // split the incident faces
       Euler::split_face(en, next(ei,m_tmesh), m_tmesh);
       if (! is_border(ej,m_tmesh))
@@ -1236,7 +1262,7 @@ private:
   std::size_t detect_degeneracies_in_disk()
   {
     std::size_t num_fixed = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       if (!v->is_fixed)
       {
@@ -1269,7 +1295,7 @@ private:
     std::vector<std::pair<Exact_point, vertex_descriptor> > points;
     std::vector<std::vector<int> > point_to_pole(num_vertices(m_tmesh));
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       const Point& input_pt = get(m_tmesh_point_pmap, v);
       Exact_point tp(get_x(input_pt), get_y(input_pt), get_z(input_pt));
@@ -1304,7 +1330,8 @@ private:
     }
 
     typedef std::pair<Exact_point, vertex_descriptor> Pair_type;
-    BOOST_FOREACH(const Pair_type& p, points)
+    std::vector<Pair_type> duplicated_points;
+    for(const Pair_type& p : points)
     {
       std::size_t vid = get(m_vertex_id_pmap, p.second);
       Point surface_point = get(m_tmesh_point_pmap, p.second);
@@ -1328,9 +1355,23 @@ private:
           max_neg_t = t;
         }
       }
-
-      p.second->pole = cell_dual[max_neg_i];
+      // max_neg_i is -1 only when duplicated the point is duplicated
+      // (null edge or non-manifold issue resolved with duplication)
+      if (max_neg_i!=-1)
+        p.second->pole = cell_dual[max_neg_i];
+      else
+        duplicated_points.push_back(p);
     }
+
+    for (const Pair_type& p : duplicated_points)
+    {
+      typename Delaunay::Locate_type lt;
+      int li, lj;
+      typename Delaunay::Cell_handle cell = T.locate (p.first, lt, li, lj);
+      CGAL_assertion(lt==Delaunay::VERTEX);
+      p.second->pole = cell->vertex(li)->info()->pole; // copy the pole of the point present in the DT3
+    }
+
     m_are_poles_computed = true;
   }
 
@@ -1339,19 +1380,19 @@ private:
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
-    boost::unordered_map<face_descriptor, Vector> normals;
+    std::unordered_map<face_descriptor, Vector> normals;
     boost::associative_property_map<
-      boost::unordered_map<face_descriptor, Vector> > normals_pmap(normals);
+      std::unordered_map<face_descriptor, Vector> > normals_pmap(normals);
     PMP::compute_face_normals(m_tmesh, normals_pmap);
 
     m_normals.resize(num_vertices(m_tmesh));
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
+    for(vertex_descriptor v : vertices(m_tmesh))
     {
       int vid = static_cast<int>(get(m_vertex_id_pmap, v));
       m_normals[vid] = PMP::compute_vertex_normal(v
                           , m_tmesh
-                          , PMP::parameters::geom_traits(m_traits)
+                          , CGAL::parameters::geom_traits(m_traits)
                           .face_normal_map(normals_pmap));
     }
   }
@@ -1364,7 +1405,7 @@ private:
   {
     std::map<halfedge_descriptor, bool> visited;
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(m_tmesh))
+    for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
       if (!visited[hd])
       {
@@ -1389,9 +1430,9 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 {
   std::size_t cnt=0, prev_cnt=0;
 
-  std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
+  std::set<edge_descriptor,Less_id> edges_to_collapse, non_topologically_valid_collapses;
 
-  BOOST_FOREACH(edge_descriptor ed, edges(m_tmesh))
+  for(edge_descriptor ed : edges(m_tmesh))
     if ( edge_should_be_collapsed(ed) )
       edges_to_collapse.insert(ed);
 
@@ -1440,7 +1481,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 
       CGAL_assertion(vj==v);
 
-      BOOST_FOREACH(edge_descriptor oed, out_edges(v, m_tmesh))
+      for(edge_descriptor oed : out_edges(v, m_tmesh))
         if ( edge_should_be_collapsed(oed) ) edges_to_collapse.insert(oed);
 
       ++cnt;

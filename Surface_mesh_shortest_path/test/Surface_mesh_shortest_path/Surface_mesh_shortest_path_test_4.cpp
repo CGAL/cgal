@@ -5,11 +5,12 @@
 
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
+#include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 
 #include <CGAL/Random.h>
@@ -38,11 +39,11 @@ int main(int argc, char* argv[])
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-  typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::type VPM;
-  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::const_type VPM;
+  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::const_type FIM;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
 
   Traits traits;
 
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
 
   face_iterator facesBegin, facesEnd;
-  boost::tie(facesBegin, facesEnd) = faces(polyhedron);
+  std::tie(facesBegin, facesEnd) = faces(polyhedron);
 
   std::vector<face_descriptor> facesList;
 
@@ -83,8 +84,8 @@ int main(int argc, char* argv[])
 
   size_t numTrials = 30;
 
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM ;
-  typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM ;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::const_type FIM;
 
   FIM faceIndexMap(get(boost::face_index, polyhedron));
   VPM vertexPointMap(get(CGAL::vertex_point, polyhedron));
@@ -94,7 +95,7 @@ int main(int argc, char* argv[])
     size_t faceIndex = random.get_int(0, static_cast<int>(facesList.size()));
     face_descriptor face = facesList[faceIndex];
 
-    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
+    Triangle_3 faceTriangle = CGAL::Surface_mesh_shortest_paths_3::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
 
     Barycentric_coordinates location = CGAL::test::random_coordinates<Traits>(random);
 
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
   }
 
   vertex_iterator startVertexIt, endVertexIt;
-  boost::tie(startVertexIt, endVertexIt) = vertices(polyhedron);
+  std::tie(startVertexIt, endVertexIt) = vertices(polyhedron);
 
   bool first = true;
 
@@ -146,10 +147,9 @@ int main(int argc, char* argv[])
   Ray_3 outsideRay(maxPoint + (awayDir * FT(0.2)), maxPoint + (awayDir * FT(1.0)));
 
   Surface_mesh_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_traits>(outsideRay);
+  CGAL_USE(emptyFaceLocation);
 
   assert(Graph_traits::null_face() == emptyFaceLocation.first);
 
   return 0;
 }
-
-

@@ -12,14 +12,13 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cassert>
+#include <type_traits>
 #include <CGAL/Cache.h>
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 
 struct Int_rep {
     int val;
@@ -41,7 +40,7 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
     // This is needed to prevent VC7.1 and VC8 to call
     // the explicit templated constructor in Base instead of its copy-ctor.
     Int_t( Int_t const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
-
+    Int_t& operator=(Int_t const&)=default;
     int  value() const { return this->ptr()->val; }
     void set_value( int i) {
         this->copy_on_write();
@@ -58,16 +57,16 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
 void test_typedefs(){
     typedef CGAL::Cache<int,double> Cache;
     CGAL_USE_TYPE(Cache);
-    CGAL_static_assertion(( ::boost::is_same< Cache::Input, int >::value ));
-    CGAL_static_assertion(( ::boost::is_same< Cache::Output,double>::value ));
+    static_assert(::std::is_same< Cache::Input, int >::value );
+    static_assert(::std::is_same< Cache::Output,double>::value );
     typedef CGAL::Creator_1<int,double> Creator_double;
     CGAL_USE_TYPE(Creator_double);
-    CGAL_static_assertion(( ::boost::is_same<Cache::Creator,Creator_double>::value ));
+    static_assert(::std::is_same<Cache::Creator,Creator_double>::value );
     typedef CGAL::Creator_1<int,int> Creator_int;
     CGAL_USE_TYPE(Creator_int);
-    CGAL_static_assertion(( ::boost::is_same<Cache::Canonicalizer,Creator_int>::value ));
-    CGAL_static_assertion(( ::boost::is_same<Cache::Compare,std::less<int> >::value ));
-    CGAL_static_assertion(( ::boost::is_same<Cache::Self,CGAL::Cache<int,double> >::value ));
+    static_assert(::std::is_same<Cache::Canonicalizer,Creator_int>::value );
+    static_assert(::std::is_same<Cache::Compare,std::less<int> >::value );
+    static_assert(::std::is_same<Cache::Self,CGAL::Cache<int,double> >::value );
 }
 int main(){
     {

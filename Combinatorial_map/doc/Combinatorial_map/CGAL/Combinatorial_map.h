@@ -6,9 +6,9 @@ namespace CGAL {
 
 The class `Combinatorial_map` represents a <I>d</I>D combinatorial map.
 
-Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator.
+Two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where Darts and non void attributes are stored in an internal std::vector like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
 
-\cgalModels `CombinatorialMap`
+\cgalModels{CombinatorialMap}
 
 \tparam d the dimension of the map.
 
@@ -33,8 +33,6 @@ The complexity of \link GenericMap::clear `clear`\endlink is in <I>O</I>( \f$ | 
 Other methods have all a constant time complexity.
 
 \sa `GenericMapItems`
-
-\deprecated Before CGAL 4.9, `Items` had to define the type of dart used, and the default class was `Combinatorial_map_min_items`. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
 
 */
 template< unsigned int d, typename Items, typename Alloc >
@@ -65,7 +63,7 @@ Information associated with darts. Equal to `void` if `Dart_info` is not defined
 typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /*!
-The tuple of cell attributes. Equal to `CGAL::cpp11::tuple<>` if `Attributes` is not defined in the items class.
+The tuple of cell attributes. Equal to `std::tuple<>` if `Attributes` is not defined in the items class.
 */
 typedef Items::Dart_wrapper<Self>::Attributes Attributes;
 

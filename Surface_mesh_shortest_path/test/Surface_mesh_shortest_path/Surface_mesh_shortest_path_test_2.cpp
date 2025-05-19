@@ -18,7 +18,6 @@
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
-#include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/test_util.h>
 #include "check.h"
@@ -37,9 +36,9 @@ int main(int argc, char* argv[])
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-  typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::type VIM;
-  typedef boost::property_map<Polyhedron_3, boost::halfedge_index_t>::type HIM;
-  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::const_type VIM;
+  typedef boost::property_map<Polyhedron_3, boost::halfedge_index_t>::const_type HIM;
+  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::const_type FIM;
 
 
 
@@ -74,7 +73,7 @@ int main(int argc, char* argv[])
 
   std::vector<vertex_descriptor> vertices;
 
-  boost::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
+  std::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
 
   for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
@@ -86,7 +85,7 @@ int main(int argc, char* argv[])
 
   std::vector<face_descriptor> faces;
 
-  boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
+  std::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
 
   for (face_iterator it = facesStart; it != facesEnd; ++it)
   {
@@ -269,5 +268,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
-

@@ -20,7 +20,7 @@ points without explicitly constructing the projected points and the
 weights. This reduces the arithmetic demands. The traits class is
 templated by a kernel class `K` and inherits from it.
 
-\cgalModels `RegularTriangulationTraits_2`
+\cgalModels{RegularTriangulationTraits_2}
 
 \sa `CGAL::Regular_triangulation_2<Gt, Tds>`
 \sa `PkgInterpolationRegularNeighborCoordinates2`

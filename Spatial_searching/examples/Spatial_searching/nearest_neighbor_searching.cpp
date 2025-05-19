@@ -12,7 +12,8 @@ typedef CGAL::Search_traits_2<K> TreeTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int main() {
+int main()
+{
   const unsigned int N = 1;
 
   std::list<Point_d> points;
@@ -20,18 +21,14 @@ int main() {
 
   Tree tree(points.begin(), points.end());
 
-  Point_d query(0,0);
-
   // Initialize the search structure, and search all N points
-
+  Point_d query(0,0);
   Neighbor_search search(tree, query, N);
 
    // report the N nearest neighbors and their distance
   // This should sort all N points by increasing distance from origin
-  for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it){
+  for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
     std::cout << it->first << " "<< std::sqrt(it->second) << std::endl;
-  }
-
 
   return 0;
 }

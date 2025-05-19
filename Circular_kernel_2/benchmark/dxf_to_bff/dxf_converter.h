@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cassert>
 #include <CGAL/Cartesian.h>
-#include <boost/variant.hpp>
+#include <variant>
 #include <CGAL/intersections.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Circular_kernel_2.h>
@@ -25,9 +25,9 @@ class Dxf_converter {
   typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
   typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CircularKernel;*/
 // typedef double                                              type;
-// typedef CGAL::Cartesian<type>                       NT1; 
+// typedef CGAL::Cartesian<type>                       NT1;
 //typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
-typedef CGAL::Gmpq						NT1;
+typedef CGAL::Gmpq                                                NT1;
 //    typedef CGAL::Quotient<NT1>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>                      Algebraic_k1;
@@ -35,7 +35,7 @@ typedef CGAL::Gmpq						NT1;
  typedef  CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef  CK::Line_2  Line_2;
   typedef CK::Point_2 Point_2;
-  typedef  CK::Circle_2 Circle_2;  
+  typedef  CK::Circle_2 Circle_2;
   typedef std::list<std::pair<Point_2, double> > Polygon;
   typedef std::list<Polygon> Polygons;
  typedef CK::Intersect_2   Intersect_2;
@@ -77,8 +77,8 @@ private:
       is >> ymax;
     }
   }
-  
-  
+
+
   void
   skip_header(std::istream& is)
   {
@@ -99,10 +99,10 @@ private:
     is >> str;
     assert(str == "ENDSEC");
   }
-  
-  
-  
-  void 
+
+
+
+  void
   read_circle(std::istream& is,std::ostream& os)
   {
     int n;
@@ -112,7 +112,7 @@ private:
     assert(n == 8);
     is >> n;
     assert(n == 0);
-  
+
   is >> n;
   assert(n == 10);
   is >> cx;
@@ -138,37 +138,37 @@ write_polygon(Polygons polygons,std::ostream& os){
   FT bulge;
   for( Polygons::iterator it = polygons.begin(); it != polygons.end(); it++){
      Polygon::iterator pit = it->begin();
-    first_point = pit->first;    
+    first_point = pit->first;
     while(true){
       ps = pit->first;
       bulge = pit->second;
       pit++;
       if(pit ==it->end()){
-	break;
+        break;
       }
       pt = pit->first;
       if(bulge == FT(0)){
-	if(ps != pt){
-	  os<<"Line_arc_2("<<"Point_2("<<"Rational(" <<ps.x().numerator()<< ", "<<ps.x().denominator()<<"), "<<"Rational(" <<ps.y().numerator()<< ", "<<ps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<pt.x().numerator()<< ", "<<pt.x().denominator()<<"), "<<"Rational(" <<pt.y().numerator()<< ", "<<pt.y().denominator()<<")))"<<std::endl;
-	}
+        if(ps != pt){
+          os<<"Line_arc_2("<<"Point_2("<<"Rational(" <<ps.x().numerator()<< ", "<<ps.x().denominator()<<"), "<<"Rational(" <<ps.y().numerator()<< ", "<<ps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<pt.x().numerator()<< ", "<<pt.x().denominator()<<"), "<<"Rational(" <<pt.y().numerator()<< ", "<<pt.y().denominator()<<")))"<<std::endl;
+        }
       } else {
 os<<"Circular_arc_2( Point_2( Rational(" <<ps.x().numerator()<< ", "<<ps.x().denominator()<<")"<< ", "<<"Rational(" <<ps.y().numerator()<< ", "<<ps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<pt.x().numerator()<< ", "<<pt.x().denominator()<<"), "<<"Rational(" <<pt.y().numerator()<< ", "<<pt.y().denominator()<<")),"<<"Rational(" <<bulge.numerator()<< ", "<<bulge.denominator()<<"))"<<std::endl;
 //         const FT sqr_bulge = CGAL::square(bulge);
 //         const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
 //         const FT x_coord = ((ps.x() + pt.x())/FT(2)) + common*(ps.y() - pt.y());
 //         const FT y_coord = ((ps.y() + pt.y())/FT(2)) + common*(pt.x() - ps.x());
-//         const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
-//  	Circular_arc_point_2 cps = ps;
-//  	Circular_arc_point_2 cpt = pt;
-// 	os << "Circular_arc_2("<<"Circle_2 ("<<"Point_2("<< x_coord<<","<<y_coord <<"),"<<sqr_rad <<"),"<< "Point_2("<< cps.x()<<","<<cps.y() <<"),"<<"Point_2("<< cpt.x()<<","<<cpt.y() <<"))"<<std::endl; 
+//         const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16);
+//          Circular_arc_point_2 cps = ps;
+//          Circular_arc_point_2 cpt = pt;
+//         os << "Circular_arc_2("<<"Circle_2 ("<<"Point_2("<< x_coord<<","<<y_coord <<"),"<<sqr_rad <<"),"<< "Point_2("<< cps.x()<<","<<cps.y() <<"),"<<"Point_2("<< cpt.x()<<","<<cpt.y() <<"))"<<std::endl;
 
-	//Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
+        //Circular_arc_2 arc = Circular_arc_2(Circle_2(Point_2(x_coord, y_coord), sqr_rad), cps, cpt);
 // os<<"Circular_arc_2("<<"Circle_2 ("<<"Point_2("<<"Rational(" <<x_coord.numerator()<< ", "<<x_coord.denominator()<<")"<< ", "<<"Rational(" <<y_coord.numerator()<< ", "<<y_coord.denominator()<<")""),"<<"Rational(" <<sqr_rad.numerator()<< ", "<<sqr_rad.denominator()<<")"<<"),"<<"Point_2("<<"Rational(" <<cps.x().numerator()<< ", "<<cps.x().denominator()<<"), "<<"Rational(" <<cps.y().numerator()<< ", "<<cps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<cpt.x().numerator()<< ", "<<cpt.x().denominator()<<"), "<<"Rational(" <<cpt.y().numerator()<< ", "<<cpt.y().denominator()<<")))"<<std::endl;
       }
     }
     if(bulge == FT(0)){
       if(ps != first_point){
-	  os<<"Line_arc_2("<<"Point_2("<<"Rational(" <<ps.x().numerator()<< ", "<<ps.x().denominator()<<"), "<<"Rational(" <<ps.y().numerator()<< ", "<<ps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<first_point.x().numerator()<< ", "<<first_point.x().denominator()<<"), "<<"Rational(" <<first_point.y().numerator()<< ", "<<first_point.y().denominator()<<")))"<<std::endl;
+          os<<"Line_arc_2("<<"Point_2("<<"Rational(" <<ps.x().numerator()<< ", "<<ps.x().denominator()<<"), "<<"Rational(" <<ps.y().numerator()<< ", "<<ps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<first_point.x().numerator()<< ", "<<first_point.x().denominator()<<"), "<<"Rational(" <<first_point.y().numerator()<< ", "<<first_point.y().denominator()<<")))"<<std::endl;
       }
     } else {
       pt = first_point;
@@ -176,11 +176,11 @@ os<<"Circular_arc_2( Point_2( Rational(" <<ps.x().numerator()<< ", "<<ps.x().den
 //       const FT sqr_bulge = CGAL::square(bulge);
 //       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
 //       const FT x_coord = ((ps.x() + pt.x())/FT(2)) + common*(ps.y() - pt.y());
-//       const FT y_coord = ((ps.y() + pt.y())/FT(2)) + common*(pt.x() - ps.x());      
-//       const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16);       
+//       const FT y_coord = ((ps.y() + pt.y())/FT(2)) + common*(pt.x() - ps.x());
+//       const FT sqr_rad = CGAL::squared_distance(ps, pt) * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16);
 //       Circular_arc_point_2 cps = ps;
 //       Circular_arc_point_2 cpt = pt;
-/*	os << "Circular_arc_2("<<"Circle_2 ("<<"Point_2("<< x_coord<<","<<y_coord <<"),"<<sqr_rad <<"),"<< "Point_2("<< cps.x()<<","<<cps.y() <<"),"<<"Point_2("<< cpt.x()<<","<<cpt.y() <<"))"<<std::endl;*/ 
+/*        os << "Circular_arc_2("<<"Circle_2 ("<<"Point_2("<< x_coord<<","<<y_coord <<"),"<<sqr_rad <<"),"<< "Point_2("<< cps.x()<<","<<cps.y() <<"),"<<"Point_2("<< cpt.x()<<","<<cpt.y() <<"))"<<std::endl;*/
 // os<<"Circular_arc_2("<<"Circle_2 ("<<"Point_2("<<"Rational(" <<x_coord.numerator()<< ", "<<x_coord.denominator()<<")"<< ", "<<"Rational(" <<y_coord.numerator()<< ", "<<y_coord.denominator()<<")""),"<<"Rational(" <<sqr_rad.numerator()<< ", "<<sqr_rad.denominator()<<")"<<"),"<<"Point_2("<<"Rational(" <<cps.x().numerator()<< ", "<<cps.x().denominator()<<"), "<<"Rational(" <<cps.y().numerator()<< ", "<<cps.y().denominator()<<")),"<<"Point_2("<<"Rational(" <<cpt.x().numerator()<< ", "<<cpt.x().denominator()<<"), "<<"Rational(" <<cpt.y().numerator()<< ", "<<cpt.y().denominator()<<")))"<<std::endl;
     }
   }
@@ -203,7 +203,7 @@ read_polygon(std::istream& is,Polygon& poly)
     is >> n;
     if(n != 0){
       int m;
-      is >> m; 
+      is >> m;
     }
   } while(n != 0);
 
@@ -223,15 +223,15 @@ read_polygon(std::istream& is,Polygon& poly)
       is >> n;
       len = 0;
       if(n == 42){
-	is >> len;
+        is >> len;
       } else {
-	assert(n == 0);
+        assert(n == 0);
       }
       //std::cout<<"Polygon"<<x<<y<<len<<std::endl;
       poly.push_back(std::make_pair(CK::Construct_point_2()(x,y), len));
      i++;
     }
-    
+
   } while (str != "SEQEND");
   is >> n;
   assert(n == 8);
@@ -261,19 +261,19 @@ read_entities(std::istream& is,std::ostream& os)
     is >> str;
     if(str == "POLYLINE"){
       Polygon p;
-      poly.push_back(p); 
-	std::cout<< "it's polyline" <<std::endl;
+      poly.push_back(p);
+        std::cout<< "it's polyline" <<std::endl;
       read_polygon(is, poly.back());
     } else if(str == "CIRCLE"){
-      read_circle(is,os);      
+      read_circle(is,os);
     } else if(str == "ENDSEC"){
-      
+
     } else {
       std::cerr << "unknown entity" << std::endl;
       exit(0);
     }
   } while(str != "ENDSEC");
-	std::cout<< "it's endsec" <<std::endl;
+        std::cout<< "it's endsec" <<std::endl;
   is >> n;
   assert(n == 0);
   is >> str;

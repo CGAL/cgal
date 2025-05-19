@@ -1,20 +1,16 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_TEST_H
 #define CGAL_APOLLONIUS_GRAPH_2_TEST_H
 
-#include <CGAL/basic.h>
-#include <cassert>
-#include <CGAL/enum.h>
-#include <CGAL/use.h>
-
-#include <CGAL/Vector_2.h> // this is done in order to avoid error
-// when the  Segment_2_Segment_2_intersection.h file is included from
-// the Triangulation_euclidean_traits_2.h file.
-
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
-//#include <CGAL/new_traits/Apollonius_graph_new_filtered_traits_2.h>
+
+#include <cassert>
+#include <CGAL/enum.h>
+#include <CGAL/use.h>
+#include <CGAL/Random.h>
+
 
 #include "IO/Null_output_stream.h"
 
@@ -35,24 +31,24 @@ bool test_algo_generic(InputStream& is, const AG& = AG());
 
 template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is, const Kernel& = Kernel(),
-	       const Method_tag& = Method_tag());
+               const Method_tag& = Method_tag());
 
 template<class Kernel, class Method_tag, class InputStream>
 bool test_hierarchy_algo(InputStream& is, const Kernel& = Kernel(),
-			 const Method_tag& = Method_tag());
+                         const Method_tag& = Method_tag());
 
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_algo(InputStream& is,
-			       const CK& = CK(), const CKM& = CKM(),
-			       const EK& = EK(),
-			       const EKM& = EKM());
+                               const CK& = CK(), const CKM& = CKM(),
+                               const EK& = EK(),
+                               const EKM& = EKM());
 
 template<class CK, class CKM, class EK, class EKM, class InputStream>
-bool test_filtered_traits_hierarchy_algo(InputStream& is, 
-					 const CK& = CK(),
-					 const CKM& = CKM(),
-					 const EK& = EK(),
-					 const EKM& = EKM());
+bool test_filtered_traits_hierarchy_algo(InputStream& is,
+                                         const CK& = CK(),
+                                         const CKM& = CKM(),
+                                         const EK& = EK(),
+                                         const EKM& = EKM());
 #endif
 
 
@@ -213,7 +209,7 @@ bool test_traits_base(const Traits& = Traits())
   //--------------------------------------------------------------------
   Point_2 p = wp2.point();
   assert( oriented_side_of_bisector(wp1, wp3, p) ==
-		  ON_POSITIVE_SIDE );
+                  ON_POSITIVE_SIDE );
 
 
   // testing vertex_conflict
@@ -237,7 +233,7 @@ bool test_traits_base(const Traits& = Traits())
   // then we consider the case where v3 is the vertex at infinity
   wp1 = Site_2(Point_2(1,100),49);
   wp2 = Site_2(Point_2(0,-100),50);
-  
+
   wp3 = Site_2(Point_2(0,0),0);
   assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
@@ -274,7 +270,7 @@ bool test_traits_base(const Traits& = Traits())
 
   assert( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
   assert( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
-  
+
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  false);
 
   assert( b );
@@ -284,7 +280,7 @@ bool test_traits_base(const Traits& = Traits())
 
   assert( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
   assert( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
-  
+
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
   assert( b );
@@ -294,7 +290,7 @@ bool test_traits_base(const Traits& = Traits())
 
   assert( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
   assert( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
-  
+
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
   assert( !b );
@@ -305,7 +301,7 @@ bool test_traits_base(const Traits& = Traits())
 
   assert( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
   assert( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
-  
+
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
   assert( !b );
@@ -395,14 +391,14 @@ bool test_traits_base(const Traits& = Traits())
   // testing infinite_edge_interior_conflict
   //--------------------------------------------------------------------
 
-  
+
   wp2 = Site_2(Point_2(0,0),100);
   wp3 = Site_2(Point_2(-100,200),5);
   wp4 = Site_2(Point_2(100,300),4);
 
   // the endpoints are not in conflict but the interior is
   wp5 = Site_2(Point_2(0,-150),2);
-  
+
   assert( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
   assert( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
 
@@ -412,7 +408,7 @@ bool test_traits_base(const Traits& = Traits())
 
   // the endpoints are in conflict but the interior isn't
   wp5 = Site_2(Point_2(0,150),150);
-  
+
   assert( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
   assert( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
 
@@ -422,7 +418,7 @@ bool test_traits_base(const Traits& = Traits())
 
   // the endpoints are in conflict as well as the interior
   wp5 = Site_2(Point_2(0,-150),150);
-  
+
   assert( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
   assert( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
 
@@ -432,7 +428,7 @@ bool test_traits_base(const Traits& = Traits())
 
   // neither the endpoints nor the interior are in conflict
   wp5 = Site_2(Point_2(0,150),50);
-  
+
   assert( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
   assert( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
 
@@ -597,7 +593,7 @@ bool test_algo_generic(InputStream& is)
     n_afaces++;
   }
 
-    
+
   assert( 2 * n_aedges == 3 * n_afaces );
   assert( n_avertices - n_aedges + n_afaces == 2 );
 
@@ -755,9 +751,9 @@ bool test_algo_generic(InputStream& is)
     typename std::vector<Site_2>::iterator it;
     for (it = wp_list.begin(); it != wp_list.end(); ++it) {
       if ( it == wp_list.begin() ) {
-	v = ag.insert(*it);
+        v = ag.insert(*it);
       } else {
-	v = ag.insert(*it, v);
+        v = ag.insert(*it, v);
       }
     }
     assert( ag.is_valid() );
@@ -793,7 +789,7 @@ bool test_algo_generic(InputStream& is)
   ag.clear();
   ag.swap(ag2);
   assert( ag.number_of_vertices() +
-		  ag.number_of_hidden_sites() == wp_list.size() );
+                  ag.number_of_hidden_sites() == wp_list.size() );
   assert( ag2.number_of_vertices() == 0 );
 
 
@@ -840,24 +836,29 @@ bool test_algo_generic(InputStream& is)
   // file I/O methods
   //--------------------------------------------------------------------
   {
-    std::ofstream ofs("ag_testsuite.tmp");
+    std::string fname  =  "ag_testsuite_" + std::to_string(CGAL::Random().get_seed())  + ".tmp";
+    std::cout << "writing to " << fname << std::endl;
+
+    std::ofstream ofs(fname);
     assert( ofs );
     ag.file_output(ofs);
     ofs.close();
 
-    std::ifstream ifs("ag_testsuite.tmp");
+    std::ifstream ifs(fname);
     assert( ifs );
     ag.file_input(ifs);
     ifs.close();
     assert( ag.is_valid() );
   }
   {
-    std::ofstream ofs("ag_testsuite.tmp");
+    std::string fname = "ag_testsuite_" + std::to_string(CGAL::Random().get_seed()) + ".tmp";
+    std::cout << "writing to " << fname << std::endl;
+    std::ofstream ofs(fname);
     assert( ofs );
     ofs << ag;
     ofs.close();
 
-    std::ifstream ifs("ag_testsuite.tmp");
+    std::ifstream ifs(fname);
     assert( ifs );
     ifs >> ag;
     ifs.close();
@@ -869,7 +870,7 @@ bool test_algo_generic(InputStream& is)
 #if defined(__INTEL_COMPILER)
 template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is, const Kernel&,
-	       const Method_tag&)
+               const Method_tag&)
 #else
 template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is)
@@ -880,7 +881,7 @@ bool test_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -905,7 +906,7 @@ bool test_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;
@@ -924,7 +925,7 @@ bool test_hierarchy_algo(InputStream& is)
 #if defined(__INTEL_COMPILER)
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_algo(InputStream& is, const CK&,
-			       const CKM&, const EK&, const EKM&)
+                               const CKM&, const EK&, const EKM&)
 #else
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_algo(InputStream& is)
@@ -935,7 +936,7 @@ bool test_filtered_traits_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -949,9 +950,9 @@ bool test_filtered_traits_algo(InputStream& is)
 
 #if defined(__INTEL_COMPILER)
 template<class CK, class CKM, class EK, class EKM, class InputStream>
-bool test_filtered_traits_hierarchy_algo(InputStream& is, 
-					 const CK&, const CKM&,
-					 const EK&, const EKM&)
+bool test_filtered_traits_hierarchy_algo(InputStream& is,
+                                         const CK&, const CKM&,
+                                         const EK&, const EKM&)
 #else
 template<class CK, class CKM, class EK, class EKM, class InputStream>
 bool test_filtered_traits_hierarchy_algo(InputStream& is)
@@ -962,7 +963,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;

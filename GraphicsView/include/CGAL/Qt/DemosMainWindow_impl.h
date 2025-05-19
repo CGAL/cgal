@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -41,15 +32,14 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QGraphicsView>
-#include <QGLWidget>
 #include <QTextStream>
 #include <QSettings>
 #include <QUrl>
-#include <QDesktopWidget>
-#include <QRegExp>
-#include <QSvgGenerator>
+#include <QRegularExpression>
+#if QT_SVG_LIB
+#  include <QSvgGenerator>
+#endif
 #include <QtCore>
-#include <QtOpenGL>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -69,13 +59,6 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   xycoord->setAlignment(::Qt::AlignHCenter);
   xycoord->setMinimumSize(xycoord->sizeHint());
   xycoord->clear();
-
-  actionUse_OpenGL = new QAction(this);
-  actionUse_OpenGL->setObjectName("actionUse_OpenGL");
-  actionUse_OpenGL->setCheckable(true);
-  actionUse_OpenGL->setText(tr("Use &OpenGL"));
-  actionUse_OpenGL->setStatusTip(tr("Make Qt use OpenGL to display the graphical items, instead of its native painting system."));
-  actionUse_OpenGL->setShortcut(tr("Ctrl+G"));
 
   actionUse_Antialiasing = new QAction(this);
   actionUse_Antialiasing->setObjectName("actionUse_Antialiasing");
@@ -101,7 +84,7 @@ DemosMainWindow::~DemosMainWindow()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   if (event->mimeData()->hasFormat("text/uri-list"))
@@ -109,7 +92,7 @@ DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::dropEvent(QDropEvent *event)
 {
   Q_FOREACH(QUrl url, event->mimeData()->urls()) {
@@ -127,7 +110,7 @@ DemosMainWindow::addNavigation(QGraphicsView* graphicsView)
   graphicsView->viewport()->installEventFilter(navigation);
   graphicsView->installEventFilter(navigation);
   QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
-		   xycoord, SLOT(setText(QString)));
+                   xycoord, SLOT(setText(QString)));
   view = graphicsView;
 }
 
@@ -159,31 +142,29 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
   if(!menuOptions->isEmpty()) {
     menuOptions->addSeparator();
   }
-  menuOptions->addAction(actionUse_OpenGL);
   menuOptions->addAction(actionUse_Antialiasing);
   connect(actionUse_Antialiasing, SIGNAL(toggled(bool)),
           this, SLOT(setUseAntialiasing(bool)));
-  connect(actionUse_OpenGL, SIGNAL(toggled(bool)),
-          this, SLOT(setUseOpenGL(bool)));
   actionUse_Antialiasing->setChecked(true);
 }
 
+#if QT_SVG_LIB
 CGAL_INLINE_FUNCTION
 void
 DemosMainWindow::setupExportSVG(QAction* action, QGraphicsView* view)
 {
   this->view = view;
   connect(action, SIGNAL(triggered(bool)),
-	  this, SLOT(exportSVG()));
+          this, SLOT(exportSVG()));
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::exportSVG()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Export to SVG"),
-						  ".",
-						  tr("SVG (*.svg)\n"));
+                                                  tr("Export to SVG"),
+                                                  ".",
+                                                  tr("SVG (*.svg)\n"));
 
   QSvgGenerator svg;
   svg.setFileName(fileName);
@@ -198,48 +179,23 @@ void DemosMainWindow::exportSVG()
   this->view->render(&painter);
   painter.end();
 }
+#endif // QT_SVG_LIB
 
 CGAL_INLINE_FUNCTION
 void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
-  view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
 
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
 }
 
 CGAL_INLINE_FUNCTION
-void
-DemosMainWindow::setUseOpenGL(bool checked)
-{ 
-  if(checked) {
-    QGLWidget* new_viewport = new QGLWidget;
-
-    // Setup the format to allow antialiasing with OpenGL:
-    // one need to activate the SampleBuffers, if the graphic driver allows
-    // this.
-    QGLFormat glformat = new_viewport->format();
-    glformat.setOption(QGL::SampleBuffers);
-    new_viewport->setFormat(glformat);
-
-    view->setViewport(new_viewport);
-  }
-  else {
-    view->setViewport(new QWidget);
-  }
-  statusBar()->showMessage(tr("OpenGL %1activated").arg(checked?"":"de-"),
-                           1000);
-  view->viewport()->installEventFilter(navigation);
-  view->setFocus();
-}
-
-CGAL_INLINE_FUNCTION
-QMenu* 
+QMenu*
 DemosMainWindow::getMenu(QString objectName, QString title)
 {
-  QMenu* menu = NULL;
+  QMenu* menu = nullptr;
 
   QString title2 = title;
   title2.remove('&');
@@ -257,11 +213,11 @@ DemosMainWindow::getMenu(QString objectName, QString title)
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 {
   QFile about_CGAL(html_resource_name);
@@ -284,8 +240,8 @@ DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 
   QLabel* mb_label = mb.findChild<QLabel*>("qt_msgbox_label");
   if(mb_label) {
-    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() | 
-                                      ::Qt::LinksAccessibleByMouse | 
+    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() |
+                                      ::Qt::LinksAccessibleByMouse |
                                       ::Qt::LinksAccessibleByKeyboard);
   }
   else {
@@ -309,7 +265,7 @@ QMenu* DemosMainWindow::getHelpMenu()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addAboutCGAL(QMenu* menuHelp)
 {
   if(!menuHelp) {
@@ -322,7 +278,7 @@ DemosMainWindow::addAboutCGAL(QMenu* menuHelp)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addAboutDemo(QString htmlResourceName, QMenu* menuHelp)
 {
   if(!menuHelp) {
@@ -360,14 +316,14 @@ DemosMainWindow::setMaxNumberOfRecentFiles(const unsigned int i)
 }
 
 CGAL_INLINE_FUNCTION
-unsigned int 
+unsigned int
 DemosMainWindow::maxNumberOfRecentFiles() const
 {
   return maxNumRecentFiles;
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::openRecentFile_aux()
 {
   QAction *action = qobject_cast<QAction *>(sender());
@@ -376,7 +332,7 @@ DemosMainWindow::openRecentFile_aux()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addToRecentFiles(QString fileName)
 {
   QStringList files = settings.value("recentFileList").toStringList();
@@ -418,13 +374,13 @@ DemosMainWindow::addRecentFiles(QMenu* menu, QAction* insertBeforeAction)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::updateRecentFileActions()
 {
   QStringList files = settings.value("recentFileList").toStringList();
 
   int numRecentFiles = qMin(files.size(), (int)this->maxNumberOfRecentFiles());
-  
+
   for (int i = 0; i < numRecentFiles; ++i) {
     QString strippedName = QFileInfo(files[i]).fileName();
     QString text = tr("&%1 %2").arg(i).arg(strippedName);
@@ -434,14 +390,14 @@ DemosMainWindow::updateRecentFileActions()
   }
   for (unsigned int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
     recentFileActs[j]->setVisible(false);
-  
+
   recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::writeState(QString groupname)
 {
-  
+
 
   settings.beginGroup(groupname);
   settings.setValue("size", size());
@@ -453,19 +409,14 @@ void DemosMainWindow::writeState(QString groupname)
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
 {
-  
-  
+
+
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
 
-  QDesktopWidget* desktop = qApp->desktop();
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-  if(desktop->availableGeometry(pos).contains(pos)) {
+  if(QGuiApplication::screenAt(pos)) {
     move(pos);
-  }
-  QByteArray mainWindowState = settings.value("state").toByteArray();
-  if(!mainWindowState.isNull()) {
-    this->restoreState(mainWindowState);
   }
   settings.endGroup();
 }

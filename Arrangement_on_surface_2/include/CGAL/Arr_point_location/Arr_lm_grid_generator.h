@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
@@ -91,14 +82,14 @@ protected:
                            // number of landmarks as parameter
 
 private:
-  /*! Copy constructor - not supported. */
+  /*! Copy constructor not supported. */
   Arr_grid_landmarks_generator(const Self&);
 
-  /*! Assignment operator - not supported. */
+  /*! Assignment operator not supported. */
   Self& operator=(const Self&);
 
 public:
-  /*! Constructor from an arrangement.
+  /*! constructs from an arrangement.
    * \param arr (in) The arrangement.
    */
   Arr_grid_landmarks_generator(const Arrangement_2& arr) :
@@ -120,7 +111,7 @@ public:
     build_landmark_set();//this->
   }
 
-  /*! Create the landmarks set (choosing the landmarks),
+  /*! creates the landmarks set (choosing the landmarks),
    * and store them in the nearest neighbor search structure.
    */
   virtual void build_landmark_set()
@@ -137,7 +128,7 @@ public:
     this->updated = true;
   }
 
-  /*! Clear the set of landmarks.
+  /*! clears the set of landmarks.
    */
   virtual void clear_landmark_set()
   {
@@ -145,7 +136,7 @@ public:
     this->updated = false;
   }
 
-  /*! Obtain the nearest neighbor (landmark) to the given point.
+  /*! obtains the nearest neighbor (landmark) to the given point.
    * \param q The query point.
    * \param obj (out) The location of the nearest landmark point in the
    *                  arrangement (a vertex, halfedge, or face handle).
@@ -174,7 +165,7 @@ public:
   }
 
 protected:
-  /*! Create a set of landmark points on a grid.
+  /*! creates a set of landmark points on a grid.
    */
   virtual void _create_points_set(Points_set& points)
   {
@@ -270,6 +261,6 @@ protected:
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

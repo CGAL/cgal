@@ -1,0 +1,60 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \begin{pspicture}(-4,-4)(4,4)
+    \arraxes(0,0)(-4,-4)(4,4)
+    \rput(1.96,-3){%
+      \psframebox*{%
+        \begin{minipage}[t]{5cm}
+          \textcolor{blue}{$c_1: 3x-5y-2=0$}\\
+          \textcolor{olivegreen}{$c_2: x^2+3y^2-10=0$}\\
+          \textcolor{orange}{$c_3: x^2+y^2+xy^2=0$}\\
+          \textcolor{purple}{$c_4: x^6+y^6-x^3y^3-12=0$}
+        \end{minipage}
+      }
+    }
+    %
+    % C1: 3x-5y-2=0 (line)
+    \psline[linecolor=blue](-4,-2.8)(4,2)
+    % C2: x^2+3*y^2-10=0 (ellipse)
+    \parametricplot[linecolor=olivegreen,plotstyle=ccurve]{0}{360}{10 sqrt t cos mul 10 3 div sqrt t sin mul}
+    % C3: x^2+y^2+xy^2=0 (2 disconnected curves + an isolated point)
+    \psplot[linecolor=orange]{-4}{-1.075}{x -1 x sub sqrt div}
+    \psplot[linecolor=orange]{-4}{-1.075}{0 x sub -1 x sub sqrt div}
+    \arrColorVertex(0,0){3}{orange}
+    % C4: x^6+y^6-x^3y^3-12=0
+    \parametricplot[linecolor=purple,plotstyle=ccurve]{0}{360}{
+      /sqrttwelve 12 sqrt def
+      /third 1 3 div def
+      /u sqrttwelve t sin mul 2 t cos mul add def
+      /v sqrttwelve t sin mul 2 t cos mul sub def
+      /su u abs third exp def
+      /sv v abs third exp def
+      u 0 ge {su} {su neg} ifelse
+      v 0 ge {sv} {sv neg} ifelse
+    }
+    \arrEmptyVertex(-1.82104,-1.49263){x}
+    \arrEmptyVertex(-3.16228,0){x}
+    \arrEmptyVertex(3.16228,0){x}
+    \arrEmptyVertex(2.51335,1.10801){x}
+    \arrEmptyVertex(-2.81613,-2.08968){x}
+    \arrEmptyVertex(-1.58236,-1.34942){x}
+    \arrEmptyVertex(-1.5874,-1.25992){x}
+    \arrEmptyVertex(-1.51309,-1.51309){x}
+    \arrEmptyVertex(-1.51309,0){x}
+    \arrEmptyVertex(1.51309,0){x}
+    \arrEmptyVertex(1.51309,1.51309){x}
+    \arrEmptyVertex(1.5226,0.513558){x}
+    \arrEmptyVertex(1.5874,1.25992){x}
+    %
+    \rput(3.5,2.1){\textcolor{blue}{$c_1$}}
+    \rput(3,-1.25){\textcolor{olivegreen}{$c_2$}}
+    \rput(-1.75,2.4){\textcolor{orange}{$c_3$}}
+    \rput(1.85,-0.5){\textcolor{purple}{$c_4$}}
+    %
+    \psframe[linewidth=0.25pt](-4,-4)(4,4)
+  \end{pspicture}
+}
+\end{document}

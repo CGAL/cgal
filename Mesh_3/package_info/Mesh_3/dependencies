@@ -2,6 +2,7 @@ AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 CGAL_ImageIO
 Cartesian_kernel
 Circulator
@@ -24,15 +25,14 @@ Mesher_level
 Modifier
 Modular_arithmetic
 Number_types
-Polygon
 Polygon_mesh_processing
 Polyhedron
-Polyhedron_IO
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
+SMDS_3
 STL_Extension
 Solver_interface
 Spatial_searching

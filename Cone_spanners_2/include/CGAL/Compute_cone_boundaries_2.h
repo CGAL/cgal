@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Authors: Weisheng Si, Quincy Tse
@@ -39,7 +30,9 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
+#endif
 #include <CGAL/Aff_transformation_2.h>
 
 namespace CGAL {
@@ -59,7 +52,7 @@ namespace CGAL {
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
- * \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+ * \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
  *                  or `CGAL::Exact_predicates_inexact_constructions_kernel`.
  *
  */
@@ -89,7 +82,7 @@ public:
      * and output them to `result` in the counterclockwise order.
      * Finally, the past-the-end iterator for the resulting directions is returned.
      *
-         * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
+     * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
      * \param cone_number The number of cones
      * \param initial_direction The direction of the first ray
      * \param result  The output iterator
@@ -120,9 +113,9 @@ public:
 
 };
 
-
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 /*
- The specialised functor for computing the directions of cone boundaries exactly
+ The specialized functor for computing the directions of cone boundaries exactly
  with a given cone number and a given initial direction.
 */
 template <>
@@ -216,8 +209,9 @@ public:
 
         return result;
 
-    };      // end of operator()
+    }   // end of operator()
 };      // end of functor specialization: Compute_cone_..._2
+#endif
 
 }  // namespace CGAL
 

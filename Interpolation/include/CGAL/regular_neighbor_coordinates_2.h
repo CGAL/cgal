@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julia Floetotto
 
@@ -25,19 +16,18 @@
 
 #include <CGAL/Interpolation/internal/helpers.h>
 
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/function_objects.h>
-
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
+#include <CGAL/Polygon_2_algorithms.h>
 
 #include <iterator>
 #include <list>
 #include <map>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -131,9 +121,12 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
     *vor_vertices++ = vor[2];
 
     area += polygon_area_2(vor.begin(), vor.end(), rt.geom_traits());
-    *out++= std::make_pair(current, area);
 
-    area_sum += area;
+    if(area > 0)
+    {
+      *out++= std::make_pair(current, area);
+      area_sum += area;
+    }
 
     //update prev and hit:
     prev = current;
@@ -163,8 +156,11 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
       ++fc;
     }
 
-    *out++ = std::make_pair((*hidden_vertices_begin), area);
-    area_sum += area;
+    if(area > 0)
+    {
+      *out++ = std::make_pair((*hidden_vertices_begin), area);
+      area_sum += area;
+    }
   }
 
   return make_triple(out, area_sum, true);
@@ -309,9 +305,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIterator out,
                                OutputIteratorVorVertices vor_vertices,
                                typename Rt::Face_handle start,
-                               typename boost::enable_if_c<
-                                          is_iterator<OutputIteratorVorVertices>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               is_iterator<OutputIteratorVorVertices>::value
+                                        >* = 0)
 {
   // Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
   typedef typename Rt::Geom_traits::FT                            FT;
@@ -329,9 +325,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                OutputIterator out,
                                OutputFunctor fct,
                                typename Rt::Face_handle start,
-                               typename boost::disable_if_c<
-                                          is_iterator<OutputFunctor>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               !is_iterator<OutputFunctor>::value
+                                        >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(), start);
 }
@@ -344,10 +340,10 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                const typename Rt::Weighted_point& p,
                                OutputIterator out,
                                OutputFunctor fct,
-                               typename boost::disable_if_c<
-                                 boost::is_convertible<OutputFunctor,
+                               std::enable_if_t<
+                                 !std::is_convertible<OutputFunctor,
                                                        typename Rt::Face_handle>::value
-                               >::type* = 0)
+                               >* = 0)
 {
   return regular_neighbor_coordinates_2(rt, p, out, fct, typename Rt::Face_handle());
 }
@@ -426,9 +422,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
-                               typename boost::disable_if_c<
-                                          is_iterator<OutputFunctor>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               !is_iterator<OutputFunctor>::value
+                                        >* = 0)
 {
    return regular_neighbor_coordinates_2(rt, p, out, fct, Emptyset_iterator(),
                                          hole_begin, hole_end,
@@ -449,9 +445,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                EdgeIterator hole_end,
                                VertexIterator hidden_vertices_begin,
                                VertexIterator hidden_vertices_end,
-                               typename boost::enable_if_c<
-                                          is_iterator<OutputIteratorVorVertices>::value
-                                        >::type* = 0)
+                               std::enable_if_t<
+                               is_iterator<OutputIteratorVorVertices>::value
+                                        >* = 0)
 {
   typedef typename Rt::Geom_traits::FT                            FT;
   typedef Interpolation::internal::Extract_point_in_pair<Rt, FT>  OutputFunctor;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Sebastian Morr    <sebastian@morr.cc>
 
@@ -22,12 +13,16 @@
 #define CGAL_AABB_TRAITS_2_H
 
 #include <CGAL/license/Minkowski_sum_2.h>
+#include <CGAL/Search_traits_2.h>
 
 
 namespace CGAL {
 
+namespace Minkowski_sum {
+
 template<typename GeomTraits, typename AABB_primitive_>
 class AABB_traits_2
+  :public Search_traits_2<GeomTraits>
 {
 
 public:
@@ -46,18 +41,18 @@ public:
 
   // Types for AABB_tree
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_2 Point_3;
-  typedef typename GeomTraits::Circle_2 Sphere_3;
-  typedef typename GeomTraits::Iso_rectangle_2 Iso_cuboid_3;
-  typedef typename GeomTraits::Construct_center_2 Construct_center_3;
-  typedef typename GeomTraits::Construct_iso_rectangle_2 Construct_iso_cuboid_3;
-  typedef typename GeomTraits::Construct_min_vertex_2 Construct_min_vertex_3;
-  typedef typename GeomTraits::Construct_max_vertex_2 Construct_max_vertex_3;
-  typedef typename GeomTraits::Compute_squared_radius_2 Compute_squared_radius_3;
+  typedef typename GeomTraits::Point_2 Point_2;
+  typedef typename GeomTraits::Circle_2 Circle_2;
+  typedef typename GeomTraits::Iso_rectangle_2 Iso_rectangle_2;
+  typedef typename GeomTraits::Construct_center_2 Construct_center_2;
+  typedef typename GeomTraits::Construct_iso_rectangle_2 Construct_iso_cuboid_2;
+  typedef typename GeomTraits::Construct_min_vertex_2 Construct_min_vertex_2;
+  typedef typename GeomTraits::Construct_max_vertex_2 Construct_max_vertex_2;
+  typedef typename GeomTraits::Compute_squared_radius_2 Compute_squared_radius_2;
   typedef typename GeomTraits::Cartesian_const_iterator_2
-  Cartesian_const_iterator_3;
+  Cartesian_const_iterator_2;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_2
-  Construct_cartesian_const_iterator_3;
+  Construct_cartesian_const_iterator_2;
 
   AABB_traits_2(const Point &translation_point): m_translation_point(
       translation_point)
@@ -222,6 +217,8 @@ private:
     return pr1.reference_point().y() < pr2.reference_point().y();
   }
 };
+
+} // namespace Minkowski_sum
 
 } // namespace CGAL
 

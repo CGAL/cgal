@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -23,90 +14,143 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/create_offset_polygons_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/arrange_offset_polygons_2.h>
+#include <CGAL/create_offset_polygons_2.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <memory>
+
+#include <type_traits>
+#include <vector>
 
 namespace CGAL {
 
-template<class FT, class OfK, class SsK, class C>
-std::vector< boost::shared_ptr< Polygon_2<OfK,C> > >
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// INTERIOR
+
+/*! create_interior_skeleton_and_offset_polygons_2 (no sorting of the result) */
+
+// overload where PolygonWithHoles actually is a type of Polygon that supports holes
+template <class OutPolygon_ = CGAL::Default,
+          class FT, class PolygonWithHoles,
+          class OfK = Exact_predicates_inexact_constructions_kernel,
+          class SsK = Exact_predicates_inexact_constructions_kernel>
+std::vector<std::shared_ptr<CGAL_SS_i::Polygon_return_type<OutPolygon_, PolygonWithHoles, OfK> > >
 inline
-create_interior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly, SsK const& ssk )
+create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
+                                               const PolygonWithHoles& aPoly,
+                                               const OfK& ofk = OfK(),
+                                               const SsK& ssk = SsK(),
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
-  OfK ofk ;
-  return create_interior_skeleton_and_offset_polygons_2(aOffset
-                                                       ,aPoly.outer_boundary()
-                                                       ,aPoly.holes_begin()
-                                                       ,aPoly.holes_end()
-                                                       ,ofk
-                                                       ,ssk
-                                                       );
-    
+  using OutPolygon = CGAL_SS_i::Polygon_return_type<OutPolygon_, PolygonWithHoles, OfK>;
+
+  return create_interior_skeleton_and_offset_polygons_2<OutPolygon>(aOffset, aPoly.outer_boundary(),
+                                                                    aPoly.holes_begin(), aPoly.holes_end(),
+                                                                    ofk, ssk);
 }
 
-template<class FT, class OfK, class C>
-std::vector< boost::shared_ptr< Polygon_2<OfK,C> > >
+/*! create_interior_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
+
+// 'Polygon' might be a polygon with holes or not, but it returns a polygon with holes
+template <class OutPolygonWithHoles_ = CGAL::Default,
+          class FT, class Polygon,
+          class OfK = Exact_predicates_inexact_constructions_kernel,
+          class SsK = Exact_predicates_inexact_constructions_kernel>
+std::vector<std::shared_ptr<CGAL_SS_i::Polygon_with_holes_return_type<OutPolygonWithHoles_, Polygon, OfK> > >
 inline
-create_interior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly )
+create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
+                                                          const Polygon& aPoly,
+                                                          const OfK& ofk = OfK(),
+                                                          const SsK& ssk = SsK())
 {
-  return create_interior_skeleton_and_offset_polygons_2(aOffset, aPoly, Exact_predicates_inexact_constructions_kernel() );
+  using OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<Polygon, OfK>::type;
+  using OutPolygonWithHoles = CGAL_SS_i::Polygon_with_holes_return_type<OutPolygonWithHoles_, Polygon, OfK>;
+
+  return arrange_offset_polygons_2<OutPolygonWithHoles>(
+           create_interior_skeleton_and_offset_polygons_2<OutPolygon>(aOffset, aPoly, ofk, ssk));
 }
 
-template<class FT, class OfK, class C>
-std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// EXTERIOR
+
+/*! create_exterior_skeleton_and_offset_polygons_with_holes_2 (orders the resulting polygons) */
+
+// Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
+template <class OutPolygonWithHoles_ = CGAL::Default,
+          class FT, class Polygon,
+          class OfK = Exact_predicates_inexact_constructions_kernel,
+          class SsK = Exact_predicates_inexact_constructions_kernel>
+std::vector<std::shared_ptr<CGAL_SS_i::Polygon_with_holes_return_type<OutPolygonWithHoles_, Polygon, OfK> > >
 inline
-create_exterior_skeleton_and_offset_polygons_with_holes_2 ( FT const&             aOffset
-                                                          , Polygon_2<OfK,C> const& aPoly
-                                                          , bool                  aDontReverseOrientation = false
-                                                          )
+create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
+                                                          const Polygon& aPoly,
+                                                          const OfK& ofk = OfK(),
+                                                          const SsK& ssk = SsK())
 {
-  return arrange_offset_polygons_2(create_exterior_skeleton_and_offset_polygons_with_holes_2(aOffset
-                                                                                            ,aPoly
-                                                                                            ,aDontReverseOrientation
-                                                                                            )
-                                  );
+  using OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<Polygon, OfK>::type;
+  using OutPolygonWithHoles = CGAL_SS_i::Polygon_with_holes_return_type<OutPolygonWithHoles_, Polygon, OfK>;
+
+  std::vector<std::shared_ptr<OutPolygon> > raw_output =
+    create_exterior_skeleton_and_offset_polygons_2<OutPolygon>(aOffset, aPoly, ofk, ssk);
+
+  // filter offset of the outer frame
+  std::swap(raw_output[0], raw_output.back());
+  raw_output.pop_back();
+
+  for (std::shared_ptr<OutPolygon> ptr : raw_output) {
+    if (ptr->size() > 1) {
+      // keep the first in place is just to get the same behavior as for Polygon_2
+      auto first = std::next(ptr->begin());
+      std::reverse(first, ptr->end());
+    }
+  }
+
+  return arrange_offset_polygons_2<OutPolygonWithHoles>(raw_output);
 }
 
-  template<class FT, class OfK, class SsK, class C>
-std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
+/*! create_interior_skeleton_and_offset_polygons_2 with a polygon with holes */
+
+// overload where PolygonWithHoles actually is a type of Polygon that supports holes
+template <class OutPolygon_ = CGAL::Default,
+          class FT, class PolygonWithHoles,
+          class OfK = Exact_predicates_inexact_constructions_kernel,
+          class SsK = Exact_predicates_inexact_constructions_kernel>
+std::vector<std::shared_ptr<CGAL_SS_i::Polygon_return_type<OutPolygon_, PolygonWithHoles, OfK> > >
 inline
-create_interior_skeleton_and_offset_polygons_with_holes_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly, SsK const& ssk )
+create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
+                                               const PolygonWithHoles& aPoly,
+                                               const OfK& ofk = OfK(),
+                                               const SsK& ssk = SsK(),
+                                               std::enable_if_t<
+                                                 CGAL_SS_i::has_Hole_const_iterator<PolygonWithHoles>::value>* = nullptr)
 {
-  return arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(aOffset,aPoly,ssk));
+  using OutPolygon = CGAL_SS_i::Polygon_return_type<OutPolygon_, PolygonWithHoles, OfK>;
+
+  std::vector<std::shared_ptr<OutPolygon> > polygons =
+    create_exterior_skeleton_and_offset_polygons_2<OutPolygon>(aOffset, aPoly.outer_boundary(), ofk, ssk);
+
+  for (typename PolygonWithHoles::Hole_const_iterator hit=aPoly.holes_begin(); hit!=aPoly.holes_end(); ++hit)
+  {
+    typename PolygonWithHoles::Polygon_2 hole = *hit;
+    hole.reverse_orientation();
+    std::vector<std::shared_ptr<OutPolygon> > hole_polygons =
+        create_interior_skeleton_and_offset_polygons_2<OutPolygon>(aOffset,
+                                                                   hole,
+                                                                   ofk, ssk);
+    polygons.insert(polygons.end(), hole_polygons.begin(), hole_polygons.end());
+  }
+
+  return polygons;
 }
 
+} // namespace CGAL
 
-  template<class FT, class OfK, class C>
-std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
-inline
-create_interior_skeleton_and_offset_polygons_with_holes_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly )
-{
-  return arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(aOffset,aPoly));
-}
-
-template<class FT, class OfK, class SsK>
-std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK> > >
-inline
-create_exterior_skeleton_and_offset_polygons_with_holes_2 ( FT const&             aOffset
-                                                          , Polygon_2<OfK> const& aPoly
-                                                          , SsK const&            ssk 
-                                                          )
-{
-  return arrange_offset_polygons_2(create_exterior_skeleton_and_offset_polygons_with_holes_2(aOffset
-                                                                                            ,aPoly
-                                                                                            ,ssk
-                                                                                            )
-                                  );
-}
-
-
-
-} // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
-
-#endif 
-// EOF //
+#endif // CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H

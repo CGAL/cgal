@@ -1,3 +1,5 @@
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 
 // c2t3
@@ -37,18 +39,18 @@ int main(int , char**)
                 i1, i2, i3);
     c2t3.set_in_complex(Tr::Facet(cell, 6 - i1 - i2 - i3));
   }
-  
+
   Tr::size_type number_of_edges = std::distance(c2t3.edges_begin(),
                                                 c2t3.edges_end());
 
   Tr::size_type number_of_facets = std::distance(c2t3.facets_begin(),
                                                  c2t3.facets_end());
 
-  Tr::size_type number_of_boundary_edges = 
+  Tr::size_type number_of_boundary_edges =
     std::distance(c2t3.boundary_edges_begin(),
                   c2t3.boundary_edges_end());
 
-  Tr::size_type number_of_vertices = 
+  Tr::size_type number_of_vertices =
     std::distance(c2t3.vertices_begin(),
                   c2t3.vertices_end());
 
@@ -59,10 +61,10 @@ int main(int , char**)
             << "\n";
 
   // Excepted results:
-  assert( number_of_vertices == 4 );  
+  assert( number_of_vertices == 4 );
   assert( number_of_boundary_edges == 4 );
   assert( number_of_edges == 5 );
-  assert( number_of_facets == 2 );  
+  assert( number_of_facets == 2 );
 
   // check the cast from C2t3::Vertex_iterator to Vertex_handle, at compile
   // time.

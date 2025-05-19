@@ -12,10 +12,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/property_map.h>
 
 // This package
 #include <CGAL/remove_outliers.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <deque>
 #include <string>
@@ -40,9 +41,11 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
+template <class PointContainer, class PointMap>
+void test_avg_knn_sq_distance(PointContainer& points, // input point set
                               unsigned int nb_neighbors_remove_outliers, // K-nearest neighbors
-                              double removed_percentage) // percentage of points to remove
+                              double removed_percentage,
+                              PointMap point_map) // percentage of points to remove
 {
   CGAL::Timer task_timer; task_timer.start();
   std::cerr << "Removes outliers wrt average squared distance to k nearest neighbors (remove "
@@ -50,12 +53,14 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
             << nb_neighbors_remove_outliers << ")...\n";
 
   // Removes outliers using erase-remove idiom
-  points.erase(CGAL::remove_outliers(points, nb_neighbors_remove_outliers,
-                                     CGAL::parameters::threshold_percent(removed_percentage)),
+  points.erase(CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
+               (points, nb_neighbors_remove_outliers,
+                CGAL::parameters::threshold_percent(removed_percentage).
+                                  point_map(point_map)),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-  std::deque<Point>(points).swap(points);
+  PointContainer(points).swap(points);
 
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -104,23 +109,18 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[i];
-
     // Reads the point set file in points[].
     std::deque<Point> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    std::ifstream stream(input_filename.c_str());
-    if(stream &&
-       CGAL::read_xyz_points(stream, std::back_inserter(points)))
+    if(CGAL::IO::read_points(argv[i], std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
-      std::cerr << "Error: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
@@ -129,8 +129,16 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, removed_percentage);
+    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, removed_percentage,
+                             CGAL::Identity_property_map<Point>());
 
+    struct A{};
+    std::vector< std::pair<Point, A> > points_bis;
+    points_bis.reserve(points.size());
+    for (const Point& p : points)
+      points_bis.push_back( std::make_pair(p, A()) );
+    test_avg_knn_sq_distance(points_bis, nb_neighbors_remove_outliers, removed_percentage,
+                             CGAL::First_of_pair_property_map<std::pair<Point,A>>());
   } // for each input file
 
   std::cerr << std::endl;
@@ -139,4 +147,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-

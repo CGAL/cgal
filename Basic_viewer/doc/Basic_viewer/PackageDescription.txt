@@ -1,0 +1,83 @@
+/// \defgroup PkgBasicViewerRef Basic Viewer Reference
+
+/// \defgroup PkgBasicViewerConcepts Concepts
+/// \ingroup PkgBasicViewerRef
+
+/// \defgroup PkgBasicViewerClasses Classes
+/// \ingroup PkgBasicViewerRef
+
+/*!
+\addtogroup PkgBasicViewerRef
+\cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
+\cgalPkgPicture{basic_viewer_logo.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand and Mostafa Ashraf}
+\cgalPkgDesc{This package provides interactive visualization for most \cgal packages.
+First, the function `draw()` is provided for each data structure.
+Several data structures can be added to a same graphics scene and visualized simultaneously.
+Rendering can be controlled (color, point size, etc.).
+Finally a \qt widget is provided that can be integrated in the GUI of a user application.}
+\cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgBib{cgal:d-bv}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `GraphicsSceneOptions`
+- `GraphicsSceneOptionsWithVolumes`
+
+\cgalCRPSection{Classes}
+- `CGAL::Qt::Basic_viewer`
+- `CGAL::Graphics_scene`
+- `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, VolumeDescriptor>`
+- `CGAL::Qt::QApplication_and_basic_viewer`
+
+\cgalCRPSubsection{Draw a Graphics Scene}
+
+- `CGAL::draw_graphics_scene()`
+
+\cgalCRPSubsection{Draw for Different Packages}
+
+- `CGAL::Arrangement_2` \link PkgArrangementOnSurface2Draw CGAL::draw<ARR>() \endlink
+- `CGAL::Constrained_triangulation_2` \link PkgDrawTriangulation2 CGAL::draw<CT2>() \endlink
+- `CGAL::Linear_cell_complex_for_combinatorial_map` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_generalized_map` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- `CGAL::Nef_polyhedron_3` \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
+- `CGAL::Periodic_2_triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- `CGAL::Point_set_3` \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
+- `CGAL::Polygon_2` \link PkgDrawPolygon2 CGAL::draw<P2>() \endlink
+- `CGAL::Polygon_set_2` \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- `CGAL::Polygon_with_holes_2` \link PkgDrawPolygonWithHoles2 CGAL::draw<PH2>() \endlink
+- `CGAL::Polyhedron_3` \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink
+- `CGAL::Surface_mesh` \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
+- `CGAL::Surface_mesh_topology` \link PkgDrawFaceGraphWithPaths CGAL::draw<SMT>() \endlink
+- `CGAL::Triangulation_2` \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink
+- `CGAL::Triangulation_3` \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
+- `CGAL::Voronoi_diagram_2` \link PkgDrawVoronoiDiagram2 CGAL::draw<V2>() \endlink
+
+\cgalCRPSubsection{Fill Graphics Scene for Different Packages}
+
+- `CGAL::Arrangement_2` \link PkgArrangementOnSurface2Draw CGAL::add_to_graphics_scene<ARR>() \endlink
+- `CGAL::Constrained_triangulation_2` \link PkgDrawTriangulation2 CGAL::add_to_graphics_scene<CT2>() \endlink
+- `CGAL::Linear_cell_complex_for_combinatorial_map` \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_generalized_map` \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
+- `CGAL::Nef_polyhedron_3` \link PkgDrawNef3 CGAL::add_to_graphics_scene<Nef3>() \endlink
+- `CGAL::Periodic_2_triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::add_to_graphics_scene<P2T2>() \endlink
+- `CGAL::Point_set_3` \link PkgDrawPointSet3D CGAL::add_to_graphics_scene<PS>() \endlink
+- `CGAL::Polygon_2` \link PkgDrawPolygon2 CGAL::add_to_graphics_scene<P2>() \endlink
+- `CGAL::Polygon_set_2` \link PkgDrawPolygonSet2 CGAL::add_to_graphics_scene<PS>() \endlink
+- `CGAL::Polygon_with_holes_2` \link PkgDrawPolygonWithHoles2 CGAL::add_to_graphics_scene<PH2>() \endlink
+- `CGAL::Polyhedron_3` \link PkgDrawPolyhedron CGAL::add_to_graphics_scene<POLY>() \endlink
+- `CGAL::Surface_mesh` \link PkgDrawSurfaceMesh CGAL::add_to_graphics_scene<SM>() \endlink
+- `CGAL::Surface_mesh_topology` \link PkgDrawFaceGraphWithPaths CGAL::add_to_graphics_scene<SMT>() \endlink
+- `CGAL::Triangulation_2` \link PkgDrawTriangulation2 CGAL::add_to_graphics_scene<T2>() \endlink
+- `CGAL::Triangulation_3` \link PkgDrawTriangulation3 CGAL::add_to_graphics_scene<T3>() \endlink
+- `CGAL::Voronoi_diagram_2` \link PkgDrawVoronoiDiagram2 CGAL::add_to_graphics_scene<V2>() \endlink
+
+*/

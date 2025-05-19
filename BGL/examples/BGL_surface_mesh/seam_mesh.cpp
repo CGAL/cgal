@@ -4,14 +4,14 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -31,12 +31,16 @@ typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor       halfedge_descr
 typedef boost::graph_traits<Seam_mesh>::edge_descriptor           edge_descriptor;
 typedef boost::graph_traits<Seam_mesh>::face_descriptor           face_descriptor;
 
-
 int main(int argc, char* argv[])
 {
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
+
   Mesh sm;
-  std::ifstream in((argc>1) ? argv[1] : "data/cube.off");
-  in >> sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   Seam_edge_pmap seam_edge_pm =
       sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
@@ -72,43 +76,43 @@ int main(int argc, char* argv[])
   std::cout << "opposite of seam halfedge in seam mesh: " << opposite(bhd, mesh) << std::endl;
 
   std::cout << "vertices on one of the seams" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd,
+  for(halfedge_descriptor hd :
                 halfedges_around_face(opposite(bhd, mesh), mesh)){
     std::cout << target(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << target(smhd , sm) << " in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges_around_target(smhd, sm)){
+  for(SM_halfedge_descriptor hd : halfedges_around_target(smhd, sm)){
     std::cout << source(hd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << target(bhd , mesh) << " in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(bhd, mesh)){
+  for(halfedge_descriptor hd : halfedges_around_target(bhd, mesh)){
     std::cout << source(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << source(smhd , sm) << " in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd,
+  for(SM_halfedge_descriptor hd :
                 halfedges_around_source(source(smhd, sm), sm)){
      std::cout << target(hd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around " << source(bhd , mesh) << " in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd,
+  for(halfedge_descriptor hd :
                 halfedges_around_source(source(bhd, mesh), mesh)){
     std::cout << target(hd.tmhd, sm) << " ";
   }
   std::cout << std::endl;
 
   std::cout << "vertices around vertices in seam mesh" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  for(vertex_descriptor vd : vertices(mesh)){
     halfedge_descriptor hd = halfedge(vd, mesh);
     std::cout << " " << vd << " has incident vertices:" << std::endl;
-    BOOST_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, mesh)){
+    for(halfedge_descriptor hd2 : halfedges_around_target(hd, mesh)){
       std::cout << "  " << hd2;
     }
     std::cout << std::endl;
@@ -118,19 +122,19 @@ int main(int argc, char* argv[])
   std::cout << "the (base) mesh has: " << num_halfedges(sm) << " halfedges" << std::endl;
   std::cout << "the seam mesh has: " << num_halfedges(mesh) << " halfedges" << std::endl;
   std::cout << "halfedges in (base) mesh" << std::endl;
-  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges(sm)){
+  for(SM_halfedge_descriptor hd : halfedges(sm)){
      std::cout << hd << " ";
   }
   std::cout << std::endl;
 
   std::cout << "halfedges in seam mesh" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+  for(halfedge_descriptor hd : halfedges(mesh)){
      std::cout << hd << " ";
   }
   std::cout << std::endl;
 
   std::cout << "faces of the base and seam meshes" << std::endl;
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  for(face_descriptor fd : faces(mesh)){
     std::cout << fd << " ";
   }
   std::cout << std::endl;

@@ -1,4 +1,6 @@
 #include <fstream>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
@@ -15,7 +17,8 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/PointsInKdTreeGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
-  
+#include <CGAL/IO/WKT.h>
+
 // the two base classes
 #include "ui_Spatial_searching_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -38,12 +41,12 @@ class MainWindow :
   public Ui::Spatial_searching_2
 {
   Q_OBJECT
-  
+
 private:
   Tree tree;
 
   CGAL::Qt::Converter<K> convert;
-  QGraphicsScene scene;  
+  QGraphicsScene scene;
 
   CGAL::Qt::PointsInKdTreeGraphicsItem<Tree> * pgi;
   NearestNeighbor * nearest_neighbor;
@@ -57,7 +60,7 @@ public:
   {
 
     QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-    CGAL::Qt::Converter<K> convert;  
+    CGAL::Qt::Converter<K> convert;
     Iso_rectangle_2 isor = convert(rect);
     Point_2 center = CGAL::midpoint(isor[0], isor[2]);
     Vector_2 offset = center - CGAL::ORIGIN;
@@ -68,8 +71,8 @@ public:
     G pg(radius);
     bool ok = false;
 
-    const int number_of_points = 
-      QInputDialog::getInt(this, 
+    const int number_of_points =
+      QInputDialog::getInt(this,
                                tr("Number of random points"),
                                tr("Enter number of random points"),
                                100,
@@ -85,7 +88,7 @@ public:
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    std::vector<Point_2> points; 
+    std::vector<Point_2> points;
 
     points.reserve(number_of_points);
     for(int i = 0; i < number_of_points; ++i){
@@ -93,7 +96,7 @@ public:
       ++pg;
     }
     tree.insert(points.begin(), points.end());
-    
+
     // default cursor
     QApplication::restoreOverrideCursor();
     Q_EMIT( changed());
@@ -129,7 +132,7 @@ MainWindow::MainWindow()
   pgi = new CGAL::Qt::PointsInKdTreeGraphicsItem<Tree>(&tree);
 
   QObject::connect(this, SIGNAL(changed()),
-		   pgi, SLOT(modelChanged()));
+                   pgi, SLOT(modelChanged()));
 
   pgi->setVerticesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
@@ -138,17 +141,17 @@ MainWindow::MainWindow()
   nearest_neighbor->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.installEventFilter(nearest_neighbor);
 
-  // 
+  //
   // Manual handling of actions
   //
 
   QObject::connect(this->nn, SIGNAL(valueChanged(int)),
-		   this, SLOT(N_changed(int)));
+                   this, SLOT(N_changed(int)));
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
- 
+
   //
   // Setup the scene and the view
   //
@@ -162,7 +165,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -174,7 +177,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -186,10 +189,10 @@ void MainWindow::N_changed(int i)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -210,7 +213,7 @@ MainWindow::on_actionRecenter_triggered()
     return;
   }
   this->graphicsView->setSceneRect(pgi->boundingRect());
-  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 void
@@ -241,8 +244,11 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+                                                  tr("Open Points file"),
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -256,11 +262,17 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
+
   K::Point_2 p;
   std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    CGAL::IO::read_multi_point_WKT(ifs, points);
+  }
+  else{
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   tree.insert(points.begin(), points.end());
 
@@ -269,13 +281,13 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
   Q_EMIT( changed());
-    
+
 }
 
 void
 MainWindow::clear()
 {
-  tree.clear();  
+  tree.clear();
 }
 
 
@@ -290,8 +302,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Spatial_searching_2 demo");
 
-  // Import resources from libCGAL (Qt5).
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  // Import resources from libCGAL (Qt6).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Spatial_searching_2);
 

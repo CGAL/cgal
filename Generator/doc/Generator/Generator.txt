@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Geometric_Object_Generators
 \anchor chapterGenerators
 \cgalAutoToc
@@ -18,7 +18,7 @@ Two kinds of point generators are provided: first, random point
 generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators. The input iterators model an infinite sequence of
-points. The function `CGAL::copy_n()` can be used to copy a
+points. The algorithm `std::copy_n` can be used to copy a
 finite sequence. The iterator adaptor
 `Counting_iterator` can be used to create finite iterator
 ranges.
@@ -26,9 +26,9 @@ Other generators are provided as functions that write to output
 iterators. Further functions add degeneracies or random perturbations.
 
 In 2D, we provide input iterators to generate random points in a disc
-(`Random_points_in_disc_2`), 
+(`Random_points_in_disc_2`),
 in a square (`Random_points_in_square_2`),
-on a circle (`Random_points_on_circle_2`), 
+on a circle (`Random_points_on_circle_2`),
 on a segment (`Random_points_on_segment`),
 in a square (`Random_points_on_square_2`),
 in a triangle (`Random_points_in_triangle_2`),
@@ -39,22 +39,22 @@ For generating grid points we provide three functions,
 `points_on_square_grid_2()` that write to output iterators and
 an input iterator `Points_on_segment_2`.
 
-For 3D points, input iterators are provided for random points uniformly 
+For 3D points, input iterators are provided for random points uniformly
 distributed in a sphere (`Random_points_in_sphere_3`), in a triangle (`Random_points_in_triangle_3`),
 in a range of triangles (`Random_points_in_triangles_3`),
 in a tetrahedron (`Random_points_in_tetrahedron_3`), in a cube (`Random_points_in_cube_3`), on the boundary of a sphere
 (`Random_points_on_sphere_3`), in a triangle mesh (`Random_points_in_triangle_mesh_3`),
 in a tetrahedron mesh (`Random_points_in_tetrahedral_mesh_3`), and on the boundary
 of a tetrahedron mesh (`Random_points_in_tetrahedral_mesh_boundary_3`).
-For generating 3D grid points, we provide the function 
+For generating 3D grid points, we provide the function
 `points_on_cube_grid_3()` that writes to
 an output iterator.
 
-For higher dimensions, input iterators are provided for random points uniformly 
+For higher dimensions, input iterators are provided for random points uniformly
 distributed in a `d`-dimensional cube (`Random_points_in_cube_d`)
-or `d`-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
+or `d`-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a
 sphere (`Random_points_on_sphere_d`).
-For generating grid points, we provide the function 
+For generating grid points, we provide the function
 `points_on_cube_grid_d()` that writes to
 an output iterator.
 
@@ -133,7 +133,7 @@ Output of example program for point generator on a triangle mesh
 
 The following two examples illustrate the use of the generic functions
 from Section \ref STLAlgos like
-`Join_input_iterator_2` to generate 
+`Join_input_iterator_2` to generate
 composed objects from other
 generators - here two-dimensional segments from two point generators.
 
@@ -169,16 +169,16 @@ The following example generates points inside a cube in dimension 5
 The output of this example looks like:
 \verbatim
 Generating 10 random points in a cube in 5D, coordinates from -100 to 100
-5 32.9521 26.0403 59.3979 -99.2553 15.5102 
-5 80.3731 30.809 7.32491 -90.2544 94.5635 
-5 -71.3412 -31.933 -98.0734 79.6493 66.6104 
-5 -78.5065 -58.2397 -33.9096 81.2196 57.2512 
-5 21.4093 26.7661 57.6083 23.4958 93.1047 
-5 10.5895 -21.8914 70.9726 36.756 -42.2667 
-5 23.9813 54.4519 -26.0894 -85.18 -21.0775 
-5 -48.7499 59.9873 6.22335 -4.16011 81.0727 
-5 -11.6615 5.53147 -32.6578 -79.9283 44.5679 
-5 53.0183 78.3228 -28.5665 83.3503 68.0482 
+5 32.9521 26.0403 59.3979 -99.2553 15.5102
+5 80.3731 30.809 7.32491 -90.2544 94.5635
+5 -71.3412 -31.933 -98.0734 79.6493 66.6104
+5 -78.5065 -58.2397 -33.9096 81.2196 57.2512
+5 21.4093 26.7661 57.6083 23.4958 93.1047
+5 10.5895 -21.8914 70.9726 36.756 -42.2667
+5 23.9813 54.4519 -26.0894 -85.18 -21.0775
+5 -48.7499 59.9873 6.22335 -4.16011 81.0727
+5 -11.6615 5.53147 -32.6578 -79.9283 44.5679
+5 53.0183 78.3228 -28.5665 83.3503 68.0482
 \endverbatim
 
 Next example generates grid points in dimension `d=4`.
@@ -193,31 +193,31 @@ generated points have the same last coordinate \f$ -5\f$.
 \cgalExample{Generator/grid_d.cpp}
 
 The output of previous example corresponds to the points of this
-figure depicted in red or pink (pink points are "inside" the cube). 
+figure depicted in red or pink (pink points are "inside" the cube).
 The output is:
 
 \verbatim
 Generating 20 grid points in 4D
-4 -5 -5 -5 -5 
-4 0 -5 -5 -5 
-4 5 -5 -5 -5 
-4 -5 0 -5 -5 
-4 0 0 -5 -5 
-4 5 0 -5 -5 
-4 -5 5 -5 -5 
-4 0 5 -5 -5 
-4 5 5 -5 -5 
-4 -5 -5 0 -5 
-4 0 -5 0 -5 
-4 5 -5 0 -5 
-4 -5 0 0 -5 
-4 0 0 0 -5 
-4 5 0 0 -5 
-4 -5 5 0 -5 
-4 0 5 0 -5 
-4 5 5 0 -5 
-4 -5 -5 5 -5 
-4 0 -5 5 -5 
+4 -5 -5 -5 -5
+4 0 -5 -5 -5
+4 5 -5 -5 -5
+4 -5 0 -5 -5
+4 0 0 -5 -5
+4 5 0 -5 -5
+4 -5 5 -5 -5
+4 0 5 -5 -5
+4 5 5 -5 -5
+4 -5 -5 0 -5
+4 0 -5 0 -5
+4 5 -5 0 -5
+4 -5 0 0 -5
+4 0 0 0 -5
+4 5 0 0 -5
+4 -5 5 0 -5
+4 0 5 0 -5
+4 5 5 0 -5
+4 -5 -5 5 -5
+4 0 -5 5 -5
 \endverbatim
 
 \image html hypergrid.png
@@ -272,16 +272,16 @@ is used to put the point inside the ball.
 
 Remy Thomasse coded the random convex hull in a disc.
 
-During Google Summer of Code 2013, Pedro M. M. de Castro and Alexandru Tifrea coded generators for points in 
-triangle (2D and 3D) and in tetrahedra (3D). Basically, in order to generate 
-a random point in a \f$N\f$-simplex (a triangle for \f$N = 2\f$, and tetrahedron 
-for \f$N = 3\f$), we generate numbers \f$a_1,a_2,\ldots,a_N\f$ identically and independently 
-uniformly distributed in \f$(0,1)\f$, we sort them, we let \f$a_0 = 0\f$ and \f$a_{N+1} = 1\f$, 
+During Google Summer of Code 2013, Pedro M. M. de Castro and Alexandru Tifrea coded generators for points in
+triangle (2D and 3D) and in tetrahedra (3D). Basically, in order to generate
+a random point in a \f$N\f$-simplex (a triangle for \f$N = 2\f$, and tetrahedron
+for \f$N = 3\f$), we generate numbers \f$a_1,a_2,\ldots,a_N\f$ identically and independently
+uniformly distributed in \f$(0,1)\f$, we sort them, we let \f$a_0 = 0\f$ and \f$a_{N+1} = 1\f$,
 and then \f$a_{i+1}-a_i\f$, for \f$i = 1,\ldots,N\f$ becomes its
 barycentric coordinates with respect to the simplex.
 
 Maxime Gimemo introduced the random generators on 2D and 3D triangle meshes.
 
-*/ 
+*/
 } /* namespace CGAL */
 

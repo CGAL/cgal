@@ -1,1 +1,1 @@
-data/cube.off
+${CGAL_DATA_DIR}/meshes/cube.off

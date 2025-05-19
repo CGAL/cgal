@@ -8,8 +8,6 @@ Convex_hull_2
 Convex_hull_3
 Distance_2
 Distance_3
-Filtered_kernel
-Hash_map
 Installation
 Intersections_2
 Intersections_3
@@ -17,8 +15,6 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
-Point_set_processing_3
-Polygon_mesh_processing
 Profiling_tools
 Property_map
 Random_numbers

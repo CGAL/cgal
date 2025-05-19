@@ -80,16 +80,6 @@
      </row>
      <row>
       <property name="text">
-       <string>Delete Curve Mode</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Grid Size</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
        <string>Grid Color</string>
       </property>
      </row>
