@@ -175,10 +175,10 @@ Right: The corresponding conforming constrained Delaunay triangulation using the
 <!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
 
-\subsection CT_3_examples_preprocessing Preprocessing the Input Mesh for Conforming Constrained Delaunay Triangulation
+\subsection CT_3_examples_preprocessing Preprocessing the Input Mesh for Conforming Constrained Delaunay Triangulations
 
 The input mesh must be a valid triangulated surface mesh, i.e., it must not have self-intersections.
-Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package.
+Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package _to enforce these preconditions_.
 
 \subsubsection CT_3_example_ccdt_autorefinement Autorefinement of the Input Mesh
 
