@@ -67,6 +67,8 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
     return cdt.tds().faces().iterator_to(*ptr);
   }
 public:
+  /// @{
+  // @cond SKIP_IN_MANUAL
   bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
 
   CDT_3_signed_index face_constraint_index(int i) const {
@@ -76,6 +78,7 @@ public:
   void set_face_constraint_index(int i, CDT_3_signed_index index) {
     face_id[unsigned(i)] = index;
   }
+  /// @endcond
 };
 
 } // namespace CGAL

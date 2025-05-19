@@ -1,7 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include "CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h"
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -37,8 +38,13 @@ int main(int argc, char* argv[])
     std::vector<std::vector<std::size_t>> polygons;
     PMP::polygon_mesh_to_polygon_soup(mesh, points, polygons);
     PMP::autorefine_triangle_soup(points, polygons);
-    std::cout << "Number of facets after autorefine: "
+    std::cout << "Number of input triangles after autorefine: "
               << polygons.size() << "\n";
+
+    if(PMP::does_polygon_soup_self_intersect(points, polygons)) {
+      std::cerr << "Error: mesh still self-intersects after autorefine\n";
+      return EXIT_FAILURE;
+    }
 
     auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(points, polygons);
 

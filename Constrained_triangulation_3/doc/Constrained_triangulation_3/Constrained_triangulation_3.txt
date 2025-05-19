@@ -14,19 +14,19 @@ namespace CGAL {
 
 \section CT_3_CCDT_3 Conforming Delaunay Triangulations in 3D
 
-This package implements the construction of a 3D constrained Delaunay triangulation,
-conforming to the set of faces of a _Piecewise Linear Complex_, PLC for short.
-The set of input polygonal constraints given as a PLC is meant to be represented as a
-sub-complex of the triangulation.
+3D triangulations are a way to partition space, which is useful in many applications.
+Sometimes, we want specific faces to appear in the output, for example, to preserve sharp features.
+When a triangulation exactly respects these constraints, it is called a _constrained_ triangulation.
+In some cases, it is possible to honor the geometry of the constraints but not their combinatorics;
+additional points must be inserted—this is called a _conforming_ triangulation.
 
-For any PLC in 3D,
-the algorithm builds a constrained Delaunay triangulation conforming to this PLC.
-The constrained triangulation does not always exist, and it may be necessary
-to add Steiner vertices to the PLC to make it tetrahedralizable.
+This package implements an algorithm that constructs conforming triangulations of
+3D polygonal constraints. In particular, it requires that these piecewise linear constraints
+are part of a _Piecewise Linear Complex_&nbsp;(PLC). The type of produced triangulations is
+`Triangulation_3`, described in the chapter \ref PkgTriangulation3.
 
 The problem is described by Cohen-Steiner et al. \cgalCite{cgal:cohen2002conforming},
 and by Si \cgalCite{cgal:si2008cdt3}.
-
 
 \section CT_3_definitions Definitions
 
@@ -40,29 +40,30 @@ that satisfies the following properties:
 
 - The vertices and edges in the PLC form a simplicial complex: two edges may intersect
   only at a common vertex.
-- For each polygon (face) in the PLC, its boundary is a union of edges in the PLC.
-- If two polygons (faces) in the PLC intersect, their intersection is a union of edges and vertices
+- For each polygon in the PLC, its boundary is a union of edges in the PLC.
+- If two polygons in the PLC intersect, their intersection is a union of edges and vertices
   in the PLC. In particular, the interiors of two polygons cannot intersect.
 
-The polygons (faces) can be non-convex, have holes, and arbitrarily many boundary segments.
+The polygons can be non-convex, have holes, and arbitrarily many boundary segments.
 
 \cgalFigureAnchor{CT_3_plc_fig}
 <center>
 <img src="plc.png" style="max-width:60%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_plc_fig}
-A Piecewise Linear Complex, made of planar faces, connected by edges and vertices.
+A Piecewise Linear Complex, made of planar faces connected by edges and vertices.
 \cgalFigureCaptionEnd
 
 
-\subsection CT_3_CDT Conforming Delaunay Triangulation
+\subsection CT_3_CDT Conforming Constrained Delaunay Triangulation
 
 The goal of the algorithms developed in this package is to compute a constrained Delaunay
 mesh containing a given set of polygonal constraints in 3D as sub-complex.
-See package \ref PkgTriangulation3 for more details on Delaunay triangulations.
 
 A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any simplex
-of the triangulation contains no vertex in its interior.
+of the triangulation contains no vertex in its interior (see package \ref PkgTriangulation3
+for more details on Delaunay triangulations).
+
 A _constrained Delaunay triangulation_ of a PLC is a constrained triangulation which is as much
 Delaunay as possible, given that some facets are marked as _constrained_. More precisely, a
 triangulation is _constrained Delaunay_ if for any simplex \f$s\f$ of the triangulation,
@@ -72,9 +73,9 @@ if the open line segment joining them does not intersect any polygon of the PLC,
 of polygons that are coplanar with the segment.
 
 In 3D, constrained triangulations do not always exist. It can be shown using the
-example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
+example of the Sch&ouml;nhardt polyhedron \cgalCite{schonhardt1928zerlegung},
 \cgalCite{b-ip-48a}, that requires the addition of
-Steiner vertices to be tetrahedralizable (see Figure \cgalFigureRef{CT_3_schonhardt_fig}).
+Steiner vertices to be tetrahedralizable (see \cgalFigureRef{CT_3_schonhardt_fig}).
 
 \cgalFigureAnchor{CT_3_schonhardt_fig}
 <center>
@@ -87,17 +88,17 @@ A Sch&ouml;nhardt polyhedron.
 
 Shewchuk \cgalCite{cgal:shewchuk1998condition} showed that for any PLC,
 there exists another PLC that is a refined version of the original one,
-that admits a constrained Delaunay triangulation.
-The refined PLC is obtained by adding Steiner vertices on the input edges and facets,
+and admits a constrained Delaunay triangulation.
+The refined PLC is obtained by adding Steiner vertices on the input edges and polygons,
 and the constrained triangulation built on this PLC is called
-a _conforming Delaunay triangulation_.
+a _conforming constrained Delaunay triangulation_.
 
 The algorithm implemented in this package is based on the work of
 Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
-Steiner vertices are added on input edges and input facets
+Steiner vertices are added on input edges and input polygons
 of the PLC to make it tetrahedralizable.
 
-Figure \cgalFigureRef{CT_3_plc2cdt_fig} shows an example of a conforming constrained
+\cgalFigureRef{CT_3_plc2cdt_fig} shows an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
 
 \cgalFigureAnchor{CT_3_plc2cdt_fig}
@@ -105,17 +106,17 @@ Delaunay triangulation constructed from a PLC.
 <img src="plc_to_cdt.png" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_plc2cdt_fig}
-Left : PLC (360 vertices);
-Middle : CCDT (2452 vertices);
-Right : the same CCDT seen with cutplane.
+Left: PLC (360 vertices);
+Middle: CCDT (2452 vertices);
+Right: the same CCDT seen with cutplane.
 \cgalFigureCaptionEnd
 
 
-\section CT_3_api API
+\section CT_3_api Software Design
 
 \subsection CT_3_api_classes Classes
 
-This package provides one main class `Conforming_constrained_Delaunay_triangulation_3`
+This package provides one main class `CGAL::Conforming_constrained_Delaunay_triangulation_3`
 that represents a 3D conforming constrained Delaunay triangulation.
 The class is templated by the geometric traits class and the underlying triangulation class.
 The other classes that are provided are secondary classes that define the
@@ -123,15 +124,15 @@ vertex and cell types and metadata that constitute the triangulation.
 
 \subsection CT_3_api_functions Functions
 
-Some helper constructor functions, like `make_conforming_constrained_Delaunay_triangulation_3()`,
-are provided to create a `Conforming_constrained_Delaunay_triangulation_3` object.
+Some helper constructor functions, like `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`,
+are provided to create a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object.
 
 \section CT_3_examples Examples
 
 \subsection CT_3_example_ccdt Build a Conforming Constrained Delaunay Triangulation
 
 The following example demonstrates how to use the helper constructor function
-`make_conforming_constrained_Delaunay_triangulation_3()` to create a
+`CGAL::make_conforming_constrained_Delaunay_triangulation_3()` to create a
 conforming constrained Delaunay triangulation from a given PLC.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
@@ -156,28 +157,28 @@ The following example demonstrates how to detect surface patches separated by sh
 and use this surface segmentation in the tetrahedrization process.
 
 When this parameter is used, the 3D triangulation constrained faces indices (available with
-\link Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index() `face_constraint_index()`\endlink
-in `Conforming_constrained_Delaunay_triangulation_cell_data_3`)
+`CGAL::Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index() `
+)
 are set to the corresponding patch ids from this map.
-When it is not used, the face indices are set to different indices for each input facet.
+When it is not used, the face indices are set to different indices for each input polygon.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 
-Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
+\cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
 
 \cgalFigureBegin{ccdt_fpmap, ccdt_fpmap.png}
-(Left) Input PLC;
-(Middle-left) The corresponding conforming constrained Delaunay triangulation with one patch per input face;
-(Middle-Right) Input PLC segmented according to sharp edges;
-(Right) The corresponding conforming constrained Delaunay triangulation using the segmentation.
+Left: Input PLC;
+Middle-left: The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
+Middle-Right: Input PLC segmented according to sharp edges;
+Right: The corresponding conforming constrained Delaunay triangulation using the segmentation.
 \cgalFigureEnd
 <!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
 
-\subsection CT_3_examples_preprocessing Preprocessing the Input Mesh for Conforming Constrained Delaunay Triangulation
+\subsection CT_3_examples_preprocessing Preprocessing the Input Mesh for Conforming Constrained Delaunay Triangulations
 
 The input mesh must be a valid triangulated surface mesh, i.e., it must not have self-intersections.
-Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package.
+Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package _to enforce these preconditions_.
 
 \subsubsection CT_3_example_ccdt_autorefinement Autorefinement of the Input Mesh
 

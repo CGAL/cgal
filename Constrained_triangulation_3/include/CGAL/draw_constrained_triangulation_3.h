@@ -27,15 +27,15 @@ opens a new window and draws the constrained triangulation.
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 */
-template <typename Traits, typename Tr_or_default>
-void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_or_default>& ccdt,
+template <typename Traits, typename Tr>
+void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt,
           const char *title="Constrained 3D Triangulation Basic Viewer")
 {
-  using Tr = CGAL::cpp20::remove_cvref_t<decltype(ccdt.triangulation())>;
-  using Vertex_handle = typename Tr::Vertex_handle;
-  using Cell_handle = typename Tr::Cell_handle;
-  using Edge_descriptor = typename Tr::Finite_edges_iterator;
-  using Facet_descriptor = typename Tr::Finite_facets_iterator;
+  using Tr_ = CGAL::cpp20::remove_cvref_t<decltype(ccdt.triangulation())>;
+  using Vertex_handle = typename Tr_::Vertex_handle;
+  using Cell_handle = typename Tr_::Cell_handle;
+  using Edge_descriptor = typename Tr_::Finite_edges_iterator;
+  using Facet_descriptor = typename Tr_::Finite_facets_iterator;
 
   using Face_index = CGAL::cpp20::remove_cvref_t<
       decltype(std::declval<Cell_handle>()->ccdt_3_data().face_constraint_index(0))>;
@@ -51,15 +51,15 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_or_de
   std::generate(colors.begin(), colors.end(), []() {
     return CGAL::get_random_color(CGAL::get_default_random());
   });
-  CGAL::Graphics_scene_options<Tr, Vertex_handle, Edge_descriptor, Facet_descriptor> options;
-  options.draw_face = [](const Tr&, Facet_descriptor f) {
+  CGAL::Graphics_scene_options<Tr_, Vertex_handle, Edge_descriptor, Facet_descriptor> options;
+  options.draw_face = [](const Tr_&, Facet_descriptor f) {
     auto [c, index] = *f;
     return c->ccdt_3_data().is_facet_constrained(index);
   };
-  options.colored_face = [](const Tr&, Facet_descriptor) {
+  options.colored_face = [](const Tr_&, Facet_descriptor) {
     return true;
   };
-  options.face_color = [&](const Tr&, Facet_descriptor f) {
+  options.face_color = [&](const Tr_&, Facet_descriptor f) {
     auto [c, index] = *f;
     return colors[c->ccdt_3_data().face_constraint_index(index)];
   };

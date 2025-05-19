@@ -563,8 +563,13 @@ private:
 
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
+
+#ifdef DOXYGEN_RUNNING
+  using Constrained_polyline_id = unspecified_type;
+#else
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
-  using size_type = typename CDT_3_impl::size_type;
+#endif // not DOXYGEN_RUNNING
+  using size_type = typename Triangulation::size_type;
 
 public:
   /** \name Constructors
@@ -620,7 +625,7 @@ public:
   /*!
     * creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh,
     * following the same API and requirements as the function template
-   * \ref PkgConstrainedTriangulation3FunctionsMesh "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
+    * \ref make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mesh, const NamedParameters &np) "make_conforming_constrained_Delaunay_triangulation_3()".
     */
   template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
@@ -757,7 +762,7 @@ public:
   /*!
     * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup,
     * following the same API and requirements as the function template
-   * \ref PkgConstrainedTriangulation3FunctionsSoup "CGAL::make_conforming_constrained_Delaunay_triangulation_3()".
+    * \ref make_conforming_constrained_Delaunay_triangulation_3(const PointRange &points, const PolygonRange &polygons, const NamedParameters &np) "make_conforming_constrained_Delaunay_triangulation_3()".
    */
   template <typename PointRange, typename PolygonRange, typename NamedParams = parameters::Default_named_parameters>
   Conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
@@ -4050,9 +4055,21 @@ protected:
 
 /*!
 * \ingroup PkgConstrainedTriangulation3Functions
-* \brief creates a triangulation that can be used for tetrahedral remeshing
+* creates a triangulation that can be used for \ref Chapter_Tetrahedral_Remeshing "tetrahedral remeshing".
+*
+* The vertex and cell base classes of the triangulation `ccdt` must be models of `RemeshingVertexBase_3` and `RemeshingCellBase_3` respectively.
+*
+* This function sets the attributes of the vertices and cells of the triangulation,
+* models of `RemeshingVertexBase_3` and `RemeshingCellBase_3`, according to the values of
+* the corresponding attributes of the vertices and cells of `ccdt`.
+*
+* Then it returns `std::move(ccdt).triangulation()`.
+*
+* \note The parameter `ccdt` is passed by copy. You can pass it an rvalue-reference to avoid that copy.
+        See the example \ref Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp.
+*
 * \tparam Traits is the geometric traits class of `ccdt`
-* \tparam Tr is the type of triangulation to which `ccdt` is converted
+* \tparam Tr is the type of triangulation to which `ccdt` is converted (or `CGAL::Default`).
 * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param ccdt the triangulation to be converted
@@ -4061,28 +4078,25 @@ protected:
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}
-*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of
-*                     `c3t3.triangulation()`.
-*                     For each edge `e` for which `c3t3.is_in_complex(e)` returns `true`,
-*                     the constrained status of `e` is set to `true`.}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge `e` of
+     *                     `ccdt.triangulation()`. Sets if the edge `e` is at the border of a polygonal constraint.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap`
-*         with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
-*         as key type and `bool` as value type. It must be default constructible.}
+*         with `std::pair<Vertex_handle, Vertex_handle>` (where `Vertex_handle` is the vertex handle type of `ccdt.triangulation()`)
+*         as key type and `bool` as value type.
+*         It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edge is constrained}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \return a triangulation of type `CGAL::Triangulation_3` that can be used for tetrahedral remeshing
-* \todo make it clear that the output Vb and Cb must be model of `RemeshingVertexBase_3` and
-* `RemeshingCellBase_3`
 */
-template <typename Traits,
-          typename Tr,
-          typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL::Triangulation_3<Traits,
-  typename Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>::Triangulation::Triangulation_data_structure>
-convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
-                           const CGAL_NP_CLASS& np = parameters::default_values())
+template <typename Traits, typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+auto convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
+                                const CGAL_NP_CLASS& np = parameters::default_values())
+    -> CGAL::Triangulation_3<Traits,
+                             typename Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>::Triangulation::
+                                 Triangulation_data_structure>
+
 {
   constexpr bool has_ecmap =
       !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value;
