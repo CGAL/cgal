@@ -107,7 +107,7 @@ namespace CGAL {
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
-
+ *
  *   \cgalParamNBegin{face_patch_map}
  *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -117,12 +117,13 @@ namespace CGAL {
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{return_empty_on_invalid_input}
- *     \cgalParamDescription{a boolean activating the check of preconditions on the input
+ *     \cgalParamDescription{a Boolean activating the check of preconditions on the input
  *                           before starting to construct the triangulation.
- *                           If the check is activated and the preconditions not satisfied,
- *                           the constructed triangulation is empty.}
+ *                           If the check is activated and the preconditions are not satisfied,
+ *                           an empty triangulation is immediately returned.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If this parameter is set to `false` and the preconditions are not satisfied, the algorithm may throw an exception or crash.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -190,12 +191,13 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{return_empty_on_invalid_input}
- *     \cgalParamDescription{a boolean activating the check of preconditions on the input
+ *     \cgalParamDescription{a Boolean activating the check of preconditions on the input
  *                           before starting to construct the triangulation.
- *                           If the check is activated and the preconditions not satisfied,
- *                           the constructed triangulation is empty.}
+ *                           If the check is activated and the preconditions are not satisfied,
+ *                           an empty triangulation is immediately returned.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{If this parameter is set to `false` and the preconditions are not satisfied, the algorithm may throw an exception or crash.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -212,8 +214,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  * \pre The polygon soup must be free of self-intersections. If the polygon soup is a triangle soup, this is equivalent to:
  *      \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect
  *     `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points, polygons, np) == false`
- *     \endlink
- *     (click on the link for details).
+ *     \endlink.
  */
 template <typename Triangulation = CGAL::Default,
           typename PointRange,
