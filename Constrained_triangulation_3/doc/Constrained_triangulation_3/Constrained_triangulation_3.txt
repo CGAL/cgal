@@ -75,7 +75,7 @@ of polygons that are coplanar with the segment.
 In 3D, constrained triangulations do not always exist. It can be shown using the
 example of the Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung},
 \cgalCite{b-ip-48a}, that requires the addition of
-Steiner vertices to be tetrahedralizable (see Figure \cgalFigureRef{CT_3_schonhardt_fig}).
+Steiner vertices to be tetrahedralizable (see \cgalFigureRef{CT_3_schonhardt_fig}).
 
 \cgalFigureAnchor{CT_3_schonhardt_fig}
 <center>
@@ -98,7 +98,7 @@ Hang Si \cgalCite{si2005meshing}, \cgalCite{si2015tetgen}.
 Steiner vertices are added on input edges and input facets
 of the PLC to make it tetrahedralizable.
 
-Figure \cgalFigureRef{CT_3_plc2cdt_fig} shows an example of a conforming constrained
+\cgalFigureRef{CT_3_plc2cdt_fig} shows an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
 
 \cgalFigureAnchor{CT_3_plc2cdt_fig}
@@ -164,13 +164,13 @@ When it is not used, the face indices are set to different indices for each inpu
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 
-Figure \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
+\cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
 
 \cgalFigureBegin{ccdt_fpmap, ccdt_fpmap.png}
-(Left) Input PLC;
-(Middle-left) The corresponding conforming constrained Delaunay triangulation with one patch per input face;
-(Middle-Right) Input PLC segmented according to sharp edges;
-(Right) The corresponding conforming constrained Delaunay triangulation using the segmentation.
+Left: Input PLC;
+Middle-left: The corresponding conforming constrained Delaunay triangulation with one patch per input face;
+Middle-Right: Input PLC segmented according to sharp edges;
+Right: The corresponding conforming constrained Delaunay triangulation using the segmentation.
 \cgalFigureEnd
 <!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
