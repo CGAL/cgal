@@ -23,10 +23,10 @@
 namespace CGAL {
 
 /*!
-  \addtogroup PkgConstrainedTriangulation3Functions
+  \addtogroup PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
   @{
 
-  Free Functions for Creating Conforming Constrained Delaunay Triangulations  {#PkgConstrainedTriangulation3Functions}
+  Free Functions Template for Creating Conforming Constrained Delaunay Triangulations  {#PkgConstrainedTriangulation3Functions}
   ==========================================================================
 
   The following functions create a 3D conforming constrained Delaunay triangulation
@@ -85,7 +85,7 @@ namespace CGAL {
 */
 
 /*!
- * \ingroup PkgConstrainedTriangulation3FunctionsMesh
+ * \ingroup PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
  *
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
@@ -157,7 +157,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
 }
 
 /*!
- * \ingroup PkgConstrainedTriangulation3FunctionsSoup
+ * \ingroup PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
  *
  * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
  *
