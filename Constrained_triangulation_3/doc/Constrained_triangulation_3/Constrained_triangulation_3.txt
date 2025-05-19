@@ -105,9 +105,9 @@ Delaunay triangulation constructed from a PLC.
 <img src="plc_to_cdt.png" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_plc2cdt_fig}
-Left : PLC (360 vertices);
-Middle : CCDT (2452 vertices);
-Right : the same CCDT seen with cutplane.
+Left: PLC (360 vertices);
+Middle: CCDT (2452 vertices);
+Right: the same CCDT seen with cutplane.
 \cgalFigureCaptionEnd
 
 
