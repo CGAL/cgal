@@ -1,9 +1,8 @@
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_constrained_triangulation_3.h>
-
-#include <algorithm>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -12,8 +11,7 @@ int main(int argc, char* argv[])
   CGAL::Surface_mesh<K::Point_3> mesh;
 
   auto filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
-  std::ifstream in(filename);
-  if(!in || !CGAL::IO::read_OFF(in, mesh)) {
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
