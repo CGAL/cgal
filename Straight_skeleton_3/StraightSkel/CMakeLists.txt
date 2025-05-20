@@ -41,6 +41,8 @@ if(Eigen3_FOUND)
 
   create_single_source_cgal_program("misc/tilt_faces.cpp")
   target_link_libraries(tilt_faces PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("misc/remesh_to_minimize_degree.cpp")
+  target_link_libraries(remesh_to_minimize_degree PRIVATE CGAL::Eigen3_support)
 endif()
 
 # to get help about a cmake module run:
