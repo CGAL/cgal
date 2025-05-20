@@ -22,14 +22,14 @@ public:
   /*! Number type model of `FieldNumberType`*/
   typedef unspecified_type FT;
 
+  /*! 2D line type */
+  typedef unspecified_type Line_2;
   /*! 2D point type */
   typedef unspecified_type Point_2;
   /*! 2D segment type */
   typedef unspecified_type Segment_2;
   /*! 2D triangle type */
   typedef unspecified_type Triangle_2;
-  /*! 2D line type */
-  typedef unspecified_type Line_2;
   /*! 2D vector type */
   typedef unspecified_type Vector_2;
   /*! 2D weighted point type */
@@ -39,16 +39,16 @@ public:
   typedef unspecified_type Point_3;
   /*! 3D line type */
   typedef unspecified_type Line_3;
+  /*! 3D ray type */
+  typedef unspecified_type Ray_3;
   /*! 3D segment type */
   typedef unspecified_type Segment_3;
+  /*! 3D triangle type */
+  typedef unspecified_type Triangle_3;
   /*! 3D vector type */
   typedef unspecified_type Vector_3;
   /*! 3D weighted point type */
   typedef unspecified_type Weighted_point_3;
-  /*! 3D triangle type */
-  typedef unspecified_type Triangle_3;
-  /*! 3D ray type */
-  typedef unspecified_type Ray_3;
 
   /*! `CGAL::Bounded_side` or `Uncertain<CGAL::Bounded_side>` */
   typedef unspecified_type Bounded_side;
@@ -57,27 +57,33 @@ public:
   /*! `bool` or `Uncertain<bool>` */
   typedef unspecified_type Boolean;
 
-  /*! A function object to construct a `Point_2` */
-  typedef unspecified_type Construct_point_2;
-  /*! A function object to construct a `Weighted_point_2` */
-  typedef unspecified_type Construct_weighted_point_2;
-  /*! A function object to construct a `Segment_2` */
-  typedef unspecified_type Construct_segment_2;
-  /*! A function object to construct a `Vector_2` */
-  typedef unspecified_type Construct_vector_2;
-  /*! A function object to construct a `Triangle_2` */
-  typedef unspecified_type Construct_triangle_2;
-  /*! A function object to construct a `Line_2` */
-  typedef unspecified_type Construct_line_2;
+  /*! A function object to construct a `Point_3` */
+  typedef unspecified_type Construct_point_3;
+  /*! A function object to construct a `Weighted_point_3` */
+  typedef unspecified_type Construct_weighted_point_3;
+  /*! A function object to construct a `Segment_3` */
+  typedef unspecified_type Construct_segment_3;
+  /*! A function object to construct a `Vector_3` */
+  typedef unspecified_type Construct_vector_3;
+  /*! A function object to construct a `Triangle_3` */
+  typedef unspecified_type Construct_triangle_3;
+  /*! A function object to construct a `Line_3` */
+  typedef unspecified_type Construct_line_3;
+  /*! A function object to construct a `Triangle_3` */
+  typedef unspecified_type Construct_triangle_3;
+  /*! A function object to construct a `Bbox_3` */
+  typedef unspecified_type Construct_bbox_3;
 
-  /*! A function object to construct a translated `Point_2` */
-  typedef unspecified_type Construct_translated_point_2;
+  /*! A function object to construct a translated `Point_3` */
+  typedef unspecified_type Construct_translated_point_3;
   /*! A function object to construct the midpoint of two `Point_2` */
-  typedef unspecified_type Construct_midpoint_2;
-  /*! A function object to construct the barycenter of three `Point_2` */
-  typedef unspecified_type Construct_barycenter_2;
-  /*! A function object to construct the scaled version of a `Vector_2` */
-  typedef unspecified_type Construct_scaled_vector_2;
+  typedef unspecified_type Construct_midpoint_3;
+  /*! A function object to construct the barycenter of three `Point_3` */
+  typedef unspecified_type Construct_barycenter_3;
+  /*! A function object to construct the barycenter of three `Vector_3` */
+  typedef unspecified_type Construct_vector_3;
+  /*! A function object to construct the scaled version of a `Vector_3` */
+  typedef unspecified_type Construct_scaled_vector_3;
 
   /*! A function object to construct the `i`-th vertex of a `Triangle_3` */
   typedef unspecified_type Construct_vertex_3;
@@ -93,8 +99,8 @@ public:
 
   /*! A function object to compute orientated side of a segment with respect to a triangle */
   typedef unspecified_type Oriented_side_2;
-  /*! A function object to compare coordinates of two points in the `xy` order */
-  typedef unspecified_type Compare_xy_2;
+  /*! A function object to compare coordinates of two points in the `xyz` order */
+  typedef unspecified_type Compare_xyz_3;
   /*! A function object to compare coordinates of two points from their `x` coordinates */
   typedef unspecified_type Less_x_3;
   /*! A function object to compare coordinates of two points from their `y` coordinates */
@@ -114,6 +120,14 @@ public:
   /*! A function object to compare coordinates of two points from their `y` coordinates */
   typedef unspecified_type Equal_z_3;
 
+  /*! A function object to compute the oriented side of a segment with respect to a triangle */
+  typedef unspecified_type Oriented_side_2;
+  /*! A function object to compare signed distances to a 2D line */
+  typedef unspecified_type Compare_signed_distance_to_line_2;
+  /*! A function object to compare signed distances to a 2D line */
+  typedef unspecified_type Less_signed_distance_to_line_2;
+
+
 /// @}
 
 /// \name Operations
@@ -128,6 +142,11 @@ unspecified_type compute_area_2_object();
 * returns a function object model of `ConstructPoint_3`
 */
 unspecified_type construct_point_3_object();
+
+/*!
+ * returns a function object model of `Compute_SquaredRadius_2`
+ */
+unspecified_type compute_squared_radius_2_object();
 
 /// @}
 
