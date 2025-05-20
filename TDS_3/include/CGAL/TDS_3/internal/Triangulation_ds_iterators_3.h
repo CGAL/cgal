@@ -315,7 +315,7 @@ public:
 	      do {
 	        if (edge.second == 0) {
 	          edge.second = 2; edge.third = 0;
-	          -pos;
+	          --pos;
 	        } else {
 	          --edge.second;
 	          edge.third = edge.second+1;

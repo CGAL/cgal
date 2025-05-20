@@ -673,7 +673,7 @@ private:
     switch (lt)
     {
     case Locate_type::VERTEX:
-      _curr_simplex = cell->vertex(li);
+      _curr_simplex = triangulation().tds().vertex(cell, li);
       break;
     case Locate_type::EDGE:
       _curr_simplex = Edge(cell, li, lj);

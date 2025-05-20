@@ -216,7 +216,7 @@ public:
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void for_compact_container(void* p) { N[0].for_compact_container(p); }
 
-#if 0  AF??
+#if 0  // AF??
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }

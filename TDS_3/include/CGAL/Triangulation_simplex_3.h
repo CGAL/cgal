@@ -115,8 +115,8 @@ public:
 
 private:
   void set_vertex(const Vertex_handle vh) {
-    ch = vh->cell();
-    ref = (ch->index(vh) << 2); /* dim == 0 */
+    ch = tds().cell(vh);
+    ref = tds().index(ch, vh) << 2; /* dim == 0 */
     CGAL_assertion (ch != Cell_handle());
   }
   void set_edge(const Edge &e) {
@@ -140,6 +140,12 @@ private:
     return (ref >> (2*(i+1))) & 3;
   }
 
+  const TDS& tds() const {
+    CGAL_assertion (tds_ != nullptr);
+    return *tds_;
+  }
+
+  const TDS* tds_; // AF we have to pass the TDS to the constructor
   int ref; // storage iijjdd (index i, index j, dimension of simplex)
   Cell_handle ch; // Corresponding cell handle
 };
