@@ -581,8 +581,6 @@ void Facet::perturbPlaneCoefficients()
 {
     CGAL_precondition(bool(this->plane_));
 
-    normalizePlaneCoefficients();
-
     // @todo storing coefficients is only useful if we plan on untilting at the end.
     storePlaneCoefficients();
 
