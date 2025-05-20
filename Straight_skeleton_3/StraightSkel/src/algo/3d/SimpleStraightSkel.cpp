@@ -1069,13 +1069,14 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         if (!vertex->hasData()) {
             SkelVertexData::create(vertex);
         }
-        // leaving this regardless of the SKELETON_DS macro because of splitters
+#ifndef CGAL_SS3_NO_SKELETON_DS
         NodeSPtr node = createNode(vertex);
         if (node) {
             skel_result_->addNode(node);
         } else {
             result = false;
         }
+#endif
     }
 
     std::list<VertexSPtr> vertices_tosplit;
