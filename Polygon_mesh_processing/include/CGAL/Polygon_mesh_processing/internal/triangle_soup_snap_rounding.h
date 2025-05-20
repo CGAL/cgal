@@ -69,7 +69,7 @@ double double_ceil(const NT &x){
   }
 };
 
-// Provide an index to the range, it is used by the visitor to track the correspondance between the input and the output
+// Provides an index to the range, which is used by the visitor to track the correspondence between the input and the output
 template <typename Range>
 class Indexes_range : public Range{
   typedef std::remove_cv_t<typename std::iterator_traits<typename Range::iterator>::value_type> Value_type;
