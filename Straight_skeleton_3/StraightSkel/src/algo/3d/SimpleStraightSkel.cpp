@@ -4328,6 +4328,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
                 }
             }
 
+#ifndef CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
             bool conv_split_event = false;
             FacetSPtr facet_1b = facet_2->next(v1);
             FacetSPtr facet_2b = facet_1->next(v2);
@@ -4336,7 +4337,6 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
                 facet_2b = facet_2b->next(v2);
             }
 
-#ifndef CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
             EdgeSPtr edge_cur = edge_11->next(facet_1b);
             while (edge_cur != edge_11) {
                 if ((edge_cur->getFacetL() == facet_1b && edge_cur->getFacetR() == facet_2b) ||
