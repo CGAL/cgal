@@ -5573,6 +5573,8 @@ SimpleStraightSkel::handleSaveOffsetEvent(const CGAL::FT current_offset,
     DEBUG_PRINT("#########  Handle Save Event  ##########");
     DEBUG_PRINT("########################################");
 
+    skel_result_->addEvent(event);
+
     const CGAL::FT event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
 
