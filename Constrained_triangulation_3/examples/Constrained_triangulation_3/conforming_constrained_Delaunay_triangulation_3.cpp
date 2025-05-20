@@ -3,6 +3,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_constrained_triangulation_3.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/IO/write_MEDIT.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -25,6 +26,9 @@ int main(int argc, char* argv[])
             << ccdt.triangulation().number_of_vertices() << '\n'
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
+
+  std::ofstream ofs("out.mesh");
+  CGAL::IO::write_MEDIT(ofs, ccdt);
 
   CGAL::draw(ccdt);
 
