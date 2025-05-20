@@ -978,6 +978,7 @@ void generate_subtriangles(std::size_t ti,
 namespace autorefine_impl{
 // Forward declaration
 struct Wrap_snap_visitor;
+
 template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool polygon_soup_snap_rounding(PointRange &points,
                                 PolygonRange &triangles,
