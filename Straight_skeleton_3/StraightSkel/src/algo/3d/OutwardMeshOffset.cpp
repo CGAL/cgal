@@ -291,6 +291,8 @@ invert_and_add_bbox(Mesh& sm)
   PMP::orient_to_bound_a_volume(sm);
   PMP::reverse_face_orientations(sm);
 
+#define CGAL_SS3_DO_NOT_USE_ENCLOSING_BBOX
+#ifndef CGAL_SS3_DO_NOT_USE_ENCLOSING_BBOX
   const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
   Mesh bbox_mesh;
   CGAL::make_hexahedron(Iso_cuboid3(Point3(bb.xmin(), bb.ymin(), bb.zmin()),
@@ -316,6 +318,7 @@ invert_and_add_bbox(Mesh& sm)
     for(const auto& e : f2f)
       put(*fwm, e.second, 1e-10 * min_weight);
   }
+#endif
 
   if(CGAL::is_empty(sm) || !CGAL::is_closed(sm)) {
     std::cerr << "Error: empty or open output" << std::endl;
@@ -333,8 +336,27 @@ remove_bbox_and_invert(Mesh& sm)
 
   DEBUG_PRINT("Removing Bbox and inverting...");
 
-  CGAL_precondition(!CGAL::is_empty(sm));
+  std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF (with BBOX)" << std::endl;
 
+  CGAL_precondition(!CGAL::is_empty(sm));
+  CGAL_precondition(CGAL::is_valid_face_graph(sm) && sm.is_valid());
+
+  if(CGAL::is_empty(sm)) {
+    std::cerr << "Error: empty output" << std::endl;
+    return false;
+  } else if(!CGAL::is_closed(sm)) {
+    std::cerr << "Error: open output" << std::endl;
+    return false;
+  }
+
+  // @fixme this shouldn't be needed, but that's because files are currently written
+  // using the point position as their ID, even if vertices have disappeared.
+  // Thus, placeholders are required, and these are isolated vertices.
+  // It's a gimmick to make it easier to debug (otherwise I need to use point positions
+  // and not IDs...).
+  CGAL::Polygon_mesh_processing::remove_isolated_vertices(sm);
+
+#ifndef CGAL_SS3_DO_NOT_USE_ENCLOSING_BBOX
   auto vpm = get(CGAL::vertex_point, sm);
 
   vertex_descriptor extreme_v = *(vertices(sm).begin());
@@ -346,25 +368,19 @@ remove_bbox_and_invert(Mesh& sm)
   face_descriptor extreme_f = face(halfedge(extreme_v, sm), sm);
   CGAL_assertion(extreme_f != boost::graph_traits<Mesh>::null_face());
 
-  // std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF (with BBOX)" << std::endl;
 
   std::vector<face_descriptor> fs { extreme_f };
   PMP::remove_connected_components(sm, fs);
 
-  // std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
-
-  PMP::orient_to_bound_a_volume(sm);
+  std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
   if(CGAL::is_empty(sm)) {
     std::cerr << "Error: empty output" << std::endl;
     return false;
-  } else if(!CGAL::is_closed(sm)) {
-    std::cerr << "Error: open output" << std::endl;
-    return false;
-  } else if(!CGAL::is_triangle_mesh(sm)) {
-    std::cerr << "Warning: non-triangle output" << std::endl;
-    return false;
   }
+#endif
+
+  PMP::orient_to_bound_a_volume(sm);
 
   return true;
 }
