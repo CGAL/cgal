@@ -2,9 +2,9 @@
 CGAL_directory=$1
 input_path=$2
 output_dir=$3
-alpha_value=$4
-timeout_value=$5
-virtual_thread=$6
+timeout_value=$4
+virtual_thread=$5
+alpha_value=$6
 
 Benchmark_output_dir="$output_dir/Logs/Alpha_wrap_3"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
