@@ -164,6 +164,8 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -220,8 +222,6 @@ CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
 CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
 CGAL_add_named_parameter(min_points_per_cell_t, min_points_per_cell, min_points_per_cell)
 CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
-CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
-CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
