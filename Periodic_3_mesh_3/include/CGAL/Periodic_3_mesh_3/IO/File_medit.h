@@ -295,7 +295,9 @@ void output_to_medit(std::ostream& os,
 
   // periodic meshes always print facets twice because the facet in complex
   // might be on the boundary of the domain
-  typedef CGAL::SMDS_3::Medit_pmap_generator<C3T3, rebind, true>      Generator;
+  typedef CGAL::SMDS_3::
+    Medit_pmap_generator<C3T3, CGAL::SMDS_3::Renumber_subdomain_indices(rebind),
+                               CGAL::SMDS_3::Facet_indices(true)>     Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
   typedef typename Generator::Facet_pmap                              Facet_pmap;
   typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;
