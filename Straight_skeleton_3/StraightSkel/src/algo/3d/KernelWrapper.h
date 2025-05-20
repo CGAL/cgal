@@ -73,6 +73,8 @@ public:
 
     static Vector3SPtr normalize(Vector3SPtr v);
 
+    static bool isNormalizedPlane(Plane3SPtr plane);
+
     static Plane3SPtr offsetPlane(Plane3SPtr plane, const CGAL::FT& offset);
     static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, const CGAL::FT& offset);
 

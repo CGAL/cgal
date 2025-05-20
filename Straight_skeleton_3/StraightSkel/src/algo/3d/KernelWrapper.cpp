@@ -222,9 +222,26 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
     return result;
 }
 
+bool KernelWrapper::isNormalizedPlane(Plane3SPtr plane) {
+#ifdef USE_CGAL
+    const CGAL::FT a = plane->a();
+    const CGAL::FT b = plane->b();
+    const CGAL::FT c = plane->c();
+#else
+    const double a = plane->getA();
+    const double b = plane->getB();
+    const double c = plane->getC();
+#endif
+
+// inaccuracies during normalization since the sqrt is (usually) not exact
+    return (a*a + b*b + c*c - 1) <= 1e-5;
+}
+
 Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
 {
     Plane3SPtr result = Plane3SPtr();
+    CGAL_precondition(isNormalizedPlane(plane));
+
 // #define CGAL_SS3_OLD_CODE_OFFSET_PLANE
 #ifndef CGAL_SS3_OLD_CODE_OFFSET_PLANE // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
 # ifdef USE_CGAL
@@ -238,18 +255,6 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
     const double c = plane->getC();
     const double d = plane->getD();
 # endif
-    CGAL_assertion_code(CGAL::FT sq_n = a*a + b*b + c*c;)
-    // std::cout << "Shifting plane by " << offset << std::endl;
-    // std::cout << "normalization check (post offset): " << sq_n
-    //           << " (" << CGAL::to_interval(sq_n).first << "; "
-    //           << CGAL::to_interval(sq_n).second << ")" << std::endl;
-    // std::cout << "a: " << a << std::endl;
-    // std::cout << "b: " << b << std::endl;
-    // std::cout << "c: " << c << std::endl;
-    // std::cout << "d: " << d << std::endl;
-
-    // inaccuracies during normalization since the sqrt is (usually) not exact
-    CGAL_assertion((sq_n - 1) < 1e-5);
 
     result = KernelFactory::createPlane3(a, b, c, d - offset);
 
@@ -311,10 +316,10 @@ static CGAL::FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT&
                                                    a3, b3, c3, d3) << std::endl;
 #endif
 
-    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
-    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
-    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
-    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
+    CGAL_assertion(isNormalizedPlane(plane_0));
+    CGAL_assertion(isNormalizedPlane(plane_1));
+    CGAL_assertion(isNormalizedPlane(plane_2));
+    CGAL_assertion(isNormalizedPlane(plane_3));
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
@@ -397,10 +402,10 @@ Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
                                                    a3, b3, c3, d3) << std::endl;
 #endif
 
-    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
-    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
-    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
-    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
+    CGAL_assertion(isNormalizedPlane(plane_0));
+    CGAL_assertion(isNormalizedPlane(plane_1));
+    CGAL_assertion(isNormalizedPlane(plane_2));
+    CGAL_assertion(isNormalizedPlane(plane_3));
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
@@ -479,10 +484,10 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPla
                                                    a3, b3, c3, d3) << std::endl;
 #endif
 
-    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
-    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
-    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
-    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
+    CGAL_assertion(isNormalizedPlane(plane_0));
+    CGAL_assertion(isNormalizedPlane(plane_1));
+    CGAL_assertion(isNormalizedPlane(plane_2));
+    CGAL_assertion(isNormalizedPlane(plane_3));
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
