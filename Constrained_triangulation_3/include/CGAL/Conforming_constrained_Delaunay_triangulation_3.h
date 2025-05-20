@@ -4085,6 +4085,12 @@ auto convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<
     for(auto ch : tr.all_cell_handles()) {
       ch->set_subdomain_index(0);
     }
+    for(auto [c, index] : tr.finite_facets()) {
+      if(c->ccdt_3_data().is_facet_constrained(index)) {
+        auto patch = c->ccdt_3_data().face_constraint_index(index);
+        c->set_surface_patch_index(index, patch);
+      }
+    }
   } else {
     for(auto ch : tr.all_cell_handles()) {
       ch->set_subdomain_index(1);
