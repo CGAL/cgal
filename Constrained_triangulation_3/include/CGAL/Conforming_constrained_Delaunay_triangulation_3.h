@@ -29,6 +29,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/circulator.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_range.h>
@@ -897,83 +898,6 @@ public:
     return t;
   }
   /// @} // end triangulation section
-
-  /// \cond SKIP_IN_MANUAL
-  Conforming_constrained_Delaunay_triangulation_3 convert_for_remeshing() &&
-  {
-    auto& tr = cdt_impl;
-
-    for(auto v : tr.all_vertex_handles()) {
-      switch(v->ccdt_3_data().vertex_type()) {
-      case CDT_3_vertex_type::CORNER:
-        v->set_dimension(0);
-        v->set_index(0);
-        break;
-      case CDT_3_vertex_type::STEINER_ON_EDGE:
-        v->set_dimension(1);
-        v->set_index(static_cast<int>(v->ccdt_3_data().constrained_polyline_id(tr).index()));
-        break;
-      case CDT_3_vertex_type::STEINER_IN_FACE:
-        v->set_dimension(2);
-        v->set_index(v->ccdt_3_data().face_index());
-        break;
-      case CDT_3_vertex_type::FREE:
-        v->set_dimension(3);
-        v->set_index(1);
-        break;
-      default:
-        CGAL_error();
-        break;
-      }
-    }
-
-    if(tr.dimension() < 3) {
-      for(auto ch : tr.all_cell_handles()) {
-        ch->set_subdomain_index(0);
-      }
-    } else {
-      for(auto ch : tr.all_cell_handles()) {
-        ch->set_subdomain_index(1);
-      }
-
-      std::stack<decltype(tr.infinite_cell())> stack;
-      stack.push(tr.infinite_cell());
-      while(!stack.empty()) {
-        auto ch = stack.top();
-        stack.pop();
-        ch->set_subdomain_index(0);
-        for(int i = 0; i < 4; ++i) {
-          if(ch->ccdt_3_data().is_facet_constrained(i))
-            continue;
-          auto n = ch->neighbor(i);
-          if(n->subdomain_index() == 1) {
-            stack.push(n);
-          }
-        }
-      }
-
-      for(auto f : tr.finite_facets())
-      {
-        const auto& mf = tr.mirror_facet(f);
-        if(f.first->ccdt_3_data().is_facet_constrained(f.second) ||
-           mf.first->ccdt_3_data().is_facet_constrained(mf.second))
-        {
-          const auto& patch = f.first->ccdt_3_data().face_constraint_index(f.second);
-          f.first->set_surface_patch_index(f.second, patch);
-          mf.first->set_surface_patch_index(mf.second, patch);
-        }
-      }
-    }
-    Conforming_constrained_Delaunay_triangulation_3 result{std::move(*this)};
-    static_assert(CGAL::cdt_3_msvc_2019_or_older() ||
-                  CGAL::is_nothrow_movable_v<Triangulation> == false ||
-                  CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3>);
-    static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Conforming_constrained_Delaunay_triangulation_3>);
-    *this = Conforming_constrained_Delaunay_triangulation_3{};
-    return result;
-  }
-  /// \endcond
-  // end SKIP_IN_MANUAL for convert_for_remeshing
 
   /**
    * A bidirectional iterator for visiting all constrained facets of the triangulation.
@@ -4098,27 +4022,103 @@ auto convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<
                                  Triangulation_data_structure>
 
 {
-  constexpr bool has_ecmap =
+  for(auto v : ccdt.triangulation().all_vertex_handles()) {
+    switch(v->ccdt_3_data().vertex_type()) {
+    case CDT_3_vertex_type::CORNER:
+      v->set_dimension(0);
+      v->set_index(0);
+      break;
+    case CDT_3_vertex_type::STEINER_ON_EDGE:
+      v->set_dimension(1);
+      v->set_index(static_cast<int>(v->ccdt_3_data().constrained_polyline_id(ccdt).index()));
+      break;
+    case CDT_3_vertex_type::STEINER_IN_FACE:
+      v->set_dimension(2);
+      v->set_index(v->ccdt_3_data().face_index());
+      break;
+    case CDT_3_vertex_type::FREE:
+      v->set_dimension(3);
+      v->set_index(1);
+      break;
+    default:
+      CGAL_error();
+      break;
+    }
+  }
+
+  constexpr bool has_edge_is_constrained_map =
       !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_is_constrained_t>::value;
-  if constexpr (has_ecmap)
+  if constexpr (has_edge_is_constrained_map)
   {
     const auto& tr = ccdt.triangulation();
-    auto ecmap = parameters::get_parameter(np, internal_np::edge_is_constrained);
+    auto edge_is_constrained_map = parameters::get_parameter(np, internal_np::edge_is_constrained);
     for(auto e : tr.finite_edges())
     {
       auto [v1, v2] = tr.vertices(e);
-      if(  v1->ccdt_3_data().constrained_polyline_id(ccdt).index()
-        == v2->ccdt_3_data().constrained_polyline_id(ccdt).index())
+      auto v1_dim = v1->in_dimension();
+      auto v2_dim = v2->in_dimension();
+
+      if(v1_dim > 1 || v2_dim > 1) continue;
+
+      if(v1_dim == 1 && v2_dim == 1 &&
+           v1->ccdt_3_data().constrained_polyline_id(ccdt).index()
+        != v2->ccdt_3_data().constrained_polyline_id(ccdt).index()) continue;
+
+      auto incident_facets = Range_from_circulator(tr.incident_facets(e));
+      if(std::any_of(incident_facets.begin(), incident_facets.end(),
+                     [&](const auto& f) { return ccdt.is_facet_constrained(f); }))
       {
         if(v2 > v1)
           std::swap(v1, v2);
-        put(ecmap, std::make_pair(v1, v2), true);
+        put(edge_is_constrained_map, std::make_pair(v1, v2), true);
       }
     }
   }
 
-  auto tmp = std::move(ccdt).convert_for_remeshing();
-  return std::move(tmp).triangulation();
+  auto tr = std::move(ccdt).triangulation();
+
+  using CDT_3 = Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>;
+  using TDS = typename CDT_3::Triangulation::Triangulation_data_structure;
+  static_assert(std::is_same_v<decltype(tr), Triangulation_3<Traits, TDS>>);
+
+  if(tr.dimension() < 3) {
+    for(auto ch : tr.all_cell_handles()) {
+      ch->set_subdomain_index(0);
+    }
+  } else {
+    for(auto ch : tr.all_cell_handles()) {
+      ch->set_subdomain_index(1);
+    }
+
+    std::stack<decltype(tr.infinite_cell())> stack;
+    stack.push(tr.infinite_cell());
+    while(!stack.empty()) {
+      auto ch = stack.top();
+      stack.pop();
+      ch->set_subdomain_index(0);
+      for(int i = 0; i < 4; ++i) {
+        if(ch->ccdt_3_data().is_facet_constrained(i))
+          continue;
+        auto n = ch->neighbor(i);
+        if(n->subdomain_index() == 1) {
+          stack.push(n);
+        }
+      }
+    }
+
+    for(auto f : tr.finite_facets())
+    {
+      auto mf = tr.mirror_facet(f);
+      if(f.first->ccdt_3_data().is_facet_constrained(f.second) ||
+          mf.first->ccdt_3_data().is_facet_constrained(mf.second))
+      {
+        auto patch = f.first->ccdt_3_data().face_constraint_index(f.second);
+        f.first->set_surface_patch_index(f.second, patch);
+        mf.first->set_surface_patch_index(mf.second, patch);
+      }
+    }
+  }
+  return tr;
 }
 
 } // end CGAL
