@@ -582,6 +582,7 @@ bool SimpleStraightSkel::run() {
 
 #ifdef CGAL_SS3_DUMP_FILES
     db::_3d::OBJFile::save("results/input.obj", polyhedron, false /*do not triangulate*/);
+    db::_3d::OBJFile::save("results/input_triangulated.obj", polyhedron, true /*do not triangulate*/);
 #endif
 
     // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
@@ -663,7 +664,7 @@ bool SimpleStraightSkel::run() {
 #endif
 
     DEBUG_VAL("Using " << vertex_splitter_->toString() << " to initialize polyhedron.");
-    if (init(polyhedron)) {
+    if (init(polyhedron, vertex_splitter_, use_fast_vertex_splitter_, controller_)) {
         if (controller_) {
             controller_->wait();
         }
@@ -674,10 +675,6 @@ bool SimpleStraightSkel::run() {
 
         CGAL_assertion_code(const bool is_emptiness_expected = save_offsets_.empty();)
 
-#ifdef CGAL_SS3_DUMP_FILES
-        db::_3d::OBJFile::save("results/split.obj", polyhedron, false /*do not triangulate*/);
-#endif
-
         PQ queue;
         collectEvents(polyhedron, current_offset, queue);
 
@@ -686,6 +683,13 @@ bool SimpleStraightSkel::run() {
 
             std::cout << "\n=========== ITERATION #" << step_id_ << " AT OFFSET " << current_offset << std::endl;
             DEBUG_PRINT(polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
+
+            if (visitor_) {
+                if (!visitor_->go_further(step_id_, polyhedron, current_offset)) {
+                    DEBUG_PRINT("Stopping on visitor request");
+                    break;
+                }
+            }
 
             // std::stringstream ss_filename;
             // ss_filename << "results/" << save_path_.string() << "/face_count.txt";
@@ -757,17 +761,29 @@ bool SimpleStraightSkel::run() {
                 continue;
             }
 
+            current_offset = upcoming_offset;
+
+            if (visitor_) {
+                visitor_->after_offset_event(polyhedron, current_offset);
+            }
+
 #ifdef CGAL_SS3_DUMP_FILES
             db::_3d::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
             db::_3d::OBJFile::save("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
 #endif
+
+            if(visitor_ && event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
+                visitor_->on_save_offset_event(polyhedron, current_offset);
+            }
 
             CGAL_assertion(polyhedron->isConsistent());
 #ifndef CGAL_SS3_NO_SKELETON_DS
             CGAL_assertion(skel_result_->isConsistent());
 #endif
             CGAL_assertion(p_box_min && p_box_max);
-            CGAL_assertion(PolyhedronTransformation::isInsideBox(polyhedron, p_box_min, p_box_max));
+
+            // @fixme for outward offsets without an enclosing bbox, this is wrong
+            CGAL_warning(PolyhedronTransformation::isInsideBox(polyhedron, p_box_min, p_box_max));
 
             // this is tempting, but the mesh is usually not in a nice state here
             // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
@@ -786,8 +802,6 @@ bool SimpleStraightSkel::run() {
                 }
             }
 
-            current_offset = upcoming_offset;
-
             // Update (or recompute) the event priority queue
 #ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
             queue = PQ();
@@ -805,10 +819,9 @@ bool SimpleStraightSkel::run() {
 #endif
         }
 
-
         DEBUG_PRINT("== Straight Skeleton 3D finished ==");
 
-        CGAL_assertion(!is_emptiness_expected || polyhedron->empty());
+        CGAL_warning(!is_emptiness_expected || polyhedron->empty());
 
 #ifdef CGAL_SS3_RUN_TIMERS
         timer.stop();
@@ -819,7 +832,7 @@ bool SimpleStraightSkel::run() {
         //        util::StringFactory::fromBoolean(controller_) + "; ");
         std::cout << skel_result_->toString() << std::endl;
     } else {
-        DEBUG_PRINT("Error: Failed to initialize");
+        DEBUG_PRINT("Error: Failed to initialize polyhedron");
         return false;
     }
 
@@ -1049,15 +1062,19 @@ void SimpleStraightSkel::cacheBasePlanes(PolyhedronSPtr polyhedron) {
         if (!facet->hasData()) {
             SkelFacetData::create(facet);
         }
-        CGAL_assertion(bool(facet->getPlane()));
         facet->setBasePlaneID(basePlanes_.size());
         basePlanes_.push_back(facet->getPlane());
     }
 }
 
-bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
+bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron,
+                              AbstractVertexSplitterSPtr vertex_splitter,
+                              const bool use_fast_vertex_splitter,
+                              ControllerSPtr controller) {
     WriteLock l(polyhedron->mutex());
     bool result = true;
+
+    DEBUG_PRINT("Before split: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
     std::list<VertexSPtr>::iterator it_v;
     it_v = polyhedron->vertices().begin();
@@ -1097,10 +1114,10 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
 
     DEBUG_PRINT(vertices_tosplit.size() << " vertices to split");
 
-    if (controller_) {
+    if (controller) {
         l.unlock();
-        controller_->setDispPolyhedron(polyhedron);
-        controller_->wait();
+        controller->setDispPolyhedron(polyhedron);
+        controller->wait();
         l.lock();
     }
     it_v = vertices_tosplit.begin();
@@ -1113,41 +1130,75 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     it_v = vertices_tosplit.begin();
     while (it_v != vertices_tosplit.end()) {
         VertexSPtr vertex = *it_v++;
-        bool equal_speeds = true;
-        std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-        while (it_f != vertex->facets().end()) {
-            FacetWPtr facet_wptr = *it_f++;
-            if (facet_wptr.expired()) {
-                continue;
-            }
-            FacetSPtr facet(facet_wptr);
-            CGAL::FT speed = 1.0;
-            if (facet->hasData()) {
-                speed = std::dynamic_pointer_cast<SkelFacetData>(
-                        facet->getData())->getSpeed();
-            }
-            if (speed != 1.0) {
-                equal_speeds = false;
-                break;
+
+        bool equal_speeds = false;
+
+        if (use_fast_vertex_splitter) {
+            equal_speeds = true;
+            CGAL::FT first_speed = 1.0;
+            bool first_speed_set = false;
+
+            std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+            while (it_f != vertex->facets().end()) {
+                FacetWPtr facet_wptr = *it_f++;
+                if (facet_wptr.expired()) {
+                    continue;
+                }
+                FacetSPtr facet(facet_wptr);
+                CGAL::FT speed = 1.0;
+                if (facet->hasData()) {
+                    speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                }
+
+                if (!first_speed_set) {
+                    first_speed = speed;
+                    first_speed_set = true;
+                } else if (speed != first_speed) {
+                    equal_speeds = false;
+                    break;
+                }
             }
         }
 
-        if (use_fast_vertex_splitter_ && equal_speeds && vertex->isConvex()) {
+        if (equal_speeds && vertex->isConvex()) {
             AbstractVertexSplitter::splitConvexVertex(vertex);
-        } else if (use_fast_vertex_splitter_ && equal_speeds && vertex->isReflex()) {
+        } else if (equal_speeds && vertex->isReflex()) {
             AbstractVertexSplitter::splitReflexVertex(vertex);
         } else {
             l.unlock();
-            DEBUG_PRINT("Split generic vertex");
+            DEBUG_PRINT("Generic split vertex");
             DEBUG_VAR(vertex->toString());
-            vertex_splitter_->splitVertex(vertex);
-            if (controller_) {
-                controller_->setDispPolyhedron(polyhedron);
-                controller_->setDispSkel3d(skel_result_);
+
+            // When the degree is high, take the first valid split
+            if (vertex->degree() > 10) {
+                CGAL::Real_timer timer;
+                timer.start();
+#if 1
+                DEBUG_PRINT("High degree, force a combinatorial split");
+                AbstractVertexSplitterSPtr combi_splitter = CombiVertexSplitter::create();
+                combi_splitter->splitVertex(vertex);
+#else
+                vertex_splitter->splitVertex(vertex);
+#endif
+                timer.stop();
+                DEBUG_PRINT("Time taken to split vertex #" << vertex->getID() << " = " << timer.time());
+            } else {
+                vertex_splitter->splitVertex(vertex);
+            }
+
+            if (controller) {
+                controller->setDispPolyhedron(polyhedron);
+#ifndef CGAL_SS3_NO_SKELETON_DS
+                controller->setDispSkel3d(skel_result_);
+#endif
             }
             l.lock();
         }
     }
+
+#ifdef CGAL_SS3_DUMP_FILES
+    db::_3d::OBJFile::save("results/split.obj", polyhedron, false /*do not triangulate*/);
+#endif
 
     CGAL_postcondition_code(for(auto v : polyhedron->vertices()))
     CGAL_postcondition(v->getID() != -1);
@@ -1192,9 +1243,9 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
             SkelFacetData::create(facet);
         }
     }
-#endif
 
     CGAL_postcondition(skel_result_->isConsistent());
+#endif
 
     return result;
 }

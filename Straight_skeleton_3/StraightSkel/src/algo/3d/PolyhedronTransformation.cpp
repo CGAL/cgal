@@ -180,38 +180,48 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
             util::StringFactory::fromDouble(CGAL::to_double((*v_s)[2])) + ">; ");
 }
 
-void PolyhedronTransformation::resetPoint(VertexSPtr vertex)
+bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
 {
-  CGAL_precondition(vertex->degree() == 3);
+    CGAL_precondition(vertex->degree() == 3);
 
-  Plane3SPtr planes[3];
-  unsigned int i = 0;
-  std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-  while (i < 3 && it_f != vertex->facets().end()) {
-      FacetWPtr facet_wptr = *it_f++;
-      if (!facet_wptr.expired()) {
-          FacetSPtr facet = FacetSPtr(facet_wptr);
-          planes[i++] = facet->plane();
-      }
-  }
-  CGAL_postcondition(i == 3);
+    Plane3SPtr planes[3];
+    unsigned int i = 0;
+    std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (i < 3 && it_f != vertex->facets().end()) {
+        FacetWPtr facet_wptr = *it_f++;
+        if (!facet_wptr.expired()) {
+            FacetSPtr facet = FacetSPtr(facet_wptr);
+            planes[i++] = facet->plane();
+        }
+    }
+    CGAL_postcondition(i == 3);
 
-  Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
-  CGAL_assertion(bool(point));
+    Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+    if (!point) {
+        std::cerr << "Error: triplet of planes doesn't define a point!" << std::endl;
+        Point3SPtr result = Point3SPtr();
+        DEBUG_SPTR(result);
+        return false;
+    }
 
-  vertex->setPoint(point);
+    vertex->setPoint(point);
+    return true;
 }
 
-void PolyhedronTransformation::resetPoints(PolyhedronSPtr polyhedron)
+bool PolyhedronTransformation::resetPoints(PolyhedronSPtr polyhedron)
 {
     // Reset degree 3 vertices
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() == 3) {
-            resetPoint(vertex);
+            if (!resetPoint(vertex)) {
+                std::cerr << "Error: failed to reset vertex " << vertex->toString() << std::endl;
+                return false;
+            }
         }
     }
+    return true;
 }
 
 // @todo this function cannot deal with degree 1 vertices
@@ -894,15 +904,27 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
         vertex->setPoint(p_t);
     }
 
-    // recompute normalized planes, and ensure points are on the planes
+    // recompute normalized planes to ensure points are on the supporting planes
     polyhedron->initPlanes();
     normalizeFacetPlanes(polyhedron);
-
-    resetPoints(polyhedron);
+    bool success = resetPoints(polyhedron);
+    CGAL_assertion(success);
+    CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 
     polyhedron->appendDescription("rand_move_points_range=" +
             util::StringFactory::fromDouble(range) + "; ");
+}
 
+void PolyhedronTransformation::randTiltPlanes(PolyhedronSPtr polyhedron) {
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        facet->perturbPlaneCoefficients(); // this normalizes coefficients
+    }
+
+    // @fixme this can break the polyhedron or create self-intersections
+    bool success = PolyhedronTransformation::resetPoints(polyhedron);
+    CGAL_assertion(success);
     CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 }
 
@@ -968,53 +990,6 @@ PolyhedronSPtr PolyhedronTransformation::merge_and_perturb(PolyhedronSPtr polyhe
   DEBUG_PRINT("Done with perturbation");
 
   return polyhedron;
-}
-
-// same as above, but we do not merge facets
-PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
-    CGAL_precondition(polyhedron && polyhedron->isConsistent());
-
-    DEBUG_PRINT("Perturbing...");
-
-    // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
-    // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
-    // of the plane will still yield a single intersection point.
-    // That's not the case (in general) for degree > 3 vertices as there would no longer be
-    // a single intersection point for the tilted planes.
-    //
-    // The advantage is that we then manipulate smaller meshes since the faces are polygonal.
-    bool all_degree_3 = true;
-
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-      VertexSPtr vertex = *it_v++;
-      if (vertex->degree() != 3) {
-        DEBUG_PRINT("Can't use plane tilts because of " << vertex->toString());
-        all_degree_3 = false;
-        break;
-      }
-    }
-
-    if (all_degree_3) {
-        DEBUG_PRINT("Tilting the polyhedron's facets");
-
-        std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-        while (it_f != polyhedron->facets().end()) {
-            FacetSPtr facet = *it_f++;
-            std::cout << "perturb " << facet->toString() << std::endl;
-            facet->perturbPlaneCoefficients();
-        }
-
-        resetPoints(polyhedron);
-    } else {
-        randMovePoints(polyhedron);
-    }
-
-    DEBUG_PRINT("Done with perturbation");
-
-    CGAL_postcondition(polyhedron && polyhedron->isConsistent());
-
-    return polyhedron;
 }
 
 } }

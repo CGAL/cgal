@@ -36,13 +36,13 @@ public:
      * updates the position of the vertex of a polyhedron, computed from the planes of
      * its incident faces.
      */
-    static void resetPoint(VertexSPtr vertex);
+    static bool resetPoint(VertexSPtr vertex);
 
     /**
      * updates the positions of the vertices of a polyhedron, computed from the planes of
      * their incident faces.
      */
-    static void resetPoints(PolyhedronSPtr polyhedron);
+    static bool resetPoints(PolyhedronSPtr polyhedron);
 
     /**
      * returns the shifted position of the vertex of a polyhedron
@@ -79,7 +79,6 @@ public:
      * Normalize facet planes
     */
     static void normalizeFacetPlanes(PolyhedronSPtr polyhedron);
-
     /**
      * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
     */
@@ -94,8 +93,8 @@ public:
     static bool areAllVerticesDegree3(PolyhedronSPtr polyhedron);
 
     static void randMovePoints(PolyhedronSPtr polyhedron);
+    static void randTiltPlanes(PolyhedronSPtr polyhedron);
     static PolyhedronSPtr merge_and_perturb(PolyhedronSPtr polyhedron);
-    static PolyhedronSPtr perturb(PolyhedronSPtr polyhedron);
 
     static Point3SPtr boundingBoxMin(PolyhedronSPtr polyhedron);
     static Point3SPtr boundingBoxMax(PolyhedronSPtr polyhedron);

@@ -44,12 +44,33 @@ struct hash<std::array<int, 4>> {
         return seed;
     }
 };
-}
+
+} // namespace std
 
 namespace algo { namespace _3d {
 
 using namespace data::_3d;
 using namespace data::_3d::skel;
+
+namespace utils {
+
+struct Base_mesh_offset_visitor
+{
+    virtual ~Base_mesh_offset_visitor() = default;
+    virtual bool go_further(int, PolyhedronSPtr, CGAL::FT) = 0;
+    virtual void after_offset_event(PolyhedronSPtr, CGAL::FT) = 0;
+    virtual void on_save_offset_event(PolyhedronSPtr, CGAL::FT) = 0;
+};
+
+struct Default_mesh_offset_visitor
+    : Base_mesh_offset_visitor
+{
+  bool go_further(int, PolyhedronSPtr, CGAL::FT) override { return true; };
+  void after_offset_event(PolyhedronSPtr, CGAL::FT) override { };
+  void on_save_offset_event(PolyhedronSPtr, CGAL::FT) override { };
+};
+
+} // namespace utils
 
 class SimpleStraightSkel {
 public:
@@ -64,6 +85,10 @@ public:
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller,
                                          const std::list<CGAL::FT>& save_offsets,
                                          const std::filesystem::path& save_path);
+
+    void setVisitor(utils::Base_mesh_offset_visitor* visitor) {
+        visitor_ = visitor;
+    }
 
     void initVertexSplitter();
     void initEdgeEvent();
@@ -122,7 +147,10 @@ public:
      * Split all vertices with degree > 3 and
      * initializes the data variables of all edges and vertices.
      */
-    bool init(PolyhedronSPtr polyhedron);
+    static bool init(PolyhedronSPtr polyhedron,
+                      AbstractVertexSplitterSPtr vertex_splitter,
+                      const bool use_fast_vertex_splitter = false,
+                      ControllerSPtr controller = nullptr);
 
     /**
      * Checks if the given edge is part of a triangle
@@ -514,6 +542,8 @@ protected:
     PolyhedronSPtr polyhedron_;
 
     ControllerSPtr controller_;
+
+    utils::Base_mesh_offset_visitor* visitor_ = nullptr;
 
     std::list<CGAL::FT> save_offsets_;
     std::filesystem::path save_path_;
