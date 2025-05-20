@@ -487,6 +487,7 @@ void Facet::setBasePlaneID(int planeId) {
 }
 
 Plane3SPtr Facet::getPlane() const {
+    CGAL_precondition(bool(this->plane_));
     return this->plane_;
 }
 
@@ -535,6 +536,7 @@ bool Facet::initPlane() {
     }
 
     CGAL_postcondition(result);
+
     return result;
 }
 

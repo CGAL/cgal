@@ -367,10 +367,10 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
         }
 
         CGAL::FT od = future_facing ? -1 : 1;
-        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), od * speed_l);
-        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), od * speed_r);
-        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), od * speed_src);
-        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), od * speed_dst);
+        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->getPlane(), od * speed_l);
+        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->getPlane(), od * speed_r);
+        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->getPlane(), od * speed_src);
+        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->getPlane(), od * speed_dst);
 
         Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
         Point3SPtr p_dst = KernelWrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
@@ -462,13 +462,13 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
             speed_dst = std::dynamic_pointer_cast<SkelFacetData>(
                     facet_dst->getData())->getSpeed();
         }
-        Plane3SPtr plane_l = facet_l->plane();
-        Plane3SPtr plane_r = facet_r->plane();
+        Plane3SPtr plane_l = facet_l->getPlane();
+        Plane3SPtr plane_r = facet_r->getPlane();
 
         Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, -speed_l);
         Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(plane_r, -speed_r);
-        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), -speed_src);
-        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), -speed_dst);
+        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->getPlane(), -speed_src);
+        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->getPlane(), -speed_dst);
 
         Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src,
                 offset_plane_l, offset_plane_r);
@@ -618,7 +618,7 @@ bool SimpleStraightSkel::run() {
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
         CGAL::FT speed = other_speed;
-        const auto pl = facet->plane();
+        const auto pl = facet->getPlane();
         const auto normal = KernelFactory::createVector3(pl);
         // std::cout << "SP X " << CGAL::scalar_product(*normal, Vector3(1,0,0)) << std::endl;
         // std::cout << "SP Y " << CGAL::scalar_product(*normal, Vector3(0,1,0)) << std::endl;
@@ -875,9 +875,9 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
 
         if (i >= 3) {
             Vector3SPtr direction;
-            Plane3SPtr plane_1 = facets[0]->plane();
-            Plane3SPtr plane_2 = facets[1]->plane();
-            Plane3SPtr plane_3 = facets[2]->plane();
+            Plane3SPtr plane_1 = facets[0]->getPlane();
+            Plane3SPtr plane_2 = facets[1]->getPlane();
+            Plane3SPtr plane_3 = facets[2]->getPlane();
             // std::cout << "Plane #" << facets[0]->getID() << " --> " << *plane_1 << std::endl;
             // std::cout << "\t" << plane_1->point() << std::endl;
             // std::cout << "\t" << plane_1->point() + plane_1->base1() << std::endl;
@@ -978,8 +978,8 @@ SheetSPtr SimpleStraightSkel::createSheet(EdgeSPtr edge) {
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
     if (facet_l && facet_r) {
-        Plane3SPtr plane_l = facet_l->plane();
-        Plane3SPtr plane_r = facet_r->plane();
+        Plane3SPtr plane_l = facet_l->getPlane();
+        Plane3SPtr plane_r = facet_r->getPlane();
         FacetSPtr facet_b = facet_l;
         CGAL::FT speed_l = 1.0;
         if (facet_l->hasData()) {
@@ -1226,7 +1226,7 @@ bool SimpleStraightSkel::isTriangle(FacetSPtr facet, EdgeSPtr edge_begin) {
 //                    vertices[1]->getPoint(),
 //                    vertices[2]->getPoint());
 //            Vector3SPtr v1 = KernelFactory::createVector3(plane);
-//            Vector3SPtr v2 = KernelFactory::createVector3(facet->plane());
+//            Vector3SPtr v2 = KernelFactory::createVector3(facet->getPlane());
 //            if (((*v1) * (*v2)) > 0.0) {
 //                // angle between orthogonal vectors of planes < M_PI/2.0
 //                // not a hole
@@ -1367,7 +1367,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
                 sheets[2]->getPlane());
         if (p_intersect) {
             // @fixme should it check with the other incident facet as well?
-            if (KernelWrapper::side(facet->plane(), p_intersect) <= 0) {
+            if (KernelWrapper::side(facet->getPlane(), p_intersect) <= 0) {
                 // inside polyhedron
                 point = p_intersect;
                 offset_event = offsetDist(facet_l, point);
@@ -1418,7 +1418,7 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     // is the event time, but maybe if f or f_third have speed 0, we could quickly
     // check like below?
 
-    Plane3SPtr plane_third = f_third->plane();
+    Plane3SPtr plane_third = f_third->getPlane();
     CGAL::FT speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
     if (is_zero(speed_third)) {
         return (KernelWrapper::side(plane_third, point) <= 0);
@@ -1436,8 +1436,8 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     // @todo predicates
 
     FacetSPtr f_other = edge->other(f);
-    Plane3SPtr plane_f = f->plane();
-    Plane3SPtr plane_f_other = f_other->plane();
+    Plane3SPtr plane_f = f->getPlane();
+    Plane3SPtr plane_f_other = f_other->getPlane();
     Vector3SPtr n_f = KernelFactory::createVector3(plane_f);
     Vector3SPtr n_f_other = KernelFactory::createVector3(plane_f_other);
     Vector3SPtr n_f_third = KernelFactory::createVector3(plane_third);
@@ -1548,10 +1548,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     FacetSPtr facet_r1 = edge_1->getFacetR();
     FacetSPtr facet_l2 = edge_2->getFacetL();
     FacetSPtr facet_r2 = edge_2->getFacetR();
-    Plane3SPtr plane_l1 = facet_l1->getPlane();
-    Plane3SPtr plane_r1 = facet_r1->getPlane();
-    Plane3SPtr plane_l2 = facet_l2->getPlane();
-    Plane3SPtr plane_r2 = facet_r2->getPlane();
     CGAL::FT speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
     CGAL::FT speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
     CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
@@ -1693,6 +1689,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     //
     // Since we have filtered positive times, this shouldn't be needed (assuming positive weights)
 
+    Plane3SPtr plane_l1 = facet_l1->getPlane();
+    Plane3SPtr plane_r1 = facet_r1->getPlane();
+    Plane3SPtr plane_l2 = facet_l2->getPlane();
+    Plane3SPtr plane_r2 = facet_r2->getPlane();
+
     // this assumes positive weights
     CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
                      KernelWrapper::side(plane_r1, point) > 0));
@@ -1821,7 +1822,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 }
 
 CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
-    Plane3SPtr plane = facet->plane();
+    Plane3SPtr plane = facet->getPlane();
     CGAL::FT result = KernelWrapper::distance(plane, point);
     if (KernelWrapper::side(plane, point) < 0) {
         result *= -1.0;
@@ -2175,8 +2176,8 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
             FacetSPtr facet_2_src = edge_2->getFacetSrc();
             FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
-            Plane3SPtr plane_l2 = facet_l2->plane();
-            Plane3SPtr plane_r2 = facet_r2->plane();
+            Plane3SPtr plane_l2 = facet_l2->getPlane();
+            Plane3SPtr plane_r2 = facet_r2->getPlane();
             CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
             CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
@@ -2539,8 +2540,8 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
 
         CGAL_assertion(offset_event < current_offset && offset_event > offset_of_nearest_event);
 
-        CGAL_assertion(KernelWrapper::side(edge->getFacetL()->plane(), point) < 0);
-        CGAL_assertion(KernelWrapper::side(edge->getFacetR()->plane(), point) < 0);
+        CGAL_assertion(KernelWrapper::side(edge->getFacetL()->getPlane(), point) < 0);
+        CGAL_assertion(KernelWrapper::side(edge->getFacetR()->getPlane(), point) < 0);
 
         NodeSPtr node = Node::create();
         TriangleEventSPtr event = TriangleEvent::create();
@@ -4800,7 +4801,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 
                 CGAL::FT shift = offset_event - current_offset;
                 const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-                Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), shift*speed);
+                Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->getPlane(), shift*speed);
                 facet_offset->setPlane(offset_plane);
 
                 // abusing the fact that vertices will have the same order in both facets
@@ -5674,8 +5675,8 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT current_offset,
             FacetSPtr facet_2_src = edge_2->getFacetSrc();
             FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
-            Plane3SPtr plane_l2 = facet_l2->plane();
-            Plane3SPtr plane_r2 = facet_r2->plane();
+            Plane3SPtr plane_l2 = facet_l2->getPlane();
+            Plane3SPtr plane_r2 = facet_r2->getPlane();
             CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
             CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
@@ -6236,8 +6237,8 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT current_offset,
 
 // #define CGAL_SS3_USE_APPROXIMATE_ANGLES // old code
 #ifdef CGAL_SS3_USE_APPROXIMATE_ANGLES
-        double angle_flipped = KernelWrapper::angle(facets[0]->plane(), facets[2]->plane());
-        double angle_no_flip = KernelWrapper::angle(facets[1]->plane(), facets[3]->plane());
+        double angle_flipped = KernelWrapper::angle(facets[0]->getPlane(), facets[2]->getPlane());
+        double angle_no_flip = KernelWrapper::angle(facets[1]->getPlane(), facets[3]->getPlane());
         DEBUG_VAR(angle_no_flip);
         DEBUG_VAR(angle_flipped);
         if (edge_event_ == 0) {
@@ -8046,7 +8047,7 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT current_offset,
 
     CGAL::FT shift = event->getOffset() - current_offset;
     const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet_base->getData())->getSpeed();
-    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet_base->plane(), shift*speed);
+    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet_base->getPlane(), shift*speed);
     facet_clone->setPlane(offset_plane);
 
     // abusing the fact that vertices will have the same order in both facets
