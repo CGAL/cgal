@@ -34,6 +34,7 @@
 #include <utility>
 
 namespace std {
+
 template <>
 struct hash<std::array<int, 4>> {
     size_t operator()(const std::array<int, 4>& arr) const {
@@ -109,6 +110,7 @@ public:
                         const bool attempt_untilting = false);
 
     bool run();
+
     ThreadSPtr startThread();
 
     /**

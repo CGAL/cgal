@@ -471,7 +471,7 @@ void Facet::merge(FacetSPtr facet) {
 }
 
 int Facet::getID() const {
-  return this->id_;
+    return this->id_;
 }
 
 void Facet::setID(int id) {
@@ -560,6 +560,7 @@ void Facet::normalizePlaneCoefficients()
     const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
 
     if(!is_zero(n)) {
+        // @todo to_double() it here too?
         plane_ = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
     }
 }
@@ -629,8 +630,8 @@ void Facet::perturbPlaneCoefficients()
 #if 0
     plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
 #else
-    // cast to_double() *after* the normalization
-    // the downside is that we won't have a^2 + b^2 + c^2 == 1
+    // cast to_double() *after* the normalization to have double coordinates in the planes
+    // the downside is that we won't have a^2 + b^2 + c^2 == 1,
     // but then again, who does...
     plane_ = KernelFactory::createPlane3(CGAL::to_double(na/n),
                                          CGAL::to_double(nb/n),

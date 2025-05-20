@@ -49,7 +49,6 @@ void SkelVertexData::setArc(ArcSPtr arc) {
 }
 
 NodeSPtr SkelVertexData::getNode() const {
-    DEBUG_WPTR(node_);
     if (this->node_.expired())
         return NodeSPtr();
     else

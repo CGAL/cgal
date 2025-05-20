@@ -231,19 +231,14 @@ bool OBJFile::save(const std::string& filename,
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
     using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-    using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
+    using PTDS = CGAL::Triangulation_data_structure_2<PVb, PFb>;
     using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
     using PCDT_VH = PCDT::Vertex_handle;
     using PCDT_FH = PCDT::Face_handle;
 
-    // Improve precision if EPECK
-    CGAL::internal::Evaluate<CGAL::FT> evaluate;
-
     std::ofstream ofs(filename.c_str());
     ofs.precision(17);
     if (ofs.is_open()) {
-        WriteLock l(polyhedron->mutex());
-
         // Find the maximum vertex ID
         int max_vertex_id = -1;
         for (const auto& vertex : polyhedron->vertices()) {

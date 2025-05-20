@@ -14,10 +14,50 @@
  * @date   2012-03-08
  */
 
-// @todo
+ // @fixme yesterday:
+//  TIMEOUT:
+//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/DblEdgeMergeEvent.obj --no-window
+//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/misc_1.obj --no-window
+//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/SplitMergeEvent_reflex.obj --no-window
+
+// @fixme:
+// - Enable caching + performance model ==> shared pointer is invalid: edge_tosplit
+// - customer data w/ no face merging has bugs
+// - fix OBJ + IDs giving isolated vertices
+// -
+
+// @fixme later:
 // - Fix expired shared ptr errors in prints
 // - Fix Save() face ID order + not using dummies
-// - Fix simultaneous events still being detected (likely the same event multiple times since we don't check the queue before pushing)
+// - Fix simultaneous events still happening sometimes (likely the same event multiple times
+//   since we don't check the queue before pushing)
+// - determine if outward or inward offset. Reject outward if there is no save-offset +
+//   stop_on_last_save
+
+// @fixme latest:
+// - zero speed (check divisions)
+// - (a) Random perturbations can still create degenerate configurations if unlucky
+// - (b) Random perturbations must be small enough as to not create self-intersections
+// - EPECK -> EPICK can create self-intersections
+// - factorize the three VV events but be very careful with the tiny differences
+
+// @todo: cleaning
+// - use CGAL kernel everywhere
+// - assert / CGAL assertion
+// - indentation 4 --> 2 spaces
+// - merge .h/.cpp into a single file
+// - fix all weak --> shared pointer conversions
+// - face/facet
+// - nullptr init?
+
+// @todo later:
+// - Lighter data structures
+// - Fix straight skeleton construction
+
+// @todo latest
+// - implement lazy perturbations where we only perturb if we encounter an issue?
+//   * Would cost more (detection of simultaneous events, etc.)
+//   * How to detect "hidden" simultaneous events?
 
 // ----
 
@@ -593,7 +633,6 @@ bool SimpleStraightSkel::run() {
 // #define CGAL_SS3_ACUTE_WEIGHTS
 // #define CGAL_SS3_MERGING_WEIGHTS
 // #define CGAL_SS3_PERFORMANCE_WEIGHTS
-
 #if defined(CGAL_SS3_ACUTE_WEIGHTS) || defined(CGAL_SS3_MERGING_WEIGHTS) || defined(CGAL_SS3_PERFORMANCE_WEIGHTS)
 # ifdef CGAL_SS3_ACUTE_WEIGHTS
     const CGAL::FT x_speed = 20;
@@ -4883,7 +4922,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 while (it_fe != facet_offset->edges().end()) {
                     EdgeSPtr edge = *it_fe++;
                     Segment3SPtr seg = KernelFactory::createSegment3(edge->getVertexSrc()->getPoint(),
-                                                                      edge->getVertexDst()->getPoint());
+                                                                     edge->getVertexDst()->getPoint());
                     if (!seg || seg->is_degenerate()) {
                         continue;
                     }
@@ -5532,7 +5571,7 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
         // @fixme the current "isObsolete" is only a sufficient condition: if the neighborhoods
         // have changed, then the event should be discarded.
         // But we likely also need the necessary condition, i.e. "if it is not obsolete, then
-        // we know it is valid". Is it just re-doing the combinatorial checks?
+        // we know it is valid". Is it just doing _again_ all combinatorial checks to pop time?
         if (isEventObsolete(event)) {
             DEBUG_PRINT("Skipping obsolete event E" << event->getID());
 #ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
@@ -5651,7 +5690,7 @@ SimpleStraightSkel::handleConstOffsetEvent(const CGAL::FT current_offset,
   const CGAL::FT event_offset = event->getOffset();
   polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
 
-  #ifndef CGAL_SS3_NO_SKELETON_DS
+#ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
 #endif
     skel_result_->addEvent(event);
@@ -5678,7 +5717,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT current_offset,
                                       PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("########  Handle Vanish Event  #########");
+    DEBUG_PRINT("####### Tentative Vanish Event  ########");
     DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
@@ -7039,7 +7078,7 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT current_offset,
                                       PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("########  Handle Vertex Event  #########");
+    DEBUG_PRINT("#######  Tentative Vertex Event  #######");
     DEBUG_PRINT("########################################");
 
 #ifdef CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
@@ -7087,6 +7126,10 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT current_offset,
         }
     }
 #endif
+
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("########  Handle Vertex Event  #########");
+    DEBUG_PRINT("########################################");
 
     const CGAL::FT event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
@@ -7243,7 +7286,7 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT current_offset,
                                           PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("######  Handle Flip Vertex Event  ######");
+    DEBUG_PRINT("#####  Tentative Flip Vertex Event  ####");
     DEBUG_PRINT("########################################");
 
 #ifdef CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
@@ -7290,6 +7333,10 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT current_offset,
       }
     }
 #endif
+
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Flip Vertex Event  ######");
+    DEBUG_PRINT("########################################");
 
     const CGAL::FT event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
@@ -7393,7 +7440,7 @@ SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT current_offset,
                                        PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("#######  Handle Surface Event  #########");
+    DEBUG_PRINT("######  Tentative Surface Event  #######");
     DEBUG_PRINT("########################################");
 
     WriteLock l(skel_result_->mutex());
@@ -7442,6 +7489,10 @@ SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT current_offset,
         }
     }
 #endif
+
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("#######  Handle Surface Event  #########");
+    DEBUG_PRINT("########################################");
 
     NodeSPtr node = event->getNode();
     appendEventNode(node);
@@ -7735,7 +7786,7 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT current_offset,
                                           PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("#####  Handle Split Merge Event  #######");
+    DEBUG_PRINT("####  Tentative Split Merge Event  #####");
     DEBUG_PRINT("########################################");
 
 #ifdef CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
@@ -7784,6 +7835,10 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT current_offset,
         }
     }
 #endif
+
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("######  Handle Split Merge Event  ######");
+    DEBUG_PRINT("########################################");
 
     const CGAL::FT event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
@@ -8085,7 +8140,7 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT current_offset,
                                       PolyhedronSPtr polyhedron)
 {
     DEBUG_PRINT("########################################");
-    DEBUG_PRINT("########  Handle Pierce Event  #########");
+    DEBUG_PRINT("######  Tentative Pierce Event  ########");
     DEBUG_PRINT("########################################");
 
 #ifdef CGAL_SS3_CHECK_PIERCE_AT_POP_TIME
@@ -8144,7 +8199,13 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT current_offset,
         std::cout << "Pierce rejected at pop time (2)" << std::endl;
         return EventStatus::NON_EVENT;
     }
+
+    std::cout << "Pierce event accepted" << std::endl;
 #endif
+
+    DEBUG_PRINT("########################################");
+    DEBUG_PRINT("########  Handle Pierce Event  #########");
+    DEBUG_PRINT("########################################");
 
     const CGAL::FT event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);

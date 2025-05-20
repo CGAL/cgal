@@ -10,6 +10,7 @@
 #include <fstream>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT = K::FT;
 using Point = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;

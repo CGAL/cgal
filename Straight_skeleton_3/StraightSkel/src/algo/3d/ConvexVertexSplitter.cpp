@@ -89,7 +89,7 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;
-        std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
+        // std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
 
         // don't take it out of the loop
         PolyhedronSPtr poly_c = copyVertex(vertex);
