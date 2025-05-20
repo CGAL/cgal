@@ -36,12 +36,6 @@ class PLYFile : public AbstractFile {
 public:
     virtual ~PLYFile();
 
-    static PolyhedronSPtr load(const Mesh& sm,
-                               const std::string& description,
-                               std::map<edge_descriptor, EdgeWPtr>& e2e);
-    static PolyhedronSPtr load(const Mesh& sm,
-                               const std::string& description = {});
-
     static PolyhedronSPtr load(const std::string& filename);
 
 protected:
