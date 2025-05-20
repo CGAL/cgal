@@ -77,14 +77,14 @@ std::vector<int> CombiVertexSplitter::initLabels(unsigned int degree) {
     return result;
 }
 
-std::vector<int> CombiVertexSplitter::splitLabels(std::vector<int>& labels, vec2i split) {
+std::vector<int> CombiVertexSplitter::splitLabels(std::vector<int>& labels, const vec2i& split) {
     std::vector<int> result;
     int begin = split[0];
     int end = split[1];
     bool inside = false;
-    std::vector<int>::iterator it = labels.begin();
+    std::vector<int>::const_iterator it = labels.begin();
     while (it != labels.end()) {
-        std::vector<int>::iterator it_current = it;
+        std::vector<int>::const_iterator it_current = it;
         int label = *it++;
         if (label == begin) {
             inside = true;
@@ -107,7 +107,7 @@ std::vector<int> CombiVertexSplitter::splitLabels(std::vector<int>& labels, vec2
     return result;
 }
 
-std::list<vec2i> CombiVertexSplitter::createSingleSplitCombinations(std::vector<int> labels) {
+std::list<vec2i> CombiVertexSplitter::createSingleSplitCombinations(const std::vector<int>& labels) {
     std::list<vec2i> result;
     unsigned int degree = labels.size();
     for (unsigned int i = 0; i < degree-1; i++) {
@@ -123,10 +123,10 @@ std::list<vec2i> CombiVertexSplitter::createSingleSplitCombinations(std::vector<
 }
 
 std::list<combi> CombiVertexSplitter::appendSplitCombinations(
-        combi history, std::list<vec2i> splits) {
+        const combi& history, const std::list<vec2i>& splits) {
     std::list<combi> result;
     if (history.size() == 0) {
-        std::list<vec2i>::iterator it_splits = splits.begin();
+        std::list<vec2i>::const_iterator it_splits = splits.begin();
         while (it_splits != splits.end()) {
             vec2i split = *it_splits++;
             combi combination;
@@ -135,7 +135,7 @@ std::list<combi> CombiVertexSplitter::appendSplitCombinations(
         }
     } else {
         vec2i last_split = history.back();
-        std::list<vec2i>::iterator it_splits = splits.begin();
+        std::list<vec2i>::const_iterator it_splits = splits.begin();
         while (it_splits != splits.end()) {
             vec2i split = *it_splits++;
             if (compareSplits(last_split, split) > 0) {
@@ -148,14 +148,15 @@ std::list<combi> CombiVertexSplitter::appendSplitCombinations(
     return result;
 }
 
-std::list<combi> CombiVertexSplitter::mergeCombinations(combi history,
-        std::list<combi> combis1, std::list<combi> combis2) {
+std::list<combi> CombiVertexSplitter::mergeCombinations(const combi& history,
+                                                        const std::list<combi>& combis1,
+                                                        const std::list<combi>& combis2) {
     std::list<combi> result;
     unsigned int history_size = history.size();
-    std::list<combi>::iterator it_combis1 = combis1.begin();
+    std::list<combi>::const_iterator it_combis1 = combis1.begin();
     while (it_combis1 != combis1.end()) {
         combi combi1 = *it_combis1++;
-        std::list<combi>::iterator it_combis2 = combis2.begin();
+        std::list<combi>::const_iterator it_combis2 = combis2.begin();
         while (it_combis2 != combis2.end()) {
             combi combi2 = *it_combis2++;
             combi combi_merged(history);
@@ -190,8 +191,8 @@ std::list<combi> CombiVertexSplitter::mergeCombinations(combi history,
     return result;
 }
 
-std::list<combi> CombiVertexSplitter::generateCombinationsRec(
-        combi history, std::vector<int> labels) {
+std::list<combi> CombiVertexSplitter::generateCombinationsRec(const combi& history,
+                                                              const std::vector<int>& labels) {
     std::list<combi> result;
     std::list<vec2i> splits = createSingleSplitCombinations(labels);
     std::list<combi> combis = appendSplitCombinations(history, splits);
@@ -301,7 +302,7 @@ PolyhedronSPtr CombiVertexSplitter::copyVertex(VertexSPtr vertex) {
     return result;
 }
 
-PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex, combi combination) {
+PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex, const combi& combination) {
     assert(vertex->degree() - 3 == combination.size());
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
     std::list<VertexSPtr> vertices_tosplit;
@@ -568,7 +569,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
     return polyhedron;
 }
 
-std::string CombiVertexSplitter::combiToString(combi combination) {
+std::string CombiVertexSplitter::combiToString(const combi& combination) {
     std::stringstream sstr;
     sstr << "{ ";
     for (unsigned int i = 0; i < combination.size(); i++) {

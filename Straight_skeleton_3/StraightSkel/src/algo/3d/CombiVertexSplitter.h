@@ -43,23 +43,25 @@ public:
     static vec2i createSplit(int begin, int end);
     static int compareSplits(vec2i split1, vec2i split2);
     static std::vector<int> initLabels(unsigned int degree);
-    static std::vector<int> splitLabels(std::vector<int>& labels, vec2i split);
-    static std::list<vec2i> createSingleSplitCombinations(std::vector<int> labels);
+    static std::vector<int> splitLabels(std::vector<int>& labels, const vec2i& split);
+    static std::list<vec2i> createSingleSplitCombinations(const std::vector<int>& labels);
     static std::list<combi> appendSplitCombinations(
-            combi history, std::list<vec2i> splits);
-    static std::list<combi> mergeCombinations(combi history,
-            std::list<combi> combis1, std::list<combi> combis2);
+            const combi& history, const std::list<vec2i>& splits);
+    static std::list<combi> mergeCombinations(
+            const combi& history,
+            const std::list<combi>& combis1,
+            const std::list<combi>& combis2);
     static std::list<combi> generateCombinationsRec(
-            combi history, std::vector<int> labels);
+            const combi& history, const std::vector<int>& labels);
     static std::list<combi> generateAllCombinations(unsigned int degree);
 
     static PolyhedronSPtr copyVertex(VertexSPtr vertex);
-    static PolyhedronSPtr splitVertex(VertexSPtr vertex, combi combination);
+    static PolyhedronSPtr splitVertex(VertexSPtr vertex, const combi& combination);
     static PolyhedronSPtr apply(PolyhedronSPtr poly_split, VertexSPtr vertex);
 
     virtual PolyhedronSPtr splitVertex(VertexSPtr vertex);
 
-    static std::string combiToString(combi combination);
+    static std::string combiToString(const combi& combination);
 
     virtual std::string toString() const;
 
