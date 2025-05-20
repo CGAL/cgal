@@ -383,7 +383,7 @@ private:
                        color);
 
       QRect text_rect(left_margin + cell_width + 10, drawing_height - top_margin - j, 100, text_height);
-      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(values[i], 0, 'f', 6, QLatin1Char(' ')));
+      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(static_cast<double>(values[i]), 0, 'f', 6, QLatin1Char(' ')));
     }
 
     if(color_map.size() > size)

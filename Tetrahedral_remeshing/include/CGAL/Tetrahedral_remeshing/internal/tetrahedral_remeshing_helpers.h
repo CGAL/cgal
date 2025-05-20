@@ -257,7 +257,7 @@ struct Dihedral_angle_cosine
       CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
       CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
 
-      return (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);
+      return (l.m_sq_num * r.m_sq_den > r.m_sq_num* l.m_sq_den);
     }
   }
 

@@ -45,7 +45,7 @@ typedef unspecified_type Point_2;
 
 /*!
 model for
-`Kernel::Less_xy_2`.
+`Kernel::LessXY_2`.
 */
 typedef unspecified_type Less_xy_2;
 

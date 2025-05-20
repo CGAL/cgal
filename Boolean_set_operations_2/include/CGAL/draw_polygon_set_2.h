@@ -19,10 +19,10 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
-#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_set_2.h>
+#include <CGAL/Basic_viewer.h>
 
 namespace CGAL {
 
@@ -166,7 +166,7 @@ void compute_elements(const PWH& pwh,
 
 } // End namespace draw_function_for_boolean_set_2
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#if defined(CGAL_USE_BASIC_VIEWER)
 
 template <typename PolygonSet_2, typename GSOptions>
 class Polygon_set_2_basic_viewer_qt : public Basic_viewer
@@ -196,6 +196,8 @@ public:
     CGAL::qglviewer::Vec maxv(bbox.xmax(), bbox.ymax(), 0);
     auto diameter = (maxv - minv).norm();
     m_pixel_ratio = diameter / gso.height();
+
+    add_elements();
   }
 
   /*! Intercept the resizing of the window.
@@ -281,13 +283,16 @@ void add_to_graphics_scene(const CGAL_PS2_TYPE& ap2,
   draw_function_for_boolean_set_2::compute_elements(ap2, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function.
 template<class T, class C, class D, class GSOptions>
 void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
           const char* title = "Polygon_set_2 Basic Viewer")
 {
+  CGAL_USE(ps);
+  CGAL_USE(gso);
+  CGAL_USE(title);
+
+#ifdef CGAL_USE_BASIC_VIEWER
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
 #else
@@ -306,6 +311,7 @@ void draw(const CGAL_PS2_TYPE& ps, GSOptions& gso,
     basic_viewer.show();
     app.exec();
   }
+#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<class T, class C, class D>
@@ -319,7 +325,6 @@ void draw(const CGAL_PS2_TYPE& ps,
   draw(ps, gso, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_PS2_TYPE
 

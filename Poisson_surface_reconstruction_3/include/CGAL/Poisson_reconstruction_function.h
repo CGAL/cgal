@@ -460,7 +460,7 @@ public:
       // Add a pass of Delaunay refinement.
       //
       // In that pass, the sizing field, of the refinement process of the
-      // triangulation, is based on the result of a poisson function with a
+      // triangulation, is based on the result of a Poisson function with a
       // sample of the input points. The ratio is 'approximation_ratio'.
       //
       // For optimization reasons, the cell criteria of the refinement

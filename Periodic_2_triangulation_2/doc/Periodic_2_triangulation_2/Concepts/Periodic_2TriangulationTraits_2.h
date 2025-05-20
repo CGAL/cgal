@@ -67,7 +67,7 @@ public:
   /*!
   A type representing an
   axis-aligned rectangle. It must be a model of
-  `Kernel::Iso_rectangle_2`.
+  `Kernel::IsoRectangle_2`.
   */
   typedef unspecified_type Iso_rectangle_2;
 

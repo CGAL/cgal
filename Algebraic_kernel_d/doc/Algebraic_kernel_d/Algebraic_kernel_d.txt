@@ -146,8 +146,8 @@ polynomial is not computed yet.
 This is in particular relevant in relation to the `AlgebraicKernel_d_2`,
 where `AlgebraicKernel_d_1::Algebraic_real_1` is used to represent coordinates of solutions of bivariate systems.
 Hence, the design does
-not allow a direct access to any, seemingly obvious, members of an
-`AlgebraicKernel_d_1::Algebraic_real_1`. Instead there is, e.g.,
+not allow direct access to any, seemingly obvious, members of an
+`AlgebraicKernel_d_1::Algebraic_real_1`. Instead, there is, e.g.,
 `AlgebraicKernel_d_1::Compute_polynomial_1` which emphasizes
 that the requested polynomial may not be computed yet. Similarly,
 there is no way to directly ask for the refinement of the current

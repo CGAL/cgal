@@ -9,26 +9,6 @@ Before submitting a change for integration into \cgal it is good style
 to run the testsuite of the modified package and all packages that
 could be impacted.
 
-All examples and tests in CGAL are now compatible with `ctest`. So to test all examples or all tests
-of a package, you simply need to configure with `cmake` the examples/tests of the package you want to
-test, adding the option `CGAL_ENABLE_TESTING` and setting its value to `ON`. In order to report more
-warnings, it is recommended to also add the option `CGAL_DEV_MODE` and to set it to `ON`.
-Then a call to the command `ctest` will compile and run the tests/examples.
-
-
-\section fullTestsuite Running the Whole Testsuite
-We describe here how to proceed to the testing of a full copy of `master` or any branch by creating a <i>flat release</i>
-(that is having a layout similar to a release rather than a branch layout with header files gathered by packages).
-
-The creation of the flat release is done using the `cmake` script `cgal_create_release_with_cmake.cmake` located in the directory `Scripts/developer_scripts`.
-You can run it using the option `-P` of `cmake`: `cmake -P cgal_create_release_with_cmake.cmake`.
-For an up-to-date documentation of available options, check the comments at the beginning of the script.
-
-Then for testing all examples, tests, and demos, in a build directory call `cmake` on the created release
-(the path is given by the script if not manually specified)
-
-`cmake -DBUILD_TESTING=ON  -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ../CGAL-X.XX/`
-
-Finally, a call to the command `ctest`  will compile and run the tests, examples, and demos.
+For details see <a href="https://github.com/CGAL/cgal/wiki/Testing">Testing</a> on the CGAL wiki on github.
 
 */

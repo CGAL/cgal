@@ -18,7 +18,7 @@
 //| a derived class.  The workaround is to write a forwarder or not use using.
 //| At least SunPro CC 5.3 has this bug where the typical error message is :
 //| "Error: The function B<int>::g() has not had a body defined."
-//| Note that the subtlely is that the error message does not mention
+//| Note that the subtility is that the error message does not mention
 //| "Member"...
 //| This test is updated (hijacked) to detect an issue with sunpro 5.9
 //| that instantiates a function twice.

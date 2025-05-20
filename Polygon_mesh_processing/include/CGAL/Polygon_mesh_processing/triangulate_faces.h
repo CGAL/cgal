@@ -119,9 +119,10 @@ private:
       if(first)
         first = false;
       else
+      {
         f = add_face(pmesh);
-
-      visitor.after_subface_created(f);
+        visitor.after_subface_created(f);
+      }
 
       std::array<int, 4> indices = make_array(triangle.first,
                                               triangle.second,

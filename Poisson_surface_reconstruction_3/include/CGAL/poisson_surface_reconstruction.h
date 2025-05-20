@@ -17,7 +17,7 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Poisson_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
@@ -99,7 +99,7 @@ namespace CGAL {
     typedef typename Kernel::FT FT;
 
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-    typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+    typedef CGAL::Poisson_mesh_domain_3<Kernel> Mesh_domain;
     typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Sequential_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -115,7 +115,7 @@ namespace CGAL {
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance * spacing / 1000.0;
 
-    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, Sphere(inner_point, sm_sphere_radius),
+    Mesh_domain domain = Mesh_domain::create_Poisson_mesh_domain(function, Sphere(inner_point, sm_sphere_radius),
       CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
     Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
@@ -134,7 +134,7 @@ namespace CGAL {
 
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         turn_tag_into_mesh_3_manifold_option(tag)
-                                        .no_exude().no_perturb()
+                                        .surface_only()
                                         .manifold_with_boundary());
 
     const auto& tr = c3t3.triangulation();

@@ -131,7 +131,7 @@ Example of drawing of a point cloud and a polyhedron in a same viewer.
 \cgalFigureEnd
 
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
-\section BV_BasicViewer The Basic Viewer Class
+\section BV_BasicViewer The Qt Basic Viewer Class
 
 The class `CGAL::Qt::Basic_viewer` is a \qt widget that inherits from `QGLViewer` and mainly stores a `Graphics_scene` and allows to visualize it and interact with the scene. Since this class is a \qt widget, it can be used into more complex \qt code to create more advanced demos.
 
