@@ -69,7 +69,7 @@ double double_ceil(const NT &x){
   }
 };
 
-// Color a range by an index, it is used by the visitor to track the correspondance between the input and the output
+// Provide an index to the range, it is used by the visitor to track the correspondance between the input and the output
 template <typename Range>
 class Indexes_range : public Range{
   typedef std::remove_cv_t<typename std::iterator_traits<typename Range::iterator>::value_type> Value_type;
@@ -106,7 +106,7 @@ struct Triangle_soup_fixer
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    using Traits = typename ::CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
@@ -141,7 +141,7 @@ struct Triangle_soup_fixer<PointRange, PolygonRange, Indexes_range< std::array<P
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    using Traits = typename ::CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
     Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
@@ -410,7 +410,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
         Point_3 center = snap_p(points[v[0]]);
         size_t argmin(0);
         for(size_t i=1; i!=v.size(); ++i){
-          if(Kernel().compare_squared_distance_3_object()(center, points[v[i]], center, points[v[argmin]])==SMALLER)
+          if(Kernel().compare_distance_3_object()(center, points[v[i]], points[v[argmin]])==SMALLER)
           {
             argmin=i;
           }
@@ -427,7 +427,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     // Group the points of the vertices of the intersecting triangles by their voxel
     std::map<Point_3, size_t> snap_points;
     std::size_t index=0;
-    for (auto &pair : pairs_of_intersecting_triangles)
+    for (const auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
       {
@@ -473,7 +473,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
 #elif defined(PMP_ROUNDING_VERTICES_FLOAT_SNAP)
     // Version where points are rounded to the closest simple precision float.
 
-    for (auto &pair : pairs_of_intersecting_triangles)
+    for (const auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
         points[pi]=Point_3( (float) to_double(points[pi].x()), (float) to_double(points[pi].y()), (float) to_double(points[pi].z()));
@@ -489,7 +489,7 @@ bool polygon_soup_snap_rounding_impl(PointRange &points,
     std::vector<Point_3> snap_points;
     snap_points.reserve(pairs_of_intersecting_triangles.size() * 3);
 
-    for (auto &pair : pairs_of_intersecting_triangles)
+    for (const auto &pair : pairs_of_intersecting_triangles)
     {
       for (size_t pi : triangles[pair.first])
         snap_points.emplace_back(snap_p(points[pi]));
