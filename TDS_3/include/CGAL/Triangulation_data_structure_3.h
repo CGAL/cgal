@@ -97,14 +97,14 @@ public:
   typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
 
   class Cell_data {
-    unsigned char conflict_state;
+    mutable unsigned char conflict_state;  // AF: make that testsuite compiles
   public:
     Cell_data() : conflict_state(0) {}
 
-    void clear()            { conflict_state = 0; }
-    void mark_in_conflict() { conflict_state = 1; }
-    void mark_on_boundary() { conflict_state = 2; }
-    void mark_processed()   { conflict_state = 1; }
+    void clear()  const          { conflict_state = 0; }
+    void mark_in_conflict() const  { conflict_state = 1; }
+    void mark_on_boundary() const { conflict_state = 2; }
+    void mark_processed()   const  { conflict_state = 1; }
 
     bool is_clear()       const { return conflict_state == 0; }
     bool is_in_conflict() const { return conflict_state == 1; }
@@ -1532,8 +1532,8 @@ public:
 
     for(auto c : tmp_cells)
     {
-      const_cast<Tds*>(this)->tds_data(*cit).clear();
-      visit(*cit);
+      const_cast<Tds*>(this)->tds_data(c).clear();
+      visit(c);
     }
 
     return visit.result();
@@ -2200,14 +2200,14 @@ is_edge(Vertex_handle u, Vertex_handle v,
     return false;
 
   if(dimension() == 3) {
-    auto d = u->cell();
+    auto d = cell(u);
     boost::container::small_vector<Cell_handle, 128> cells;
     cells.emplace_back(d);
-    d->tds_data().mark_in_conflict();
+    tds_data(d).mark_in_conflict();
 
     auto cleanup_tds_data = make_scope_exit([&] {
       for(auto c : cells) {
-        c->tds_data().clear();
+        tds_data(c).clear();
       }
     });
 
@@ -2222,14 +2222,14 @@ is_edge(Vertex_handle u, Vertex_handle v,
           i = index(ch, u);
           return true;
         }
-        if(ch->vertex(j) == u)
+        if(vertex(ch,j) == u)
           continue;
-        Cell_handle next = ch->neighbor(j);
-        if(!next->tds_data().is_clear())
+        Cell_handle next = neighbor(ch,j);
+        if(!tds_data(next).is_clear())
           continue;
         cells.emplace_back(next);
         ++tail;
-        next->tds_data().mark_in_conflict();
+        tds_data(next).mark_in_conflict();
       }
       ++head;
     } while(head != tail);
@@ -2239,9 +2239,9 @@ is_edge(Vertex_handle u, Vertex_handle v,
   bool edge_found = false;
   // try {
   incident_cells_threadsafe(u, boost::make_function_output_iterator([&](Cell_handle ch) {
-                              if(ch->has_vertex(v, j)) {
+                              if(has_vertex(ch, v, j)) {
                                 c = ch;
-                                i = c->index(u);
+                                i = index(c,u);
                                 // throw true;
                                 edge_found = true;
                               }

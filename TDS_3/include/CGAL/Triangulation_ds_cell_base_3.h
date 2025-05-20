@@ -64,7 +64,7 @@ public:
 
   // ACCESS FUNCTIONS
 
-private: 
+private:
   Vertex_handle vertex(int i) const
   {
     CGAL_precondition( i >= 0 && i <= 3 );
@@ -179,11 +179,11 @@ private:
   bool is_valid(bool = false, int = 0) const
   { return true; }
 
-  
+
   // TDS internal data access functions.
   TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-  
+
 public:
   Vertex_handle ivertex(int i) const { return vertex(i); }
   bool ihas_vertex(Vertex_handle v) const { return has_vertex(v); }
@@ -211,18 +211,17 @@ public:
   { return true; }
   TDS_data& itds_data()       { return _tds_data; }
   const TDS_data& itds_data() const { return _tds_data; }
-  
+
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void for_compact_container(void* p) { N[0].for_compact_container(p); }
 
-<<<<<<< HEAD
+#if 0  AF??
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
+#endif
 
-=======
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
   int mark;
   int mark2;

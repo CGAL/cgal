@@ -241,23 +241,13 @@ _test_cls_tds_3( const Tds &)
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
       tds6.incident_vertices
-<<<<<<< HEAD
-        ( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices_old));
-      // correct name
-      tds6.adjacent_vertices
-        ( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices));
-
-      tds6.incident_edges
-        ( (*ccit)->vertex(i), std::back_inserter(vector_of_edges));
-=======
 	( tds6.vertex(*ccit,i), std::back_inserter(vector_of_vertices_old));
-      // correct name 
+      // correct name
       tds6.adjacent_vertices
 	( tds6.vertex(*ccit,i), std::back_inserter(vector_of_vertices));
 
       tds6.incident_edges
 	( tds6.vertex(*ccit,i), std::back_inserter(vector_of_edges));
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
 
       assert(vector_of_edges.size() == vector_of_vertices_old.size());
       assert(vector_of_edges.size() == vector_of_vertices.size());
@@ -321,13 +311,8 @@ _test_cls_tds_3( const Tds &)
   assert(tds7.dimension() == 1);
   assert(tds7.is_valid());
   Vertex_handle v7_4 = tds7.insert_increase_dimension(v7_3);
-<<<<<<< HEAD
-  Cell_handle fb = v7_4->cell();
-  i7 = fb->index(v7_4);
-=======
-  Cell_handle fb = tds7.cell(v7_4);	
+  Cell_handle fb = tds7.cell(v7_4);
   i7 = tds7.index(fb, v7_4);
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
   tds7.decrease_dimension(fb, i7);
   assert(tds7.dimension() == 1);
   assert(tds7.is_valid());
@@ -337,51 +322,29 @@ _test_cls_tds_3( const Tds &)
   Vertex_handle v7_6 = tds7.insert_increase_dimension(v7_5);
   assert(tds7.dimension() == 3);
   assert(tds7.is_valid());
-<<<<<<< HEAD
-  Cell_handle fc = v7_6->cell();
-  i7 = fc->index(v7_6);
-=======
-  Cell_handle fc = tds7.cell(v7_6);	
+  Cell_handle fc = tds7.cell(v7_6);
   i7 = tds7.index(fc, v7_6);
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
   tds7.decrease_dimension(fc, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
   Vertex_handle v7_7 = tds7.insert_increase_dimension(v7_6);
   assert(tds7.dimension() == 3);
-<<<<<<< HEAD
   assert(tds7.is_valid());
-  Cell_handle fd = v7_7->cell();
-  i7 = fd->index(v7_7);
-  tds7.decrease_dimension(fd, i7);
-  assert(tds7.dimension() == 2);
-  assert(tds7.is_valid());
-  Cell_handle fe = v7_7->cell();
-  i7 = fe->index(v7_7);
-=======
-  assert(tds7.is_valid());		
-  Cell_handle fd = tds7.cell(v7_7);	
+  Cell_handle fd = tds7.cell(v7_7);
   i7 = tds7.index(fd, v7_7);
   tds7.decrease_dimension(fd, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
   Cell_handle fe = tds7.cell(v7_7);
-  i7 = tds7.index(fe, v7_7);	
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
+  i7 = tds7.index(fe, v7_7);
   tds7.insert_in_facet(fe, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());
   Vertex_handle v7_8 = tds7.insert_increase_dimension(v7_7);
   assert(tds7.dimension() == 3);
-<<<<<<< HEAD
   assert(tds7.is_valid());
-  Cell_handle ff = v7_8->cell();
-  i7 = ff->index(v7_8);
-=======
-  assert(tds7.is_valid());		
-  Cell_handle ff = tds7.cell(v7_8);	
+  Cell_handle ff = tds7.cell(v7_8);
   i7 = tds7.index(ff, v7_8);
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
   tds7.decrease_dimension(ff, i7);
   assert(tds7.dimension() == 2);
   assert(tds7.is_valid());

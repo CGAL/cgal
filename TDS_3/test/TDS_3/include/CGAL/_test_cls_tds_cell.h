@@ -80,35 +80,6 @@ _test_cell_tds_3(const Tds &)
      assert(tds.has_neighbor(c2,n3,ind));
 
      std::cout << "   setting cell's functions " << std::endl;
-<<<<<<< HEAD
-   c2->set_vertex(0,v1);
-   c2->set_vertex(1,v2);
-   c2->set_vertex(2,v3);
-   c2->set_vertex(3,v0);
-   assert(c2->index(v0)==3);
-   assert(c2->index(v1)==0);
-   assert(c2->index(v2)==1);
-   assert(c2->index(v3)==2);
-   c2->set_vertices(v0, v1, v2, v3);
-   assert(c2->index(v0)==0);
-   assert(c2->index(v1)==1);
-   assert(c2->index(v2)==2);
-   assert(c2->index(v3)==3);
-
-   c2->set_neighbor(0,n1);
-   c2->set_neighbor(1,n2);
-   c2->set_neighbor(2,n3);
-   c2->set_neighbor(3,n0);
-   assert(c2->index(n0)==3);
-   assert(c2->index(n1)==0);
-   assert(c2->index(n2)==1);
-   assert(c2->index(n3)==2);
-   c2->set_neighbors(n0, n1, n2, n3);
-   assert(c2->index(n0)==0);
-   assert(c2->index(n1)==1);
-   assert(c2->index(n2)==2);
-   assert(c2->index(n3)==3);
-=======
    tds.set_vertex(c2,0,v1);
    tds.set_vertex(c2,1,v2);
    tds.set_vertex(c2,2,v3);
@@ -146,7 +117,6 @@ _test_cell_tds_3(const Tds &)
    assert(tds.index(c2,n1)==1);
    assert(tds.index(c2,n2)==2);
    assert(tds.index(c2,n3)==3);
->>>>>>> f30d5b4d4ab (Replace vertex/cell member function calls in TDS_3)
 
    std::cout << "   Tds Destructors " << std::endl;
    tds.delete_vertex(v0);
