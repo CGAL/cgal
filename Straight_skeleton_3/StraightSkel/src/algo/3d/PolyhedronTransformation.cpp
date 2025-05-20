@@ -830,6 +830,22 @@ bool PolyhedronTransformation::doAll3PlanesIntersect(PolyhedronSPtr polyhedron) 
     return result;
 }
 
+bool PolyhedronTransformation::areAllVerticesDegree3(PolyhedronSPtr polyhedron) {
+    bool result = true;
+
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (vertex->degree() != 3) {
+            DEBUG_PRINT("High degree vertex: " << vertex->toString());
+            result = false;
+            break;
+        }
+    }
+
+    return result;
+}
+
 Vector3SPtr PolyhedronTransformation::randVec(double min, double max) {
     double rval[3];
     for (unsigned int i = 0; i < 3; i++) {

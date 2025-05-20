@@ -90,6 +90,9 @@ public:
      */
     static bool hasParallelPlanes(PolyhedronSPtr polyhedron);
     static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron);
+
+    static bool areAllVerticesDegree3(PolyhedronSPtr polyhedron);
+
     static void randMovePoints(PolyhedronSPtr polyhedron);
     static PolyhedronSPtr merge_and_perturb(PolyhedronSPtr polyhedron);
     static PolyhedronSPtr perturb(PolyhedronSPtr polyhedron);
