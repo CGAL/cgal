@@ -62,9 +62,7 @@ public:
     std::list<EdgeSPtr>& edges();
     std::list<FacetSPtr>& facets();
 
-    VertexSPtr ith_vertex(const std::size_t i);
-    EdgeSPtr ith_edge(const std::size_t i);
-    FacetSPtr ith_facet(const std::size_t i);
+    int maxVertexDegree() const;
 
     bool isConsistent() const;
     void clear();
