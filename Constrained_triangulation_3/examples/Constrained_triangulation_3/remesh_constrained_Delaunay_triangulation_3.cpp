@@ -10,22 +10,23 @@
 
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/IO/write_MEDIT.h>
 #include <CGAL/property_map.h>
 
 #include <unordered_set>
 #include <fstream>
 #include <string>
 
-using K   = CGAL::Exact_predicates_inexact_constructions_kernel;
+using K    = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-using Vbb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
-using Vb  = CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K, Vbb>;
+using Vbb  = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
+using Vb   = CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K, Vbb>;
 
 using Cbb  = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
-using Cb  = CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K, Cbb>;
+using Cb   = CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K, Cbb>;
 
-using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
-using Tr  = CGAL::Triangulation_3<K, Tds>;
+using Tds  = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+using Tr   = CGAL::Triangulation_3<K, Tds>;
 using CCDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K, Tr>;
 
 // Triangulation for Remeshing
@@ -49,23 +50,28 @@ int main(int argc, char* argv[])
   }
   CCDT ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CCDT>(mesh);
 
+  std::ofstream out("ccdt.mesh");
+  CGAL::IO::write_MEDIT(out, ccdt);
+  out.close();
+
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
   //! [move ccdt to tr]
+  namespace np = CGAL::parameters;
   Tr tr = CGAL::convert_to_triangulation_3(std::move(ccdt),
-                                           CGAL::parameters::edge_is_constrained_map(constraints_pmap));
+                                           np::edge_is_constrained_map(constraints_pmap));
   //! [move ccdt to tr]
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, 1.,
-        CGAL::parameters::number_of_iterations(3)
+        np::number_of_iterations(3)
         .edge_is_constrained_map(constraints_pmap));
 
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
 
-  std::ofstream ofs("out.mesh");
+  std::ofstream ofs("tr.mesh");
   CGAL::IO::write_MEDIT(ofs, tr);
 
   return EXIT_SUCCESS;
