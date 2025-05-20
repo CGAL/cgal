@@ -350,25 +350,25 @@ function process_file_single_function {
 
     # parse the log to detect the error type
     if grep -q -e "Error: Config file" \
-            -e "Error: failed to read input" \
-            -e "Error: failed to read weights" \
-            -e "Error: negative weights" \
-            -e "Error: all weights are zero" \
-            -e "Error: input has self intersections" \
-            -e "Error: input has nested connected components" \
-            "$LOG_FILE"; then
+               -e "Error: failed to read input" \
+               -e "Error: failed to read weights" \
+               -e "Error: negative weights" \
+               -e "Error: all weights are zero" \
+               -e "Error: input has self intersections" \
+               -e "Error: input has nested connected components" \
+               "$LOG_FILE"; then
       echo "PREPROCESS FAILURE" >> $RESULT_FILE
     elif grep -q -e "Error: failed to load weights" \
-            -e "Error: failed to build polyhedron" \
-            -e "Error: failed to add outer bounding box" \
-            -e "Error: failed to add property map" \
-            "$LOG_FILE"; then
+                 -e "Error: failed to build polyhedron" \
+                 -e "Error: failed to add outer bounding box" \
+                 -e "Error: failed to add property map" \
+                 "$LOG_FILE"; then
         echo "PREPROCESS FAILURE" >> $RESULT_FILE
     elif grep -q -e "Error: failed to remove outer bounding box" \
-                -e "Error: empty or open output" \
-                -e "Error: failed to read temporary file" \
-                -e "Error: failed to write result" \
-                "$LOG_FILE"; then
+                 -e "Error: empty or open output" \
+                 -e "Error: failed to read temporary file" \
+                 -e "Error: failed to write result" \
+                 "$LOG_FILE"; then
         echo "POSTPROCESS FAILURE" >> $RESULT_FILE
     else
         echo "OFFSET FAILURE" >> $RESULT_FILE
