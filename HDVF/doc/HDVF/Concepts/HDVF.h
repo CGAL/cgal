@@ -47,7 +47,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  - compute the full reduction (option `OPT_FULL`): to get the full homological / cohomological information
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`Hdvf_core<Ring, AbstractChainComplex, SparseChain, SparseMatrix>`}
+\cgalHasModelsBare{`Hdvf_core<Ring, AbstractChainComplex, SparseChain, Sparse_matrix>`}
 \cgalHasModelsBare{`Hdvf<Ring, AbstractChainComplex>`}
 \cgalHasModelsBare{`Hdvf_persistence<Ring, AbstractChainComplex>`}
 \cgalHasModelsBare{`Hdvf_duality<Ring, AbstractChainComplex>`}
@@ -56,7 +56,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  \sa `AbstractChainComplex`
  \sa `Ring`
  \sa `SparseChain`
- \sa `SparseMatrix`
+ \sa `Sparsematrix`
  
  *How to describe constants declared in the namespace HDVF and used everywhere? FlagType, options, exporttype*
  
@@ -68,6 +68,11 @@ public:
 /// \name Types
 /// @{
 
+/*!
+ * \brief Type of coefficients stored in the matrix (a model of `Ring`).
+ */
+typedef Ring CoefficientType;
+    
 /*!
  Type of column-major chains
  */

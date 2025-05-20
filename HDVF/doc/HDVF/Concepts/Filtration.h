@@ -46,12 +46,12 @@ protected:
     /*!
      Type of column-major sparse matrices.
      */
-    typedef OSM::SparseMatrix<_CoefType,OSM::COLUMN> CMatrix ;
+    typedef OSM::Sparse_matrix<_CoefType,OSM::COLUMN> CMatrix ;
     
     /*!
      Type of row-major sparse matrices.
      */
-    typedef OSM::SparseMatrix<_CoefType,OSM::ROW> RMatrix ;
+    typedef OSM::Sparse_matrix<_CoefType,OSM::ROW> RMatrix ;
     
     /*!
      Type of column-major chains.

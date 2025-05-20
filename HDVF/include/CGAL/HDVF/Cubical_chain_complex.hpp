@@ -130,7 +130,7 @@ public:
     /** \brief Type of row-major chains */
     typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
     /** \brief Type of column-major sparse matrices */
-    typedef OSM::SparseMatrix<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
     
     /**
      * \brief Affectation operator for cubical chain complexes.
@@ -166,7 +166,7 @@ public:
     CChain d(int id_cell, int q) const
     {
         if (q > 0)
-            return OSM::cgetColumn(_d[q], id_cell);
+            return OSM::cget_column(_d[q], id_cell);
         else
             return CChain(0) ;
     }
@@ -186,7 +186,7 @@ public:
     RChain cod(int id_cell, int q) const
     {
         if (q < _dim)
-            return OSM::getRow(_d[q+1], id_cell);
+            return OSM::get_row(_d[q+1], id_cell);
         else
             return RChain(0) ;
     }
@@ -770,7 +770,7 @@ void Cubical_chain_complex<CoefficientType>::calculate_d(int dim)  {
         CChain boundary = boundary_cell(i, dim);
         
         // Insert the chain into the corresponding column of the boundary matrix
-        OSM::setColumn(_d[dim], i, boundary);
+        OSM::set_column(_d[dim], i, boundary);
     }
 }
 

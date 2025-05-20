@@ -12,7 +12,7 @@
 #include <cassert>
 #include <iostream>
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.hpp"
+#include "CGAL/OSM/Bitboard.h"
 #include "CGAL/HDVF/Hdvf_core.h"
 #include "CGAL/HDVF/Sub_chain_complex_mask.h"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
@@ -167,7 +167,7 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_Bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
                         // Iterate over the ith column of _G_col
-                        typename HDVF_type::CChain col(OSM::getColumn(this->_G_col.at(q), i)) ; // TODO cget
+                        typename HDVF_type::CChain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
                         for (typename HDVF_type::CChain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                             out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                         }
@@ -187,7 +187,7 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_Bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
                         // Iterate over the ith row of _F_row
-                        typename HDVF_type::RChain row(OSM::getRow(this->_F_row.at(q), i)) ; // TODO cget
+                        typename HDVF_type::RChain row(OSM::get_row(this->_F_row.at(q), i)) ; // TODO cget
                         for (typename HDVF_type::RChain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                             out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                         }
@@ -276,7 +276,7 @@ public:
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            CChain g_cell(OSM::getColumn(this->_G_col.at(dim), cell)) ;
+            CChain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
             // Add 1 to the cell
             g_cell[cell] = 1 ;
             // Keep cells of the chain belonging to _subCC
@@ -306,7 +306,7 @@ public:
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            RChain fstar_cell(OSM::getRow(this->_F_row.at(dim), cell)) ;
+            RChain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell[cell] = 1 ;
             // Compute the cofaces
@@ -331,7 +331,7 @@ public:
     }
     
     //            // Get fstar(cell, dim) with per indices
-    //            RChain fstar_cell(OSM::cgetRow(this->_F_row.at(dim), cell)) ;
+    //            RChain fstar_cell(OSM::cget_row(this->_F_row.at(dim), cell)) ;
     //            // Add 1 to the cell
     //            fstar_cell[cell] = 1 ;
     //            // Keep cells of the chain belonging to _subCC
@@ -366,7 +366,7 @@ PairCell Hdvf_duality<_CoefficientType,_ComplexType>::find_pair_A(int q, bool &f
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
     {
-        const typename HDVF_type::CChain& col(OSM::cgetColumn(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
         
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
@@ -395,7 +395,7 @@ PairCell Hdvf_duality<_CoefficientType,_ComplexType>::find_pair_A(int q, bool &f
     
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::CChain& tmp2(OSM::cgetColumn(this->_DD_col.at(q), tau)) ;
+    const typename HDVF_type::CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
     for (typename HDVF_type::CChain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (_subCC.get_Bit(q-1, it->first) && abs(it->second) == 1)
@@ -409,7 +409,7 @@ PairCell Hdvf_duality<_CoefficientType,_ComplexType>::find_pair_A(int q, bool &f
     
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_type::RChain tmp(OSM::getRow(this->_DD_col.at(q+1), tau)) ;
+    typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
     for (typename HDVF_type::RChain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
         if (_subCC.get_Bit(q+1, it->first) && (abs(it->second) == 1))
@@ -434,7 +434,7 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::find_pairs_A(
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const typename HDVF_type::CChain& col(OSM::cgetColumn(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
         
         // Iterate through the entries of the column
         for (typename HDVF_type::CChain::const_iterator it = col.begin(); it != col.end(); ++it) {
@@ -464,7 +464,7 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::find_pairs_A(
     
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_type::RChain tmp(OSM::getRow(this->_DD_col.at(q+1), tau)) ;
+    typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
     for (typename HDVF_type::RChain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
         if (_subCC.get_Bit(q+1, it->first) && (abs(it->second) == 1))
@@ -479,7 +479,7 @@ std::vector<PairCell> Hdvf_duality<_CoefficientType,_ComplexType>::find_pairs_A(
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::CChain& tmp2(OSM::cgetColumn(this->_DD_col.at(q), tau)) ;
+    const typename HDVF_type::CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
     for (typename HDVF_type::CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (_subCC.get_Bit(q-1, it->first) && (abs(it->second) == 1))

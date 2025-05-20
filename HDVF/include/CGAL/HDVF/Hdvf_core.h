@@ -17,7 +17,7 @@
 #include <iostream>
 #include <random>
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.hpp"
+#include "CGAL/OSM/Bitboard.h"
 
 namespace CGAL {
 namespace HDVF {
@@ -77,11 +77,11 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
  \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
- \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::SparseMatrix`), providing the type of sparse matrices used.
+ \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.
  */
 
 
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType = OSM::Chain, template <typename, int> typename SparseMatrixType = OSM::SparseMatrix>
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType = OSM::Chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
 class Hdvf_core {
 public:
     /*!
@@ -354,7 +354,7 @@ public:
             throw "Error : export_homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            CChain g_cell(OSM::getColumn(_G_col.at(q), cell)) ;
+            CChain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
             // Add 1 to the cell
             g_cell[cell] = 1 ;
             return g_cell ;
@@ -376,7 +376,7 @@ public:
             throw "Error : export_homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            RChain fstar_cell(OSM::getRow(_F_row.at(dim), cell)) ;
+            RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell[cell] = 1 ;
             // Compute the cofaces
@@ -564,7 +564,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = _DD_col[q+1].begin(); (it_col != _DD_col[q+1].end() && !found); ++it_col)
     {
-        const CChain& col(OSM::cgetColumn(_DD_col[q+1], *it_col)) ;
+        const CChain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
         
         // Iterate through the entries of the column
         for (typename CChain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
@@ -588,7 +588,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     PairCell p ;
     
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const CChain& tmp2(OSM::cgetColumn(_DD_col.at(q), gamma)) ;
+    const CChain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
     for (typename CChain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (abs(it->second) == 1)
@@ -601,7 +601,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     }
     
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    RChain tmp(OSM::getRow(_DD_col.at(q+1), gamma)) ;
+    RChain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
     for (typename RChain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
         if (abs(it->second) == 1)
@@ -625,7 +625,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const CChain& col(OSM::cgetColumn(this->_DD_col[q+1], *it_col)) ;
+        const CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
         
         // Iterate through the entries of the column
         for (typename CChain::const_iterator it = col.begin(); it != col.end(); ++it) {
@@ -651,7 +651,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
     std::vector<PairCell> pairs;
     
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    RChain tmp(OSM::getRow(_DD_col.at(q+1), gamma)) ;
+    RChain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
     for (typename RChain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
         if (abs(it->second) == 1)
@@ -665,7 +665,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
         }
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const CChain& tmp2(OSM::cgetColumn(_DD_col.at(q), gamma)) ;
+    const CChain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
     for (typename CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (abs(it->second) == 1)
@@ -694,8 +694,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     //    cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << endl;
     
     // Extract submatrices from _DD_col
-    RChain D12(OSM::getRow(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
-    CChain D21(OSM::getColumn(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
+    RChain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
+    CChain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
     CoefficientType D11(D12[tau2]); // D11 is the coefficient at the intersection of tau2 in D12
     
     // Assert that D11 is either 1 or -1 (check invertibility)
@@ -709,8 +709,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     D21 /= std::vector<int>({tau1}); // Remove tau1 row from D21
     
     // Delete rows and columns from _DD_col
-    _DD_col[q + 1].delRow(tau1); // Remove row tau1 from _DD_col[q+1]
-    _DD_col[q + 1].delColumn(tau2); // Remove column tau2 from _DD_col[q+1]
+    _DD_col[q + 1].del_row(tau1); // Remove row tau1 from _DD_col[q+1]
+    _DD_col[q + 1].del_column(tau2); // Remove column tau2 from _DD_col[q+1]
     
     //---------------------------------------------- Submatrices of F -----------------------------------------------------
     
@@ -719,10 +719,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     if (_hdvf_opt & (OPT_FULL | OPT_F))
     {
         // Extract the relevant submatrix from _F_row
-        F11 = OSM::getRow(_F_row.at(q),tau1); // F11 is a row chain from _F_row[q] at index tau1
+        F11 = OSM::get_row(_F_row.at(q),tau1); // F11 is a row chain from _F_row[q] at index tau1
         
         // Delete the row tau1 from _F_row
-        _F_row[q].delRow(tau1);
+        _F_row[q].del_row(tau1);
     }
     
     //--------------------------------------------- Submatrices of G ------------------------------------------------------
@@ -730,10 +730,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     if (_hdvf_opt & (OPT_FULL | OPT_G))
     {
         // Extract the relevant submatrix from _G_col
-        G11 = OSM::getColumn(_G_col.at(q + 1),tau2); // G11 is a column chain from _G_col[q+1] at index tau2
+        G11 = OSM::get_column(_G_col.at(q + 1),tau2); // G11 is a column chain from _G_col[q+1] at index tau2
         
         // Delete the column tau2 from _G_col
-        _G_col[q + 1].delColumn(tau2);
+        _G_col[q + 1].del_column(tau2);
     }
     
     //--------------------------------------------- Update matrices -------------------------------------------------------
@@ -748,10 +748,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         _F_row[q] -= (D21 * D11_inv) % F11;
         
         // Set the column tau1 of _F_row[q] to (D21 * (-D11_inv))
-        OSM::setColumn(_F_row[q], tau1, D21 * (-D11_inv));
+        OSM::set_column(_F_row[q], tau1, D21 * (-D11_inv));
         
         // Remove the row tau2 from _F_row[q+1]
-        _F_row[q + 1].delRow(tau2);
+        _F_row[q + 1].del_row(tau2);
     }
     
     // ---- Update _G_col
@@ -763,10 +763,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         _G_col[q + 1] -= (G11 * D11_inv) * D12;
         
         // Set the row tau2 of _G_col[q + 1] to (D12 * (-D11_inv))
-        OSM::setRow(_G_col[q + 1], tau2, D12 * (-D11_inv));
+        OSM::set_row(_G_col[q + 1], tau2, D12 * (-D11_inv));
         
         // Remove the column tau1 from _G_col[q]
-        _G_col[q].delColumn(tau1);
+        _G_col[q].del_column(tau1);
     }
     
     // ---- Update _H_col
@@ -781,10 +781,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         _H_col[q] += (tmp) * D11_inv;
         
         // Set the row tau2 of _H_col[q] to (F11 * D11_inv)
-        OSM::setRow(_H_col[q], tau2, F11 * D11_inv);
+        OSM::set_row(_H_col[q], tau2, F11 * D11_inv);
         
         // Set the column tau1 of _H_col[q] to (G11 * D11_inv)
-        OSM::setColumn(_H_col[q], tau1, G11 * D11_inv);
+        OSM::set_column(_H_col[q], tau1, G11 * D11_inv);
         
         // Set the coefficient at (tau2, tau1) in _H_col[q] to D11_inv
         _H_col[q].set_coef(tau2, tau1, D11_inv);
@@ -797,10 +797,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     
     // Remove columns and rows from _DD_col as necessary
     if (q > 0) {
-        _DD_col[q].delColumn(tau1); // Remove column tau1 from _DD_col[q]
+        _DD_col[q].del_column(tau1); // Remove column tau1 from _DD_col[q]
     }
     if (q + 2 <= _K.dim()) {
-        _DD_col[q + 2].delRow(tau2); // Remove row tau2 from _DD_col[q+2]
+        _DD_col[q + 2].del_row(tau2); // Remove row tau2 from _DD_col[q+2]
     }
     
     // Update flags
@@ -976,7 +976,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
                 const int id(critical.at(q).at(i)) ;
                 out << "g(" << id << ") = (" << id << ")";
                 // Iterate over the ith column of _G_col
-                CChain col(OSM::getColumn(_G_col.at(q), id)) ; // TODO cget
+                CChain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
                 for (typename CChain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                     out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                 }
@@ -996,7 +996,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
                 const int id(critical.at(q).at(i)) ;
                 out << "f*(" << id << ") = (" << id << ")";
                 // Iterate over the ith row of _F_row
-                RChain row(OSM::getRow(_F_row.at(q), id)) ; // TODO cget
+                RChain row(OSM::get_row(_F_row.at(q), id)) ; // TODO cget
                 for (typename RChain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                     out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                 }

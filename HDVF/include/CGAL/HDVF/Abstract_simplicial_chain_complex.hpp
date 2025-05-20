@@ -73,7 +73,7 @@ public:
     /** \brief Type of row-major chains */
     typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
     /** \brief Type of column-major sparse matrices */
-    typedef OSM::SparseMatrix<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
     
     
     /**
@@ -108,7 +108,7 @@ public:
     CChain d(int id_cell, int q) const
     {
         if (q > 0)
-            return OSM::getColumn(_d[q], id_cell);
+            return OSM::get_column(_d[q], id_cell);
         else
             return CChain(0) ;
     }
@@ -128,7 +128,7 @@ public:
     RChain cod(int id_cell, int q) const
     {
         if (q < _dim)
-            return OSM::getRow(_d[q+1], id_cell);
+            return OSM::get_row(_d[q+1], id_cell);
         else
             return RChain(0) ;
     }
@@ -356,7 +356,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
             }
             
             // Insert the chain into the corresponding column of the delta matrix
-            OSM::setColumn(_d[dim], i, chain);
+            OSM::set_column(_d[dim], i, chain);
         }
     }
 }

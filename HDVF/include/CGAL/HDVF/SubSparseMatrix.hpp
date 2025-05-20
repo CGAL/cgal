@@ -13,7 +13,7 @@
 
 
 #include "CGAL/OSM/Sparse_matrix.h"
-#include "CGAL/OSM/Bitboard.hpp"
+#include "CGAL/OSM/Bitboard.h"
 
 namespace CGAL {
 namespace OSM {
@@ -32,7 +32,7 @@ namespace OSM {
  * \date 02/10/2024
  */
 template <typename _CoefficientType, int _ChainTypeFlag>
-class SubSparseMatrix : public SparseMatrix<_CoefficientType, _ChainTypeFlag> {
+class SubSparseMatrix : public Sparse_matrix<_CoefficientType, _ChainTypeFlag> {
     
 protected:
     /** \brief A bitboard describing subchains restriction. */
@@ -43,12 +43,12 @@ protected:
     
 public:
     /** \brief Constructor with sizes and Bitboard describing subchains. */
-    SubSparseMatrix(const int _rowCount, const int _columnCount, const Bitboard& subChain) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->chainsStates & subChain)
+    SubSparseMatrix(const int _rowCount, const int _columnCount, const Bitboard& subChain) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->chainsStates & subChain)
     {
     }
     
     /** \brief Constructor with sizes (Bitboard describing subchains set to full Bitboard). */
-    SubSparseMatrix(const int _rowCount=0, const int _columnCount=0) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount)
+    SubSparseMatrix(const int _rowCount=0, const int _columnCount=0) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount)
     {
         if (_ChainTypeFlag == OSM::COLUMN)
             _subChains = OSM::Bitboard(_columnCount,false) ;
@@ -58,10 +58,10 @@ public:
     }
     
     /** \brief Copy constructor. */
-    SubSparseMatrix(const SubSparseMatrix& otherToCopy) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
+    SubSparseMatrix(const SubSparseMatrix& otherToCopy) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
     
-    /** \brief Copy constructor from SparseMatrix. */
-    SubSparseMatrix(const SparseMatrix<_CoefficientType,_ChainTypeFlag>& otherToCopy) : SparseMatrix<_CoefficientType, _ChainTypeFlag>(otherToCopy)
+    /** \brief Copy constructor from Sparse_matrix. */
+    SubSparseMatrix(const Sparse_matrix<_CoefficientType,_ChainTypeFlag>& otherToCopy) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(otherToCopy)
     {
         if (_ChainTypeFlag == OSM::COLUMN)
             _subChains = OSM::Bitboard(otherToCopy.dimensions().second,false) ;
@@ -111,7 +111,7 @@ public:
     /** \brief Operator=. */
     inline SubSparseMatrix& operator=(const SubSparseMatrix &other)
     {
-        (dynamic_cast<SparseMatrix<_CoefficientType,_ChainTypeFlag>&>(*this)).operator=(other) ;
+        (dynamic_cast<Sparse_matrix<_CoefficientType,_ChainTypeFlag>&>(*this)).operator=(other) ;
         _subChains = other._subChains ;
         _subChainsStates = other._subChainsStates ;
         return *this ;
@@ -119,7 +119,7 @@ public:
     
     /** \brief Operator<<. */
     friend std::ostream& operator<<(std::ostream &_stream, const SubSparseMatrix &_matrix) {
-        _stream << static_cast<const SparseMatrix<_CoefficientType, _ChainTypeFlag>&>(_matrix) ;
+        _stream << static_cast<const Sparse_matrix<_CoefficientType, _ChainTypeFlag>&>(_matrix) ;
         _stream << _matrix._subChains << std::endl ;
         return _stream ;
     }

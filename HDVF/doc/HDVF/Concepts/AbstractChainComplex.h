@@ -39,7 +39,7 @@ typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef OSM::SparseMatrix<CoefficientType, OSM::COLUMN> CMatrix;
+typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
 
 /// @}
 

@@ -81,12 +81,12 @@ protected:
     /*!
      Type of column-major sparse matrices
      */
-    typedef OSM::SparseMatrix<CoefficientType,OSM::COLUMN> CMatrix ;
+    typedef OSM::Sparse_matrix<CoefficientType,OSM::COLUMN> CMatrix ;
     
     /*!
      Type of row-major sparse matrices
      */
-    typedef OSM::SparseMatrix<CoefficientType,OSM::ROW> RMatrix ;
+    typedef OSM::Sparse_matrix<CoefficientType,OSM::ROW> RMatrix ;
     /*!
      Type of column-major chains
      */

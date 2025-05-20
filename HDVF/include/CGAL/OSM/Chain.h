@@ -43,12 +43,12 @@ public:
     typedef typename std::unordered_map<int, _CoefficientType>::iterator iterator;
     typedef typename std::unordered_map<int, _CoefficientType>::const_iterator const_iterator;
     
-    // Add these lines to allow the SparseMatrix class to access other templated
+    // Add these lines to allow the Sparse_matrix class to access other templated
     // SparsedMatrix private members.
     template <typename _CT, int _CTF>
     friend class Chain;
     template <typename _CT, int _CTF>
-    friend class SparseMatrix;
+    friend class Sparse_matrix;
 protected:
     /** \brief The chain inner representation and storage of data. */
     std::unordered_map<int, _CoefficientType> chainData;
@@ -64,8 +64,8 @@ protected:
     
 public:
     /**
-     * \brief Create new Chain for SparseMatrix object.
-     * 
+     * \brief Create new Chain for Sparse_matrix object.
+     *
      * Default constructor, initialize an empty Chain as a Z integers column chain.
      * The default chain size is 128.
      * 
@@ -86,8 +86,8 @@ public:
     }
     
     /**
-     * \brief Create new Chain for SparseMatrix object.
-     * 
+     * \brief Create new Chain for Sparse_matrix object.
+     *
      * Constructor with size, initialize an empty Chain as a Z integers column chain with boundary check.
      * 
      * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
@@ -123,8 +123,8 @@ public:
     size_t dimension() const { return upperBound ; }
     
     /**
-     * \brief Create new Chain for SparseMatrix object.
-     * 
+     * \brief Create new Chain for Sparse_matrix object.
+     *
      * Copy constructor, initialize a Chain based on the same type of chain.
      * The resulting chain will be a copy of the passed chain.
      * 
@@ -327,7 +327,7 @@ public:
      * \date 08/04/2024
      */
     template <typename _CT>
-    friend SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
     
     /**
      * \brief Perform matrix multiplication between two chains.
@@ -350,7 +350,7 @@ public:
      * \date 08/04/2024
      */
     template <typename _CT>
-    friend SparseMatrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
+    friend Sparse_matrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
     
     /**
      * \brief Perform dot product between two chains.
@@ -844,11 +844,11 @@ public:
  * \date 08/04/2024
  */
 template <typename _CT>
-SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
-    SparseMatrix<_CT, COLUMN> matrix(_column.upperBound, _row.upperBound);
+Sparse_matrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
+    Sparse_matrix<_CT, COLUMN> matrix(_column.upperBound, _row.upperBound);
     
     for (std::pair<int, _CT> pair : _row.chainData) {
-        OSM::setColumn(matrix,pair.first,_column * pair.second) ;
+        OSM::set_column(matrix,pair.first,_column * pair.second) ;
     }
     
     return matrix;
@@ -875,11 +875,11 @@ SparseMatrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Cha
  * \date 08/04/2024
  */
 template <typename _CT>
-SparseMatrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
-    SparseMatrix<_CT, ROW> matrix(_column.upperBound, _row.upperBound);
+Sparse_matrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
+    Sparse_matrix<_CT, ROW> matrix(_column.upperBound, _row.upperBound);
     
     for (std::pair<int, _CT> pair : _column.chainData) {
-        OSM::setRow(matrix,pair.first,_row * pair.second);
+        OSM::set_row(matrix,pair.first,_row * pair.second);
     }
     
     return matrix;

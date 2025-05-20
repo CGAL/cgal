@@ -38,7 +38,7 @@
 namespace CGAL {
 namespace HDVF {
 
-template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix>
+template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix>
 void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;

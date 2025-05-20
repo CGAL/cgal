@@ -17,7 +17,7 @@
 #include <iostream>
 #include <memory>
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.hpp"
+#include "CGAL/OSM/Bitboard.h"
 #include "CGAL/HDVF/SubSparseMatrix.hpp"
 
 namespace CGAL {

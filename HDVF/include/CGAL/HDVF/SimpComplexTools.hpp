@@ -31,7 +31,7 @@ namespace HDVF {
 
 /** \brief vtk export for SimpComplex */
 
-template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::SparseMatrix, typename VertexIdType = int>
+template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
 void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;

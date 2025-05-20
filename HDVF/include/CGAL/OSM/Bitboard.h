@@ -6,7 +6,7 @@
  * \date 23/05/2024
  * 
  * Define everything for the Bitboard class.
- * Bitboards are used with SparseMatrix to quickly find and set non empty columns.
+ * Bitboards are used with Sparse_matrix to quickly find and set non empty columns.
  */
 
 #ifndef __OSM_BITBOARD_HPP__
@@ -61,7 +61,7 @@ namespace OSM {
  * \class Bitboard
  * \brief Bitboards are long bitset with specific operations.
  *
- * Bitboards are used with SparseMatrix to quickly find and set non empty columns.
+ * Bitboards are used with Sparse_matrix to quickly find and set non empty columns.
  *
  * \author Fedyna K.
  * \version 0.2.0
