@@ -157,16 +157,16 @@ assign_weights(Mesh& sm,
   DEBUG_PRINT("top_val = " << top_val);
 
   CGAL::FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
-  eps_weight = (std::min)(eps_weight, x1_val);
-  eps_weight = (std::min)(eps_weight, x2_val);
-  eps_weight = (std::min)(eps_weight, y1_val);
-  eps_weight = (std::min)(eps_weight, y2_val);
-  eps_weight = (std::min)(eps_weight, bot_val);
-  eps_weight = (std::min)(eps_weight, top_val);
+  if(x1_val > 0) eps_weight = (std::min)(eps_weight, x1_val);
+  if(x2_val > 0) eps_weight = (std::min)(eps_weight, x2_val);
+  if(y1_val > 0) eps_weight = (std::min)(eps_weight, y1_val);
+  if(y2_val > 0) eps_weight = (std::min)(eps_weight, y2_val);
+  if(bot_val > 0) eps_weight = (std::min)(eps_weight, bot_val);
+  if(top_val > 0) eps_weight = (std::min)(eps_weight, top_val);
 
   DEBUG_PRINT("min_weight = " << eps_weight);
 
-  if(eps_weight == 0.) {
+  if(eps_weight == std::numeric_limits<double>::max()) {
     std::cerr << "Error: all weights are zero" << std::endl;
     return false;
   }
