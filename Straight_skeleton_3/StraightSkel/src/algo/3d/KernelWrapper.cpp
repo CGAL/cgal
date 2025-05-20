@@ -278,11 +278,11 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
 }
 
 // @speed return num / den and re-use the denominator for point computation
-static CGAL::FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
-                                             Plane3SPtr plane_1, const CGAL::FT& w1,
-                                             Plane3SPtr plane_2, const CGAL::FT& w2,
-                                             Plane3SPtr plane_3, const CGAL::FT& w3,
-                                             const CGAL::FT& past_bound, const CGAL::FT& future_bound)
+CGAL::FT KernelWrapper::intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                     Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                     Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                     Plane3SPtr plane_3, const CGAL::FT& w3,
+                                                     const CGAL::FT& past_bound, const CGAL::FT& future_bound)
 {
     CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
