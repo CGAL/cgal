@@ -697,25 +697,25 @@ public:
     for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
          local_facet_index < end; ++local_facet_index) {
       const Facet f = mirror_facet(facets[local_facet_index]);
-      f.first->tds_data().clear(); // was on boundary
-      const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-      const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-      const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-      u->set_cell(f.first);
-      v->set_cell(f.first);
-      w->set_cell(f.first);
+      tds_data(f.first).clear(); // was on boundary
+      const Vertex_handle u = vertex(f.first, vertex_triple_index(f.second, 0));
+      const Vertex_handle v = vertex(f.first, vertex_triple_index(f.second, 1));
+      const Vertex_handle w = vertex(f.first, vertex_triple_index(f.second, 2));
+      set_cell(u, f.first);
+      set_cell(v, f.first);
+      set_cell(w, f.first);
       const Cell_handle nc = create_cell(v, u, w, nv);
       new_cells[local_facet_index] = nc;
-      nv->set_cell(nc);
-      nc->set_neighbor(3, f.first);
-      f.first->set_neighbor(f.second, nc);
+      set_cell(nv, nc);
+      set_neighbor(nc, 3, f.first);
+      set_neighbor(f.first, f.second, nc);
 
       vertex_pair_facet_map.set({u, v}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(w))});
+                                         static_cast<unsigned char>(index(nc, w))});
       vertex_pair_facet_map.set({v, w}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(u))});
+                                         static_cast<unsigned char>(index(nc, u))});
       vertex_pair_facet_map.set({w, u}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(v))});
+                                         static_cast<unsigned char>(index(nc, v))});
     }
 
     for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
@@ -725,12 +725,12 @@ public:
         vertex_pair_facet_map.clear(it);
         const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
         const Facet n = Facet{new_cells[p.first], p.second};
-        f.first->set_neighbor(f.second, n.first);
-        n.first->set_neighbor(n.second, f.first);
+        set_neighbor(f.first, f.second, n.first);
+        set_neighbor(n.first, n.second, f.first);
       }
     }
     for(Cell_handle c : cells){
-      c->tds_data().clear(); // was in conflict
+      tds_data(c).clear(); // was in conflict
     }
     delete_cells(cells.begin(), cells.end());
     vertex_pair_facet_map.clear();

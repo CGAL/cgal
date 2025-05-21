@@ -279,7 +279,8 @@ public:
     // Lock the element area on the grid
     for(int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
-      success = try_lock_vertex(tds().vertex(cell_handle, iVertex), lock_radius);
+      // F: tds() is not known here
+      // success = try_lock_vertex(tds().vertex(cell_handle, iVertex), lock_radius);
     }
     return success;
   }
@@ -293,7 +294,9 @@ public:
     for(int iVertex = (facet.second+1)&3 ;
          success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
     {
-      success = try_lock_vertex(tds().vertex(facet.first, iVertex), lock_radius);
+      // AF tds() is not known here
+      assert(false);
+      // success = try_lock_vertex(tds().vertex(facet.first, iVertex), lock_radius);
     }
 
     return success;
@@ -318,8 +321,10 @@ public:
     {
       for(int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
       {
-        locked = m_lock_ds->is_locked_by_this_thread(
-                   tds().vertex(cell_handle, iVertex)->point());
+       // AF tds() is not known here
+       assert(false);
+        //locked = m_lock_ds->is_locked_by_this_thread(
+         //          tds().vertex(cell_handle, iVertex)->point());
       }
     }
     return locked;
@@ -1648,7 +1653,7 @@ protected:
       int i = tds().index(f, inserted);
       tds().set_vertex(f, i, v);
     }
-    tds().set_cell(tds().cell(inserted));
+    tds().set_cell(v, tds().cell(inserted));
 
     tds().delete_vertex(inserted);
   }
@@ -1662,7 +1667,7 @@ protected:
   Vertex_handle>::type Vertex_handle_unique_hash_map;
 
   // AF: cannot be static, because it uses the TDS
-  Vertex_triple make_vertex_triple(const Facet& f);
+  Vertex_triple make_vertex_triple(const Facet& f) const;
   static void make_canonical_oriented_triple(Vertex_triple& t);
 
   template < class VertexRemover >
@@ -4411,7 +4416,7 @@ Triangulation_3<GT,Tds,Lds>::insert_and_give_new_cells(const Point& p,
 template < class Gt, class Tds, class Lds >
 typename Triangulation_3<Gt,Tds,Lds>::Vertex_triple
 Triangulation_3<Gt,Tds,Lds>::
-make_vertex_triple(const Facet& f)
+make_vertex_triple(const Facet& f) const
 {
   return vertices(f);
 }
@@ -4695,7 +4700,7 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover)
     {
       ff = (hole.front()).first;
       ii = (hole.front()).second;
-      if(is_infinite(tds().vertex(f, cw(ii))) || is_infinite(tds().vertex(f, ccw(ii))))
+      if(is_infinite(tds().vertex(ff, cw(ii))) || is_infinite(tds().vertex(ff, ccw(ii))))
       {
         hole.push_back(hole.front());
         hole.pop_front();
@@ -4711,8 +4716,8 @@ fill_hole_2D(std::list<Edge_2D>& first_hole, VertexRemover& remover)
     ii = (hole.front()).second;
     hole.pop_front();
 
-    Vertex_handle v0 = tds().vertex(f, cw(ii));
-    Vertex_handle v1 = tds().vertex(f, ccw(ii));
+    Vertex_handle v0 = tds().vertex(ff, cw(ii));
+    Vertex_handle v1 = tds().vertex(ff, ccw(ii));
     Vertex_handle v2 = infinite_vertex();
     const Point& p0 = v0->point();
     const Point& p1 = v1->point();
@@ -4992,7 +4997,7 @@ create_triangulation_inner_map(const Triangulation& t,
     for(auto ch : cells_range) {
       for(unsigned int index = 0; index < 4; index++) {
         Facet f = std::pair<Cell_handle, int>(ch, index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
+        Vertex_triple vt_aux = t.make_vertex_triple(f);
         Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
@@ -5185,9 +5190,9 @@ remove_dim_down(Vertex_handle v, VertexRemover& remover)
   if(dimension() == 2)
   {
     Facet f = *finite_facets_begin();
-    if(coplanar_orientation(tds().vertex(f.fitst, 0)->point(),
-                            tds().vertex(f.fitst, 1)->point(),
-                            tds().vertex(f.fitst, 2)->point()) == NEGATIVE)
+    if(coplanar_orientation(tds().vertex(f.first, 0)->point(),
+                            tds().vertex(f.first, 1)->point(),
+                            tds().vertex(f.first, 2)->point()) == NEGATIVE)
     {
       tds().reorient();
     }
@@ -5568,7 +5573,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       Cell_handle g= tds().neighbor(f,  0);
       tds().set_vertex(f, 1, tds().vertex(g, 1));
       tds().set_neighbor(f,  0,tds().neighbor(g,  0));
-      tds().neighbor(g,  0)->set_tds().neighbor(1,f);
+      tds().set_neighbor(tds().neighbor(g,  0), 1,f);
       tds().set_cell(tds().vertex(g, 1), f);
       tds().delete_cell(g);
       Cell_handle f_ins = tds().cell(inserted);
@@ -5645,7 +5650,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       tds().set_vertex(f, i, v);
     }
     v->set_point(p);
-    tds().set_cell(tds().cell(v, inserted));
+    tds().set_cell(v, tds().cell(inserted));
 
     tds().delete_vertex(inserted);
 
@@ -5675,9 +5680,9 @@ move_if_no_collision(Vertex_handle v, const Point& p,
       v->set_point(p);
       _tds.decrease_dimension(loc, tds().index(loc, v));
       Facet f = *finite_facets_begin();
-      if(coplanar_orientation(tds().vertex(f.fitst, 0)->point(),
-                               tds().vertex(f.fitst, 1)->point(),
-                               tds().vertex(f.fitst, 2)->point()) == NEGATIVE)
+      if(coplanar_orientation(tds().vertex(f.first, 0)->point(),
+                               tds().vertex(f.first, 1)->point(),
+                               tds().vertex(f.first, 2)->point()) == NEGATIVE)
       {
         tds().reorient();
       }
@@ -5738,7 +5743,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
   }
 
   v->set_point(p);
-  tds().set_cell(tds().cell(v, inserted));
+  tds().set_cell(v, tds().cell(inserted));
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
