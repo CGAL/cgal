@@ -202,7 +202,7 @@ struct Test{
       }
   }
 
-  void test_random_tetrahedrons(int N, CGAL::Random &r)
+  void test_random_tetrahedra(int N, CGAL::Random &r)
   {
     using Tet = typename K::Tetrahedron_3;
 
@@ -241,7 +241,7 @@ struct Test{
     test_degenerate();
     test_cube();
     test_half_sphere();
-    test_random_tetrahedrons(1000, r);
+    test_random_tetrahedra(1000, r);
   }
 
 };

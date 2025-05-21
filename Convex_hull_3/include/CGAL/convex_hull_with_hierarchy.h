@@ -20,9 +20,8 @@
 
 #include <vector>
 
-
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
-int nb_visited=0;
+      size_t nb_visited=0;
 #endif
 
 namespace CGAL{
@@ -31,11 +30,12 @@ template <class P>
 struct Convex_hull_with_hierarchy{
   // parameterization of the hierarchy
   constexpr static size_t RATIO = 32;
-  constexpr static size_t MINSIZE_FOR_NEXT_HIERARCHY = RATIO*4;
+  constexpr static size_t MINSIZE_FOR_NEXT_LEVEL = RATIO*4;
   constexpr static size_t MAXSIZE_FOR_NAIVE_SEARCH = RATIO;
 
-  typedef Surface_mesh< P > Mesh;
-  typedef typename Mesh::Vertex_index Vertex_index;
+  using Mesh = Surface_mesh< P >;
+  using Vertex_index = typename Mesh::Vertex_index;
+
   typedef P Point;
 
 //   const Base &sm;
@@ -45,7 +45,7 @@ struct Convex_hull_with_hierarchy{
     return hierarchy_sm.size()-1;
   }
 
-  const Mesh& hierarchy_mesh(std::size_t level) const{
+  const Mesh& mesh(std::size_t level) const{
     return hierarchy_sm[level];
   }
 
@@ -54,11 +54,11 @@ struct Convex_hull_with_hierarchy{
     size_t size=hierarchy_sm[0].vertices().size();
     size_t level=0;
 
-    if(size<=MINSIZE_FOR_NEXT_HIERARCHY)
+    if(size<=MINSIZE_FOR_NEXT_LEVEL)
       return;
 
-    Random r;
-    while(size>MINSIZE_FOR_NEXT_HIERARCHY){
+    Random rng;
+    while(size>MINSIZE_FOR_NEXT_LEVEL){
       std::vector<P> select_points;
       std::map<P, Vertex_index> select_vertices;
       select_points.reserve(2*size/RATIO);
@@ -66,7 +66,7 @@ struct Convex_hull_with_hierarchy{
       ++level;
 
       for(Vertex_index v: above_sm.vertices())
-        if(r.get_int(0,RATIO-1)==0){
+        if(rng.get_int(0,RATIO-1)==0){
           select_points.push_back(above_sm.point(v));
           select_vertices[above_sm.point(v)]=v;
         }
@@ -82,7 +82,7 @@ struct Convex_hull_with_hierarchy{
     }
   }
 
-  Convex_hull_with_hierarchy(Mesh &sm){
+  Convex_hull_with_hierarchy(const Mesh &sm){
     using Traits=typename Convex_hull_3::internal::Default_traits_for_Chull_3<P>::type;
     Mesh ch;
     convex_hull_3(sm, ch);
@@ -91,7 +91,7 @@ struct Convex_hull_with_hierarchy{
   };
 
   template <typename Point, typename Traits>
-  Convex_hull_with_hierarchy(Surface_mesh<Point> &sm, const Traits &traits){
+  Convex_hull_with_hierarchy(const Surface_mesh<Point> &sm, const Traits &traits){
     Mesh ch;
     convex_hull_3(vertices(sm).begin(), vertices(sm).end(), ch, traits);
     hierarchy_sm.push_back(std::move(ch));
@@ -152,8 +152,8 @@ struct Convex_hull_with_hierarchy{
 
     for(; level>=0; --level){
       // Starting from the vertex of the previous level, we walk on the graph
-      // along neighbor that increase the "score"
-      const Mesh &csm = hierarchy_mesh(level);
+      // along neighbors that increase the "score"
+      const Mesh &csm = mesh(level);
       bool is_local_max;
       do{
         is_local_max=true;
@@ -178,8 +178,9 @@ struct Convex_hull_with_hierarchy{
   }
 };
 
-template <class Point_type, class Converter, class Vector_3>
-const Point_type extreme_point(const Convex_hull_with_hierarchy<Point_type> &C, const Vector_3 &dir, const Converter &c){
+// Point can be different from K::Point_3
+template <class Point, class Converter, class Vector_3>
+const Point extreme_point(const Convex_hull_with_hierarchy<Point> &C, const Vector_3 &dir, const Converter &c){
   return C.template extreme_point(dir, c);
 }
 
