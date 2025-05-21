@@ -70,147 +70,117 @@ public:
     
 protected:
     /** \brief The inner chain storage. */
-    std::vector<Chain<CoefficientType, ChainTypeFlag>> chains;
+    std::vector<Chain<CoefficientType, ChainTypeFlag>> _chains;
     
     /** \brief A bitboard containing state of each columns. */
-    Bitboard chainsStates;
+    Bitboard _chainsStates;
     
     /** \brief The matrix size as a (row, column) pair. */
-    std::pair<int, int> size;
+    std::pair<int, int> _size;
     
     /**
-     * \brief Get a chain from a matrix.
+     * \brief Get a reference on a chain from a matrix and change its state (for affectation).
      *
-     * \warning The matrix will perform boundary check.
+     * Used only internally.
+     *
+     * \warning The operator changes the status of the chain and the matrix will perform boundary check.
      *
      * \param[in] _index The coefficient index.
      *
      * \return The reference to the chain stored at given index.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     MatrixChain& operator[](const int _index) {
-        if (ChainTypeFlag == COLUMN && _index >= size.second) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(size.second) + ".");
+        if (ChainTypeFlag == COLUMN && _index >= _size.second) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
-        if (ChainTypeFlag == ROW && _index >= size.first) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(size.first) + ".");
+        if (ChainTypeFlag == ROW && _index >= _size.first) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.first) + ".");
         }
         
-        chainsStates |= _index;
-        return chains[_index];
+        _chainsStates |= _index;
+        return _chains[_index];
     }
     
 public:
     /**
-     * \brief Create new Sparse_matrix object.
+     * \brief Create an empty new SparseMatrix object.
      *
-     * Default constructor, initialize an empty Matrix as Z integers column chains.
-     * The default matrix size is 128x128.
-     *
-     * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * Default constructor, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * The default matrix size is 0x0.
      */
     Sparse_matrix() {
-        chains = std::vector<MatrixChain>(0);
-        chainsStates = Bitboard(0);
-        size = {0, 0};
+        _chains = std::vector<MatrixChain>(0);
+        _chainsStates = Bitboard(0);
+        _size = {0, 0};
     }
     
     /**
-     * \brief Create new Sparse_matrix object.
+     * \brief Create a new SparseMatrix object with given rows/columns sizes.
      *
-     * Constructor with size, initialize an empty Matrix as Z integers column chains.
+     * Constructor with sizes, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
      *
-     * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     * \param[in] _rowCount The number of rows to preallocate.
-     * \param[in] _columnCount The number of columns to preallocate.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * \param[in] rowCount The number of rows to preallocate.
+     * \param[in] columnCount The number of columns to preallocate.
      */
-    Sparse_matrix(const int _rowCount, const int _columnCount) {
-        int mainSize = ChainTypeFlag == COLUMN ? _columnCount : _rowCount;
-        int secondarySize = ChainTypeFlag == COLUMN ? _rowCount : _columnCount;
+    Sparse_matrix(const int rowCount, const int columnCount) {
+        int mainSize = ChainTypeFlag == COLUMN ? columnCount : rowCount;
+        int secondarySize = ChainTypeFlag == COLUMN ? rowCount : columnCount;
         
-        chains = std::vector<Chain<CoefficientType, ChainTypeFlag>>(mainSize);
+        _chains = std::vector<Chain<CoefficientType, ChainTypeFlag>>(mainSize);
         for (int i = 0 ; i < mainSize ; i++) {
-            chains[i] = Chain<CoefficientType, ChainTypeFlag>(secondarySize);
+            _chains[i] = Chain<CoefficientType, ChainTypeFlag>(secondarySize);
         }
         
-        chainsStates = Bitboard(mainSize);
-        size = {_rowCount, _columnCount};
+        _chainsStates = Bitboard(mainSize);
+        _size = {rowCount, columnCount};
     }
     
     /**
-     * \brief Create new Sparse_matrix from other Sparse_matrix object.
+     * \brief Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`).
      *
-     * Copy constructor, initialize a Sparse_matrix (not necessarly based on the same type of matrix).
+     * Copy constructor, initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
      * If types are different, the constructor performs conversion.
      *
-     * \tparam CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     * \param[in] _otherToCopy The matrix we want to copy.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * \param[in] otherToCopy The matrix copied.
      */
     template <int CTF>
-    Sparse_matrix(const Sparse_matrix<CoefficientType,CTF> &_otherToCopy) {
-        //        *this = _otherToCopy;
+    Sparse_matrix(const Sparse_matrix<CoefficientType,CTF> &otherToCopy) {
         if (ChainTypeFlag == CTF)
         {
-            chainsStates = _otherToCopy.chainsStates;
-            size = _otherToCopy.size;
-            // Copy of chains as such
-            chains.resize(_otherToCopy.chains.size()) ;
-            for (int i = 0; i<_otherToCopy.chains.size(); ++i)
+            _chainsStates = otherToCopy._chainsStates;
+            _size = otherToCopy._size;
+            // Copy of _chains as such
+            _chains.resize(otherToCopy._chains._size()) ;
+            for (int i = 0; i<otherToCopy._chains._size(); ++i)
             {
-                const Chain<CoefficientType, CTF>& tmp(_otherToCopy.chains.at(i)) ;
+                const Chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 Chain<CoefficientType,ChainTypeFlag> res(tmp.dimension()) ;
                 for (typename Chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
                     res[it->first] = it->second ;
                 }
-                chains[i] = res ;
+                _chains[i] = res ;
             }
         }
         else // Copy coefficient by coefficient
         {
-            size = _otherToCopy.size;
-            int vec_size = (ChainTypeFlag == OSM::COLUMN)?size.second:size.first ;
-            int chain_size = (ChainTypeFlag == OSM::COLUMN)?size.first:size.second ;
-            chains.resize(vec_size) ;
-            chainsStates = OSM::Bitboard(vec_size) ;
+            _size = otherToCopy._size;
+            int vec_size = (ChainTypeFlag == OSM::COLUMN)?_size.second:_size.first ;
+            int chain_size = (ChainTypeFlag == OSM::COLUMN)?_size.first:_size.second ;
+            _chains.resize(vec_size) ;
+            _chainsStates = OSM::Bitboard(vec_size) ;
             for (int i=0; i<vec_size; ++i)
             {
-                chains.at(i) = Chain<CoefficientType,ChainTypeFlag>(chain_size) ;
+                _chains.at(i) = Chain<CoefficientType,ChainTypeFlag>(chain_size) ;
             }
             
-            for (int i = 0; i<_otherToCopy.chains.size(); ++i)
+            for (int i = 0; i<otherToCopy._chains._size(); ++i)
             {
-                const Chain<CoefficientType, CTF>& tmp(_otherToCopy.chains.at(i)) ;
+                const Chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 for (typename Chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
-                    chains[it->first][i] = it->second ;
-                    chainsStates.setOn(it->first) ;
+                    _chains[it->first][i] = it->second ;
+                    _chainsStates.setOn(it->first) ;
                 }
             }
         }
@@ -226,35 +196,21 @@ public:
      * \param[in] _otherToCopy The matrix we want to copy.
      *
      * \return The reference to the modified matrix.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
-    Sparse_matrix& operator=(const Sparse_matrix& _otherToCopy)
+    Sparse_matrix& operator=(const Sparse_matrix& otherToCopy)
     {
-        chainsStates = _otherToCopy.chainsStates;
-        size = _otherToCopy.size;
-        chains = _otherToCopy.chains;
+        _chainsStates = otherToCopy._chainsStates;
+        _size = otherToCopy._size;
+        _chains = otherToCopy._chains;
         
         return *this;
     }
     
     
     /**
-     * \brief Clean a Sparse_matrix (set everything to zero)
+     * \brief Clean a SparseMatrix (set all coefficients to zero).
      *
      * Empty all structures of the sparse matrix.
-     *
-     * \warning Will raise an error if the other matrix is not the same chain type.
-     *
-     * \see \link OSM::Sparse_matrix \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     void nullify() {
         std::vector<int> coefs ;
@@ -266,250 +222,162 @@ public:
     }
     
     /**
-     * \brief Displays a Sparse_matrix in the output stream.
+     * \brief Displays a matrix in the output stream.
      *
-     * \param[in] _stream The output stream.
-     * \param[in] _matrix The matrix to display.
+     * \param[in] stream The output stream.
+     * \param[in] matrix The matrix to display.
      *
      * \return A reference to the modified stream.
-     *
-     * \see \link OSM::Matrix \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
-    friend std::ostream& operator<<(std::ostream &_stream, const Sparse_matrix &_matrix) {
+    friend std::ostream& operator<<(std::ostream &stream, const Sparse_matrix &matrix) {
 #ifndef DEBUG
         bool empty = true;
         
-        _stream << "[";
-        for (int index : _matrix.chainsStates) {
+        stream << "[";
+        for (int index : matrix._chainsStates) {
             empty = false;
-            _stream << index << ": " << _matrix.chains[index] << ", ";
+            stream << index << ": " << matrix._chains[index] << ", ";
         }
         
         if (!empty) {
-            _stream << "\b\b";
+            stream << "\b\b";
         }
-        _stream << "]" << std::endl ;
+        stream << "]" << std::endl ;
 #else
-        for (int i=0; i<_matrix.size.first; ++i)
+        for (int i=0; i<matrix._size.first; ++i)
         {
-            for (int j=0; j<_matrix.size.second; ++j)
+            for (int j=0; j<matrix._size.second; ++j)
             {
-                
-                //CoefficientType tmp = _matrix[j][i] ;  // get_coef(i,j) ;
-                CoefficientType tmp = _matrix.get_coef(i,j) ;
+                CoefficientType tmp = matrix.get_coef(i,j) ;
                 
                 if (tmp == 0)
-                    _stream << ".\t" ;
+                    stream << ".\t" ;
                 else
-                    _stream << tmp << "\t" ;
+                    stream << tmp << "\t" ;
             }
-            _stream << std::endl ;
+            stream << std::endl ;
         }
 #endif
         
-        return _stream;
+        return stream;
     }
     
     
     /**
-     * \brief Adds two matrices together.
+     * \brief Adds two matrices together into a new matrix.
      *
-     * Adds each coefficient of the matrix together.
+     * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
      *
-     * \pre The matrixs have the same chain type.
+     * \pre Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the other matrix is not the same chain type.
+     * \warning Will raise an error if the other matrix is not the same `CoefficientType`.
      *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
+     * \param[in] first The first matrix.
+     * \param[in] second The second matrix.
      *
      * \return A new matrix representing the result.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     template <int _CTF>
-    friend Sparse_matrix operator+(const Sparse_matrix &_first, const Sparse_matrix<CoefficientType, _CTF> &_second) {
-        Sparse_matrix newMatrix(_first);
-        newMatrix += _second;
+    friend Sparse_matrix operator+(const Sparse_matrix &first, const Sparse_matrix<CoefficientType, _CTF> &second) {
+        Sparse_matrix newMatrix(first);
+        newMatrix += second;
         
         return newMatrix;
     }
     
     /**
-     * \brief Substracts two matrices together.
+     * \brief Substracts two matrices together into a new matrix.
      *
-     * Substracts each coefficient of the matrix together.
+     * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
      *
-     * \pre The matrixs have the same chain type.
+     * \pre Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the other matrix is not the same chain type.
+     * \warning Will raise an error if the other matrix is not the same `CoefficientType`.
      *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
+     * \param[in] first The first matrix.
+     * \param[in] second The second matrix.
      *
      * \return A new matrix representing the result.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     template <int _CTF>
-    friend Sparse_matrix operator-(const Sparse_matrix &_first, const Sparse_matrix<CoefficientType, _CTF> &_second) {
-        Sparse_matrix newMatrix = _first;
-        newMatrix -= _second;
+    friend Sparse_matrix operator-(const Sparse_matrix &first, const Sparse_matrix<CoefficientType, _CTF> &second) {
+        Sparse_matrix newMatrix = first;
+        newMatrix -= second;
         
         return newMatrix;
     }
     
     /**
-     * \brief Apply factor on each coefficients.
+     * \brief Apply factor on each coefficients into a new matrix.
      *
-     * \warning Will raise an error if _lambda is 0.
+     * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
      *
-     * \param[in] _lambda The factor to apply.
-     * \param[in] _matrix The matrix.
+     * If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
+     *
+     * \param[in] lambda The factor to apply.
+     * \param[in] matrix The matrix.
      *
      * \return A new matrix representing the result.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix operator*(const _CT& _lambda, const Sparse_matrix<_CT, _CTF> &_matrix) {
-        Sparse_matrix newMatrix = _matrix;
-        newMatrix *= _lambda;
+    friend Sparse_matrix operator*(const _CT& lambda, const Sparse_matrix<_CT, _CTF> &matrix) {
+        Sparse_matrix newMatrix = matrix;
+        newMatrix *= lambda;
         
         return newMatrix;
     }
     
     /**
-     * \brief Apply factor on each coefficients.
+     * \brief Apply factor on each coefficients into a new matrix.
      *
-     * \warning Will raise an error if _lambda is 0.
+     * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
      *
-     * \param[in] _matrix The matrix.
-     * \param[in] _lambda The factor to apply.
+     * If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
+     *
+     * \param[in] matrix The matrix.
+     * \param[in] lambda The factor to apply.
      *
      * \return A new matrix representing the result.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix operator*(const Sparse_matrix<_CT, _CTF> &_matrix, const _CT& _lambda) {
-        Sparse_matrix newMatrix = _matrix;
-        newMatrix *= _lambda;
+    friend Sparse_matrix operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda) {
+        Sparse_matrix newMatrix = matrix;
+        newMatrix *= lambda;
         
         return newMatrix;
     }
     
     /**
-     * \brief Perform matrix multiplication between two matrices.
+     * \defgroup MatrixProdCol Matrix product (with column-based result).
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Perform multiplication between matrices and returns a new column-major matrix.
      *
-     * Generate a column-based matrix from the matrix multiplication and return it.
+     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag` (when possible, prefer row-major by column-major products).
      *
-     * \pre The matrix have the same coefficent type.
-     *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
-     *
-     * \return The result of the matrix multiplication, column-based.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * @param first The first matrix.
+     * @param second The second matrix.
+     * @return The result of the matrix multiplication, column-based.
+     * @{
      */
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
     
-    /**
-     * \brief Perform matrix multiplication between two matrices.
-     *
-     * Generate a column-based matrix from the matrix multiplication and return it.
-     *
-     * \pre The matrix have the same coefficent type.
-     *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
-     *
-     * \return The result of the matrix multiplication, column-based.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
+    //* COLUMN x COLUMN -> COLUMN */
     template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second);
     
-    /**
-     * \brief Perform matrix multiplication between two matrices.
-     *
-     * Generate a column-based matrix from the matrix multiplication and return it.
-     *
-     * \pre The matrix have the same coefficent type.
-     *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
-     *
-     * \return The result of the matrix multiplication, column-based.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
+    //* ROW x COLUMN -> COLUMN */
     template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second);
     
-    /**
-     * \brief Perform matrix multiplication between two matrices.
-     *
-     * Generate a column-based matrix from the matrix multiplication and return it.
-     *
-     * \pre The matrix have the same coefficent type.
-     *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     *
-     * \param[in] _first The first matrix.
-     * \param[in] _second The second matrix.
-     *
-     * \return The result of the matrix multiplication, column-based.
-     *
-     * \see \link OSM::Chain \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
+    //* COLUMN x ROW -> COLUMN */
     template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second);
+    
+    //* ROW x ROW -> COLUMN */
+    template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second);
+
+    /** @} */
+    
     
     /**
      * \brief Perform multiplication between a column-based matrix and a column-based chain.
@@ -518,7 +386,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The matrix.
      * \param[in] _second The chain.
@@ -541,7 +409,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The matrix.
      * \param[in] _second The chain.
@@ -564,7 +432,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The matrix.
      * \param[in] _second The chain.
@@ -587,7 +455,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The matrix.
      * \param[in] _second The chain.
@@ -610,7 +478,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The first matrix.
      * \param[in] _second The second matrix.
@@ -633,7 +501,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The first matrix.
      * \param[in] _second The second matrix.
@@ -650,13 +518,13 @@ public:
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
     
     /**
-     * \brief Perform matrix multiplication between two chains.
+     * \brief Perform matrix multiplication between two _chains.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The first matrix.
      * \param[in] _second The second matrix.
@@ -673,13 +541,13 @@ public:
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
     
     /**
-     * \brief Perform matrix multiplication between two chains.
+     * \brief Perform matrix multiplication between two _chains.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _first The first matrix.
      * \param[in] _second The second matrix.
@@ -702,7 +570,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _other The other matrix.
      *
@@ -715,16 +583,16 @@ public:
      * \date 08/04/2024
      */
     Sparse_matrix& operator+=(const Sparse_matrix &_other) {
-        if (this->size != _other.size) {
-            throw std::runtime_error("Matrices must be the same size.");
+        if (this->_size != _other._size) {
+            throw std::runtime_error("Matrices must be the same _size.");
         }
         
-        for (int index: _other.chainsStates) {
-            this->chainsStates |= index;
-            this->chains[index] += _other.chains[index];
+        for (int index: _other._chainsStates) {
+            this->_chainsStates |= index;
+            this->_chains[index] += _other._chains[index];
             
-            if (this->chains[index].isNull()) {
-                this->chainsStates.setOff(index);
+            if (this->_chains[index].isNull()) {
+                this->_chainsStates.setOff(index);
             }
         }
         
@@ -738,7 +606,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -761,7 +629,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -784,7 +652,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _other The other matrix.
      *
@@ -797,16 +665,16 @@ public:
      * \date 08/04/2024
      */
     Sparse_matrix& operator-=(const Sparse_matrix &_other) {
-        if (this->size != _other.size) {
-            throw std::runtime_error("Matrices must be the same size.");
+        if (this->_size != _other._size) {
+            throw std::runtime_error("Matrices must be the same _size.");
         }
         
-        for (int index: _other.chainsStates) {
-            this->chainsStates |= index;
-            this->chains[index] -= _other.chains[index];
+        for (int index: _other._chainsStates) {
+            this->_chainsStates |= index;
+            this->_chains[index] -= _other._chains[index];
             
-            if (this->chains[index].isNull()) {
-                this->chainsStates.setOff(index);
+            if (this->_chains[index].isNull()) {
+                this->_chainsStates.setOff(index);
             }
         }
         
@@ -821,7 +689,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -844,7 +712,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -882,8 +750,8 @@ public:
             return *this;
         }
         
-        for (int index: this->chainsStates) {
-            this->chains[index] *= _lambda;
+        for (int index: this->_chainsStates) {
+            this->_chains[index] *= _lambda;
         }
         
         return *this;
@@ -901,11 +769,11 @@ public:
      * \date 07/09/2024
      */
     friend Sparse_matrix operator-(const Sparse_matrix& _matrix) {
-        Sparse_matrix res(_matrix.size.first, _matrix.size.second) ;
+        Sparse_matrix res(_matrix._size.first, _matrix._size.second) ;
         
-        for (int index: _matrix.chainsStates)
+        for (int index: _matrix._chainsStates)
         {
-            const MatrixChain& tmp_chain(_matrix.chains[index]) ;
+            const MatrixChain& tmp_chain(_matrix._chains[index]) ;
             for (typename MatrixChain::const_iterator it = tmp_chain.cbegin(); it != tmp_chain.cend(); ++it)
                 res[index][it->first] = -it->second ;
         }
@@ -919,7 +787,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -942,7 +810,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -965,7 +833,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -988,7 +856,7 @@ public:
      *
      * \pre The matrix have the same coefficent type.
      *
-     * \warning Will raise an error if the two chains are not the same coefficient type.
+     * \warning Will raise an error if the two _chains are not the same coefficient type.
      *
      * \param[in] _matrix The matrix to reassign.
      * \param[in] _other The other matrix.
@@ -1020,14 +888,14 @@ public:
      * \date 08/04/2024
      */
     MatrixChain operator[](const int _index) const {
-        if (ChainTypeFlag == COLUMN && _index >= size.second) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(size.second) + ".");
+        if (ChainTypeFlag == COLUMN && _index >= _size.second) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
-        if (ChainTypeFlag == ROW && _index >= size.first) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(size.first) + ".");
+        if (ChainTypeFlag == ROW && _index >= _size.first) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_size.first) + ".");
         }
         
-        return chains[_index];
+        return _chains[_index];
     }
     
     /**
@@ -1046,11 +914,11 @@ public:
      * \date 08/04/2024
      */
     void set_coef(const int _i, const int _j, const CoefficientType _d) {
-        if (_i >= size.first) {
-            throw std::runtime_error("Provided _i index should be less than " + std::to_string(size.first) + ".");
+        if (_i >= _size.first) {
+            throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }
-        if (_j >= size.second) {
-            throw std::runtime_error("Provided _j index should be less than " + std::to_string(size.second) + ".");
+        if (_j >= _size.second) {
+            throw std::runtime_error("Provided _j index should be less than " + std::to_string(_size.second) + ".");
         }
         
         
@@ -1080,13 +948,13 @@ public:
      */
     
     CoefficientType get_coef(const int _i, const int _j) const {
-        if (_i >= size.first) {
-            //std::cout << "Provided _i index should be less than " << size.first << "." << std::endl;
-            throw std::runtime_error("Provided _i index should be less than " + std::to_string(size.first) + ".");
+        if (_i >= _size.first) {
+            //std::cout << "Provided _i index should be less than " << _size.first << "." << std::endl;
+            throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }
-        if (_j >= size.second) {
-            //std::cout << "Provided _j index should be less than " << size.second << "." << std::endl;
-            throw std::runtime_error("Provided _j index should be less than " + std::to_string(size.second) + ".");
+        if (_j >= _size.second) {
+            //std::cout << "Provided _j index should be less than " << _size.second << "." << std::endl;
+            throw std::runtime_error("Provided _j index should be less than " + std::to_string(_size.second) + ".");
         }
         
         
@@ -1379,8 +1247,8 @@ public:
      * \date 08/04/2024
      */
     Sparse_matrix& operator/=(const int _index) {
-        chains[_index].nullify();
-        chainsStates.setOff(_index);
+        _chains[_index].nullify();
+        _chainsStates.setOff(_index);
         
         return *this;
     }
@@ -1409,9 +1277,9 @@ public:
         }
         else // OSM::ROW
         {
-            for (int index : chainsStates)
+            for (int index : _chainsStates)
             {
-                MatrixChain &tmp(chains[index]) ;
+                MatrixChain &tmp(_chains[index]) ;
                 tmp/=tmp_id ;
                 // If the row index has become empty: update
                 if (tmp.isNull())
@@ -1445,8 +1313,8 @@ public:
             (*this) /= tmp_id;
         } else // OSM::COLUMN
         {
-            for (int index : chainsStates) {
-                MatrixChain &tmp(chains[index]);
+            for (int index : _chainsStates) {
+                MatrixChain &tmp(_chains[index]);
                 tmp /= tmp_id;
                 // If the column index has become empty: update
                 if (tmp.isNull())
@@ -1460,7 +1328,7 @@ public:
     /**
      * \brief Nullifies a coefficient from the matrix.
      *
-     * Removes coefficient at row `i` and column `j` and update (if necessary) the status of corresponding chains (null or not).
+     * Removes coefficient at row `i` and column `j` and update (if necessary) the status of corresponding _chains (null or not).
      *
      * \param[in] i Index of the row
      * \param[in] j Index of the column
@@ -1479,26 +1347,26 @@ public:
         
         if (ChainTypeFlag == OSM::COLUMN) {
             std::vector<int> tmp_id({i}) ;
-            MatrixChain &tmp(chains[j]);
+            MatrixChain &tmp(_chains[j]);
             tmp /= tmp_id;
             if (tmp.isNull())
-                chainsStates.setOff(j) ;
+                _chainsStates.setOff(j) ;
         } else // OSM::ROW
         {
             std::vector<int> tmp_id({j}) ;
-            MatrixChain &tmp(chains[i]);
+            MatrixChain &tmp(_chains[i]);
             tmp /= tmp_id;
             if (tmp.isNull())
-                chainsStates.setOff(i) ;
+                _chainsStates.setOff(i) ;
         }
         
         return *this;
     }
     
     /**
-     * \brief Iterator to the beginning of the chains indices.
+     * \brief Iterator to the beginning of the _chains indices.
      *
-     * \return The iterator to the beginning of the chains indices.
+     * \return The iterator to the beginning of the _chains indices.
      *
      * \see \link OSM::Sparse_matrix \endlink
      * \see \link OSM::Chain \endlink
@@ -1510,12 +1378,12 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::iterator begin() const noexcept { return chainsStates.begin(); }
+    inline Bitboard::iterator begin() const noexcept { return _chainsStates.begin(); }
     
     /**
-     * \brief Iterator to the ending of the chains indices.
+     * \brief Iterator to the ending of the _chains indices.
      *
-     * \return The iterator to the ending of the chains indices.
+     * \return The iterator to the ending of the _chains indices.
      *
      * \see \link OSM::Sparse_matrix \endlink
      * \see \link OSM::Chain \endlink
@@ -1527,12 +1395,12 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::iterator end() const noexcept { return chainsStates.end(); }
+    inline Bitboard::iterator end() const noexcept { return _chainsStates.end(); }
     
     /**
-     * \brief Reverse iterator to the chains indices.
+     * \brief Reverse iterator to the _chains indices.
      *
-     * \return The reverse iterator to the chains indices.
+     * \return The reverse iterator to the _chains indices.
      *
      * \see \link OSM::Sparse_matrix \endlink
      * \see \link OSM::Chain \endlink
@@ -1544,13 +1412,13 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::reverse_iterator reverse_begin() noexcept { return chainsStates.reverse_begin(); }
-    inline Bitboard::reverse_iterator reverse_begin(size_t index) noexcept { return chainsStates.reverse_begin(index); }
+    inline Bitboard::reverse_iterator reverse_begin() noexcept { return _chainsStates.reverse_begin(); }
+    inline Bitboard::reverse_iterator reverse_begin(size_t index) noexcept { return _chainsStates.reverse_begin(index); }
     
     /**
-     * \brief Reverse iterator to the ending of the chains indices.
+     * \brief Reverse iterator to the ending of the _chains indices.
      *
-     * \return The reverse iterator to the ending of the chains indices.
+     * \return The reverse iterator to the ending of the _chains indices.
      *
      * \see \link OSM::Sparse_matrix \endlink
      * \see \link OSM::Chain \endlink
@@ -1562,7 +1430,7 @@ public:
      * \version 0.1.0
      * \date 08/04/2024
      */
-    inline Bitboard::reverse_iterator reverse_end() noexcept { return chainsStates.reverse_end(); }
+    inline Bitboard::reverse_iterator reverse_end() noexcept { return _chainsStates.reverse_end(); }
     
     
     /**
@@ -1577,13 +1445,13 @@ public:
      * \date 08/04/2024
      */
     Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transpose() {
-        Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transposed(this->size.second, this->size.first);
+        Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transposed(this->_size.second, this->_size.first);
         
-        for (int index : this->chainsStates) {
-            transposed.chains[index] = this->chains[index].transpose();
+        for (int index : this->_chainsStates) {
+            transposed._chains[index] = this->_chains[index].transpose();
         }
         
-        transposed.chainsStates = this->chainsStates;
+        transposed._chainsStates = this->_chainsStates;
         
         return transposed;
     }
@@ -1600,43 +1468,26 @@ public:
      * \date 06/05/2024
      */
     std::pair<int, int> dimensions() const {
-        return this->size;
+        return this->_size;
     }
 };
 
 
-
-/**
- * \brief Perform matrix multiplication between two chains.
- *
- * Generate a column-based matrix from the matrix multiplication and return it.
- *
- * \pre The matrix have the same coefficent type.
- *
- * \warning Will raise an error if the two chains are not the same coefficient type.
- *
- * \param[in] _first The first matrix.
- * \param[in] _second The second matrix.
- *
- * \return The result of the matrix multiplication, column-based.
- *
- * \see \link OSM::Chain \endlink
- *
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
+/** @ingroup MatrixProdCol
+ * @brief COLUMN x COLUMN -> COLUMN
  */
+// COLUMN x COLUMN -> COLUMN
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second) {
-    Sparse_matrix<_CT, COLUMN> res(_first.size.first, _second.size.second);
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second) {
+    Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform col-col matrix multiplication with linear combination of columns.
-    for (int index: _second.chainsStates) {
-        Chain<_CT, COLUMN> column(_first.size.first);
+    for (int index: second._chainsStates) {
+        Chain<_CT, COLUMN> column(first._size.first);
         
-        for (std::pair colRight: _second.chains[index]) {
-            if (_first.chainsStates.isOn(colRight.first)) {
-                column += colRight.second * _first.chains[colRight.first];
+        for (std::pair colRight: second._chains[index]) {
+            if (first._chainsStates.isOn(colRight.first)) {
+                column += colRight.second * first._chains[colRight.first];
             }
         }
         
@@ -1646,36 +1497,20 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, c
     return res;
 }
 
-/**
- * \brief Perform matrix multiplication between two chains.
- *
- * Generate a column-based matrix from the matrix multiplication and return it.
- *
- * \pre The matrix have the same coefficent type.
- *
- * \warning Will raise an error if the two chains are not the same coefficient type.
- *
- * \param[in] _first The first matrix.
- * \param[in] _second The second matrix.
- *
- * \return The result of the matrix multiplication, column-based.
- *
- * \see \link OSM::Chain \endlink
- *
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
+/** @ingroup MatrixProdCol
+ * @brief ROW x COLUMN -> COLUMN
  */
+// ROW x COLUMN -> COLUMN
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second) {
-    Sparse_matrix<_CT, COLUMN> res(_first.size.first, _second.size.second);
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second) {
+    Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colRight: _second.chainsStates) {
-        Chain<_CT, COLUMN> column(_first.size.first);
+    for (int colRight: second._chainsStates) {
+        Chain<_CT, COLUMN> column(first._size.first);
         
-        for (int rowLeft: _first.chainsStates) {
-            _CT coef = _first.chains[rowLeft] * _second.chains[colRight];
+        for (int rowLeft: first._chainsStates) {
+            _CT coef = first._chains[rowLeft] * second._chains[colRight];
             if (coef != 0) {
                 column[rowLeft] = coef;
             }
@@ -1687,68 +1522,36 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, cons
     return res;
 }
 
-/**
- * \brief Perform matrix multiplication between two chains.
- *
- * Generate a column-based matrix from the matrix multiplication and return it.
- *
- * \pre The matrix have the same coefficent type.
- *
- * \warning Will raise an error if the two chains are not the same coefficient type.
- *
- * \param[in] _first The first matrix.
- * \param[in] _second The second matrix.
- *
- * \return The result of the matrix multiplication, column-based.
- *
- * \see \link OSM::Chain \endlink
- *
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
+/** @ingroup MatrixProdCol
+ * @brief COLUMN x ROW -> COLUMN
  */
+// COLUMN x ROW -> COLUMN
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second) {
-    Sparse_matrix<_CT, COLUMN> res(_first.size.first, _second.size.second);
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second) {
+    Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colLeft: _first.chainsStates) {
-        res += _first.chains[colLeft] * _second.chains[colLeft];
+    for (int colLeft: first._chainsStates) {
+        res += first._chains[colLeft] * second._chains[colLeft];
     }
     
     return res;
 }
 
-/**
- * \brief Perform matrix multiplication between two chains.
- *
- * Generate a column-based matrix from the matrix multiplication and return it.
- *
- * \pre The matrix have the same coefficent type.
- *
- * \warning Will raise an error if the two chains are not the same coefficient type.
- *
- * \param[in] _first The first matrix.
- * \param[in] _second The second matrix.
- *
- * \return The result of the matrix multiplication, column-based.
- *
- * \see \link OSM::Chain \endlink
- *
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
+/** @ingroup MatrixProdCol
+ * @brief ROW x ROW -> COLUMN
  */
+// ROW x ROW -> COLUMN
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second) {
-    Sparse_matrix<_CT, COLUMN> res(_first.size.first, _second.size.second);
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second) {
+    Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int i = 0 ; i < _second.size.second ; i++) {
-        Chain<_CT, COLUMN> column(_first.size.first);
+    for (int i = 0 ; i < second._size.second ; i++) {
+        Chain<_CT, COLUMN> column(first._size.first);
         
-        for (int rowLeft: _first.chainsStates) {
-            _CT coef = _first.chains[rowLeft] * get_column(_second, i);
+        for (int rowLeft: first._chainsStates) {
+            _CT coef = first._chains[rowLeft] * get_column(second, i);
             if (coef != 0) {
                 column[rowLeft] = coef;
             }
@@ -1769,7 +1572,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, cons
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The matrix.
  * \param[in] _second The chain.
@@ -1786,11 +1589,11 @@ template <typename _CT>
 Chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Chain<_CT, COLUMN> &_second)
 {
     // Perform col-col matrix multiplication with linear combination of columns.
-    Chain<_CT, COLUMN> column(_first.size.first);
+    Chain<_CT, COLUMN> column(_first._size.first);
     
     for (typename Chain<_CT, COLUMN>::const_iterator it = _second.begin(); it != _second.end(); ++it)
     {
-        column += it->second * _first.chains[it->first];
+        column += it->second * _first._chains[it->first];
     }
     
     return column;
@@ -1803,7 +1606,7 @@ Chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Cha
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The matrix.
  * \param[in] _second The chain.
@@ -1820,9 +1623,9 @@ template <typename _CT>
 Chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Chain<_CT, COLUMN> &_second)
 {
     // Perform row-col matrix multiplication with dots
-    Chain<_CT, COLUMN> column(_first.size.first);
+    Chain<_CT, COLUMN> column(_first._size.first);
     
-    for (int index : _first.chainsStates)
+    for (int index : _first._chainsStates)
     {
         _CT tmp(_first[index] * _second) ;
         if (tmp != 0)
@@ -1838,7 +1641,7 @@ Chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Chain<
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The matrix.
  * \param[in] _second The chain.
@@ -1855,11 +1658,11 @@ template <typename _CT>
 Chain<_CT, ROW> operator*(const Chain<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second)
 {
     // Perform row-row matrix multiplication with linear combination of rows.
-    Chain<_CT, ROW> row(_second.size.second);
+    Chain<_CT, ROW> row(_second._size.second);
     
     for (typename Chain<_CT, ROW>::const_iterator it = _first.begin(); it != _first.end(); ++it)
     {
-        row += it->second * _second.chains[it->first];
+        row += it->second * _second._chains[it->first];
     }
     
     return row;
@@ -1872,7 +1675,7 @@ Chain<_CT, ROW> operator*(const Chain<_CT, ROW> &_first, const Sparse_matrix<_CT
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The matrix.
  * \param[in] _second The chain.
@@ -1889,9 +1692,9 @@ template <typename _CT>
 Chain<_CT, ROW> operator*(const Chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second)
 {
     // Perform row-col matrix multiplication with dots
-    Chain<_CT, ROW> row(_second.size.second);
+    Chain<_CT, ROW> row(_second._size.second);
     
-    for (int index : _second.chainsStates)
+    for (int index : _second._chainsStates)
     {
         _CT tmp(_first * _second[index]) ;
         if (tmp != 0)
@@ -1901,13 +1704,13 @@ Chain<_CT, ROW> operator*(const Chain<_CT, ROW> &_first, const Sparse_matrix<_CT
 }
 
 /**
- * \brief Perform matrix multiplication between two chains.
+ * \brief Perform matrix multiplication between two _chains.
  *
  * Generate a row-based matrix from the matrix multiplication and return it.
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The first matrix.
  * \param[in] _second The second matrix.
@@ -1922,13 +1725,13 @@ Chain<_CT, ROW> operator*(const Chain<_CT, ROW> &_first, const Sparse_matrix<_CT
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second) {
-    Sparse_matrix<_CT, ROW> res(_first.size.first, _second.size.second);
+    Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
-    for (int i = 0 ; i < _first.size.first ; i++) {
-        Chain<_CT, ROW> row(_second.size.second);
+    for (int i = 0 ; i < _first._size.first ; i++) {
+        Chain<_CT, ROW> row(_second._size.second);
         
-        for (int colRight: _second.chainsStates) {
-            _CT coef = get_row(_first, i) * _second.chains[colRight];
+        for (int colRight: _second._chainsStates) {
+            _CT coef = get_row(_first, i) * _second._chains[colRight];
             if (coef != 0) {
                 row[colRight] = coef;
             }
@@ -1943,13 +1746,13 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, cons
 }
 
 /**
- * \brief Perform matrix multiplication between two chains.
+ * \brief Perform matrix multiplication between two _chains.
  *
  * Generate a row-based matrix from the matrix multiplication and return it.
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The first matrix.
  * \param[in] _second The second matrix.
@@ -1964,14 +1767,14 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, cons
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second) {
-    Sparse_matrix<_CT, ROW> res(_first.size.first, _second.size.second);
+    Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int rowLeft: _first.chainsStates) {
-        Chain<_CT, ROW> row(_second.size.second);
+    for (int rowLeft: _first._chainsStates) {
+        Chain<_CT, ROW> row(_second._size.second);
         
-        for (int colRight: _second.chainsStates) {
-            _CT coef = _first.chains[rowLeft] * _second.chains[colRight];
+        for (int colRight: _second._chainsStates) {
+            _CT coef = _first._chains[rowLeft] * _second._chains[colRight];
             if (coef != 0) {
                 row[colRight] = coef;
             }
@@ -1984,13 +1787,13 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
 }
 
 /**
- * \brief Perform matrix multiplication between two chains.
+ * \brief Perform matrix multiplication between two _chains.
  *
  * Generate a row-based matrix from the matrix multiplication and return it.
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The first matrix.
  * \param[in] _second The second matrix.
@@ -2005,24 +1808,24 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second) {
-    Sparse_matrix<_CT, ROW> res(_first.size.first, _second.size.second);
+    Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colLeft: _first.chainsStates) {
-        res += _first.chains[colLeft] % _second.chains[colLeft];
+    for (int colLeft: _first._chainsStates) {
+        res += _first._chains[colLeft] % _second._chains[colLeft];
     }
     
     return res;
 }
 
 /**
- * \brief Perform matrix multiplication between two chains.
+ * \brief Perform matrix multiplication between two _chains.
  *
  * Generate a row-based matrix from the matrix multiplication and return it.
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _first The first matrix.
  * \param[in] _second The second matrix.
@@ -2037,15 +1840,15 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, cons
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second) {
-    Sparse_matrix<_CT, ROW> res(_first.size.first, _second.size.second);
+    Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-row matrix multiplication with linear combination of rows.
-    for (int index: _first.chainsStates) {
-        Chain<_CT, ROW> row(_second.size.second);
+    for (int index: _first._chainsStates) {
+        Chain<_CT, ROW> row(_second._size.second);
         
-        for (std::pair colRight: _first.chains[index]) {
-            if (_first.chainsStates.isOn(colRight.first)) {
-                row += colRight.second * _second.chains[colRight.first];
+        for (std::pair colRight: _first._chains[index]) {
+            if (_first._chainsStates.isOn(colRight.first)) {
+                row += colRight.second * _second._chains[colRight.first];
             }
         }
         
@@ -2062,7 +1865,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _matrix The matrix to reassign.
  * \param[in] _other The other matrix.
@@ -2077,18 +1880,18 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
  */
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &_matrix, const Sparse_matrix<_CT, ROW> &_other) {
-    if (_matrix.size != _other.size) {
+    if (_matrix._size != _other._size) {
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other.size.second ; index++) {
+    for (int index = 0 ; index < _other._size.second ; index++) {
         Chain column = get_column(_other, index);
         if (!column.isNull()) {
-            _matrix.chainsStates |= index;
-            _matrix.chains[index] += get_column(_other, index);
+            _matrix._chainsStates |= index;
+            _matrix._chains[index] += get_column(_other, index);
             
-            if (_matrix.chains[index].isNull()) {
-                _matrix.chainsStates.setOff(index);
+            if (_matrix._chains[index].isNull()) {
+                _matrix._chainsStates.setOff(index);
             }
         }
     }
@@ -2103,7 +1906,7 @@ Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _matrix The matrix to reassign.
  * \param[in] _other The other matrix.
@@ -2118,18 +1921,18 @@ Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &_matrix, const Sparse_matrix<_CT, COLUMN> &_other) {
-    if (_matrix.size != _other.size) {
+    if (_matrix._size != _other._size) {
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other.size.first ; index++) {
+    for (int index = 0 ; index < _other._size.first ; index++) {
         Chain row = get_row(_other, index);
         if (!row.isNull()) {
-            _matrix.chainsStates |= index;
-            _matrix.chains[index] += get_row(_other, index);
+            _matrix._chainsStates |= index;
+            _matrix._chains[index] += get_row(_other, index);
             
-            if (_matrix.chains[index].isNull()) {
-                _matrix.chainsStates.setOff(index);
+            if (_matrix._chains[index].isNull()) {
+                _matrix._chainsStates.setOff(index);
             }
         }
     }
@@ -2144,7 +1947,7 @@ Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _matrix The matrix to reassign.
  * \param[in] _other The other matrix.
@@ -2159,18 +1962,18 @@ Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
  */
 template <typename _CT>
 Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &_matrix, const Sparse_matrix<_CT, ROW> &_other) {
-    if (_matrix.size != _other.size) {
+    if (_matrix._size != _other._size) {
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other.size.second ; index++) {
+    for (int index = 0 ; index < _other._size.second ; index++) {
         Chain column = get_column(_other, index);
         if (!column.isNull()) {
-            _matrix.chainsStates |= index;
-            _matrix.chains[index] -= get_column(_other, index);
+            _matrix._chainsStates |= index;
+            _matrix._chains[index] -= get_column(_other, index);
             
-            if (_matrix.chains[index].isNull()) {
-                _matrix.chainsStates.setOff(index);
+            if (_matrix._chains[index].isNull()) {
+                _matrix._chainsStates.setOff(index);
             }
         }
     }
@@ -2185,7 +1988,7 @@ Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _matrix The matrix to reassign.
  * \param[in] _other The other matrix.
@@ -2200,18 +2003,18 @@ Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  */
 template <typename _CT>
 Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &_matrix, const Sparse_matrix<_CT, COLUMN> &_other) {
-    if (_matrix.size != _other.size) {
+    if (_matrix._size != _other._size) {
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other.size.second ; index++) {
+    for (int index = 0 ; index < _other._size.second ; index++) {
         Chain row = get_row(_other, index);
         if (!row.isNull()) {
-            _matrix.chainsStates |= index;
-            _matrix.chains[index] -= get_row(_other, index);
+            _matrix._chainsStates |= index;
+            _matrix._chains[index] -= get_row(_other, index);
             
-            if (_matrix.chains[index].isNull()) {
-                _matrix.chainsStates.setOff(index);
+            if (_matrix._chains[index].isNull()) {
+                _matrix._chainsStates.setOff(index);
             }
         }
     }
@@ -2226,7 +2029,7 @@ Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _other The other matrix.
  *
@@ -2251,7 +2054,7 @@ Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _other The other matrix.
  *
@@ -2276,7 +2079,7 @@ Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _other The other matrix.
  *
@@ -2301,7 +2104,7 @@ Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
  *
  * \pre The matrix have the same coefficent type.
  *
- * \warning Will raise an error if the two chains are not the same coefficient type.
+ * \warning Will raise an error if the two _chains are not the same coefficient type.
  *
  * \param[in] _other The other matrix.
  *
@@ -2338,7 +2141,7 @@ Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
  */
 template <typename _CT>
 Chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix, const int _index) {
-    return _matrix.chains[_index];
+    return _matrix._chains[_index];
 }
 
 /**
@@ -2360,12 +2163,12 @@ Chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix, const i
  */
 template <typename _CT>
 Chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix, const int _index) {
-    Chain<_CT, COLUMN> column(_matrix.size.first);
-    if (_matrix.size.first > 0)
+    Chain<_CT, COLUMN> column(_matrix._size.first);
+    if (_matrix._size.first > 0)
     {
-        for (int i : _matrix.chainsStates) {
-            if (!_matrix.chains[i].isNull(_index)) {
-                column[i] = _matrix.chains[i][_index];
+        for (int i : _matrix._chainsStates) {
+            if (!_matrix._chains[i].isNull(_index)) {
+                column[i] = _matrix._chains[i][_index];
             }
         }
     }
@@ -2392,12 +2195,12 @@ Chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix, const int 
  */
 template <typename _CT>
 Chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix, const int _index) {
-    Chain<_CT, ROW> row(_matrix.size.second);
-    if (_matrix.size.second > 0)
+    Chain<_CT, ROW> row(_matrix._size.second);
+    if (_matrix._size.second > 0)
     {
-        for (int i : _matrix.chainsStates) {
-            if (!_matrix.chains[i].isNull(_index)) {
-                row[i] = _matrix.chains[i][_index];
+        for (int i : _matrix._chainsStates) {
+            if (!_matrix._chains[i].isNull(_index)) {
+                row[i] = _matrix._chains[i][_index];
             }
         }
     }
@@ -2424,7 +2227,7 @@ Chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix, const int _in
  */
 template <typename _CT>
 Chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix, const int _index) {
-    return _matrix.chains[_index];
+    return _matrix._chains[_index];
 }
 
 /**
@@ -2445,10 +2248,10 @@ Chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix, const int _index
 template <typename _CT>
 const Chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &_matrix, const int _index)
 {
-    if (_index >= _matrix.size.second) {
-        throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix.size.second) + ".");
+    if (_index >= _matrix._size.second) {
+        throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix._size.second) + ".");
     }
-    return _matrix.chains[_index];
+    return _matrix._chains[_index];
 }
 
 /**
@@ -2469,10 +2272,10 @@ const Chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &_matrix
 template <typename _CT>
 const Chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &_matrix, const int _index)
 {
-    if (_index >= _matrix.size.first) {
-        throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix.size.first) + ".");
+    if (_index >= _matrix._size.first) {
+        throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix._size.first) + ".");
     }
-    return _matrix.chains[_index];
+    return _matrix._chains[_index];
 }
 
 /**
@@ -2495,7 +2298,7 @@ void set_column(Sparse_matrix<_CT, COLUMN> &_matrix, const int _index, const Cha
         throw std::runtime_error("set_column dimension error") ;
     _matrix[_index] = _chain;
     if (_chain.isNull())
-        _matrix.chainsStates.setOff(_index) ;
+        _matrix._chainsStates.setOff(_index) ;
 }
 
 /**
@@ -2516,18 +2319,18 @@ template <typename _CT>
 void set_column(Sparse_matrix<_CT, ROW> &_matrix, const int _index, const Chain<_CT, COLUMN> &_chain) {
     if(_matrix.dimensions().first != _chain.dimension())
         throw std::runtime_error("set_column dimension error") ;
-    for (int i = 0 ; i < _matrix.size.first ; i++) {
-        if (!_matrix.chains[i].isNull(_index) && _chain.isNull(i)) {
-            _matrix.chains[i] /= _index;
+    for (int i = 0 ; i < _matrix._size.first ; i++) {
+        if (!_matrix._chains[i].isNull(_index) && _chain.isNull(i)) {
+            _matrix._chains[i] /= _index;
             
-            if (_matrix.chains[i].isNull()) {
-                _matrix.chainsStates.setOff(i);
+            if (_matrix._chains[i].isNull()) {
+                _matrix._chainsStates.setOff(i);
             }
         }
         
         if (!_chain.isNull(i)) {
-            _matrix.chainsStates |= i;
-            _matrix.chains[i][_index] = _chain[i];
+            _matrix._chainsStates |= i;
+            _matrix._chains[i][_index] = _chain[i];
         }
     }
 }
@@ -2550,18 +2353,18 @@ template <typename _CT>
 void set_row(Sparse_matrix<_CT, COLUMN> &_matrix, const int _index, const Chain<_CT, ROW> &_chain) {
     if(_matrix.dimensions().second != _chain.dimension())
         throw("set_column dimension error") ;
-    for (int i = 0 ; i < _matrix.size.second ; i++) {
-        if (!_matrix.chains[i].isNull(_index) && _chain.isNull(i)) {
-            _matrix.chains[i] /= _index;
+    for (int i = 0 ; i < _matrix._size.second ; i++) {
+        if (!_matrix._chains[i].isNull(_index) && _chain.isNull(i)) {
+            _matrix._chains[i] /= _index;
             
-            if (_matrix.chains[i].isNull()) {
-                _matrix.chainsStates.setOff(i);
+            if (_matrix._chains[i].isNull()) {
+                _matrix._chainsStates.setOff(i);
             }
         }
         
         if (!_chain.isNull(i)) {
-            _matrix.chainsStates |= i;
-            _matrix.chains[i][_index] = _chain[i];
+            _matrix._chainsStates |= i;
+            _matrix._chains[i][_index] = _chain[i];
         }
     }
 }
@@ -2586,7 +2389,7 @@ void set_row(Sparse_matrix<_CT, ROW> &_matrix, const int _index, const Chain<_CT
         throw("set_column dimension error") ;
     _matrix[_index] = _chain;
     if (_chain.isNull())
-        _matrix.chainsStates.setOff(_index) ;
+        _matrix._chainsStates.setOff(_index) ;
 }
 
 } /* end namespace OSM */

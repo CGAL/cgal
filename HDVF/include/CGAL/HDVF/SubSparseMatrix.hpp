@@ -43,7 +43,7 @@ protected:
     
 public:
     /** \brief Constructor with sizes and Bitboard describing subchains. */
-    SubSparseMatrix(const int _rowCount, const int _columnCount, const Bitboard& subChain) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->chainsStates & subChain)
+    SubSparseMatrix(const int _rowCount, const int _columnCount, const Bitboard& subChain) : Sparse_matrix<_CoefficientType, _ChainTypeFlag>(_rowCount, _columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
     }
     
@@ -54,7 +54,7 @@ public:
             _subChains = OSM::Bitboard(_columnCount,false) ;
         else
             _subChains = OSM::Bitboard(_rowCount,false) ;
-        _subChainsStates = this->chainsStates & _subChains ;
+        _subChainsStates = this->_chainsStates & _subChains ;
     }
     
     /** \brief Copy constructor. */
@@ -67,7 +67,7 @@ public:
             _subChains = OSM::Bitboard(otherToCopy.dimensions().second,false) ;
         else
             _subChains = OSM::Bitboard(otherToCopy.dimensions().first,false) ;
-        _subChainsStates = this->chainsStates & _subChains ;
+        _subChainsStates = this->_chainsStates & _subChains ;
     }
     
     
@@ -87,18 +87,18 @@ public:
     inline void set_sub (const Bitboard& new_subChains)
     {
         _subChains = new_subChains ;
-        _subChainsStates = this->chainsStates & _subChains ;
+        _subChainsStates = this->_chainsStates & _subChains ;
     }
     
-    /** \brief Set a bit on in subchains and update chainsStates accordingly. */
+    /** \brief Set a bit on in subchains and update _chainsStates accordingly. */
     inline void set_bitOn (int index)
     {
         _subChains.setOn(index) ;
-        if (this->chainsStates.isOn(index))
+        if (this->_chainsStates.isOn(index))
             _subChainsStates.setOn(index) ;
     }
     
-    /** \brief Set a bit off in subchains and update chainsStates accordingly. */
+    /** \brief Set a bit off in subchains and update _chainsStates accordingly. */
     inline void set_bitOff (int index)
     {
         _subChains.setOff(index) ;

@@ -192,17 +192,33 @@ public:
      * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
      * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
      */
-    friend SparseMatrix operator-(const SparseMatrix &_first, const SparseMatrix &second);
+    friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);
     
     /**
      * \brief Compute the negative of a matrix (unary operator).
      *
      * \return The resulting matrix.
      */
-    friend SparseMatrix operator-(const SparseMatrix& _matrix);
+    friend SparseMatrix operator-(const SparseMatrix& matrix);
     
     /**
-     * \brief Apply factor on each coefficients and assign.
+     * \brief Apply factor on each coefficients into a new matrix.
+     *
+     * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
+     */
+    friend Sparse_matrix operator*(const CoefficientType& lambda, const Sparse_matrix &matrix);
+    
+    /**
+     * \brief Apply factor on each coefficients into a new matrix.
+     *
+     * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
+     */
+    friend Sparse_matrix operator*(const Sparse_matrix &matrix, const CoefficientType& lambda);
+    
+    /**
+     * \brief Apply factor on each coefficient and assign.
+     *
+     * This method multiplies the matrix by a scalar factor `lambda`.
      */
     SparseMatrix& operator*=(const CoefficientType& lambda);
     
