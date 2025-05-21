@@ -42,6 +42,29 @@ function compute_benchmark_data() {
 }
 export -f compute_benchmark_data
 
+if [ ! -f "$BUILD_DIR/robustness_benchmark" ]; then
+    echo "-> Compiling benchmarks in $BUILD_DIR"
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+
+    if [ -f "$CGAL_directory/Alpha_wrap_3/benchmark/Alpha_wrap_3/CMakeLists.txt" ]; then
+        cmake "$CGAL_directory/Alpha_wrap_3/benchmark/Alpha_wrap_3" \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$CGAL_directory"
+        make -j"$(nproc)"
+
+        if [ $? -ne 0 ]; then
+            echo "Compilation failed."
+            exit 1
+        fi
+        echo "Compilation done."
+    else
+        echo "No CMakeLists.txt found. Skipping compilation."
+    fi
+    cd "$SCRIPT_DIR"
+else
+    echo "Benchmarks already compiled in $BUILD_DIR"
+fi
+
 if [ -d "$input_path" ]; then
   find "$input_path" -type f | parallel -j"$virtual_thread" compute_benchmark_data "$CGAL_directory" "$Benchmark_output_dir" "$alpha_value" "$timeout_value" "$BUILD_DIR" {}
 else
