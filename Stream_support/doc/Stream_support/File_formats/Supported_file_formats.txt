@@ -479,7 +479,7 @@ A precise specification of those formats is available at
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="800">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -524,9 +524,11 @@ In \cgal, it is used to represent 3D meshes.
 A precise specification of the format is available <a href="https://inria.hal.science/inria-00069921/document">in this report</a>,
 in the appendices (section 7.2.1, page 36).
 
-- The `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`. This can be done using the function
-  \ref CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &).
-- The `CGAL::Conforming_constrained_Delaunay_triangulation_3` \cgal data structure can be exported into `.mesh`. This can be done using the function
+The following \cgal data structures can be exported into the `.mesh` file format:
+
+- `CGAL::Mesh_complex_3_in_triangulation_3`, using the function
+  \ref CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &), and
+- `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
   \ref CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt).
 
 
