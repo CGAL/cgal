@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
   const char* filename = (argc > 1) ? argv[1] : "data/sword.off";
   std::ifstream input(filename);
-  
+
   if (!input || !(input >> mesh))
   {
     std::cout << "Failed to read mesh" << std::endl;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     std::cout << "Input mesh is invalid" << std::endl;
     return EXIT_FAILURE;
   }
- 
+
   // init the polyhedron indices
   CGAL::set_halfedgeds_items_id(mesh);
 
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   // decompose mesh with default parameters
   Timer timer;
 
-  timer.start(); 
+  timer.start();
   std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, facet_property_map, 0.3);
   timer.stop();
 

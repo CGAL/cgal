@@ -37,7 +37,7 @@
 #include <boost/graph/copy.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/foreach.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/move/move.hpp>
 #include <boost/unordered_map.hpp>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -78,13 +78,13 @@ class Approx_segmentation
 
   // predefined structs
   struct Candidate_comparator;
-  
+
   template <class Graph>
   struct Noborder_predicate;
 
   struct Cluster_properties;
   struct Decimation_properties;
-  
+
   // typedefs
   typedef typename GeomTraits::Point_3 Point_3;
 
@@ -95,12 +95,12 @@ class Approx_segmentation
 
   typedef CGAL::Dual<TriangleMesh> Dual_graph;
   typedef boost::filtered_graph<Dual_graph, Noborder_predicate<TriangleMesh> > Filtered_dual_graph;
-  
+
   typedef boost::property<segment_props_t, Cluster_properties> VertexProperty;
   typedef boost::property<decimation_props_t, Decimation_properties> EdgeProperty;
 
   typedef boost::adjacency_list<boost::setS, boost::listS, boost::undirectedS, VertexProperty, EdgeProperty> Graph;
-  
+
   typedef typename boost::graph_traits<Graph>::vertex_descriptor graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor graph_edge_descriptor;
   typedef std::pair<graph_vertex_descriptor, graph_vertex_descriptor> graph_edge_pair;
@@ -129,9 +129,9 @@ public:
   */
   void segmentize(double concavity_threshold,
                   std::size_t min_number_of_segments)
-                 
+
   {
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     std::cout << "Segmentizing..." << std::endl;
     std::cout << "concavity_threshold=" << concavity_threshold << std::endl;
     std::cout << "min_number_of_segments=" << min_number_of_segments << std::endl;
@@ -149,7 +149,7 @@ public:
       update_edge(edge, concavity_threshold, CONCAVITY_FACTOR);
       add_candidate(edge, concavity_threshold);
     }
-    
+
     // remove edges that can not become candidates
     remove_invalid_edges();
 
@@ -158,15 +158,15 @@ public:
     while (num_vertices(m_graph) > min_number_of_segments)
     {
       CGAL_assertion(m_candidates.size() == num_edges(m_graph));
- 
+
       // if no valid edges left than stop
       if (m_candidates.empty()) break;
 
       // pop edge with the lowest decimation cost (optimal edge)
       graph_edge_descriptor optimal_edge = *m_candidates.begin();
       m_candidates.erase(m_candidates.begin());
-      
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
       std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
       std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_segment_props.concavity << std::endl;
       std::cout << "Total edges: " << num_edges(m_graph) << std::endl;
@@ -183,11 +183,11 @@ public:
   */
   void postprocess(std::size_t min_number_of_segments, double segment_size_threshold, double concavity_threshold)
   {
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     std::cout << "Postprocessing segments..." << std::endl;
     std::cout << "segment_size_threshold=" << segment_size_threshold << std::endl;
 #endif
-  
+
     // comparator that orders segments by the lengths of their diagonals
     struct Size_segment_comparator
     {
@@ -197,7 +197,7 @@ public:
       {
         double diagonal_a = m_alg.compute_diagonal_length(m_alg.m_segment_map[a].bbox);
         double diagonal_b = m_alg.compute_diagonal_length(m_alg.m_segment_map[b].bbox);
-        
+
         if (diagonal_a != diagonal_b)
         {
           return diagonal_a < diagonal_b;
@@ -209,17 +209,17 @@ public:
     private:
       Approx_segmentation& m_alg;
     };
-  
+
     // restore edges that were removed on segmentation stage
     restore_invalid_edges(concavity_threshold);
 
     // a queue which contains all segments ordered by their diagonal lengths
     std::set<graph_vertex_descriptor, Size_segment_comparator> queue(vertices(m_graph).first, vertices(m_graph).second, Size_segment_comparator(*this));
-    
+
     // diagonal length of the input mesh
     double diagonal_length_threshold = segment_size_threshold / 100. * compute_diagonal_length(CGAL::Polygon_mesh_processing::bbox(m_mesh));
 
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     std::cout << "Diagonal length threshold (max allowed for merging): " << diagonal_length_threshold << std::endl;
 #endif
 
@@ -230,7 +230,7 @@ public:
       graph_vertex_descriptor cur = *queue.begin();
       queue.erase(queue.begin());
 
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
       std::cout << "Diagonal length: " << compute_diagonal_length(m_segment_map[cur].bbox) << std::endl;
 #endif
 
@@ -251,7 +251,7 @@ public:
 
       if (!found) continue;
 
-#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
       std::cout << "Merging..." << std::endl;
 #endif
 
@@ -286,13 +286,14 @@ public:
     }
   }
 
+  void fill_convex_hull_map(const internal_np::Param_not_found&) {}
+
   /**
    * Fills up face property map with segment-ids
    * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
    */
   template <class FacePropertyMap>
-  std::size_t result(FacePropertyMap face_ids,
-                     boost::param_not_found)
+  std::size_t result(FacePropertyMap face_ids)
   {
     // resulting number of produced segments
     std::size_t num_segments = num_vertices(m_graph);
@@ -324,30 +325,16 @@ public:
     return num_segments;
   }
 
-  /**
-   * Fills up face property map with segment-ids and convex hulls property map with the convex hulls of all segments
-   * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
-   * @param convex_hull_map which stores an array of convex hulls for each segment
-   */
-  template <class FacePropertyMap, class ConvexHullMap>
-  std::size_t result(FacePropertyMap face_ids,
-                     ConvexHullMap convex_hull_map)
-  {
-    std::size_t res = result(face_ids, boost::param_not_found());
-    fill_convex_hull_map(convex_hull_map);
-    return res;
-  }
-
 private:
   const TriangleMesh& m_mesh;
   Vpm m_vpm; // vertex point property map
   const GeomTraits& m_traits;
-  
+
   Graph m_graph; // dual graph adjacency list for the input mesh
 
   Graph_segment_map m_segment_map; // vertex property map of the adjacency list
   Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
-   
+
   std::vector<graph_edge_descriptor> m_invalid_edges; // list of invalid edges (the concavity value of produced segment after decimation is larger than the threshold)
   std::vector<graph_edge_pair> m_removed_invalid_edges; // list of removed invalid edges that might be restored in postprocessing procedure
 
@@ -368,7 +355,7 @@ private:
   private:
     Approx_segmentation& m_alg;
   };
-  
+
   std::set<graph_edge_descriptor, Candidate_comparator> m_candidates; // ordered by decimation cost list of edges
 
   Concavity<TriangleMesh, Vpm, GeomTraits, ConcurrencyTag> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
@@ -378,13 +365,13 @@ private:
   struct Noborder_predicate
   {
     Noborder_predicate(const Mesh& mesh) : m_mesh(mesh) {}
-    
+
     bool operator()(const edge_descriptor& edge) const { return !CGAL::is_border(edge, m_mesh); }
-    
+
     const Mesh& m_mesh;
   };
 
-  // all the necessary information to describe a segment 
+  // all the necessary information to describe a segment
   struct Cluster_properties
   {
     int id; // needed to prevent dupblications of edges
@@ -407,8 +394,8 @@ private:
   */
   void setup_graph(const Filtered_dual_graph& dual)
   {
-    boost::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
-    
+    boost::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list
+
     // extract property maps of the adjacency list
     m_segment_map = boost::get(segment_props_t(), m_graph);
     m_decimation_map = boost::get(decimation_props_t(), m_graph);
@@ -419,7 +406,7 @@ private:
     BOOST_FOREACH(face_descriptor face, vertices(dual))
     {
       Cluster_properties props;
-     
+
       props.id = id++;
       props.concavity = 0;
       props.faces.push_back(face);
@@ -458,7 +445,7 @@ private:
 
     decimation_props.new_segment_props.id = -1;
 
-    // faces 
+    // faces
     decimation_props.new_segment_props.faces.resize(segment_1_props.faces.size() + segment_2_props.faces.size());
 
     // add faces from the first segment
@@ -468,7 +455,7 @@ private:
 
     // convex hull points
     std::vector<Point_3> common_hull_pts(segment_1_props.conv_hull_pts.size() + segment_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two segments
-    
+
     // add the convex hull points of the first segment
     std::copy(segment_1_props.conv_hull_pts.begin(), segment_1_props.conv_hull_pts.end(), common_hull_pts.begin());
     // add the convex hull points of the second segment
@@ -522,7 +509,7 @@ private:
   }
 
   /**
-  * Decimates an edge in adjacency list. The second vertex of an edge merges into the first one 
+  * Decimates an edge in adjacency list. The second vertex of an edge merges into the first one
   * Returns the vertex of produced segment.
   */
   void decimate_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor, bool update_candidates)
@@ -555,7 +542,7 @@ private:
         remove_candidate(edge);
       }
     }
-    
+
     // remove adjacent edges incident to the second vertex and remove the vertex
     clear_vertex(vert_2, m_graph);
     remove_vertex(vert_2, m_graph);
@@ -569,7 +556,7 @@ private:
       if (update_candidates)
       {
         remove_candidate(edge);
-      } 
+      }
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
       ++cnt;
 #endif
@@ -599,7 +586,7 @@ private:
     if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
     {
       Update_edge_functor update_functor(*this, concavity_threshold, alpha_factor);
-      
+
       tbb::parallel_for_each(boost::out_edges(vert_1, m_graph).first, boost::out_edges(vert_1, m_graph).second, update_functor);
     }
     else
@@ -619,7 +606,7 @@ private:
         add_candidate(edge, concavity_threshold);
       }
     }
-    
+
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     std::cout << "Updated edges: " << cnt << std::endl;
 #endif
@@ -649,7 +636,7 @@ private:
     }
 
     // sum up lengths of border edges
-    struct Perimeter_calculator 
+    struct Perimeter_calculator
     {
       Perimeter_calculator(const TriangleMesh& mesh, double& perimeter)
       : m_mesh(mesh), m_perimeter(perimeter)
@@ -659,7 +646,7 @@ private:
       {
         m_perimeter += CGAL::Polygon_mesh_processing::edge_length(edge(h, m_mesh), m_mesh);
       }
-      
+
       const TriangleMesh& m_mesh;
       double& m_perimeter;
     };
@@ -685,7 +672,7 @@ private:
   }
 
   /**
-   * Checks if there is need to construct the convex hull of a set of points 
+   * Checks if there is need to construct the convex hull of a set of points
    */
   bool valid_convex_hull_pts(const std::vector<Point_3>& pts)
   {
@@ -704,7 +691,7 @@ private:
       m_invalid_edges.push_back(edge);
       return;
     }
-    
+
     // otherwise the edge is a candidate for decimation operator
     m_candidates.insert(edge);
   }
@@ -747,7 +734,7 @@ private:
       }
     }
   }
-  
+
   /**
    * Updates vertex descriptors of removed invalid edges (vert_1 -> vert_2)
    */
@@ -765,7 +752,7 @@ private:
       }
     }
   }
-};    
+};
 
 }
 }

@@ -28,7 +28,7 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
@@ -70,9 +70,9 @@ namespace internal
     typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> AABB_primitive;
-    typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive> > AABB_tree;
+    typedef CGAL::AABB_tree<CGAL::AABB_traits_3<GeomTraits, AABB_primitive> > AABB_tree;
 
-    typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
+    typedef std::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
 
   public:
     Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool use_closest_point = false)
@@ -206,7 +206,7 @@ namespace internal
 
       // compute intersections and select the largest projection length
       #ifdef CGAL_LINKED_WITH_TBB
-      typedef tbb::atomic<double> Result_type;
+      typedef std::atomic<double> Result_type;
       #else
       typedef double Result_type;
       #endif
@@ -238,9 +238,9 @@ namespace internal
 
           if (intersection)
           {
-            const Point_3* intersection_point =  boost::get<Point_3>(&(intersection->first));
-            if (intersection_point)
+            if (std::get_if<Point_3>(&(intersection->first)))
             {
+              const Point_3 *intersection_point = std::get_if<Point_3>(&(intersection->first));
               double d = CGAL::squared_distance(origin, *intersection_point);
               put(m_distances, vert, d);
 
@@ -249,7 +249,7 @@ namespace internal
               double current_value = *m_result;
               while( current_value < d )
               {
-                current_value = m_result->compare_and_swap(d, current_value);
+                current_value = m_result->compare_exchange_weak(d, current_value);
               }
               #else
               *m_result = (std::max)(*m_result, d);
@@ -302,7 +302,7 @@ namespace internal
 
       // compute intersections and select the largest projection length
       #ifdef CGAL_LINKED_WITH_TBB
-      typedef tbb::atomic<double> Result_type;
+      typedef std::atomic<double> Result_type;
       #else
       typedef double Result_type;
       #endif
@@ -331,7 +331,7 @@ namespace internal
           double current_value = *m_result;
           while( current_value < distance )
           {
-            current_value = m_result->compare_and_swap(distance, current_value);
+            current_value = m_result->compare_exchange_weak(distance, current_value);
           }
           #else
           *m_result = (std::max)(*m_result, distance);

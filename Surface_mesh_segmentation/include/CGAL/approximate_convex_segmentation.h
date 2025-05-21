@@ -29,7 +29,6 @@
  */
 #include <CGAL/internal/Approximate_convex_segmentation/Approx_segmentation.h>
 #include <CGAL/internal/Approximate_convex_segmentation/Concavity.h>
-#include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL
@@ -78,19 +77,22 @@ concavity_values(const TriangleMesh& mesh,
                  DistancesPropertyMap distances,
                  const NamedParameters& np)
 {
-    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
-    typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  using Vpm = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
 
-    Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
-    Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                  get_const_property_map(boost::vertex_point, mesh));
+  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
 
-    CGAL_precondition(is_triangle_mesh(mesh));
-  
-    bool use_closest_point = boost::choose_param(boost::get_param(np, internal_np::use_closest_point), false);
+  Geom_traits geom_traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
-    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
-    return algorithm.compute(face_ids, segment_id, distances);
+  CGAL_precondition(is_triangle_mesh(mesh));
+
+  bool use_closest_point = choose_parameter(get_parameter(np, internal_np::use_closest_point), false);
+  //const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_weight), 2);
+
+  internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
+  return algorithm.compute(face_ids, segment_id, distances);
 }
 
 
@@ -111,8 +113,8 @@ concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
                  std::size_t segment_id)
 {
-    CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
-    
+    CGAL::Constant_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
+
     return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances_pmap, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
@@ -152,19 +154,22 @@ concavity_values(const TriangleMesh& mesh,
                  DistancesPropertyMap distances,
                  const NamedParameters& np)
 {
-    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
-    typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  using Vpm = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
 
-    Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
-    Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                  get_const_property_map(boost::vertex_point, mesh));
 
-    CGAL_precondition(is_triangle_mesh(mesh));
-  
-    bool use_closest_point = boost::choose_param(boost::get_param(np, internal_np::use_closest_point), false);
+  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
 
-    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
-    return algorithm.compute(distances);
+  Geom_traits geom_traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
+
+  CGAL_precondition(is_triangle_mesh(mesh));
+
+  bool use_closest_point = choose_parameter(get_parameter(np, internal_np::use_closest_point), false);
+
+  internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
+  return algorithm.compute(distances);
 }
 
 
@@ -181,8 +186,8 @@ template <class ConcurrencyTag, class TriangleMesh>
 double
 concavity_values(const TriangleMesh& mesh)
 {
-    CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
-    
+    CGAL::Constant_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
+
     return concavity_values<ConcurrencyTag>(mesh, distances_pmap, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
@@ -226,30 +231,33 @@ concavity_values(const TriangleMesh& mesh)
  *
  * @return number of segments computed
  */
-template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
+template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters = parameters::Default_named_parameters>
 std::size_t
 approximate_convex_segmentation(const TriangleMesh& mesh,
                                 FacePropertyMap face_ids,
                                 double concavity_threshold,
-                                const NamedParameters& np)
+                                const NamedParameters& np = parameters::default_values())
 {
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
-  typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  using Vpm = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
 
-  Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
-  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, mesh));
-  std::size_t min_number_of_segments = boost::choose_param(boost::get_param(np, internal_np::min_number_of_segments), 1);
+  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
+
+  Geom_traits geom_traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
+
+  std::size_t min_number_of_segments = choose_parameter(get_parameter(np, internal_np::min_number_of_segments), 1);
 
   CGAL_precondition(is_triangle_mesh(mesh));
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
 
-  bool use_closest_point = boost::choose_param(boost::get_param(np, internal_np::use_closest_point), false);
+  bool use_closest_point = choose_parameter(get_parameter(np, internal_np::use_closest_point), false);
 
   internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
   algorithm.segmentize(concavity_threshold, min_number_of_segments);
 
-  double segment_size_threshold = boost::choose_param(boost::get_param(np, internal_np::segment_size_threshold), 0.);
+  double segment_size_threshold = choose_parameter(get_parameter(np, internal_np::segment_size_threshold), 0.);
   if (segment_size_threshold < 0) segment_size_threshold = 0;
   if (segment_size_threshold > 100) segment_size_threshold = 100;
 
@@ -258,21 +266,10 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
     algorithm.postprocess(min_number_of_segments, segment_size_threshold, concavity_threshold);
   }
 
-  return algorithm.result(face_ids, boost::get_param(np, internal_np::convex_hulls_of_segments));
+  algorithm.fill_convex_hull_map(get_parameter(np, internal_np::convex_hulls_of_segments));
+
+  return algorithm.result(face_ids);
 }
-
-
-#ifndef DOXYGEN_RUNNING
-template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
-std::size_t
-approximate_convex_segmentation(const TriangleMesh& mesh,
-                                FacePropertyMap face_ids,
-                                double concavity_threshold)
-{
-  return approximate_convex_segmentation<ConcurrencyTag>(mesh, face_ids, concavity_threshold, Polygon_mesh_processing::parameters::all_default());
-}
-#endif
-
 
 } //namespace CGAL
 
