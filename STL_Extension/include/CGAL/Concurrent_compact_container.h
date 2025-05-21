@@ -110,6 +110,12 @@ namespace CCC_internal {
     }
 
     template <typename Element>
+    static void set_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
+    }
+
+    template <typename Element>
     static void restore_erase_counter(Element* e, unsigned int c)
     {
       e->set_erase_counter(c);
