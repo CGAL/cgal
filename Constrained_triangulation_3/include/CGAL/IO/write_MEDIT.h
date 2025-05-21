@@ -30,17 +30,17 @@ namespace IO
  *
  * \see \ref IOStreamMedit
  */
-template <typename Traits, typename Tr_of_default>
+template <typename Traits, typename Tr>
 void write_MEDIT(std::ostream& os,
-                 const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr_of_default>& ccdt)
+                 const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt)
 {
   const auto& tr = ccdt.triangulation();
 
-  using Tr = typename cpp20::remove_cvref_t<decltype(tr)>;
+  using Tr_ = typename cpp20::remove_cvref_t<decltype(tr)>;
 
-  using Vertex_handle = typename Tr::Vertex_handle;
-  using Facet = typename Tr::Facet;
-  using Cell_handle = typename Tr::Cell_handle;
+  using Vertex_handle = typename Tr_::Vertex_handle;
+  using Facet = typename Tr_::Facet;
+  using Cell_handle = typename Tr_::Cell_handle;
   CGAL::unordered_flat_map<Cell_handle, bool> cells_in_domain;
   for(Cell_handle c : tr.all_cell_handles())
     cells_in_domain[c] = true;
